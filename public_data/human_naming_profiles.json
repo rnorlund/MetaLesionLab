@@ -1,0 +1,71 @@
+{
+  "_about": "Published, group-level picture-naming results for people with aphasia and healthy controls, used as reference profiles in the Model Lab. Only numbers printed in the cited sources; no individual-level data. Category names follow metalesionlab.naming_errors: Nonword = phonologically related nonword, Neologism = abstruse (unrelated) nonword. Checked against the sources on 2026-10-26.",
+  "sources": {
+    "schwartz2012": {
+      "citation": "Schwartz MF, Faseyitan O, Kim J, Coslett HB (2012). The dorsal stream contribution to phonological retrieval in object naming. Brain 135(12):3799-3814.",
+      "doi": "10.1093/brain/aws300",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3525060/",
+      "where": "Table 2",
+      "note": "Philadelphia Naming Test (PNT), 175 items; Western Aphasia Battery (WAB) subtypes. With severity as a covariate, the authors found no group effects on these measures, so compare at matched accuracy."
+    },
+    "walker2018": {
+      "citation": "Walker GM, Hickok G, Fridriksson J (2018). A cognitive psychometric model for assessment of picture naming abilities in aphasia. Psychological Assessment 30(6):809-826.",
+      "doi": "10.1037/pas0000529",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5980659/",
+      "where": "Table 4, 'Full' row",
+      "note": "365 people with aphasia x 175 PNT items = 63,875 trials, all subtypes pooled. Non-naming attempts include omissions, descriptions, non-nouns, picture parts and fragments."
+    },
+    "dell2007": {
+      "citation": "Dell GS, Martin N, Schwartz MF (2007). A case-series test of the interactive two-step model of lexical access: predicting word repetition from picture naming. Journal of Memory and Language 56(4):490-520.",
+      "doi": "10.1016/j.jml.2006.05.007",
+      "where": "Table 2, naming row",
+      "note": "65 people with aphasia. Responses outside these six categories were removed and proportions rescaled to sum to 1; nonword combines related and abstruse nonwords."
+    },
+    "roach1996": {
+      "citation": "Roach A, Schwartz MF, Martin N, Grewal RS, Brecher A (1996). The Philadelphia Naming Test: scoring and rationale. Clinical Aphasiology 24:121-133.",
+      "where": "pp. 127-128",
+      "note": "30 adults without brain injury, aged 40-75."
+    },
+    "walker2011": {
+      "citation": "Walker GM, Schwartz MF, Kimberg DY, Faseyitan O, Brecher A, Dell GS, Coslett HB (2011). Support for anterior temporal involvement in semantic error production in aphasia: new evidence from VLSM. Brain and Language 117(3):110-122.",
+      "doi": "10.1016/j.bandl.2010.09.008",
+      "where": "Table 1, note a",
+      "note": "20 healthy participants (unpublished norms reported in the paper)."
+    },
+    "mrri_guide": {
+      "citation": "Moss Rehabilitation Research Institute. Detailed Guide to Philadelphia Naming Test (PNT) Scoring (1996).",
+      "where": "pp. 4-5",
+      "note": "Source of the sound-relatedness criterion used by naming_errors (shared stressed vowel, initial or final phoneme, or two or more phonemes)."
+    }
+  },
+  "subtype_profiles": {
+    "source": "schwartz2012",
+    "measures": "mean proportion of the 175 PNT responses; nonword = all nonword errors (related + abstruse)",
+    "groups": [
+      {"subtype": "Anomic", "n": 49, "correct": 0.84, "nonword": 0.04, "semantic": 0.03},
+      {"subtype": "Broca's", "n": 28, "correct": 0.47, "nonword": 0.14, "semantic": 0.04},
+      {"subtype": "Conduction", "n": 17, "correct": 0.56, "nonword": 0.14, "semantic": 0.03},
+      {"subtype": "Wernicke's", "n": 8, "correct": 0.26, "nonword": 0.12, "semantic": 0.05}
+    ]
+  },
+  "pooled_profiles": [
+    {
+      "name": "People with aphasia, all subtypes (N = 365)",
+      "source": "walker2018",
+      "counts": {"Correct": 35662, "Semantic": 2634, "Formal": 3161, "Mixed": 1587, "Unrelated": 2303,
+                 "Nonword": 6049, "Neologism": 1821, "NonNaming": 10658},
+      "mapping": "NonNaming = our Description + NoResponse."
+    },
+    {
+      "name": "People with aphasia, all subtypes (N = 65)",
+      "source": "dell2007",
+      "proportions": {"Correct": 0.640, "Semantic": 0.057, "Formal": 0.074, "Mixed": 0.032, "Unrelated": 0.062,
+                      "AnyNonword": 0.138},
+      "mapping": "Drop our Description and NoResponse, merge Nonword + Neologism into AnyNonword, then rescale to 1."
+    }
+  ],
+  "controls": [
+    {"source": "roach1996", "n": 30, "correct_percent": {"initial": 96, "complete": 96, "final": 97}},
+    {"source": "walker2011", "n": 20, "correct": 0.97, "semantic": 0.01}
+  ]
+}

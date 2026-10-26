@@ -36,7 +36,14 @@ Everything in this repository was written during the hackathon, starting at the 
 
 ### Prior research context (not part of this submission)
 
-The research question comes from the author's earlier work on simulating aphasia by perturbing the weights of a different vision-language model (LLaVA). No code, data or results from that project are included here.
+The research question comes from the author's earlier work on simulating aphasia by lesioning a different vision-language model: Yang et al. (2026), "Lesioned multimodal language models reproduce aphasic picture-naming patterns", arXiv:2607.11621 (preprint). No code, data or results from that project are included here.
+
+Built new during the hackathon:
+- everything on Meta's models (Muse Glimmer, Muse Spark, Muse Image, SAM 3.1, Muse Voice Transcribe),
+- the test-building and scoring tools for people,
+- the word lens,
+- the agent,
+- any-language support.
 
 ## How scoring works
 
