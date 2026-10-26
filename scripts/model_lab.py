@@ -1,0 +1,226 @@
+"""Model Lab runs on the GPU box: reference stats, naming conditions, localizers, severity.
+
+  stats SET                 per-unit mean/sd for mean and noise lesions (held-out drawings)
+  name SET [--spec JSON]    one naming condition (intact without --spec)
+  agreement SET             intact naming -> runs/sets/SET/glimmer_names.json
+  localize SET.. --contrast naming|visual|language
+  severity SET --localizer NAME --kind mlp|heads --method zero|mean|noise
+  components SET            vision tower, projector and decoder-band lesions
+
+Results go to runs/lesion/<set>/<condition>.json (one file per condition) and
+runs/lesion/<set>/index.json. Codes are made without the meaning judge; re-score locally with
+scripts/rescore_lesions.py.
+"""
+import argparse
+import json
+import re
+import time
+from pathlib import Path
+
+import torch
+
+from metalesionlab import glimmer
+from metalesionlab.lesions import LesionSpec, UnitStats, compute_unit_stats, site_dims
+from metalesionlab.localizers import (Localizer, localizer_images, localizer_spec, random_control,
+                                      run_contrast)
+from metalesionlab.model_lab import (NamingTest, SeverityCurve, build_batches, naming_prompt, save_result)
+
+RUNS = Path("runs")
+
+
+def slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9.]+", "-", text.lower()).strip("-")[:80]
+
+
+def stats_path(set_name: str) -> Path:
+    return RUNS / "cache" / f"unit_stats_{set_name}.pt"
+
+
+def write_index(out_dir: Path) -> None:
+    rows = []
+    for f in sorted(out_dir.glob("*.json")):
+        if f.name == "index.json" or f.name.startswith("severity_"):
+            continue
+        r = json.loads(f.read_text())
+        if "accuracy" in r:
+            rows.append({"file": f.name, "condition": r["condition"], "accuracy": r["accuracy"], "counts": r["counts"],
+                         "method": r["spec"]["method"], "units": {k: r["units"][k] for k in ("mlp", "heads", "components")},
+                         "recipe": r["spec"].get("recipe", {}), "judge": r.get("judge")})
+    (out_dir / "index.json").write_text(json.dumps({"conditions": rows}, ensure_ascii=False, indent=1))
+
+
+class Lab:
+    def __init__(self, set_dir: Path, batch_size: int):
+        t0 = time.time()
+        self.model, self.processor = glimmer.load()
+        print(f"loaded in {time.time() - t0:.0f}s", flush=True)
+        self.set_dir, self.set_name = set_dir, set_dir.name
+        self.test = NamingTest.from_set(self.processor, set_dir, batch_size=batch_size)
+        self.out_dir = RUNS / "lesion" / self.set_name
+        self.dims = site_dims(self.model)
+        self._stats = None
+
+    @property
+    def stats(self) -> UnitStats | None:
+        if self._stats is None and stats_path(self.set_name).exists():
+            self._stats = UnitStats.load(stats_path(self.set_name), self.model.device)
+        return self._stats
+
+    def run(self, spec: LesionSpec, condition: str = "", save: bool = True) -> dict:
+        r = self.test.run(self.model, self.processor, spec, self.stats, max_new_tokens=12, condition=condition)
+        if save:
+            save_result(r, self.out_dir / f"{slug(r['condition'])}.json")
+        print(f"  {r['condition']}: acc {r['accuracy']:.2f}  {_short(r['counts'])}  ({r['seconds']}s)", flush=True)
+        return r
+
+
+def _short(counts: dict) -> str:
+    return " ".join(f"{k}={v}" for k, v in counts.items() if v)
+
+
+def cmd_stats(args):
+    model, processor = glimmer.load()
+    trials = localizer_images([args.set_dir], held_out=True) or localizer_images([args.set_dir], held_out=False)
+    from PIL import Image
+    batches = build_batches(processor, [(Image.open(t.image).convert("RGB"), naming_prompt(t.lang)) for t in trials],
+                            args.batch)
+    t0 = time.time()
+    stats = compute_unit_stats(model, [{k: v.to(model.device) for k, v in b.items()} for b in batches],
+                               source=f"{args.set_dir.name}: {len(trials)} held-out drawings, naming prompt")
+    stats.save(stats_path(args.set_dir.name))
+    print(f"unit stats from {len(trials)} pictures, {stats.n_tokens} tokens ({stats.n_image_tokens} image) "
+          f"in {time.time() - t0:.0f}s -> {stats_path(args.set_dir.name)}")
+
+
+def cmd_name(args):
+    lab = Lab(args.set_dir, args.batch)
+    spec = LesionSpec.from_dict(json.loads(Path(args.spec).read_text() if args.spec and Path(args.spec).exists()
+                                           else args.spec or "{}"))
+    lab.run(spec, args.condition)
+    write_index(lab.out_dir)
+
+
+def cmd_agreement(args):
+    lab = Lab(args.set_dir, args.batch)
+    r = lab.run(LesionSpec(name="intact"), "intact")
+    names = {row["word"]: {"name": row["said"], "code": row["code"]} for row in r["items"]}
+    (args.set_dir / "glimmer_names.json").write_text(json.dumps(names, ensure_ascii=False, indent=1))
+    write_index(lab.out_dir)
+    print(f"Glimmer name agreement {r['accuracy']:.2f} on {r['n']} items -> {args.set_dir / 'glimmer_names.json'}")
+
+
+def cmd_localize(args):
+    model, processor = glimmer.load()
+    trials = localizer_images(args.set_dirs, held_out=not args.include_test) if args.contrast != "language" else None
+    name = args.name or args.contrast
+    t0 = time.time()
+    loc = run_contrast(model, processor, args.contrast, trials, batch_size=args.batch, name=name)
+    loc.meta.update({"sets": [d.name for d in args.set_dirs], "trials": loc.n_a, "seconds": round(time.time() - t0, 1),
+                     "held_out": not args.include_test})
+    out = RUNS / "localizers" / f"{name}.pt"
+    loc.save(out)
+    (RUNS / "localizers" / f"{name}.json").write_text(json.dumps(loc.summary()))
+    t = loc.t["mlp"]
+    print(f"{name}: {loc.n_a} vs {loc.n_b} trials in {time.time() - t0:.0f}s; mlp t max {t.max():.1f}, "
+          f"units t>4: {(t > 4).sum().item()}; heads t>4: {(loc.t['heads'] > 4).sum().item()}")
+    for kind in ("mlp", "heads"):
+        top = loc.summary()[f"{kind}_top0.01_by_layer"]
+        print(f"  {kind} top 1% by layer: {top}")
+
+
+def cmd_severity(args):
+    lab = Lab(args.set_dir, args.batch)
+    loc = Localizer.load(RUNS / "localizers" / f"{args.localizer}.pt")
+    tag = f"{loc.name}-{args.kind}-{args.method}" + ("-rev" if args.direction < 0 else "")
+    results = {}
+
+    def evaluate(frac: float) -> float:
+        spec = localizer_spec(loc, args.kind, frac, args.method, args.direction, args.noise_scale)
+        r = lab.run(spec, f"{tag} f{frac:.4g}")
+        results[frac] = r
+        return r["accuracy"]
+
+    curve = SeverityCurve(evaluate)
+    levels = []
+    for target in args.targets:
+        level = curve.bisect(target, args.lo, args.hi, steps=args.steps)
+        print(f"target {target}: fraction {level['fraction']:.4g} -> accuracy {level['accuracy']:.2f}", flush=True)
+        spec = localizer_spec(loc, args.kind, level["fraction"], args.method, args.direction, args.noise_scale)
+        level["condition"] = results[level["fraction"]]["condition"]
+        level["units"] = results[level["fraction"]]["units"]
+        level["controls"] = []
+        for seed in range(args.controls):
+            ctrl = random_control(spec, lab.dims, seed=seed)
+            r = lab.run(ctrl, f"{tag} f{level['fraction']:.4g} random seed{seed}")
+            level["controls"].append({"condition": r["condition"], "accuracy": r["accuracy"], "counts": r["counts"]})
+        levels.append(level)
+    summary = {"set": lab.set_name, "localizer": loc.name, "kind": args.kind, "method": args.method,
+               "direction": args.direction, "curve": sorted(curve.points.items()), "levels": levels}
+    (lab.out_dir / f"severity_{slug(tag)}.json").write_text(json.dumps(summary, indent=1))
+    write_index(lab.out_dir)
+
+
+def cmd_components(args):
+    lab = Lab(args.set_dir, args.batch)
+    lab.run(LesionSpec(name="intact"), "intact")
+    for comp in ("vision_tower", "projector"):
+        for method in args.methods:
+            scales = args.noise_scales if method == "noise" else [1.0]
+            for s in scales:
+                name = f"{comp} {method}" + (f" x{s:g}" if method == "noise" else "")
+                lab.run(LesionSpec(method=method, components={comp: None}, noise_scale=s, name=name))
+    n = lab.dims.n_layers
+    for start in range(0, n, args.band):
+        layers = list(range(start, min(start + args.band, n)))
+        for method in args.band_methods:
+            lab.run(LesionSpec(method=method, layers=layers, name=f"layers {layers[0]}-{layers[-1]} {method}"))
+    write_index(lab.out_dir)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    def with_set(p):
+        p.add_argument("set_dir", type=Path)
+        p.add_argument("--batch", type=int, default=10)
+        return p
+
+    with_set(sub.add_parser("stats")).set_defaults(fn=cmd_stats)
+    p = with_set(sub.add_parser("name"))
+    p.add_argument("--spec", help="lesion spec as a JSON file or string")
+    p.add_argument("--condition", default="")
+    p.set_defaults(fn=cmd_name)
+    with_set(sub.add_parser("agreement")).set_defaults(fn=cmd_agreement)
+    p = sub.add_parser("localize")
+    p.add_argument("set_dirs", type=Path, nargs="+")
+    p.add_argument("--contrast", required=True, choices=["naming", "visual", "language"])
+    p.add_argument("--name", default="")
+    p.add_argument("--batch", type=int, default=10)
+    p.add_argument("--include-test", action="store_true", help="also use the kept test pictures")
+    p.set_defaults(fn=cmd_localize)
+    p = with_set(sub.add_parser("severity"))
+    p.add_argument("--localizer", required=True)
+    p.add_argument("--kind", choices=["mlp", "heads"], default="mlp")
+    p.add_argument("--method", choices=["zero", "mean", "noise"], default="zero")
+    p.add_argument("--direction", type=int, default=1)
+    p.add_argument("--noise-scale", type=float, default=1.0)
+    p.add_argument("--targets", type=float, nargs="+", default=[0.8, 0.6, 0.4])
+    p.add_argument("--lo", type=float, default=0.0)
+    p.add_argument("--hi", type=float, default=0.2)
+    p.add_argument("--steps", type=int, default=5)
+    p.add_argument("--controls", type=int, default=1)
+    p.set_defaults(fn=cmd_severity)
+    p = with_set(sub.add_parser("components"))
+    p.add_argument("--methods", nargs="+", default=["zero", "mean", "noise"])
+    p.add_argument("--noise-scales", type=float, nargs="+", default=[0.5, 1.0, 2.0])
+    p.add_argument("--band", type=int, default=4)
+    p.add_argument("--band-methods", nargs="+", default=["zero", "mean"])
+    p.set_defaults(fn=cmd_components)
+    args = ap.parse_args()
+    torch.manual_seed(0)
+    args.fn(args)
+
+
+if __name__ == "__main__":
+    main()
