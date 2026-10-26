@@ -1,11 +1,14 @@
+import io
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from PIL import Image
 
 from metalesionlab import scorer
-from metalesionlab.scorer import (agreement, normalize_item, score_description, score_fluency, second_rater,
-                                  split_chunks)
+from metalesionlab.scorer import (agreement, make_scene, normalize_item, score_description, score_fluency,
+                                  second_rater, split_chunks)
 
 
 class FakeAPI:
@@ -17,6 +20,12 @@ class FakeAPI:
     def chat(self, messages, reasoning_effort="minimal", **kwargs):
         self.prompts.append(messages[0]["content"])
         return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=self.replies.pop(0)))])
+
+    def generate_images(self, prompt, n=1, size=None, output_format="png"):
+        self.prompts.append(prompt)
+        buf = io.BytesIO()
+        Image.new("RGB", (300, 200), "white").save(buf, "PNG")
+        return [buf.getvalue()]
 
 
 @pytest.fixture(autouse=True)
@@ -107,6 +116,12 @@ def test_score_fluency_counts_repetitions_intrusions_and_comments():
     assert len(api.prompts) == 1
 
 
+def test_score_fluency_keys_an_item_the_judge_pulled_out_of_a_remark():
+    api = FakeAPI(_stretches([("dog", True)], [("cat", True)], [("cat", True)]))
+    out = score_fluency(api, "dog, I think a cat, cats", "animals", "en")
+    assert out["valid"] == ["dog", "cat"] and out["repetitions"] == ["cats"]
+
+
 def test_score_fluency_caches_judgments_per_stretch():
     api = FakeAPI(_stretches([("perro", True)], [("mesa", False)]))
     score_fluency(api, "perro, mesa", "animales", "es")
@@ -142,3 +157,19 @@ def test_score_description_rates_and_units():
 def test_score_description_empty_transcript_needs_no_call():
     out = score_description(FakeAPI(), "", {"content_units": ["the boy"]}, "en")
     assert out["cu_count"] == 0 and out["words_per_min"] is None and out["content_units_missed"] == ["the boy"]
+
+
+def test_make_scene_writes_picture_and_units(tmp_path):
+    api = FakeAPI('{"setting": "city park", "brief": "A park with people."}',
+                  '{"description": "Un parque.", "content_units": ["el niño", "el perro"], "has_text": false}')
+    scene = make_scene(api, "es", "un parque", out_dir=tmp_path)
+    assert scene["id"].startswith("es_city-park_")
+    assert scene["content_units"] == ["el niño", "el perro"] and scene["description"] == "Un parque."
+    assert Path(scene["image_file"]).exists() and (tmp_path / f"{scene['id']}.json").exists()
+    assert "no text" in api.prompts[1]  # the drawing prompt forbids writing
+
+
+def test_make_scene_redraws_once_when_the_picture_has_writing(tmp_path):
+    units = '{"description": "d", "content_units": ["the boy"], "has_text": %s}'
+    api = FakeAPI('{"setting": "beach", "brief": "A beach."}', units % "true", units % "false")
+    assert make_scene(api, "en", out_dir=tmp_path)["draws"] == 2

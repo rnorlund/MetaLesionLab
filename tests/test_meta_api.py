@@ -1,7 +1,9 @@
+import json
+
 import pytest
 
 from metalesionlab import meta_api
-from metalesionlab.meta_api import BudgetExceeded, parse_sam_output, token_cost
+from metalesionlab.meta_api import BudgetExceeded, asr_language_name, parse_sam_output, token_cost
 
 # Shape of a real sam-3.1 reply (mask payload shortened).
 SAM_TEXT = ("<0f>0<|box;x1=462;y1=261;x2=1252;y2=1364;w=1600;h=1600;c=0.93|>"
@@ -39,3 +41,33 @@ def test_budget_cap_blocks_calls(tmp_path, monkeypatch):
     meta_api._check_budget(0.005)
     with pytest.raises(BudgetExceeded):
         meta_api._check_budget(0.02)
+
+
+def test_asr_language_name_accepts_codes_and_names():
+    assert asr_language_name("fr") == "French"
+    assert asr_language_name(" spanish ") == "Spanish"
+    assert asr_language_name("zh") == "Mandarin Chinese"
+    assert asr_language_name("sw") is None  # Swahili is not one of the 25
+
+
+@pytest.mark.parametrize("language,bias", [(None, None), ("fr", ["French"]), ("sw", None)])
+def test_transcribe_sends_language_bias_only_when_supported(tmp_path, monkeypatch, language, bias):
+    monkeypatch.setattr(meta_api, "LEDGER", tmp_path / "costs.jsonl")
+    api = meta_api.MetaAPI(api_key="test")
+    sent = {}
+
+    class Reply:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"transcript": "chat", "audioDurationMs": 1000}
+
+    def fake_post(url, headers, files):
+        sent.update(json.loads(files["request"][1]))
+        return Reply()
+
+    monkeypatch.setattr(api.http, "post", fake_post)
+    assert api.transcribe(b"RIFF", language=language)["transcript"] == "chat"
+    assert sent.get("languageBias") == bias
+    assert sent["mode"] == "PUSH_TO_TALK" and sent["audioEncoding"] == "WAV"

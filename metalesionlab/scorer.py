@@ -18,11 +18,12 @@ Picture description
   analyses of Yorkston & Beukelman (1980).
 
 Category fluency
-  score_fluency: the transcript is split into items at punctuation and conjunctions, and each
-  item is normalized (case, accents, articles, plurals) so "Dogs" and "the dog" are one item.
-  A repeat of an earlier item is a repetition. Muse Spark judges every new item in one batched
-  call: a member of the category (valid), a non-member (intrusion), or a remark that isn't an
-  attempt at an item ("let me think"), which is left out of the scores.
+  score_fluency: the transcript is split into stretches at punctuation and conjunctions, and
+  fillers and articles are dropped. Muse Spark judges every new stretch in one batched call: it
+  lists the items in it (usually one; several when the speaker didn't pause and the transcript
+  has no commas; none for a remark such as "let me think") and marks each item a member of the
+  category (valid) or not (intrusion). Items are compared after normalizing case, accents,
+  articles and plurals, so "Dogs" after "the dog" is a repetition.
 
 Every Muse Spark answer is cached on disk under runs/cache/, keyed by a prompt version, so a
 prompt change re-asks and a repeated call costs nothing. Scores are for research and teaching;
@@ -40,6 +41,7 @@ import time
 from collections import Counter
 from pathlib import Path
 
+from openai import BadRequestError
 from PIL import Image
 
 from metalesionlab.meta_api import REPO_ROOT, image_data_url
@@ -50,8 +52,8 @@ CATEGORIES = ("Correct", "Semantic", "Formal", "Mixed", "Unrelated", "Nonword", 
               "Description", "NoResponse", "Visual")
 
 SECOND_RATER_PROMPT_VERSION = 1
-SCENE_PROMPT_VERSION = 1
-DESCRIPTION_PROMPT_VERSION = 1
+SCENE_PROMPT_VERSION = 2
+DESCRIPTION_PROMPT_VERSION = 2
 FLUENCY_PROMPT_VERSION = 1
 
 CACHE_DIR = REPO_ROOT / "runs" / "cache"
@@ -245,9 +247,12 @@ This picture is for a picture-description test in {language}: the person looks a
 everything that is happening. List its content units, the key people, objects and actions a full \
 description would mention.
 - 10 to 20 units, most important first.
-- Each unit is a short phrase in {language}: a noun phrase for a person or object (like "the boy" \
-or "the dog"), or a short verb phrase for an action (like "the boy is climbing the tree").
-- Include only what is clearly visible.
+- Each unit is one idea, as a short phrase in {language}: one person or object (like "the boy" or \
+"the dog"), or one action (like "the boy is climbing the tree"). Never combine several objects in \
+one unit ("a blanket with a bag and an apple" is three units), and leave out colors and other \
+details unless they are needed to tell two things apart.
+- Include only what is clearly visible, and name each thing as most speakers would; if you are \
+not sure what something is, leave it out.
 Also write a two-sentence description of the scene in {language}, and say whether any writing, \
 letters or numbers appear anywhere in the picture.
 Reply with only JSON: {{"description": "...", "content_units": ["...", ...], "has_text": true or false}}"""
@@ -255,6 +260,17 @@ Reply with only JSON: {{"description": "...", "content_units": ["...", ...], "ha
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", _strip_accents(text.lower())).strip("-")[:30] or "scene"
+
+
+def _scene_units(api, image: bytes, lang: str) -> dict:
+    """Muse Spark's description, content units and text check for a drawn scene."""
+    content = [{"type": "image_url", "image_url": {"url": image_data_url(_png(image, 1024))}},
+               {"type": "text", "text": _SCENE_UNITS.format(language=_language(lang))}]
+    for effort in ("low", "medium"):  # one retry, with more thought, if the reply can't be read
+        reply = _json_from(_ask(api, content, effort))
+        if isinstance(reply, dict) and isinstance(reply.get("content_units"), list) and reply["content_units"]:
+            return reply
+    raise ValueError("Muse Spark returned no content units for the scene")
 
 
 def make_scene(api, lang: str, theme: str | None = None, out_dir: Path | None = None) -> dict:
@@ -273,17 +289,16 @@ def make_scene(api, lang: str, theme: str | None = None, out_dir: Path | None = 
     for attempt in range(2):  # redraw once if writing shows up in the picture
         try:
             image = api.generate_images(prompt, size=SCENE_SIZE)[0]
-        except Exception:  # an unsupported size: fall back to the default square
+        except BadRequestError:  # size rejected: fall back to the default square
             image = api.generate_images(prompt)[0]
         saved = _png(image, SCENE_SAVE_SIDE)
-        content = [{"type": "image_url", "image_url": {"url": image_data_url(_png(image, 1024))}},
-                   {"type": "text", "text": _SCENE_UNITS.format(language=_language(lang))}]
-        units_reply = _json_from(_ask(api, content, "low")) or {}
+        units_reply = _scene_units(api, image, lang)
         if not units_reply.get("has_text"):
             break
 
-    units = [str(u).strip() for u in units_reply.get("content_units") or [] if str(u).strip()]
-    scene_id = f"{lang}_{_slug(plan.get('setting') or theme or 'scene')}_{time.strftime('%Y%m%d-%H%M%S')}"
+    units = [str(u).strip() for u in units_reply["content_units"] if str(u).strip()]
+    stamp = f"{time.strftime('%Y%m%d-%H%M%S')}-{_digest(prompt, time.time())[:4]}"
+    scene_id = f"{lang}_{_slug(plan.get('setting') or theme or 'scene')}_{stamp}"
     image_file = out_dir / f"{scene_id}.png"
     image_file.write_bytes(saved)
     scene = {
@@ -299,11 +314,16 @@ def make_scene(api, lang: str, theme: str | None = None, out_dir: Path | None = 
 
 
 _DESCRIPTION_MATCH = """\
-Score a spoken picture description against the picture's content units. A unit is mentioned if \
-the speaker conveys it in any wording: synonyms, paraphrases and clear pronouns count ("the kid" \
-for "the boy"). For an action unit the action itself must be described. A unit the speaker gets \
-wrong, or only implies, is not mentioned. The transcript comes from speech recognition, so ignore \
-spelling, punctuation and fillers.
+Score a spoken picture description against the picture's content units. Check each unit on its \
+own; one sentence can cover several units. Be generous with wording and strict with meaning:
+- A unit is mentioned if the speaker conveys its main idea in any wording. Synonyms, paraphrases, \
+clear pronouns and near descriptions of the same person, animal or thing count ("a man" for "the \
+father", "a kitten" for "the cat", "racing along on his bike" for "the boy rides a bicycle").
+- Details inside a unit, such as an exact number, a color or a place, need not be said ("some \
+birds" counts for "two birds on the fence").
+- For an action unit, the action must be described; naming only who does it is not enough.
+- A unit the speaker gets wrong (a cat for the dog) or never mentions is not mentioned.
+The transcript comes from speech recognition, so ignore spelling, punctuation and fillers.
 Language: {language}
 Content units:
 {units}
@@ -465,8 +485,8 @@ def score_fluency(api, transcript: str, category: str, lang: str) -> dict:
         if not judged:
             items.append({"text": c, "key": "", "status": "comment"})
             continue
-        if len(judged) == 1:  # show a single item as this person said it ("the dogs", not "dog")
-            judged = [[c, judged[0][1]]]
+        if len(judged) == 1 and normalize_item(judged[0][0], lang) == chunk_key[c]:
+            judged = [[c, judged[0][1]]]  # show it as this person said it ("dogs", not a cached "dog")
         for text, is_valid in judged:
             key = normalize_item(text, lang) or text.lower()
             if key in seen:

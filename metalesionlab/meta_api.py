@@ -45,6 +45,14 @@ ASR_LANGUAGES = {
     "pt": "Portuguese", "es": "Spanish", "tl": "Tagalog", "ta": "Tamil", "te": "Telugu", "th": "Thai",
     "tr": "Turkish", "vi": "Vietnamese",
 }
+
+
+def asr_language_name(language: str) -> str | None:
+    """The `languageBias` name for a code or name ("fr", "french"), or None if unsupported."""
+    key = language.strip().lower()
+    return ASR_LANGUAGES.get(key) or next((n for n in ASR_LANGUAGES.values() if n.lower() == key), None)
+
+
 IMAGE_PRICE = 0.01
 SAM_PRICE = 2.50 / 1000
 ASR_PRICE_PER_HOUR = 0.18
@@ -173,11 +181,12 @@ class MetaAPI:
         """Transcribe a mono 16-bit PCM WAV (16 or 24 kHz, up to 10 minutes).
 
         `language` ("fr" or "French") is sent as the `languageBias` hint, which steers recognition
-        toward that language without forcing it. Omitted, the model detects the language itself."""
+        toward that language without forcing it. Without it, or for a language outside the 25
+        supported ones, the model detects the language itself."""
         _check_budget()
         request = {"model": ASR_MODEL, "audioEncoding": "WAV", "mode": "PUSH_TO_TALK"}
-        if language:
-            request["languageBias"] = [ASR_LANGUAGES.get(language.lower(), language)]
+        if language and (name := asr_language_name(language)):
+            request["languageBias"] = [name]
         resp = self.http.post("/asr/transcribe", headers={"Accept": "application/json"}, files={
             "request": (None, json.dumps(request), "application/json"),
             "audio": ("audio.wav", wav, "audio/wav"),
