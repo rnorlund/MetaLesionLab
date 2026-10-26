@@ -9,7 +9,10 @@ from fastapi.testclient import TestClient
 from PIL import Image
 
 from metalesionlab.meta_api import BudgetExceeded
+from metalesionlab.naming_errors import classify
 from metalesionlab.web import app as web
+
+TOUR_FIXTURE = web.HERE / "static" / "tour" / "scorer_demo.json"
 
 
 def _png(path, color):
@@ -208,3 +211,35 @@ def test_human_profiles_use_the_shared_categories(env):
         assert sum(p["shares"].values()) == pytest.approx(1, abs=1e-3)
         assert set(p["shares"]) <= set(hp["codes"]) and p["source"]["short"][-4:].isdigit()
     assert [g["subtype"] for g in hp["subtypes"]["groups"]] == ["Anomic", "Broca's", "Conduction", "Wernicke's"]
+
+
+def test_unlisted_sets_are_left_out_of_the_list(env):
+    client, tmp = env
+    (tmp / "sets" / "demo" / "webmeta.json").write_text(json.dumps({"unlisted": True}))
+    assert client.get("/api/sets").json() == []
+    assert [s["id"] for s in client.get("/api/sets?all=1").json()] == ["demo"]
+    assert client.get("/api/sets/demo").json()["unlisted"] is True
+
+
+@pytest.mark.parametrize("said, target, scored", [
+    ("dog,dog", "cat", "dog"), ("umbrella umbrella", "umbrella", "umbrella"), ("umbrellaumbrella,", "umbrella", "umbrella"),
+    ("a dog a dog", "cat", "a dog"), ("bonbon", "candy", "bonbon"), ("tutu", "tutu", "tutu"), ("dog cat", "cat", "dog cat"),
+    ("Perro,", "gato", "Perro,"), ("", "cat", ""),
+])
+def test_doubled_transcripts_are_scored_once(said, target, scored):
+    assert web.collapse_repeat(said, "en", target) == scored
+
+
+def test_typed_doubled_answer_keeps_what_was_said(env):
+    client, _ = env
+    r = client.post("/api/score/naming/text", json={"target": "cat", "response": "cat cat", "second_rater": False}).json()
+    assert (r["response"], r["scored_response"], r["code"]) == ("cat cat", "cat", "Correct")
+
+
+def test_tour_fixture_agrees_with_the_classifier():
+    """The tour replays recorded pipeline output; its codes must be what the rules give today."""
+    fx = json.loads(TOUR_FIXTURE.read_text())
+    assert [it["target"] for it in fx["items"]] == ["cat", "anchor", "umbrella"]
+    for it in fx["items"]:
+        assert it["code"] == classify(it["target"], it["scored_response"], fx["lang"]).code
+        assert it["second"]["code"] in web.CODES and it["image"].startswith("candidates/")

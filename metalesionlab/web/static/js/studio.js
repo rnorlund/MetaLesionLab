@@ -85,7 +85,8 @@
     state.sets.forEach(function (s) {
       var sub = [s.lang, s.n_items + ' words'];
       if (s.status === 'done') sub.push(s.kept + ' kept' + (s.review ? ' · ' + s.review + ' review' : ''));
-      var right = STATUS_LABEL[s.status] ? h('span', { class: 'pill ' + (s.status === 'error' ? 'pill-excluded' : 'pill-review'), text: STATUS_LABEL[s.status] }) : null;
+      var right = STATUS_LABEL[s.status] ? h('span', { class: 'pill ' + (s.status === 'error' ? 'pill-excluded' : 'pill-review'), text: STATUS_LABEL[s.status] })
+        : s.demo ? h('span', { class: 'pill pill-soft', text: 'Demo' }) : null;
       var btn = h('button', { type: 'button', 'aria-current': s.id === state.current ? 'true' : 'false', onclick: function () { openSet(s.id); } }, [
         h('span', null, [h('span', { class: 'name', text: s.name }), h('br'), h('span', { class: 'sub', text: sub.join(' · ') })]),
         right
@@ -201,7 +202,7 @@
       : it.status === 'excluded' ? h('span', { class: 'pill pill-excluded', text: 'Excluded' })
       : h('span', { class: 'pill pill-review', text: 'Review: ' + reviewReason(it) });
     var samText = best ? best.sam_objects + ' · ' + (best.sam_confidence == null ? '–' : best.sam_confidence.toFixed(2)) : '–';
-    return h('button', { type: 'button', class: 'card', 'aria-label': it.word + ', ' + (it.status || '') + '. Open details', onclick: function () { openItem(i); } }, [
+    return h('button', { type: 'button', class: 'card', 'data-word': it.word, 'aria-label': it.word + ', ' + (it.status || '') + '. Open details', onclick: function () { openItem(i); } }, [
       h('div', { class: 'pic' }, pic),
       h('div', { class: 'body' }, [
         h('div', { class: 'kv' }, [h('span', { class: 'word', text: it.word }), h('span', { class: 'muted', text: 'Zipf ' + (it.zipf == null ? '–' : it.zipf) })]),
@@ -219,9 +220,17 @@
   $('dlg-close').addEventListener('click', function () { dlg.close(); });
   dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
 
-  function openItem(i) {
+  /* The guided tour opens the dialog without a modal backdrop so its own caption stays on top. */
+  function openItem(i, opts) {
     renderItem(i);
-    if (!dlg.open) dlg.showModal();
+    if (opts && opts.modal === false) {
+      if (dlg.open) dlg.close();
+      dlg.classList.add('as-panel');
+      dlg.show();
+    } else if (!dlg.open) {
+      dlg.classList.remove('as-panel');
+      dlg.showModal();
+    }
   }
 
   function renderItem(i) {
@@ -399,10 +408,22 @@
 
   // --- start ------------------------------------------------------------------------------
   T.status().then(function (st) { state.status = st; applyFeatures(st); });
-  loadSets().then(function (sets) {
-    var want = T.param('set');
-    var first = sets.filter(function (s) { return s.status === 'done'; })[0];
-    if (want || first) openSet(want || first.id);
+  var ready = loadSets().then(function (sets) {
+    // A set named in the URL, else the newest one built in this browser, else a demo set.
+    var done = sets.filter(function (s) { return s.status === 'done'; });
+    var mine = done.filter(function (s) { return tokenFor(s.id); })[0];
+    var demo = done.filter(function (s) { return s.id === 'demo_es'; })[0] || done.filter(function (s) { return s.demo; })[0];
+    var pick = T.param('set') || (mine || demo || done[0] || {}).id;
+    return pick ? openSet(pick) : null;
   });
   loadScenes();
+
+  // Hooks for the guided tour (tour.js).
+  T.studio = {
+    ready: ready,
+    data: function () { return state.data; },
+    openSet: function (id) { return state.current === id && state.data && state.data.manifest ? Promise.resolve() : openSet(id); },
+    openItem: openItem,
+    closeItem: function () { if (dlg.open) dlg.close(); dlg.classList.remove('as-panel'); }
+  };
 })();

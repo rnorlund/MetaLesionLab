@@ -1,0 +1,42 @@
+/* Guided tour: spotlight, caption card, first-visit offer, page intro banners and the Demo button. */
+.tour-spot { position: fixed; z-index: 1000; border-radius: 12px; pointer-events: none; box-shadow: 0 0 0 3px #FDE68A, 0 0 0 200vmax rgba(17, 24, 39, 0.55); transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease; }
+.tour-shade { position: fixed; inset: 0; z-index: 999; background: rgba(17, 24, 39, 0.55); display: none; }
+.tour-card { position: fixed; z-index: 1002; width: min(380px, calc(100vw - 24px)); background: var(--panel); color: var(--ink); border-radius: 14px; padding: 16px 18px 14px; box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35); display: flex; flex-direction: column; gap: 10px; }
+.tour-card:focus { outline: none; }
+.tour-card:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; }
+.tour-card.centered { left: 50% !important; top: 50% !important; transform: translate(-50%, -50%); width: min(460px, calc(100vw - 24px)); }
+.tour-card.sheet { left: 8px !important; right: 8px; bottom: 8px; top: auto !important; width: auto; max-height: 48vh; overflow-y: auto; transform: none; }
+.tour-card.loading { opacity: 0.6; }
+.tour-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.tour-progress { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.tour-bar { height: 4px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.tour-bar > div { height: 100%; background: var(--orange); border-radius: 999px; transition: width 0.25s ease; }
+.tour-card h2 { margin: 2px 0 0; font-size: 17px; letter-spacing: -0.01em; }
+.tour-card p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.tour-extra { display: flex; flex-direction: column; gap: 8px; }
+.tour-extra:empty { display: none; }
+.tour-actions { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+.tour-gap { flex: 1; }
+.tour-skip { background: none; border: 0; padding: 8px 4px; color: var(--muted); font-size: 13px; text-decoration: underline; cursor: pointer; min-height: 36px; }
+.tour-x { border: 0; background: none; font-size: 20px; line-height: 1; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; color: var(--muted); }
+.tour-x:hover { background: var(--ground); color: var(--ink); }
+
+.tour-offer { position: fixed; z-index: 998; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 10px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px 10px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); max-width: calc(100vw - 32px); }
+.tour-offer p { margin: 0; font-size: 14px; }
+
+.demo-btn { border: 0; border-radius: 999px; background: #FDE68A; color: var(--ink); font-weight: 600; font-size: 13px; padding: 8px 14px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.demo-btn:hover { background: #FCD34D; }
+.demo-btn svg { width: 10px; height: 10px; }
+.page-intro { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+.page-intro p { margin: 0; color: var(--ink-2); }
+.link-btn { background: none; border: 0; padding: 0; color: var(--blue); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.link-btn:hover { color: var(--blue-dark); }
+.stage.demo .stage-picture { height: min(26vh, 220px); min-height: 160px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spot, .tour-bar > div { transition: none; }
+}
+@media (max-width: 640px) {
+  .tour-offer { left: 8px; right: 8px; bottom: 8px; max-width: none; }
+  html.tour-on body { padding-bottom: 50vh; }
+}

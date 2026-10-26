@@ -167,7 +167,7 @@ button.card:hover { border-color: #9CA3AF; }
 .flag { font-size: 11px; color: var(--orange-dark); background: var(--orange-soft); border-radius: 6px; padding: 3px 7px; align-self: flex-start; }
 
 /* --- tables --------------------------------------------------------------------------- */
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto; position: relative; }  /* contains .sr-only cells, which are absolute */
 table.data { border-collapse: collapse; width: 100%; font-size: 13px; }
 table.data th { text-align: left; color: var(--muted); font-size: 12px; font-weight: 500; padding: 8px; white-space: nowrap; }
 table.data td { padding: 8px; border-top: 1px solid var(--line); vertical-align: middle; }
