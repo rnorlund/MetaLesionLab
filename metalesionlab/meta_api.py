@@ -9,6 +9,7 @@ import base64
 import json
 import os
 import re
+import threading
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -65,10 +66,13 @@ def _check_budget(estimate: float = 0.0) -> None:
         raise BudgetExceeded(f"spent ${total:.2f} of the ${BUDGET_USD:.2f} cap")
 
 
+_ledger_lock = threading.Lock()
+
+
 def _record(kind: str, model: str, usd: float, **extra) -> None:
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
     entry = {"ts": round(time.time(), 3), "kind": kind, "model": model, "usd": round(usd, 6), **extra}
-    with LEDGER.open("a") as f:
+    with _ledger_lock, LEDGER.open("a") as f:
         f.write(json.dumps(entry) + "\n")
 
 
