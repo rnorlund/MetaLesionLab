@@ -165,6 +165,11 @@ def test_guards_and_path_selection():
              {"removed": [1, 2, 3], "within_guard": True}]
     assert C.last_within_guard(steps)["removed"] == [1]
     assert C.last_within_guard(steps[1:]) is None
+    for s, (en, es) in zip(steps, [(19, 17), (18, 17), (17, 16)]):
+        s["heldout_by_lang"] = {"en": {"correct": en}, "es": {"correct": es}}
+    C.mark_heldout(steps, intact_heldout_correct=36)  # floor: 0.95 x 36 = 34.2
+    assert [s["heldout_ok"] for s in steps] == [True, True, False]
+    assert [s["confirmed"] for s in steps] == [True, False, False]
 
 
 def test_stats_helpers():

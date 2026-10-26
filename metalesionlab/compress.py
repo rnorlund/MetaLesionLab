@@ -37,6 +37,7 @@ import gc
 import json
 import math
 import time
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Iterable, Sequence
@@ -454,7 +455,7 @@ class Guards:
             res = {"removed": sorted(set(skip)), **self.text.run(model)}
             if naming:
                 nm = self.naming.run(model, self.processor, keep_items=keep_items)
-                res.update(acc=nm["accuracy"], correct=nm["correct"], n=nm["n"],
+                res.update(acc=nm["accuracy"], correct=nm["correct"], n=nm["n"], by_lang=nm["by_lang"],
                            **{f"acc_{lg}": v["accuracy"] for lg, v in nm["by_lang"].items()})
                 if keep_items:
                     res["items"] = nm["items"]
@@ -524,6 +525,16 @@ def greedy_path(model, guards: Guards, intact: dict, shortlist: int = 3, max_rem
     return steps
 
 
+def mark_heldout(steps: list[dict], intact_heldout_correct: int, acc_floor: float = ACC_FLOOR) -> None:
+    """Add heldout_ok (the held-out pictures also stay at or above acc_floor x intact) and
+    confirmed (inside both guards and the held-out check) to each greedy step."""
+    for s in steps:
+        correct = sum(v["correct"] for v in s["heldout_by_lang"].values())
+        s["heldout_correct"] = correct
+        s["heldout_ok"] = bool(correct >= acc_floor * intact_heldout_correct - 1e-9)
+        s["confirmed"] = bool(s["within_guard"] and s["heldout_ok"])
+
+
 def last_within_guard(steps: list[dict], key: str = "within_guard") -> dict | None:
     """The deepest step that passes, counting only the unbroken run from the start (a step that
     passes again after a failure is luck on a small test, not a safe cut)."""
@@ -563,35 +574,45 @@ def time_generation(model, processor, n_tokens: int = 32, repeats: int = 5) -> d
                                         add_generation_prompt=True, reasoning_strength="low")["input_ids"][0]
     prefix = processor.tokenizer(glimmer.ANSWER_PREFIX, add_special_tokens=False, return_tensors="pt")["input_ids"][0]
     batch = {k: v.to(model.device) for k, v in left_pad([torch.cat([ids, prefix])], 0).items()}
-    times = []
-    for r in range(repeats + 1):
-        _sync()
-        t0 = time.perf_counter()
-        toks = greedy_decode(model, batch, set(), n_tokens)
-        _sync()
-        if r:
-            times.append(time.perf_counter() - t0)
-    med = sorted(times)[len(times) // 2]
+    toks = greedy_decode(model, batch, set(), n_tokens)  # warm-up, and the text for the record
+    med = median([_timed(lambda: greedy_decode(model, batch, set(), n_tokens)) for _ in range(repeats)])
     return {"tok_per_s": round(n_tokens / med, 2), "gen_seconds": round(med, 4), "gen_tokens": len(toks[0]),
             "gen_text": processor.tokenizer.decode(toks[0])}
 
 
+def _timed(fn: Callable) -> float:
+    _sync()
+    t0 = time.perf_counter()
+    fn()
+    _sync()
+    return time.perf_counter() - t0
+
+
 @torch.no_grad()
-def time_naming(model, processor, test: NamingTest, repeats: int = 1) -> dict:
-    """End-to-end time per picture at batch size 1: vision tower, prefill and decoding. Inputs are
-    tokenized beforehand, so CPU preprocessing is excluded."""
-    stops = stop_token_ids(model, processor.tokenizer)
-    greedy_decode(model, test.batch([0], model.device, vision=True), stops, 8)  # warm-up
-    times = []
+def time_naming(model, processor, test: NamingTest, new_tokens: int = 4, repeats: int = 2) -> dict:
+    """Time per picture at batch size 1: vision tower, prefill and exactly new_tokens greedy tokens
+    (about a naming answer plus its end token). Every model does the same work, so a cut model
+    that answers in more words is not penalized. Also the time to the first token. Medians over
+    pictures and repeats; inputs are tokenized beforehand, so CPU preprocessing is excluded."""
+    batches = [test.batch([i], model.device, vision=True) for i in range(len(test.rows))]
+    greedy_decode(model, batches[0], set(), new_tokens)  # warm-up
+    first, full = [], []
     for _ in range(repeats):
-        for i in range(len(test.rows)):
-            b = test.batch([i], model.device, vision=True)
-            _sync()
-            t0 = time.perf_counter()
-            greedy_decode(model, b, stops, 8)
-            _sync()
-            times.append(time.perf_counter() - t0)
-    return {"ms_per_item": round(1000 * sum(times) / len(times), 1)}
+        for b in batches:
+            first.append(_timed(lambda: greedy_decode(model, b, set(), 1)))
+            full.append(_timed(lambda: greedy_decode(model, b, set(), new_tokens)))
+    return {"ms_per_item": round(1000 * median(full), 1), "ms_first_token": round(1000 * median(first), 1),
+            "item_tokens": new_tokens}
+
+
+@torch.no_grad()
+def throughput(model, processor, test: NamingTest, batch_size: int = 10, new_tokens: int = 4) -> dict:
+    """Pictures per second over the whole test in batches (vision tower included), new_tokens each."""
+    batches = [test.batch(list(range(s, min(s + batch_size, len(test.rows)))), model.device, vision=True)
+               for s in range(0, len(test.rows), batch_size)]
+    greedy_decode(model, batches[0], set(), new_tokens)  # warm-up
+    secs = sum(_timed(lambda: greedy_decode(model, b, set(), new_tokens)) for b in batches)
+    return {"items_per_s": round(len(test.rows) / secs, 3), "throughput_batch": batch_size}
 
 
 @torch.no_grad()
@@ -665,7 +686,7 @@ def rank_permutation_test(a: Sequence[float], b: Sequence[float], n_perm: int = 
     return round((hits + 1) / (n_perm + 1), 4)
 
 
-def _median(x: Sequence[float]) -> float:
+def median(x: Sequence[float]) -> float:
     s = sorted(x)
     n = len(s)
     return s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
@@ -678,7 +699,7 @@ def compare_layer_types(layers: list[dict]) -> dict:
         rows = [r for r in layers if r["type"] == t]
         ppl = [r["skip_d_ppl_rel"] for r in rows]
         out[t] = {"n": len(rows), "mean_d_ppl_rel": round(sum(ppl) / len(ppl), 4),
-                  "median_d_ppl_rel": round(_median(ppl), 4),
+                  "median_d_ppl_rel": round(median(ppl), 4),
                   "mean_d_acc": round(sum(r["skip_d_acc"] for r in rows) / len(rows), 4),
                   "layers_losing_naming": sum(r["skip_d_acc"] < 0 for r in rows),
                   "mean_block_influence": round(sum(r["block_influence"] for r in rows) / len(rows), 4)}
@@ -694,10 +715,11 @@ def compare_layer_types(layers: list[dict]) -> dict:
 
 
 GUARD_SETS = ("demo_en", "demo_es")
-METRIC_KEYS = ("layers", "params", "decoder_params", "mem_gb", "peak_gb", "ms_per_item", "tok_per_s", "acc",
-               "acc_en", "acc_es", "correct", "n", "heldout_acc", "ppl", "ppl_en", "ppl_es")
+TIMING_KEYS = ("ms_per_item", "ms_first_token", "items_per_s", "tok_per_s")
+METRIC_KEYS = ("layers", "params", "decoder_params", "mem_gb", "peak_gb") + TIMING_KEYS + (
+    "acc", "acc_en", "acc_es", "correct", "n", "heldout_acc", "ppl", "ppl_en", "ppl_es")
 PATH_KEYS = ("removed", "added", "acc", "acc_en", "acc_es", "correct", "ppl", "ppl_en", "ppl_es", "heldout_acc",
-             "acc_ok", "ppl_ok", "within_guard")
+             "heldout_correct", "acc_ok", "ppl_ok", "within_guard", "heldout_ok", "confirmed")
 
 
 def _pct(new: float, old: float) -> float:
@@ -717,20 +739,24 @@ def build_report(out_dir: Path) -> dict:
                "block_influence_text": scan["block_influence_text"][r["layer"]], "acc_en": r.get("acc_en"),
                "acc_es": r.get("acc_es"), "ppl": r["ppl"]} for r in scan["layers"]]
     step0 = {"step": 0, "removed": [], "added": None, **{k: ev.get(k) for k in PATH_KEYS if k in ev},
-             "heldout_acc": ev["heldout"]["accuracy"], "acc_ok": True, "ppl_ok": True, "within_guard": True}
+             "heldout_acc": ev["heldout"]["accuracy"], "heldout_correct": ev["heldout"]["correct"], "acc_ok": True,
+             "ppl_ok": True, "within_guard": True, "heldout_ok": True, "confirmed": True}
     path = [step0] + [{"step": i + 1, **{k: s.get(k) for k in PATH_KEYS}} for i, s in enumerate(greedy["steps"])]
 
     cuts = []
     for name, c in pruned.items():
         row = {"name": name, "removed": c["removed"], **{k: c.get(k) for k in METRIC_KEYS},
-               "acc_ci95": wilson(c["correct"], c["n"])}
+               "acc_ci95": wilson(c["correct"], c["n"]),
+               "speed_range": {k: c.get(f"{k}_range") for k in TIMING_KEYS},
+               "speed_rounds": len(c.get("timing_rounds", []))}
         if c["removed"]:
-            row["savings_pct"] = {k: _pct(c[k], base[k]) for k in
-                                  ("params", "decoder_params", "mem_gb", "peak_gb", "ms_per_item", "tok_per_s", "ppl")}
+            row["savings_pct"] = {k: _pct(c[k], base[k]) for k in ("params", "decoder_params", "mem_gb", "peak_gb")
+                                  + TIMING_KEYS + ("ppl",)}
             row["check"] = c.get("check")
         cuts.append(row)
 
-    n_en, n_es = ev["by_lang"]["en"]["n"], ev["by_lang"]["es"]["n"]
+    langs = Counter(it["lang"] for it in ev["items"])
+    n_en, n_es = langs["en"], langs["es"]
     return {
         "model": glimmer.MODEL_ID,
         "precision": "decoder FP8 (FineGrainedFP8Config); vision tower, projector and lm_head BF16",
@@ -773,7 +799,16 @@ def build_report(out_dir: Path) -> dict:
             "held-out pictures (same words, new drawings) are the fairer check; new words could fare worse.",
             "Perplexity is measured on 150 short model-written sentences (about 1,600 tokens), not on long "
             "documents, reasoning or instruction following, which these guards do not test.",
-            "Speed is batch 1 on one L40S with an FP8 decoder. Savings follow the share of decoder weights "
-            "removed and will differ on other hardware and batch sizes.",
+            "Speed is measured on one L40S with an FP8 decoder: per picture at batch 1 (vision tower, prefill "
+            "and exactly 4 new tokens, so every model does the same work), pictures per second at batch 10, "
+            "and tokens per second for 32 tokens at batch 1; medians of rounds run in rotated order. Decoding "
+            "at about 10 tokens/s is roughly a third of what reading the FP8 weights (about 26 GB at "
+            "864 GB/s) would allow, so per-layer overheads dominate; other hardware, batch sizes or "
+            "compiled kernels will give different savings.",
+            "Accuracy at the margin depends on numerics: the same cut can score one picture differently "
+            "with image features computed per picture (scan, greedy) or inside the batch (pruned rows).",
+            "Answers are capped at 8 tokens, as in the Model Lab, and the prompt asks for one word. Deep cuts "
+            "that start with a carrier phrase (\"The object in the picture is a te...\") are scored wrong, so "
+            "their accuracy mixes naming with following the one-word instruction.",
         ],
     }

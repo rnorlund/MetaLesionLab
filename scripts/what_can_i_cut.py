@@ -105,24 +105,45 @@ def stage_greedy(args) -> None:
                   steps=state["steps"], on_step=keep)
 
 
-def choose_cuts(steps: list[dict]) -> dict[str, list[int]]:
-    """The deepest cut inside both guards, and the deepest one the naming guard alone allows."""
+TIMING_KEYS = C.TIMING_KEYS
+
+
+def choose_cuts(steps: list[dict], deep_step: int = 10) -> dict[str, list[int]]:
+    """Cuts to build for real, each the deepest unbroken run of greedy steps that passes:
+    confirmed (both guards and the held-out pictures), guarded (both guards), perplexity_only and
+    naming_only (one guard each); plus one deep cut that ignores the guards, to show the scale."""
     cuts = {"intact": []}
-    if g := C.last_within_guard(steps):
-        cuts["guarded"] = g["removed"]
-    if n := C.last_within_guard(steps, key="acc_ok"):
-        if n["removed"] != cuts.get("guarded"):
-            cuts["naming_only"] = n["removed"]
+    for name, key in (("confirmed", "confirmed"), ("guarded", "within_guard"), ("perplexity_only", "ppl_ok"),
+                      ("naming_only", "acc_ok")):
+        s = C.last_within_guard(steps, key)
+        if s and s["removed"] not in cuts.values():
+            cuts[name] = s["removed"]
+    if deep_step and len(steps) >= deep_step and steps[deep_step - 1]["removed"] not in cuts.values():
+        cuts[f"deep_{deep_step}"] = steps[deep_step - 1]["removed"]
     return cuts
 
 
-def measure_cut(name: str, removed: list[int], args) -> dict:
+def measure_cut(name: str, removed: list[int], args, full: bool = True) -> dict:
+    """Load a fresh model, delete the layers, and measure it. full=False measures only size, memory
+    and speed (the extra timing rounds)."""
     t0 = time.time()
     model, processor = glimmer.load()
     load_s = time.time() - t0
     torch.cuda.synchronize()
     res = {"name": name, "removed": removed, "load_seconds": round(load_s, 1)}
     guards, heldout = guards_for(model, processor, args.sets, features=False)
+    if not full:
+        C.remove_layers(model, removed)
+        gc.collect()
+        torch.cuda.empty_cache()
+        res.update(mem_gb=round(torch.cuda.memory_allocated() / 2**30, 3),
+                   **C.peak_memory(model, processor, guards.naming), **C.time_naming(model, processor, guards.naming),
+                   **C.throughput(model, processor, guards.naming), **C.time_generation(model, processor))
+        log(f"{name} timing: " + ", ".join(f"{k} {res[k]}" for k in TIMING_KEYS))
+        del model
+        gc.collect()
+        torch.cuda.empty_cache()
+        return res
     if removed:
         with C.SkipLayers(model, removed):
             skip_logits = C.answer_logits(model, guards.naming, CHECK_ITEMS, vision=True)
@@ -148,10 +169,12 @@ def measure_cut(name: str, removed: list[int], args) -> dict:
     res.update(guards.text.run(model))
     res.update(C.peak_memory(model, processor, guards.naming))
     res.update(C.time_naming(model, processor, guards.naming))
+    res.update(C.throughput(model, processor, guards.naming))
     res.update(C.time_generation(model, processor))
     log(f"{name}: {res['layers']} layers, {res['params'] / 1e9:.2f}B params, {res['mem_gb']} GiB, "
-        f"peak {res['peak_gb']} GiB, {res['ms_per_item']} ms/item, {res['tok_per_s']} tok/s, acc {res['acc']}, "
-        f"ppl {res['ppl']}" + (f", check {res['check']}" if removed else ""))
+        f"peak {res['peak_gb']} GiB, {res['ms_per_item']} ms/item, {res['items_per_s']} items/s, "
+        f"{res['tok_per_s']} tok/s, acc {res['acc']}, heldout {res['heldout_acc']}, ppl {res['ppl']}"
+        + (f", check {res['check']}" if removed else ""))
     del model
     gc.collect()
     torch.cuda.empty_cache()
@@ -159,16 +182,36 @@ def measure_cut(name: str, removed: list[int], args) -> dict:
 
 
 def stage_prune(args) -> None:
+    """Measure every chosen cut once in full, then repeat the speed measurements in rotated order
+    (args.rounds in all) so drift in GPU clocks does not favor one cut. Speed is the median over
+    rounds; the range is kept."""
     path = args.out / "pruned.json"
     state = load_json(path, {"cuts": {}})
-    cuts = choose_cuts(load_json(args.out / "greedy.json")["steps"])
+    scan, greedy = load_json(args.out / "scan.json"), load_json(args.out / "greedy.json")
+    C.mark_heldout(greedy["steps"], scan["intact"]["heldout"]["correct"])
+    save(args.out / "greedy.json", greedy)
+    cuts = choose_cuts(greedy["steps"], args.deep_step)
     for name, removed in json.loads(args.extra or "{}").items():
         cuts[name] = sorted(removed)
+    log(f"cuts: {cuts}")
     for name, removed in cuts.items():
-        if name in state["cuts"] and state["cuts"][name]["removed"] == removed:
-            continue
-        state["cuts"][name] = measure_cut(name, removed, args)
-        save(path, state)
+        if name not in state["cuts"] or state["cuts"][name]["removed"] != removed:
+            state["cuts"][name] = measure_cut(name, removed, args) | {"timing_rounds": []}
+            save(path, state)
+    names = list(cuts)
+    for r in range(args.rounds):
+        for name in names[r % len(names):] + names[:r % len(names)]:
+            cut = state["cuts"][name]
+            if len(cut["timing_rounds"]) > r:
+                continue
+            first_round = {k: cut[k] for k in TIMING_KEYS} if r == 0 else None
+            cut["timing_rounds"].append(first_round or {k: v for k, v in measure_cut(
+                name, cut["removed"], args, full=False).items() if k in TIMING_KEYS})
+            for k in TIMING_KEYS:
+                vals = [t[k] for t in cut["timing_rounds"]]
+                cut[k] = C.median(vals)
+                cut[f"{k}_range"] = [min(vals), max(vals)]
+            save(path, state)
 
 
 def stage_reload(args) -> None:
@@ -221,6 +264,8 @@ def main() -> None:
     p.add_argument("--shortlist", type=int, default=3)
     p.add_argument("--max-removed", type=int, default=20)
     p.add_argument("--extra", help='more cuts to measure, as JSON: {"name": [layers]}')
+    p.add_argument("--rounds", type=int, default=3, help="speed measurements per cut, in rotated order")
+    p.add_argument("--deep-step", type=int, default=10, help="greedy step to build as the deep cut (0: none)")
     p.add_argument("--ckpt", default=os.path.expanduser("~/mll-compress-ckpt/glimmer-guarded"))
     p.add_argument("--keep-ckpt", action="store_true")
     args = p.parse_args()
