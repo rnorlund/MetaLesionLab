@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Lab · Tip of the Tongue</title>
+<meta name="description" content="The same picture-naming test given to Muse Glimmer, intact and lesioned, with a word lens showing the model's best guess at every layer.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/lab.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tip of the Tongue</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/studio">Test Studio</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/lab" aria-current="page">Model Lab</a>
+  </nav>
+  <div class="chips">
+    <span class="chip">Muse Glimmer 30B · FP8</span>
+    <span class="chip chip-sample" id="sample-chip" hidden>Sample data</span>
+  </div>
+</header>
+
+<div class="layout">
+<aside>
+  <section class="panel" aria-labelledby="map-h">
+    <h2 id="map-h" style="margin-bottom:4px">Model map</h2>
+    <p class="lede" style="margin-bottom:14px">Where the selected lesion is. Shaded: lesioned.</p>
+    <div class="model-map" id="model-map"></div>
+  </section>
+
+  <section class="panel stack" aria-labelledby="cond-h">
+    <h2 id="cond-h">Lesion condition</h2>
+    <div class="cond-list" id="cond-list" role="radiogroup" aria-labelledby="cond-h"></div>
+    <dl class="spec" id="spec"></dl>
+    <p class="xsmall muted" style="margin:0">Conditions are run ahead of time on a GPU with Muse Glimmer 30B (activation hooks; zero, mean or noise ablation). This page replays the results, so it needs no GPU.</p>
+  </section>
+</aside>
+
+<main id="main" tabindex="-1">
+  <div class="note note-sample" id="sample-note" hidden></div>
+
+  <section class="panel" aria-labelledby="items-h">
+    <div class="panel-head">
+      <h2 id="items-h">Naming, intact vs. lesioned</h2>
+      <span class="meta" id="items-meta"></span>
+    </div>
+    <p class="lede" style="margin:-6px 0 12px">Select a picture to see its word lens.</p>
+    <div class="cards" id="items"></div>
+  </section>
+
+  <div class="row">
+    <section class="panel lens" style="flex: 1 1 520px" aria-labelledby="lens-h">
+      <h2 id="lens-h" style="margin-bottom:2px">Word lens</h2>
+      <p class="lede" style="margin-bottom:10px">The model's best guess at every decoder layer: p(correct word) read out after each layer.</p>
+      <div class="chart-wrap" id="lens-chart"></div>
+      <div class="legend" id="lens-legend" style="margin:6px 0 12px"></div>
+      <div class="lens-table-head">
+        <h3 class="small" style="margin:0">Top word by layer</h3>
+        <button type="button" class="btn btn-small" id="all-layers" aria-pressed="false">Show all 52 layers</button>
+      </div>
+      <div class="table-wrap"><table class="data lens-table" id="lens-table"></table></div>
+      <p class="small" id="lens-caption" style="margin:10px 0 0"></p>
+    </section>
+
+    <section class="panel stack" style="flex: 1 1 360px" aria-labelledby="prof-h">
+      <h2 id="prof-h">Error profile</h2>
+      <p class="lede">Share of responses by error type, for each condition.</p>
+      <div class="profiles" id="profiles"></div>
+      <div id="prof-legend"></div>
+      <p class="xsmall muted" style="margin:0">Comparison with published aphasia profiles (group means, each cited) is next. No participant data is used.</p>
+    </section>
+  </div>
+</main>
+</div>
+<p class="footnote">Research and teaching use only. Tip of the Tongue doesn't diagnose and doesn't give medical or treatment advice. Lesioning a model is an analogy for brain damage, not a model of any person.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/lab.js"></script>
+</body>
+</html>
