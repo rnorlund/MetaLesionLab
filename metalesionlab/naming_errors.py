@@ -428,7 +428,7 @@ _HI_SILENT = {"्", "़"}  # virama and nukta: marks on a consonant, not sound
 # sounds elsewhere (accented Latin vowels; Devanagari vowel letters and signs).
 _VOWEL_LETTERS = (set("aeiouáàâãéèêíìîóòôõúùûü") | _PT_VOWELS
                   | {chr(c) for c in range(0x0904, 0x0915)} | {chr(c) for c in range(0x093E, 0x094D)})
-HOMOPHONE_LANGS = {"fr", "pt"}  # a response that sounds exactly like the target counts as the target
+HOMOPHONE_LANGS = {"es", "fr", "pt"}  # a response that sounds exactly like the target counts as the target
 
 
 @lru_cache(maxsize=None)

@@ -238,3 +238,9 @@ def test_alternate_spelling_in_another_script_is_correct():
 def test_english_and_spanish_heads_unchanged():
     assert classify("cat", "big dog", judge=fake_judge).head == "dog"
     assert classify("gato", "un perro grande", "es", judge=fake_judge).head == "perro"
+
+
+@pytest.mark.parametrize("target,response", [("sierra", "Cierra."), ("cuchara", "Kuchara"), ("zanahoria", "sanahoria")])
+def test_spanish_homophone_spellings_are_correct(target, response):
+    # Spoken scoring: the transcript picked another spelling of the same sounds.
+    assert classify(target, response, "es", judge=lambda t, r, l: False).code == "Correct"
