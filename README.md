@@ -15,6 +15,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Date | Built |
 |---|---|
 | Oct 26 | Repo, data guard, Meta Model API client with spend ledger and budget cap |
+| Oct 26 | Muse Glimmer in FP8 on a single L40S (32 GiB); picture naming with the reasoning channel skipped; word lens (logit lens) that matches the model's own output at the last layer |
 
 ### Prior research context (not part of this submission)
 
