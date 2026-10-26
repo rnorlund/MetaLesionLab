@@ -22,10 +22,10 @@
 .spec dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
 
 .chart-wrap { position: relative; }
-.chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; touch-action: pan-y; }
 .chart-wrap .axis text, .chart-wrap .label { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
 .chart-wrap .end-label { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
-.chart-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.5; white-space: nowrap; transform: translate(-50%, -100%); z-index: 2; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); }
+.chart-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.5; white-space: nowrap; z-index: 2; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); }
 .chart-tip .k { display: inline-block; width: 12px; height: 3px; vertical-align: middle; margin-right: 6px; }
 .key-line { display: inline-block; width: 16px; height: 3px; border-radius: 2px; }
 .lens-table-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }

@@ -191,6 +191,7 @@
   // --- stage --------------------------------------------------------------------------------
   function showStage() {
     var st = $('stage');
+    $('stage-picture').classList.remove('compact');
     st.hidden = false;
     st.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -245,7 +246,7 @@
     var last = S.idx === S.items.length - 1;
     if (voice) {
       setControls([btn(last ? 'Finish' : 'Next picture →', 'btn-record', nextNaming), btn('Redo', 'secondary', redoNaming), btn('End test', 'secondary', endNaming)]);
-      $('stage-help').textContent = 'Recording starts with each picture. Press Next (or the space bar) when the speaker has answered.';
+      $('stage-help').textContent = 'Recording starts with each picture. Press Next (or the space bar) when the speaker has answered. End test stops without scoring this picture.';
       startClip(NAMING_MAX_S, nextNaming);
     } else {
       $('typed-response').value = '';
@@ -294,6 +295,7 @@
     $('stage-typed').hidden = true;
     var pic = $('stage-picture');
     pic.innerHTML = '';
+    pic.classList.add('compact');
     pic.appendChild(h('div', { class: 'done' }, [h('h3', { text: 'Test complete' }), h('p', { class: 'muted', text: 'Codes appear in the table below as each response is scored. Review them, then export.' })]));
     $('stage-help').textContent = '';
     setControls([btn('Close', 'btn-dark', hideStage)]);
@@ -529,6 +531,39 @@
   function stat(value, label) { return h('div', { class: 'stat' }, [h('b', { text: value == null ? '–' : String(value) }), h('span', { text: label })]); }
   function chips(list, cls) { return h('div', { class: 'chips-list ' + (cls || '') }, (list || []).map(function (x) { return h('span', { text: typeof x === 'string' ? x : JSON.stringify(x) }); })); }
 
+  var FLUENCY_STATUS = { valid: 'Valid', repetition: 'Repetition', intrusion: 'Intrusion', comment: 'Not an item' };
+  function recount(r) {
+    r.valid = []; r.repetitions = []; r.intrusions = [];
+    r.items.forEach(function (it) {
+      if (it.status === 'valid') r.valid.push(it.text);
+      else if (it.status === 'repetition') r.repetitions.push(it.text);
+      else if (it.status === 'intrusion') r.intrusions.push(it.text);
+    });
+    r.count = r.valid.length;
+  }
+  function fluencyItems(r) {
+    var rows = r.items.map(function (it, i) {
+      var sel = h('select', { 'aria-label': 'Status of item ' + (i + 1) + ', ' + it.text });
+      Object.keys(FLUENCY_STATUS).forEach(function (k) { sel.appendChild(h('option', { value: k, text: FLUENCY_STATUS[k], selected: k === it.status })); });
+      sel.addEventListener('change', function () {
+        if (it.auto == null) it.auto = it.status;
+        it.status = sel.value;
+        r.reviewed = true;
+        recount(r);
+        save();
+        renderResults();
+      });
+      return h('tr', { class: it.auto != null && it.auto !== it.status ? 'changed' : null }, [
+        h('td', { class: 'mono muted', text: String(i + 1) }), h('td', { text: it.text }), h('td', null, sel)]);
+    });
+    return h('details', { open: r.items.length <= 30 }, [
+      h('summary', { class: 'small', text: 'Review items (' + r.items.length + ')' }),
+      h('div', { class: 'table-wrap' }, h('table', { class: 'data' }, [
+        h('thead', null, h('tr', null, [h('th', { text: '#' }), h('th', { text: 'Item as said' }), h('th', { text: 'Status' })])),
+        h('tbody', null, rows)]))
+    ]);
+  }
+
   function renderResults() {
     var box = $('task-res-body');
     box.innerHTML = '';
@@ -548,9 +583,12 @@
       } else {
         card.appendChild(h('div', { class: 'kv' }, [h('span', { text: (r.speaker || '–') + ' · ' + r.category }), h('span', { class: 'xsmall', text: when })]));
         card.appendChild(h('div', { class: 'stats' }, [stat(r.count, 'valid, unique'), stat((r.repetitions || []).length, 'repetitions'), stat((r.intrusions || []).length, 'intrusions')]));
-        card.appendChild(h('div', null, [h('span', { class: 'xsmall muted', text: 'Valid' }), chips(r.valid, 'ok')]));
-        if ((r.repetitions || []).length) card.appendChild(h('div', null, [h('span', { class: 'xsmall muted', text: 'Repetitions' }), chips(r.repetitions, 'warn')]));
-        if ((r.intrusions || []).length) card.appendChild(h('div', null, [h('span', { class: 'xsmall muted', text: 'Intrusions' }), chips(r.intrusions, 'miss')]));
+        if ((r.items || []).length) card.appendChild(fluencyItems(r));
+        else {
+          card.appendChild(h('div', null, [h('span', { class: 'xsmall muted', text: 'Valid' }), chips(r.valid, 'ok')]));
+          if ((r.repetitions || []).length) card.appendChild(h('div', null, [h('span', { class: 'xsmall muted', text: 'Repetitions' }), chips(r.repetitions, 'warn')]));
+          if ((r.intrusions || []).length) card.appendChild(h('div', null, [h('span', { class: 'xsmall muted', text: 'Intrusions' }), chips(r.intrusions, 'miss')]));
+        }
       }
       card.appendChild(h('p', { class: 'small', style: { margin: 0 } }, [h('span', { class: 'muted', text: 'Transcript: ' }), r.transcript || '']));
       box.appendChild(card);
@@ -575,7 +613,11 @@
       if (!list.length) { T.toast('No results to export yet.', 'error'); return; }
       var out = list.map(function (r) {
         var o = {};
-        Object.keys(r).forEach(function (k) { o[k] = Array.isArray(r[k]) ? r[k].map(function (x) { return typeof x === 'string' ? x : JSON.stringify(x); }).join('; ') : r[k]; });
+        Object.keys(r).forEach(function (k) {
+          var v = r[k];
+          if (k === 'items' && Array.isArray(v)) o[k] = v.map(function (x) { return x.text + ' (' + x.status + ')'; }).join('; ');
+          else o[k] = Array.isArray(v) ? v.map(function (x) { return typeof x === 'string' ? x : JSON.stringify(x); }).join('; ') : v;
+        });
         return o;
       });
       var cols = Object.keys(out.reduce(function (acc, o) { return Object.assign(acc, o); }, {}));

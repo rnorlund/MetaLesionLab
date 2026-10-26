@@ -195,7 +195,8 @@
   }
 
   function drawChart(box, series, lesSet, word) {
-    var W = 600, H = 250, x0 = 40, x1 = 540, y0 = 24, y1 = 204;
+    // Drawn at the container's real pixel width so text stays 10-11 px on a phone.
+    var W = Math.max(300, Math.min(900, Math.round(box.clientWidth || 600))), H = 250, x0 = 40, x1 = W - 52, y0 = 24, y1 = 204;
     var x = function (l) { return x0 + (l - 1) / (LAYERS - 1) * (x1 - x0); };
     var y = function (p) { return y1 - Math.max(0, Math.min(1, p)) * (y1 - y0); };
     var last = series.map(function (s) { return s.item.lens.p_correct[LAYERS - 1]; });
@@ -212,7 +213,7 @@
       axis.appendChild(svg('line', { x1: x0, x2: x1, y1: y(p), y2: y(p), stroke: p === 0 ? '#9CA3AF' : '#E5E7EB', 'stroke-width': 1 }));
       axis.appendChild(svg('text', { x: x0 - 8, y: y(p) + 3, 'text-anchor': 'end' }, p === 0.5 ? '0.5' : String(p)));
     });
-    [1, 13, 26, 39, 52].forEach(function (l) { axis.appendChild(svg('text', { x: x(l), y: y1 + 16, 'text-anchor': 'middle' }, String(l))); });
+    (W < 460 ? [1, 26, 52] : [1, 13, 26, 39, 52]).forEach(function (l) { axis.appendChild(svg('text', { x: x(l), y: y1 + 16, 'text-anchor': 'middle' }, String(l))); });
     axis.appendChild(svg('text', { x: (x0 + x1) / 2, y: y1 + 34, 'text-anchor': 'middle' }, 'decoder layer'));
     axis.appendChild(svg('text', { x: x0 - 8, y: y0 - 8, 'text-anchor': 'end' }, 'p'));
     root.appendChild(axis);
@@ -253,8 +254,10 @@
         tip.appendChild(h('div', null, [k, s.name + ': p = ' + (+p).toFixed(3) + ' · top "' + shown(s.item.lens.top[layer - 1][0]) + '"']));
       });
       tip.hidden = false;
-      tip.style.left = Math.max(80, Math.min(rect.width - 80, cx / scale)) + 'px';
-      tip.style.top = (y0 / scale) + 'px';
+      // beside the crosshair, on the side with room
+      var px = cx / scale, right = px < rect.width / 2;
+      tip.style.left = (right ? px + 12 : px - 12 - tip.offsetWidth) + 'px';
+      tip.style.top = (y0 / scale + 4) + 'px';
     }
     function hide() {
       tip.hidden = true;
@@ -316,6 +319,15 @@
     }
     return parts.join(' ');
   }
+
+  var resizeTimer = null, lastWidth = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      var w = $('lens-chart').clientWidth;
+      if (L.cur && Math.abs(w - lastWidth) > 8) { lastWidth = w; renderLens(); }
+    }, 150);
+  });
 
   $('all-layers').addEventListener('click', function () {
     L.allLayers = !L.allLayers;

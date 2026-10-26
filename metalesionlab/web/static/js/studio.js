@@ -336,21 +336,50 @@
   // --- scenes -----------------------------------------------------------------------------
   function loadScenes() {
     return T.api('/api/scenes').then(function (scenes) {
+      state.scenes = scenes;
       var grid = $('scenes');
       grid.innerHTML = '';
       $('scenes-panel').hidden = !scenes.length;
       $('scenes-meta').textContent = scenes.length + (scenes.length === 1 ? ' scene' : ' scenes');
       scenes.forEach(function (s) {
-        grid.appendChild(h('a', { class: 'card scene-card', href: '/scorer?task=description&scene=' + encodeURIComponent(s.id), style: { textDecoration: 'none' } }, [
+        grid.appendChild(h('button', { type: 'button', class: 'card scene-card', 'aria-label': 'Scene ' + (s.theme || s.setting || s.id) + '. Open details', onclick: function () { openScene(s.id); } }, [
           h('div', { class: 'pic' }, s.image_url ? h('img', { src: s.image_url + '?w=320', alt: 'Scene: ' + (s.description || s.theme || s.id), loading: 'lazy' }) : h('span', { text: 'No picture' })),
           h('div', { class: 'body' }, [
-            h('span', { class: 'word', text: s.theme || ('Scene ' + s.id) }),
-            h('p', { text: (s.content_units || []).length + ' content units · ' + T.langName(state.langs, s.lang || 'en') }),
-            h('span', { class: 'xsmall', text: 'Use in Scorer →' })
+            h('span', { class: 'word', text: s.theme || s.setting || ('Scene ' + s.id) }),
+            h('p', { text: (s.content_units || []).length + ' content units · ' + T.langName(state.langs, s.lang || 'en') + (s.units_edited ? ' · reviewed' : '') })
           ])
         ]));
       });
     }).catch(function () { /* scenes are optional */ });
+  }
+
+  function openScene(id) {
+    var s = (state.scenes || []).filter(function (x) { return x.id === id; })[0];
+    if (!s) return;
+    var editable = s.editable || !!tokenFor('scene-' + s.id);
+    $('dlg-title').textContent = 'Scene · ' + (s.theme || s.setting || s.id);
+    var body = $('dlg-body');
+    body.innerHTML = '';
+    if (s.image_url) body.appendChild(h('img', { src: s.image_url, alt: 'Scene: ' + (s.description || ''), style: { width: '100%', borderRadius: '10px', border: '1px solid #E5E7EB' } }));
+    if (s.description) body.appendChild(h('p', { class: 'small', style: { margin: 0 } }, [h('span', { class: 'muted', text: 'Muse Spark sees: ' }), s.description]));
+    var units = h('textarea', { id: 'units-input', rows: '10', class: 'mono', disabled: !editable, spellcheck: 'false' });
+    units.value = (s.content_units || []).join('\n');
+    body.appendChild(h('label', { class: 'field' }, ['Content units, one per line', units,
+      h('span', { class: 'hint', text: 'What a full description should mention: key people, objects and actions. Listed by Muse Spark from the finished picture; correct anything that isn\'t really there.' })]));
+    body.appendChild(h('div', { class: 'btn-row' }, [
+      h('button', { type: 'button', class: 'btn btn-primary', disabled: !editable, onclick: function () {
+        var headers = {}, tok = tokenFor('scene-' + s.id);
+        if (tok) headers['X-Edit-Token'] = tok;
+        T.api('/api/scenes/' + encodeURIComponent(s.id), { method: 'PATCH', headers: headers,
+          json: { content_units: units.value.split('\n').map(function (u) { return u.trim(); }).filter(Boolean) } })
+          .then(function () { T.toast('Content units saved.'); return loadScenes(); })
+          .then(function () { openScene(s.id); })
+          .catch(function (e) { T.toast(e.message, 'error'); });
+      } }, 'Save content units'),
+      h('a', { class: 'btn btn-dark', href: '/scorer?task=description&scene=' + encodeURIComponent(s.id) }, 'Use in Scorer')
+    ]));
+    if (!editable) body.appendChild(h('p', { class: 'xsmall muted', style: { margin: 0 }, text: 'On this public demo you can edit only the scenes you drew in this browser.' }));
+    if (!dlg.open) dlg.showModal();
   }
 
   $('scene-form').addEventListener('submit', function (e) {
@@ -359,7 +388,11 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Drawing…';
     T.api('/api/scenes', { method: 'POST', json: { lang: $('scene-lang').value, theme: $('scene-theme').value.trim() || null } })
-      .then(function () { T.toast('Scene ready.'); return loadScenes(); })
+      .then(function (scene) {
+        if (scene.edit_token) saveToken('scene-' + scene.id, scene.edit_token);
+        T.toast('Scene ready. Check its content units.');
+        return loadScenes().then(function () { openScene(scene.id); });
+      })
       .catch(function (err) { T.toast(err.message, 'error'); })
       .then(function () { btn.disabled = false; btn.textContent = 'Draw a scene'; refreshStatus().then(applyFeatures); });
   });

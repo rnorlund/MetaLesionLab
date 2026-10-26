@@ -18,6 +18,7 @@ import logging
 import os
 import re
 import secrets
+import shutil
 import threading
 import time
 import unicodedata
@@ -55,6 +56,7 @@ VERIFIED_LANGS = {"en", "es"}  # checked end to end; the rest are labeled experi
 MAX_WORDS = int(os.environ.get("TOT_MAX_WORDS", "24"))
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 MAX_CLIP_S = {"naming": 30, "description": 240, "fluency": 120}
+NAMING_PAD_S = 0.7  # silence added around a naming clip before transcription
 COST_PER_CANDIDATE = meta_api.IMAGE_PRICE + meta_api.SAM_PRICE + 0.002  # image, SAM check, Spark naming
 THUMB_WIDTHS = {160, 320, 640}
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp"}
@@ -212,7 +214,8 @@ for _route, _name in PAGES.items():
 def status(request: Request):
     ip = client_ip(request)
     return {
-        "features": {"meta_api": api_key_present(), "audio": has_module("metalesionlab.audio"),
+        "features": {"meta_api": api_key_present(),
+                     "audio": has_module("metalesionlab.audio") and shutil.which("ffmpeg") is not None,
                      "scorer": has_module("metalesionlab.scorer"), "builds": ALLOW_BUILDS},
         "public": PUBLIC,
         "languages": [{"code": c, "name": n, "verified": c in VERIFIED_LANGS} for c, n in LANGUAGE_NAMES.items()],
@@ -279,7 +282,7 @@ def set_summary(d: Path) -> dict:
         "n_items": len(items) or len(meta.get("words", [])), "kept": statuses.count("kept"),
         "review": statuses.count("review"), "excluded": statuses.count("excluded"),
         "created": meta.get("created") or d.stat().st_mtime,
-        "source": meta.get("source", "folder"), "editable": not PUBLIC or bool(meta.get("token_sha")),
+        "source": meta.get("source", "folder"), "editable": not PUBLIC,  # else only with the edit token
     }
 
 
@@ -474,15 +477,23 @@ def scene_public(scene: dict) -> dict:
             image = image.resolve().relative_to(SCENES_DIR.resolve())
         except ValueError:
             image = Path(image.name)
-    return {**scene, "image_url": f"/media/scenes/{image.as_posix()}" if scene.get("image_file") else None}
+    public = {k: v for k, v in scene.items() if k not in ("token_sha", "image_file", "prompt")}
+    return {**public, "image_url": f"/media/scenes/{image.as_posix()}" if scene.get("image_file") else None,
+            "editable": not PUBLIC}
 
 
-def load_scene(scene_id: str) -> dict:
+def scene_path(scene_id: str, missing_ok: bool = False) -> Path | None:
     for path in scene_files():
         scene = read_json(path)
         if isinstance(scene, dict) and str(scene.get("id")) == scene_id:
-            return scene
+            return path
+    if missing_ok:
+        return None
     raise HTTPException(404, f"No scene called '{scene_id}'.")
+
+
+def load_scene(scene_id: str) -> dict:
+    return read_json(scene_path(scene_id))
 
 
 @app.get("/api/scenes")
@@ -501,9 +512,29 @@ def create_scene(body: NewScene, request: Request):
     limiter.take("scene", client_ip(request))
     SCENES_DIR.mkdir(parents=True, exist_ok=True)
     scene = scorer.make_scene(api, lang, theme=(body.theme or None), out_dir=SCENES_DIR)
-    record = SCENES_DIR / f"{slugify(str(scene['id']))}.json"
-    if not any(str((read_json(p) or {}).get("id")) == str(scene["id"]) for p in scene_files()):
-        write_json(record, {**scene, "lang": scene.get("lang", lang), "theme": body.theme})
+    token = secrets.token_urlsafe(18)
+    path = scene_path(str(scene["id"]), missing_ok=True) or SCENES_DIR / f"{slugify(str(scene['id']))}.json"
+    scene = {**scene, "lang": scene.get("lang", lang), "token_sha": _token_hash(token)}
+    write_json(path, scene)
+    return {**scene_public(scene), "edit_token": token}
+
+
+class SceneEdit(BaseModel):
+    content_units: list[str] = Field(..., min_length=1, max_length=30)
+
+
+@app.patch("/api/scenes/{scene_id}")
+def edit_scene(scene_id: str, body: SceneEdit, x_edit_token: str | None = Header(None)):
+    """The reviewer's corrected list of content units (what a full description should mention)."""
+    path = scene_path(scene_id)
+    scene = read_json(path)
+    if PUBLIC and (not x_edit_token or scene.get("token_sha") != _token_hash(x_edit_token)):
+        raise HTTPException(403, "On this public demo you can edit only the scenes you drew in this browser.")
+    units = list(dict.fromkeys(u.strip()[:120] for u in body.content_units if u.strip()))
+    if not units:
+        raise HTTPException(422, "Keep at least one content unit.")
+    scene.update(content_units=units, units_edited=True)
+    write_json(path, scene)
     return scene_public(scene)
 
 
@@ -573,21 +604,28 @@ def read_upload(audio: UploadFile) -> tuple[bytes, str]:
     return data, suffix
 
 
-def transcribe_upload(audio: UploadFile, task: str, request: Request) -> tuple[str, float]:
-    """Convert to 16 kHz WAV, check the length, count against the visitor's limit, then transcribe."""
+def transcribe_upload(audio: UploadFile, task: str, lang: str, request: Request) -> tuple[str, float]:
+    """Convert to 16 kHz WAV, check the length, count against the visitor's limit, then transcribe
+    with the test's language as a hint. Short naming clips get a silent lead-in, without which
+    Muse Voice Transcribe sometimes returns nothing."""
     audio_mod = optional_module("metalesionlab.audio", "Voice scoring")
     data, suffix = read_upload(audio)
     try:
         wav = audio_mod.to_wav16k(data, suffix)
         duration = float(audio_mod.duration_s(wav))
+    except audio_mod.FFmpegMissing as e:
+        raise HTTPException(503, "Voice scoring needs ffmpeg on the server to read browser recordings, and it "
+                                 "isn't installed. Typed responses still work.") from e
     except Exception as e:
         log.warning("audio conversion failed: %s", e)
         raise HTTPException(400, "Couldn't read that recording. Try again, or use typed responses.") from e
     if duration > MAX_CLIP_S[task]:
         raise HTTPException(413, f"The recording is {duration:.0f} s; {MAX_CLIP_S[task]} s is the most for this task.")
+    if task == "naming":
+        wav = audio_mod.pad_silence(wav, NAMING_PAD_S)
     api = get_api()
     limiter.take("score", client_ip(request))
-    body = api.transcribe(wav)
+    body = api.transcribe(wav, language=lang)
     return str(body.get("transcript") or "").strip(), round(duration, 2)
 
 
@@ -597,7 +635,7 @@ def score_naming_audio(request: Request, audio: UploadFile = File(...), target: 
                        second_rater: bool = Form(True)):
     check_lang(lang)
     entry = set_item(set_id, item)
-    transcript, duration = transcribe_upload(audio, "naming", request)
+    transcript, duration = transcribe_upload(audio, "naming", lang, request)
     return {**score_naming(target, transcript, lang, set_id, entry, second_rater),
             "transcript": transcript, "duration_s": duration}
 
@@ -619,7 +657,7 @@ def score_description(request: Request, scene_id: str = Form(...), lang: str = F
     scene = load_scene(scene_id)
     duration = None
     if audio is not None:
-        transcript, duration = transcribe_upload(audio, "description", request)
+        transcript, duration = transcribe_upload(audio, "description", lang, request)
     elif transcript and transcript.strip():
         get_api()
         limiter.take("score", client_ip(request))
@@ -636,7 +674,7 @@ def score_fluency(request: Request, category: str = Form(..., max_length=60), la
     check_lang(lang)
     duration = None
     if audio is not None:
-        transcript, duration = transcribe_upload(audio, "fluency", request)
+        transcript, duration = transcribe_upload(audio, "fluency", lang, request)
     elif transcript and transcript.strip():
         get_api()
         limiter.take("score", client_ip(request))
