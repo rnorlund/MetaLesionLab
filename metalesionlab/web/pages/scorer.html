@@ -26,6 +26,7 @@
   <div class="chips"><span class="chip">Muse Voice Transcribe · Muse Spark</span></div>
 </header>
 
+<h1 class="sr-only">Scorer</h1>
 <div class="layout">
 <aside>
   <section class="panel stack" aria-labelledby="session-h">
@@ -82,7 +83,7 @@
     <div class="stage-typed" id="stage-typed" hidden>
       <label class="sr-only" for="typed-response">Response</label>
       <input type="text" id="typed-response" autocomplete="off" spellcheck="false" placeholder="Type what the speaker said">
-      <textarea id="typed-long" rows="4" hidden placeholder="Type the response"></textarea>
+      <textarea id="typed-long" rows="4" hidden placeholder="Type the response" aria-label="Response"></textarea>
     </div>
     <div class="stage-controls" id="stage-controls"></div>
     <p class="xsmall muted stage-help" id="stage-help"></p>
