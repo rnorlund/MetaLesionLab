@@ -87,7 +87,7 @@
   function modeHint() {
     $('mode-hint').textContent = G.mode === 'voice'
       ? 'Your browser will ask to use the microphone. Say the name, and the next picture comes after a short pause (or press Next).'
-      : (G.voiceWhy && !G.voiceOK ? G.voiceWhy : 'Type the name and press Enter. Spelling counts, but “a” and plurals are fine.');
+      : (G.voiceWhy && !G.voiceOK ? G.voiceWhy : 'Type the name and press Enter. Spelling counts, but “a”, plurals and missing accents are fine.');
   }
 
   // --- the run -------------------------------------------------------------------------------
@@ -373,7 +373,11 @@
     var tip = said && norm(said).length >= 2 && norm(word).indexOf(norm(said)) === 0 && norm(said) !== norm(word);
     var parts = [];
     parts.push('This is Glimmer’s word lens for the ' + word + ' picture: its top guess after each of its ' + LAYERS + ' layers.');
-    if (first) parts.push('Intact, the right word reaches first place at layer ' + first + '.');
+    var glossAt = [];
+    if (ins.gloss) for (var g = 1; g < (first || LAYERS + 1); g++) if (norm(ins.intact.top[g - 1]) === norm(ins.gloss)) glossAt.push(g);
+    if (glossAt.length >= 2) {
+      parts.push('Intact, its top guess from layer ' + glossAt[0] + ' is the English word ' + quote(ins.gloss) + (first ? ', and the ' + LANG_NAMES[G.lang] + ' word only takes first place at layer ' + first + '.' : '.'));
+    } else if (first) parts.push('Intact, the right word reaches first place at layer ' + first + '.');
     parts.push('Then we damaged it: ' + dmg.plain.charAt(0).toLowerCase() + dmg.plain.slice(1) + ' (orange).');
     if (lostIn.length) parts.push('In ' + lostIn.length + ' of those ' + dmg.layers.length + ' layers the right word drops out of first place.');
     parts.push(tip ? 'Out came only ' + quote(said) + ': the start of the word, but not the rest. The tip of the tongue.'
@@ -406,6 +410,13 @@
     });
     table.appendChild(tb);
     wrap.appendChild(table);
+    // On narrow screens, open the strip a little before the damaged layers rather than at layer 36.
+    var firstDmg = (dmg.layers || []).filter(function (l) { return l >= LENS_FROM; })[0];
+    if (firstDmg && wrap.scrollWidth > wrap.clientWidth) {
+      var col = table.querySelector('thead th:nth-child(' + (firstDmg - LENS_FROM + 1) + ')');
+      var rowHead = table.querySelector('tbody th');
+      if (col && rowHead) wrap.scrollLeft = Math.max(0, col.offsetLeft - rowHead.offsetWidth - 8);
+    }
 
     var saidBox = $('inside-said');
     saidBox.innerHTML = '';

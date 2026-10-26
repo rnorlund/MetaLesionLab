@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from pathlib import Path
 from typing import Literal
 from urllib.parse import quote
@@ -217,7 +218,9 @@ def build_game(lang: str) -> dict:
         if word:
             base = ai[word]
             dam = next(x for x in cond["items"] if x.get("word") == word)
-            inside = {"word": word, "image": next(x["image"] for x in items if x["word"] == word),
+            gloss = next((it.get("gloss") for _, it in chosen if it["word"] == word), None)
+            inside = {"word": word, "gloss": gloss if lang != "en" and gloss and gloss != word else None,
+                      "image": next(x["image"] for x in items if x["word"] == word),
                       "damage": _damage(cond, sample),
                       "intact": {"said": _first_line(base.get("said")), "code": web.norm_code(base.get("code")), **_lens(base)},
                       "damaged": {"said": _first_line(dam.get("said")), "code": web.norm_code(dam.get("code")), **_lens(dam)}}
@@ -241,6 +244,10 @@ def build_game(lang: str) -> dict:
 def web_media(set_id: str, file: str, width: int = 640) -> str:
     path = "/".join(quote(part) for part in str(file).split("/"))
     return f"/media/sets/{quote(set_id)}/{path}?w={width}"
+
+
+def _bare(word: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", word) if unicodedata.category(c) != "Mn")
 
 
 # --- routes ------------------------------------------------------------------------------
@@ -293,6 +300,12 @@ def score(body: Answers):
     cache = cached_judgments()
     manifest = _read(web.SETS_DIR / GAMES[body.lang]["set"] / "manifest.json") or {}
     alternates = {it.get("word"): tuple(it.get("alternates") or ()) for it in manifest.get("items", [])}
+
+    def accepted(target: str) -> tuple[str, ...]:
+        """The set's alternate names, plus accent-free spellings: many keyboards can't type ñ or ú."""
+        names = (target, *alternates.get(target, ()))
+        bare = tuple(dict.fromkeys(_bare(n) for n in names if _bare(n) != n))
+        return alternates.get(target, ()) + bare
     results = []
     for a in body.answers:
         target = a.word.strip().lower()
@@ -306,7 +319,7 @@ def score(body: Answers):
             return False
 
         scored = web.collapse_repeat(a.response, body.lang, target)
-        coding = classify(target, scored, body.lang, alternates=alternates.get(target, ()), judge=judge)
+        coding = classify(target, scored, body.lang, alternates=accepted(target), judge=judge)
         results.append({"word": target, "response": a.response, "scored_response": scored, "code": coding.code,
                         "correct": coding.code == "Correct", "head": coding.head, "meaning_checked": not missed})
     return {"results": results, "correct": sum(r["correct"] for r in results), "n": len(results)}

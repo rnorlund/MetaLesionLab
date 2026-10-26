@@ -72,9 +72,9 @@ body.challenge { background: #F7F6F1; }
 
 .cg-inside { display: flex; flex-direction: column; gap: 14px; }
 .cg-inside h2 { font-size: 22px; letter-spacing: -0.01em; margin-top: -8px; }
-.cg-inside-top { display: flex; gap: 16px; align-items: flex-start; }
+.cg-inside-top { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-start; }
 .cg-inside-top img { width: 120px; height: 90px; object-fit: contain; background: #FFFFFF; border: 1px solid var(--line); border-radius: 8px; flex: none; }
-.cg-inside-top p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-2); max-width: 820px; }
+.cg-inside-top p { flex: 1 1 280px; margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-2); max-width: 820px; }
 .cg-lens-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
 .cg-lens-wrap:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; }
 .cg-lens { border-collapse: separate; border-spacing: 2px; font-family: var(--mono); font-size: 12px; min-width: 100%; }

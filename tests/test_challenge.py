@@ -114,3 +114,15 @@ def test_typed_scoring_is_free_and_uses_only_cached_judgments(client):
     assert c.post("/api/challenge/score", json={"lang": "fr", "answers": [{"word": "chat", "response": "chat"}]}).status_code == 422
     too_many = [{"word": "cat", "response": "cat"}] * 21
     assert c.post("/api/challenge/score", json={"lang": "en", "answers": too_many}).status_code == 422
+
+
+def test_typed_spanish_accepts_missing_accents(client):
+    c, tmp = client
+    d = tmp / "sets" / "demo_es"
+    d.mkdir(parents=True)
+    (d / "manifest.json").write_text(json.dumps({"lang": "es", "items": [
+        {"word": "piña", "status": "kept", "image": "x.png"}, {"word": "iglú", "status": "kept", "image": "y.png"}]}))
+    r = c.post("/api/challenge/score", json={"lang": "es", "answers": [
+        {"word": "piña", "response": "pina"}, {"word": "iglú", "response": "iglu"}, {"word": "piña", "response": "la piña"},
+        {"word": "iglú", "response": "igloo"}]}).json()
+    assert [x["code"] for x in r["results"]][:3] == ["Correct", "Correct", "Correct"] and not r["results"][3]["correct"]
