@@ -60,13 +60,19 @@
     if (!L.cache[id]) L.cache[id] = T.api('/api/lab/conditions/' + encodeURIComponent(id));
     return L.cache[id];
   }
-  function baselineId() {
-    var b = L.list.filter(function (c) { return c.baseline; })[0];
+  function setOf(id) {
+    var c = L.list.filter(function (c) { return c.id === id; })[0];
+    return c ? c.set : undefined;
+  }
+  // The intact baseline from the same picture set (English and Spanish runs each have their own).
+  function baselineId(set) {
+    var b = L.list.filter(function (c) { return c.baseline && c.set === set; })[0] ||
+      L.list.filter(function (c) { return c.baseline; })[0];
     return b ? b.id : null;
   }
 
   function select(id, word) {
-    var bid = baselineId();
+    var bid = baselineId(setOf(id));
     return Promise.all([bid ? load(bid) : Promise.resolve(null), load(id)]).then(function (res) {
       L.base = res[0];
       L.cur = res[1];
@@ -112,11 +118,20 @@
     ]));
   }
 
+  var SET_NAMES = { demo_en: 'English pictures', demo_es: 'Spanish pictures' };
+
   function renderConds() {
     var box = $('cond-list');
     box.innerHTML = '';
-    var list = L.list.slice().sort(function (a, b) { return (b.baseline ? 1 : 0) - (a.baseline ? 1 : 0); });
-    list.forEach(function (c) {
+    var anyFeatured = L.list.some(function (c) { return c.featured; });
+    var shown = L.list.filter(function (c) { return L.showAll || !anyFeatured || c.featured || (L.cur && c.id === L.cur.id); });
+    if (!anyFeatured) shown.sort(function (a, b) { return (b.baseline ? 1 : 0) - (a.baseline ? 1 : 0); });
+    var lastSet = null;
+    shown.forEach(function (c) {
+      if (c.set && c.set !== lastSet && Object.keys(SET_NAMES).length) {
+        lastSet = c.set;
+        box.appendChild(h('div', { class: 'cond-set', text: SET_NAMES[c.set] || c.set }));
+      }
       var input = h('input', { type: 'radio', name: 'cond', value: c.id, checked: L.cur && c.id === L.cur.id });
       input.addEventListener('change', function () { select(c.id, L.word); });
       box.appendChild(h('label', { class: 'cond' }, [input, h('span', null, [
@@ -124,6 +139,12 @@
         h('span', { class: 'acc', text: 'naming accuracy ' + pct(c.accuracy) + ' · ' + c.n_items + ' items' })
       ])]));
     });
+    if (anyFeatured) {
+      var more = h('button', { type: 'button', class: 'btn btn-line cond-more',
+        text: L.showAll ? 'Show featured only' : 'Show all ' + L.list.length + ' conditions' });
+      more.addEventListener('click', function () { L.showAll = !L.showAll; renderConds(); });
+      box.appendChild(more);
+    }
   }
 
   function renderSpec() {
@@ -394,7 +415,10 @@
   function renderProfiles() {
     var box = $('profiles');
     box.innerHTML = '';
-    var rows = L.list.slice().sort(function (a, b) {
+    var anyFeatured = L.list.some(function (c) { return c.featured; });
+    var rows = L.list.filter(function (c) {
+      return c.set === L.cur.set && (!anyFeatured || c.featured || c.id === L.cur.id);
+    }).sort(function (a, b) {
       var ra = a.baseline ? 0 : a.id === L.cur.id ? 1 : 2, rb = b.baseline ? 0 : b.id === L.cur.id ? 1 : 2;
       return ra - rb;
     }).slice(0, 8);
