@@ -208,6 +208,12 @@ def test_doubled_article_in_a_transcript(lang, target, response, expected, head)
     assert (c.code, c.head) == (expected, head)
 
 
+def test_doubled_name_in_a_transcript():
+    assert classify("umbrella", "umbrellaumbrella").code == "Correct"   # seen with Samantha, Oct 26
+    assert classify("couscous", "couscous").code == "Correct"
+    assert classify("cat", "dodo", judge=fake_judge).head == "dodo"     # only accepted names are undoubled
+
+
 def test_hindi_chandrabindu_and_anusvara_spellings_match():
     assert classify("आँख", "आंख", "hi").code == "Correct"
 

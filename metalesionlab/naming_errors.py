@@ -444,8 +444,8 @@ def same_sounds(target: str, response: str, lang: str) -> bool:
     ("bouilloir", "cerrote") or a real-word homophone ("encre" for "ancre", "si" for "scie")."""
     if lang not in HOMOPHONE_LANGS or re.search(r"[\s-]", target):
         return False
-    t, r = phonemes(target, lang)[0], phonemes(response, lang)[0]
-    return bool(t) and t == r
+    t, r = phonemes(target, lang), phonemes(response, lang)
+    return bool(t[0]) and t == r  # same sounds and the same stressed vowel
 
 
 def sound_related(target: str, response: str, lang: str) -> bool:
@@ -610,12 +610,14 @@ def _classify_zh(target: str, response: str, alternates: tuple[str, ...], judge:
 
 # --- the decision tree -----------------------------------------------------------------
 
-def _undouble(word: str, lang: str) -> str:
-    """Transcripts sometimes double a leading article or frame word ("UnUn chien", "OO banco",
-    "यहयह"); read such a token as the single word."""
+def _undouble(word: str, lang: str, names: tuple[str, ...] = ()) -> str:
+    """Transcripts sometimes write a word twice as one token: a leading article or frame word
+    ("UnUn chien", "OO banco", "यहयह") or the name itself ("umbrellaumbrella"). Read such a token
+    as the single word. Only articles, frame words and accepted names are undoubled, so real
+    reduplicated words (couscous, bonbon) are left alone."""
     half = len(word) // 2
     if len(word) % 2 == 0 and word[:half] == word[half:] and \
-            word[:half] in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set()):
+            word[:half] in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set()) | set(names):
         return word[:half]
     return word
 
@@ -643,9 +645,9 @@ def classify(target: str, response: str, lang: str = "en", alternates: tuple[str
         return Coding("NoResponse", "")
     if lang == "fr":
         words = [p for w in words for p in _unelide(w)]
-    words = [_undouble(w, lang) for w in words]
-    content = [w for w in words if w not in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set())] or words
     accepted = (target,) + tuple(_norm(a) for a in alternates)
+    words = [_undouble(w, lang, accepted) for w in words]
+    content = [w for w in words if w not in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set())] or words
     if phrase := next((a for a in accepted if _phrase_match(a, words, lang)), None):
         return Coding("Correct", phrase)
     if any(_same_word(a, w, lang) for a in accepted for w in content):
