@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You vs. the AI · Tippa Lingua</title>
+<meta name="description" content="Name 10 pictures, then see how Meta's open AI model Muse Glimmer named the same pictures, and watch a word get lost inside it.">
+<meta property="og:title" content="You vs. the AI · Tippa Lingua">
+<meta property="og:description" content="Name 10 pictures, then see how Meta's open AI model named them, and watch a word get lost inside it.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/tour.css">
+<link rel="stylesheet" href="/static/css/challenge.css">
+</head>
+<body class="challenge">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/challenge" aria-current="page">You vs. the AI</a>
+    <a href="/lab">Model Lab</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/studio">Test Studio</a>
+  </nav>
+  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="cg-intro" id="intro" aria-labelledby="intro-h">
+  <div class="cg-intro-text">
+    <span class="cg-kicker">A 2-minute game</span>
+    <h1 id="intro-h">You vs. the AI</h1>
+    <p class="cg-lede">Name 10 pictures, one word each, as fast as you can. Then see how Muse Glimmer, Meta’s open AI model, named the same pictures, and watch one word get lost inside it.</p>
+
+    <div class="cg-options">
+      <fieldset>
+        <legend>Pictures in</legend>
+        <div class="seg" id="lang-seg">
+          <button type="button" data-lang="en" aria-pressed="true">English</button>
+          <button type="button" data-lang="es" aria-pressed="false">Español</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Answer by</legend>
+        <div class="seg" id="mode-seg">
+          <button type="button" data-mode="type" aria-pressed="true">Typing</button>
+          <button type="button" data-mode="voice" aria-pressed="false">Speaking</button>
+        </div>
+      </fieldset>
+    </div>
+    <p class="cg-hint" id="mode-hint" aria-live="polite"></p>
+
+    <div class="cg-start-row">
+      <button type="button" class="btn btn-accent cg-big" id="start-btn" disabled>Start</button>
+      <span class="cg-hint" id="load-state" aria-live="polite">Loading the pictures…</span>
+    </div>
+    <p class="cg-fine">Each picture has a 15-second timer. Typed answers are scored on our server with fixed rules and nothing is stored. Spoken answers are sent to Meta’s speech model to be written down, and recordings aren’t kept. This is a game, not a medical test.</p>
+    <div class="note note-sample" id="sample-note" hidden></div>
+  </div>
+  <figure class="cg-intro-art">
+    <img src="/static/img/ill-ai-parts-600.webp" srcset="/static/img/ill-ai-parts-600.webp 600w, /static/img/ill-ai-parts-1100.webp 1100w" sizes="(max-width: 720px) 90vw, 420px" width="600" height="450"
+         alt="Illustration: a cat walks toward a tall tower of glass layers that stands for an AI model. A few middle layers are dimmed and switched off, and the speech bubble at the top shows a dog instead of a cat.">
+  </figure>
+</section>
+
+<section class="cg-play" id="play" hidden aria-labelledby="play-h">
+  <h2 class="sr-only" id="play-h">Name the picture</h2>
+  <div class="cg-play-top">
+    <span class="cg-progress" id="progress">Picture 1 of 10</span>
+    <span class="cg-clock mono" id="clock" aria-hidden="true">15 s</span>
+  </div>
+  <div class="cg-timer" aria-hidden="true"><div id="timer-bar"></div></div>
+  <div class="cg-pic"><img id="pic" alt="" width="640" height="480"></div>
+
+  <form class="cg-answer" id="typed" autocomplete="off">
+    <label for="answer" class="sr-only">Name of the picture</label>
+    <input type="text" id="answer" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" maxlength="60" placeholder="Type its name, then press Enter">
+    <button type="submit" class="btn btn-accent">Enter</button>
+  </form>
+
+  <div class="cg-answer cg-voice" id="voice" hidden>
+    <div class="cg-meter" aria-hidden="true"><span id="level"></span></div>
+    <span class="cg-voice-status" id="voice-status" aria-live="polite">Listening: say its name</span>
+    <button type="button" class="btn btn-accent" id="voice-next">Next</button>
+  </div>
+
+  <div class="cg-play-foot">
+    <button type="button" class="link-btn" id="skip-btn">I don’t know, skip</button>
+    <button type="button" class="link-btn cg-quit" id="quit-btn">Quit</button>
+  </div>
+</section>
+
+<section class="cg-wait" id="wait" hidden aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span> <span id="wait-text">Scoring your answers…</span>
+</section>
+
+<section class="cg-results" id="results" hidden aria-labelledby="results-h">
+  <h2 class="sr-only" id="results-h">Results</h2>
+  <div class="cg-score" id="score"></div>
+  <p class="cg-neutral">Lots of things affect naming: the picture, the language, being tired. This game doesn’t measure anything medical.</p>
+
+  <section class="panel" aria-labelledby="table-h">
+    <div class="panel-head"><h2 id="table-h">Picture by picture</h2><span class="meta" id="table-meta"></span></div>
+    <div class="table-wrap"><table class="data cg-table" id="cg-table"></table></div>
+  </section>
+
+  <section class="panel cg-inside" id="inside" aria-labelledby="inside-h" hidden>
+    <span class="cg-kicker">Inside the AI</span>
+    <h2 id="inside-h">Watch a word get lost</h2>
+    <div class="cg-inside-top">
+      <img id="inside-pic" alt="" width="160" height="120">
+      <p id="inside-text"></p>
+    </div>
+    <div class="cg-lens-wrap" id="lens-wrap" tabindex="0" role="region" aria-label="Word lens: the model's top guess after each layer"></div>
+    <div class="cg-said" id="inside-said"></div>
+    <p class="xsmall muted" id="inside-key"></p>
+    <a class="cg-link" href="/lab">Explore this in the Model Lab →</a>
+  </section>
+
+  <section class="panel cg-share" aria-labelledby="share-h">
+    <h2 id="share-h">Share your result</h2>
+    <div class="cg-share-row">
+      <img id="card-img" alt="" width="600" height="315">
+      <div class="cg-share-actions">
+        <button type="button" class="btn btn-dark" id="download-btn">Download image</button>
+        <a class="btn" id="x-btn" target="_blank" rel="noopener">Share on X</a>
+        <button type="button" class="btn" id="native-share" hidden>Share…</button>
+        <p class="xsmall muted">The image shows your score and the AI’s, nothing else.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cg-next" aria-label="What next">
+    <button type="button" class="btn btn-accent" id="again-btn">Play again</button>
+    <button type="button" class="btn" id="other-lang-btn">Play in Spanish</button>
+    <a class="btn" href="/lab">Explore the Model Lab</a>
+    <div class="cg-assess" data-assess-box hidden>
+      <p><b>Take the naming test:</b> see your accuracy and speed, and how they compare with healthy adults who took the same test. Not a medical test.</p>
+      <a class="cg-link" href="/assess">Take the naming test →</a>
+    </div>
+  </section>
+</section>
+
+</main>
+<p class="footnote">Glimmer’s answers and word lens were recorded ahead of time on one GPU; this page replays them. The test pictures were drawn by Muse Image for the Tippa Lingua demo set.</p>
+</div>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/challenge.js"></script>
+<script src="/static/js/tour.js"></script>
+</body>
+</html>
