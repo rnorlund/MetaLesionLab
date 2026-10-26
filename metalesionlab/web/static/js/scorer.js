@@ -414,7 +414,8 @@
     var box = $('summary');
     box.innerHTML = '';
     if (task() !== 'naming') {
-      box.appendChild(h('p', { class: 'small muted', style: { margin: 0 }, text: S.results.length ? S.results.length + ' result(s) below.' : 'No results yet.' }));
+      var n = S.results.filter(function (r) { return r.kind === task(); }).length;
+      box.appendChild(h('p', { class: 'small muted', style: { margin: 0 }, text: n ? n + (n === 1 ? ' result' : ' results') + ' above, newest first.' : 'No results yet.' }));
       return;
     }
     var done = S.rows.filter(function (r) { return r.status === 'done'; });
