@@ -335,7 +335,7 @@
   }
   function tooltip(box) {
     var tip = box.querySelector('.chart-tip');
-    if (!tip) { tip = h('div', { class: 'chart-tip', role: 'status' }); box.appendChild(tip); }
+    if (!tip) { tip = h('div', { class: 'chart-tip', role: 'status', hidden: true }); box.appendChild(tip); }
     return {
       show: function (html, x, y) { tip.innerHTML = html; tip.hidden = false; tip.style.left = Math.min(x, box.clientWidth - 170) + 'px'; tip.style.top = Math.max(0, y - 46) + 'px'; },
       hide: function () { tip.hidden = true; }

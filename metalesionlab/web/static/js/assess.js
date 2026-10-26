@@ -343,8 +343,14 @@
     if (!sess) return;
     clearTimeout(saveTimers[sess.id]);
     saveTimers[sess.id] = setTimeout(function () {
-      A.store.put('sessions', plain(sess)).catch(function (e) { T.toast('Couldn\'t save the session in this browser: ' + e.message, 'error'); });
+      A.store.put('sessions', plain(sess)).then(function () { if (!S.run) refreshTracking(); })
+        .catch(function (e) { T.toast('Couldn\'t save the session in this browser: ' + e.message, 'error'); });
     }, 150);
+  }
+  var trackTimer = null;
+  function refreshTracking() {
+    clearTimeout(trackTimer);
+    trackTimer = setTimeout(loadSessions, 400);
   }
 
   // --- report --------------------------------------------------------------------------------
@@ -504,8 +510,8 @@
   }
   function history(sess) {
     return S.sessions.filter(function (s) { return s.speaker === sess.speaker && s.id !== sess.id && s.started < sess.started; })
-      .map(function (s) { var m = A.summarize(s.items); return { date: s.started, set_name: s.set_name, form: s.form, n: m.n, accuracy_pct: m.accuracy_pct, latency_median_ms: m.latency_median_ms }; })
-      .concat([(function () { var m = A.summarize(sess.items); return { date: sess.started, set_name: sess.set_name, form: sess.form, n: m.n, accuracy_pct: m.accuracy_pct, latency_median_ms: m.latency_median_ms }; })()]);
+      .map(function (s) { var m = A.summarize(s.items); return { date: fmtDate(s.started), set_name: s.set_name, form: s.form, n: m.n, accuracy_pct: m.accuracy_pct, latency_median_ms: m.latency_median_ms }; })
+      .concat([(function () { var m = A.summarize(sess.items); return { date: fmtDate(sess.started), set_name: sess.set_name, form: sess.form, n: m.n, accuracy_pct: m.accuracy_pct, latency_median_ms: m.latency_median_ms }; })()]);
   }
   function exportPDF() {
     var sess = shown;
@@ -517,7 +523,7 @@
         reviewer: it.reviewer || null, latency_ms: it.latency_ms, reviewer_latency_ms: it.reviewer_latency_ms,
         duration_ms: it.duration_ms, timeout: !!it.timeout, practice: !!it.practice, flags: it.flags || [] };
     });
-    var body = { session: { speaker: sess.speaker, set_name: sess.set_name, private_set: sess.private_set, lang: sess.lang, started: sess.started,
+    var body = { session: { speaker: sess.speaker, set_name: sess.set_name, private_set: sess.private_set, lang: sess.lang, started: fmtDate(sess.started),
       time_limit_s: sess.time_limit_s, form: sess.form, second_rater: sess.second_rater, items: items }, history: history(sess).filter(function (x) { return x.accuracy_pct != null; }) };
     fetch('/api/assess/report.pdf', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       .then(function (r) { if (!r.ok) throw new Error('The report couldn\'t be made (' + r.status + ').'); return r.blob(); })
@@ -549,11 +555,14 @@
     var body = $('sessions-body');
     body.innerHTML = '';
     var acc = [], lat = [];
-    list.forEach(function (s) {
+    var days = list.map(function (s) { return shortDate(s.started); });
+    list.forEach(function (s, k) {
+      var short = days.indexOf(days[k]) !== days.lastIndexOf(days[k])
+        ? days[k] + ' ' + new Date(s.started).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : days[k];
       var m = A.summarize(s.items);
       var label = fmtDate(s.started) + ' · ' + s.set_name + (s.form ? ' · ' + s.form : '');
-      acc.push({ value: m.accuracy_pct, label: label, short: shortDate(s.started), note: m.n ? m.correct + ' of ' + m.n + ' correct' : null });
-      lat.push({ value: m.latency_median_ms, label: label, short: shortDate(s.started), note: m.latency_n ? 'IQR ' + A.seconds(m.latency_q1_ms) + ' – ' + A.seconds(m.latency_q3_ms) : null });
+      acc.push({ value: m.accuracy_pct, label: label, short: short, note: m.n ? m.correct + ' of ' + m.n + ' correct' : null });
+      lat.push({ value: m.latency_median_ms, label: label, short: short, note: m.latency_n ? 'IQR ' + A.seconds(m.latency_q1_ms) + ' – ' + A.seconds(m.latency_q3_ms) : null });
       body.appendChild(h('tr', null, [
         h('td', { text: fmtDate(s.started) }),
         h('td', null, [s.set_name, s.private_set ? h('span', { class: 'pill pill-private', text: 'Private set' }) : null, s.form ? h('span', { class: 'xsmall muted', text: ' ' + s.form }) : null]),

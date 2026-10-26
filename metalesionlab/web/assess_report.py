@@ -16,9 +16,10 @@ CODE_LABELS = {"Correct": "Correct", "Semantic": "Semantic", "Formal": "Formal",
 CODE_RGB = {"Correct": (17, 24, 39), "Semantic": (37, 99, 235), "Formal": (194, 65, 12), "Mixed": (124, 58, 237),
             "Nonword": (15, 118, 110), "Neologism": (190, 24, 93), "Unrelated": (146, 64, 14),
             "Description": (162, 28, 175), "Visual": (21, 128, 61), "NoResponse": (107, 114, 128)}
-FLAG_TEXT = {"speech_at_onset": "speech already under way when the picture appeared",
-             "noisy_lead_in": "background sound before the picture",
-             "no_onset_found": "speech heard but no clear onset"}
+NOTE_KEYS = [("P", "practice item, not scored"), ("T", "reached the time limit"), ("C", "code changed by the reviewer"),
+             ("L", "latency entered by the reviewer"), ("S", "speech already under way when the picture appeared"),
+             ("N", "background sound before the picture"), ("O", "speech heard but no clear onset")]
+FLAG_KEYS = {"speech_at_onset": "S", "noisy_lead_in": "N", "no_onset_found": "O"}
 FONT_PAIRS = [
     (os.environ.get("TOT_PDF_FONT", ""), os.environ.get("TOT_PDF_FONT_BOLD", "")),
     ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
@@ -98,7 +99,7 @@ def render(session: dict, summary: dict, reference: dict, history: list[dict]) -
     y = m + 27
 
     # Session details
-    started = (session.get("started") or "")[:16].replace("T", " ")
+    started = (session.get("started") or "")[:40].replace("T", " ")  # the browser sends its local date and time
     rows = [("Speaker code", session.get("speaker") or "–"), ("Date", started or stamp),
             ("Test", (session.get("set_name") or "–") + (" (private set)" if session.get("private_set") else "")),
             ("Language", session.get("lang") or "–"),
@@ -115,7 +116,7 @@ def render(session: dict, summary: dict, reference: dict, history: list[dict]) -
     y += 4 * 5.2 + 3
 
     # Key measures
-    tiles = [("Accuracy (first complete response)",
+    tiles = [("Accuracy",
               f"{summary['correct']} / {summary['n']}" + (f"  ({summary['accuracy_pct']:g}%)" if summary["n"] else "")),
              ("Median naming latency, correct", _fmt_ms(summary["latency_median_ms"])),
              ("Interquartile range (n = %d)" % summary["latency_n"],
@@ -159,8 +160,8 @@ def render(session: dict, summary: dict, reference: dict, history: list[dict]) -
     pdf.set_xy(m, y + 1.5)
     pdf.multi_cell(w, 3.4, d.t(reference["caption"]))
     y = pdf.get_y() + 1
-    heads = [("Group", 74), ("N", 12), ("Accuracy", 18), ("Semantic", 16), ("Formal", 14), ("Nonword", 16),
-             ("No resp.", 15), ("Source", w - 165)]
+    heads = [("Group", 66), ("N", 11), ("Accuracy", 18), ("Semantic", 16), ("Formal", 14), ("Nonword", 16),
+             ("No resp.", 15), ("Source", w - 156)]
     x = m
     for label, cw in heads:
         d.cell(x, y, cw, 4.5, label, 7.5, rgb=MUTED)
@@ -197,7 +198,7 @@ def render(session: dict, summary: dict, reference: dict, history: list[dict]) -
         y += 4.8
         for h in past:
             pdf.line(m, y, m + w, y)
-            vals = [str(h.get("date", ""))[:16].replace("T", " "), h.get("set_name", ""), h.get("form") or "whole set",
+            vals = [str(h.get("date", ""))[:40].replace("T", " "), h.get("set_name", ""), h.get("form") or "whole set",
                     str(h.get("n", "")), f"{h['accuracy_pct']:g}%", _fmt_ms(h.get("latency_median_ms"))]
             x = m
             for (_, cw), v in zip(heads2, vals):
@@ -259,8 +260,8 @@ def _latency_chart(d: _Doc, session: dict, x: float, y: float, w: float, h: floa
 
 def _appendix(d: _Doc, session: dict, reference: dict) -> None:
     pdf, m, w = d.pdf, d.m, d.w
-    heads = [("#", 8), ("Target", 26), ("Heard (transcript)", 46), ("Scored", 28), ("Auto", 18), ("2nd rater", 18),
-             ("Final", 18), ("Latency", 14), ("Notes", w - 176)]
+    heads = [("#", 8), ("Target", 26), ("Heard (transcript)", 46), ("Scored (first complete)", 30), ("Auto", 18),
+             ("2nd rater", 18), ("Final", 18), ("Latency", 15), ("Notes", w - 179)]
     page = 1
 
     def new_page():
@@ -282,19 +283,19 @@ def _appendix(d: _Doc, session: dict, reference: dict) -> None:
         lat = it.get("reviewer_latency_ms") if it.get("reviewer_latency_ms") is not None else it.get("latency_ms")
         notes = []
         if it.get("practice"):
-            notes.append("practice")
+            notes.append("P")
         if it.get("timeout"):
-            notes.append("time limit")
+            notes.append("T")
         if it.get("reviewer") and it.get("code") and it["reviewer"] != it["code"]:
-            notes.append("reviewer changed")
+            notes.append("C")
         if it.get("reviewer_latency_ms") is not None:
-            notes.append("latency edited")
-        notes += [FLAG_TEXT.get(f, f) for f in it.get("flags") or []]
+            notes.append("L")
+        notes += [FLAG_KEYS.get(f, f) for f in it.get("flags") or []]
         second = (it.get("second") or {}).get("code")
         vals = [str(it.get("n") or k), it.get("target"), it.get("transcript") or "(nothing)", it.get("scored_response") or "",
                 CODE_LABELS.get(it.get("code"), it.get("code") or ""), CODE_LABELS.get(second, second or ""),
                 CODE_LABELS.get(it.get("reviewer") or it.get("code"), ""), "–" if lat is None else f"{lat:.0f} ms",
-                "; ".join(notes)]
+                " ".join(notes)]
         pdf.set_draw_color(*LINE)
         pdf.line(m, y, m + w, y)
         x = m
@@ -302,9 +303,12 @@ def _appendix(d: _Doc, session: dict, reference: dict) -> None:
             d.cell(x, y + 0.3, cw, 4.6, v, 7.5)
             x += cw
         y += 4.9
-    if y > pdf.h - 60:
+    if y > pdf.h - 66:
         y = new_page()
-    y += 5
+    d.font(7, rgb=MUTED)
+    pdf.set_xy(m, y + 1.5)
+    pdf.multi_cell(w, 3.3, d.t("Notes: " + " · ".join(f"{k} {text}" for k, text in NOTE_KEYS) + "."))
+    y = pdf.get_y() + 3
     d.text(m, y, "Sources for the published references", 9, bold=True)
     d.font(7, rgb=MUTED)
     pdf.set_xy(m, y + 2)
