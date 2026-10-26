@@ -32,6 +32,12 @@
       "where": "Table 1, note a",
       "note": "20 healthy participants (unpublished norms reported in the paper)."
     },
+    "yang2026": {
+      "citation": "Yang Y, Guan X, Arheix-Parras S, Ahmadi S, Newman-Norlund R, Bonilha L, Rorden C, Fridriksson J, Desai RH, Nelakuditi S (2026). Lesioned multimodal language models reproduce aphasic picture-naming patterns. arXiv:2607.11621v2 (preprint).",
+      "url": "https://arxiv.org/abs/2607.11621",
+      "where": "Table 1",
+      "note": "278 people with aphasia from the C-STAR cohort (University of South Carolina); group means of PNT response counts out of 175. Neologism covers all non-lexical forms; No Response includes descriptions. Shown with the authors' permission; group averages only."
+    },
     "mrri_guide": {
       "citation": "Moss Rehabilitation Research Institute. Detailed Guide to Philadelphia Naming Test (PNT) Scoring (1996).",
       "where": "pp. 4-5",
@@ -55,6 +61,13 @@
       "counts": {"Correct": 35662, "Semantic": 2634, "Formal": 3161, "Mixed": 1587, "Unrelated": 2303,
                  "Nonword": 6049, "Neologism": 1821, "NonNaming": 10658},
       "mapping": "NonNaming = our Description + NoResponse."
+    },
+    {
+      "name": "People with aphasia, C-STAR cohort (N = 278)",
+      "source": "yang2026",
+      "mean_counts_of_175": {"Correct": 82.7, "Semantic": 7.3, "Unrelated": 10.7, "Formal": 20.3, "Mixed": 1.6,
+                             "AnyNonword": 14.0, "NoResponse": 38.4},
+      "mapping": "AnyNonword = our Nonword + Neologism; NoResponse = our NoResponse + Description."
     },
     {
       "name": "People with aphasia, all subtypes (N = 65)",
