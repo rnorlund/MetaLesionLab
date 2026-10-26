@@ -81,6 +81,7 @@
       return applyTest();
     }
     return T.api('/api/sets/' + encodeURIComponent(id)).then(function (d) {
+      if ($('test').value !== key) return;  // the selection changed while this loaded
       var items = (d.manifest ? d.manifest.items : []).map(function (it, i) {
         return { index: i, target: it.word, alternates: it.alternates || [], practice: false, image: it.image, status: it.status,
           url: it.image ? T.mediaUrl(id, it.image) : null };
