@@ -1,11 +1,11 @@
 [project]
 name = "metalesionlab"
 version = "0.1.0"
-description = "In-silico lesion lab: aphasia-style lesions of Meta's Muse Glimmer, compared with human language"
+description = "Tip of the Tongue: language tests for people and AI, in any language, built on Meta's models"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
-dependencies = ["openai>=1.40", "httpx", "numpy", "pillow"]
+dependencies = ["openai>=1.40", "httpx", "numpy", "pillow", "nltk", "wordfreq", "pronouncing"]
 
 [project.optional-dependencies]
 gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"]
