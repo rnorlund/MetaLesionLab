@@ -417,7 +417,7 @@ def split_chunks(transcript: str, lang: str) -> list[str]:
     without pauses can hold several, which the judge separates."""
     joiners = CONJUNCTIONS.get(lang, set())
     chunks = []
-    for piece in re.split(r"[,.;:!?¿¡\n]+", transcript or ""):
+    for piece in re.split(r"[,.;:!?¿¡\n，。、；：！？…।]+", transcript or ""):  # with Chinese and Hindi marks
         current: list[str] = []
         for w in piece.split() + [None]:
             if w is None or _strip_accents(w.lower().strip("'\"-")) in joiners:

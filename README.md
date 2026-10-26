@@ -68,7 +68,7 @@ The decision order follows the Philadelphia Naming Test scheme (Roach et al., 19
 | Sound | The PNT rule: shared first or last sound, shared stressed vowel, or two shared sounds anywhere. Sounds come from the CMU dictionary, or from spelling rules for non-words. | Same rule, adapted because nouns end in a gender vowel: a shared final vowel doesn't count |
 | Meaning | WordNet first. Muse Spark judges associations (milk for cat). | Muse Spark judges every pair |
 
-See `metalesionlab/naming_errors.py`.
+See `metalesionlab/naming_errors.py`. French, Brazilian Portuguese, Hindi and Mandarin Chinese have their own rules and measured results in [docs/languages.md](docs/languages.md).
 
 ## What can I cut?
 
