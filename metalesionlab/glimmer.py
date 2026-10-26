@@ -35,13 +35,15 @@ def decoder_layers(model):
 
 
 def build_inputs(processor, image, prompt: str, device, max_side: int = 512) -> dict:
-    """Chat-formatted inputs for one image + prompt, ending at the start of the answer.
-    Images are shrunk to max_side pixels: a 1600 px picture costs ~3,400 tokens."""
-    if max(image.size) > max_side:
-        image = image.copy()
-        image.thumbnail((max_side, max_side))
-    messages = [{"role": "user", "content": [{"type": "image", "image": image},
-                                              {"type": "text", "text": prompt}]}]
+    """Chat-formatted inputs for one image + prompt (or text only, with image=None), ending at the
+    start of the answer. Images are shrunk to max_side pixels: a 1600 px picture costs ~3,400 tokens."""
+    content = [{"type": "text", "text": prompt}]
+    if image is not None:
+        if max(image.size) > max_side:
+            image = image.copy()
+            image.thumbnail((max_side, max_side))
+        content.insert(0, {"type": "image", "image": image})
+    messages = [{"role": "user", "content": content}]
     inputs = processor.apply_chat_template(messages, tokenize=True, return_dict=True, return_tensors="pt",
                                            add_generation_prompt=True, reasoning_strength="low")
     prefix = processor.tokenizer(ANSWER_PREFIX, add_special_tokens=False, return_tensors="pt")["input_ids"]

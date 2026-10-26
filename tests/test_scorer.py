@@ -93,6 +93,8 @@ def test_split_chunks_at_punctuation_and_conjunctions():
     assert split_chunks("Perro, gato y caballo. Eh, perros, la mesa", "es") == [
         "perro", "gato", "caballo", "perros", "mesa"]
     assert split_chunks("", "en") == []
+    assert split_chunks("猫，狗、老虎。大象", "zh") == ["猫", "狗", "老虎", "大象"]
+    assert split_chunks("बिल्ली, कुत्ता। शेर", "hi") == ["बिल्ली", "कुत्ता", "शेर"]
 
 
 # --- fluency scoring with a fake judge ----------------------------------------------------

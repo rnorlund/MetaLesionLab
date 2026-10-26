@@ -14,15 +14,15 @@ from __future__ import annotations
 import io
 import json
 import re
+import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from PIL import Image
-from wordfreq import zipf_frequency
 
 from metalesionlab.meta_api import MetaAPI, image_data_url
-from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, phonemes, spark_semantic_judge
+from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, phonemes, spark_semantic_judge, word_zipf
 
 STYLES = {
     "line": ("A simple black-and-white line drawing of {depiction}, centered on a plain white background. "
@@ -43,6 +43,11 @@ class Concept:
     depiction: str = ""
     ambiguous: bool = False
     other_meanings: list[str] = field(default_factory=list)
+    alternates: list[str] = field(default_factory=list)  # other spellings of the same word, accepted as correct
+
+
+def _nfc(text: str) -> str:
+    return unicodedata.normalize("NFC", text)
 
 
 def parse_word_list(lines: list[str]) -> list[Concept]:
@@ -51,7 +56,7 @@ def parse_word_list(lines: list[str]) -> list[Concept]:
     for line in lines:
         if line.strip():
             word, _, hint = line.partition(":")
-            out.append(Concept(word.strip().lower(), hint.strip()))
+            out.append(Concept(_nfc(word).strip().lower(), hint.strip()))
     return out
 
 
@@ -61,26 +66,37 @@ def _json_from(text: str):
 
 
 def plan_concepts(api: MetaAPI, concepts: list[Concept], lang: str) -> list[Concept]:
+    # One object, no colors (Oct 26): Chinese 手套 doesn't mark number and was planned as "a pair of
+    # gloves", which SAM rightly counts as two objects; "an orange carrot" put color into line drawings.
     listing = "\n".join(f"- {c.word}" + (f" (meaning: {c.hint})" if c.hint else "") for c in concepts)
     prompt = (
         f"You are preparing pictures for a picture-naming test in {LANGUAGE_NAMES.get(lang, lang)}. "
         "For each word below give:\n"
         '- "gloss": one English noun for the intended object (follow the meaning hint when given)\n'
         '- "depiction": a short English phrase describing one typical, easy-to-recognize example to draw, '
-        'starting with "a" or "an"\n'
+        'starting with "a" or "an" and naming the object plainly ("a carrot with its leafy top"). Exactly one '
+        'object, never a pair or a group, even when the word is plural or doesn\'t mark number (one glove, '
+        'not gloves). Don\'t mention colors.\n'
         '- "ambiguous": true if the word also commonly names a different picturable thing\n'
         '- "other_meanings": those other meanings in English (empty list if none)\n'
+        '- "spellings": other ways the SAME word is commonly written, which a speech transcript might '
+        'produce: variant spellings, and for a loanword its spelling in the source language (Hindi '
+        'कैक्टस -> "cactus"). Never synonyms or different words. Empty list if none.\n'
         'Return only JSON: {"items": [{"word": ..., "gloss": ..., "depiction": ..., "ambiguous": ..., '
-        '"other_meanings": [...]}]} in the same order.\n\nWords:\n' + listing)
+        '"other_meanings": [...], "spellings": [...]}]} in the same order.\n\nWords:\n' + listing)
     reply = api.chat([{"role": "user", "content": prompt}], reasoning_effort="low")
     items = (_json_from(reply.choices[0].message.content) or {}).get("items", [])
-    by_word = {str(it.get("word", "")).lower(): it for it in items}
-    for c in concepts:
-        it = by_word.get(c.word, {})
+    by_word = {_nfc(str(it.get("word", ""))).strip().lower(): it for it in items if isinstance(it, dict)}
+    in_order = len(items) == len(concepts)
+    for k, c in enumerate(concepts):
+        # By word, else by position: a reply may spell a Devanagari or accented word differently.
+        it = by_word.get(c.word) or (items[k] if in_order and isinstance(items[k], dict) else {})
         c.gloss = it.get("gloss") or c.hint or c.word
         c.depiction = it.get("depiction") or f"a {c.gloss}"
         c.ambiguous = bool(it.get("ambiguous"))
         c.other_meanings = list(it.get("other_meanings") or [])
+        spellings = (_nfc(str(s)).strip().lower() for s in (it.get("spellings") or []) if isinstance(s, str))
+        c.alternates = list(dict.fromkeys(s for s in spellings if s and s != c.word and len(s) <= 40))[:5]
     return concepts
 
 
@@ -105,7 +121,7 @@ def check_candidate(api: MetaAPI, image: bytes, concept: Concept, lang: str, jud
                                  f"{LANGUAGE_NAMES.get(lang, lang)}. Reply with the word only."},
     ]}])
     spark_name = reply.choices[0].message.content.strip()
-    spark_code = classify(concept.word, spark_name, lang, judge=judge).code
+    spark_code = classify(concept.word, spark_name, lang, alternates=tuple(concept.alternates), judge=judge).code
     return {
         "sam_objects": len(confident),
         "sam_confidence": round(confident[0].confidence, 3) if confident else None,
@@ -136,7 +152,7 @@ def build_set(words: list[str], lang: str, out_dir: Path, style: str = "line", c
         ph, _ = phonemes(concept.word, lang)
         return {
             **asdict(concept), "lang": lang, "style": style, "prompt": prompt,
-            "zipf": round(zipf_frequency(concept.word, lang), 2), "phonemes": len(ph),
+            "zipf": round(word_zipf(concept.word, lang), 2), "phonemes": len(ph),
             "status": "kept" if best else "review", "image": best["file"] if best else None,
             "candidates": results,
         }
