@@ -1,0 +1,19 @@
+[project]
+name = "metalesionlab"
+version = "0.1.0"
+description = "In-silico lesion lab: aphasia-style lesions of Meta's Muse Glimmer, compared with human language"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = ["openai>=1.40", "httpx", "numpy", "pillow"]
+
+[project.optional-dependencies]
+gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["metalesionlab"]

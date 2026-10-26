@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Data guard: keep participant data and large binaries out of this public repo.
+# Enable once per clone with: git config core.hooksPath .githooks
+# Extra content patterns (never committed) go in .githooks/private_patterns.txt, one ERE per line.
+set -euo pipefail
+shopt -s nocasematch
+
+blocked='\.(csv|tsv|xlsx?|sav|nii(\.gz)?|mat|dcm|wav|mp3|m4a|flac|aiff?|h5|hdf5|npz|npy|pt|pth|safetensors|parquet|pkl|pickle)$'
+max_bytes=$((5 * 1024 * 1024))
+patterns=.githooks/private_patterns.txt
+fail=0
+
+while IFS= read -r -d '' f; do
+  if [[ "$f" != public_data/* && "$f" =~ $blocked ]]; then
+    echo "data guard: $f has a data-file extension (only public_data/ may hold data files)"
+    fail=1
+  fi
+  size=$(git cat-file -s ":$f")
+  if (( size > max_bytes )); then
+    echo "data guard: $f is $((size / 1024 / 1024)) MB (limit 5 MB)"
+    fail=1
+  fi
+  if [[ -s "$patterns" && "$f" != .githooks/* ]] &&
+     git show ":$f" | grep -I -q -E -f <(grep -v '^[[:space:]]*$' "$patterns"); then
+    echo "data guard: $f matches a private-data pattern"
+    fail=1
+  fi
+done < <(git diff --cached --name-only --diff-filter=AM -z)
+
+if (( fail )); then
+  echo "Commit blocked. Remove the files above, or put public, licensed data in public_data/."
+  exit 1
+fi
