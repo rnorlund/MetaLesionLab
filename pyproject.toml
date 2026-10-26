@@ -1,7 +1,7 @@
 [project]
 name = "metalesionlab"
 version = "0.1.0"
-description = "Tip of the Tongue: language tests for people and AI, in any language, built on Meta's models"
+description = "Tippa Lingua: language tests for people and AI, in any language, built on Meta's models"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"

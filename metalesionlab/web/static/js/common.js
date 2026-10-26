@@ -1,4 +1,4 @@
-/* Tip of the Tongue: helpers shared by every page. */
+/* Tippa Lingua: helpers shared by every page. */
 (function () {
   'use strict';
 

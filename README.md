@@ -1,8 +1,8 @@
-# Tip of the Tongue
+# Tippa Lingua
 
 **Language tests for people and AI, in any language.** Build picture-based language tests in minutes, give them by voice, and score them automatically. Then run the same tests on Meta's open-weight model and see where language breaks.
 
-Tip of the Tongue has three tools that share one pipeline:
+Tippa Lingua has three tools that share one pipeline:
 
 1. **Test Studio:** turns a word list into a picture test in your language.
    - **Muse Image** draws each item.
@@ -22,7 +22,7 @@ Tip of the Tongue has three tools that share one pipeline:
    - A word lens shows the model's best guess at every layer.
    - A **Muse Spark** agent designs and runs the experiments and compares the results with published profiles from people with aphasia.
 
-> Research and teaching use only. Tip of the Tongue doesn't diagnose, and it doesn't give medical or treatment advice.
+> Research and teaching use only. Tippa Lingua doesn't diagnose, and it doesn't give medical or treatment advice.
 
 ## Built during the Meta Global AI Developer Hackathon (Oct 26 – Nov 4, 2026)
 

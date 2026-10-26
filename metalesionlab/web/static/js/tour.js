@@ -100,7 +100,7 @@
 
   // --- the steps ----------------------------------------------------------------------------
   var STEPS = [
-    { page: '/', url: '/', target: function () { return phone() ? '.hero-text h1' : '.hero'; }, title: 'Tip of the Tongue in 2 minutes',
+    { page: '/', url: '/', target: function () { return phone() ? '.hero-text h1' : '.hero'; }, title: 'Tippa Lingua in 2 minutes',
       body: 'Three tools in one pipeline: build a picture-naming test in any language, score spoken answers automatically, then give the same test to an AI model and see where its language breaks. Let’s do one of each with real demo data.' },
 
     { page: '/studio', url: '/studio?set=' + STUDIO_SET, id: 'studio', before: studioPrep, skip: function () { return !studioItem('gato'); },

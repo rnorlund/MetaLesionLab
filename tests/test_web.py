@@ -61,7 +61,7 @@ def test_pages_and_status(env):
     client, _ = env
     for path in ("/", "/studio", "/scorer", "/lab"):
         r = client.get(path)
-        assert r.status_code == 200 and "Tip of the Tongue" in r.text
+        assert r.status_code == 200 and "Tippa Lingua" in r.text
     status = client.get("/api/status").json()
     assert {"meta_api", "audio", "scorer", "builds"} <= set(status["features"])
     assert status["limits"]["score"]["remaining"] == status["limits"]["score"]["per_day"]

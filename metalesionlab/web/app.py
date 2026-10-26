@@ -1,4 +1,4 @@
-"""Tip of the Tongue web app: Test Studio, Scorer and Model Lab over one small JSON API.
+"""Tippa Lingua web app: Test Studio, Scorer and Model Lab over one small JSON API.
 
 Run:  uvicorn metalesionlab.web.app:app      (or: python -m metalesionlab.web)
 Data: TOT_DATA_DIR (default <repo>/runs) holds sets/, scenes/, lesion/ and cache/.
@@ -71,7 +71,7 @@ AUDIO_SUFFIXES = {"audio/webm": ".webm", "audio/ogg": ".ogg", "audio/mp4": ".m4a
 BUDGET_MSG = ("This demo has reached its spending cap for Meta API calls, so new scoring and picture "
               "generation are paused. Browsing, review and exports still work.")
 
-app = FastAPI(title="Tip of the Tongue", version="0.1.0", docs_url="/api/docs", redoc_url=None)
+app = FastAPI(title="Tippa Lingua", version="0.1.0", docs_url="/api/docs", redoc_url=None)
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 
 
@@ -339,7 +339,7 @@ def _build(set_id: str, words: list[str], lang: str, style: str, candidates: int
 def create_set(body: NewSet, request: Request):
     if not ALLOW_BUILDS:
         raise HTTPException(403, "Building new picture sets is turned off on this demo. You can browse "
-                                 "and export the existing sets, or run Tip of the Tongue yourself.")
+                                 "and export the existing sets, or run Tippa Lingua yourself.")
     lang = check_lang(body.lang)
     lines, seen = [], set()
     for line in body.words.splitlines():
