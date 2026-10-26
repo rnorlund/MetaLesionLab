@@ -52,6 +52,12 @@ def test_spanish_codes(target, response, expected):
     assert classify(target, response, "es", judge=fake_judge).code == expected
 
 
+def test_accents_do_not_count_as_errors():
+    assert classify("iglú", "iglu", "es").code == "Correct"
+    assert classify("helicóptero", "helicoptero", "es").code == "Correct"
+    assert classify("iglu", "iglú", "es").code == "Correct"
+
+
 def test_spanish_spelling_rules():
     assert phonemes("queso", "es")[0] == ("k", "e", "s", "o")
     assert phonemes("cielo", "es")[0][0] == "s"

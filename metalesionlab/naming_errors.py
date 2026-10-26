@@ -78,6 +78,8 @@ def _wordnet():
 
 
 def _same_word(target: str, word: str, lang: str) -> bool:
+    # A missing or extra accent is a spelling/transcription detail, not a naming error ("iglu" for "iglú").
+    target, word = _strip_accents(target), _strip_accents(word)
     if word == target or word in (target + "s", target + "es"):
         return True
     if lang == "en":
