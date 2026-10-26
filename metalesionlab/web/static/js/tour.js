@@ -93,6 +93,11 @@
     return f.sample ? ' Sample data for now: real lesion runs replace it this week.' : '';
   }
 
+  // With real lesion files the Model Lab steps follow whatever exists, and skip what doesn't.
+  function noLab() { var L = T.lab && T.lab.state(); return !L || !L.cur || !!L.cur.baseline; }
+  function noLens() { return noLab() || !labFacts().intact; }
+  function noLesionLens() { return noLab() || !labFacts().lesioned; }
+
   // --- the steps ----------------------------------------------------------------------------
   var STEPS = [
     { page: '/', url: '/', target: function () { return phone() ? '.hero-text h1' : '.hero'; }, title: 'Tip of the Tongue in 2 minutes',
@@ -173,17 +178,21 @@
     { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, target: '#start-btn', title: 'Try it with your own voice',
       body: 'After the tour, press Start test, allow the microphone and name the pictures (or switch to Typed). Next: the same test, given to an AI model.' },
 
-    { page: '/lab', url: '/lab', id: 'lab', before: labPrep, target: '#items .card[aria-pressed="true"]', title: '3 · Look inside an AI',
+    { page: '/lab', url: '/lab', id: 'lab', before: labPrep, skip: noLab, target: '#items .card[aria-pressed="true"]', title: '3 · Look inside an AI',
       body: function () {
-        var f = labFacts(), spec = f.spec, amount = spec.fraction != null ? (spec.fraction <= 1 ? spec.fraction * 100 : spec.fraction) + '% of its units' : 'some units';
+        var f = labFacts(), spec = f.spec;
+        var amount = spec.fraction != null ? +(spec.fraction <= 1 ? spec.fraction * 100 : spec.fraction).toFixed(2) + '% of its units'
+          : spec.units != null ? spec.units + ' units' : 'some units';
         var where = f.layers ? 'decoder layers ' + f.layers : (spec.site || 'one part of the model');
-        var said = f.lesioned ? (f.lesioned.said ? 'it now says ' + quote(f.lesioned.said) : 'it now gives no answer') + ' (' + T.codeInfo(f.lesioned.code).label + ')' : '';
+        var how = { zero: 'switched off', mean: 'replaced with their average activity', noise: 'disturbed with noise' }[String(spec.method).toLowerCase()] || 'lesioned';
+        var said = f.lesioned ? (f.lesioned.said ? 'it now says ' + quote(f.lesioned.said) : 'it now gives no answer') + ' (' + T.codeInfo(f.lesioned.code).label + ')' : 'see what it says';
+        var acc = f.baseAccuracy != null && f.accuracy != null ? ' Naming accuracy went from ' + Math.round(f.baseAccuracy) + '% intact to ' + Math.round(f.accuracy) + '%.'
+          : f.accuracy != null ? ' Naming accuracy: ' + Math.round(f.accuracy) + '%.' : '';
         return 'Muse Glimmer, Meta’s open-weight model, took the same naming test. In this condition ' + amount + ' in ' + where +
-          ' were switched off (orange on the model map). Shown the ' + f.word + ', ' + said + '. Naming accuracy fell from ' + Math.round(f.baseAccuracy) + '% to ' +
-          Math.round(f.accuracy) + '%.' + sampleNote(f);
+          ' were ' + how + ' (orange on the model map). Shown the ' + f.word + ', ' + said + '.' + acc + sampleNote(f);
       } },
 
-    { page: '/lab', url: '/lab', before: labPrep, target: '#lens-chart', title: 'The word lens',
+    { page: '/lab', url: '/lab', before: labPrep, skip: noLens, target: '#lens-chart', title: 'The word lens',
       onShow: function () {
         var f = labFacts();
         return T.lab.play(3200).then(function () { if (f.intact) T.lab.showLayer(f.intact.concept || f.intact.emerge || 52); });
@@ -198,7 +207,7 @@
         return text;
       } },
 
-    { page: '/lab', url: '/lab', before: labPrep, target: '#lens-chart', title: 'Tip of the tongue',
+    { page: '/lab', url: '/lab', before: labPrep, skip: noLesionLens, target: '#lens-chart', title: 'Tip of the tongue',
       onShow: function () { T.lab.showLayer(52); },
       body: function () {
         var f = labFacts(), l = f.lesioned, i = f.intact;
@@ -208,7 +217,7 @@
         return start + quote(l.winner) + ' wins at the last layer: ' + kind + ', the kind of slip people with aphasia make.' + sampleNote(f);
       } },
 
-    { page: '/lab', url: '/lab', before: labPrep, target: ['#human-pooled .profile-row:nth-child(1)', '#human-pooled .profile-row:nth-child(2)'],
+    { page: '/lab', url: '/lab', before: labPrep, skip: noLab, target: ['#human-pooled .profile-row:nth-child(1)', '#human-pooled .profile-row:nth-child(2)'],
       title: 'Compared with people',
       body: function () {
         var f = labFacts();
