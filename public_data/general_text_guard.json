@@ -1,0 +1,759 @@
+{
+ "description": "General-language guard text for compress.py: next-token perplexity on plain sentences.",
+ "generated_by": "Muse Spark (muse-spark-1.3) via the Meta Model API, 2026-10-26",
+ "prompt": "Write {n} short, plain sentences in {language} about {topic}. Rules: each sentence has 6 to 18 words; use everyday vocabulary; vary the structure (statements, at least one question, one with a number); no names of real people, brands or specific places; no quotations. Output one sentence per line, with no numbering and nothing else.",
+ "license": "Model-generated for this project; Apache 2.0 with the repository",
+ "n": 150,
+ "sentences": [
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "I wake up early and drink a glass of water."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "I brush my teeth after breakfast every single morning."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "Do you usually take a short walk after lunch?"
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "I make my bed before starting work each day."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "She eats two eggs and toast for breakfast daily."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "I check my messages while drinking hot morning coffee."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "We clean the kitchen together after dinner every night."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "I read a few pages before turning off the light."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "They take out the trash on Monday and Thursday evenings."
+  },
+  {
+   "lang": "en",
+   "topic": "daily routines",
+   "text": "I plan tomorrow in a small notebook before sleeping."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Spring brings warm days and fresh green leaves everywhere."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Summer heat makes long afternoons feel slow and heavy."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Do you enjoy cool rain on a quiet evening?"
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Autumn leaves fall softly and cover the small paths."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Winter mornings are cold with frost on the grass."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Three sunny days in a row lift my mood."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Dark clouds gather quickly before a heavy summer storm."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Light wind moves the trees and cools our skin."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Cold nights call for warm soup and thick blankets."
+  },
+  {
+   "lang": "en",
+   "topic": "weather and seasons",
+   "text": "Seasons change slowly but always bring something new."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "I like to cook simple meals at home every day."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "We chop fresh vegetables before starting the hot soup."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "Do you prefer rice or soft noodles for dinner tonight?"
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "She adds two spoons of sugar to the warm tea."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "The bread smells good when it comes from the oven."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "We wash the fruit well before cutting it for lunch."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "He stirs the thick sauce slowly over low heat."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "Can you taste the salt and add a little more?"
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "They bake soft cakes with sweet corn and fresh milk."
+  },
+  {
+   "lang": "en",
+   "topic": "food and cooking",
+   "text": "Dinner is ready so please wash your hands first."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "I usually take the bus to work in the morning."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "Do you prefer to travel by train or by car?"
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "We packed two small bags for our short weekend trip."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "The flight was late but the crew was very kind."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "She rides her bike to school every single day."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "Walking to the market is easy and also healthy."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "Our taxi arrived quickly after we called for help."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "They waited a long time at the busy station."
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "Can we catch the next ferry across the river?"
+  },
+  {
+   "lang": "en",
+   "topic": "travel and transport",
+   "text": "I like to look out the window during trips."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "I start work early and drink tea first."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "School starts soon and I feel ready."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "Do you like your teacher this year?"
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "I have three short meetings before lunch today."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "My class learns new words every morning."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "Work gets busy near the end of month."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "Please bring your notebook to class tomorrow."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "We eat lunch together after the morning shift."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "I study for one hour after dinner."
+  },
+  {
+   "lang": "en",
+   "topic": "work and school",
+   "text": "The new job teaches me useful skills daily."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Birds sing early in the morning near tall trees."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "A small rabbit hides under green bushes from foxes."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Do you hear the frogs croaking by the pond?"
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Two brown bears walk slowly through the cool forest."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Leaves fall gently when the cold wind blows hard."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Fish swim together in clear water every day."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "A mother deer watches her baby with soft eyes."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Why do ants carry food back to their warm home?"
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "The bright sun helps young plants grow tall and strong."
+  },
+  {
+   "lang": "en",
+   "topic": "nature and animals",
+   "text": "Butterflies rest on red flowers during warm afternoons."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Drinking enough water helps your body stay healthy every day."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "A short walk after meals can help your digestion a lot."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Are you getting enough sleep to feel rested in the morning?"
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Fresh fruits and vegetables give your body useful vitamins daily."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Drink about 8 glasses of water during the day."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Gentle stretching in the morning can reduce muscle stiffness and pain."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Deep breathing helps you relax when you feel stressed or tired."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Eating too much sugar can make you feel tired later."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Your heart works harder when you run or climb stairs."
+  },
+  {
+   "lang": "en",
+   "topic": "health and the body",
+   "text": "Washing your hands often helps stop the spread of germs."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "Our kitchen smells nice in the morning before breakfast."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "My brother helps me carry heavy bags from the store."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "We like to sit together and talk after dinner."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "Who usually waters the small plants near the window?"
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "My mother keeps three warm blankets in the big closet."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "The living room feels calm when the lamps are on."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "Our father tells short funny stories on cold evenings."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "We clean the small house together every Saturday morning."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "My sister sings softly while she folds clean clothes."
+  },
+  {
+   "lang": "en",
+   "topic": "home and family",
+   "text": "Home feels best when everyone laughs and feels safe."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "I try to save a little money every week."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "Do you often compare prices before you buy food?"
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "I bought two bags of rice for dinner."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "The market was very busy on Saturday morning."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "She likes to look for cheap clothes online."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "We need to buy fresh bread and milk today."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "He paid cash because the card reader was broken."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "My bag broke while I was walking home."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "They plan to spend less money next month."
+  },
+  {
+   "lang": "en",
+   "topic": "shopping and money",
+   "text": "Why is fruit more costly in the winter?"
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Water turns to steam when it gets very hot."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Why does ice float on top of cold water?"
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Plants use light to make food and grow taller."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "The heart pumps blood through tubes around the body."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Sound travels in waves that our ears can hear."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Three states of matter are solid, liquid, and gas."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Cold air often sinks while warm air rises up."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Can magnets pull metal objects without even touching them?"
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "The moon pulls on seas and makes the tides."
+  },
+  {
+   "lang": "en",
+   "topic": "science and how things work",
+   "text": "Soap breaks up grease so water can wash it away."
+  },
+  {
+   "lang": "es",
+   "topic": "daily routines",
+   "text": "Por la mañana me levanto temprano y preparo el desayuno."
+  },
+  {
+   "lang": "es",
+   "topic": "daily routines",
+   "text": "Después salgo a caminar media hora por el barrio."
+  },
+  {
+   "lang": "es",
+   "topic": "daily routines",
+   "text": "¿A qué hora almuerzas normalmente durante la semana?"
+  },
+  {
+   "lang": "es",
+   "topic": "daily routines",
+   "text": "Por la tarde trabajo cuatro horas y leo un libro."
+  },
+  {
+   "lang": "es",
+   "topic": "daily routines",
+   "text": "Antes de dormir ordeno la casa y tomo agua."
+  },
+  {
+   "lang": "es",
+   "topic": "weather and seasons",
+   "text": "La primavera trae flores nuevas y mañanas más cálidas cada día."
+  },
+  {
+   "lang": "es",
+   "topic": "weather and seasons",
+   "text": "¿Te gusta pasear cuando llueve suave por la tarde?"
+  },
+  {
+   "lang": "es",
+   "topic": "weather and seasons",
+   "text": "En verano hay 35 grados a veces al mediodía."
+  },
+  {
+   "lang": "es",
+   "topic": "weather and seasons",
+   "text": "El otoño trae viento fresco y hojas secas en el suelo."
+  },
+  {
+   "lang": "es",
+   "topic": "weather and seasons",
+   "text": "El invierno es frío y la noche llega muy temprano siempre."
+  },
+  {
+   "lang": "es",
+   "topic": "food and cooking",
+   "text": "Me gusta cocinar arroz con verduras frescas cada semana."
+  },
+  {
+   "lang": "es",
+   "topic": "food and cooking",
+   "text": "¿Prefieres el pan tostado con aceite o con mantequilla?"
+  },
+  {
+   "lang": "es",
+   "topic": "food and cooking",
+   "text": "Añade dos cucharadas de azúcar a la masa del pastel."
+  },
+  {
+   "lang": "es",
+   "topic": "food and cooking",
+   "text": "La sopa caliente es perfecta para las noches de invierno."
+  },
+  {
+   "lang": "es",
+   "topic": "food and cooking",
+   "text": "Cortamos las frutas y las mezclamos en un bol grande."
+  },
+  {
+   "lang": "es",
+   "topic": "travel and transport",
+   "text": "El autobús sale temprano y llega antes del mediodía."
+  },
+  {
+   "lang": "es",
+   "topic": "travel and transport",
+   "text": "¿Prefieres viajar en tren o en coche este fin de semana?"
+  },
+  {
+   "lang": "es",
+   "topic": "travel and transport",
+   "text": "Compramos dos billetes baratos para viajar el próximo lunes."
+  },
+  {
+   "lang": "es",
+   "topic": "travel and transport",
+   "text": "El avión despega con retraso por el mal tiempo."
+  },
+  {
+   "lang": "es",
+   "topic": "travel and transport",
+   "text": "Caminamos hasta la estación porque el taxi tardaba mucho."
+  },
+  {
+   "lang": "es",
+   "topic": "work and school",
+   "text": "Trabajo de lunes a viernes en una oficina pequeña."
+  },
+  {
+   "lang": "es",
+   "topic": "work and school",
+   "text": "La escuela abre temprano y cierra por la tarde."
+  },
+  {
+   "lang": "es",
+   "topic": "work and school",
+   "text": "¿Prefieres estudiar en casa o en la biblioteca?"
+  },
+  {
+   "lang": "es",
+   "topic": "work and school",
+   "text": "Tengo tres reuniones hoy y dos clases mañana."
+  },
+  {
+   "lang": "es",
+   "topic": "work and school",
+   "text": "Los estudiantes aprenden cosas nuevas cada semana en clase."
+  },
+  {
+   "lang": "es",
+   "topic": "nature and animals",
+   "text": "El río baja claro entre piedras pequeñas durante la mañana."
+  },
+  {
+   "lang": "es",
+   "topic": "nature and animals",
+   "text": "Los pájaros cantan fuerte cuando sale el sol brillante."
+  },
+  {
+   "lang": "es",
+   "topic": "nature and animals",
+   "text": "¿Has visto cómo corren los conejos en el campo?"
+  },
+  {
+   "lang": "es",
+   "topic": "nature and animals",
+   "text": "En el bosque viven tres zorros junto a un lago."
+  },
+  {
+   "lang": "es",
+   "topic": "nature and animals",
+   "text": "Las abejas buscan flores dulces para hacer su miel."
+  },
+  {
+   "lang": "es",
+   "topic": "health and the body",
+   "text": "Bebo agua todos los días para cuidar mi cuerpo."
+  },
+  {
+   "lang": "es",
+   "topic": "health and the body",
+   "text": "Caminar media hora ayuda a fortalecer las piernas."
+  },
+  {
+   "lang": "es",
+   "topic": "health and the body",
+   "text": "¿Duermes lo suficiente para sentirte con energía?"
+  },
+  {
+   "lang": "es",
+   "topic": "health and the body",
+   "text": "Como dos frutas cada mañana antes del trabajo."
+  },
+  {
+   "lang": "es",
+   "topic": "health and the body",
+   "text": "Respirar despacio calma la mente y relaja los hombros."
+  },
+  {
+   "lang": "es",
+   "topic": "home and family",
+   "text": "Mi casa es pequeña pero siempre está muy limpia."
+  },
+  {
+   "lang": "es",
+   "topic": "home and family",
+   "text": "¿Quién cocina la cena en tu familia normalmente?"
+  },
+  {
+   "lang": "es",
+   "topic": "home and family",
+   "text": "Tengo dos hermanos y compartimos una habitación grande."
+  },
+  {
+   "lang": "es",
+   "topic": "home and family",
+   "text": "Por la noche hablamos juntos en la sala tranquila."
+  },
+  {
+   "lang": "es",
+   "topic": "home and family",
+   "text": "Los fines de semana limpiamos el patio con alegría."
+  },
+  {
+   "lang": "es",
+   "topic": "shopping and money",
+   "text": "Quiero comprar pan y leche para la cena de hoy"
+  },
+  {
+   "lang": "es",
+   "topic": "shopping and money",
+   "text": "¿Cuánto cuesta esta camisa azul en la tienda grande?"
+  },
+  {
+   "lang": "es",
+   "topic": "shopping and money",
+   "text": "Pago con tres monedas porque no tengo más dinero"
+  },
+  {
+   "lang": "es",
+   "topic": "shopping and money",
+   "text": "La fruta fresca siempre parece un poco más cara aquí"
+  },
+  {
+   "lang": "es",
+   "topic": "shopping and money",
+   "text": "Guardo parte de mi sueldo cada mes para ahorrar"
+  },
+  {
+   "lang": "es",
+   "topic": "science and how things work",
+   "text": "El agua se convierte en vapor cuando recibe mucho calor."
+  },
+  {
+   "lang": "es",
+   "topic": "science and how things work",
+   "text": "¿Por qué el cielo cambia de color durante el día?"
+  },
+  {
+   "lang": "es",
+   "topic": "science and how things work",
+   "text": "Las plantas necesitan unas seis horas de luz cada día."
+  },
+  {
+   "lang": "es",
+   "topic": "science and how things work",
+   "text": "El jabón ayuda a quitar la suciedad de las manos."
+  },
+  {
+   "lang": "es",
+   "topic": "science and how things work",
+   "text": "Los imanes atraen algunos metales sin necesidad de tocarlos."
+  }
+ ]
+}

@@ -57,6 +57,8 @@ def test_transcribe_sends_language_bias_only_when_supported(tmp_path, monkeypatc
     sent = {}
 
     class Reply:
+        status_code = 200
+
         def raise_for_status(self):
             pass
 
@@ -71,3 +73,29 @@ def test_transcribe_sends_language_bias_only_when_supported(tmp_path, monkeypatc
     assert api.transcribe(b"RIFF", language=language)["transcript"] == "chat"
     assert sent.get("languageBias") == bias
     assert sent["mode"] == "PUSH_TO_TALK" and sent["audioEncoding"] == "WAV"
+
+
+def test_transcribe_retries_network_errors(tmp_path, monkeypatch):
+    import httpx
+    monkeypatch.setattr(meta_api, "LEDGER", tmp_path / "costs.jsonl")
+    monkeypatch.setattr(meta_api.time, "sleep", lambda s: None)
+    api = meta_api.MetaAPI(api_key="test")
+    calls = []
+
+    class Reply:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"transcript": "gato", "audioDurationMs": 500}
+
+    def flaky_post(url, headers, files):
+        calls.append(1)
+        if len(calls) < 3:
+            raise httpx.ConnectError("DNS lookup failed")
+        return Reply()
+
+    monkeypatch.setattr(api.http, "post", flaky_post)
+    assert api.transcribe(b"RIFF")["transcript"] == "gato" and len(calls) == 3

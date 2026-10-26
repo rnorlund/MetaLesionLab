@@ -730,9 +730,87 @@ def _conditions_in(path: Path) -> list[dict]:
     return found
 
 
+# Lesion runs from scripts/model_lab.py: TOT_DATA_DIR/lesion/<set>/<condition>.json, listed in
+# <set>/index.json. Featured conditions (the clearest targeted-vs-random contrasts and one example per
+# damage site) lead the list with plain labels; the rest stay one click away.
+FEATURED = {
+    "demo_en": {
+        "intact": "Intact model",
+        "naming-en-mlp-mean-f0.2973": "Naming units switched off (30% of neurons)",
+        "naming-en-mlp-mean-f0.2973-random-seed0": "Control: the same number of random neurons",
+        "visual-en-mlp-mean-f0.2548": "Seeing units switched off (25% of neurons)",
+        "visual-en-mlp-mean-f0.2548-random-seed0": "Control: the same number of random neurons",
+        "language-en-mlp-mean-f0.3173": "Language units switched off (32% of neurons)",
+        "language-en-mlp-mean-f0.3173-random-seed0": "Control: the same number of random neurons",
+        "naming-en-heads-mean-f0.4042": "Naming attention heads switched off (40%)",
+        "vision-tower-noise-x4.223": "Vision damaged: look-alike and related-meaning errors",
+        "layers-40-47-noise-x2.828": "Late layers 41–48 damaged: sound errors, self-corrections",
+        "layers-0-7-noise-x3": "Early layers 1–8 damaged: jargon",
+    },
+    "demo_es": {
+        "intact": "Intact model (Spanish)",
+        "naming-en-mlp-mean-f0.2973": "Naming units switched off: it switches to English",
+        "naming-en-mlp-mean-f0.2973-random-seed0": "Control: the same number of random neurons",
+    },
+}
+_LOCALIZERS = {"naming": "naming", "visual": "seeing", "language": "language"}
+
+
+def _view_spec(raw: dict, units: dict, random_control: bool) -> dict:
+    """The fields the Model Lab page reads, from a model_lab spec (decoder layers there are 0-based)."""
+    name = str(raw.get("name", ""))
+    site = (raw.get("recipe") or {}).get("site") or ""
+    if name == "intact":
+        return {"site": "intact"}
+    view: dict = {"method": raw.get("method"), "random": random_control}
+    if site.startswith(("vision_tower", "projector")):
+        view["site"] = "vision tower" if site.startswith("vision") else "projector"
+    else:
+        view["site"] = "decoder"
+        layers = raw.get("layers") or sorted({int(k) for key in ("mlp_by_layer", "heads_by_layer")
+                                               for k in (units.get(key) or {})})
+        view["layers"] = [int(layer) + 1 for layer in layers]
+    if (loc := name.split("_")[0]) in _LOCALIZERS:
+        view["localizer"] = _LOCALIZERS[loc] + (" (random control)" if random_control else "")
+        if (frac := re.search(r"\bf(0\.\d+|1(?:\.0+)?)\b", name.replace("-", " "))):
+            view["fraction"] = float(frac.group(1))
+    if raw.get("method") == "noise" and raw.get("noise_scale"):
+        view["noise_scale"] = raw["noise_scale"]
+    view["units"] = (units.get("mlp") or 0) + (units.get("heads") or 0) or None
+    return view
+
+
+def _real_condition(path: Path, set_name: str) -> dict | None:
+    key = (path, "real")
+    mtime = path.stat().st_mtime
+    if (hit := _lab_cache.get(key)) and hit[0] == mtime:
+        return hit[1]
+    raw = read_json(path)
+    if not isinstance(raw, dict) or not isinstance(raw.get("items"), list):
+        return None
+    stem = path.stem
+    random_control = "random" in stem
+    c = {**raw, "id": f"{set_name}:{stem}", "set": set_name, "raw_spec": raw.get("spec"),
+         "spec": _view_spec(raw.get("spec") or {}, raw.get("units") or {}, random_control),
+         "featured": stem in FEATURED.get(set_name, {}),
+         "label": FEATURED.get(set_name, {}).get(stem)}
+    _lab_cache[key] = (mtime, c)
+    return c
+
+
 def lab_conditions() -> tuple[list[dict], bool]:
-    """Real conditions from TOT_DATA_DIR/lesion when there are any, else the shipped sample."""
-    real = [c for p in sorted(LESION_DIR.glob("*.json")) for c in _conditions_in(p)] if LESION_DIR.is_dir() else []
+    """Real conditions from TOT_DATA_DIR/lesion when there are any, else the shipped sample.
+    Per-set folders (with index.json) come first, featured conditions in curated order."""
+    real: list[dict] = []
+    if LESION_DIR.is_dir():
+        for set_dir in sorted(p for p in LESION_DIR.iterdir() if (p / "index.json").is_file()):
+            index = read_json(set_dir / "index.json") or {}
+            files = [set_dir / e["file"] for e in index.get("conditions", []) if isinstance(e, dict) and e.get("file")]
+            conds = [c for f in files if f.is_file() and (c := _real_condition(f, set_dir.name))]
+            order = list(FEATURED.get(set_dir.name, {}))
+            conds.sort(key=lambda c: (order.index(c["id"].split(":", 1)[1]) if c["featured"] else len(order)))
+            real += conds
+        real += [c for p in sorted(LESION_DIR.glob("*.json")) for c in _conditions_in(p)]
     if real:
         return real, False
     return _conditions_in(SAMPLE_LAB), True
@@ -740,7 +818,7 @@ def lab_conditions() -> tuple[list[dict], bool]:
 
 def is_baseline(c: dict) -> bool:
     spec = c.get("spec") or {}
-    return "intact" in str(c["id"]).lower() or str(spec.get("site", "")).lower() in ("", "none", "intact")
+    return str(c["id"]).lower().endswith("intact") or str(spec.get("site", "")).lower() in ("", "none", "intact")
 
 
 def accuracy_pct(c: dict) -> float | None:
@@ -779,7 +857,8 @@ def condition_summary(c: dict, sample: bool) -> dict:
             counts[it.get("code", "?")] = counts.get(it.get("code", "?"), 0) + 1
     return {"id": c["id"], "label": c.get("label") or describe_spec(c.get("spec") or {}), "spec": c.get("spec") or {},
             "accuracy": accuracy_pct(c), "counts": counts, "n_items": len(c["items"]),
-            "baseline": is_baseline(c), "sample": sample or bool(c.get("sample")), "note": c.get("note")}
+            "baseline": is_baseline(c), "sample": sample or bool(c.get("sample")), "note": c.get("note"),
+            "set": c.get("set"), "featured": bool(c.get("featured")), "flags": c.get("flags")}
 
 
 @app.get("/api/lab/conditions")

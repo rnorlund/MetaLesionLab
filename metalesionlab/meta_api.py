@@ -177,20 +177,29 @@ class MetaAPI:
         _record("sam", SAM_MODEL, SAM_PRICE)
         return parse_sam_output(resp.output_text), resp.output_text
 
-    def transcribe(self, wav: bytes, language: str | None = None) -> dict:
+    def transcribe(self, wav: bytes, language: str | None = None, retries: int = 3) -> dict:
         """Transcribe a mono 16-bit PCM WAV (16 or 24 kHz, up to 10 minutes).
 
         `language` ("fr" or "French") is sent as the `languageBias` hint, which steers recognition
         toward that language without forcing it. Without it, or for a language outside the 25
-        supported ones, the model detects the language itself."""
+        supported ones, the model detects the language itself. Network failures and 5xx replies
+        are retried with backoff (1, 3, 9 s); a 4xx is final."""
         _check_budget()
         request = {"model": ASR_MODEL, "audioEncoding": "WAV", "mode": "PUSH_TO_TALK"}
         if language and (name := asr_language_name(language)):
             request["languageBias"] = [name]
-        resp = self.http.post("/asr/transcribe", headers={"Accept": "application/json"}, files={
-            "request": (None, json.dumps(request), "application/json"),
-            "audio": ("audio.wav", wav, "audio/wav"),
-        })
+        for attempt in range(retries + 1):
+            try:
+                resp = self.http.post("/asr/transcribe", headers={"Accept": "application/json"}, files={
+                    "request": (None, json.dumps(request), "application/json"),
+                    "audio": ("audio.wav", wav, "audio/wav"),
+                })
+                if resp.status_code < 500 or attempt == retries:
+                    break
+            except httpx.TransportError:
+                if attempt == retries:
+                    raise
+            time.sleep(3 ** attempt)
         resp.raise_for_status()
         body = resp.json()
         ms = body.get("audioDurationMs") or 0
