@@ -36,6 +36,15 @@ TOKEN_PRICES = {
     "muse-spark-1.2": (1.25, 0.15, 4.25),
     "muse-wonder-1.0": (4.00, 0.20, 20.00),
 }
+# The 25 languages Muse Voice Transcribe supports; `languageBias` takes the English name.
+# https://dev.meta.ai/docs/speech-to-text#language-biasing (checked 2026-10-26)
+ASR_LANGUAGES = {
+    "ar": "Arabic", "bn": "Bengali", "nl": "Dutch", "en": "English", "fr": "French", "de": "German",
+    "he": "Hebrew", "hi": "Hindi", "id": "Indonesian", "it": "Italian", "ja": "Japanese", "kn": "Kannada",
+    "ko": "Korean", "ms": "Malay", "zh": "Mandarin Chinese", "mr": "Marathi", "pl": "Polish",
+    "pt": "Portuguese", "es": "Spanish", "tl": "Tagalog", "ta": "Tamil", "te": "Telugu", "th": "Thai",
+    "tr": "Turkish", "vi": "Vietnamese",
+}
 IMAGE_PRICE = 0.01
 SAM_PRICE = 2.50 / 1000
 ASR_PRICE_PER_HOUR = 0.18
@@ -160,10 +169,15 @@ class MetaAPI:
         _record("sam", SAM_MODEL, SAM_PRICE)
         return parse_sam_output(resp.output_text), resp.output_text
 
-    def transcribe(self, wav: bytes) -> dict:
-        """Transcribe a mono 16-bit PCM WAV (16 or 24 kHz, up to 10 minutes)."""
+    def transcribe(self, wav: bytes, language: str | None = None) -> dict:
+        """Transcribe a mono 16-bit PCM WAV (16 or 24 kHz, up to 10 minutes).
+
+        `language` ("fr" or "French") is sent as the `languageBias` hint, which steers recognition
+        toward that language without forcing it. Omitted, the model detects the language itself."""
         _check_budget()
         request = {"model": ASR_MODEL, "audioEncoding": "WAV", "mode": "PUSH_TO_TALK"}
+        if language:
+            request["languageBias"] = [ASR_LANGUAGES.get(language.lower(), language)]
         resp = self.http.post("/asr/transcribe", headers={"Accept": "application/json"}, files={
             "request": (None, json.dumps(request), "application/json"),
             "audio": ("audio.wav", wav, "audio/wav"),
