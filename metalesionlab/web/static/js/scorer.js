@@ -12,10 +12,12 @@
   function $(id) { return document.getElementById(id); }
   function task() { return $('task').value; }
   function mode() { var el = document.querySelector('input[name="mode"]:checked'); return el ? el.value : 'typed'; }
+  function simple(s) { return String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); }
   function fmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
 
   // --- persistence ------------------------------------------------------------------------
   function save() {
+    if (S.demo) return;  // the tour's replayed rows are never stored
     var rows = S.rows.map(function (r) {
       var c = Object.assign({}, r);
       delete c.blob; delete c.audioUrl;
@@ -88,10 +90,13 @@
       sel.innerHTML = '';
       if (!S.sets.length) sel.appendChild(h('option', { value: '', text: 'No picture sets yet: build one in Test Studio' }));
       S.sets.forEach(function (s) {
-        sel.appendChild(h('option', { value: s.id, text: s.name + ' · ' + s.kept + ' pictures · ' + T.langName(S.langs, s.lang) }));
+        sel.appendChild(h('option', { value: s.id, text: (s.demo ? 'Demo set' : s.name) + ' · ' + s.kept + ' pictures · ' + T.langName(S.langs, s.lang) }));
       });
+      var has = function (id) { return id && S.sets.some(function (s) { return s.id === id; }); };
       var want = T.param('set');
-      if (want && S.sets.some(function (s) { return s.id === want; })) sel.value = want;
+      var demo = has('demo_en') ? 'demo_en' : (S.sets.filter(function (s) { return s.demo; })[0] || {}).id;
+      if (has(want)) sel.value = want;
+      else if (has(demo)) sel.value = demo;
       return onSet();
     }).catch(function (e) { T.toast(e.message, 'error'); });
   }
@@ -189,11 +194,11 @@
   }
 
   // --- stage --------------------------------------------------------------------------------
-  function showStage() {
+  function showStage(noScroll) {
     var st = $('stage');
     $('stage-picture').classList.remove('compact');
     st.hidden = false;
-    st.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!noScroll) st.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function hideStage() {
     $('stage').hidden = true;
@@ -327,6 +332,7 @@
   function applyResult(row, res) {
     row.status = 'done';
     row.response = res.transcript != null ? res.transcript : res.response;
+    row.scored = res.scored_response;
     row.code = res.code;
     row.second = res.second;
     row.second_status = res.second_status;
@@ -385,7 +391,10 @@
       if (row.status === 'pending') heard = h('span', { class: 'muted' }, [h('span', { class: 'spinner', 'aria-hidden': 'true' }), row.mode === 'voice' ? ' transcribing…' : ' scoring…']);
       else if (row.status === 'error') heard = h('span', null, [h('span', { class: 'xsmall', style: { color: '#7F1D1D' }, text: row.error || 'Failed' }), ' ',
         (row.blob || row.mode === 'typed') ? h('button', { type: 'button', class: 'btn btn-small', onclick: function () { retry(row); } }, 'Retry') : null]);
-      else heard = row.response ? row.response : h('span', { class: 'muted', text: '(nothing)' });
+      else if (!row.response) heard = h('span', { class: 'muted', text: '(nothing)' });
+      else if (row.scored != null && simple(row.scored) !== simple(row.response)) {
+        heard = h('span', null, [row.response, h('span', { class: 'rationale', text: 'scored as "' + row.scored + '"' + (simple(row.scored) ? '' : ' (nothing)') })]);
+      } else heard = row.response;
       var changed = row.status === 'done' && T.normCode(row.reviewer) !== T.normCode(row.code);
       var del = h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Remove item ' + row.n, title: 'Remove', onclick: function () {
         S.rows = S.rows.filter(function (r) { return r !== row; });
@@ -603,6 +612,7 @@
     if (task() === 'naming') {
       var rows = S.rows.filter(function (r) { return r.status === 'done'; }).map(function (r) {
         return { speaker: r.speaker, set: r.set, item: r.index + 1, target: r.target, lang: r.lang, response: r.response,
+          scored_response: r.scored == null ? r.response : r.scored,
           auto_code: r.code, second_rater_code: r.second ? r.second.code : '', second_rater_rationale: r.second ? r.second.rationale : '',
           raters_agree: r.agree == null ? '' : r.agree, reviewer_code: T.normCode(r.reviewer), reviewer_changed: T.normCode(r.reviewer) !== T.normCode(r.code),
           mode: r.mode, duration_s: r.duration == null ? '' : r.duration, scored_at: r.scored_at };
@@ -655,8 +665,61 @@
   });
   window.addEventListener('beforeunload', function (e) { if (S.running) { e.preventDefault(); e.returnValue = ''; } });
 
+  // --- guided-tour replay ---------------------------------------------------------------------------
+  /* The tour replays answers recorded once with the real pipeline (static/tour/scorer_demo.json):
+     no microphone, no API calls, nothing saved. The visitor's own rows come back afterwards. */
+  function demoStart(fx) {
+    if (S.demo) return;
+    S.demo = { saved: S.rows, fx: fx };
+    S.rows = [];
+    if (task() !== 'naming') { $('task').value = 'naming'; onTask(); }
+    if (S.sets.some(function (s) { return s.id === fx.set; }) && $('set').value !== fx.set) { $('set').value = fx.set; onSet(); }
+    $('restored').hidden = true;
+    renderTable();
+    renderSummary();
+  }
+  function demoShow(i) {
+    var fx = S.demo.fx, it = fx.items[i];
+    showStage(true);
+    $('stage').classList.add('demo');
+    $('stage-count').textContent = 'Item ' + (i + 1) + ' of ' + fx.items.length + ' · recorded demo';
+    $('stage-rec').hidden = true;
+    $('stage-typed').hidden = true;
+    var pic = $('stage-picture');
+    pic.innerHTML = '';
+    pic.appendChild(h('img', { src: T.mediaUrl(fx.set, it.image), alt: 'Picture to name, item ' + (i + 1) }));
+    setControls([]);
+    $('stage-help').textContent = 'Replaying a recorded answer: no microphone and no API calls.';
+  }
+  function demoAdd(i) {
+    var fx = S.demo.fx, it = fx.items[i];
+    var row = { id: S.nextId++, n: S.rows.length + 1, index: it.item, target: it.target, image: it.image, set: fx.set,
+      lang: fx.lang, speaker: 'DEMO', mode: 'voice', status: 'pending', second_on: true, demo: true };
+    S.rows.push(row);
+    renderTable();
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        if (!S.demo) return resolve(row);
+        Object.assign(row, { status: 'done', response: it.transcript, scored: it.scored_response, code: it.code, second: it.second,
+          second_status: it.second_status, agree: it.agree, duration: it.duration_s, reviewer: it.code, scored_at: fx.recorded });
+        renderTable();
+        renderSummary();
+        resolve(row);
+      }, 900);
+    });
+  }
+  function demoEnd() {
+    if (!S.demo) return;
+    S.rows = S.demo.saved;
+    S.demo = null;
+    $('stage').classList.remove('demo');
+    hideStage();
+    renderTable();
+    renderSummary();
+  }
+
   restore();
-  T.status().then(function (st) {
+  var ready = T.status().then(function (st) {
     S.status = st;
     S.langs = st ? st.languages : [{ code: 'en', name: 'English', verified: true }, { code: 'es', name: 'Spanish', verified: true }];
     T.fillLanguages($('lang'), S.langs, 'en');
@@ -665,7 +728,13 @@
     applyFeatures();
     onTask();
     renderTable();
-    loadSets();
     loadScenes();
+    return loadSets();
   });
+
+  T.scorer = {
+    ready: ready,
+    demoStart: demoStart, demoShow: demoShow, demoAdd: demoAdd, demoEnd: demoEnd,
+    demoRows: function () { return S.demo ? S.rows.length : 0; }
+  };
 })();

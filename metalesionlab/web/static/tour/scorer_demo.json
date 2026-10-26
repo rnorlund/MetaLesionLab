@@ -1,0 +1,71 @@
+{
+ "about": "Recorded once with the real pipeline for the guided tour: answers synthesized with macOS say (Samantha), sent to POST /api/score/naming (Muse Voice Transcribe, the naming-error classifier and the Muse Spark second rater). The tour replays these replies and makes no API calls.",
+ "recorded": "2026-10-26",
+ "set": "demo_en",
+ "lang": "en",
+ "items": [
+  {
+   "item": 0,
+   "target": "cat",
+   "image": "candidates/cat_0.png",
+   "said": "dog",
+   "transcript": "dog",
+   "scored_response": "dog",
+   "code": "Semantic",
+   "head": "dog",
+   "lexical": true,
+   "semantic": true,
+   "phonological": false,
+   "second": {
+    "code": "Semantic",
+    "rationale": "Dog and cat are both members of the animal category."
+   },
+   "second_status": "ok",
+   "agree": true,
+   "duration_s": 0.35,
+   "alternates": []
+  },
+  {
+   "item": 2,
+   "target": "anchor",
+   "image": "candidates/anchor_1.png",
+   "said": "ankle",
+   "transcript": "ankle",
+   "scored_response": "ankle",
+   "code": "Formal",
+   "head": "ankle",
+   "lexical": true,
+   "semantic": false,
+   "phonological": true,
+   "second": {
+    "code": "Formal",
+    "rationale": "ankle shares the first sound, stressed vowel, and multiple sounds with anchor but is unrelated in meaning."
+   },
+   "second_status": "ok",
+   "agree": true,
+   "duration_s": 0.51,
+   "alternates": []
+  },
+  {
+   "item": 1,
+   "target": "umbrella",
+   "image": "candidates/umbrella_0.png",
+   "said": "umbrella",
+   "transcript": "umbrella",
+   "scored_response": "umbrella",
+   "code": "Correct",
+   "head": "umbrella",
+   "lexical": null,
+   "semantic": null,
+   "phonological": null,
+   "second": {
+    "code": "Correct",
+    "rationale": "Response matches target exactly."
+   },
+   "second_status": "ok",
+   "agree": true,
+   "duration_s": 0.6,
+   "alternates": []
+  }
+ ]
+}

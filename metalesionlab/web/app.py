@@ -28,15 +28,16 @@ from typing import Literal
 
 import httpx
 import openai
-from fastapi import FastAPI, File, Form, Header, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel, Field
+from wordfreq import zipf_frequency
 
 from metalesionlab import meta_api
 from metalesionlab.meta_api import BudgetExceeded, MetaAPI, load_api_key
-from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, spark_semantic_judge
+from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, is_word, spark_semantic_judge, tokens
 from metalesionlab.web import exports
 from metalesionlab.web.limits import client_ip, limit_for, limiter
 
@@ -277,22 +278,27 @@ def set_summary(d: Path) -> dict:
         state, error = "incomplete", None
     items = (manifest or {}).get("items", [])
     statuses = [it.get("status") for it in items]
+    lang = (manifest or meta).get("lang")
+    name = meta.get("name") or (f"Demo set ({LANGUAGE_NAMES.get(lang, lang)})" if d.name.startswith("demo_") else d.name)
     return {
-        "id": d.name, "name": meta.get("name") or d.name, "status": state, "error": error,
+        "id": d.name, "name": name, "status": state, "error": error,
         "lang": (manifest or meta).get("lang"), "style": (manifest or meta).get("style"),
         "n_items": len(items) or len(meta.get("words", [])), "kept": statuses.count("kept"),
         "review": statuses.count("review"), "excluded": statuses.count("excluded"),
         "created": meta.get("created") or d.stat().st_mtime,
         "source": meta.get("source", "folder"), "editable": not PUBLIC,  # else only with the edit token
+        "demo": d.name.startswith("demo_"), "unlisted": bool(meta.get("unlisted")),
     }
 
 
 @app.get("/api/sets")
-def list_sets():
+def list_sets(show_all: bool = Query(False, alias="all")):
+    """Every set, newest first. Sets whose webmeta.json says "unlisted" (test builds) are left out
+    unless ?all=1; they stay reachable by id."""
     if not SETS_DIR.is_dir():
         return []
     sets = [set_summary(d) for d in SETS_DIR.iterdir() if d.is_dir() and SET_ID.match(d.name)]
-    return sorted(sets, key=lambda s: -s["created"])
+    return sorted((s for s in sets if show_all or not s["unlisted"]), key=lambda s: -s["created"])
 
 
 @app.get("/api/sets/{set_id}")
@@ -565,14 +571,34 @@ def _picture_for_rater(set_id: str | None, item: dict | None) -> bytes | None:
     return buf.getvalue()
 
 
+def collapse_repeat(response: str, lang: str, target: str) -> str:
+    """Muse Voice Transcribe sometimes doubles a short one-word answer ("dog,dog", "umbrella umbrella",
+    "umbrellaumbrella,"; 4 of about 20 synthesized clips on Oct 26). An exact immediate repeat of the
+    whole answer is scored once, as the PNT scores the first complete response. A glued token is split
+    only when its half is a word and the whole never occurs in wordfreq ("bonbon" stays). The raw
+    transcript is kept."""
+    words = tokens(response)
+    n = len(words)
+    if n >= 2 and n % 2 == 0 and words[:n // 2] == words[n // 2:]:
+        return " ".join(words[:n // 2])
+    if n == 1:
+        w, half = words[0], len(words[0]) // 2
+        if (len(w) % 2 == 0 and half >= 3 and w[:half] == w[half:] and w != target.lower()
+                and is_word(w[:half], lang) and zipf_frequency(w, lang) == 0):
+            return w[:half]
+    return response
+
+
 def score_naming(target: str, response: str, lang: str, set_id: str | None, item: dict | None,
                  second_rater: bool) -> dict:
-    """Code one response; a set item supplies the target, accepted alternates and the picture."""
+    """Code one response; a set item supplies the target, accepted alternates and the picture.
+    "response" in the reply is what was said or typed; "scored_response" is what was coded."""
     if item:
         target = item["word"]
     alternates = tuple(item.get("alternates", [])) if item else ()
+    said, response = response, collapse_repeat(response, lang, target)
     coding = classify(target, response, lang, alternates=alternates, judge=judge)
-    out = {"target": target, "response": response, "code": coding.code, "head": coding.head,
+    out = {"target": target, "response": said, "scored_response": response, "code": coding.code, "head": coding.head,
            "lexical": coding.lexical, "semantic": coding.semantic, "phonological": coding.phonological,
            "alternates": list(alternates), "second": None, "second_status": "off", "agree": None}
     if second_rater:

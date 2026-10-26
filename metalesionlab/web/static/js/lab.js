@@ -148,7 +148,7 @@
     grid.innerHTML = '';
     c.items.forEach(function (it) {
       var pic = it.image_url ? h('img', { src: it.image_url + '?w=320', alt: 'Muse Image drawing: ' + it.word, loading: 'lazy' }) : h('span', { text: '[' + it.word + ']' });
-      grid.appendChild(h('button', { type: 'button', class: 'card', 'aria-pressed': it.word === L.word ? 'true' : 'false', onclick: function () { L.word = it.word; history.replaceState(null, '', '/lab?c=' + encodeURIComponent(c.id) + '&item=' + encodeURIComponent(it.word)); renderItems(); renderLens(); } }, [
+      grid.appendChild(h('button', { type: 'button', class: 'card', 'data-word': it.word, 'aria-pressed': it.word === L.word ? 'true' : 'false', onclick: function () { L.word = it.word; history.replaceState(null, '', '/lab?c=' + encodeURIComponent(c.id) + '&item=' + encodeURIComponent(it.word)); renderItems(); renderLens(); } }, [
         h('div', { class: 'pic' }, pic),
         h('div', { class: 'body' }, [
           h('div', { class: 'kv' }, [h('span', { text: 'target' }), h('span', { style: { fontFamily: 'var(--sans)', fontWeight: '600' }, text: it.word })]),
@@ -217,16 +217,22 @@
     axis.appendChild(svg('text', { x: (x0 + x1) / 2, y: y1 + 34, 'text-anchor': 'middle' }, 'decoder layer'));
     axis.appendChild(svg('text', { x: x0 - 8, y: y0 - 8, 'text-anchor': 'end' }, 'p'));
     root.appendChild(axis);
+    var reveal = svg('rect', { x: 0, y: 0, width: W, height: H });
+    root.appendChild(svg('defs', null, svg('clipPath', { id: 'lens-reveal' }, reveal)));
+    var lines = svg('g', { 'clip-path': 'url(#lens-reveal)' });
     series.forEach(function (s) {
       var pts = s.item.lens.p_correct.map(function (p, i) { return x(i + 1).toFixed(1) + ',' + y(p).toFixed(1); }).join(' ');
-      root.appendChild(svg('polyline', { points: pts, fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+      lines.appendChild(svg('polyline', { points: pts, fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
     });
+    root.appendChild(lines);
+    var ends = svg('g');
+    root.appendChild(ends);
     // end markers and selective end labels (dropped when they would collide)
     var ys = last.map(function (p) { return y(p); });
     series.forEach(function (s, i) {
-      root.appendChild(svg('circle', { cx: x(LAYERS), cy: ys[i], r: 4, fill: s.color, stroke: '#FFFFFF', 'stroke-width': 2 }));
+      ends.appendChild(svg('circle', { cx: x(LAYERS), cy: ys[i], r: 4, fill: s.color, stroke: '#FFFFFF', 'stroke-width': 2 }));
       var clash = i > 0 && Math.abs(ys[i] - ys[0]) < 13;
-      if (!clash) root.appendChild(svg('text', { x: x(LAYERS) + 9, y: ys[i] + 4, class: 'end-label' }, (+last[i]).toFixed(2)));
+      if (!clash) ends.appendChild(svg('text', { x: x(LAYERS) + 9, y: ys[i] + 4, class: 'end-label' }, (+last[i]).toFixed(2)));
     });
     // hover layer: crosshair + tooltip
     var cross = svg('line', { y1: y0, y2: y1, stroke: '#9CA3AF', 'stroke-width': 1, visibility: 'hidden' });
@@ -241,7 +247,10 @@
     function show(evt) {
       var rect = root.getBoundingClientRect(), scale = W / rect.width;
       var vx = (evt.clientX - rect.left) * scale;
-      var layer = Math.max(1, Math.min(LAYERS, Math.round((vx - x0) / (x1 - x0) * (LAYERS - 1)) + 1));
+      showLayer(Math.max(1, Math.min(LAYERS, Math.round((vx - x0) / (x1 - x0) * (LAYERS - 1)) + 1)));
+    }
+    function showLayer(layer) {
+      var rect = root.getBoundingClientRect(), scale = W / (rect.width || W);
       var cx = x(layer);
       cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.setAttribute('visibility', 'visible');
       tip.innerHTML = '';
@@ -267,6 +276,28 @@
     hit.addEventListener('pointermove', show);
     hit.addEventListener('pointerdown', show);
     hit.addEventListener('pointerleave', hide);
+
+    /* Draw the curves from layer 1 to 52 with the crosshair following (used by the guided tour). */
+    function play(ms) {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !ms) { showLayer(LAYERS); return Promise.resolve(); }
+      ends.setAttribute('visibility', 'hidden');
+      return new Promise(function (resolve) {
+        var t0 = null;
+        function frame(t) {
+          if (!root.isConnected) return resolve();
+          t0 = t0 == null ? t : t0;
+          var f = Math.min(1, (t - t0) / ms), layer = 1 + f * (LAYERS - 1);
+          reveal.setAttribute('width', x(layer) + 3);
+          showLayer(Math.round(layer));
+          if (f < 1) requestAnimationFrame(frame);
+          else { reveal.setAttribute('width', W); ends.setAttribute('visibility', 'visible'); resolve(); }
+        }
+        reveal.setAttribute('width', 0);
+        requestAnimationFrame(frame);
+      });
+    }
+    L.chart = { show: showLayer, hide: hide, play: play };
   }
 
   function drawTable(series, lesSet, word) {
@@ -290,6 +321,29 @@
       }))));
     });
     table.appendChild(tb);
+  }
+
+  /* What the word lens shows for one item, for captions and the guided tour. */
+  function lensFacts(word) {
+    word = word || L.word;
+    var les = L.cur.baseline ? null : itemIn(L.cur, word), intact = itemIn(L.base, word) || (L.cur.baseline ? itemIn(L.cur, word) : null);
+    var f = { word: word, label: L.cur.label, sample: L.sample, baseline: !!L.cur.baseline, spec: L.cur.spec || {},
+      layers: rangeText(lesionedLayers(L.cur.spec)), accuracy: L.cur.accuracy, baseAccuracy: L.base ? L.base.accuracy : null };
+    if (intact && intact.lens) {
+      var tops = intact.lens.top.map(function (t) { return t[0]; }), p = intact.lens.p_correct;
+      var first = tops.findIndex(function (w) { return norm(w) === norm(word); }), concept = -1;
+      for (var i = Math.max(0, first - 6); first >= 0 && i < first; i++) if (/[^\u0000-\u024F]/.test(tops[i] || '')) { concept = i; break; }
+      var rise = p.findIndex(function (v) { return v > 0.001; });
+      f.intact = { emerge: first >= 0 ? first + 1 : null, concept: concept >= 0 ? concept + 1 : null,
+        conceptWord: concept >= 0 ? shown(tops[concept]) : null, rise: rise >= 0 ? rise + 1 : null, final: +p[LAYERS - 1] };
+    }
+    if (les && les.lens) {
+      var c = f.intact && f.intact.concept;
+      f.lesioned = { said: les.said, code: T.normCode(les.code), final: +les.lens.p_correct[LAYERS - 1],
+        winner: shown(les.lens.top[LAYERS - 1][0]),
+        conceptKept: !!(c && norm(les.lens.top[c - 1][0]) === norm(f.intact.conceptWord)) };
+    }
+    return f;
   }
 
   function caption(series, word) {
@@ -483,7 +537,7 @@
     renderHuman();
   }
 
-  T.api('/api/lab/conditions').then(function (res) {
+  var ready = T.api('/api/lab/conditions').then(function (res) {
     L.list = res.conditions;
     L.sample = res.sample || res.conditions.some(function (c) { return c.sample; });
     $('sample-chip').hidden = !L.sample;
@@ -502,4 +556,20 @@
     var id = want && L.list.some(function (c) { return c.id === want; }) ? want : first.id;
     return select(id, T.param('item'));
   }).catch(function (e) { T.toast(e.message, 'error'); });
+
+  // Hooks for the guided tour (tour.js).
+  T.lab = {
+    ready: ready,
+    state: function () { return L; },
+    select: select,
+    selectItem: function (word) {
+      L.word = word;
+      renderItems();
+      renderLens();
+    },
+    facts: lensFacts,
+    showLayer: function (layer) { if (L.chart) L.chart.show(layer); },
+    hideLayer: function () { if (L.chart) L.chart.hide(); },
+    play: function (ms) { return L.chart ? L.chart.play(ms) : Promise.resolve(); }
+  };
 })();

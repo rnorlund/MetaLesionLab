@@ -7,8 +7,8 @@ body.landing { background: #FFFFFF; }
 .lnav-links { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14px; }
 .lnav-links a { color: #E5E7EB; text-decoration: none; padding: 10px 0; }
 .lnav-links a:hover { color: #FFFFFF; text-decoration: underline; }
-.lnav-cta { margin-left: auto; display: flex; gap: 10px; }
-.lbtn { display: inline-flex; align-items: center; text-decoration: none; font-size: 14px; padding: 10px 16px; border-radius: 8px; font-weight: 500; }
+.lnav-cta { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.lbtn { font: inherit; border: 0; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; font-size: 14px; padding: 10px 16px; border-radius: 8px; font-weight: 500; }
 .lbtn-line { color: #F9FAFB; border: 1px solid #6B7280; }
 .lbtn-line:hover { color: #FFFFFF; border-color: #D1D5DB; }
 .lbtn-light { color: var(--ink); background: #F9FAFB; font-weight: 600; }
