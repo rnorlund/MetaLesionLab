@@ -1,4 +1,4 @@
-/* Guided tour: about two minutes across all four pages, with real demo data and no API calls.
+/* Guided tour: about two minutes across the site, AI science first, with real demo data and no API calls.
    The Scorer part replays answers recorded once with the real pipeline (static/tour/scorer_demo.json).
    The current step lives in sessionStorage, so the tour carries on across page loads. */
 (function () {
@@ -100,85 +100,10 @@
 
   // --- the steps ----------------------------------------------------------------------------
   var STEPS = [
-    { page: '/', url: '/', target: function () { return phone() ? '.hero-text h1' : '.hero'; }, title: 'Tippa Lingua in 2 minutes',
-      body: 'Three tools in one pipeline: build a picture-naming test in any language, score spoken answers automatically, then give the same test to an AI model and see where its language breaks. Let’s do one of each with real demo data.' },
+    { page: '/', url: '/', target: function () { return phone() ? '.lens-card' : '.hero-pair'; }, title: 'Tippa Lingua in 2 minutes',
+      body: 'One picture-naming test for people and AI. On the left, a person who can’t find a word; on the right, Muse Glimmer, Meta’s open model, whose best guess we can read after every layer. First we look inside the AI, then you can play against it, then the tools for people. Real demo data, no microphone, no AI calls.' },
 
-    { page: '/studio', url: '/studio?set=' + STUDIO_SET, id: 'studio', before: studioPrep, skip: function () { return !studioItem('gato'); },
-      target: '.card[data-word="gato"]', title: '1 · Build: a Spanish picture test',
-      body: function () {
-        var g = studioItem('gato'), c = keptCandidate(g.item), d = T.studio.data();
-        return 'Muse Image drew ' + g.item.candidates.length + ' candidate pictures for each of the ' + d.manifest.items.length +
-          ' Spanish words. Each is checked: SAM 3.1 found ' + c.sam_objects + ' clear object here (confidence ' + c.sam_confidence.toFixed(2) +
-          '), and Muse Spark, asked to name it in Spanish, said ' + quote(c.spark_name) + '. Both checks pass, so it’s kept.';
-      } },
-
-    { page: '/studio', url: '/studio?set=' + STUDIO_SET, skip: function () { return !studioItem('sierra'); },
-      before: function () {
-        return studioPrep().then(function () { T.studio.openItem(studioItem('sierra').index, { modal: false }); });
-      },
-      target: '#item-dialog .cand',
-      title: 'Held for review',
-      body: function () {
-        var it = studioItem('sierra').item;
-        var names = (it.candidates || []).map(function (c) { return c.spark_name.toLowerCase(); });
-        var same = names.every(function (n) { return n === names[0]; });
-        var said = same ? quote(names[0]) + (names.length === 2 ? ' both times' : ' every time') : names.map(quote).join(' and ');
-        return 'For ' + quote('sierra') + ' (' + (it.hint || it.gloss) + '), Muse Spark said ' + said +
-          (names[0] === 'serrucho' ? ', the everyday Spanish word for a handsaw' : '') +
-          '. People may name this picture differently, so instead of keeping it the tool holds it for a person to decide: accept ' +
-          quote(names[0]) + ' as an alternate name, pick another picture or drop the item.';
-      } },
-
-    { page: '/studio', url: '/studio?set=' + STUDIO_SET, before: studioPrep, skip: function () { return !studioItem('banco'); },
-      target: '.card[data-word="banco"]', title: 'Words with two meanings',
-      body: function () {
-        var it = studioItem('banco').item;
-        return 'Muse Spark also flags words that name more than one picturable thing: ' + quote('banco') + ' can also mean ' +
-          (it.other_meanings || []).join(' or ') + '. ' + (it.hint ? 'This word list pinned it as ' + quote('banco: ' + it.hint) + ', so the picture shows a ' + it.hint + '.'
-            : 'Check that the picture shows the meaning you want.');
-      } },
-
-    { page: '/studio', url: '/studio?set=' + STUDIO_SET, before: studioPrep, target: '#export-panel .btn-row', title: 'Ready to use',
-      body: 'Print picture cards (PDF, 2 to 6 per page), download the norms table (word frequency, length and every check) or the whole set as a ZIP. Use in Scorer gives the test.' },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', id: 'scorer', before: function () { return scorerPrep(0); },
-      skip: function () { return !fxData; },
-      target: function () { return phone() ? '#resp-body tr:nth-child(1)' : ['#stage', '#resp-body tr:nth-child(1)']; },
-      title: '2 · Score: a recorded mini-session',
-      body: function () {
-        var it = fxItem(0);
-        return 'The Scorer shows each picture full-size and records the answer. Here we replay three answers recorded once through the real pipeline, so there’s no microphone and no API call. For the ' +
-          it.target + ' the speaker said ' + quote(it.said) + '. Muse Voice Transcribe heard ' + quote(it.transcript) + ', and the rules coded it ' +
-          T.codeInfo(it.code).label + (it.code === 'Semantic' ? ': related in meaning, not in sound.' : '.');
-      } },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
-      target: '#resp-table', title: 'Sound errors too',
-      body: function () {
-        var a = fxItem(1), b = fxItem(2);
-        return quote(a.transcript) + ' for ' + a.target + ' shares sounds but not meaning: ' + T.codeInfo(a.code).label + '. ' + quote(b.transcript) + ' for ' + b.target + ' is ' +
-          T.codeInfo(b.code).label + '. The codes follow the Philadelphia Naming Test scheme: semantic, formal, mixed, nonword, neologism, unrelated, description and no response.';
-      } },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
-      target: '#resp-body tr:nth-child(1) td:nth-child(6)', title: 'A second opinion',
-      body: function () {
-        var it = fxItem(0), s = it.second || {};
-        return 'Muse Spark codes every answer on its own as a second rater, without seeing the first code. Here it ' +
-          (it.agree ? 'agrees' : 'says ' + T.codeInfo(s.code).label) + (s.rationale ? ': ' + quote(s.rationale) : '.') + ' Disagreements are highlighted for the reviewer.';
-      } },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
-      target: '#resp-body tr:nth-child(2) td:nth-child(7)', title: 'A person has the final say',
-      body: 'Change any code here and the summary updates. Exports keep the automatic code, the second rater’s code and the reviewer’s. Nothing is a diagnosis.' },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, target: '#export-csv', title: 'Export',
-      body: 'Download the scored table as a CSV. Results stay in this browser until you export them, and the app doesn’t store audio.' },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, target: '#start-btn', title: 'Try it with your own voice',
-      body: 'After the tour, press Start test, allow the microphone and name the pictures (or switch to Typed). Next: the same test, given to an AI model.' },
-
-    { page: '/lab', url: '/lab', id: 'lab', before: labPrep, skip: noLab, target: '#items .card[aria-pressed="true"]', title: '3 · Look inside an AI',
+    { page: '/lab', url: '/lab', id: 'lab', before: labPrep, skip: noLab, target: '#items .card[aria-pressed="true"]', title: '1 · Look inside the AI',
       body: function () {
         var f = labFacts(), spec = f.spec;
         var amount = spec.fraction != null ? +(spec.fraction <= 1 ? spec.fraction * 100 : spec.fraction).toFixed(2) + '% of its units'
@@ -222,11 +147,77 @@
       body: function () {
         var f = labFacts();
         return 'Across all items, the model’s error profile is set beside published group averages for people with aphasia (cited papers; no participant data). ' +
-          'The closer the mix of error types, the higher the similarity.' + (f.sample ? ' With sample data these numbers are illustrative.' : '');
+          'The closer the mix of error types, the higher the similarity. Next: try the same pictures yourself.' + (f.sample ? ' With sample data these numbers are illustrative.' : '');
+      } },
+
+    { page: '/challenge', url: '/challenge', id: 'challenge', target: function () { return phone() ? '#intro h1' : '.cg-intro-text'; }, title: '2 · You vs. the AI',
+      before: function () { return T.challenge ? T.challenge.ready() : null; },
+      body: function () {
+        var d = T.challenge && T.challenge.state().data, ins = d && d.inside;
+        var moment = ins && ins.damaged && ins.damaged.said ? ' (for the ' + ins.word + ', the damaged model says only ' + quote(ins.damaged.said) + ')' : '';
+        return 'Anyone can try the same test: name 10 pictures, then see how Glimmer named them and watch a word get lost inside it' + moment +
+          '. Typed answers are scored on our server by fixed rules, with no AI calls, and nothing is stored. A shareable result card comes at the end.';
+      } },
+
+    { page: '/scorer', url: '/scorer?set=demo_en', id: 'scorer', before: function () { return scorerPrep(0); },
+      skip: function () { return !fxData; },
+      target: function () { return phone() ? '#resp-body tr:nth-child(1)' : ['#stage', '#resp-body tr:nth-child(1)']; },
+      title: '3 · Score people’s answers',
+      body: function () {
+        var it = fxItem(0);
+        return 'The most useful part for people: spoken answers scored automatically, in many languages. Here we replay three answers recorded once through the real pipeline, so there’s no microphone and no API call. For the ' +
+          it.target + ' the speaker said ' + quote(it.said) + '. Muse Voice Transcribe heard ' + quote(it.transcript) + ', and the rules coded it ' +
+          T.codeInfo(it.code).label + (it.code === 'Semantic' ? ': related in meaning, not in sound.' : '.');
+      } },
+
+    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
+      target: '#resp-table', title: 'Sound errors too',
+      body: function () {
+        var a = fxItem(1), b = fxItem(2);
+        return quote(a.transcript) + ' for ' + a.target + ' shares sounds but not meaning: ' + T.codeInfo(a.code).label + '. ' + quote(b.transcript) + ' for ' + b.target + ' is ' +
+          T.codeInfo(b.code).label + '. The codes follow the Philadelphia Naming Test scheme: semantic, formal, mixed, nonword, neologism, unrelated, description and no response.';
+      } },
+
+    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
+      target: '#resp-body tr:nth-child(1) td:nth-child(6)', title: 'A second opinion',
+      body: function () {
+        var it = fxItem(0), s = it.second || {};
+        return 'Muse Spark codes every answer on its own as a second rater, without seeing the first code. Here it ' +
+          (it.agree ? 'agrees' : 'says ' + T.codeInfo(s.code).label) + (s.rationale ? ': ' + quote(s.rationale) : '.') + ' Disagreements are highlighted for the reviewer.';
+      } },
+
+    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
+      target: '#resp-body tr:nth-child(2) td:nth-child(7)', title: 'A person has the final say',
+      body: 'Change any code here and the summary updates. Exports keep the automatic code, the second rater’s code and the reviewer’s. Nothing is a diagnosis. Last stop: making tests where none exist.' },
+
+    { page: '/studio', url: '/studio?set=' + STUDIO_SET, id: 'studio', before: studioPrep, skip: function () { return !studioItem('gato'); },
+      target: '.card[data-word="gato"]', title: '4 · Fill the gaps: a Spanish picture test',
+      body: function () {
+        var g = studioItem('gato'), c = keptCandidate(g.item), d = T.studio.data();
+        return 'Where a language has no ready-made test, Test Studio makes one. Muse Image drew ' + g.item.candidates.length + ' candidate pictures for each of the ' + d.manifest.items.length +
+          ' Spanish words. Each is checked: SAM 3.1 found ' + c.sam_objects + ' clear object here (confidence ' + c.sam_confidence.toFixed(2) +
+          '), and Muse Spark, asked to name it in Spanish, said ' + quote(c.spark_name) + '. Both checks pass, so it’s kept.';
+      } },
+
+    { page: '/studio', url: '/studio?set=' + STUDIO_SET, skip: function () { return !studioItem('sierra'); },
+      before: function () {
+        return studioPrep().then(function () { T.studio.openItem(studioItem('sierra').index, { modal: false }); });
+      },
+      target: '#item-dialog .cand',
+      title: 'Held for review',
+      body: function () {
+        var it = studioItem('sierra').item;
+        var names = (it.candidates || []).map(function (c) { return c.spark_name.toLowerCase(); });
+        var same = names.every(function (n) { return n === names[0]; });
+        var said = same ? quote(names[0]) + (names.length === 2 ? ' both times' : ' every time') : names.map(quote).join(' and ');
+        return 'For ' + quote('sierra') + ' (' + (it.hint || it.gloss) + '), Muse Spark said ' + said +
+          (names[0] === 'serrucho' ? ', the everyday Spanish word for a handsaw' : '') +
+          '. People may name this picture differently, so instead of keeping it the tool holds it for a person to decide: accept ' +
+          quote(names[0]) + ' as an alternate name, pick another picture or drop the item.';
       } },
 
     { page: null, title: 'Now try it yourself', finish: true,
-      body: 'Everything you saw runs on Meta’s models: Muse Image, SAM 3.1, Muse Spark, Muse Voice Transcribe and Muse Glimmer. Pick a starting point:' }
+      body: 'Everything you saw runs on Meta’s models: Muse Glimmer (open weights), Muse Spark, Muse Voice Transcribe, Muse Image and SAM 3.1. Pick a starting point:' }
   ];
 
   function firstStep(id) {
@@ -363,7 +354,7 @@
     ui.next.hidden = !!step.finish;
     ui.skip.textContent = step.finish ? 'Close' : 'Skip tour';
     if (step.finish) {
-      [['Build a test in your language', '/studio'], ['Score a session', '/scorer'], ['Explore the Model Lab', '/lab']].forEach(function (b, k) {
+      [['Play: You vs. the AI', '/challenge'], ['Explore the Model Lab', '/lab'], ['Score a session', '/scorer'], ['Build a test in your language', '/studio']].forEach(function (b, k) {
         ui.extra.appendChild(h('a', { class: 'btn ' + (k === 0 ? 'btn-primary' : ''), href: b[1], onclick: function () { stop(); } }, b[0]));
       });
     }

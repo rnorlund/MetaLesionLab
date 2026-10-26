@@ -411,7 +411,7 @@
     saidBox.innerHTML = '';
     saidBox.appendChild(h('div', { class: 'cg-said-one intact' }, [h('span', { text: 'Intact, it said' }), h('b', { text: quote(ins.intact.said) })]));
     saidBox.appendChild(h('div', { class: 'cg-said-one damaged' }, [h('span', { text: 'Damaged, it said' }), h('b', { text: quote(ins.damaged.said || '…') })]));
-    $('inside-key').textContent = 'Blue shading: how likely the right word is at that layer. Bold: the top guess is (the start of) the right word. Orange columns: the damaged layers. Measured ahead of time; the damage is switched on and off with code, and the model itself is never changed.';
+    $('inside-key').textContent = 'Blue shading: how likely the model is to start the right word at that layer. It measures only the first piece of the word, so a model can be sure how a word starts and still not finish it. Bold: the top guess is (the start of) the right word. Orange columns: the damaged layers. Measured ahead of time; the damage is switched on and off with code, and the model itself is never changed.';
   }
 
   // --- share card ------------------------------------------------------------------------------
