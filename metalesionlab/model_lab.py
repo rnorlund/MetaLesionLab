@@ -5,19 +5,23 @@ One condition = one lesion spec run over every kept picture of a Test Studio set
      (see glimmer.build_inputs), so the next token is the answer.
   2. Pictures run in left-padded batches. The prefill pass records the residual stream at the
      answer position after every decoder layer, then greedy decoding writes the answer.
-  3. The answer is coded with naming_errors.classify. "Correct" never depends on the meaning
-     judge, so accuracy is final on the GPU box; Semantic vs Unrelated can be re-scored later
-     with the Muse Spark judge (rescore_result).
+  3. The answer is coded with naming_errors.classify after dropping a carrier phrase ("The
+     object in the picture is a ...", "El objeto de la imagen es un ..."), as PNT scoring
+     ignores them. "Correct" never depends on the meaning judge, so accuracy is final on the
+     GPU box; Semantic vs Unrelated can be re-scored later with the Muse Spark judge
+     (rescore_result).
   4. Word lens per item: the top-5 tokens and p(correct first token) after each layer, where
      p(correct) is the max over the target's spacing and capitalization variants.
 
-Severity bisection searches the fraction of a ranked unit list (from a localizer) that brings
-naming accuracy to a target, assuming accuracy falls as more units are lesioned.
+Severity bisection searches the dose that brings naming accuracy to a target, assuming accuracy
+falls as the dose grows. The dose is the fraction of a ranked unit list (from a localizer) or the
+noise scale of a fixed lesion.
 """
 from __future__ import annotations
 
 import json
 import math
+import re
 import time
 from collections import Counter
 from dataclasses import dataclass, field
@@ -33,13 +37,37 @@ from metalesionlab.naming_errors import LANGUAGE_NAMES, classify
 
 NAMING_PROMPTS = {
     "en": "Name the object in this picture with exactly one word.",
-    "es": "Nombra el objeto de esta imagen con una sola palabra en español.",
+    # Oct 26, demo_es: this wording gave one-word answers for 19/19 pictures; "Nombra el objeto de
+    # esta imagen con una sola palabra en español." gave carrier sentences for 7/19.
+    "es": "Di el nombre del objeto con una sola palabra en español. Solo la palabra, sin artículo.",
 }
 VERIFY_PROMPTS = {
     "en": "Is this a {word}? Answer yes or no.",
     "es": "¿Esta imagen muestra: {word}? Responde sí o no.",
 }
+# Carrier phrases dropped before coding (matched on the lowercased first sentence).
+CARRIERS = {
+    "en": [r"(?:the )?(?:object|thing|item)(?: (?:in|on|of) (?:the|this) (?:picture|image|drawing))? (?:is|shows) ",
+           r"(?:the |this )?(?:picture|image|drawing) (?:shows|is of|depicts) ", r"(?:this|that|it)(?: is|'s) ",
+           r"i see "],
+    "es": [r"(?:el )?objeto(?: de| en)? (?:la|esta) imagen es ", r"(?:la|esta) imagen (?:muestra|es de) ",
+           r"(?:esto )?es ", r"veo "],
+}
 CODES = ("Correct", "Semantic", "Formal", "Mixed", "Unrelated", "Nonword", "Neologism", "Description", "NoResponse")
+
+
+def answer_text(said: str, lang: str) -> str:
+    """The naming response inside a model answer: first sentence, markdown and carrier phrase removed."""
+    text = re.split(r"(?<=[.!?])\s", said.replace("*", "").strip())[0]
+    for pattern in CARRIERS.get(lang, []):
+        if m := re.match(pattern, text.lower()):
+            text = text[m.end():]
+            break
+    return text.strip(" .!?")
+
+
+def code_answer(item_word: str, said: str, lang: str, alternates: tuple[str, ...] = (), judge=None):
+    return classify(item_word, answer_text(said, lang), lang, alternates=alternates, judge=judge)
 
 
 def naming_prompt(lang: str) -> str:
@@ -221,8 +249,8 @@ class NamingTest:
         seconds = time.time() - t0
         items = []
         for k, (it, answer) in enumerate(zip(self.items, said)):
-            c = classify(it.word, answer, it.lang, alternates=it.alternates, judge=judge)
-            row = {"word": it.word, "said": answer, "code": c.code}
+            c = code_answer(it.word, answer, it.lang, it.alternates, judge)
+            row = {"word": it.word, "said": answer, "code": c.code, "head": c.head}
             if lens:
                 row["lens"] = lenses[k]
             items.append(row)
@@ -244,8 +272,8 @@ def rescore_result(result: dict, judge, alternates: dict[str, tuple[str, ...]] |
     """Re-code saved answers with a meaning judge (e.g. Muse Spark), without the GPU."""
     lang = result.get("lang", "en")
     for row in result["items"]:
-        row["code"] = classify(row["word"], row["said"], lang, alternates=(alternates or {}).get(row["word"], ()),
-                               judge=judge).code
+        c = code_answer(row["word"], row["said"], lang, (alternates or {}).get(row["word"], ()), judge)
+        row["code"], row["head"] = c.code, c.head
     counts = Counter(r["code"] for r in result["items"])
     result["counts"] = {c: counts.get(c, 0) for c in CODES}
     result["accuracy"] = round(counts["Correct"] / max(len(result["items"]), 1), 4)
@@ -259,20 +287,36 @@ def save_result(result: dict, path: Path) -> Path:
     return path
 
 
+def write_index(out_dir: Path) -> Path:
+    """index.json: one row per condition file in out_dir, for the web app."""
+    rows = []
+    for f in sorted(out_dir.glob("*.json")):
+        if f.name == "index.json" or f.name.startswith("severity_"):
+            continue
+        r = json.loads(f.read_text())
+        if "accuracy" in r:
+            rows.append({"file": f.name, "condition": r["condition"], "accuracy": r["accuracy"], "counts": r["counts"],
+                         "method": r["spec"]["method"], "recipe": r["spec"].get("recipe", {}), "judge": r.get("judge"),
+                         "units": {k: r["units"][k] for k in ("mlp", "heads", "components")}})
+    path = out_dir / "index.json"
+    path.write_text(json.dumps({"set": out_dir.name, "conditions": rows}, ensure_ascii=False, indent=1))
+    return path
+
+
 # --- severity bisection -----------------------------------------------------------------
 
 @dataclass
 class SeverityCurve:
-    """Accuracy as a function of the fraction of ranked units lesioned. Evaluations are cached,
-    so several targets share points."""
+    """Accuracy as a function of lesion dose (fraction of ranked units, or noise scale).
+    Evaluations are cached, so several targets share points."""
     evaluate: Callable[[float], float]
     points: dict[float, float] = field(default_factory=dict)
 
-    def at(self, frac: float) -> float:
-        frac = float(f"{frac:.4g}")
-        if frac not in self.points:
-            self.points[frac] = self.evaluate(frac)
-        return self.points[frac]
+    def at(self, dose: float) -> float:
+        dose = float(f"{dose:.4g}")
+        if dose not in self.points:
+            self.points[dose] = self.evaluate(dose)
+        return self.points[dose]
 
     def bisect(self, target: float, lo: float, hi: float, steps: int = 5, tol: float = 0.05) -> dict:
         """Geometric bisection on (lo, hi] for accuracy == target +/- tol, in at most `steps` new
@@ -285,7 +329,7 @@ class SeverityCurve:
             return self._best(target, lo, hi, tol, used, reachable=False)
         while used < steps:
             known = {f: a for f, a in self.points.items() if lo <= f <= hi}
-            if any(abs(a - target) <= tol for a in known.values()):
+            if any(abs(a - target) <= tol + 1e-9 for a in known.values()):
                 break
             mild = max((f for f, a in known.items() if a > target), default=lo)
             severe = min((f for f, a in known.items() if a < target and f > mild), default=hi)
@@ -295,6 +339,6 @@ class SeverityCurve:
 
     def _best(self, target: float, lo: float, hi: float, tol: float, used: int, reachable: bool) -> dict:
         known = {f: a for f, a in self.points.items() if lo <= f <= hi}
-        frac, acc = min(known.items(), key=lambda kv: (abs(kv[1] - target), kv[0]))
-        return {"target": target, "fraction": frac, "accuracy": acc, "within_tol": abs(acc - target) <= tol,
+        dose, acc = min(known.items(), key=lambda kv: (abs(kv[1] - target), kv[0]))
+        return {"target": target, "dose": dose, "accuracy": acc, "within_tol": abs(acc - target) <= tol + 1e-9,
                 "reachable": reachable, "evaluations": used}

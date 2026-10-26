@@ -254,6 +254,21 @@ def _post_hook(rw: _Rewrite):
     return lambda _m, _args, out: rw(out)
 
 
+def site_spec(site: str, method: str = "zero", noise_scale: float = 1.0, seed: int = 0) -> LesionSpec:
+    """A whole-site lesion from a short name: "vision_tower", "projector", "layers:40-47" (every
+    head and neuron), "mlp:40-47" (every neuron) or "heads:40-47" (every head)."""
+    if site in COMPONENTS:
+        return LesionSpec(method=method, components={site: None}, noise_scale=noise_scale, seed=seed,
+                          name=site, recipe={"site": site})
+    kind, _, span = site.partition(":")
+    first, _, last = span.partition("-")
+    if kind not in ("layers", "mlp", "heads") or not first.isdigit():
+        raise ValueError(f"unknown site {site!r}")
+    layers = list(range(int(first), int(last or first) + 1))
+    units = {"layers": layers} if kind == "layers" else {kind: {layer: None for layer in layers}}
+    return LesionSpec(method=method, noise_scale=noise_scale, seed=seed, name=site, recipe={"site": site}, **units)
+
+
 @contextlib.contextmanager
 def lesion(model, spec: LesionSpec | dict | None, stats: UnitStats | None = None):
     """Apply `spec` inside the block; every hook is removed on exit, even after an error."""

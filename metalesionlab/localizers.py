@@ -24,6 +24,7 @@ import json
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable
 
 import torch
 from PIL import Image
@@ -247,3 +248,28 @@ def random_control(spec: LesionSpec, dims: SiteDims, seed: int = 0) -> LesionSpe
     return LesionSpec(method=spec.method, mlp=mlp, heads=heads, noise_scale=spec.noise_scale, seed=spec.seed,
                       name=f"random control for {spec.name} (seed {seed})",
                       recipe={"control": "random", "of": spec.name, "seed": seed, **spec.recipe})
+
+
+def isolate_critical(units: Units, fails: Callable[[Units], bool], max_probes: int = 60) -> tuple[Units, int]:
+    """Bisect a unit set whose lesion breaks the model down to a small subset that still breaks it.
+    `fails(units)` runs the lesion and says whether it broke. Halving stops when neither half
+    breaks alone (the culprits interact), so the result can hold more than one unit."""
+    flat = [(layer, u) for layer, idx in sorted(units.items()) for u in idx]
+    probes = 0
+
+    def as_units(pairs):
+        out: Units = {}
+        for layer, u in pairs:
+            out.setdefault(layer, []).append(u)
+        return out
+
+    while len(flat) > 1 and probes < max_probes:
+        half = len(flat) // 2
+        for part in (flat[:half], flat[half:]):
+            probes += 1
+            if fails(as_units(part)):
+                flat = part
+                break
+        else:
+            break
+    return as_units(flat), probes

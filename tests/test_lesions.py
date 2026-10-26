@@ -8,10 +8,10 @@ import pytest
 import torch
 from torch import nn
 
-from metalesionlab.lesions import LesionSpec, Moments, UnitStats, lesion, site_dims
+from metalesionlab.lesions import LesionSpec, Moments, UnitStats, lesion, site_dims, site_spec
 from metalesionlab.localizers import (Localizer, random_control, random_like, scramble_tiles, scramble_words,
                                       top_units, welch_t)
-from metalesionlab.model_lab import SeverityCurve, collate
+from metalesionlab.model_lab import SeverityCurve, answer_text, code_answer, collate
 
 L, N, H, HD, VT, PJ, D = 3, 8, 2, 4, 6, 5, 7  # layers, neurons, heads, head dim, vision/projector widths, hidden
 
@@ -229,7 +229,35 @@ def test_severity_bisection_finds_targets_and_reuses_points():
     for target in (0.8, 0.6, 0.4):
         level = curve.bisect(target, 0.0, 0.2, steps=5)
         assert level["within_tol"], level
-        assert abs(level["fraction"] - (1 - target) / 4) < 0.02
+        assert abs(level["dose"] - (1 - target) / 4) < 0.02
     assert len(calls) <= 12
     too_mild = SeverityCurve(lambda f: 0.95).bisect(0.4, 0.0, 0.2)
     assert not too_mild["reachable"] and too_mild["evaluations"] == 1
+    edge = SeverityCurve(lambda f: 0.75).bisect(0.8, 0.0, 0.2)  # |0.75 - 0.8| is 0.05000000000000004
+    assert edge["within_tol"] and edge["evaluations"] == 1
+
+
+@pytest.mark.parametrize("said,lang,expected", [
+    ("cat", "en", "cat"),
+    ("The object in the picture is a cat", "en", "a cat"),
+    ("The object is an umbrella. The picture", "en", "an umbrella"),
+    ("It's a **saw**.", "en", "a saw"),
+    ("El objeto de la imagen es un **paraguas**.", "es", "un paraguas"),
+    ("La imagen muestra una tetera.", "es", "una tetera"),
+    ("Gato", "es", "Gato"),
+])
+def test_answer_text_drops_carrier_phrases(said, lang, expected):
+    assert answer_text(said, lang) == expected
+
+
+def test_carrier_answers_are_coded_by_their_noun():
+    assert code_answer("silbato", "El objeto de la imagen es un micrófono.", "es").code != "Description"
+    assert code_answer("bench", "The object is a park bench. The", "en").code == "Correct"
+
+
+def test_site_spec_names():
+    assert site_spec("vision_tower", "noise", 8).components == {"vision_tower": None}
+    assert site_spec("layers:40-43").layers == [40, 41, 42, 43]
+    assert site_spec("mlp:5").mlp == {5: None} and site_spec("heads:1-2").heads == {1: None, 2: None}
+    with pytest.raises(ValueError):
+        site_spec("cortex")
