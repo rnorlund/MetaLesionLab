@@ -610,16 +610,16 @@ def _classify_zh(target: str, response: str, alternates: tuple[str, ...], judge:
 
 # --- the decision tree -----------------------------------------------------------------
 
-def _undouble(word: str, lang: str, names: tuple[str, ...] = ()) -> str:
-    """Transcripts sometimes write a word twice as one token: a leading article or frame word
-    ("UnUn chien", "OO banco", "यहयह") or the name itself ("umbrellaumbrella"). Read such a token
-    as the single word. Only articles, frame words and accepted names are undoubled, so real
-    reduplicated words (couscous, bonbon) are left alone."""
+def _clean_token(word: str, lang: str, names: tuple[str, ...] = ()) -> str:
+    """Undo two transcript artifacts on short clips: a word written twice as one token (a leading
+    article or frame word, "UnUn chien", "OO banco", "यहयह", or the name itself,
+    "umbrellaumbrella"), and an article fused onto the name ("Uniglú"). Only articles, frame words
+    and accepted names are touched, so real words (couscous, bonbon) are left alone."""
+    small = ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set())
     half = len(word) // 2
-    if len(word) % 2 == 0 and word[:half] == word[half:] and \
-            word[:half] in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set()) | set(names):
+    if len(word) % 2 == 0 and word[:half] == word[half:] and word[:half] in small | set(names):
         return word[:half]
-    return word
+    return next((n for n in names for a in ARTICLES.get(lang, set()) if word == a + n), word)
 
 
 def _unelide(word: str) -> tuple[str, ...]:
@@ -646,7 +646,7 @@ def classify(target: str, response: str, lang: str = "en", alternates: tuple[str
     if lang == "fr":
         words = [p for w in words for p in _unelide(w)]
     accepted = (target,) + tuple(_norm(a) for a in alternates)
-    words = [_undouble(w, lang, accepted) for w in words]
+    words = [_clean_token(w, lang, accepted) for w in words]
     content = [w for w in words if w not in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set())] or words
     if phrase := next((a for a in accepted if _phrase_match(a, words, lang)), None):
         return Coding("Correct", phrase)

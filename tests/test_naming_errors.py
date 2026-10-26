@@ -214,6 +214,12 @@ def test_doubled_name_in_a_transcript():
     assert classify("cat", "dodo", judge=fake_judge).head == "dodo"     # only accepted names are undoubled
 
 
+def test_article_fused_onto_the_name_in_a_transcript():
+    assert classify("iglú", "Uniglú.", "es").code == "Correct"        # Paulina voice, "un iglú"
+    assert classify("chat", "lechat", "fr").code == "Correct"
+    assert classify("chat", "machat", "fr", judge=lambda *a: False).code != "Correct"  # "ma" isn't an article
+
+
 def test_hindi_chandrabindu_and_anusvara_spellings_match():
     assert classify("आँख", "आंख", "hi").code == "Correct"
 
