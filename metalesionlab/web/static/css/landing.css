@@ -101,6 +101,10 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --sky: #60A5FA; }
 .finding { margin: 0; background: #FFFFFF; border: 1px solid #E7E5DF; border-left: 4px solid var(--orange); border-radius: 10px; padding: 14px 16px; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
 .btn-line { display: flex; flex-wrap: wrap; gap: 10px; }
 .small-note { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
+.lang-claim { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-2); background: #FFFFFF; border: 1px solid #E7E5DF; border-radius: 10px; padding: 12px 14px; }
+.lang-claim a { font-weight: 600; white-space: nowrap; }
+.catches { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.55; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.catches li::marker { color: var(--orange); }
 
 /* three ways in */
 .doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }

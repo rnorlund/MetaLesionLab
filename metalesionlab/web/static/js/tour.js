@@ -64,11 +64,37 @@
   loadFixture().then(function (d) { fxData = d; });
   function fxItem(i) { return fxData && fxData.items[i]; }
 
-  /* The lesion condition to show: one where the cat is named wrongly, preferring naming-related lesions. */
+  /* The lesion condition to show. First choice: the real tip-of-the-tongue example that the landing page
+     and the game also use (late layers damaged, umbrella comes out as "Umb"). Otherwise: one where the cat
+     is named wrongly, preferring naming-related lesions. */
+  var LAB_PICKS = [['layers-40-47-noise-x2.181', 'umbrella'], ['layers-40-47-noise-x2.828', 'umbrella']];
+  function labPick(L) {
+    var chain = Promise.resolve(false);
+    LAB_PICKS.forEach(function (pick) {
+      chain = chain.then(function (found) {
+        if (found) return true;
+        var c = L.list.filter(function (x) { return x.id === pick[0] || String(x.id).split(':').pop() === pick[0]; })[0];
+        if (!c) return false;
+        return T.lab.select(c.id, pick[1]).then(function () {
+          var it = L.cur.items.filter(function (x) { return x.word === pick[1]; })[0];
+          return !!(it && T.normCode(it.code) !== 'Correct');
+        });
+      });
+    });
+    return chain;
+  }
   function labPrep() {
     return T.lab.ready.then(function () {
       var L = T.lab.state();
       if (L.tourPicked && L.cur) return;
+      return labPick(L).then(function (found) {
+        if (found) { L.tourPicked = true; return; }
+        return labSearch(L);
+      });
+    });
+  }
+  function labSearch(L) {
+    return Promise.resolve().then(function () {
       var cands = L.list.filter(function (c) { return !c.baseline; }).sort(function (a, b) {
         return (/naming/i.test(b.label) ? 1 : 0) - (/naming/i.test(a.label) ? 1 : 0);
       });
@@ -89,6 +115,11 @@
     });
   }
   function labFacts() { return T.lab.facts(); }
+  function L0() { return T.lab.state(); }
+  function startsWord(part, word) {
+    var a = String(part || '').toLowerCase().replace(/[^a-z\u00e0-\u00ff]/g, ''), b = String(word || '').toLowerCase();
+    return a.length >= 2 && a !== b && b.indexOf(a) === 0;
+  }
   function sampleNote(f) {
     return f.sample ? ' Sample data for now: real lesion runs replace it this week.' : '';
   }
@@ -107,14 +138,15 @@
       body: function () {
         var f = labFacts(), spec = f.spec;
         var amount = spec.fraction != null ? +(spec.fraction <= 1 ? spec.fraction * 100 : spec.fraction).toFixed(2) + '% of its units'
-          : spec.units != null ? spec.units + ' units' : 'some units';
+          : spec.units != null ? Number(spec.units).toLocaleString('en-US') + ' units' : 'some units';
         var where = f.layers ? 'decoder layers ' + f.layers : (spec.site || 'one part of the model');
         var how = { zero: 'switched off', mean: 'replaced with their average activity', noise: 'disturbed with noise' }[String(spec.method).toLowerCase()] || 'lesioned';
         var said = f.lesioned ? (f.lesioned.said ? 'it now says ' + quote(f.lesioned.said) : 'it now gives no answer') + ' (' + T.codeInfo(f.lesioned.code).label + ')' : 'see what it says';
         var acc = f.baseAccuracy != null && f.accuracy != null ? ' Naming accuracy went from ' + Math.round(f.baseAccuracy) + '% intact to ' + Math.round(f.accuracy) + '%.'
           : f.accuracy != null ? ' Naming accuracy: ' + Math.round(f.accuracy) + '%.' : '';
-        return 'Muse Glimmer, Meta’s open-weight model, took the same naming test. In this condition ' + amount + ' in ' + where +
-          ' were ' + how + ' (orange on the model map). Shown the ' + f.word + ', ' + said + '.' + acc + sampleNote(f);
+        var what = L0().cur && L0().cur.featured && f.label ? 'This condition: ' + quote(f.label) + ' (orange on the model map)'
+          : 'In this condition ' + amount + ' in ' + where + ' were ' + how + ' (orange on the model map)';
+        return 'Muse Glimmer, Meta’s open-weight model, took the same naming test, and we damaged it on purpose. ' + what + '. Shown the ' + f.word + ', ' + said + '.' + acc + sampleNote(f);
       } },
 
     { page: '/lab', url: '/lab', before: labPrep, skip: noLens, target: '#lens-chart', title: 'The word lens',
@@ -137,6 +169,10 @@
       body: function () {
         var f = labFacts(), l = f.lesioned, i = f.intact;
         if (!l) return 'Pick a lesion condition to compare its curve with the intact model.';
+        if (startsWord(l.said, f.word)) {
+          return 'With the damage (orange), the right word drops out of first place in the damaged layers, and only its start comes out: ' + quote(String(l.said).trim()) +
+            '. The lens reads only the first piece of a word, which is why p(' + f.word + ') still ends high; the rest never comes. A tip-of-the-tongue moment: some people with aphasia also get the first sound out, but not the word.' + sampleNote(f);
+        }
         var start = 'With the lesion (orange), ' + (l.conceptKept && i ? 'the concept is still there at layer ' + i.concept + ', but ' : 'p(' + f.word + ') ends at ' + l.final.toFixed(2) + ' and ');
         var kind = l.code === 'NoResponse' ? 'no answer comes out' : (/^[aeiou]/i.test(l.code) ? 'an ' : 'a ') + T.codeInfo(l.code).label.toLowerCase() + ' error';
         return start + quote(l.winner) + ' wins at the last layer: ' + kind + ', the kind of slip people with aphasia make.' + sampleNote(f);
@@ -165,7 +201,7 @@
       title: '3 · Score people’s answers',
       body: function () {
         var it = fxItem(0);
-        return 'The most useful part for people: spoken answers scored automatically, in many languages. Here we replay three answers recorded once through the real pipeline, so there’s no microphone and no API call. For the ' +
+        return 'Spoken answers, scored automatically (verified in English, Spanish, French and Brazilian Portuguese). Here we replay three answers recorded once through the real pipeline: no microphone, no API call. For the ' +
           it.target + ' the speaker said ' + quote(it.said) + '. Muse Voice Transcribe heard ' + quote(it.transcript) + ', and the rules coded it ' +
           T.codeInfo(it.code).label + (it.code === 'Semantic' ? ': related in meaning, not in sound.' : '.');
       } },

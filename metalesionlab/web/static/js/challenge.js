@@ -86,7 +86,8 @@
   }
   function modeHint() {
     $('mode-hint').textContent = G.mode === 'voice'
-      ? 'Your browser will ask to use the microphone. Say the name, and the next picture comes after a short pause (or press Next).'
+      ? 'Your browser will ask to use the microphone. Say the name, and the next picture comes after a short pause (or press Next).' +
+        (G.lang === 'es' ? ' Tip: say it with “un” or “una” (un gato); short words are heard better that way.' : '')
       : (G.voiceWhy && !G.voiceOK ? G.voiceWhy : 'Type the name and press Enter. Spelling counts, but “a”, plurals and missing accents are fine.');
   }
 
@@ -510,6 +511,7 @@
     if (!b || b.getAttribute('data-lang') === G.lang) return;
     setSeg($('lang-seg'), 'data-lang', b.getAttribute('data-lang'));
     load(b.getAttribute('data-lang'));
+    modeHint();
   });
   $('mode-seg').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-mode]');
