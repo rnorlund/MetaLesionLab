@@ -54,11 +54,13 @@ CARRIERS = {
            r"(?:esto )?es ", r"veo "],
 }
 CODES = ("Correct", "Semantic", "Formal", "Mixed", "Unrelated", "Nonword", "Neologism", "Description", "NoResponse")
+FLAGS = ("echo", "perseveration")
 
 
 def answer_text(said: str, lang: str) -> str:
-    """The naming response inside a model answer: first sentence, markdown and carrier phrase removed."""
-    text = re.split(r"(?<=[.!?])\s", said.replace("*", "").strip())[0]
+    """The naming response inside a model answer: first sentence or line (the first attempt, as in
+    PNT scoring), with markdown and a carrier phrase removed."""
+    text = re.split(r"(?<=[.!?])\s|\n", said.replace("*", "").strip())[0]
     for pattern in CARRIERS.get(lang, []):
         if m := re.match(pattern, text.lower()):
             text = text[m.end():]
@@ -68,6 +70,26 @@ def answer_text(said: str, lang: str) -> str:
 
 def code_answer(item_word: str, said: str, lang: str, alternates: tuple[str, ...] = (), judge=None):
     return classify(item_word, answer_text(said, lang), lang, alternates=alternates, judge=judge)
+
+
+def _words(text: str) -> list[str]:
+    return re.findall(r"\w+", text.lower())
+
+
+def response_flags(said: str, prompt: str, echo_ngram: int = 4, repeats: int = 4) -> list[str]:
+    """Lesion signs the naming codes don't capture: "echo" when the answer repeats the instruction
+    (4 words in a row from the prompt), "perseveration" when one token makes up at least half of
+    the answer and occurs 4+ times ("self | self | self", '" " " "')."""
+    flags = []
+    w, p = _words(said), _words(prompt)
+    grams = {tuple(p[i:i + echo_ngram]) for i in range(len(p) - echo_ngram + 1)}
+    if any(tuple(w[i:i + echo_ngram]) in grams for i in range(len(w) - echo_ngram + 1)):
+        flags.append("echo")
+    toks = said.split()
+    top = Counter(toks).most_common(1)
+    if top and top[0][1] >= repeats and top[0][1] * 2 >= len(toks):
+        flags.append("perseveration")
+    return flags
 
 
 def naming_prompt(lang: str) -> str:
@@ -247,38 +269,33 @@ class NamingTest:
                 start += n
         torch.cuda.synchronize()
         seconds = time.time() - t0
-        items = []
-        for k, (it, answer) in enumerate(zip(self.items, said)):
-            c = code_answer(it.word, answer, it.lang, it.alternates, judge)
-            row = {"word": it.word, "said": answer, "code": c.code, "head": c.head}
-            if lens:
-                row["lens"] = lenses[k]
-            items.append(row)
-        counts = Counter(r["code"] for r in items)
-        n = len(items)
-        return {
+        items = [{"word": it.word, "said": answer} | ({"lens": lenses[k]} if lens else {})
+                 for k, (it, answer) in enumerate(zip(self.items, said))]
+        result = {
             "set": self.name, "condition": condition or spec.name or ("intact" if spec.is_intact else "lesion"),
             "lang": self.items[0].lang if self.items else "", "prompt": self.prompt,
-            "spec": spec.to_dict(units=False), "units": spec.counts(site_dims(model)),
-            "n": n, "accuracy": round(counts["Correct"] / n, 4) if n else 0.0,
-            "counts": {c: counts.get(c, 0) for c in CODES},
-            "judge": "spark" if judge else "none",
-            "seconds": round(seconds, 2), "items_per_s": round(n / seconds, 3) if seconds else None,
+            "spec": spec.to_dict(units=False), "units": spec.counts(site_dims(model)), "n": len(items),
+            "seconds": round(seconds, 2), "items_per_s": round(len(items) / seconds, 3) if seconds else None,
             "items": items, **self.meta,
         }
+        return rescore_result(result, judge, {it.word: it.alternates for it in self.items})
 
 
 def rescore_result(result: dict, judge, alternates: dict[str, tuple[str, ...]] | None = None) -> dict:
-    """Re-code saved answers with a meaning judge (e.g. Muse Spark), without the GPU."""
-    lang = result.get("lang", "en")
+    """Code (or re-code) a result's answers: naming code, the coded word and lesion flags, then the
+    counts and accuracy. With a meaning judge (e.g. Muse Spark) this runs without the GPU."""
+    lang, prompt = result.get("lang", "en"), result.get("prompt", "")
     for row in result["items"]:
         c = code_answer(row["word"], row["said"], lang, (alternates or {}).get(row["word"], ()), judge)
-        row["code"], row["head"] = c.code, c.head
+        row["code"], row["head"], row["flags"] = c.code, c.head, response_flags(row["said"], prompt)
     counts = Counter(r["code"] for r in result["items"])
+    flags = Counter(f for r in result["items"] for f in r["flags"])
     result["counts"] = {c: counts.get(c, 0) for c in CODES}
+    result["flags"] = {f: flags.get(f, 0) for f in FLAGS}
     result["accuracy"] = round(counts["Correct"] / max(len(result["items"]), 1), 4)
     result["judge"] = "spark" if judge else "none"
-    return result
+    # Keep the summary fields ahead of the long item list.
+    return {k: result[k] for k in sorted(result, key=lambda k: k == "items")}
 
 
 def save_result(result: dict, path: Path) -> Path:
@@ -296,6 +313,7 @@ def write_index(out_dir: Path) -> Path:
         r = json.loads(f.read_text())
         if "accuracy" in r:
             rows.append({"file": f.name, "condition": r["condition"], "accuracy": r["accuracy"], "counts": r["counts"],
+                         "flags": r.get("flags", {}),
                          "method": r["spec"]["method"], "recipe": r["spec"].get("recipe", {}), "judge": r.get("judge"),
                          "units": {k: r["units"][k] for k in ("mlp", "heads", "components")}})
     path = out_dir / "index.json"
@@ -337,8 +355,12 @@ class SeverityCurve:
             used += 1
         return self._best(target, lo, hi, tol, used, reachable=True)
 
-    def _best(self, target: float, lo: float, hi: float, tol: float, used: int, reachable: bool) -> dict:
+    def closest(self, target: float, lo: float, hi: float, tol: float = 0.05) -> dict:
+        """The evaluated dose in [lo, hi] whose accuracy is closest to target (smallest dose on ties).
+        Call after every bisection, since a later search can land nearer an earlier target."""
         known = {f: a for f, a in self.points.items() if lo <= f <= hi}
         dose, acc = min(known.items(), key=lambda kv: (abs(kv[1] - target), kv[0]))
-        return {"target": target, "dose": dose, "accuracy": acc, "within_tol": abs(acc - target) <= tol + 1e-9,
-                "reachable": reachable, "evaluations": used}
+        return {"target": target, "dose": dose, "accuracy": acc, "within_tol": abs(acc - target) <= tol + 1e-9}
+
+    def _best(self, target: float, lo: float, hi: float, tol: float, used: int, reachable: bool) -> dict:
+        return {**self.closest(target, lo, hi, tol), "reachable": reachable, "evaluations": used}

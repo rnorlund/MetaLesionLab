@@ -5,6 +5,9 @@ word), and random controls collapse for some seeds and not others. This bisects 
 unit set on a few pictures down to the units that cause it, then runs those units alone on the
 whole set. Results are added to runs/localizers/keystones.json.
 
+Oct 26, demo_en: the collapses of a zeroed 20% random MLP set did not narrow (neither half broke
+naming alone), so there the damage was distributed rather than a few keystone units.
+
 Usage: python scripts/find_keystones.py runs/sets/demo_en --localizer visual_en --kind mlp --frac 0.17
        [--random-seed 1] [--method zero]
 """
@@ -30,6 +33,7 @@ def main():
     ap.add_argument("--random-seed", type=int, default=None, help="bisect the matched random control instead")
     ap.add_argument("--probe-items", type=int, default=5)
     ap.add_argument("--fail-below", type=float, default=0.4)
+    ap.add_argument("--max-units", type=int, default=20, help="report a culprit set only up to this size")
     args = ap.parse_args()
 
     model, processor = glimmer.load()
@@ -50,6 +54,10 @@ def main():
         return
     culprits, probes = isolate_critical(units, fails)
     n = sum(len(v) for v in culprits.values())
+    if n > args.max_units:
+        print(f"{spec.name}: no small culprit set; {n} units in {len(culprits)} layers still needed after "
+              f"{probes} probes (neither half breaks naming alone, so the damage is distributed)")
+        return
     print(f"{spec.name}: {n} unit(s) after {probes} probes: {culprits}")
 
     alone = LesionSpec(method=args.method, name=f"keystone {args.kind} {culprits} ({args.method})",

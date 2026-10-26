@@ -11,7 +11,8 @@ from torch import nn
 from metalesionlab.lesions import LesionSpec, Moments, UnitStats, lesion, site_dims, site_spec
 from metalesionlab.localizers import (Localizer, random_control, random_like, scramble_tiles, scramble_words,
                                       top_units, welch_t)
-from metalesionlab.model_lab import SeverityCurve, answer_text, code_answer, collate
+from metalesionlab.model_lab import (SeverityCurve, answer_text, code_answer, collate, rescore_result,
+                                     response_flags)
 
 L, N, H, HD, VT, PJ, D = 3, 8, 2, 4, 6, 5, 7  # layers, neurons, heads, head dim, vision/projector widths, hidden
 
@@ -245,6 +246,8 @@ def test_severity_bisection_finds_targets_and_reuses_points():
     ("El objeto de la imagen es un **paraguas**.", "es", "un paraguas"),
     ("La imagen muestra una tetera.", "es", "una tetera"),
     ("Gato", "es", "Gato"),
+    ("Kante\n\nWait object is a tea/coepid?", "en", "Kante"),
+    ("Caraloon? Wait object is a carrot.", "en", "Caraloon"),
 ])
 def test_answer_text_drops_carrier_phrases(said, lang, expected):
     assert answer_text(said, lang) == expected
@@ -261,3 +264,23 @@ def test_site_spec_names():
     assert site_spec("mlp:5").mlp == {5: None} and site_spec("heads:1-2").heads == {1: None, 2: None}
     with pytest.raises(ValueError):
         site_spec("cortex")
+
+
+@pytest.mark.parametrize("said,expected", [
+    ("cat", []),
+    ('= "Name the object in this picture with exact', ["echo"]),
+    ('" " " " " " " " " " " "', ["perseveration"]),
+    ("| self | user | self | self | self |", ["perseveration"]),
+    ("The object in the picture is a cat", []),
+    ("1 2 3 4 5 6", []),
+])
+def test_response_flags(said, expected):
+    assert response_flags(said, "Name the object in this picture with exactly one word.") == expected
+
+
+def test_rescore_counts_codes_and_flags():
+    result = {"lang": "en", "prompt": "Name the object in this picture with exactly one word.",
+              "items": [{"word": "cat", "said": "cat"}, {"word": "cat", "said": "Name the object in this picture"}]}
+    r = rescore_result(result, judge=None)
+    assert r["accuracy"] == 0.5 and r["counts"]["Description"] == 1 and r["flags"]["echo"] == 1
+    assert list(r)[-1] == "items"

@@ -3,6 +3,7 @@
   stats SET                 per-unit mean/sd for mean and noise lesions (held-out drawings)
   name SET [--spec JSON]    one naming condition (intact without --spec)
   agreement SET             intact naming -> runs/sets/SET/glimmer_names.json
+  batch SET SPECS.json      several conditions in one process (site, localizer or full specs)
   localize SET.. --contrast naming|visual|language
   severity SET --localizer NAME --kind mlp|heads --method zero|mean|noise   (dose = fraction of units)
   severity SET --site layers:40-47 --dose noise                            (dose = noise scale)
@@ -147,9 +148,10 @@ def cmd_severity(args):
         return results[dose]["accuracy"]
 
     curve = SeverityCurve(evaluate)
+    searches = {t: curve.bisect(t, args.lo, args.hi, steps=args.steps)["evaluations"] for t in args.targets}
     levels, controls = [], {}
-    for target in args.targets:
-        level = curve.bisect(target, args.lo, args.hi, steps=args.steps)
+    for target in args.targets:  # chosen from the final curve: a later search may land nearer
+        level = {**curve.closest(target, args.lo, args.hi), "evaluations": searches[target]}
         dose = level["dose"]
         print(f"target {target}: dose {dose:.4g} -> accuracy {level['accuracy']:.2f}"
               + ("" if level["within_tol"] else " (not reached)"), flush=True)
@@ -163,8 +165,41 @@ def cmd_severity(args):
         levels.append(level)
     summary = {"set": lab.set_name, "localizer": loc.name if loc else None, "site": args.site, "kind": args.kind,
                "method": method, "dose": args.dose, "direction": args.direction,
-               "curve": sorted(curve.points.items()), "levels": levels}
+               "curve": sorted(curve.points.items()), "levels": levels,
+               "points": [{"dose": d, "accuracy": a, "condition": results[d]["condition"]}
+                          for d, a in sorted(curve.points.items())]}
     (lab.out_dir / f"severity_{slug(tag)}.json").write_text(json.dumps(summary, indent=1))
+    write_index(lab.out_dir)
+
+
+def resolve(entry: dict, dims) -> LesionSpec:
+    """A condition from a short recipe: {"site": "vision_tower", "method": "noise", "noise_scale": 4},
+    {"localizer": "naming_en", "kind": "mlp", "fraction": 0.3, "method": "mean", "control_seed": 0},
+    or a full spec dict."""
+    method, scale = entry.get("method", "zero"), float(entry.get("noise_scale", 1.0))
+    if "site" in entry:
+        spec = site_spec(entry["site"], method, scale)
+        spec.name = f"{entry['site']}-{method}" + (f" x{scale:.4g}" if method == "noise" else "")
+        return spec
+    if "localizer" in entry:
+        loc = Localizer.load(RUNS / "localizers" / f"{entry['localizer']}.pt")
+        frac = float(entry["fraction"])
+        spec = localizer_spec(loc, entry.get("kind", "mlp"), frac, method, int(entry.get("direction", 1)), scale)
+        tag = f"{loc.name}-{entry.get('kind', 'mlp')}-{method}" + (f"-f{frac:g} x{scale:.4g}" if method == "noise"
+                                                                   else f" f{frac:.4g}")
+        spec.name = tag
+        if "control_seed" in entry:
+            spec = random_control(spec, dims, seed=int(entry["control_seed"]))
+            spec.name = f"{tag} random seed{entry['control_seed']}"
+        return spec
+    return LesionSpec.from_dict(entry)
+
+
+def cmd_batch(args):
+    lab = Lab(args.set_dir, args.batch)
+    for entry in json.loads(Path(args.specs).read_text()):
+        spec = resolve(entry, lab.dims)
+        lab.run(spec, spec.name)
     write_index(lab.out_dir)
 
 
@@ -203,6 +238,9 @@ def main():
     p.add_argument("--condition", default="")
     p.set_defaults(fn=cmd_name)
     with_set(sub.add_parser("agreement")).set_defaults(fn=cmd_agreement)
+    p = with_set(sub.add_parser("batch"))
+    p.add_argument("specs", help="JSON list of conditions (see resolve)")
+    p.set_defaults(fn=cmd_batch)
     p = sub.add_parser("localize")
     p.add_argument("set_dirs", type=Path, nargs="+")
     p.add_argument("--contrast", required=True, choices=["naming", "visual", "language"])
