@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Studio · Tip of the Tongue</title>
+<meta name="description" content="Turn a word list into a checked picture-naming test in any language, with Muse Image, SAM 3.1 and Muse Spark.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/studio.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tip of the Tongue</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/studio" aria-current="page">Test Studio</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/lab">Model Lab</a>
+  </nav>
+  <div class="chips"><span class="chip">Muse Image · SAM 3.1 · Muse Spark</span></div>
+</header>
+
+<h1 class="sr-only">Test Studio</h1>
+<div class="layout">
+<aside>
+  <section class="panel stack" aria-labelledby="new-h">
+    <h2 id="new-h">New test</h2>
+    <label class="field">Task
+      <select id="task">
+        <option value="naming">Picture naming</option>
+        <option value="scene">Picture description (scene)</option>
+        <option value="fluency">Category fluency</option>
+      </select>
+    </label>
+
+    <form id="naming-form" class="stack-form" novalidate>
+      <div class="fields">
+        <label class="field">Set name
+          <input type="text" id="set-name" maxlength="60" placeholder="e.g. Kitchen objects" autocomplete="off">
+        </label>
+        <label class="field">Language
+          <select id="lang"></select>
+        </label>
+      </div>
+      <label class="field">Words, one per line
+        <textarea id="words" rows="8" class="mono" spellcheck="false" aria-describedby="words-hint">cat
+umbrella
+anchor</textarea>
+        <span class="hint" id="words-hint">Pin a meaning after a colon, e.g. <span class="mono">banco: bench</span>. Up to <span id="max-words">24</span> words.</span>
+      </label>
+      <fieldset>
+        <legend>Picture style</legend>
+        <div class="seg">
+          <label><input type="radio" name="style" value="line" checked><span>Line drawing</span></label>
+          <label><input type="radio" name="style" value="color"><span>Color</span></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Candidates per word</legend>
+        <div class="seg">
+          <label><input type="radio" name="cands" value="1"><span>1</span></label>
+          <label><input type="radio" name="cands" value="2" checked><span>2</span></label>
+          <label><input type="radio" name="cands" value="3"><span>3</span></label>
+        </div>
+      </fieldset>
+      <div class="checks-list">
+        <span class="legend-like">Every picture is checked</span>
+        <ul>
+          <li><b>SAM 3.1</b>: exactly one clear object of the right size</li>
+          <li><b>Muse Spark</b>: names the picture in your language, scored like a test response</li>
+          <li><b>Muse Spark</b>: flags words with more than one picturable meaning</li>
+        </ul>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="build-btn">Generate set</button>
+      <p class="xsmall muted" id="estimate" aria-live="polite"></p>
+    </form>
+
+    <form id="scene-form" class="stack-form" hidden novalidate>
+      <p class="small muted" style="margin:0">Muse Image draws a busy scene to describe; Muse Spark lists its content units for scoring.</p>
+      <div class="fields">
+        <label class="field">Language
+          <select id="scene-lang"></select>
+        </label>
+        <label class="field">Theme (optional)
+          <input type="text" id="scene-theme" maxlength="80" placeholder="e.g. a kitchen" autocomplete="off">
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="scene-btn">Draw a scene</button>
+      <p class="xsmall muted" id="scene-note" aria-live="polite"></p>
+    </form>
+
+    <div id="fluency-info" hidden>
+      <p class="small" style="margin:0 0 12px">Category fluency needs no pictures: the speaker names as many members of a category (animals, fruits…) as they can in 60 seconds.</p>
+      <a class="btn btn-dark btn-block" href="/scorer?task=fluency">Open category fluency in the Scorer</a>
+    </div>
+  </section>
+
+  <section class="panel stack" aria-labelledby="sets-h">
+    <div class="panel-head" style="margin:0"><h2 id="sets-h">Picture sets</h2><button class="btn btn-small" type="button" id="refresh-sets">Refresh</button></div>
+    <ul class="set-list" id="set-list" aria-label="Picture sets"></ul>
+  </section>
+</aside>
+
+<main id="main" tabindex="-1">
+  <section class="panel" aria-labelledby="set-h">
+    <div class="panel-head">
+      <h2 id="set-h">Choose or build a set</h2>
+      <span class="meta" id="set-meta"></span>
+    </div>
+    <div id="set-status" aria-live="polite"></div>
+    <div id="set-body">
+      <div class="empty">Pick a set on the left, or type a few words and press <b>Generate set</b>. Pictures appear here as they are drawn and checked.</div>
+    </div>
+  </section>
+
+  <section class="panel stack" aria-labelledby="export-h" id="export-panel" hidden>
+    <h2 id="export-h">Export</h2>
+    <div class="fields export-opts">
+      <label class="field">Cards per page
+        <select id="per-page">
+          <option value="2">2</option><option value="3">3</option><option value="4" selected>4</option><option value="6">6</option>
+        </select>
+      </label>
+      <label class="field">Paper
+        <select id="paper"><option value="letter">US Letter</option><option value="a4">A4</option></select>
+      </label>
+      <label class="check" style="align-self:flex-end;padding-bottom:10px"><input type="checkbox" id="show-word" checked> Print the word on each card</label>
+    </div>
+    <div class="btn-row">
+      <a class="btn" id="dl-pdf" download>Printable cards (PDF)</a>
+      <a class="btn" id="dl-csv" download>Norms table (CSV)</a>
+      <a class="btn" id="dl-zip" download>Whole set (ZIP)</a>
+      <a class="btn btn-dark" id="use-scorer">Use in Scorer</a>
+    </div>
+    <p class="xsmall muted" style="margin:0">Norms table: word, frequency (Zipf), length in phonemes, SAM 3.1 objects, confidence and box size, Muse Spark's name and agreement, ambiguity, alternates. Cards include only kept pictures.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="scenes-h" id="scenes-panel" hidden>
+    <div class="panel-head"><h2 id="scenes-h">Scenes for picture description</h2><span class="meta" id="scenes-meta"></span></div>
+    <div class="cards" id="scenes"></div>
+  </section>
+</main>
+</div>
+<p class="footnote">Research and teaching use only. Tip of the Tongue doesn't diagnose and doesn't give medical or treatment advice. Pictures are drawn by Muse Image.</p>
+</div>
+
+<dialog id="item-dialog" aria-labelledby="dlg-title">
+  <div class="dialog-head">
+    <h2 id="dlg-title">Item</h2>
+    <button type="button" class="icon-btn" id="dlg-close" aria-label="Close">×</button>
+  </div>
+  <div class="dialog-body" id="dlg-body"></div>
+</dialog>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/studio.js"></script>
+</body>
+</html>

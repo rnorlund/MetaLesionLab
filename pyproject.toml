@@ -9,6 +9,7 @@ dependencies = ["openai>=1.40", "httpx", "numpy", "pillow", "nltk", "wordfreq", 
 
 [project.optional-dependencies]
 gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"]
+web = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart", "fpdf2>=2.7"]
 dev = ["pytest"]
 
 [build-system]
@@ -16,4 +17,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["metalesionlab"]
+packages = ["metalesionlab", "metalesionlab.web"]
+
+[tool.setuptools.package-data]
+"metalesionlab.web" = ["pages/*.html", "static/*/*", "sample_lab/*.json"]

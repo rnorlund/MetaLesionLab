@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tip of the Tongue</title>
+<meta name="description" content="Language tests for people and AI, in any language. Build picture-based language tests in minutes, give them by voice, score them automatically, then run the same tests on Meta's open model.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/landing.css">
+</head>
+<body class="landing">
+<a class="skip" href="#problem">Skip to content</a>
+
+<div class="dark">
+  <div class="wrap">
+    <nav class="lnav" aria-label="Main">
+      <a class="lbrand" href="/">Tip of the Tongue</a>
+      <div class="lnav-links">
+        <a href="#tools">Tools</a>
+        <a href="#how">How it works</a>
+        <a href="#who">Who it's for</a>
+        <a href="#trust">Responsible use</a>
+      </div>
+      <div class="lnav-cta">
+        <a class="lbtn lbtn-line" href="https://github.com/rnorlund/MetaLesionLab">GitHub</a>
+        <a class="lbtn lbtn-light" href="/studio">Open the app</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-text">
+        <span class="kicker">Open source · built on Meta's models</span>
+        <h1>Language tests for people and AI, in any language.</h1>
+        <p class="hero-lede">Build picture-based language tests in minutes, give them by voice, and score them automatically. Then run the same tests on Meta's open-weight model and see exactly where language breaks.</p>
+        <div class="hero-cta">
+          <a class="lbtn lbtn-accent lbtn-lg" href="/studio">Build a test</a>
+          <a class="lbtn lbtn-line lbtn-lg" href="/lab">Explore the Model Lab</a>
+        </div>
+      </div>
+      <figure class="hero-card" aria-label="Example item">
+        <span class="hero-card-tag">Example item</span>
+        <div class="hero-item">
+          <img src="/static/img/hero-gato.png" width="130" height="130" alt="Muse Image line drawing of a cat, from the Spanish demo set">
+          <dl>
+            <div><dt>Test</dt><dd>Picture naming · Spanish</dd></div>
+            <div><dt>Heard</dt><dd class="mono">“gato”</dd></div>
+            <div><dt>Code</dt><dd><span class="pill hero-pill">Correct</span></dd></div>
+            <div><dt>Checked by</dt><dd>SAM 3.1 · Muse Spark</dd></div>
+          </dl>
+        </div>
+        <div class="hero-lens">
+          <div class="hero-lens-head"><span>Word lens · Muse Glimmer</span><span class="mono">p("cat") by layer</span></div>
+          <svg viewBox="0 0 360 90" role="img" aria-label="Measured on Muse Glimmer: the probability of the word cat stays near zero until layer 40, the Chinese word for cat leads at layer 43, and cat reaches 0.62 at layer 52.">
+            <line x1="0" y1="80" x2="360" y2="80" stroke="#4B5563"></line>
+            <polyline points="0,80 272.2,80 293.2,79.3 314.1,63.8 335.1,66.4 356,30.6" fill="none" stroke="#60A5FA" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+            <circle cx="356" cy="30.6" r="4" fill="#60A5FA" stroke="#1F2937" stroke-width="2"></circle>
+            <text x="293.2" y="60" font-size="11" fill="#FDBA74" text-anchor="middle">猫</text>
+            <text x="342" y="22" font-size="11" fill="#F9FAFB" text-anchor="end">cat 0.62</text>
+            <text x="0" y="74" font-size="10" fill="#9CA3AF">layer 1</text>
+            <text x="356" y="74" font-size="10" fill="#9CA3AF" text-anchor="end">52</text>
+          </svg>
+          <p>Measured: the concept appears (as 猫) three layers before the English word wins.</p>
+        </div>
+      </figure>
+    </section>
+  </div>
+</div>
+
+<main>
+<section id="problem" class="band band-gray">
+  <div class="wrap section">
+    <h2 class="h2">Language testing is slow, locked up, and mostly English.</h2>
+    <div class="grid3">
+      <article class="tile"><h3>Materials are scarce</h3><p>Standard picture tests are copyrighted and built for English. Making a new set by hand, with checked pictures and agreed names, takes weeks.</p></article>
+      <article class="tile"><h3>Scoring takes hours</h3><p>Every response is transcribed and coded by hand: was it right, a related word, a sound error, a made-up word? One session can take longer to score than to give.</p></article>
+      <article class="tile"><h3>The mechanism is hidden</h3><p>We see which errors people make, but can't open a brain to test which damage causes which error. In an AI model, we can.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="tools" class="band">
+  <div class="wrap section">
+    <div class="section-head">
+      <span class="kicker kicker-accent">Three tools, one pipeline</span>
+      <h2 class="h2 h2-big">From a word list to scored results, for a person or a model.</h2>
+    </div>
+    <div class="tools">
+      <article class="tool">
+        <span class="step">01 · Build</span>
+        <h3>Test Studio</h3>
+        <p>Turn a word list into a ready-to-use picture test, in your language.</p>
+        <ul>
+          <li>Pictures drawn for each word, in a consistent style</li>
+          <li>Each picture checked for one clear object</li>
+          <li>Name agreement measured before you use it</li>
+          <li>Export printable cards, a norms table and the whole set</li>
+        </ul>
+        <div class="models"><span>Muse Image</span><span>SAM 3.1</span><span>Muse Spark</span></div>
+        <a class="tool-link" href="/studio">Open Test Studio →</a>
+      </article>
+      <article class="tool">
+        <span class="step">02 · Give and score</span>
+        <h3>Scorer</h3>
+        <p>Give the test by voice and get every response transcribed and coded.</p>
+        <ul>
+          <li>Naming errors coded by standard categories</li>
+          <li>Picture descriptions and fluency lists scored</li>
+          <li>A second AI rater flags disagreements</li>
+          <li>A person reviews, then exports</li>
+        </ul>
+        <div class="models"><span>Muse Voice Transcribe</span><span>Muse Spark</span></div>
+        <a class="tool-link" href="/scorer">Open Scorer →</a>
+      </article>
+      <article class="tool">
+        <span class="step">03 · Look inside</span>
+        <h3>Model Lab</h3>
+        <p>Give the same test to an AI model, damage it on purpose, and watch the errors appear.</p>
+        <ul>
+          <li>Targeted lesions in Meta’s open-weight model</li>
+          <li>Word lens: the best guess at every layer</li>
+          <li>Agent designs and runs the experiments</li>
+          <li>Compare with published human profiles</li>
+        </ul>
+        <div class="models"><span>Muse Glimmer (open weights)</span><span>Muse Spark agent</span></div>
+        <a class="tool-link" href="/lab">Open Model Lab →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="band band-gray">
+  <div class="wrap section">
+    <h2 class="h2">How it works</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><b>List words</b><span>Type them in any language; pin a meaning when a word has two.</span></li>
+      <li><span class="n">2</span><b>Draw</b><span>Muse Image draws several candidates per word.</span></li>
+      <li><span class="n">3</span><b>Check</b><span>SAM 3.1 confirms one clear object; Muse Spark confirms the name.</span></li>
+      <li><span class="n">4</span><b>Give</b><span>Show pictures; responses are recorded and transcribed.</span></li>
+      <li><span class="n">5</span><b>Score</b><span>Rules code each response; Muse Spark gives a second opinion.</span></li>
+      <li><span class="n">6</span><b>Review and export</b><span>A person confirms the codes; download the table.</span></li>
+    </ol>
+    <p class="after">Tasks: picture naming, picture description and category fluency. Every automatic code goes to a person for review before export.</p>
+  </div>
+</section>
+
+<section id="who" class="band">
+  <div class="wrap section">
+    <h2 class="h2">Who it's for</h2>
+    <div class="grid4">
+      <article class="who"><h3>Language researchers</h3><p>Aphasia, dementia, child language and bilingualism studies that need normed materials and consistent scoring.</p></article>
+      <article class="who"><h3>Clinicians in training</h3><p>Practice scoring with instant feedback, using pictures you are free to print and share.</p></article>
+      <article class="who"><h3>Teachers</h3><p>Show students how different kinds of damage produce different errors, live in class.</p></article>
+      <article class="who"><h3>AI researchers</h3><p>Test models with tasks from cognitive science and locate where words form inside a model.</p></article>
+    </div>
+    <div class="anylang">
+      <span class="anylang-title">Any language</span>
+      <span class="anylang-text">Muse Voice Transcribe covers 25 languages. Tested end to end so far: spoken English and Spanish; Muse Spark also named test pictures correctly in Hindi and Swahili. Other languages are marked experimental until checked.</span>
+    </div>
+  </div>
+</section>
+
+<section id="trust" class="band band-gray">
+  <div class="wrap section">
+    <h2 class="h2">Responsible by design</h2>
+    <div class="grid4">
+      <article class="tile"><h3>No diagnosis</h3><p>Tip of the Tongue produces error codes for review. It does not diagnose or give medical or treatment advice.</p></article>
+      <article class="tile"><h3>A person decides</h3><p>Every automatic code can be changed by the reviewer, and exports keep both.</p></article>
+      <article class="tile"><h3>Your data stays yours</h3><p>Use speaker codes, never names. Audio is sent for transcription and not stored by the app. Don’t upload identifiable patient recordings without approval.</p></article>
+      <article class="tile"><h3>Open and inspectable</h3><p>Apache 2.0 source, documented scoring rules, and a cited source for every human comparison.</p></article>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="lfoot">
+  <div class="wrap lfoot-row">
+    <span class="lbrand">Tip of the Tongue</span>
+    <span>Built at the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026</span>
+    <span>Apache 2.0</span>
+    <a href="https://github.com/rnorlund/MetaLesionLab">github.com/rnorlund/MetaLesionLab</a>
+  </div>
+</footer>
+</body>
+</html>

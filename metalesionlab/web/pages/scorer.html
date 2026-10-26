@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scorer · Tip of the Tongue</title>
+<meta name="description" content="Give a picture-naming test by voice; Muse Voice Transcribe and the naming-error classifier code every response for review.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/scorer.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tip of the Tongue</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/studio">Test Studio</a>
+    <a href="/scorer" aria-current="page">Scorer</a>
+    <a href="/lab">Model Lab</a>
+  </nav>
+  <div class="chips"><span class="chip">Muse Voice Transcribe · Muse Spark</span></div>
+</header>
+
+<h1 class="sr-only">Scorer</h1>
+<div class="layout">
+<aside>
+  <section class="panel stack" aria-labelledby="session-h">
+    <h2 id="session-h">Session</h2>
+    <div class="fields">
+      <label class="field">Task
+        <select id="task">
+          <option value="naming">Picture naming</option>
+          <option value="description">Picture description</option>
+          <option value="fluency">Category fluency</option>
+        </select>
+      </label>
+      <label class="field">Language
+        <select id="lang"></select>
+      </label>
+    </div>
+    <label class="field" id="set-field">Picture set
+      <select id="set"></select>
+    </label>
+    <label class="field" id="scene-field" hidden>Scene
+      <select id="scene"></select>
+    </label>
+    <label class="field" id="category-field" hidden>Category
+      <input type="text" id="category" value="animals" maxlength="60" list="categories" autocomplete="off">
+      <datalist id="categories"><option value="animals"><option value="fruits"><option value="vegetables"><option value="tools"><option value="clothing"><option value="things in a kitchen"></datalist>
+    </label>
+    <label class="field">Speaker code
+      <input type="text" id="speaker" value="S-001" maxlength="24" autocomplete="off" aria-describedby="speaker-hint">
+      <span class="hint" id="speaker-hint">Codes only, never names.</span>
+    </label>
+    <fieldset>
+      <legend>Responses</legend>
+      <div class="seg" id="mode-seg">
+        <label><input type="radio" name="mode" value="voice" checked><span>Voice</span></label>
+        <label><input type="radio" name="mode" value="typed"><span>Typed</span></label>
+      </div>
+    </fieldset>
+    <label class="check" id="second-field"><input type="checkbox" id="second" checked> Second rater (Muse Spark)</label>
+    <div id="feature-note" class="note note-warn" hidden></div>
+    <button type="button" class="btn btn-record btn-block btn-big" id="start-btn">Start test</button>
+    <p class="xsmall muted" style="margin:0" id="limit-note"></p>
+    <p class="xsmall muted" style="margin:0">Audio goes to the Meta Model API for transcription and isn't stored by this app. Don't use identifiable patient recordings without your institution's approval.</p>
+  </section>
+</aside>
+
+<main id="main" tabindex="-1">
+  <section class="panel stage" id="stage" hidden aria-label="Test" tabindex="-1">
+    <div class="stage-top">
+      <span id="stage-count" class="mono"></span>
+      <span id="stage-rec" class="rec-indicator" hidden><span class="dot" aria-hidden="true"></span> Recording <span id="stage-timer" class="mono">0:00</span></span>
+      <button type="button" class="btn btn-small" id="fullscreen-btn">Full screen</button>
+    </div>
+    <div class="stage-picture" id="stage-picture"></div>
+    <div class="stage-typed" id="stage-typed" hidden>
+      <label class="sr-only" for="typed-response">Response</label>
+      <input type="text" id="typed-response" autocomplete="off" spellcheck="false" placeholder="Type what the speaker said">
+      <textarea id="typed-long" rows="4" hidden placeholder="Type the response" aria-label="Response"></textarea>
+    </div>
+    <div class="stage-controls" id="stage-controls"></div>
+    <p class="xsmall muted stage-help" id="stage-help"></p>
+  </section>
+
+  <section class="panel" aria-labelledby="resp-h" id="naming-results">
+    <div class="panel-head">
+      <h2 id="resp-h">Responses</h2>
+      <span class="meta" id="resp-meta"></span>
+    </div>
+    <div id="restored" class="note" hidden style="margin-bottom:12px"></div>
+    <div class="table-wrap">
+      <table class="data" id="resp-table">
+        <thead><tr>
+          <th scope="col">#</th><th scope="col"><span class="sr-only">Picture</span></th><th scope="col">Target</th>
+          <th scope="col">Heard</th><th scope="col">Auto code</th><th scope="col">Second rater (Muse Spark)</th>
+          <th scope="col">Reviewer</th><th scope="col"><span class="sr-only">Clip and actions</span></th>
+        </tr></thead>
+        <tbody id="resp-body"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="resp-empty">Choose a picture set and press <b>Start test</b>. Each response is transcribed, coded and listed here for review.</div>
+  </section>
+
+  <section class="panel" aria-labelledby="task-res-h" id="task-results" hidden>
+    <div class="panel-head"><h2 id="task-res-h">Results</h2><span class="meta" id="task-res-meta"></span></div>
+    <div id="task-res-body" class="stack-results"></div>
+  </section>
+
+  <div class="row">
+    <section class="panel stack" style="flex: 1 1 380px" aria-labelledby="sum-h">
+      <h2 id="sum-h">Session summary</h2>
+      <div id="summary"><p class="small muted" style="margin:0">No scored responses yet.</p></div>
+      <p class="xsmall muted" style="margin:0">Error codes for review by a qualified person. No diagnosis.</p>
+    </section>
+    <section class="panel stack" style="flex: 1 1 300px" aria-labelledby="exp-h">
+      <h2 id="exp-h">Export</h2>
+      <div class="btn-row">
+        <button type="button" class="btn" id="export-csv">Scored table (CSV)</button>
+        <button type="button" class="btn btn-ghost" id="clear-session">Clear session</button>
+      </div>
+      <p class="xsmall muted" style="margin:0">Exports include the transcript, both raters' codes and the reviewer's final code. Results stay in this browser until you export them.</p>
+    </section>
+  </div>
+</main>
+</div>
+<p class="footnote">Research and teaching use only. Tip of the Tongue doesn't diagnose and doesn't give medical or treatment advice. Scoring follows the Philadelphia Naming Test categories (Roach et al., 1996), simplified for automatic use.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/scorer.js"></script>
+</body>
+</html>

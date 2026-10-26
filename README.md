@@ -33,6 +33,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 26 | Repo, data guard, Meta Model API client with spend ledger and budget cap |
 | Oct 26 | Muse Glimmer in FP8 on a single L40S (32 GiB). Picture naming with the reasoning channel skipped. Word lens (logit lens) that matches the model's own output at the last layer |
 | Oct 26 | Naming-error classifier (English and Spanish), with WordNet plus a Muse Spark judge for meaning. It passes 34 unit tests and agreed with the expected code on 19 of 20 live cases; the one miss was a mistake in the expected answer. |
+| Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. |
 
 ### Prior research context (not part of this submission)
 
@@ -101,6 +102,20 @@ python scripts/smoke_meta_api.py # checks every Meta API we use
 ```
 
 Every Meta API call is logged to `runs/costs.jsonl`, and new calls are refused once spending reaches `MLL_BUDGET_USD` (default $120).
+
+## Web app
+
+```bash
+pip install -e ".[web]"
+python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
+```
+
+Pages: `/` (home), `/studio` (Test Studio), `/scorer` (Scorer), `/lab` (Model Lab). The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings.
+
+- Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
+- Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.
+- For a public deployment, set `TOT_PUBLIC=1` so visitors can edit only the sets and scenes they built, `TOT_TRUST_PROXY=1` behind a reverse proxy, and `TOT_ALLOW_BUILDS=0` to turn off image generation.
+- Scorer results stay in the browser until exported. The server doesn't store audio.
 
 ## License
 
