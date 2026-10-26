@@ -194,3 +194,17 @@ def test_lab_serves_the_sample_until_real_conditions_exist(env):
     assert c["label"] == "naming localizer · layers 34–44 · zero · 2% of units"
     detail = client.get("/api/lab/conditions/naming-34-44").json()
     assert detail["items"][0]["image_url"] == "/media/sets/demo/candidates/cat_0.png"
+
+
+def test_human_profiles_use_the_shared_categories(env):
+    client, _ = env
+    hp = client.get("/api/lab/human").json()
+    by_source = {p["source"]["key"]: p for p in hp["pooled"]}
+    walker = by_source["walker2018"]
+    assert walker["shares"]["Correct"] == pytest.approx(35662 / 63875, abs=1e-4)
+    assert walker["shares"]["Nonword"] == pytest.approx((6049 + 1821) / 63875, abs=1e-4)  # nonword + neologism
+    assert by_source["dell2007"]["missing"] == ["NoResponse"]
+    for p in hp["pooled"]:
+        assert sum(p["shares"].values()) == pytest.approx(1, abs=1e-3)
+        assert set(p["shares"]) <= set(hp["codes"]) and p["source"]["short"][-4:].isdigit()
+    assert [g["subtype"] for g in hp["subtypes"]["groups"]] == ["Anomic", "Broca's", "Conduction", "Wernicke's"]

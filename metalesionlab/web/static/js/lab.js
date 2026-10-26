@@ -360,6 +360,119 @@
     lg.appendChild(T.legend(T.ORDER.filter(function (k) { return seen[k]; })));
   }
 
+  // --- published human profiles -----------------------------------------------------------------
+  var SHARED_LABEL = { Nonword: 'Nonword or neologism', NoResponse: 'No response or description' };
+  var MERGE = { Neologism: 'Nonword', Description: 'NoResponse' };
+  function sharedLabel(c) { return SHARED_LABEL[c] || T.codeInfo(c).label; }
+
+  /* The condition's responses in the shared categories. Visual errors have no published counterpart,
+     so they are left out (and counted separately). */
+  function conditionShares(c) {
+    var shares = {}, total = 0, visual = 0;
+    Object.keys(c.counts || {}).forEach(function (k) {
+      var code = T.normCode(k), n = c.counts[k];
+      code = MERGE[code] || code;
+      if (code === 'Visual') { visual += n; return; }
+      shares[code] = (shares[code] || 0) + n;
+      total += n;
+    });
+    Object.keys(shares).forEach(function (k) { shares[k] /= total || 1; });
+    return { shares: shares, visual: visual, total: total + visual };
+  }
+  function cosine(a, b, codes) {
+    var dot = 0, na = 0, nb = 0;
+    codes.forEach(function (c) { var x = a[c] || 0, y = b[c] || 0; dot += x * y; na += x * x; nb += y * y; });
+    return na && nb ? dot / Math.sqrt(na * nb) : null;
+  }
+  function shareBar(shares, codes, label) {
+    var bar = h('div', { class: 'stack-bar', role: 'img', 'aria-label': label + ': ' + codes.filter(function (c) { return shares[c]; })
+      .map(function (c) { return sharedLabel(c) + ' ' + Math.round(100 * shares[c]) + '%'; }).join(', ') });
+    codes.forEach(function (c) {
+      if (!shares[c]) return;
+      var seg = h('div', { title: sharedLabel(c) + ' ' + Math.round(100 * shares[c]) + '%' });
+      seg.style.flex = shares[c] + ' 1 0';
+      seg.style.background = T.codeInfo(c).color;
+      bar.appendChild(seg);
+    });
+    return bar;
+  }
+  function percentList(shares, codes) {
+    return codes.filter(function (c) { return shares[c]; }).map(function (c) { return sharedLabel(c) + ' ' + Math.round(100 * shares[c]) + '%'; }).join(' · ');
+  }
+
+  function renderHuman() {
+    if (!L.human) {
+      L.human = T.api('/api/lab/human').catch(function () { return null; });
+    }
+    L.human.then(function (hp) {
+      if (!hp || !hp.pooled.length || !L.cur) return;
+      $('human-panel').hidden = false;
+      var codes = hp.codes, model = conditionShares(L.cur);
+      var box = $('human-pooled');
+      box.innerHTML = '';
+      var modelNote = (L.sample ? 'sample data · ' : '') + model.total + ' responses' + (model.visual ? ', ' + model.visual + ' visual errors left out' : '');
+      box.appendChild(h('div', { class: 'profile-row current-model' }, [
+        h('div', { class: 'top' }, [h('b', { text: 'Muse Glimmer · ' + L.cur.label }), h('span', { text: modelNote })]),
+        shareBar(model.shares, codes, 'This condition'),
+        h('div', { class: 'counts', text: percentList(model.shares, codes) })
+      ]));
+      hp.pooled.forEach(function (p) {
+        var used = codes.filter(function (c) { return c !== 'Correct' && p.missing.indexOf(c) < 0; });
+        var sim = cosine(model.shares, p.shares, used);
+        var src = p.source || {};
+        var cite = h('div', { class: 'cite' }, [
+          src.url ? h('a', { href: src.url, target: '_blank', rel: 'noopener', text: src.short }) : src.short,
+          src.where ? ', ' + src.where : '',
+          p.missing.length ? ' · compared without: ' + p.missing.map(sharedLabel).join(', ') : ''
+        ]);
+        box.appendChild(h('div', { class: 'profile-row' }, [
+          h('div', { class: 'top' }, [h('b', { text: p.name }), h('span', { text: sim == null ? '' : 'error-pattern similarity ' + sim.toFixed(2) + (L.sample ? ' · sample' : '') })]),
+          shareBar(p.shares, codes, p.name),
+          h('div', { class: 'counts', text: percentList(p.shares, codes) }),
+          cite
+        ]));
+      });
+      var lg = $('human-legend');
+      lg.innerHTML = '';
+      var legend = h('div', { class: 'legend' });
+      codes.forEach(function (c) {
+        var sw = h('span', { class: 'swatch' });
+        sw.style.background = T.codeInfo(c).color;
+        legend.appendChild(h('span', null, [sw, sharedLabel(c)]));
+      });
+      lg.appendChild(legend);
+      lg.appendChild(h('p', { class: 'xsmall muted', style: { margin: '6px 0 0' }, text: 'Error-pattern similarity: cosine between the two mixes of error types, leaving out correct responses and any category a source doesn\'t report (1 = the same mix of errors). Compare accuracy separately.' }));
+
+      var table = $('human-subtypes');
+      table.innerHTML = '';
+      var st = hp.subtypes;
+      if (st && st.groups.length) {
+        var mAll = {}, nAll = 0;
+        Object.keys(L.cur.counts || {}).forEach(function (k) { var code = MERGE[T.normCode(k)] || T.normCode(k); mAll[code] = (mAll[code] || 0) + L.cur.counts[k]; nAll += L.cur.counts[k]; });
+        var f = function (v) { return v == null ? '–' : Math.round(v * 100) + '%'; };
+        table.appendChild(h('thead', null, h('tr', null, ['Group', 'n', 'Correct', 'Semantic', 'Nonword'].map(function (t) { return h('th', { scope: 'col', text: t }); }))));
+        var tb = h('tbody');
+        tb.appendChild(h('tr', { class: 'model' }, [h('td', { text: 'This condition' + (L.sample ? ' (sample)' : '') }), h('td', { text: String(nAll) }),
+          h('td', { text: f((mAll.Correct || 0) / nAll) }), h('td', { text: f((mAll.Semantic || 0) / nAll) }), h('td', { text: f((mAll.Nonword || 0) / nAll) })]));
+        st.groups.forEach(function (g) {
+          tb.appendChild(h('tr', null, [h('td', { text: g.subtype }), h('td', { text: String(g.n) }), h('td', { text: f(g.correct) }), h('td', { text: f(g.semantic) }), h('td', { text: f(g.nonword) })]));
+        });
+        table.appendChild(tb);
+        var s = st.source || {};
+        var note = $('human-subtype-note');
+        note.innerHTML = '';
+        note.appendChild(document.createTextNode('Share of all responses. '));
+        note.appendChild(s.url ? h('a', { href: s.url, target: '_blank', rel: 'noopener', text: s.short }) : document.createTextNode(s.short || ''));
+        note.appendChild(document.createTextNode((s.where ? ', ' + s.where : '') + '. ' + (s.note || '')));
+      }
+      var ctrl = (hp.controls || []).map(function (c) {
+        var acc = c.correct != null ? Math.round(c.correct * 100) + '%' : c.correct_percent ? c.correct_percent.final + '%' : '?';
+        return acc + ' (' + c.source.short + ', n = ' + c.n + ')';
+      });
+      $('human-controls').textContent = ctrl.length ? 'For reference, adults without brain injury name ' + ctrl.join(' and ') + ' of PNT pictures correctly.' : '';
+    });
+  }
+
   function renderAll() {
     renderConds();
     renderMap();
@@ -367,6 +480,7 @@
     renderItems();
     renderLens();
     renderProfiles();
+    renderHuman();
   }
 
   T.api('/api/lab/conditions').then(function (res) {

@@ -49,6 +49,7 @@ SCENES_DIR = DATA_DIR / "scenes"
 LESION_DIR = DATA_DIR / "lesion"
 CACHE_DIR = DATA_DIR / "cache"
 SAMPLE_LAB = HERE / "sample_lab" / "sample_conditions.json"
+HUMAN_PROFILES = meta_api.REPO_ROOT / "public_data" / "human_naming_profiles.json"
 
 PUBLIC = os.environ.get("TOT_PUBLIC") == "1"
 ALLOW_BUILDS = os.environ.get("TOT_ALLOW_BUILDS", "1") == "1"
@@ -773,3 +774,45 @@ def lab_condition(cond_id: str):
         pictures = {it["word"]: f"/media/sets/{set_id}/{it['image']}" for it in manifest["items"] if it.get("image")}
     items = [{**it, "image_url": pictures.get(it.get("word"))} for it in c["items"]]
     return {**condition_summary(c, sample), "items": items}
+
+
+# Published group-level profiles of people with aphasia, mapped onto one shared set of categories:
+# nonwords and neologisms merge (several sources don't separate them), and descriptions count as
+# no response (as in the sources' "non-naming" and "no response" columns).
+SHARED_CODES = ["Correct", "Semantic", "Formal", "Mixed", "Unrelated", "Nonword", "NoResponse"]
+_HUMAN_MERGE = {"Neologism": "Nonword", "AnyNonword": "Nonword", "NonNaming": "NoResponse", "Description": "NoResponse"}
+
+
+def _source_info(sources: dict, key: str) -> dict:
+    src = sources.get(key, {})
+    citation = src.get("citation", "")
+    year = re.search(r"\((\d{4})\)", citation)
+    short = f"{citation.split(' ')[0]} et al. {year.group(1)}" if citation and year else key
+    link = src.get("url") or (f"https://doi.org/{src['doi']}" if src.get("doi") else None)
+    return {"key": key, "short": short, "where": src.get("where"), "citation": citation, "url": link,
+            "note": src.get("note")}
+
+
+@app.get("/api/lab/human")
+def lab_human():
+    """Published group-level naming profiles (public_data/), as shares of the shared categories."""
+    data = read_json(HUMAN_PROFILES)
+    if not isinstance(data, dict):
+        return {"codes": SHARED_CODES, "pooled": [], "subtypes": None, "controls": []}
+    sources = data.get("sources", {})
+    pooled = []
+    for prof in data.get("pooled_profiles", []):
+        raw = prof.get("counts") or prof.get("mean_counts_of_175") or prof.get("proportions") or {}
+        shares: dict[str, float] = {}
+        for key, value in raw.items():
+            code = _HUMAN_MERGE.get(key, key)
+            shares[code] = shares.get(code, 0.0) + float(value)
+        total = sum(shares.values()) or 1.0
+        pooled.append({"name": prof.get("name"), "source": _source_info(sources, prof.get("source", "")),
+                       "shares": {c: round(v / total, 4) for c, v in shares.items()},
+                       "missing": [c for c in SHARED_CODES if c not in shares], "mapping": prof.get("mapping")})
+    sub = data.get("subtype_profiles") or {}
+    subtypes = {"source": _source_info(sources, sub.get("source", "")), "measures": sub.get("measures"),
+                "groups": sub.get("groups", [])} if sub else None
+    controls = [{**c, "source": _source_info(sources, c.get("source", ""))} for c in data.get("controls", [])]
+    return {"codes": SHARED_CODES, "pooled": pooled, "subtypes": subtypes, "controls": controls}
