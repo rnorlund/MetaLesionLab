@@ -21,6 +21,7 @@ Tippa Lingua has three tools that share one pipeline:
    - You damage chosen parts of the model on purpose and watch aphasia-like errors appear.
    - A word lens shows the model's best guess at every layer.
    - A **Muse Spark** agent designs and runs the experiments and compares the results with published profiles from people with aphasia.
+   - **What can I cut?** removes whole layers from the model, with your tests as the guardrail, and measures the real savings.
 
 > Research and teaching use only. Tippa Lingua doesn't diagnose, and it doesn't give medical or treatment advice.
 
@@ -34,6 +35,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 26 | Muse Glimmer in FP8 on a single L40S (32 GiB). Picture naming with the reasoning channel skipped. Word lens (logit lens) that matches the model's own output at the last layer |
 | Oct 26 | Naming-error classifier (English and Spanish), with WordNet plus a Muse Spark judge for meaning. It passes 34 unit tests and agreed with the expected code on 19 of 20 live cases; the one miss was a mistake in the expected answer. |
 | Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. |
+| Oct 26 | "What can I cut?": every Glimmer decoder layer skipped alone, a greedy removal path guarded by picture naming (English and Spanish) and perplexity on Muse Spark-written text, and real deletion of the chosen layers with measured size, memory and speed |
 
 ### Prior research context (not part of this submission)
 
@@ -67,6 +69,26 @@ The decision order follows the Philadelphia Naming Test scheme (Roach et al., 19
 | Meaning | WordNet first. Muse Spark judges associations (milk for cat). | Muse Spark judges every pair |
 
 See `metalesionlab/naming_errors.py`.
+
+## What can I cut?
+
+Which parts of a model can go while the abilities you care about stay? The tests you build become the guardrail. `metalesionlab/compress.py` removes whole decoder layers from Muse Glimmer:
+
+1. Each of the 52 layers is skipped alone. The result is scored by picture naming on the English and Spanish demo sets (39 pictures) and by perplexity on 150 plain sentences written by Muse Spark (`public_data/general_text_guard.json`).
+2. A greedy path removes one layer at a time. A cut passes if naming stays at or above 95% of intact and perplexity rises by 10% or less. The other Muse Image picture of each word is held out to check each cut.
+3. The chosen layers are deleted for real: the stock model code loads the smaller model from its own config. The outputs match the skip version exactly, and a saved copy reloads with identical logits.
+
+Measured on one L40S with the FP8 decoder (`python scripts/what_can_i_cut.py scan|greedy|prune|reload|export`):
+
+| Cut | Layers | Params | GPU memory | ms per picture | Tokens/s | Naming (39) | Held-out (38) | Perplexity |
+|---|---|---|---|---|---|---|---|---|
+| Intact | 52 | 29.78B | 32.04 GiB | 563 | 10.1 | 37 | 37 | 48.6 |
+| Confirmed: 27, 30 | 50 | 28.81B (−3.3%) | 31.15 GiB (−2.8%) | 545 (−3.2%) | 10.5 (+3.9%) | 37 | 36 | 48.0 |
+| Both guards: 27, 30, 47 | 49 | 28.32B (−4.9%) | 30.70 GiB (−4.2%) | 536 (−4.7%) | 10.7 (+6.1%) | 37 | 34 | 48.2 |
+| Perplexity guard only (5 layers) | 47 | 27.36B (−8.1%) | 29.80 GiB (−7.0%) | 519 (−7.7%) | 11.2 (+10.5%) | 34 | 29 | 51.8 |
+| 10 layers, no guard | 42 | 24.94B (−16.3%) | 27.54 GiB (−14.0%) | 472 (−16.1%) | 12.3 (+22.1%) | 24 | 24 | 67.6 |
+
+The honest answer for this model is "not much". Two layers can go with no measurable loss, a saving of about 3%. Naming, not perplexity, was the binding guard: a perplexity check alone would allow five layers but lose three guard pictures and eight held-out ones, mostly in Spanish. The cut models often answered a Spanish prompt in English ("Umbrella" for *paraguas*), so language control broke before object recognition did. Full-attention layers mattered no more than sliding-window ones. Block influence, a cheap no-skip score, ranked layers poorly here. With about 20 pictures per language, one picture is about 5 points, so treat small differences as noise. Full results, including per-layer scores and the whole greedy path, are in `runs/compress/glimmer.json`.
 
 ## Meta models used
 
