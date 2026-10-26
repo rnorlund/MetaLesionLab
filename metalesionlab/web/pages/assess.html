@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naming Assessment · Tippa Lingua</title>
+<meta name="description" content="A timed, computerized picture-naming assessment: accuracy, error types and naming latency, tracked across sessions. For use by clinicians and researchers; measurements only.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/assess.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/studio">Test Studio</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/assess" aria-current="page">Assessment</a>
+    <a href="/lab">Model Lab</a>
+  </nav>
+  <div class="chips"><span class="chip">Muse Voice Transcribe · Muse Spark · SAM 3.1 · Muse Image</span></div>
+</header>
+<div class="page-intro"><p><b>Naming Assessment</b> gives a timed picture-naming test. It records each answer, measures naming latency, transcribes and codes the response, and builds a session report you review and export. It also tracks change across sessions. <b>For use by clinicians and researchers. Measurements only; no diagnosis or prognosis.</b></p></div>
+
+<h1 class="sr-only">Naming Assessment</h1>
+<div class="layout">
+<aside>
+  <section class="panel stack" aria-labelledby="setup-h">
+    <h2 id="setup-h">New session</h2>
+    <label class="field">Test
+      <select id="test"></select>
+    </label>
+    <label class="field" id="form-field">Items
+      <select id="form" aria-describedby="form-hint">
+        <option value="all">Whole set</option>
+        <option value="A">Form A (half of the set)</option>
+        <option value="B">Form B (the other half)</option>
+      </select>
+      <span class="hint" id="form-hint">Forms A and B split the set into halves matched on word frequency and length, for re-testing without repeating pictures.</span>
+    </label>
+    <div class="fields">
+      <label class="field">Language
+        <select id="lang"></select>
+      </label>
+      <label class="field">Time limit per picture
+        <span class="input-unit"><input type="number" id="limit" min="3" max="60" step="1" value="20" inputmode="numeric" aria-describedby="limit-hint"><span>s</span></span>
+      </label>
+    </div>
+    <span class="hint" id="limit-hint">20 s as in the Philadelphia Naming Test. Reaching the limit counts as no response.</span>
+    <label class="field">Speaker code
+      <input type="text" id="speaker" maxlength="24" autocomplete="off" spellcheck="false" placeholder="e.g. P-014" aria-describedby="speaker-hint">
+      <span class="hint" id="speaker-hint">A code, never a name. Sessions are grouped by this code in this browser.</span>
+    </label>
+    <label class="check" id="practice-field" hidden><input type="checkbox" id="practice" checked> Give the practice items first (not scored)</label>
+    <label class="check"><input type="checkbox" id="second"> Second rater (Muse Spark codes each response independently)</label>
+    <div id="feature-note" class="note note-warn" hidden></div>
+    <button type="button" class="btn btn-record btn-block btn-big" id="start">Start session</button>
+    <p class="xsmall muted" style="margin:0" id="limit-note"></p>
+    <details class="xsmall privacy">
+      <summary>Privacy and approvals</summary>
+      <p>Each answer's audio is sent to the Meta Model API (Muse Voice Transcribe) for transcription. This app processes it in memory and stores nothing about the person. Results stay in this browser (IndexedDB) until you export or delete them. Get your institution's approval before using this with patients.</p>
+    </details>
+  </section>
+
+  <section class="panel stack" aria-labelledby="tests-h">
+    <h2 id="tests-h">Tests</h2>
+    <ul class="set-list" id="test-list" aria-label="Tests"></ul>
+    <div class="btn-col">
+      <button type="button" class="btn" id="import-open">Import a test (pictures + CSV)</button>
+      <button type="button" class="btn" id="photo-open">Make a test from a photo</button>
+      <a class="btn btn-ghost" href="/studio">Make a test from a word list (Test Studio)</a>
+    </div>
+    <p class="xsmall muted" style="margin:0">Private sets stay in this browser. They are never uploaded, listed or shared.</p>
+  </section>
+</aside>
+
+<main id="main" tabindex="-1">
+  <section class="panel stack" id="report" aria-labelledby="report-h" hidden>
+    <div class="panel-head" style="margin:0"><h2 id="report-h">Session report</h2><span class="meta" id="report-meta"></span></div>
+    <p class="disclaimer"><b>For use by clinicians and researchers. Measurements only; no diagnosis or prognosis.</b> Codes and latencies are automatic until you review them below.</p>
+    <div id="report-progress" aria-live="polite"></div>
+    <div class="stats tiles" id="report-stats"></div>
+    <div class="report-grid">
+      <div class="block">
+        <h3>Responses by type</h3>
+        <div id="report-types"></div>
+      </div>
+      <div class="block">
+        <h3>Naming latency per item</h3>
+        <div id="report-latency"></div>
+      </div>
+    </div>
+    <div class="block">
+      <h3 id="review-h">Review and override</h3>
+      <p class="xsmall muted" style="margin:0 0 8px">The first complete response is coded (PNT rule). Change any code or latency; correct a transcript with <b>Edit</b> to re-code it. Your entries are final in the report and exports.</p>
+      <div class="table-wrap">
+        <table class="data" id="review-table" aria-labelledby="review-h">
+          <thead><tr>
+            <th scope="col">#</th><th scope="col"><span class="sr-only">Picture</span></th><th scope="col">Target</th>
+            <th scope="col">Heard</th><th scope="col">Auto</th><th scope="col">Second rater</th>
+            <th scope="col">Final code</th><th scope="col">Latency (ms)</th><th scope="col"><span class="sr-only">Clip and actions</span></th>
+          </tr></thead>
+          <tbody id="review-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <details class="block" id="reference" open>
+      <summary><h3>Published group references</h3></summary>
+      <p class="xsmall muted" id="reference-caption"></p>
+      <div class="table-wrap"><table class="data" id="reference-table"></table></div>
+    </details>
+    <div class="btn-row">
+      <button type="button" class="btn btn-dark" id="export-pdf">Report (PDF)</button>
+      <button type="button" class="btn" id="export-csv">Item table (CSV)</button>
+      <button type="button" class="btn btn-ghost" id="close-report">Close report</button>
+    </div>
+  </section>
+
+  <section class="panel stack" id="tracking" aria-labelledby="track-h">
+    <div class="panel-head" style="margin:0"><h2 id="track-h">Sessions over time</h2><span class="meta" id="track-meta"></span></div>
+    <label class="field" style="max-width:280px">Speaker code
+      <select id="track-speaker"></select>
+    </label>
+    <div class="report-grid">
+      <div class="block"><h3>Accuracy</h3><div id="trend-acc"></div></div>
+      <div class="block"><h3>Median naming latency, correct responses</h3><div id="trend-lat"></div></div>
+    </div>
+    <p class="xsmall muted" style="margin:0">Each point is one session's measurement, in date order. No trend line, forecast or prediction is drawn. Different tests or forms are not directly comparable.</p>
+    <div class="table-wrap">
+      <table class="data" id="sessions-table">
+        <thead><tr><th scope="col">Date</th><th scope="col">Test</th><th scope="col">Items</th><th scope="col">Accuracy</th><th scope="col">Median latency</th><th scope="col">IQR</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody id="sessions-body"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="sessions-empty">No sessions in this browser yet.</div>
+    <div class="btn-row">
+      <button type="button" class="btn" id="export-sessions">Export this speaker's sessions</button>
+      <label class="btn" for="import-sessions">Import sessions</label>
+      <input type="file" id="import-sessions" accept=".json,application/json" class="sr-only">
+      <button type="button" class="btn btn-ghost" id="delete-speaker">Delete this speaker's sessions</button>
+    </div>
+    <p class="xsmall muted" style="margin:0" id="storage-note">Sessions are stored only in this browser (IndexedDB). Export them to move to another computer, and import them there.</p>
+  </section>
+
+  <section class="panel stack" id="about" aria-labelledby="about-h">
+    <h2 id="about-h">How a session works</h2>
+    <ol class="how">
+      <li>Choose a test, a speaker code and the time limit, then press <b>Start session</b> and allow the microphone.</li>
+      <li>Each picture fills the screen. Recording starts just before it appears. Press <b>Space</b>, <b>→</b> or tap <b>Next</b> when the person has answered; at the time limit it moves on by itself.</li>
+      <li>Every answer is timed (picture onset to speech onset), transcribed with the test's language as a hint, and coded by the first complete response. Muse Spark can act as a second rater.</li>
+      <li>Review the codes and latencies, then export the PDF report and the CSV. Sessions are kept per speaker code in this browser for tracking.</li>
+    </ol>
+  </section>
+</main>
+</div>
+<p class="footnote">For use by clinicians and researchers. Measurements only; no diagnosis or prognosis. Coding follows the Philadelphia Naming Test categories (Roach et al., 1996), simplified for automatic use. Published reference values are group results on a different test, shown for context.</p>
+</div>
+
+<div class="admin" id="admin" hidden role="dialog" aria-modal="true" aria-label="Test in progress">
+  <div class="admin-top">
+    <span id="admin-count" class="mono"></span>
+    <span class="rec-indicator" id="admin-rec" hidden><span class="dot" aria-hidden="true"></span> Recording</span>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn-small" id="admin-pause">Pause</button>
+    <button type="button" class="btn btn-small" id="admin-end">End</button>
+  </div>
+  <div class="admin-stage" id="admin-stage">
+    <img id="admin-img" alt="" hidden>
+    <div id="admin-msg" class="admin-msg" aria-live="polite"></div>
+  </div>
+  <div class="admin-bottom">
+    <button type="button" class="btn btn-dark admin-next" id="admin-next">Next</button>
+  </div>
+</div>
+
+<dialog id="import-dlg" aria-labelledby="import-h">
+  <div class="dialog-head"><h2 id="import-h">Import a test</h2><button type="button" class="icon-btn" data-close aria-label="Close">×</button></div>
+  <div class="dialog-body">
+    <p class="small" style="margin:0">Bring a picture-naming test you are licensed to use: a ZIP file or a folder holding the pictures and a CSV with these columns.</p>
+    <pre class="csv-example">file,target,alternates,practice
+p1.png,house,home,yes
+01.png,cat,kitty;puss,
+02.png,umbrella,,</pre>
+    <p class="xsmall muted" style="margin:0"><b>file</b> is the picture's file name; <b>target</b> the expected name; <b>alternates</b> other accepted names, separated by <span class="mono">;</span>; <b>practice</b> marks practice items (given first, not scored). For a test that comes as a PowerPoint, such as the Philadelphia Naming Test obtained from its publisher, first run <span class="mono">scripts/import_pptx_test.py</span> (see the README).</p>
+    <div class="fields">
+      <label class="field">ZIP file
+        <input type="file" id="import-zip" accept=".zip,application/zip">
+      </label>
+      <label class="field">Or a folder
+        <input type="file" id="import-folder" webkitdirectory multiple>
+      </label>
+    </div>
+    <div id="import-preview" aria-live="polite"></div>
+    <div class="fields" id="import-meta" hidden>
+      <label class="field">Name
+        <input type="text" id="import-name" maxlength="60" autocomplete="off">
+      </label>
+      <label class="field">Language
+        <select id="import-lang"></select>
+      </label>
+    </div>
+    <div class="btn-row"><button type="button" class="btn btn-primary" id="import-save" disabled>Save as private set</button></div>
+    <p class="xsmall muted" style="margin:0">A private set is kept only in this browser. Its pictures are never uploaded: during a session only each answer's audio and the target word go to the server.</p>
+  </div>
+</dialog>
+
+<dialog id="photo-dlg" aria-labelledby="photo-h">
+  <div class="dialog-head"><h2 id="photo-h">Make a test from a photo</h2><button type="button" class="icon-btn" data-close aria-label="Close">×</button></div>
+  <div class="dialog-body">
+    <p class="small" style="margin:0">Use a photo of the person's home or belongings, with no people in it. <b>Muse Spark</b> lists the objects it can clearly see, in the test's language; <b>SAM 3.1</b> finds each one; <b>Muse Image</b> redraws it as a line drawing in the same style as our sets (or it is cropped from the photo). Then the usual Test Studio checks run.</p>
+    <div class="fields">
+      <label class="field">Photo
+        <input type="file" id="photo-file" accept="image/jpeg,image/png,image/webp">
+      </label>
+      <label class="field">Language
+        <select id="photo-lang"></select>
+      </label>
+      <label class="field">Most objects
+        <input type="number" id="photo-max" min="2" max="12" value="8" inputmode="numeric">
+      </label>
+    </div>
+    <fieldset>
+      <legend>Pictures</legend>
+      <div class="seg">
+        <label><input type="radio" name="photo-style" value="line" checked><span>Line drawings</span></label>
+        <label><input type="radio" name="photo-style" value="photo"><span>Crops of the photo</span></label>
+      </div>
+    </fieldset>
+    <div class="btn-row"><button type="button" class="btn btn-primary" id="photo-go">Make the test</button></div>
+    <p class="xsmall muted" style="margin:0" id="photo-cost">About $0.15 of Meta API calls for 8 objects. The photo goes to the Meta Model API and is not stored by this app; it is re-encoded without its location data first.</p>
+    <div id="photo-status" aria-live="polite"></div>
+    <div class="cards" id="photo-items"></div>
+    <div class="fields" id="photo-save-row" hidden>
+      <label class="field">Name
+        <input type="text" id="photo-name" maxlength="60" autocomplete="off" value="Objects at home">
+      </label>
+    </div>
+    <div class="btn-row"><button type="button" class="btn btn-primary" id="photo-save" hidden>Save as private set</button></div>
+  </div>
+</dialog>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/assess-engine.js"></script>
+<script src="/static/js/assess.js"></script>
+</body>
+</html>

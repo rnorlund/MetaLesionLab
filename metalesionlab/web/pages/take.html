@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Take the naming test · Tippa Lingua</title>
+<meta name="description" content="Name 20 pictures out loud and see how many you named and how fast. About 3 minutes, in English or Spanish. Not a medical test.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/assess.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/take" aria-current="page">Take the test</a>
+    <a href="/assess">For clinicians</a>
+  </nav>
+</header>
+
+<main class="take" id="main" tabindex="-1">
+  <h1 class="sr-only">Take the naming test</h1>
+
+  <section class="panel stack" id="step-intro" aria-labelledby="intro-h">
+    <h2 id="intro-h">Take the naming test</h2>
+    <p class="lead">Name 20 pictures out loud, as quickly as you can. It takes about 3 minutes. Afterwards you'll see how many you named and how fast.</p>
+    <fieldset>
+      <legend>Language</legend>
+      <div class="choice" id="lang-choice"></div>
+    </fieldset>
+    <ul class="plain">
+      <li>You need a microphone and a quiet room.</li>
+      <li>Your voice is sent to the Meta Model API to be written down. This site keeps no recording and none of your words.</li>
+      <li>Your results stay on this page and are gone when you close it, unless you choose to add a summary to the reference range.</li>
+    </ul>
+    <p class="note"><b>Not a medical test.</b> Many things affect naming: the language, the pictures, being tired. If you're worried about your memory or language, talk to a doctor.</p>
+    <label class="check"><input type="checkbox" id="agree"> I understand, and I'm happy for my voice to be written down by the Meta Model API.</label>
+    <div id="feature-note" class="note note-warn" hidden></div>
+    <button type="button" class="btn btn-dark btn-big" id="go-mic" disabled>Continue</button>
+  </section>
+
+  <section class="panel stack" id="step-mic" aria-labelledby="mic-h" hidden>
+    <h2 id="mic-h">Check your microphone</h2>
+    <p class="lead">Allow the microphone, then say <b id="hello-word">"hello"</b> in your usual voice.</p>
+    <div class="meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="meter-box"><div id="meter"></div></div>
+    <p class="small" id="mic-msg" aria-live="polite">Waiting for the microphone…</p>
+    <p class="small muted" style="margin:0">Next: each picture appears on its own. Say its name with one word, then tap <b>Next</b> or press the space bar. If you don't know it, say so, or wait: after 20 seconds the test moves on.</p>
+    <button type="button" class="btn btn-dark btn-big" id="go-test" disabled>Start the test</button>
+  </section>
+
+  <section class="panel stack" id="step-wait" aria-labelledby="wait-h" hidden>
+    <h2 id="wait-h">Scoring your answers</h2>
+    <div class="progress" aria-hidden="true"><div id="wait-bar" style="width:0"></div></div>
+    <p class="small" id="wait-msg" aria-live="polite"></p>
+  </section>
+
+  <section class="panel stack" id="step-result" aria-labelledby="result-h" hidden>
+    <h2 id="result-h">Your results</h2>
+    <div class="big-result">
+      <div class="stat"><span>Your accuracy</span><b id="r-acc"></b><span class="ref" id="r-acc-ref"></span><div id="r-acc-strip"></div></div>
+      <div class="stat"><span>Your median naming speed (correct answers)</span><b id="r-lat"></b><span class="ref" id="r-lat-ref"></span></div>
+    </div>
+    <div>
+      <h3 class="small" style="margin:0 0 6px">Your answers</h3>
+      <ul class="breakdown" id="r-breakdown"></ul>
+      <p class="xsmall muted" style="margin:6px 0 0">Speech recognition can mishear words, so a few of these may be its mistakes. You can see what it heard below.</p>
+    </div>
+    <p class="small" id="r-context" style="margin:0"></p>
+    <p class="note"><b>Not a medical test.</b> Many things affect naming: the language, the pictures, being tired. If you're worried about your memory or language, talk to a doctor.</p>
+    <details>
+      <summary class="small">What we heard for each picture</summary>
+      <div class="heard-list" id="r-heard"></div>
+    </details>
+
+    <section class="panel stack" id="contribute" aria-labelledby="contrib-h">
+      <h3 id="contrib-h" style="margin:0">Help build the reference range</h3>
+      <p class="small" style="margin:0">We're collecting results from adult volunteers so that future takers can compare their result with adults who took this same test. It takes one click.</p>
+      <div class="consent">
+        <label class="check"><input type="checkbox" id="c-adult"> I'm 18 or older, and I don't have a neurological or language condition (such as a stroke, aphasia, dementia, Parkinson's disease or a brain injury).</label>
+        <label class="check"><input type="checkbox" id="c-fluent"> I speak <span id="c-lang">English</span> fluently.</label>
+        <label class="check"><input type="checkbox" id="c-consent"> Add a summary of this result: the language, the test, my score, my median naming speed, my age band (if I give one) and the date. No recording, no words, no name and no IP address are kept.</label>
+        <label class="field" style="max-width:240px">Age band (optional)
+          <select id="c-age"></select>
+        </label>
+        <div class="btn-row"><button type="button" class="btn btn-primary" id="c-send" disabled>Add my result</button></div>
+        <p class="small" id="c-msg" aria-live="polite" style="margin:0"></p>
+      </div>
+    </section>
+
+    <div class="btn-row">
+      <button type="button" class="btn" id="again">Take it again</button>
+      <button type="button" class="btn" id="other-lang" hidden></button>
+    </div>
+  </section>
+</main>
+<p class="footnote">Tippa Lingua · pictures drawn by Muse Image, answers written down by Muse Voice Transcribe and coded automatically. Not a medical test. <a href="/assess">For clinicians and researchers</a>.</p>
+</div>
+
+<div class="admin" id="admin" hidden role="dialog" aria-modal="true" aria-label="Naming test">
+  <div class="admin-top">
+    <span id="admin-count" class="mono"></span>
+    <span class="rec-indicator" id="admin-rec" hidden><span class="dot" aria-hidden="true"></span> Listening</span>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn-small" id="admin-end">Stop</button>
+  </div>
+  <div class="admin-stage" id="admin-stage">
+    <img id="admin-img" alt="" hidden>
+    <div id="admin-msg" class="admin-msg" aria-live="polite"></div>
+  </div>
+  <div class="admin-bottom">
+    <button type="button" class="btn btn-dark admin-next" id="admin-next">Next</button>
+  </div>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/assess-engine.js"></script>
+<script src="/static/js/take.js"></script>
+</body>
+</html>

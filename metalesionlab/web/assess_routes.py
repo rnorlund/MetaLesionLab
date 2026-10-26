@@ -21,6 +21,7 @@ import threading
 import time
 from pathlib import Path
 
+import httpx
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
@@ -44,6 +45,24 @@ def _web():
     """The main app module, looked up at call time (tests patch its settings)."""
     from metalesionlab.web import app as web
     return web
+
+
+RETRY_ERRORS = (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, httpx.RemoteProtocolError)
+
+
+def with_retry(fn, *args, attempts: int = 4, delay_s: float = 0.5, **kwargs):
+    """Call fn, retrying with exponential backoff (0.5, 1, 2 s) when the network drops (DNS
+    failures and refused or reset connections). Chat, SAM and image calls already retry inside
+    the OpenAI client; transcription goes through httpx and retries here."""
+    for k in range(attempts):
+        try:
+            return fn(*args, **kwargs)
+        except RETRY_ERRORS as e:
+            if k == attempts - 1:
+                raise
+            log.warning("Meta API connection failed (%s); retrying in %.1f s", type(e).__name__, delay_s)
+            time.sleep(delay_s)
+            delay_s *= 2
 
 
 # --- pages -------------------------------------------------------------------------------
@@ -176,7 +195,7 @@ def score_timed(request: Request, audio: UploadFile = File(...), target: str = F
         web.limiter.take("score", web.client_ip(request))
         clip = audio_mod.trim(wav, max(0.0, onset_s - TRANSCRIBE_LEAD_S), None)
         clip = audio_mod.pad_silence(clip, web.NAMING_PAD_S)
-        body = api.transcribe(clip, language=lang)
+        body = with_retry(api.transcribe, clip, language=lang)
         transcript = str(body.get("transcript") or "").strip()
         if timing.onset_s is None and transcript:
             flags.append("no_onset_found")

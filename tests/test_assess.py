@@ -77,9 +77,10 @@ def test_pages_render(env):
         r = client.get(path)
         assert r.status_code == 200 and "Tippa Lingua" in r.text
     assert "no diagnosis or prognosis" in client.get("/assess").text
-    take = client.get("/take").text.lower()
-    for banned in ("impaired", "abnormal", "diagnos", "screen", "risk"):
-        assert banned not in take
+    # The public test reports numbers only; its wording never judges the person.
+    take = client.get("/take").text.lower() + client.get("/static/js/take.js").text.lower()
+    for banned in ("impaired", "normal", "diagnos", "screen", "risk"):
+        assert banned not in take, banned
 
 
 def test_timed_response_gives_latency_code_and_receipt(env):
@@ -294,3 +295,21 @@ def test_photo_test_route_hands_back_and_forgets(env, monkeypatch):
     assert client.get(f"/api/assess/photo-test/{job}").status_code == 404
     bad = client.post("/api/assess/photo-test", data={"lang": "en"}, files={"photo": ("x.gif", b"GIF89a", "image/gif")})
     assert bad.status_code == 415
+
+
+def test_transcription_retries_when_the_network_drops(env, monkeypatch):
+    import httpx
+    client, _, api = env
+    monkeypatch.setattr(assess_routes.time, "sleep", lambda s: None)
+    real, fails = api.transcribe, []
+
+    def flaky(wav, language=None):
+        if len(fails) < 2:
+            fails.append(1)
+            raise httpx.ConnectError("nodename nor servname provided, or not known")
+        return real(wav, language)
+
+    api.transcribe = flaky
+    api.transcripts = ["cat"]
+    r = post_clip(client, wav_with_speech(), set_id="demo_en", item=0)
+    assert r.status_code == 200 and r.json()["code"] == "Correct" and len(fails) == 2
