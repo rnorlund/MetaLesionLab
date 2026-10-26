@@ -76,10 +76,11 @@ def _words(text: str) -> list[str]:
     return re.findall(r"\w+", text.lower())
 
 
-def response_flags(said: str, prompt: str, echo_ngram: int = 4, repeats: int = 4) -> list[str]:
+def response_flags(said: str, prompt: str, echo_ngram: int = 6, repeats: int = 4) -> list[str]:
     """Lesion signs the naming codes don't capture: "echo" when the answer repeats the instruction
-    (4 words in a row from the prompt), "perseveration" when one token makes up at least half of
-    the answer and occurs 4+ times ("self | self | self", '" " " "')."""
+    (6 words in a row from the prompt; carriers like "The object in this picture is" share only 5),
+    "perseveration" when one token makes up at least half of the answer and occurs 4+ times
+    ("self | self | self", '" " " "')."""
     flags = []
     w, p = _words(said), _words(prompt)
     grams = {tuple(p[i:i + echo_ngram]) for i in range(len(p) - echo_ngram + 1)}

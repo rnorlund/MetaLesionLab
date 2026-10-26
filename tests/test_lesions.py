@@ -272,6 +272,7 @@ def test_site_spec_names():
     ('" " " " " " " " " " " "', ["perseveration"]),
     ("| self | user | self | self | self |", ["perseveration"]),
     ("The object in the picture is a cat", []),
+    ("The object in this picture is a cat", []),  # a carrier, not an echo
     ("1 2 3 4 5 6", []),
 ])
 def test_response_flags(said, expected):
