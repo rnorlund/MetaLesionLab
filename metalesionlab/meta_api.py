@@ -145,13 +145,16 @@ class MetaAPI:
         self.client = OpenAI(base_url=BASE_URL, api_key=key, max_retries=3)
         self.http = httpx.Client(base_url=BASE_URL, headers={"Authorization": f"Bearer {key}"}, timeout=120)
 
-    def chat(self, messages: list[dict], model: str = CHAT_MODEL, reasoning_effort: str = "minimal", **kwargs):
+    def chat(self, messages: list[dict], model: str = CHAT_MODEL, reasoning_effort: str = "minimal",
+             ledger_tag: str | None = None, **kwargs):
         """reasoning_effort is minimal, low, medium, high, xhigh or max. Reasoning tokens bill as output:
-        "minimal" used ~100 of them for a one-word answer, the default ~250."""
+        "minimal" used ~100 of them for a one-word answer, the default ~250. ledger_tag marks the ledger
+        entry (e.g. "ask" for the Ask the Lab agent) so a feature's own spend can be totalled."""
         _check_budget()
         resp = self.client.chat.completions.create(model=model, messages=messages,
                                                    reasoning_effort=reasoning_effort, **kwargs)
-        _record("chat", model, token_cost(model, resp.usage), usage=resp.usage.model_dump())
+        _record("chat", model, token_cost(model, resp.usage), usage=resp.usage.model_dump(),
+                **({"tag": ledger_tag} if ledger_tag else {}))
         return resp
 
     def generate_images(self, prompt: str, n: int = 1, size: str | None = None,
