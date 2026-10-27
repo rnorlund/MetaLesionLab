@@ -19,7 +19,7 @@ Plan, committed before any data were measured: `docs/plato_lifespan_plan.md`. Pa
 - For the pre-registered primary set of 10 things nothing changes clearly, and none of it survives at a lower guidance setting.
 
 **An AI that learns only from people's chairs does grow up like a child.** We trained a small sketch model from scratch on 20,000 Quick, Draw! chairs.
-- It starts with scribbles (12% recognizable, distance 0.52) and passes through the range of children's chairs.
+- It starts with scribbles (13% recognizable, distance 0.52) and passes through the range of children's chairs.
 - It ends about as close to the adult prototype as adults (0.21) and 80–89% recognizable.
 - It ends **less varied than the chairs it learned from** (spread 0.32 vs 0.37, difference −0.048 [−0.076, −0.022]).
 
@@ -110,9 +110,9 @@ Temperature 1, 64 drawings per step. Single points are not counted, so early ste
 
 | Training step | Drawings | Recognizable | Distance to the adult Form | Spread | Spread − training drawings |
 |---|---|---|---|---|---|
-| 0 (random weights) | 24 | 12% | 0.520 | 0.419 | +0.054 [0.005, 0.098] |
+| 0 (random weights) | 24 | 13% | 0.520 | 0.419 | +0.054 [0.005, 0.098] |
 | 100 | 39 | 46% | 0.325 | 0.364 | −0.002 |
-| 200 | 40 | 62% | 0.295 | 0.364 | −0.001 |
+| 200 | 40 | 63% | 0.295 | 0.364 | −0.001 |
 | 800 | 51 | 75% | 0.250 | 0.330 | −0.035 [−0.074, −0.001] |
 | 3,200 | 59 | 81% | 0.235 | 0.328 | −0.037 [−0.069, −0.011] |
 | 12,800 | 64 | 89% | 0.192 | 0.311 | −0.054 [−0.082, −0.031] |
