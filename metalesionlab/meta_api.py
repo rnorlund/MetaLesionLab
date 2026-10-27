@@ -23,6 +23,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 LEDGER = Path(os.environ.get("MLL_LEDGER", REPO_ROOT / "runs" / "costs.jsonl"))
 BUDGET_USD = float(os.environ.get("MLL_BUDGET_USD", "120"))
 
+
+def data_dir() -> Path:
+    """The web app's data folder: TIPPA_DATA_DIR (or the older TOT_DATA_DIR), default runs/.
+    A deployed site points it at the bundle written by scripts/build_site_bundle.py."""
+    return Path(os.environ.get("TIPPA_DATA_DIR") or os.environ.get("TOT_DATA_DIR") or REPO_ROOT / "runs")
+
 CHAT_MODEL = "muse-spark-1.3"
 IMAGE_MODEL = "muse-image-1.0"
 SAM_MODEL = "sam-3.1"
@@ -77,10 +83,17 @@ def spent() -> float:
         return sum(json.loads(line)["usd"] for line in f if line.strip())
 
 
+# Extra checks run before every call, each given the call's estimated cost; one raises BudgetExceeded
+# to refuse the call. The public web demo registers its daily cap here (web/guard.py).
+budget_checks: list = []
+
+
 def _check_budget(estimate: float = 0.0) -> None:
     total = spent()
     if total + estimate > BUDGET_USD:
         raise BudgetExceeded(f"spent ${total:.2f} of the ${BUDGET_USD:.2f} cap")
+    for check in budget_checks:
+        check(estimate)
 
 
 _ledger_lock = threading.Lock()

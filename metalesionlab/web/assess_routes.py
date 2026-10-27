@@ -356,7 +356,9 @@ _contributions: dict[str, list[float]] = {}
 
 
 def norms_dir() -> Path:
-    return _web().DATA_DIR / "norms"
+    """TIPPA_NORMS_DIR on a host whose data folder is read-only or not persistent, else DATA_DIR/norms."""
+    custom = os.environ.get("TIPPA_NORMS_DIR")
+    return Path(custom) if custom else _web().DATA_DIR / "norms"
 
 
 def norms_records(set_id: str, version: str) -> list[dict]:
