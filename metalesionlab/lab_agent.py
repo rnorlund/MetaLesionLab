@@ -35,6 +35,7 @@ from urllib.parse import quote
 
 from metalesionlab import agent_engine as engine
 from metalesionlab import meta_api
+from metalesionlab.brand import BRAND
 
 MODEL = meta_api.CHAT_MODEL
 REASONING_EFFORT = "low"
@@ -656,7 +657,7 @@ TOOLS = [
     _fn("bilingual_results", "The controlled bilingual test: same pictures and damage in English, Spanish, French "
         "and Portuguese; extra accuracy drop vs. English and switching into English.",
         {"language": {"type": "string", "enum": ["es", "fr", "pt", "es_xen"]}}),
-    _fn("language_support", "How well each language works in Tippa Lingua's tests (verified, works with review, "
+    _fn("language_support", f"How well each language works in {BRAND}'s tests (verified, works with review, "
         "experimental), with the measured counts.", {"lang": {"type": "string", "description": "Code or name, e.g. 'es'."}}),
 ]
 _IMPL: dict[str, Callable[..., dict]] = {
@@ -725,7 +726,7 @@ REFUSAL = ("I can't help with questions about a particular person's health, such
            "published group studies of aphasia report, for example: \"How does lesioned Glimmer compare with people "
            "with aphasia?\"")
 
-SCOPE = ("Tippa Lingua is for research and teaching. It measures picture naming and shows how a damaged AI model "
+SCOPE = (f"{BRAND} is for research and teaching. It measures picture naming and shows how a damaged AI model "
          "behaves; it doesn't decide whether anyone has a condition, predict recovery or recommend treatment. A "
          "speech-language pathologist or a doctor can help with those questions.\n\nI can answer questions about the "
          "model and about published group studies of aphasia, for example: \"How does lesioned Glimmer compare with "
@@ -833,7 +834,7 @@ def drop_banned_sentences(answer: str) -> str:
 
 # --- the agent -----------------------------------------------------------------------------------
 
-SYSTEM_PROMPT = """You are "Ask the Lab", the research guide for Tippa Lingua, a project that gives picture-naming tests to people and to Muse Glimmer 30B, Meta's open-weight vision-language model. You answer by calling read-only tools over results the lab has already computed, then writing a short answer.
+SYSTEM_PROMPT = """You are "Ask the Lab", the research guide for """ + BRAND + """, a project that gives picture-naming tests to people and to Muse Glimmer 30B, Meta's open-weight vision-language model. You answer by calling read-only tools over results the lab has already computed, then writing a short answer.
 
 What the lab holds:
 - Model Lab: lesion conditions. Parts of Muse Glimmer were switched off or disturbed (zero, mean or noise), and the model named 20 pictures (set demo_en in English, demo_es in Spanish). Responses are coded with Philadelphia Naming Test categories: Correct; Semantic (related meaning, "teapot" for kettle); Formal (a real word that sounds like the target); Mixed (both); Nonword (a non-word that sounds like the target, "Caraloon" for carrot); Neologism (a non-word unlike the target); Unrelated; Description; NoResponse. "Sound errors" means Formal + Nonword. Ids look like demo_en:layers-40-47-noise-x2.828; layer numbers inside ids count from 0, labels and pages count from 1 (that id is layers 41-48). Random controls damage the same number of randomly chosen units.

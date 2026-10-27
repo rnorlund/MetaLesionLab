@@ -1,4 +1,4 @@
-"""Tippa Lingua web app: Test Studio, Scorer and Model Lab over one small JSON API.
+"""The web app: Test Studio, Scorer and Model Lab over one small JSON API.
 
 Run:  uvicorn metalesionlab.web.app:app      (or: python -m metalesionlab.web)
 Data: TOT_DATA_DIR (default <repo>/runs) holds sets/, scenes/, lesion/ and cache/.
@@ -36,6 +36,7 @@ from pydantic import BaseModel, Field
 from wordfreq import zipf_frequency
 
 from metalesionlab import meta_api
+from metalesionlab.brand import BRAND
 from metalesionlab.meta_api import BudgetExceeded, MetaAPI, load_api_key
 from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, is_word, spark_semantic_judge, tokens
 from metalesionlab.web import exports
@@ -73,9 +74,10 @@ AUDIO_SUFFIXES = {"audio/webm": ".webm", "audio/ogg": ".ogg", "audio/mp4": ".m4a
 BUDGET_MSG = ("This demo has reached its spending cap for Meta API calls, so new scoring and picture "
               "generation are paused. Browsing, review and exports still work.")
 
-app = FastAPI(title="Tippa Lingua", version="0.1.0", docs_url="/api/docs", redoc_url=None)
+app = FastAPI(title=BRAND, version="0.1.0", docs_url="/api/docs", redoc_url=None)
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 guard.install(app)  # PUBLIC_DEMO=1: daily spend cap, per-visitor limits, tiny builds (guard.py)
+importlib.import_module("metalesionlab.web.site").install(app)  # one header, the name, share tags, series cards
 
 
 # --- errors ----------------------------------------------------------------------------
@@ -291,17 +293,20 @@ def set_summary(d: Path) -> dict:
         "created": meta.get("created") or d.stat().st_mtime,
         "source": meta.get("source", "folder"), "editable": not PUBLIC,  # else only with the edit token
         "demo": d.name.startswith("demo_"), "unlisted": bool(meta.get("unlisted")),
+        # Listed in the pickers: the demo sets, sets built on the site, and sets marked "public" in webmeta.json.
+        # Research sets (core100_*, tiny_en …) stay reachable by id and with ?all=1.
+        "public": d.name.startswith("demo_") or meta.get("source") == "web" or bool(meta.get("public")),
     }
 
 
 @app.get("/api/sets")
 def list_sets(show_all: bool = Query(False, alias="all")):
-    """Every set, newest first. Sets whose webmeta.json says "unlisted" (test builds) are left out
-    unless ?all=1; they stay reachable by id."""
+    """The demo sets, sets built on the site and sets marked public, newest first. Research sets and sets
+    whose webmeta.json says "unlisted" (test builds) are left out unless ?all=1; they stay reachable by id."""
     if not SETS_DIR.is_dir():
         return []
     sets = [set_summary(d) for d in SETS_DIR.iterdir() if d.is_dir() and SET_ID.match(d.name)]
-    return sorted((s for s in sets if show_all or not s["unlisted"]), key=lambda s: -s["created"])
+    return sorted((s for s in sets if show_all or (s["public"] and not s["unlisted"])), key=lambda s: -s["created"])
 
 
 @app.get("/api/sets/{set_id}")
@@ -342,7 +347,7 @@ def _build(set_id: str, words: list[str], lang: str, style: str, candidates: int
 def create_set(body: NewSet, request: Request):
     if not ALLOW_BUILDS:
         raise HTTPException(403, "Building new picture sets is turned off on this demo. You can browse "
-                                 "and export the existing sets, or run Tippa Lingua yourself.")
+                                 f"and export the existing sets, or run {BRAND} yourself.")
     lang = check_lang(body.lang)
     lines, seen = [], set()
     for line in body.words.splitlines():
@@ -806,7 +811,8 @@ def lab_conditions() -> tuple[list[dict], bool]:
     Per-set folders (with index.json) come first, featured conditions in curated order."""
     real: list[dict] = []
     if LESION_DIR.is_dir():
-        for set_dir in sorted(p for p in LESION_DIR.iterdir() if (p / "index.json").is_file()):
+        set_dirs = (p for p in LESION_DIR.iterdir() if (p / "index.json").is_file())
+        for set_dir in sorted(set_dirs, key=lambda p: (not p.name.startswith("demo_"), p.name)):  # demo sets first
             index = read_json(set_dir / "index.json") or {}
             files = [set_dir / e["file"] for e in index.get("conditions", []) if isinstance(e, dict) and e.get("file")]
             conds = [c for f in files if f.is_file() and (c := _real_condition(f, set_dir.name))]
@@ -846,9 +852,10 @@ def describe_spec(spec: dict) -> str:
         parts.append(str(spec["method"]))
     if spec.get("fraction") is not None:
         frac = float(spec["fraction"])
-        parts.append(f"{frac * 100:g}% of units" if frac <= 1 else f"{frac:g}% of units")
+        parts.append(f"{round(frac * 100, 2):g}% of units" if frac <= 1 else f"{round(frac, 2):g}% of units")
     elif spec.get("units") is not None:
-        parts.append(f"{spec['units']} units")
+        units = spec["units"]
+        parts.append(f"{units:,} units" if isinstance(units, int) else f"{units} units")
     return " · ".join(parts)
 
 

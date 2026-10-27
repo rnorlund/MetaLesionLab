@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>What can I cut? · Model Lab · Tippa Lingua</title>
+<title>What can I cut? · Model Lab · {{BRAND}}</title>
 <meta name="description" content="Which parts of an AI can you remove without losing the abilities you care about? Muse Glimmer's 52 layers, removed one at a time, with your own tests as the guardrail.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,18 +16,7 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="page">
-<header class="topbar">
-  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
-  <nav class="topnav" aria-label="Tools">
-    <a href="/">Home</a>
-    <a href="/studio">Test Studio</a>
-    <a href="/scorer">Scorer</a>
-    <a href="/lab" aria-current="page">Model Lab</a>
-    <a href="/ask">Ask the Lab</a>
-    <a href="/plato">Plato’s Chair</a>
-    <a href="/draw">Draw</a>
-  </nav>
-  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+<header class="topbar"><!-- the site header (web/site.py) -->
   <div class="chips">
     <span class="chip">Muse Glimmer 30B · FP8 · one L40S</span>
   </div>
@@ -88,7 +77,7 @@
   <section class="panel" id="layers" aria-labelledby="layers-h">
     <div class="panel-head">
       <h2 id="layers-h">Every layer, skipped alone</h2>
-      <div class="seg cut-measure" id="measure-seg" role="group" aria-label="Colour the layers by">
+      <div class="seg cut-measure" id="measure-seg" role="group" aria-label="Color the layers by">
         <button type="button" data-measure="naming" aria-pressed="true">Naming lost</button>
         <button type="button" data-measure="ppl" aria-pressed="false">Perplexity rise</button>
         <button type="button" data-measure="bi" aria-pressed="false">Shortcut score</button>

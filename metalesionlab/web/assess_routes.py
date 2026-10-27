@@ -95,9 +95,9 @@ def is_public_test(set_id: str | None) -> bool:
 # How to answer, per language: spoken scoring is most reliable in these forms (docs/languages.md).
 ANSWER_FORMS = {
     "en": {"instruction": "Say the name with one word.", "example": "cat"},
-    "es": {"instruction": "Say the word with its article: el or la (or un, una).", "example": "el gato"},
-    "fr": {"instruction": "Say the word with its article: le, la, un or une.", "example": "le chat"},
-    "pt": {"instruction": "Say the word with its article: o or a (or um, uma).", "example": "o gato"},
+    "es": {"instruction": "Say the word with un or una.", "example": "un gato"},
+    "fr": {"instruction": "Say the word with un or une.", "example": "un chat"},
+    "pt": {"instruction": "Say the word with um or uma.", "example": "um gato"},
     "zh": {"instruction": "Say the word with a measure word, such as 一只 or 一个.", "example": "一只猫"},
     "hi": {"instruction": "Say the word on its own.", "example": "बिल्ली"},
     # Oct 27 (docs/languages.md): the form that scored best with synthesized voices.

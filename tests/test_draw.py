@@ -283,10 +283,9 @@ def test_the_app_never_imports_the_model_at_startup():
 
 
 def test_nav_links_draw_a_chair():
-    pages = web.HERE / "pages"
-    for name in ("index.html", "challenge.html", "lab.html", "cut.html", "bilingual.html", "ask.html", "scorer.html",
-                 "studio.html", "assess.html", "draw.html"):
-        assert 'href="/draw"' in (pages / name).read_text(), name
+    c = TestClient(web.app)  # the nav comes from web/site.py, so check the pages as served
+    for path in ("/", "/challenge", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/scorer", "/studio", "/assess", "/draw"):
+        assert 'href="/draw"' in c.get(path).text, path
 
 
 # --- fetching the model at build time ------------------------------------------------------------------

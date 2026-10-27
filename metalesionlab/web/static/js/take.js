@@ -5,7 +5,7 @@
   'use strict';
   var T = window.TOT, A = window.TLA, h = T.h;
   var ITI_MS = 500;
-  var LANG_LABEL = { en: 'English', es: 'Español', fr: 'Français', pt: 'Português' };
+  var LANG_LABEL = { en: 'English', es: 'Español', fr: 'Français', pt: 'Português', de: 'Deutsch', tr: 'Türkçe', pl: 'Polski', id: 'Bahasa Indonesia' };
   var HELLO = { en: 'hello', es: 'hola', fr: 'bonjour', pt: 'olá' };
   var PLAIN = {
     Correct: ['named correctly', 'named correctly'],
