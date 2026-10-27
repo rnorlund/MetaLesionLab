@@ -1,11 +1,46 @@
-/* Landing page: the one motion moment (stack the 16 chairs on top of each other) and the
-   second-language card's numbers. */
+/* Landing page: draw first (the pad from draw.js, blind: nothing of Muse Image's chairs until the visitor
+   draws or skips), then the reveal with the one motion moment (stack the 16 chairs on top of each other),
+   the visitor's results, and the second-language card's numbers. */
 (function () {
   'use strict';
   var T = window.TOT;
   var fig = document.getElementById('chairs'), btn = document.getElementById('stack-btn');
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var autoTimer = null, autoDone = false;
+
+  // --- draw first, then the reveal ------------------------------------------------------------------
+  var padEl = document.getElementById('hero-draw'), revealEl = document.getElementById('reveal');
+  var skip = document.getElementById('skip-link'), drawApp = null;
+  function reveal(how) {
+    if (!revealEl || !revealEl.hidden) return;
+    revealEl.hidden = false;
+    if (drawApp) drawApp.markSeen();  // a drawing from now on is no longer blind
+    if (skip) skip.hidden = true;
+    var invite = document.getElementById('reveal-invite');
+    if (invite) invite.hidden = how !== 'drawn';
+    document.body.classList.add('revealed');
+  }
+  if (padEl && window.TOTDraw) {
+    drawApp = window.TOTDraw.mount(padEl, {
+      title: 'Before we tell you anything: draw {a thing}.', instruction: 'You have 20 seconds.', heading: 'h2',
+      concept: 'chair', picker: false, deepLink: false, revealStrip: false,
+      results: document.getElementById('hero-results'), scrollTo: revealEl,
+      onReveal: function () { reveal('drawn'); }
+    });
+  } else if (revealEl) {
+    revealEl.hidden = false;
+  }
+  if (skip) {
+    skip.addEventListener('click', function (e) {
+      e.preventDefault();
+      reveal('skip');
+      revealEl.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+    });
+  }
+  // The guided tour starts at the chairs: show them first (capture phase, before the tour finds its target).
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('[data-tour-start]')) reveal('tour');
+  }, true);
 
   // --- stack the drawings: Muse Image's 16 make one chair, people's 16 make a cloud ----------------
   function stack(on) {
@@ -20,6 +55,7 @@
   // Once per visit, when the grids are on screen: stack, hold, and spread out again. Not with reduced
   // motion, and not while the guided tour is running (its first step does this itself).
   function touring() { try { return window.sessionStorage.getItem('tot-tour-step') != null; } catch (e) { return false; } }
+  if (touring()) reveal('tour');
   function autoplay() {
     if (autoDone || still || touring()) return;
     autoDone = true;
@@ -58,5 +94,5 @@
     }).catch(function () {});
   }
 
-  T.landing = { stack: stack, cancelAuto: cancelAuto };
+  T.landing = { stack: stack, cancelAuto: cancelAuto, reveal: reveal, draw: drawApp };
 })();

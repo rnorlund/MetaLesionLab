@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What time does an AI draw? · Plato’s Forms · {{BRAND}}</title>
+<meta name="description" content="Ask Meta's image model Muse Image for a clock and it draws 10:10, the time on watch adverts. Ask people, and almost nobody does. Plus Plato's own examples, the bed and the table.">
+<meta property="og:title" content="What time does an AI draw? · {{BRAND}}">
+<meta property="og:description" content="Ask an AI for a clock and it draws 10:10, the time on watch adverts. People don't.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_forms.css">
+</head>
+<body class="pf">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>{{BRAND}}</b></a>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="pf-hero" aria-labelledby="hero-h">
+  <div class="pf-hero-text">
+    <span class="pf-kicker"><a href="/plato">Plato’s Chair</a> · the Platonic clock</span>
+    <h1 id="hero-h">What time does an AI draw?</h1>
+    <p class="pf-lede">We asked Meta’s image model, Muse Image, for a quick doodle of a clock, 16 times, without saying what time. Then we looked at 200 people’s 20-second drawings of a clock.</p>
+  </div>
+  <div class="pf-walls">
+    <figure class="pf-wall">
+      <div class="seg pf-ai-seg" id="ai-seg" role="group" aria-label="Which AI">
+        <button type="button" data-ai="muse" aria-pressed="true">Muse Image</button>
+        <button type="button" data-ai="sdxl" aria-pressed="false">Another AI (SDXL)</button>
+      </div>
+      <div class="pf-frame ai"><img id="wall-ai" src="/static/img/plato_forms/wall_muse.webp" width="710" height="710"
+        alt="Sixteen clock doodles by Muse Image. Nearly all show the same time: the hands make a V pointing at the 10 and the 2."></div>
+      <figcaption class="pf-wall-cap"><b id="wall-ai-stat">…</b> <span id="wall-ai-sub"></span></figcaption>
+    </figure>
+    <figure class="pf-wall">
+      <p class="pf-wall-who">People</p>
+      <div class="pf-frame people"><img src="/static/img/plato_forms/wall_people.webp" width="710" height="710"
+        alt="Sixteen clocks drawn by people in 20 seconds: circles with L-shaped hands, single hands, numbers, some with no hands at all."></div>
+      <figcaption class="pf-wall-cap"><b id="wall-people-stat">…</b> <span id="wall-people-sub"></span></figcaption>
+    </figure>
+  </div>
+  <div class="pf-hero-side">
+    <p class="pf-verdict" id="verdict">…</p>
+    <figure class="pf-hero-avg">
+      <div class="pf-hero-avg-imgs">
+        <img src="/static/img/plato_forms/avg_muse.webp" width="256" height="256" alt="The pixel average of Muse Image's 16 clocks: a crisp ring of ticks and two sharp hands at 10:10.">
+        <img src="/static/img/plato_forms/avg_people.webp" width="256" height="256" alt="The pixel average of 200 people's clocks: a soft gray ring with a stroke up to the 12, and no clear second hand.">
+      </div>
+      <figcaption><b>The average clock.</b> Average the pixels of Muse Image’s 16 clocks (left) and one sharp 10:10 comes out. People’s 200 (right) blur into a ring. No AI reading involved. <a href="#average">More</a></figcaption>
+    </figure>
+    <p class="pf-why">10:10 is the time on almost every watch and clock advert: the hands frame the brand name and look like a smile. Plato said a painter copies a carpenter’s bed, and so makes a copy of a copy. Muse Image’s clock looks like a copy of a photo of a product.</p>
+  </div>
+</section>
+
+<nav class="pf-jump" aria-label="On this page">
+  <a href="#asked">Ask for a time</a>
+  <a href="#dials">Every clock on one dial</a>
+  <a href="#average">The average clock</a>
+  <a href="#bed-table">Plato’s bed and table</a>
+  <a href="#method">How we measured</a>
+</nav>
+
+<section class="pf-sec" id="asked" aria-labelledby="asked-h">
+  <div class="pf-sec-head">
+    <span class="pf-kicker">Ask for a time</span>
+    <h2 id="asked-h">Ask for a time, and it draws that time (nearly)</h2>
+    <p class="pf-sec-lede" id="asked-lede">…</p>
+  </div>
+  <figure class="pf-fig">
+    <img src="/static/img/plato_forms/asked_muse.webp" width="898" height="416" loading="lazy" id="asked-img"
+      alt="Ten clock doodles by Muse Image, one for each time we asked for, from 1:20 to 12:25. Each shows the time asked, or close to it; none shows 10:10.">
+    <figcaption class="pf-cap">Muse Image, asked for different times (the first doodle of each). We asked for 12 times; the pictures for 4:55 and 11:05 were lost to network timeouts.</figcaption>
+  </figure>
+  <div class="pf-two">
+    <div class="pf-chart-wrap">
+      <div class="pf-chart-head">
+        <p class="pf-chart-title" id="asked-title">Time asked for, and time drawn</p>
+        <div class="seg pf-small-seg" id="asked-seg" role="group" aria-label="Which pictures">
+          <button type="button" data-g="doodle" aria-pressed="true">Doodles</button>
+          <button type="button" data-g="photo" aria-pressed="false">Photos</button>
+        </div>
+      </div>
+      <div class="pf-chart" id="asked-chart"></div>
+      <div class="pf-legend" id="asked-legend"></div>
+      <p class="pf-note">Each dot is one picture. On the diagonal: the time asked for. In the yellow band: about 10:10.</p>
+    </div>
+    <div class="pf-facts" id="asked-facts"></div>
+  </div>
+</section>
+
+<section class="pf-sec" id="dials" aria-labelledby="dials-h">
+  <div class="pf-sec-head">
+    <span class="pf-kicker">A clock-face heatmap</span>
+    <h2 id="dials-h">Every clock on one dial</h2>
+    <p class="pf-sec-lede">We drew the hands of every clock on one dial, as our automatic reader read them. Where many clocks agree, their hands pile up into thick, dark lines. No time was asked for. On Muse Image’s dial, the second hour hand pointing near the 11 comes from clocks the reader called 11:10; by eye they are 10:10 with the hour hand drawn a little far.</p>
+  </div>
+  <div class="seg pf-small-seg" id="dial-seg" role="group" aria-label="Which pictures">
+    <button type="button" data-style="doodle" aria-pressed="true">Doodles</button>
+    <button type="button" data-style="photo" aria-pressed="false">Photos (AI only)</button>
+  </div>
+  <div class="pf-dials" id="dials-box"></div>
+  <p class="pf-note" id="dial-note">Hover or tap a hand to see the time and how many clocks show it.</p>
+</section>
+
+<section class="pf-sec" id="average" aria-labelledby="avg-h">
+  <div class="pf-sec-head">
+    <span class="pf-kicker">No AI reading involved</span>
+    <h2 id="avg-h">The average clock</h2>
+    <p class="pf-sec-lede">The hands above were read by another AI. As a check that needs no reading at all, we averaged the pixels of each set of doodles. If the clocks agree, the average shows sharp hands.</p>
+  </div>
+  <div class="pf-avgs">
+    <figure><img src="/static/img/plato_forms/avg_muse.webp" width="256" height="256" loading="lazy" alt="The pixel average of Muse Image's 16 clocks: a crisp ring of ticks and two sharp hands at 10:10."><figcaption>Muse Image, 16 clocks</figcaption></figure>
+    <figure><img src="/static/img/plato_forms/avg_sdxl.webp" width="256" height="256" loading="lazy" alt="The pixel average of SDXL's 16 clocks: a dark gray blur of rings and frames, with no clear hands."><figcaption>SDXL, 16 clocks</figcaption></figure>
+    <figure><img src="/static/img/plato_forms/avg_people.webp" width="256" height="256" loading="lazy" alt="The pixel average of 200 people's clocks: a soft gray ring with a darker stroke from the centre up to the 12, and no clear second hand."><figcaption>People, 200 clocks</figcaption></figure>
+  </div>
+</section>
+
+<section class="pf-sec" id="bed-table" aria-labelledby="bt-h">
+  <div class="pf-sec-head">
+    <span class="pf-kicker">Plato, Republic X</span>
+    <h2 id="bt-h">Plato’s own examples: the bed and the table</h2>
+    <p class="pf-sec-lede">Plato’s famous example is not a chair. In Republic X he writes of beds and tables: one Form of the bed, made by a god; the bed a carpenter makes by looking to it; and a painter’s picture of that bed, a copy of a copy. We ran both through the same test as <a href="/plato">the chair</a>.</p>
+  </div>
+  <div class="pf-bt">
+    <figure class="pf-bt-fig">
+      <div class="pf-bt-controls">
+        <div class="seg" id="bt-seg" role="group" aria-label="Which thing">
+          <button type="button" data-k="bed" aria-pressed="true">Bed</button>
+          <button type="button" data-k="table" aria-pressed="false">Table</button>
+        </div>
+        <div class="seg pf-who" id="who-seg" role="group" aria-label="Whose drawings">
+          <button type="button" data-who="ai" aria-pressed="true">Muse Image</button>
+          <button type="button" data-who="people" aria-pressed="false">People</button>
+        </div>
+      </div>
+      <div class="pf-frame bt"><img id="bt-img" src="/static/img/plato_forms/grid_bed_ai.webp" width="710" height="710" loading="lazy" alt=""></div>
+      <figcaption class="pf-cap" id="bt-cap"></figcaption>
+    </figure>
+    <div class="pf-bt-side">
+      <div class="pf-stat" id="bt-stat"></div>
+      <div class="pf-facts" id="bt-facts"></div>
+    </div>
+  </div>
+  <div class="pf-kinds" id="bt-kinds" hidden>
+    <h3 id="bt-kinds-h">Asked for 16 named kinds, it draws them all</h3>
+    <img id="bt-kinds-img" src="/static/img/plato_forms/kinds_bed_ai.webp" width="900" height="221" loading="lazy" alt="">
+    <p class="pf-cap" id="bt-kinds-cap"></p>
+  </div>
+  <div class="pf-rank">
+    <p class="pf-chart-title">How varied Muse Image’s drawings are, compared with people’s: the bed and the table among 35 everyday things</p>
+    <div class="pf-chart" id="rank-chart"></div>
+    <p class="pf-note">Each dot is one thing. Left of the line: Muse Image draws it more alike than people do. Bars: 95% confidence intervals.</p>
+  </div>
+</section>
+
+<section class="pf-sec pf-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">How we measured, and caveats</h2>
+  <ul id="method-list">
+    <li><b>Pictures.</b> Muse Image drew 16 clock doodles with no time (“A quick simple doodle sketch of a clock, black marker on plain white…”), 8 for each of 12 asked times (“…of a simple clock face showing 3:00…”), and realistic photos (“A photo of a wall clock showing 3:00.”) for 6 times. Stable Diffusion XL, an open image model, got the same prompts. People’s clocks are the first 200 recognised “clock” drawings in Google’s Quick, Draw! game, where players had 20 seconds.</li>
+    <li><b>Reading the time.</b> Meta’s Muse Spark read every clock’s hands. We first tested it on clocks drawn by code with known times: <span id="val-line">…</span> We also read a random sample by eye without looking at its answers: <span id="spot-line">…</span> Most disagreements were the hour, one off, on Muse Image’s doodles, whose hour hand often sits between two numbers: the reader called five of its 10:10 V’s 11:10. So for the clocks with no time asked we also give counts by eye, and the pixel average needs no reading at all.</li>
+    <li><b>About 10:10</b> means within 10 minutes of 10:10, with the hour and minute hands either way round. If drawn times were random, 5.7% would count.</li>
+    <li><b>Pre-registered.</b> The plan, with its predictions, was written before any picture was drawn (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_forms_plan.md">plan</a>). <span id="pred-line"></span></li>
+    <li><b>Defaults, not flaws.</b> These are what the models draw when the prompt leaves things open. Muse Image draws a requested time when asked.</li>
+    <li><b>Bed and table.</b> The same pipeline as Plato’s Chair: 16 Muse Image doodles each, compared with random sets of 16 from 200 people’s drawings, with Meta’s DINOv2 vision model measuring how alike the pictures look. The 35-thing results are unchanged.</li>
+  </ul>
+  <p>Full write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_forms.md">docs/plato_forms.md</a>. The pictures live outside the repository; the app ships statistics and the images on this page.</p>
+  <p class="pf-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw!</a> (CC BY 4.0). AI pictures: Meta Muse Image 1.0; Stable Diffusion XL (Stability AI, CreativeML OpenRAIL++-M). Time reading and kind lists: Meta Muse Spark 1.3. Similarity: Meta DINOv2.</p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+<div class="pf-tip" id="tip" role="tooltip" hidden></div>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_forms.js"></script>
+</body>
+</html>

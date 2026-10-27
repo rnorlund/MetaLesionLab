@@ -8,3 +8,4 @@ runs/
 .githooks/private_patterns.txt
 .claude/
 dist/
+donations/

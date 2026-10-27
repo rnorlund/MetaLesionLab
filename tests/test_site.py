@@ -100,23 +100,28 @@ def test_the_name_lives_in_one_place(client, monkeypatch):
 
 
 def test_series_cards_and_links_appear_only_when_served(client):
-    # sub-pages merge one by one, so count against what the app serves right now (Plato's Chair first)
+    # sub-pages merge one by one, so count against what the app serves right now (Plato's Chair first), and
+    # pretend to serve the first series page that isn't served yet
     base = [s["path"] for s in client.get("/api/site").json()["series"]]
-    assert base[0] == "/plato" and "/plato/cave" not in base
+    assert base[0] == "/plato"
+    new = next((e for e in site.SERIES if e["path"] not in base), None)
+    if new is None:
+        pytest.skip("every series page is served")
+    path = new["path"]
     landing = client.get("/").text
     assert landing.count('class="series-card"') == len(base) and 'href="/plato"' in landing
-    assert "Can you know a thing from its shadow?" not in landing and 'href="/plato/cave"' not in landing
+    assert new["question"] not in landing and f'href="{path}"' not in landing
     assert ('id="series"' in client.get("/plato").text) == (len(base) > 1)
-    with served("/plato/cave"):
+    with served(path):
         landing = client.get("/").text
         assert landing.count('class="series-card"') == len(base) + 1
-        assert "Can you know a thing from its shadow?" in landing and "Republic VII · the Cave" in landing
+        assert new["question"] in landing and new["source"] in landing
         plato = client.get("/plato").text
         assert 'id="series"' in plato and plato.count('class="series-card"') == len(base)  # the sub-pages only
-        assert 'href="/plato/cave"' in nav_links_block(client.get("/lab").text)
+        assert f'href="{path}"' in nav_links_block(client.get("/lab").text)
         info = client.get("/api/site").json()
-        assert info["pages"]["/plato/cave"] and "/plato/cave" in [s["path"] for s in info["series"]]
-    assert 'href="/plato/cave"' not in client.get("/").text
+        assert info["pages"][path] and path in [s["path"] for s in info["series"]]
+    assert f'href="{path}"' not in client.get("/").text
 
 
 def test_series_override_file_sets_the_finding(client, tmp_path, monkeypatch):
@@ -128,7 +133,10 @@ def test_series_override_file_sets_the_finding(client, tmp_path, monkeypatch):
 
 def test_calls_to_action_follow_the_routes(client):
     landing = client.get("/").text
-    assert site.has_page(web.app, "/draw") and 'href="/draw">Draw a chair in 20 seconds' in landing
+    # /draw is served: the pad is on the landing page itself (draw first, then the reveal), plus a link to /draw.
+    assert site.has_page(web.app, "/draw") and 'id="hero-draw"' in landing and 'id="skip-link"' in landing
+    assert 'href="/draw">Draw something else' in landing and "TOTDraw" not in landing  # landing.js mounts it
+    assert re.search(r'id="reveal"[^>]*hidden', landing) and landing.index('id="hero-draw"') < landing.index('id="chairs"')
     # Ask Socrates is served: hero button, its own band, and the nav (as an accent item).
     assert site.has_page(web.app, "/socrates") and landing.count('href="/socrates"') >= 3
     assert 'class="nav-accent"' in nav_links_block(client.get("/plato").text)
