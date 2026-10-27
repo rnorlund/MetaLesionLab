@@ -21,6 +21,13 @@ COPY requirements-web.txt ./
 RUN pip install --no-cache-dir -r requirements-web.txt \
     && python -m nltk.downloader -q -d /usr/local/share/nltk_data wordnet
 
+# Draw a chair (/draw) runs Meta's DINOv2-base on the CPU with onnxruntime. The ONNX model is about 350 MB,
+# over the repository's 5 MB data guard, so it's fetched here once from a pinned export of the same weights
+# and checked against its SHA-256. Only this one file is copied first, so the layer stays cached when the
+# rest of the code changes.
+COPY metalesionlab/draw_fetch.py /tmp/draw_fetch.py
+RUN python /tmp/draw_fetch.py /app/models/dinov2-base.onnx && rm /tmp/draw_fetch.py
+
 COPY pyproject.toml LICENSE ./
 COPY public_data ./public_data
 COPY metalesionlab ./metalesionlab
@@ -45,7 +52,10 @@ ENV PYTHONUNBUFFERED=1 \
     MLL_LEDGER=/data/costs.jsonl \
     TIPPA_PUBLIC_DAILY_USD=2 \
     MLL_BUDGET_USD=10 \
-    PORT=7860
+    PORT=7860 \
+    DRAW_MODEL=/app/models/dinov2-base.onnx \
+    DRAW_THREADS=2 \
+    DRAW_SLOTS=1
 
 EXPOSE 7860
 HEALTHCHECK --interval=60s --timeout=5s --start-period=60s \

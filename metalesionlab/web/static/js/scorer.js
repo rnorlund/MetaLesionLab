@@ -658,7 +658,7 @@
   $('lang').addEventListener('change', languageHint);
 
   /* Measured status per language (verified, works with review, experimental) and the answer form
-     that scores most reliably, e.g. Spanish with the article ("el gato"). */
+     that scores most reliably, e.g. Spanish with un or una ("un gato"). */
   function languageStatus() {
     return T.api('/api/assess/config').then(function (cfg) {
       S.langInfo = cfg.languages || [];

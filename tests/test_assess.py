@@ -320,7 +320,7 @@ def test_config_lists_language_status_and_answer_forms(env):
     langs = {l["code"]: l for l in cfg["languages"]}
     assert [langs[c]["status"] for c in ("en", "es", "fr", "pt")] == ["verified"] * 4
     assert langs["zh"]["status"] == "works with review" and langs["hi"]["status"] == "experimental"
-    assert langs["es"]["example"] == "el gato" and "measure word" in langs["zh"]["instruction"]
+    assert langs["es"]["example"] == "un gato" and "measure word" in langs["zh"]["instruction"]
     assert [p["id"] for p in cfg["public_sets"]] == ["demo_fr"]  # verified languages, 5+ pictures (demo_en has 2 here)
     assert {l["code"]: l["verified"] for l in client.get("/api/status").json()["languages"]}["pt"] is True
 

@@ -104,6 +104,39 @@ def clock_wall(res: dict) -> None:
     webp(grid(tiles(people_sample(sets[2][2])), cols=4, cell=170, gap=10), "wall_people", 720)
 
 
+def series_card() -> Path:
+    """The Plato series card picture (static/img/plato/series/forms.webp, 1200 x 675): Muse Image's 16
+    no-time clocks as drawn (no picking) beside 16 of people's, at random (the hero's sample)."""
+    from PIL import ImageDraw, ImageFont
+
+    W, H, pad, cell, gap = 1200, 675, 36, 116, 8
+    card = Image.new("RGB", (W, H), "#FFFFFF")
+    d = ImageDraw.Draw(card)
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial Bold.ttf", 34)
+    except OSError:
+        font = ImageFont.load_default()
+    halves = [("Muse Image", BLUE, load_dir(CLOCK / "muse" / "doodle" / "any")[:16]),
+              ("People", ORANGE, people_sample(PLATO_DIR / "human" / "clock"))]
+    for i, (label, color, paths) in enumerate(halves):
+        x0 = pad + i * (W // 2)
+        d.text((x0, pad), label, fill=color, font=font)
+        d.rectangle((x0, pad + 44, x0 + 4 * cell + 3 * gap, pad + 50), fill=color)
+        sheet = grid(tiles(paths), cols=4, cell=cell, gap=gap)
+        card.paste(sheet, (x0, pad + 70))
+    d.line((W // 2 - 12, pad + 70, W // 2 - 12, H - pad), fill="#E5E7EB", width=2)
+    try:
+        small = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 18)
+    except OSError:
+        small = ImageFont.load_default()
+    d.text((W // 2 + pad - 12, H - pad + 6), "People’s drawings: Google Quick, Draw! (CC BY 4.0)", fill=MUTED, font=small,
+           anchor="ls")
+    out = REPO / "metalesionlab" / "web" / "static" / "img" / "plato" / "series" / "forms.webp"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    card.save(out, "WEBP", quality=74, method=6)
+    return out
+
+
 def draw_dial(ax, counts: list, n: int, color: str, title: str, sub: str) -> None:
     """Every read time as a pair of hands; a hand's darkness and width grow with the number of clocks showing it."""
     th = np.linspace(0, 2 * np.pi, 300)
@@ -321,6 +354,7 @@ def main():
         clock_asked(res)
         clock_average(res)
         asked_strip()
+        print(f"series card: {series_card()}")
         print(f"clock figures in {FIG}; chance {chance_ten_ten():.3f}; e.g. 10:10 check {is_ten_ten((10, 10))}")
     if args.only != "clock" and (FORMS_DIR / "results_concepts.json").exists():
         cres = json.loads((FORMS_DIR / "results_concepts.json").read_text())

@@ -9,6 +9,8 @@ import os
 import time
 from pathlib import Path
 
+from metalesionlab.brand import BRAND
+
 DISCLAIMER = "For use by clinicians and researchers. Measurements only; no diagnosis or prognosis."
 CODE_LABELS = {"Correct": "Correct", "Semantic": "Semantic", "Formal": "Formal", "Mixed": "Mixed",
                "Nonword": "Nonword", "Neologism": "Neologism", "Unrelated": "Unrelated",
@@ -36,7 +38,7 @@ class _Doc:
 
         self.pdf = FPDF(format="letter", unit="mm")
         self.pdf.set_auto_page_break(False)
-        self.pdf.set_creator("Tippa Lingua")
+        self.pdf.set_creator(BRAND)
         self.pdf.set_title("Picture-naming assessment report")
         self.family, self.bold, self.unicode = "Helvetica", True, False
         for regular, bold in FONT_PAIRS:
@@ -91,7 +93,7 @@ def render(session: dict, summary: dict, reference: dict, history: list[dict]) -
 
     # Title and disclaimer
     d.text(m, m + 5, "Picture-naming assessment · session report", 15, bold=True)
-    d.text(m, m + 11, "Tippa Lingua · automatic transcription and coding, reviewed by a person", 8.5, rgb=MUTED)
+    d.text(m, m + 11, f"{BRAND} · automatic transcription and coding, reviewed by a person", 8.5, rgb=MUTED)
     pdf.set_fill_color(254, 243, 199)
     pdf.set_draw_color(252, 211, 77)
     pdf.rect(m, m + 14, w, 8, style="DF")

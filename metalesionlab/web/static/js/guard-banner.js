@@ -1,4 +1,4 @@
-/* Tippa Lingua live demo: today's AI budget, and what to do when it's used up.
+/* Live demo: today's AI budget, and what to do when it's used up.
    Added to every page by web/guard.py only when the server runs with PUBLIC_DEMO=1.
    - A slim note at the top says how much of today's budget for Meta API calls is left.
    - When the budget is used up, a banner at the top says so and offers recorded examples.

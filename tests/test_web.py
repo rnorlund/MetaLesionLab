@@ -54,6 +54,7 @@ def env(tmp_path, monkeypatch):
     web.limiter.hits.clear()
     web._lab_cache.clear()
     _make_set(tmp_path / "sets" / "demo")
+    (tmp_path / "sets" / "demo" / "webmeta.json").write_text(json.dumps({"public": True}))  # listed in the pickers
     return TestClient(web.app), tmp_path
 
 
@@ -219,6 +220,19 @@ def test_unlisted_sets_are_left_out_of_the_list(env):
     assert client.get("/api/sets").json() == []
     assert [s["id"] for s in client.get("/api/sets?all=1").json()] == ["demo"]
     assert client.get("/api/sets/demo").json()["unlisted"] is True
+
+
+def test_pickers_list_only_demo_built_and_public_sets(env):
+    """Research sets (core100_*, tiny_en …) stay out of the Studio, Scorer and Assessment pickers."""
+    client, tmp = env
+    for name in ("core100_en", "tiny_en", "demo_fr"):
+        _make_set(tmp / "sets" / name)
+    _make_set(tmp / "sets" / "my-set")
+    (tmp / "sets" / "my-set" / "webmeta.json").write_text(json.dumps({"source": "web", "name": "My set"}))
+    listed = {s["id"] for s in client.get("/api/sets").json()}
+    assert listed == {"demo", "demo_fr", "my-set"}
+    assert {"core100_en", "tiny_en"} <= {s["id"] for s in client.get("/api/sets?all=1").json()}
+    assert client.get("/api/sets/core100_en").status_code == 200  # still reachable by id
 
 
 @pytest.mark.parametrize("said, target, scored", [
