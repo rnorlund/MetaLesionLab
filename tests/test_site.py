@@ -100,19 +100,22 @@ def test_the_name_lives_in_one_place(client, monkeypatch):
 
 
 def test_series_cards_and_links_appear_only_when_served(client):
+    # sub-pages merge one by one, so count against what the app serves right now (Plato's Chair first)
+    base = [s["path"] for s in client.get("/api/site").json()["series"]]
+    assert base[0] == "/plato" and "/plato/cave" not in base
     landing = client.get("/").text
-    assert landing.count('class="series-card"') == 1 and 'href="/plato"' in landing  # Plato's Chair itself
+    assert landing.count('class="series-card"') == len(base) and 'href="/plato"' in landing
     assert "Can you know a thing from its shadow?" not in landing and 'href="/plato/cave"' not in landing
-    assert 'id="series"' not in client.get("/plato").text
+    assert ('id="series"' in client.get("/plato").text) == (len(base) > 1)
     with served("/plato/cave"):
         landing = client.get("/").text
-        assert landing.count('class="series-card"') == 2
+        assert landing.count('class="series-card"') == len(base) + 1
         assert "Can you know a thing from its shadow?" in landing and "Republic VII · the Cave" in landing
         plato = client.get("/plato").text
-        assert 'id="series"' in plato and plato.count('class="series-card"') == 1  # the sub-pages only
+        assert 'id="series"' in plato and plato.count('class="series-card"') == len(base)  # the sub-pages only
         assert 'href="/plato/cave"' in nav_links_block(client.get("/lab").text)
         info = client.get("/api/site").json()
-        assert info["pages"]["/plato/cave"] and [s["path"] for s in info["series"]] == ["/plato", "/plato/cave"]
+        assert info["pages"]["/plato/cave"] and "/plato/cave" in [s["path"] for s in info["series"]]
     assert 'href="/plato/cave"' not in client.get("/").text
 
 
