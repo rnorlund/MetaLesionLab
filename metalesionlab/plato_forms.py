@@ -145,10 +145,31 @@ def is_ten_ten(t: tuple[int, int] | None, window: float = WINDOW) -> bool:
     return t is not None and time_distance(t, TEN_TEN, either_order=True) <= window
 
 
-def chance_ten_ten(window: float = WINDOW) -> float:
+def chance_ten_ten(window: float = WINDOW, hour_slack: bool = False) -> float:
     """Share of the 720 minute-times of the dial that count as about 10:10 (the chance level if drawn
-    times were uniform on the dial)."""
-    return sum(is_ten_ten(((x // 60) or 12, x % 60), window) for x in range(720)) / 720
+    times were uniform on the dial); with hour_slack, the chance level of is_ten_ten_hour_slack."""
+    test = is_ten_ten_hour_slack if hour_slack else is_ten_ten
+    return sum(test(((x // 60) or 12, x % 60), window) for x in range(720)) / 720
+
+
+# Post hoc (after the pre-registered spot check): on doodles, the reader often gives the hour one too high
+# (or low) when the hour hand is drawn between two numbers, e.g. a 10:10 'V' read as 11:10. These versions
+# allow the hour to be off by one and keep the minute strict. They are sensitivity checks, not the primary measure.
+
+def with_hour(t: tuple[int, int], k: int) -> tuple[int, int]:
+    """t with its hour moved by k (12-hour dial)."""
+    h = (t[0] - 1 + k) % 12 + 1
+    return (h, t[1])
+
+
+def time_distance_hour_slack(read: tuple[int, int], target: tuple[int, int], either_order: bool = False) -> float:
+    """time_distance allowing the read hour to be one off: min over hour shifts of -1, 0 and +1."""
+    return min(time_distance(with_hour(read, k), target, either_order) for k in (-1, 0, 1))
+
+
+def is_ten_ten_hour_slack(t: tuple[int, int] | None, window: float = WINDOW) -> bool:
+    """About 10:10 if the read hour may be one off (so a 'V' read as 11:10 or 9:10 counts)."""
+    return t is not None and any(is_ten_ten(with_hour(t, k), window) for k in (-1, 0, 1))
 
 
 def wilson_ci(k: int, n: int, z: float = 1.959964) -> list[float]:

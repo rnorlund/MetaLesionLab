@@ -1,12 +1,21 @@
-"""Plato's Forms: the Platonic clock's time arithmetic and reader parsing, and the bed/table concepts."""
+"""Plato's Forms: the Platonic clock's time arithmetic and reader parsing, the bed/table concepts, and /plato/forms."""
+import json
+import re
+
 import numpy as np
 import pytest
+from fastapi.testclient import TestClient
 
 from metalesionlab.plato import BY_KEY, CONCEPTS, prompt_for
 from metalesionlab.plato_forms import (CLOCK_TIMES, FORMS_CONCEPTS, PHOTO_TIMES, clock_prompt, chance_ten_ten,
                                        dial_distance, draw_test_clock, fmt_time, hand_marks, is_ten_ten,
-                                       parse_reading, parse_time, rank_among, slug, swap_hands, time_distance,
-                                       time_from_hands, unslug, validation_set, wilson_ci)
+                                       is_ten_ten_hour_slack, parse_reading, parse_time, rank_among, slug, swap_hands,
+                                       time_distance, time_distance_hour_slack, time_from_hands, unslug,
+                                       validation_set, wilson_ci, with_hour)
+from metalesionlab.web import app as web
+from metalesionlab.web import plato_forms_routes
+
+IMG = web.HERE / "static" / "img" / "plato_forms"
 
 
 def test_parse_time_accepts_clock_strings_on_a_12_hour_dial():
@@ -140,3 +149,68 @@ def test_rank_among():
     assert rank_among(0.1, [0.2, 0.3]) == 1
     assert rank_among(0.25, [0.2, 0.3]) == 2
     assert rank_among(0.2, [0.2, 0.3]) == 1
+
+
+def test_hour_slack_forgives_an_hour_off_but_not_the_minute():
+    assert with_hour((12, 5), 1) == (1, 5) and with_hour((1, 5), -1) == (12, 5)
+    assert is_ten_ten_hour_slack((11, 10)) and is_ten_ten_hour_slack((9, 10)) and is_ten_ten_hour_slack((10, 10))
+    assert not is_ten_ten_hour_slack((8, 10)) and not is_ten_ten_hour_slack((11, 30)) and not is_ten_ten_hour_slack(None)
+    assert time_distance_hour_slack((2, 22), (1, 20)) == 2
+    assert time_distance_hour_slack((7, 30), (6, 30)) == 0
+    assert time_distance_hour_slack((8, 30), (6, 30)) == 60
+    assert chance_ten_ten(hour_slack=True) > 2 * chance_ten_ten()
+
+
+# ---------- the /plato/forms page ----------
+
+@pytest.fixture
+def client(monkeypatch, tmp_path):
+    monkeypatch.setattr(web, "DATA_DIR", tmp_path)
+    plato_forms_routes._cache.clear()
+    return TestClient(web.app)
+
+
+def test_forms_page_renders_with_credit(client):
+    r = client.get("/plato/forms")
+    assert r.status_code == 200
+    assert "What time does an AI draw?" in r.text and "Quick, Draw!" in r.text and "CC BY 4.0" in r.text
+    assert "/static/js/plato_forms.js" in r.text and "/static/css/plato_forms.css" in r.text
+
+
+def test_forms_data_is_statistics_only(client):
+    d = client.get("/api/plato/forms").json()
+    groups = d["clock"]["groups"]
+    for name in ("muse_doodle_default", "muse_doodle_asked", "sdxl_doodle_default", "people"):
+        assert name in groups and groups[name]["n"] > 0
+        assert 0 <= groups[name]["ten_ten"]["share"] <= 1
+    assert d["clock"]["chance_ten_ten"] == pytest.approx(41 / 720, abs=1e-3)
+    assert set(d["concepts"]["items"]) == {"bed", "table"}
+    assert len(d["concepts"]["core_concepts"]) == 35
+    assert "CC BY 4.0" in d["attribution"]
+    text = json.dumps(d)
+    assert '"drawing"' not in text and "ndjson" not in text and "key_id" not in text  # no Quick, Draw! stroke records
+
+
+def test_forms_api_reports_missing_data(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(plato_forms_routes, "DATA", tmp_path / "missing.json")
+    assert client.get("/api/plato/forms").status_code == 503
+    (tmp_path / "bad.json").write_text(json.dumps({"clock": {"groups": {}}}))
+    monkeypatch.setattr(plato_forms_routes, "DATA", tmp_path / "bad.json")
+    assert client.get("/api/plato/forms").status_code == 503
+
+
+def test_forms_page_images_exist_and_are_small():
+    html = (web.HERE / "pages" / "plato_forms.html").read_text()
+    for name in re.findall(r"plato_forms/(\w+\.webp)", html):
+        assert (IMG / name).exists(), name
+    for stem in ("wall_muse", "wall_sdxl", "wall_people", "grid_bed_ai", "grid_bed_people", "grid_table_ai",
+                 "grid_table_people", "kinds_bed_ai", "kinds_table_ai"):  # swapped in by plato_forms.js
+        assert (IMG / f"{stem}.webp").exists(), stem
+    added = sum(p.stat().st_size for p in IMG.iterdir()) + sum(
+        (web.HERE / rel).stat().st_size for rel in ("static/js/plato_forms.js", "static/css/plato_forms.css",
+                                                   "pages/plato_forms.html", "data/plato_forms.json"))
+    assert added < 1.5 * 1024 * 1024
+
+
+def test_app_includes_the_forms_router_once():
+    assert (web.HERE / "app.py").read_text().count("metalesionlab.web.plato_forms_routes") == 1

@@ -35,6 +35,7 @@ SOURCES = {"muse_doodle": CLOCK / "muse" / "doodle", "muse_photo": CLOCK / "muse
            "people": PLATO_DIR / "human" / "clock"}  # the 200 cached Quick, Draw! clocks (read-only)
 EST_READ = 0.004  # generous per-read reservation; the real cost is logged after the call
 _lock = threading.Lock()
+STOP_AT = BUDGET  # --stop-at lowers it
 
 
 def reader_id(prompt: str, effort: str) -> str:
@@ -51,7 +52,7 @@ def read_one(api: MetaAPI, img_path: Path, prompt: str, effort: str) -> tuple[st
     msg = [{"role": "user", "content": [{"type": "image_url", "image_url": {"url": image_data_url(img_path.read_bytes())}},
                                         {"type": "text", "text": READER_PROMPTS[prompt]}]}]
     with _lock:
-        if my_spend() + EST_READ > BUDGET:
+        if my_spend() + EST_READ > min(BUDGET, STOP_AT):
             raise RuntimeError(f"experiment budget ${BUDGET:.2f} reached")
         if spent() > SHARED_STOP:
             raise RuntimeError(f"shared ledger passed ${SHARED_STOP:.0f}; stopping")
@@ -145,6 +146,8 @@ def cmd_read(args, api):
         else:
             groups = [(d.name, d) for d in sorted(root.iterdir()) if d.is_dir()] if root.exists() else []
         for cond, folder in groups:
+            if args.conds and cond not in args.conds:
+                continue
             for f in load_dir(folder):
                 rel = f"{source}/{cond}/{f.name}"
                 if rel not in have:
@@ -165,8 +168,13 @@ def main():
         p.add_argument("--workers", type=int, default=4)
         if name == "read":
             p.add_argument("--sources", nargs="*", default=list(SOURCES), choices=list(SOURCES))
+            p.add_argument("--conds", nargs="*", help="only these condition folders (any, t0120, ...)")
+            p.add_argument("--stop-at", type=float, help="stop starting new reads once this experiment's spend passes this")
             p.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    global STOP_AT
+    if getattr(args, "stop_at", None):
+        STOP_AT = args.stop_at
     api = MetaAPI()
     api.client = api.client.with_options(timeout=180, max_retries=0)
     (cmd_validate if args.cmd == "validate" else cmd_read)(args, api)
