@@ -268,7 +268,7 @@ def test_route_matching():
     assert bucket("POST", "/api/assess/rescore") == "score"
     assert bucket("POST", "/api/score/description") == "score"
     assert bucket("POST", "/api/scenes") == "scene"
-    assert bucket("GET", "/api/ask/stream") == "ask" and bucket("POST", "/api/ask") == "ask"
+    assert bucket("POST", "/api/ask") == "ask" and bucket("GET", "/api/ask/status") is None
     assert bucket("POST", "/api/assess/report.pdf") is None and bucket("POST", "/api/assess/norms/demo_en") is None
     assert bucket("GET", "/api/lab/conditions") is None and bucket("GET", "/take") is None
     assert bucket("DELETE", "/api/whatever") == "other"

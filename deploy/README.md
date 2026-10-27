@@ -18,7 +18,7 @@ upload files and start billing against the API key.
 | `POST /api/score/naming`, `/api/assess/naming` (spoken answer) | Muse Voice Transcribe, Muse Spark | 2.5 MB and 30 s per answer; 30 a minute and 150 a day per visitor |
 | `POST /api/score/description`, `/api/score/fluency` | Muse Voice Transcribe, Muse Spark | 4 MB; 90 s (description) or 60 s (fluency); same counts |
 | `POST /api/score/naming/text`, `/api/assess/rescore` (typed) | Muse Spark (meaning judge, second rater) | Same counts |
-| `/api/ask...` (Ask the Lab agent) | Muse Spark | 4 a minute and 20 a day per visitor (`TIPPA_PUBLIC_ASK_PER_DAY`) |
+| `POST /api/ask` (Ask the Lab agent) | Muse Spark, several calls a question | 4 a minute and 20 a day per visitor (`TIPPA_PUBLIC_ASK_PER_DAY`), on top of the agent's own daily cap and per-session limit |
 | Any other POST, PUT, PATCH or DELETE under `/api/` | (unknown) | Treated as paid: 10 a minute and 100 a day per visitor |
 
 Over all of these:

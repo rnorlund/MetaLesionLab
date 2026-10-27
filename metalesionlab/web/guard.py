@@ -81,7 +81,8 @@ FREE = [
     ({"PATCH"}, re.compile(r"/api/sets/[^/]+/items/\d+/?")),
     ({"PATCH"}, re.compile(r"/api/scenes/[^/]+/?")),
 ]
-# (methods or None for any, path, rule name)
+MUTATING = {"POST", "PUT", "PATCH", "DELETE"}
+# (methods, path, rule name)
 PAID = [
     ({"POST"}, re.compile(r"/api/sets/?"), "build"),
     ({"POST"}, re.compile(r"/api/scenes/?"), "scene"),
@@ -90,9 +91,8 @@ PAID = [
     ({"POST"}, re.compile(r"/api/(score/naming|assess/naming)/?"), "audio_short"),
     ({"POST"}, re.compile(r"/api/score/(description|fluency)/?"), "audio_long"),
     ({"POST"}, re.compile(r"/api/assess/rescore/?"), "text"),
-    (None, re.compile(r"/api/ask(/.*)?"), "ask"),
+    (MUTATING, re.compile(r"/api/ask(/.*)?"), "ask"),  # GET /api/ask/status is free
 ]
-MUTATING = {"POST", "PUT", "PATCH", "DELETE"}
 
 
 class DailyCapReached(BudgetExceeded):
@@ -301,7 +301,7 @@ class Guard:
         if not path.startswith("/api/") or method in ("HEAD", "OPTIONS"):
             return None
         for methods, pattern, name in PAID:
-            if (methods is None or method in methods) and pattern.fullmatch(path):
+            if method in methods and pattern.fullmatch(path):
                 return self.rules[name]
         if method not in MUTATING or any(method in m and p.fullmatch(path) for m, p in FREE):
             return None
