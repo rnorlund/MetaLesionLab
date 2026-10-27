@@ -220,7 +220,7 @@
       title: '3 · Score people’s answers',
       body: function () {
         var it = fxItem(0);
-        return 'Spoken answers, scored automatically (verified in English, Spanish, French and Brazilian Portuguese). Here we replay three answers recorded once through the real pipeline: no microphone, no API call. For the ' +
+        return 'Spoken answers, scored automatically (verified in 8 languages, including English and Spanish). Here we replay three answers recorded once through the real pipeline: no microphone, no API call. For the ' +
           it.target + ' the speaker said ' + quote(it.said) + '. Muse Voice Transcribe heard ' + quote(it.transcript) + ', and the rules coded it ' +
           T.codeInfo(it.code).label + (it.code === 'Semantic' ? ': related in meaning, not in sound.' : '.');
       } },
