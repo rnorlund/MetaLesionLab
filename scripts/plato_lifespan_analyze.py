@@ -109,7 +109,7 @@ def quad_stats(cells, keys, xs, t, m, center=6.0) -> dict:
     peak_b = center - gb[:, 1] / (2 * gb[:, 2])
     peak = center - b / (2 * c)
     return {"quadratic_coef": float(c), "quadratic_coef_ci95": ci(gb[:, 2]), "linear_coef_at_6": float(b),
-            "peak_age": float(peak), "peak_age_ci95": ci(peak_b),
+            "vertex_age": float(peak), "vertex_age_ci95": ci(peak_b), "shape": "inverted U" if c < 0 else "U",
             "share_reps_peak_inside_2_10": float(np.mean((peak_b > 2) & (peak_b < 10) & (gb[:, 2] < 0))),
             "inverted_u_supported": bool(ci(gb[:, 2])[1] < 0 and 2 < ci(peak_b)[0] and ci(peak_b)[1] < 10)}
 
@@ -157,21 +157,27 @@ def main():
         kids[k]["all"] = int(len(x))
         kid_keys.append(k)
 
-    # AI: checkpoint x thing
-    ck_names = [c[0] for c in CHECKPOINTS]
-    ksteps = np.array([c[2] for c in CHECKPOINTS], float) / 1000  # millions of steps
+    # AI: checkpoint x thing. Every (thing, checkpoint) with all 16 pictures is a cell; each set of things
+    # below uses the checkpoints that are complete for all of its things (v1.5 may still be pending).
+    all_ck = [c[0] for c in CHECKPOINTS]
+    steps_of = {c[0]: c[2] / 1000 for c in CHECKPOINTS}  # millions of steps
     ai, ai_keys = {}, []
     for k in AI_KEYS:
         if k in args.drop:
             continue
-        paths = [LIFESPAN_DIR / "embeddings" / args.sd / ck / f"{k}.npz" for ck in ck_names]
-        if not all(p.exists() for p in paths):
-            continue
-        xs = [load(p, args.emb)[0] for p in paths]
-        if any(len(x) < 16 for x in xs):
-            continue
-        ai[k] = {ck: Cell(x, k, refs, rng, R) for ck, x in zip(ck_names, xs)}
-        ai_keys.append(k)
+        cells = {}
+        for ck in all_ck:
+            p = LIFESPAN_DIR / "embeddings" / args.sd / ck / f"{k}.npz"
+            if p.exists():
+                x = load(p, args.emb)[0]
+                if len(x) >= 16:
+                    cells[ck] = Cell(x, k, refs, rng, R)
+        if "v1.1" in cells and len(cells) >= 2:
+            ai[k] = cells
+            ai_keys.append(k)
+
+    def complete_ckpts(keys):
+        return [ck for ck in all_ck if all(ck in ai[k] for k in keys)]
 
     def tsample(keys):
         return rng.integers(0, len(keys), (R, len(keys)))
@@ -246,30 +252,34 @@ def main():
     if ai_keys:
         res["ai"] = {"checkpoints": [{"name": c[0], "repo": c[1], "cumulative_ksteps": c[2], "parent": c[3]}
                                      for c in CHECKPOINTS],
-                     "cells": {k: {ck: ai[k][ck].row() for ck in ck_names} for k in ai_keys}}
+                     "cells": {k: {ck: c.row() for ck, c in ai[k].items()} for k in ai_keys}}
         for setname, keys in (("tier1", [k for k in TIER1_KEYS if k in ai]), ("all", ai_keys)):
-            if not keys:
+            ck_names = complete_ckpts(keys) if keys else []
+            if len(ck_names) < 2:
                 continue
+            first, last = ck_names[0], ck_names[-1]
+            ksteps = np.array([steps_of[ck] for ck in ck_names])
             t = tsample(keys)
-            block = {"things": keys, "curves": {}, "tests": {}}
+            block = {"things": keys, "checkpoints": ck_names, "contrast": f"{last} minus {first}",
+                     "complete": ck_names == all_ck, "curves": {}, "tests": {}}
             for m in MEASURES:
                 pt, rb = group_curve(ai, keys, ck_names, t, m)
                 block["curves"][m] = {"mean": pt.tolist(), "ci95": [ci(rb[:, i]) for i in range(len(ck_names))]}
                 s, _, _ = slope_stats(ai, keys, ck_names, ksteps, t, m)
-                d = np.array([ai[k]["v1.5"].point[m] - ai[k]["v1.1"].point[m] for k in keys])
-                db = np.stack([ai[k]["v1.5"].boot[m] - ai[k]["v1.1"].boot[m] for k in keys])
+                d = np.array([ai[k][last].point[m] - ai[k][first].point[m] for k in keys])
+                db = np.stack([ai[k][last].boot[m] - ai[k][first].boot[m] for k in keys])
                 block["tests"][m] = {"slope_per_million_steps": s,
-                                     "v15_minus_v11": {"mean": float(d.mean()),
-                                                       "ci95": ci(db[t, np.arange(R)[:, None]].mean(1)),
-                                                       "per_thing": {k: float(v) for k, v in zip(keys, d)}}}
+                                     "last_minus_first": {"mean": float(d.mean()),
+                                                          "ci95": ci(db[t, np.arange(R)[:, None]].mean(1)),
+                                                          "per_thing": {k: float(v) for k, v in zip(keys, d)}}}
             block["curves"]["disp16"] = {"mean": np.mean([[ai[k][ck].point["disp16"] for ck in ck_names]
                                                           for k in keys], 0).tolist()}
             tt = block["tests"]
             block["predictions"] = {
                 "A1_recognizability_rises": (tt["recog"]["slope_per_million_steps"]["ci95"][0] > 0
-                                             and tt["recog"]["v15_minus_v11"]["ci95"][0] > 0),
+                                             and tt["recog"]["last_minus_first"]["ci95"][0] > 0),
                 "A2_spread_narrows": (tt["spread"]["slope_per_million_steps"]["ci95"][1] < 0
-                                      and tt["spread"]["v15_minus_v11"]["ci95"][1] < 0),
+                                      and tt["spread"]["last_minus_first"]["ci95"][1] < 0),
                 "A3_d_adult_changes": not (tt["d_adult"]["slope_per_million_steps"]["ci95"][0] <= 0
                                            <= tt["d_adult"]["slope_per_million_steps"]["ci95"][1]),
                 "A3_d_muse_changes": not (tt["d_muse"]["slope_per_million_steps"]["ci95"][0] <= 0
@@ -278,20 +288,22 @@ def main():
 
     # ---------- does the AI's path resemble the children's? ----------
     shared = [k for k in kid_keys if k in ai]
-    if len(shared) >= 3 and "children" in res:
+    ck_shared = complete_ckpts(shared) if shared else []
+    if len(shared) >= 3 and len(ck_shared) >= 2 and "children" in res:
+        first, last = ck_shared[0], ck_shared[-1]
         t = tsample(shared)
-        comp = {"things": shared, "direction": {}}
+        comp = {"things": shared, "checkpoints": ck_shared, "contrast": f"{last} minus {first}", "direction": {}}
         for m in MEASURES:
             kid_s, _, _ = slope_stats(kids, shared, AGES, np.array(AGES, float), t, m)
-            d = np.array([ai[k]["v1.5"].point[m] - ai[k]["v1.1"].point[m] for k in shared])
-            db = np.stack([ai[k]["v1.5"].boot[m] - ai[k]["v1.1"].boot[m] for k in shared])
+            d = np.array([ai[k][last].point[m] - ai[k][first].point[m] for k in shared])
+            db = np.stack([ai[k][last].boot[m] - ai[k][first].boot[m] for k in shared])
             ai_ci = ci(db[t, np.arange(R)[:, None]].mean(1))
 
             def sign(lo, hi):
                 return 1 if lo > 0 else -1 if hi < 0 else 0
             ks, as_ = sign(*kid_s["ci95"]), sign(*ai_ci)
             comp["direction"][m] = {"children_slope_per_year": kid_s["mean_slope"], "children_ci95": kid_s["ci95"],
-                                    "ai_v15_minus_v11": float(d.mean()), "ai_ci95": ai_ci,
+                                    "ai_last_minus_first": float(d.mean()), "ai_ci95": ai_ci,
                                     "children_sign": ks, "ai_sign": as_,
                                     "agree": (ks == as_) if ks and as_ else None}
         clear = [v["agree"] for v in comp["direction"].values() if v["agree"] is not None]
@@ -300,7 +312,7 @@ def main():
         # developmental age equivalent of each checkpoint, on recognizability
         kid_pt, kid_rb = group_curve(kids, shared, AGES, t, "recog")
         ae = {}
-        for ck in ck_names:
+        for ck in ck_shared:
             v_pt = float(np.mean([ai[k][ck].point["recog"] for k in shared]))
             v_b = np.stack([ai[k][ck].boot["recog"] for k in shared])[t, np.arange(R)[:, None]].mean(1)
             eq = [age_equivalent(v_b[b], AGES, kid_rb[b]) for b in range(R)]
@@ -316,8 +328,7 @@ def main():
         comp["age_equivalent_recognizability"] = ae
         comp["children_recog_curve"] = kid_pt.tolist()
         # same direction in DINOv2 space?
-        m_k, n_k = [], []
-        disp_ai = {k: ai[k]["v1.5"].centroid - ai[k]["v1.1"].centroid for k in shared}
+        disp_ai = {k: ai[k][last].centroid - ai[k][first].centroid for k in shared}
         disp_kid = {k: kids[k][10].centroid - kids[k][2].centroid for k in shared}
         A = unit(np.stack([disp_ai[k] for k in shared]))
         B = unit(np.stack([disp_kid[k] for k in shared]))
@@ -331,6 +342,29 @@ def main():
                                           "difference": float(diff.mean()), "difference_ci95": ci(boot),
                                           "per_thing": {k: float(v) for k, v in zip(shared, m_k)}}
         res["comparison"] = comp
+
+    # ---------- stretch: a sketch model trained from scratch on people's chairs ----------
+    sk = LIFESPAN_DIR / "embeddings" / "sketch"
+    if (sk / "train_sample.npz").exists() and args.emb == "cls":
+        parents = Cell(load(sk / "train_sample.npz")[0], "chair", refs, rng, R)
+        block = {"model": "Sketch-RNN-style LSTM decoder trained from random weights on 20,000 Quick, Draw! "
+                          "chairs (not the 200 reference drawings); 64 drawings per checkpoint and temperature",
+                 "training_drawings": parents.row(), "steps": {}}
+        for temp in ("1.0", "0.5"):
+            rows = {}
+            for f in sorted(sk.glob(f"step*_t{temp}.npz"), key=lambda p: int(p.stem.split("_")[0][4:])):
+                x, z = load(f)
+                if len(x) < 16:
+                    continue
+                c = Cell(x, "chair", refs, rng, R)
+                row = c.row()
+                row["n_empty"] = int(z["n_empty"])
+                d = c.boot["spread"] - parents.boot["spread"]
+                row["spread_minus_training"] = float(c.point["spread"] - parents.point["spread"])
+                row["spread_minus_training_ci95"] = ci(d)
+                rows[int(f.stem.split("_")[0][4:])] = row
+            block["steps"][f"t{temp}"] = rows
+        res["sketch"] = block
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(to_jsonable(res), indent=1))
@@ -352,8 +386,8 @@ def report(res):
                   f"same sign {s['share_of_things_with_same_sign']:.2f}; age10-adult "
                   f"{c['tests'][m]['age10_minus_adults']['mean']:+.3f} {c['tests'][m]['age10_minus_adults']['ci95']}")
         q = c["tests"]["spread"]["quadratic"]
-        print(f"  spread quadratic c {q['quadratic_coef']:+.5f} {q['quadratic_coef_ci95']} peak {q['peak_age']:.1f} "
-              f"{q['peak_age_ci95']} inverted U: {q['inverted_u_supported']}")
+        print(f"  spread quadratic c {q['quadratic_coef']:+.5f} {q['quadratic_coef_ci95']} {q['shape']}, vertex {q['vertex_age']:.1f} "
+              f"{q['vertex_age_ci95']} inverted U: {q['inverted_u_supported']}")
         print("  predictions", c["predictions"])
     for name in ("adults", "muse", "sdxl"):
         if name in res and "mean_over_children_things" in res[name]:
@@ -369,8 +403,8 @@ def report(res):
             for m in MEASURES:
                 tt = b["tests"][m]
                 print(f"  {m:8s} slope/M {tt['slope_per_million_steps']['mean_slope']:+.4f} "
-                      f"{tt['slope_per_million_steps']['ci95']}  v1.5-v1.1 {tt['v15_minus_v11']['mean']:+.3f} "
-                      f"{tt['v15_minus_v11']['ci95']}")
+                      f"{tt['slope_per_million_steps']['ci95']}  {b['contrast']} {tt['last_minus_first']['mean']:+.3f} "
+                      f"{tt['last_minus_first']['ci95']}")
             print("  predictions", b["predictions"])
     if "comparison" in res:
         cp = res["comparison"]
@@ -380,6 +414,26 @@ def report(res):
         for k, v in cp["age_equivalent_recognizability"].items():
             print(f"  {k:6s} recog {v['recog']:.3f} age-equivalent {v['age_equivalent']} {v.get('ci95')}")
         print("  direction", {k: v for k, v in cp["displacement_direction"].items() if k != "per_thing"})
+    if "sketch" in res:
+        sk = res["sketch"]
+        tr = sk["training_drawings"]
+        print(f"\nSKETCH MODEL (chair). Training drawings: spread {tr['spread']:.3f} recog {tr['recog']:.2f} "
+              f"d_adult {tr['d_adult']:.3f}")
+        for temp, rows in sk["steps"].items():
+            for step, r in rows.items():
+                print(f"  {temp} step {step:>6}: recog {r['recog']:.2f} d_adult {r['d_adult']:.3f} spread "
+                      f"{r['spread']:.3f} (vs training {r['spread_minus_training']:+.3f} "
+                      f"[{r['spread_minus_training_ci95'][0]:+.3f}, {r['spread_minus_training_ci95'][1]:+.3f}]) "
+                      f"d_muse {r['d_muse']:.3f} empty {r['n_empty']}")
+
+
+def ref_public(res, name, keep_cell):
+    """A reference set (adults, Muse, SDXL): its means and its per-thing cells (no per-drawing values)."""
+    if name not in res:
+        return None
+    block = {k: v for k, v in res[name].items() if k.startswith("mean")}
+    block["cells"] = {k: {f: v[f] for f in keep_cell} for k, v in res[name]["cells"].items()}
+    return block
 
 
 def write_public(res, path: Path):
@@ -404,11 +458,12 @@ def write_public(res, path: Path):
                                {"linear": {kk: vv for kk, vv in v["linear"].items()}}
                                for m, v in res["children"]["tests"].items()},
                      "predictions": res["children"]["predictions"]} if "children" in res else None,
-        "adults": {k: res["adults"][k] for k in res["adults"] if k.startswith("mean")},
-        "muse": {k: res["muse"][k] for k in res["muse"] if k.startswith("mean")},
-        "sdxl": {k: res["sdxl"][k] for k in res["sdxl"] if k.startswith("mean")} if "sdxl" in res else None,
+        "adults": ref_public(res, "adults", keep_cell),
+        "muse": ref_public(res, "muse", keep_cell),
+        "sdxl": ref_public(res, "sdxl", keep_cell),
         "ai": res.get("ai"),
         "comparison": res.get("comparison"),
+        "sketch": res.get("sketch"),
     }
     path.write_text(json.dumps(to_jsonable(pub), indent=1))
     print(f"wrote {path}")

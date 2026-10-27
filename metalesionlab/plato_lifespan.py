@@ -178,7 +178,9 @@ def to_quickdraw(strokes: list[list[tuple[float, float]]], eps: float = 2.0) -> 
     allp = np.vstack(strokes)
     lo = allp.min(0)
     extent = float((allp.max(0) - lo).max())
-    scale = 255.0 / extent if extent > 0 else 1.0
+    if extent == 0:
+        return []  # a single point is not a drawing (cropped and enlarged, it would render as a blot)
+    scale = 255.0 / extent
     out = []
     for s in strokes:
         p = rdp(resample((s - lo) * scale, 1.0), eps)

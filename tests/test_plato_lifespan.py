@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -61,6 +64,7 @@ def test_to_quickdraw_aligns_scales_and_simplifies():
     assert min(xs) == 0 and min(ys) == 0 and max(max(xs), max(ys)) == 255
     assert qd[0] == [[0, 255], [0, 0]]  # the collinear middle point is simplified away
     assert to_quickdraw([]) == []
+    assert to_quickdraw([[(5, 5)], [(5, 5), (5, 5)]]) == []  # a single point is not a drawing
 
 
 def test_clip_strokes_splits_at_the_canvas_edge():
@@ -128,3 +132,61 @@ def test_direction_cosines():
     assert np.isclose(same, 1) and np.isclose(null, 0)
     with pytest.raises(ValueError):
         direction_cosines({"x": a["x"]}, a)
+
+
+# ---------- the public file and the page ----------
+
+PUBLIC = Path(__file__).resolve().parents[1] / "public_data" / "plato_lifespan.json"
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_lifespan.json not written yet")
+def test_public_file_is_group_level_only():
+    d = json.loads(PUBLIC.read_text())
+    assert "CC BY-NC-SA 4.0" in d["credits"]["children"] and "CC BY 4.0" in d["credits"]["adults"]
+    cells = d["children"]["cells"]
+    assert set(cells) == set(SHARED_KEYS)
+    assert all(c["n"] >= 23 for ages in cells.values() for c in ages.values())  # every cell pools many drawings
+    text = PUBLIC.read_text()
+    for field in ('"files"', '"cls"', '"patch_mean"', "session", "cdm_run", ".png", '"svgs"', '"drawing"'):
+        assert field not in text  # no file names, embeddings, strokes or per-drawing values
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_lifespan.json not written yet")
+def test_page_and_api_render():
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+    from metalesionlab.web import plato_lifespan_routes
+
+    plato_lifespan_routes._cache.clear()
+    c = TestClient(web.app)
+    r = c.get("/plato/lifespan")
+    assert r.status_code == 200 and "The life of a chair" in r.text and 'id="stop"' in r.text
+    assert "Meno" in r.text and "CC BY-NC-SA 4.0" in r.text and "We never show a child’s drawing" in r.text
+    d = c.get("/api/plato/lifespan").json()
+    assert d["children"]["things"][0] == "chair" and "v1.5" in d["ai"]["cells"]["chair"]
+    for path in ("/static/js/plato_lifespan.js", "/static/css/plato_lifespan.css",
+                 "/static/img/plato_lifespan/chair_sd_v15.webp", "/static/img/plato/series/lifespan.webp"):
+        assert c.get(path).status_code == 200
+
+
+def test_api_reports_missing_data(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+    from metalesionlab.web import plato_lifespan_routes
+
+    monkeypatch.setattr(plato_lifespan_routes, "DATA", tmp_path / "missing.json")
+    plato_lifespan_routes._cache.clear()
+    assert TestClient(web.app).get("/api/plato/lifespan").status_code == 503
+
+
+def test_page_static_files_stay_small_and_hold_no_childrens_drawings():
+    from metalesionlab.web import app as web
+
+    imgs = list((web.HERE / "static" / "img" / "plato_lifespan").glob("*"))
+    files = [web.HERE / "static" / "js" / "plato_lifespan.js", web.HERE / "static" / "css" / "plato_lifespan.css",
+             web.HERE / "static" / "img" / "plato" / "series" / "lifespan.webp", *imgs]
+    assert sum(f.stat().st_size for f in files if f.exists()) < 1.5 * 1024 * 1024
+    # only Quick, Draw! (adults), Muse Image, Stable Diffusion and sketch-model pictures; never kiddraw
+    assert all(f.name.startswith(("chair_adults", "chair_muse", "chair_sd_", "sketch_step")) for f in imgs)

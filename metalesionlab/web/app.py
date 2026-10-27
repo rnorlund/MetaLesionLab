@@ -941,3 +941,4 @@ app.include_router(importlib.import_module("metalesionlab.web.agent_routes").rou
 app.include_router(importlib.import_module("metalesionlab.web.draw_routes").router)  # Draw your chair (/draw)
 app.include_router(importlib.import_module("metalesionlab.web.socrates_routes").router)  # Ask Socrates (/socrates)
 app.include_router(importlib.import_module("metalesionlab.web.plato_bird_routes").router)  # Plato's Bird (/plato/bird)
+app.include_router(importlib.import_module("metalesionlab.web.plato_lifespan_routes").router)  # The life of a chair (/plato/lifespan)
