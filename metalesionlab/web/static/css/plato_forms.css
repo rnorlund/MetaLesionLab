@@ -17,6 +17,12 @@ body.pf { background: #F7F6F1; }
 .pf-verdict { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; border-left: 4px solid var(--blue); padding-left: 16px; }
 .pf-verdict .n { font-size: 30px; }
 .pf-why { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-2); background: var(--soft); border-radius: 10px; padding: 12px 14px; }
+.pf-hero-avg { margin: 0; display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 14px; align-items: center; }
+.pf-hero-avg-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pf-hero-avg img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.pf-hero-avg-imgs img:first-child { border-color: var(--blue); }
+.pf-hero-avg-imgs img:last-child { border-color: var(--orange); }
+.pf-hero-avg figcaption { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
 .pf-walls { grid-area: walls; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
 .pf-wall { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .pf-wall-who { margin: 0; font-weight: 700; font-size: 15px; padding: 10px 0; border-bottom: 3px solid var(--orange); }
@@ -119,4 +125,5 @@ body.pf { background: #F7F6F1; }
 }
 @media (max-width: 480px) {
   .pf-walls { grid-template-columns: minmax(0, 1fr); }
+  .pf-hero-avg { grid-template-columns: minmax(0, 1fr); }
 }
