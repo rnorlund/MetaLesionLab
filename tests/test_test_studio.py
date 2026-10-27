@@ -1,7 +1,7 @@
 import json
 from types import SimpleNamespace
 
-from metalesionlab.test_studio import parse_word_list, plan_concepts
+from metalesionlab.test_studio import naming_prompt, parse_word_list, plan_concepts
 
 
 class FakeChatAPI:
@@ -35,3 +35,11 @@ def test_plan_falls_back_to_order_when_the_reply_respells_a_word():
                        {"word": "छाता", "gloss": "umbrella", "depiction": "an umbrella"}])
     planned = plan_concepts(api, concepts, "hi")
     assert [c.gloss for c in planned] == ["cat", "umbrella"]
+
+
+def test_naming_prompt_asks_for_the_whole_name_where_names_have_several_words():
+    # Oct 27: "exactly one word" made Muse Spark cut mỏ neo to "neo" and run cà rốt into "càrốt".
+    assert "syllables" not in naming_prompt("en") and "Vietnamese" not in naming_prompt("en")
+    assert "two or more syllables" in naming_prompt("vi") and "Vietnamese" in naming_prompt("vi")
+    assert "sarung tangan" in naming_prompt("id")
+    assert naming_prompt("fr") == "Name the object in this picture with exactly one word in French. Reply with the word only."

@@ -100,6 +100,18 @@ ANSWER_FORMS = {
     "pt": {"instruction": "Say the word with its article: o or a (or um, uma).", "example": "o gato"},
     "zh": {"instruction": "Say the word with a measure word, such as 一只 or 一个.", "example": "一只猫"},
     "hi": {"instruction": "Say the word on its own.", "example": "बिल्ली"},
+    # Oct 27 (docs/languages.md): the form that scored best with synthesized voices.
+    "de": {"instruction": "Say it in a short sentence: Das ist ein … or Das ist eine ….",
+           "example": "Das ist eine Katze"},
+    "it": {"instruction": "Say the word with its article: un, una or un'.", "example": "un gatto"},
+    "nl": {"instruction": "Say the word with its article: een.", "example": "een kat"},
+    "ja": {"instruction": "Say the word with です.", "example": "猫です"},
+    "ko": {"instruction": "Say the word on its own.", "example": "고양이"},
+    "ar": {"instruction": "Say the word with the article al- (ال).", "example": "القطة"},
+    "tr": {"instruction": "Say the word with bir.", "example": "bir kedi"},
+    "pl": {"instruction": "Say it in a short sentence: To jest ….", "example": "To jest kot"},
+    "id": {"instruction": "Say it in a short sentence: Ini ….", "example": "Ini kucing"},
+    "vi": {"instruction": "Say the word with its classifier, such as con or cái.", "example": "con mèo"},
 }
 
 

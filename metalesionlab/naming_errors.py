@@ -37,6 +37,34 @@ see docs/languages.md):
     ending in 的 ("下雨用的"). Traditional characters are mapped to simplified first.
   - wordfreq's Hindi list is small, so a Hindi string it doesn't know still counts as a real
     word when the judge relates it to the target in meaning.
+
+More languages (checked Oct 27: German, Italian, Dutch, Japanese, Korean, Arabic, Turkish, Polish,
+Indonesian and Vietnamese; see docs/languages.md):
+  - Articles and frames: der/die/das, il/la/un/l'/un', de/het/een, Turkish bir, Indonesian
+    classifiers (seekor, sebuah), Vietnamese classifiers (con, cái, chiếc, quả), "das ist",
+    "to jest", "ini", "đây là", "هذه". Italian elides like French (l'ancora, un'arpa).
+  - Regular plurals: German (-n, -en, -e, -er, with or without an umlaut), Dutch (-en, -'s and
+    diminutives: bankje, katje), Italian (gatti, carote, lumache), Turkish (-ler/-lar),
+    Indonesian doubling (kucing-kucing).
+  - German and Dutch compounds have the head last, so a compound ending in the name counts
+    (Teekessel for Kessel, fluitketel for ketel), as does the name written in two parts.
+  - Arabic: short-vowel marks and tatweel are dropped, alef forms, ta marbuta/ha and alef
+    maqsura/ya are folded, and the article al- (also wa-l-, bi-l-) may be attached (القطة).
+  - Korean: a name may carry a particle or the copula (고양이가, 고양이입니다); a compound ending in
+    a name of two or more syllables counts (고무장갑). Sound comes from the jamo (NFD), with
+    liaison and ㅐ/ㅔ merged, and the same sounds count as the name (파이네플 for 파인애플).
+  - Japanese has no spaces and gets its own path, like Chinese: katakana and hiragana are the
+    same (ネコ = ねこ); kanji spellings count through the set's alternates (Muse Spark lists the
+    kana reading: 猫 -> ねこ, ネコ); frames (これは, です) are dropped; a compound ending in the
+    name counts (子猫, 雨傘). Sound is compared in kana only. With the Muse Spark judge, a kanji
+    transcript is also read aloud in kana, so a homophone counts (怒り for 錨, both いかり).
+  - Accents still fold for Latin-script words, except Vietnamese, where the marks are tones and
+    vowels (mèo "cat", méo "bent"); a Vietnamese transcript with no marks at all still matches.
+  - For the new languages, a name the transcript split in two or ran together still counts.
+  - No spelling-to-sound rules for these languages: sound is compared letter by letter (jamo
+    for Korean, kana for Japanese).
+  - English: a real word that wordfreq rates rare and CMU lacks is still a word if WordNet lists
+    it (footstool) or it joins two real words (kiwifruit).
 """
 from __future__ import annotations
 
@@ -58,26 +86,65 @@ WORD_MIN_ZIPF = 2.0  # wordfreq Zipf frequency at or above which a string counts
 WUP_THRESHOLD = 0.8  # separated related from unrelated test pairs on Oct 26 (unrelated max 0.71)
 
 LANGUAGE_NAMES = {"en": "English", "es": "Spanish", "fr": "French", "pt": "Brazilian Portuguese", "hi": "Hindi",
-                  "zh": "Mandarin Chinese", "sw": "Swahili"}
+                  "zh": "Mandarin Chinese", "de": "German", "it": "Italian", "nl": "Dutch", "ja": "Japanese",
+                  "ko": "Korean", "ar": "Arabic", "tr": "Turkish", "pl": "Polish", "id": "Indonesian",
+                  "vi": "Vietnamese", "sw": "Swahili"}
 REFUSALS = {"i dont know", "dont know", "i do not know", "no idea", "pass", "not sure", "im not sure",
             "no se", "no lo se", "ni idea",
             "je ne sais pas", "je sais pas", "sais pas", "aucune idee", "je ne sais plus",
             "nao sei", "sei la", "nao faco ideia", "nao lembro",
             "पता नहीं", "नहीं पता", "मुझे नहीं पता", "मुझे पता नहीं", "मालूम नहीं", "मुझे नहीं मालूम",
-            "不知道", "我不知道", "不清楚", "不记得", "忘了", "我忘了"}
-FILLERS = {"um", "umm", "uh", "uhh", "er", "erm", "hmm", "mm", "ah", "eh", "este", "euh", "heu", "hum", "हम्म", "उम्म"}
+            "不知道", "我不知道", "不清楚", "不记得", "忘了", "我忘了",
+            "weiß nicht", "ich weiß nicht", "ich weiß es nicht", "keine ahnung",
+            "non lo so", "non so", "non mi ricordo",
+            "weet ik niet", "ik weet het niet", "geen idee",
+            "わからない", "わかりません", "分からない", "分かりません", "知らない", "知りません",
+            "모르겠어요", "모르겠습니다", "모르겠다", "몰라요", "몰라",
+            "لا أعرف", "لا اعرف", "ما اعرف", "ما أعرف", "مش عارف",
+            "bilmiyorum", "bilmem", "nie wiem", "tidak tahu", "saya tidak tahu", "nggak tahu", "gak tahu",
+            "không biết", "tôi không biết"}
+FILLERS = {"um", "umm", "uh", "uhh", "er", "erm", "hmm", "mm", "ah", "eh", "este", "euh", "heu", "hum", "हम्म", "उम्म",
+           "äh", "ähm", "öhm", "ehm", "uhm", "eee", "yyy", "ıı", "ừm", "ờ", "えー", "えーと", "えっと", "음", "어"}
 ARTICLES = {"en": {"a", "an", "the"}, "es": {"el", "la", "los", "las", "un", "una", "unos", "unas"},
             "fr": {"le", "la", "les", "l", "un", "une", "des", "du", "de", "d"},
             "pt": {"o", "a", "os", "as", "um", "uma", "uns", "umas"},
-            "hi": {"एक"}}
+            "hi": {"एक"},
+            "de": {"der", "die", "das", "den", "dem", "des", "ein", "eine", "einen", "einem", "einer", "eines"},
+            "it": {"il", "lo", "la", "i", "gli", "le", "l", "un", "uno", "una", "dei", "degli", "delle", "del",
+                   "della", "dello", "dell"},
+            "nl": {"de", "het", "een", "n", "t"},  # 'n and 't lose their apostrophe in tokens()
+            "tr": {"bir"},
+            # Indonesian and Vietnamese count with classifiers, like Chinese measure words.
+            "id": {"sebuah", "seekor", "sebatang", "sehelai", "sepasang", "sebiji", "satu"},
+            "vi": {"con", "cái", "chiếc", "củ", "quả", "trái", "cây", "ngôi", "tấm", "cuốn", "quyển", "bông",
+                   "đôi", "bức", "một", "những", "các"}}
 # Words that frame a name without being part of it ("c'est un chat", "é um gato", "यह बिल्ली है");
 # dropped along with articles before counting words.
 FRAME_WORDS = {"fr": {"c", "ce", "est", "ça", "ca", "voilà", "voila"},
                "pt": {"é", "isso", "isto", "eh"},
-               "hi": {"यह", "ये", "वह", "वो", "है", "हैं", "था", "थी"}}
+               "hi": {"यह", "ये", "वह", "वो", "है", "हैं", "था", "थी"},
+               "de": {"ist", "es", "dies", "hier"},
+               "it": {"è", "questo", "questa", "ecco"},
+               "nl": {"dit", "dat", "is"},
+               "tr": {"bu", "şu"},
+               "pl": {"to", "jest", "ten", "ta"},
+               "id": {"ini", "itu", "adalah"},
+               "vi": {"đây", "là", "này", "đó"},
+               "ar": {"هذه", "هذا", "هذي", "هو", "هي"},
+               "ko": {"이것은", "이건", "이거", "이것이", "이게", "그것은", "그건", "저것은", "저건"}}
 POSTPOSITIONS = {"hi": {"का", "की", "के", "में", "पर", "को", "से", "ने", "तक", "लिए", "वाला", "वाली", "वाले"}}
-HEAD_LAST = {"en", "hi", "zh"}  # the head noun comes last (black cat, काली बिल्ली, 黑猫); else first (gato negro)
-ELISION = re.compile(r"^(l|d|j|c|qu|s|n|m|t)'(.+)$")  # French l'ancre -> l + ancre
+# The head noun comes last (black cat, schwarze Katze, काली बिल्ली, 黑猫, 검은 고양이); else first (gato negro).
+HEAD_LAST = {"en", "hi", "zh", "de", "nl", "pl", "tr", "ko", "ja"}
+ELISION = {"fr": re.compile(r"^(l|d|j|c|qu|s|n|m|t)'(.+)$"),  # French l'ancre -> l + ancre
+           "it": re.compile(r"^(l|un|dell|nell|all|dall|sull|quell|quest|c)'(.+)$")}  # un'arpa -> un + arpa
+COMPOUND_HEAD_LAST = {"de", "nl"}  # compounds written as one word, head last (Teekessel)
+# Languages added Oct 27, where a transcript that splits a name in two ("أنا ناس" for أناناس) or runs its
+# words together ("càrốt" for cà rốt, "sarungtangan") still counts. English and Spanish codes stay as they were.
+JOIN_LANGS = {"de", "it", "nl", "ko", "ar", "tr", "pl", "id", "vi"}
+NO_ACCENT_FOLDING = {"vi"}  # Vietnamese marks are tones and vowels: mèo (cat), méo (bent)
+# Korean particles and copula endings after a noun (고양이가, 닻을, 고양이입니다, 우산이에요), longest first.
+_KO_SUFFIXES = ("입니다", "이에요", "이네요", "이었어요", "예요", "이야", "이다", "이네", "이요", "들이", "들은", "들을",
+                "이", "가", "은", "는", "을", "를", "도", "의", "요", "야", "다", "들")
 
 SemanticJudge = Callable[[str, str, str], bool]
 JUDGE_PROMPT_VERSION = 2  # part of the judge's cache key, so a prompt change re-asks every pair
@@ -102,7 +169,9 @@ def _keep_char(c: str) -> bool:
 
 
 def tokens(text: str) -> list[str]:
-    text = unicodedata.normalize("NFC", text).lower().replace("’", "'").replace("\u200c", "").replace("\u200d", "")
+    # Turkish dotted capital İ: str.lower() would give "i" plus a combining dot ("İglo").
+    text = unicodedata.normalize("NFC", text).replace("İ", "i").lower()
+    text = text.replace("’", "'").replace("\u200c", "").replace("\u200d", "")
     text = "".join(c if _keep_char(c) else " " for c in text)
     return [t for t in (w.strip("'-") for w in text.split()) if t and t not in FILLERS]
 
@@ -159,7 +228,67 @@ def _plural_forms(target: str, lang: str) -> set[str]:
         if t.endswith("ा"):
             return {t[:-1] + "े", t[:-1] + "ों", t + "एं"}  # छाता -> छाते, छातों
         return {t + "ें", t + "ों", t + "एं"}  # किताब -> किताबें
+    if lang == "de":
+        forms = {t + "n", t + "en", t + "e", t + "er"}  # Katzen, Handschuhe
+        m = re.search(r"(au|a|o|u)(?!.*(au|a|o|u))", t)  # the last a, o, u or au can take an umlaut
+        if m:
+            umlaut = t[:m.start()] + {"au": "äu", "a": "ä", "o": "ö", "u": "ü"}[m.group(1)] + t[m.end():]
+            forms |= {umlaut, umlaut + "e", umlaut + "er"}  # Bänke, Fahrräder
+        return forms
+    if lang == "nl":
+        forms = {t + "en", t + "'s", t + "je", t + "tje", t + "pje", t + "etje", t + "jes", t + "tjes"}
+        if re.search(r"(^|[^aeiou])[aeiou][bdfgklmnprst]$", t):
+            forms |= {t + t[-1] + "en", t + t[-1] + "etje"}  # kat -> katten, bal -> balletje
+        if re.search(r"(aa|ee|oo|uu)[^aeiou]$", t):
+            forms.add(t[:-2] + t[-1] + "en")  # schaar -> scharen, zaag -> zagen
+        return forms
+    if lang == "it":
+        if t.endswith(("ca", "ga")):
+            return {t[:-1] + "he"}  # lumaca -> lumache
+        if t.endswith(("co", "go")):
+            return {t[:-1] + "hi", t[:-1] + "i"}
+        if t.endswith("io"):
+            return {t[:-1]}  # cucchiaio -> cucchiai
+        if t.endswith("a"):
+            return {t[:-1] + "e"}  # carota -> carote
+        if t.endswith(("o", "e")):
+            return {t[:-1] + "i"}  # gatto -> gatti, bollitore -> bollitori
+        return set()
+    if lang == "tr":
+        return {t + "ler", t + "lar"}
+    if lang == "id":
+        return {f"{t}-{t}"}  # kucing-kucing
+    if lang == "ar":
+        # Sound plural (شمعة -> شمعات; ta marbuta is folded to ha) and, for a noun of unit, its
+        # collective (جزرة "a carrot" -> جزر "carrots", قطة -> قط).
+        return {t[:-1] + "ات", t[:-1]} if t.endswith("ه") and len(t) > 2 else {t + "ات"}
     return set()
+
+
+_AR_MARKS = re.compile("[ؐ-ًؚ-ٰٟۖ-ۭـ]")  # short vowels, other marks, tatweel
+_AR_FOLD = str.maketrans({"أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ة": "ه"})
+_AR_PREFIXES = ("وال", "بال", "فال", "كال", "ال", "لل")  # al-, with "and", "with", "so", "like", "for" before it
+
+
+def ar_norm(word: str) -> str:
+    """Arabic spelling variation a transcript may show: short-vowel marks and tatweel dropped; alef
+    forms (أ إ آ), ta marbuta and ha, alef maqsura and ya folded together. A final alef maqsura is
+    the same final /a/ as ta marbuta (القطى for القطة), so it folds to ha."""
+    return re.sub("ى(?=\\s|$)", "ه", _AR_MARKS.sub("", word)).translate(_AR_FOLD)
+
+
+def _ar_bare(word: str) -> str:
+    """The word without an attached article (القطة -> قطه), if at least two letters remain."""
+    return next((word[len(p):] for p in _AR_PREFIXES if word.startswith(p) and len(word) - len(p) >= 2), word)
+
+
+def _ko_same(target: str, word: str) -> bool:
+    """고양이가, 고양이입니다: the name with a particle or the copula. A compound ending in a name of two or
+    more syllables counts (고무장갑 for 장갑); a one-syllable name must stand alone (톱, not 데스크톱)."""
+    for rest in (word, *(word[:-len(s)] for s in _KO_SUFFIXES if word.endswith(s) and len(word) > len(s))):
+        if rest == target or (len(target) >= 2 and rest.endswith(target)):
+            return True
+    return False
 
 
 def _fold_latin_accents(s: str) -> str:
@@ -172,10 +301,14 @@ def _same_word(target: str, word: str, lang: str) -> bool:
         return True
     # A missing or extra accent is a spelling/transcription detail, not a naming error ("iglu" for "iglú").
     folded = _fold_latin_accents(word)
-    if folded != word or _fold_latin_accents(target) != target:
+    if lang not in NO_ACCENT_FOLDING and (folded != word or _fold_latin_accents(target) != target):
         bare = _fold_latin_accents(target)
         if folded == bare or folded in (bare + "s", bare + "es"):
             return True
+    # A Vietnamese transcript may drop every mark (thia for thìa, coi for còi): a word with no marks at all
+    # matches the target's letters, but one with other marks is another word (méo "bent", not mèo "cat").
+    if lang == "vi" and word.isascii() and word == _strip_accents(target).replace("đ", "d"):
+        return True
     if lang == "en":
         with WORDNET_LOCK:
             wn = _wordnet()
@@ -184,7 +317,33 @@ def _same_word(target: str, word: str, lang: str) -> bool:
         word = word.replace("ँ", "ं")  # chandrabindu and anusvara spell the same nasal (आँख, आंख)
         if word == target.replace("ँ", "ं"):
             return True
+    if lang == "ar":
+        target, word = _ar_bare(ar_norm(target)), _ar_bare(ar_norm(word))
+        if word == target:
+            return True
+    if lang == "ko":
+        return _ko_same(target, word)
     return word in _plural_forms(target, lang)
+
+
+def _compound_match(target: str, words: list[str], lang: str) -> bool:
+    """German and Dutch compounds are written as one word with the head last: a word ending in the
+    name after at least three more letters is a kind of it (Teekessel, fluitketel, Regenschirm for
+    Schirm). The name split in two by the transcript ("Regen Schirm", "Regen-Schirm") also counts."""
+    if lang not in COMPOUND_HEAD_LAST:
+        return False
+    joined = [w.replace("-", "") for w in words] + [a + b for a, b in zip(words, words[1:])]
+    return any(_same_word(target, w, lang) or any(_same_word(target, w[i:], lang) for i in range(3, len(w) - 1))
+               for w in joined)
+
+
+def _joined_match(target: str, words: list[str], lang: str) -> bool:
+    """The name split in two by the transcript ("أنا ناس" for أناناس), or a several-word name run
+    together ("càrốt" for cà rốt, "sarungtangan" for sarung tangan)."""
+    if lang not in JOIN_LANGS:
+        return False
+    flat = re.sub(r"[\s-]+", "", target)
+    return any(_same_word(flat, w.replace("-", ""), lang) for w in [*words, *(a + b for a, b in zip(words, words[1:]))])
 
 
 def _phrase_match(target: str, words: list[str], lang: str) -> bool:
@@ -207,8 +366,18 @@ def word_zipf(word: str, lang: str) -> float:
         return round(math.log10(freq * 1e9), 2) if freq else 0.0
     try:
         return zipf_frequency(word, lang)
-    except (ImportError, LookupError):  # a language whose tokenizer isn't installed (ja, ko)
-        return 0.0
+    except (ImportError, LookupError):  # a language whose tokenizer isn't installed (ja, ko): look the word up
+        freq = _freq_dict(lang).get(word, 0.0)
+        return round(math.log10(freq * 1e9), 2) if freq else 0.0
+
+
+@lru_cache(maxsize=None)
+def _freq_dict(lang: str) -> dict[str, float]:
+    from wordfreq import get_frequency_dict
+    try:
+        return get_frequency_dict(lang, "best")
+    except LookupError:
+        return {}
 
 
 def is_word(word: str, lang: str) -> bool:
@@ -216,8 +385,25 @@ def is_word(word: str, lang: str) -> bool:
     CMU dictionary unless they are common."""
     zipf = word_zipf(word, lang)
     if lang == "en":
-        return zipf >= 3.0 or (zipf >= WORD_MIN_ZIPF and bool(pronouncing.phones_for_word(word)))
+        if zipf >= 3.0 or (zipf >= WORD_MIN_ZIPF and bool(pronouncing.phones_for_word(word))):
+            return True
+        # Real words that wordfreq rates rare and CMU lacks: WordNet lemmas (footstool), and closed
+        # compounds of two real words (kiwifruit = kiwi + fruit). Each part must be common or in CMU and
+        # also a WordNet lemma, so a nonword that splits into a name and a word (Caraloon: cara + loon)
+        # stays a nonword.
+        return _in_wordnet(word) or any(_compound_part(word[:i]) and _compound_part(word[i:])
+                                        for i in range(3, len(word) - 2))
     return zipf >= WORD_MIN_ZIPF
+
+
+def _in_wordnet(word: str) -> bool:
+    with WORDNET_LOCK:
+        return bool(_wordnet().synsets(word))
+
+
+def _compound_part(part: str) -> bool:
+    return (len(part) >= 3 and (word_zipf(part, "en") >= 3.0 or bool(pronouncing.phones_for_word(part)))
+            and _in_wordnet(part))
 
 
 def has_large_wordlist(lang: str) -> bool:
@@ -435,7 +621,26 @@ _HI_SILENT = {"्", "़"}  # virama and nukta: marks on a consonant, not sound
 # sounds elsewhere (accented Latin vowels; Devanagari vowel letters and signs).
 _VOWEL_LETTERS = (set("aeiouáàâãéèêíìîóòôõúùûü") | _PT_VOWELS
                   | {chr(c) for c in range(0x0904, 0x0915)} | {chr(c) for c in range(0x093E, 0x094D)})
-HOMOPHONE_LANGS = {"es", "fr", "pt"}  # a response that sounds exactly like the target counts as the target
+HOMOPHONE_LANGS = {"es", "fr", "pt", "ko"}  # a response that sounds exactly like the target counts as the target
+_KO_SILENT, _KO_FINAL_NG = "ᄋ", "ᆼ"  # syllable-initial ㅇ (silent) and final ㅇ (ng)
+_KO_MERGED = {"ᅢ": "ᅦ", "ᅤ": "ᅨ"}  # ㅐ and ㅔ, ㅒ and ㅖ sound the same in Seoul speech
+
+
+def _ko_sounds(word: str) -> list[str]:
+    """Korean sounds from Hangul: the syllables' jamo (NFD), without the silent initial ㅇ, with a final
+    consonant written as the same consonant at the start of a syllable (so 파인애플 and the liaison
+    spelling 파이네플 match) and ㅐ/ㅔ merged."""
+    out = []
+    for c in unicodedata.normalize("NFD", word):
+        if c == _KO_SILENT:
+            continue
+        if "ᆨ" <= c <= "ᇂ" and c != _KO_FINAL_NG:
+            try:
+                c = unicodedata.lookup(unicodedata.name(c).replace("JONGSEONG", "CHOSEONG"))
+            except KeyError:  # a consonant cluster with no initial form
+                pass
+        out.append(_KO_MERGED.get(c, c))
+    return out
 
 
 @lru_cache(maxsize=None)
@@ -454,6 +659,11 @@ def phonemes(word: str, lang: str) -> tuple[tuple[str, ...], int | None]:
         return tuple(ph), stressed
     if lang == "hi":
         return tuple(c for c in word if c not in _HI_SILENT), None
+    if lang == "ko":
+        return tuple(_ko_sounds(word)), None
+    if lang == "ja":  # kana spell sounds (one per mora); kanji don't, so they get no sounds
+        kana = ja_kana(word)
+        return (tuple(kana) if _KANA_ONLY.match(kana) else ()), None
     return tuple(word), None
 
 
@@ -462,7 +672,10 @@ def same_sounds(target: str, response: str, lang: str) -> bool:
     ("bouilloir", "cerrote") or a real-word homophone ("encre" for "ancre", "si" for "scie")."""
     if lang not in HOMOPHONE_LANGS or re.search(r"[\s-]", target):
         return False
-    t, r = phonemes(target, lang), phonemes(response, lang)
+    r = phonemes(response, lang)
+    if lang == "ko":  # also with a particle or the copula: 닻이에요, said with liaison, is spelled 다치에요
+        return any(phonemes(target + s, lang) == r for s in ("", *_KO_SUFFIXES)) and bool(r[0])
+    t = phonemes(target, lang)
     return bool(t[0]) and t == r  # same sounds and the same stressed vowel
 
 
@@ -473,8 +686,8 @@ def sound_related(target: str, response: str, lang: str) -> bool:
     r, r_stress = phonemes(response, lang)
     if not t or not r:
         return False
-    if lang not in ("en", "fr"):  # French has no gender vowels once mute e is dropped, so it uses the PNT rule
-        return _sound_related_gendered(t, r)
+    if lang not in ("en", "fr", "ko", "ja"):  # French has no gender vowels once mute e is dropped, nor do
+        return _sound_related_gendered(t, r)  # Korean and Japanese, so they use the PNT rule
     if t[0] == r[0] or t[-1] == r[-1]:
         return True
     if t_stress is not None and r_stress is not None and t[t_stress] == r[r_stress]:
@@ -547,7 +760,26 @@ def spark_semantic_judge(api, cache_path: Path | None = None) -> SemanticJudge:
             path.write_text(json.dumps(cache, ensure_ascii=False, indent=0))
         return cache[key]
 
+    judge.reading = spark_reading(api, path.with_name("ja_readings.json"))  # Japanese homophones, see _classify_ja
     return judge
+
+
+def spark_reading(api, cache_path: Path) -> Callable[[str], str]:
+    """Muse Spark reads a Japanese transcript aloud, in hiragana (怒り -> いかり), so a transcript that
+    wrote the spoken name with other kanji can be matched by sound. Cached on disk like the judge."""
+    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+
+    def reading(text: str) -> str:
+        if text not in cache:
+            prompt = ("Write how this Japanese text is most likely read aloud, in hiragana only: no kanji, no "
+                      f"katakana, no spaces or punctuation.\nText: {text}\nReply with the hiragana only.")
+            reply = api.chat([{"role": "user", "content": prompt}]).choices[0].message.content
+            cache[text] = ja_kana("".join(tokens(reply)))
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            cache_path.write_text(json.dumps(cache, ensure_ascii=False, indent=0))
+        return cache[text]
+
+    return reading
 
 
 # --- Chinese ---------------------------------------------------------------------------
@@ -588,7 +820,11 @@ def _zh_simplify(text: str) -> str:
 
 def zh_segment(text: str, max_len: int = 6) -> list[str]:
     """Split Chinese text into words by greedy longest match against wordfreq's word list."""
-    words, out, i = _zh_words(), [], 0
+    return _segment(text, _zh_words(), max_len)
+
+
+def _segment(text: str, words: dict, max_len: int) -> list[str]:
+    out, i = [], 0
     while i < len(text):
         n = next(n for n in range(min(max_len, len(text) - i), 0, -1) if n == 1 or text[i:i + n] in words)
         out.append(text[i:i + n])
@@ -631,6 +867,74 @@ def _classify_zh(target: str, response: str, alternates: tuple[str, ...], judge:
     return Coding("Semantic" if sem else "Unrelated", head, lexical=True, semantic=sem, phonological=False)
 
 
+# --- Japanese --------------------------------------------------------------------------
+
+# Frames before a name (fillers, "これは"); copula endings after it ("猫です", "ねこだよ").
+_JA_LEADING = re.compile(r"^(?:えーと|ええと|えっと|えー|あのー|あの|これは|それは|あれは|これが|それが)")
+_JA_ENDINGS = ("でしょうか", "でした", "ですね", "ですか", "です", "だね", "だよ", "だ")
+_JA_POLITE = _JA_ENDINGS[:5]  # endings no name ends in, safe to drop before coding an error ("いかだ" keeps its だ)
+_JA_FUNCTION = {"の", "は", "が", "を", "に", "で", "と", "も", "や", "へ", "な", "て", "た", "する", "ある", "いる",
+                "もの", "こと", "ため", "よう", "やつ"}
+_KANA_ONLY = re.compile(r"^[ぁ-ゟー]+$")  # hiragana and the long-vowel mark, after ja_kana()
+
+
+def ja_kana(text: str) -> str:
+    """NFKC (half-width katakana to full width), then katakana folded into hiragana: ネコ = ねこ."""
+    return "".join(chr(ord(c) - 0x60) if "ァ" <= c <= "ヶ" else c for c in unicodedata.normalize("NFKC", text))
+
+
+def ja_core(response: str) -> str:
+    """The response without punctuation, spaces and leading frames, in NFKC."""
+    s = unicodedata.normalize("NFKC", "".join(tokens(response)))
+    while (m := _JA_LEADING.match(s)) and m.end() < len(s):
+        s = s[m.end():]
+    return s
+
+
+def _ja_name_in(name: str, core: str) -> bool:
+    """Both in ja_kana form. The name, alone or with a copula ending, or at the end of a longer word or
+    phrase, since Japanese puts the head last (子猫, 黒い猫, 雨傘). A name with kanji, two or more
+    characters long, also counts anywhere (自転車に乗る)."""
+    for ending in ("", *_JA_ENDINGS):
+        if core.endswith(ending) and len(core) > len(ending):
+            rest = core[:len(core) - len(ending)]
+            if rest == name or rest.endswith(name):
+                return True
+    return len(name) >= 2 and not _KANA_ONLY.match(name) and name in core
+
+
+def _classify_ja(target: str, response: str, alternates: tuple[str, ...], judge: SemanticJudge | None) -> Coding:
+    core = ja_core(response)
+    if not core or _refusal_key(core) in REFUSAL_KEYS:
+        return Coding("NoResponse", "")
+    accepted = [_norm(a) for a in (target, *alternates)]
+    names = [ja_kana(a) for a in accepted]
+    if name := next((a for a, n in zip(accepted, names) if n and _ja_name_in(n, ja_kana(core))), None):
+        return Coding("Correct", name)
+    # Kanji spell meanings, so a transcript may write the spoken name as a homophone (怒り for いかり, the
+    # anchor 錨) or mix scripts (片つむり). With a reader (the Muse Spark judge has one), compare readings
+    # with the target's kana spellings: like "encre" for ancre in French, the same sounds are the name.
+    reader = getattr(judge, "reading", None)
+    if reader and not _KANA_ONLY.match(ja_kana(core)):
+        said = reader(core)
+        if name := next((a for a, n in zip(accepted, names) if _KANA_ONLY.match(n) and _ja_name_in(n, said)), None):
+            return Coding("Correct", name, phonological=True)
+    plain = next((core[:-len(e)] for e in _JA_POLITE if core.endswith(e) and len(core) > len(e)), core)
+    words = _segment(plain, _freq_dict("ja"), 8)
+    content = [w for w in words if w not in _JA_FUNCTION] or words
+    if len(content) >= 3 or plain.endswith(("もの", "やつ")) or (len(plain) > 2 and plain.endswith("の")):
+        return Coding("Description", plain)  # "雨の日に使うもの": the thing for rainy days
+    head = content[-1]
+    # Sound needs kana: compare with the target, or else its kana reading among the alternates (猫 -> ねこ).
+    sounding = next((n for n in names if _KANA_ONLY.match(n)), names[0])
+    phon = sound_related(sounding, reader(head) if reader and not _KANA_ONLY.match(ja_kana(head)) else head, "ja")
+    if not is_word(head, "ja"):
+        return Coding("Nonword" if phon else "Neologism", head, lexical=False, phonological=phon)
+    sem = meaning_related(target, head, "ja", judge)
+    code = {(True, True): "Mixed", (True, False): "Semantic", (False, True): "Formal"}.get((sem, phon), "Unrelated")
+    return Coding(code, head, lexical=True, semantic=sem, phonological=phon)
+
+
 # --- the decision tree -----------------------------------------------------------------
 
 def _clean_token(word: str, lang: str, names: tuple[str, ...] = ()) -> str:
@@ -639,14 +943,15 @@ def _clean_token(word: str, lang: str, names: tuple[str, ...] = ()) -> str:
     "umbrellaumbrella"), and an article fused onto the name ("Uniglú"). Only articles, frame words
     and accepted names are touched, so real words (couscous, bonbon) are left alone."""
     small = ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set())
+    firsts = {re.split(r"[\s-]+", n)[0] for n in names if re.search(r"[\s-]", n)}  # "xexe đạp", "sarungsarung tangan"
     half = len(word) // 2
-    if len(word) % 2 == 0 and word[:half] == word[half:] and word[:half] in small | set(names):
+    if len(word) % 2 == 0 and word[:half] == word[half:] and word[:half] in small | set(names) | firsts:
         return word[:half]
     return next((n for n in names for a in ARTICLES.get(lang, set()) if word == a + n), word)
 
 
-def _unelide(word: str) -> tuple[str, ...]:
-    m = ELISION.match(word)
+def _unelide(word: str, lang: str = "fr") -> tuple[str, ...]:
+    m = ELISION[lang].match(word)
     return m.groups() if m else (word,)
 
 
@@ -662,22 +967,34 @@ def classify(target: str, response: str, lang: str = "en", alternates: tuple[str
              judge: SemanticJudge | None = None) -> Coding:
     if lang == "zh":
         return _classify_zh(target, response, alternates, judge)
+    if lang == "ja":
+        return _classify_ja(target, response, alternates, judge)
     target = _norm(target)
     words = tokens(response)
     if not words or _refusal_key(" ".join(words)) in REFUSAL_KEYS:
         return Coding("NoResponse", "")
-    if lang == "fr":
-        words = [p for w in words for p in _unelide(w)]
     accepted = (target,) + tuple(_norm(a) for a in alternates)
+    if lang in ELISION:
+        # An apostrophe the transcript put inside the name ("L'umaca" for lumaca) isn't an elided article.
+        words = [w.replace("'", "") if w.replace("'", "") in accepted else w for w in words]
+        words = [p for w in words for p in _unelide(w, lang)]
     words = [_clean_token(w, lang, accepted) for w in words]
     content = [w for w in words if w not in ARTICLES.get(lang, set()) | FRAME_WORDS.get(lang, set())] or words
     if phrase := next((a for a in accepted if _phrase_match(a, words, lang)), None):
         return Coding("Correct", phrase)
     if any(_same_word(a, w, lang) for a in accepted for w in content):
         return Coding("Correct", next(w for w in content if any(_same_word(a, w, lang) for a in accepted)))
+    if name := next((a for a in accepted if _compound_match(a, content, lang) or _joined_match(a, content, lang)),
+                    None):
+        return Coding("Correct", name)
     if len(content) >= 3:
         return Coding("Description", " ".join(content))
     head = _head(content, lang)
+    if lang == "ko" and not is_word(head, lang):  # 강아지가 -> 강아지
+        head = next((head[:-len(s)] for s in _KO_SUFFIXES
+                     if head.endswith(s) and len(head) > len(s) and is_word(head[:-len(s)], lang)), head)
+    if lang == "ar":  # السفارة -> سفارة (wordfreq knows both; sound is compared without the article)
+        head = _ar_bare(head)
     if any(same_sounds(a, head, lang) for a in accepted):
         return Coding("Correct", head, phonological=True)
 
