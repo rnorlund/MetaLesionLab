@@ -206,6 +206,7 @@ class ToolAgent:
     tool_result_chars = 9000      # one tool result as sent to the model
     results_chars = 24_000        # all results, as text, in the forced answer and the repair
     repair_without_calls = False  # repair a failed check even when no tool was called
+    retry_empty = True            # an empty or cut-off answer is asked for once more, from the results as text
     no_answer = "I couldn't put an answer together from the lab's results. Try asking more specifically."
     final_note = "You can't call more tools. Write the final answer now, following the rules."
     keep_note = "keep everything else including the citations"
@@ -283,7 +284,9 @@ class ToolAgent:
         state["cost"] += call_cost(self.model, getattr(resp, "usage", None))
         state["tokens"] += usage_tokens(getattr(resp, "usage", None))
         state["model_calls"] += 1
-        return resp.choices[0].message
+        choice = resp.choices[0]
+        state["finish"] = getattr(choice, "finish_reason", None)  # "length": reasoning used up the output budget
+        return choice.message
 
     def _results_text(self, calls: list[dict]) -> str:
         text = json.dumps([{"tool": c["name"], "args": c["args"], "result": c["result"]} for c in calls],
@@ -303,7 +306,8 @@ class ToolAgent:
                            f"problems, {self.keep_note}, and output only the corrected answer:\n- " + "\n- ".join(fix)}],
                          tools=False, state=state)
         fixed = (msg.content or "").strip()
-        return fixed if fixed and not getattr(msg, "tool_calls", None) else answer
+        cut = state.get("finish") == "length"
+        return fixed if fixed and not cut and not getattr(msg, "tool_calls", None) else answer
 
     # --- the loop ----------------------------------------------------------------------------------
 
@@ -345,6 +349,9 @@ class ToolAgent:
             tcs = list(getattr(msg, "tool_calls", None) or [])
             if not tcs:
                 answer = (msg.content or "").strip()
+                if (not answer or state.get("finish") == "length") and self.retry_empty:
+                    yield ev("thinking", text="The answer came back empty or cut short; asking for it again.")
+                    answer = self._finalize(q, calls, state)
                 break
             if (msg.content or "").strip():
                 yield ev("thinking", text=said(msg.content, 300))

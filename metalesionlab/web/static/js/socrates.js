@@ -205,8 +205,8 @@
       var parts = [];
       if (good) {
         var what = [];
-        if (nums) what.push(nums + ' number' + (nums === 1 ? '' : 's') + ' match the results');
-        if (quotes) what.push(quotes + ' quotation' + (quotes === 1 ? '' : 's') + ' match Plato’s text');
+        if (nums) what.push(nums + (nums === 1 ? ' number matches' : ' numbers match') + ' the results');
+        if (quotes) what.push(quotes + (quotes === 1 ? ' quotation matches' : ' quotations match') + ' Plato’s text');
         parts.push(h('b', { text: '✓ ' }), what.length ? 'Checked: ' + what.join('; ') + '.' : 'Nothing to check: no numbers or quotations.');
       } else {
         parts.push(h('b', { text: 'Check before you use this: ' }));

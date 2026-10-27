@@ -32,9 +32,9 @@ def _call(name, args, i=0):
                            function=SimpleNamespace(name=name, arguments=json.dumps(args)))
 
 
-def _reply(content=None, calls=None, prompt=3000, completion=250):
+def _reply(content=None, calls=None, prompt=3000, completion=250, finish="stop"):
     msg = SimpleNamespace(content=content, tool_calls=calls or None)
-    return SimpleNamespace(choices=[SimpleNamespace(message=msg)],
+    return SimpleNamespace(choices=[SimpleNamespace(message=msg, finish_reason=finish)],
                            usage={"prompt_tokens": prompt, "completion_tokens": completion,
                                   "total_tokens": prompt + completion, "prompt_tokens_details": {"cached_tokens": 0}})
 
@@ -78,6 +78,9 @@ def test_tools_read_the_plato_results():
     gi = S.dispatch("glimmer_inside", {"concept": "chair"})
     assert gi["collapse_layer"] == 34 and gi["named_correctly_pct"] == {"muse": 100.0, "people": 75.0}
     assert gi["link"] == "/plato#inside"
+    assert {"stage": "layer 46", "muse": 0.055, "people": 0.5} in gi["spread_inside_glimmer"]
+    said = "By layer 46 Muse's chairs have a spread of 0.06 against 0.50 [glimmer_inside: chair].\n\nWhy?"
+    assert S.SocratesAgent(FakeAPI([])).check(said, [gi], "")["ok"]  # a layer number is data, not invented
     assert S.dispatch("glimmer_inside", {})["median_collapse_layer"] == 36
     assert S.dispatch("glimmer_inside", {"concept": "boat"})["concept"] == "boat"  # sailboat in the data
 
@@ -188,6 +191,34 @@ def test_quote_check():
     assert S.check_quotes('People call it "chair".', texts)["quotes"] == 0  # one word is a term, not a quotation
     long_unsourced = S.check_quotes('Critics say "machines will never understand a single chair at all".', texts)
     assert len(long_unsourced["bad_quotes"]) == 1
+    # A short term from the tool results (a prompt) may sit near Plato's name; the visitor's words may not.
+    term = S.check_quotes('Plato would smile: asked for "any kind", it drew one chair.', texts,
+                          tool_text="'a chair (any kind of chair)'")
+    assert term["bad_quotes"] == []
+    echoed = S.check_quotes('Plato said "AI is evil".', texts, data_text="Quote me Plato saying AI is evil")
+    assert echoed["bad_quotes"] == ["AI is evil"]
+    # Plato's name in an earlier sentence doesn't put a later quotation in his mouth.
+    later = S.check_quotes('That is Plato. Muse kept drawing "a slat-back dining chair, in the same view" anyway.', texts,
+                           tool_text="a slat-back dining chair, in the same view")
+    assert later["bad_quotes"] == []
+
+
+def test_engine_keeps_the_draft_when_a_repair_is_cut_off_and_retries_an_empty_answer():
+    api = FakeAPI([
+        _reply(None, [_call("plato_stats", {"concept": "chair"})]),
+        _reply("Muse drew 99 chairs [plato_stats: chair].\n\nWhy?"),
+        _reply("Muse drew", finish="length"),  # the repair ran out of output tokens
+    ])
+    ans = _answer(_events(S.SocratesAgent(api), "How many?"))
+    assert ans["text"] == "Muse drew 99 chairs [plato_stats: chair].\n\nWhy?" and ans["check"]["unverified"] == ["99"]
+    api2 = FakeAPI([
+        _reply(None, [_call("plato_stats", {"concept": "chair"})]),
+        _reply("", finish="length"),  # reasoning used the whole budget
+        _reply("Spread 0.13 [plato_stats: chair].\n\nWhy one chair?"),
+    ])
+    evs = _events(S.SocratesAgent(api2), "Same chair?")
+    assert any(e["type"] == "thinking" and "empty or cut short" in e["text"] for e in evs)
+    assert _answer(evs)["text"].startswith("Spread 0.13") and "tools" not in api2.requests[-1]
 
 
 def test_invented_plato_quote_is_repaired_or_dropped():
@@ -282,6 +313,11 @@ def test_split_question():
     assert S.split_question("An answer. Would Plato? What makes a chair?") == ("An answer.", "Would Plato? What makes a chair?")
     assert S.split_question("No question here.") == ("No question here.", "")
     assert S.split_question("Answer.\n\n**Question:** Is it?")[1] == "Is it?"
+    assert S.split_question("Answer.\n\nIf it broke, would it still be a chair") == (
+        "Answer.", "If it broke, would it still be a chair?")  # a question that lost its question mark
+    assert S.split_question("Answer.\n\nThat is all.") == ("Answer.\n\nThat is all.", "")
+    assert S.split_question("Answer.\n\nYou added rockers — does that make it more of a chair")[1].endswith("chair?")
+    assert S.split_question("Answer.\n\nDifference in look is not difference in being.")[1] == ""
 
 
 # --- guardrails --------------------------------------------------------------------------------------------
@@ -377,7 +413,8 @@ def test_dialogue_turns_stream_and_carry_history_and_context(client):
                                             "context": {"concept": "chair", "originality": 12.5, "evil": "x" * 50}})
     evs2 = _lines(r2)
     assert evs2[0]["turn"] == 2 and evs2[0]["replayed_tool_calls"] == 1 and evs2[0]["drawing"]
-    assert client.made[-1].context["originality_pct"] == 12 and "evil" not in client.made[-1].context
+    assert client.made[-1].context["originality_pct"] == 13  # 12.5 rounds up, as on the /draw page
+    assert "evil" not in client.made[-1].context
     assert client.get("/api/socrates/status").json()["turns_left"] == 22
     assert socrates_routes.spend.reserved == 0
 
