@@ -23,6 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/draw.css">
 <link rel="stylesheet" href="/static/css/landing.css">
 <link rel="stylesheet" href="/static/css/tour.css">
 </head>
@@ -32,19 +33,34 @@
 
 <main id="main" tabindex="-1">
 
-<section class="hero" aria-labelledby="hero-h">
+<!--#if /draw-->
+<!-- Blind first: the pad, and only Plato's question, until the visitor draws or skips. -->
+<section class="hero hero-draw" aria-labelledby="hero-h">
+  <div class="wrap draw-grid">
+    <div class="hero-pad" id="hero-draw"></div>
+    <div class="hero-ask">
+      <p class="kicker">What would Plato ask an AI?</p>
+      <h1 id="hero-h">Is there one ideal chair?</h1>
+      <p class="hero-sub">Plato thought every chair is a copy of one ideal chair. Draw yours, then see what Meta’s image model drew and where your chair lands among 200 people’s.</p>
+      <a class="hero-skip" href="#reveal" id="skip-link">Skip, just show me what the AI drew</a>
+      <button type="button" class="hero-tour" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Take the 90-second tour</button>
+    </div>
+  </div>
+</section>
+<!--#endif-->
+
+<section class="hero reveal-band" id="reveal" aria-labelledby="reveal-h" <!--#if /draw-->hidden<!--#endif-->>
   <div class="wrap hero-grid">
     <div class="hero-text">
       <p class="kicker">What would Plato ask an AI? <span class="kicker-q">Question 1: Is there one ideal chair?</span></p>
-      <h1 id="hero-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h1>
+      <!--#if /draw--><h2 class="reveal-h" id="reveal-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h2><!--#else--><h1 class="reveal-h" id="reveal-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h1><!--#endif-->
       <p class="hero-sub">People drew 16 different ones, mostly of the same plain chair.</p>
       <div class="hero-cta">
-        <!--#if /draw--><a class="lbtn lbtn-accent lbtn-lg" href="/draw">Draw a chair in 20 seconds</a><!--#endif-->
         <a class="lbtn lbtn-dark lbtn-lg" href="/plato">See the experiment</a>
+        <!--#if /draw--><a class="lbtn lbtn-outline lbtn-lg" href="/draw">Draw something else</a><!--#endif-->
         <!--#if /socrates--><a class="lbtn lbtn-outline lbtn-lg" href="/socrates">Ask Socrates</a><!--#endif-->
       </div>
-      <!--#if /draw--><p class="hero-invite">Draw yours first, then see what Meta’s AI drew and where your chair lands among 200 people’s.</p><!--#endif-->
-      <button type="button" class="hero-tour" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Take the 90-second tour</button>
+      <!--#if /draw--><p class="hero-invite" id="reveal-invite" hidden>Your chair’s results are just below.</p><!--#endif-->
     </div>
 
     <figure class="chairs" id="chairs" aria-labelledby="chairs-cap">
@@ -76,6 +92,7 @@
       </div>
     </figure>
   </div>
+  <!--#if /draw--><div class="wrap hero-results" id="hero-results"></div><!--#endif-->
 </section>
 
 <section class="band" id="findings" aria-labelledby="findings-h">
@@ -221,6 +238,7 @@
   </div>
 </footer>
 <script src="/static/js/common.js"></script>
+<script src="/static/js/draw.js"></script>
 <script src="/static/js/landing.js"></script>
 <script src="/static/js/tour.js"></script>
 </body>

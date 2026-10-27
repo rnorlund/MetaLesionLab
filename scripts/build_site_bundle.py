@@ -53,7 +53,7 @@ AUDIO_EXT = {".wav", ".wave", ".mp3", ".m4a", ".aac", ".flac", ".ogg", ".oga", "
 ALLOWED_EXT = {".json", ".png", ".jpg", ".jpeg", ".webp"}
 # Things that must never be in a public bundle, by path.
 FORBIDDEN_PATH = re.compile(r"quickdraw|quick_draw|doodle|ndjson|(^|/)human(/|$)|participant|patient|subject|"
-                            r"(^|/)\.env|costs\.jsonl|norms", re.I)
+                            r"(^|/)\.env|costs\.jsonl|norms|donations", re.I)  # donations: Draw a chair, never in a bundle
 KEY_SHAPES = [re.compile(rb"MODEL_API_KEY"), re.compile(rb"\bsk-[A-Za-z0-9_-]{20,}"),
               re.compile(rb"Bearer\s+[A-Za-z0-9._-]{20,}"), re.compile(rb"\bhf_[A-Za-z0-9]{30,}")]
 SPACE_README = """---
@@ -278,7 +278,7 @@ def check_bundle(out: Path, require_patterns: bool = True) -> list[str]:
         if path.suffix.lower() not in ALLOWED_EXT:
             problems.append(f"{rel}: unexpected file type")
         if FORBIDDEN_PATH.search(rel):
-            problems.append(f"{rel}: path suggests human drawings, participant data, the ledger or volunteer data")
+            problems.append(f"{rel}: path suggests human drawings, participant data, the ledger, volunteer data or donated drawings")
         if key and key in data:
             problems.append(f"{rel}: contains the Meta API key")
         if any(p.search(data) for p in KEY_SHAPES):

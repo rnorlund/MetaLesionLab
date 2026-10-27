@@ -1,8 +1,11 @@
 """Draw a chair (/draw), offline: stroke rendering, percentiles, the shipped reference data, the route's
 limits and lazy model loading. A fake embedder stands in for DINOv2, so nothing is downloaded."""
 import hashlib
+import io
 import json
 import logging
+import math
+import re
 import subprocess
 import sys
 
@@ -205,9 +208,29 @@ def post(c, strokes=CHAIR, concept="chair"):
 
 def test_page_and_concepts(client):
     r = client.get("/draw")
-    assert r.status_code == 200 and "never stored or logged" in r.text and 'id="pad"' in r.text
+    assert r.status_code == 200 and "never stored or logged" in r.text and 'id="draw-app"' in r.text
+    assert "TOTDraw.mount" in r.text and "/static/js/draw.js" in r.text
     data = client.get("/api/draw/concepts").json()
     assert data["concepts"][0]["key"] == "chair" and "vectors" not in data["concepts"][0]
+
+
+def test_pages_are_blind_until_the_reveal(client):
+    """Before drawing: no Muse Image pictures and no originality framing, on /draw and on the landing page."""
+    page = client.get("/draw").text
+    main = page[page.index("<main"):page.index("</main>")]
+    assert "_muse.webp" not in main and "16 times" not in main
+    assert re.search(r'<section class="dw-sec" id="how"[^>]*hidden', main)  # "How it works" waits for the reveal
+    js = (web.HERE / "static" / "js" / "draw.js").read_text()
+    pad_html = js[js.index("var PAD_HTML"):js.index("var RESULTS_HTML")]
+    assert "Muse" not in pad_html and "original" not in pad_html
+    landing = client.get("/").text
+    hero = landing[landing.index('id="hero-draw"') - 200:landing.index('id="reveal"')]
+    assert "Is there one ideal chair?" in hero and "Skip, just show me what the AI drew" in hero
+    assert "hero_chairs_ai" not in hero and "16" not in hero
+    assert re.search(r'<section class="hero reveal-band" id="reveal"[^>]*hidden', landing)
+    reveal = landing[landing.index('id="reveal"'):]
+    assert 'id="chairs"' in reveal and 'id="hero-results"' in reveal  # the stack animation and the results
+    assert landing.index("/static/js/draw.js") < landing.index("/static/js/landing.js")
 
 
 def test_model_loads_on_the_first_drawing_only(client):
@@ -268,8 +291,8 @@ def test_drawings_are_not_logged(client, caplog):
 
 def test_the_guard_counts_drawing_as_free():
     g = G.Guard(G.Settings(public_demo=True))
-    assert g.match("POST", "/api/draw") is None
-    assert g.match("POST", "/api/drawings") is not None  # only the exact route
+    assert g.match("POST", "/api/draw") is None and g.match("POST", "/api/draw/upload") is None
+    assert g.match("POST", "/api/drawings") is not None  # only the exact routes
 
 
 def test_the_app_never_imports_the_model_at_startup():
@@ -303,3 +326,247 @@ def test_fetch_checks_the_sha256(tmp_path, monkeypatch):
     with pytest.raises(SystemExit):
         draw_fetch.fetch(tmp_path / "bad.onnx", retries=2, url=src.as_uri())
     assert not (tmp_path / "bad.onnx").exists() and not (tmp_path / "bad.onnx.part").exists()
+
+
+# --- uploads: a photo of a drawing on paper ---------------------------------------------------------
+
+def photo(strokes=CHAIR, table=False, size=(1024, 768), seed=0, ink=(40, 40, 70)) -> Image.Image:
+    """A photo-like picture of a pen drawing on paper: off-white, uneven light, grain, a slight tilt."""
+    rng = np.random.default_rng(seed)
+    w, h = size
+    pw, ph = (int(w * 0.7), int(h * 0.75)) if table else (w, h)
+    paper = Image.new("RGB", (pw, ph), (236, 233, 226))
+    from PIL import ImageDraw
+    d = ImageDraw.Draw(paper)
+    xs = [x for s in strokes for x in s[0]] or [0]
+    ys = [y for s in strokes for y in s[1]] or [0]
+    k = 0.6 * min(pw, ph) / max(max(xs) - min(xs), max(ys) - min(ys), 1)
+    ox, oy = pw / 2 - (max(xs) + min(xs)) / 2 * k, ph / 2 - (max(ys) + min(ys)) / 2 * k
+    for sx, sy in strokes:
+        d.line([(ox + x * k, oy + y * k) for x, y in zip(sx, sy)], fill=ink, width=4)
+    paper = paper.rotate(4, resample=Image.BICUBIC, fillcolor=(236, 233, 226), expand=table)
+    if table:
+        bg = Image.new("RGB", size, (110, 80, 50))
+        bg.paste(paper, ((w - paper.width) // 2, (h - paper.height) // 2))
+        paper = bg
+    a = np.asarray(paper, dtype=np.float32)
+    shade = np.linspace(0.8, 1.0, w, dtype=np.float32)[None, :, None]
+    a = np.clip(a * shade + rng.normal(0, 3, a.shape), 0, 255).astype(np.uint8)
+    return Image.fromarray(a)
+
+
+def jpeg(img: Image.Image, fmt="JPEG") -> bytes:
+    buf = io.BytesIO()
+    img.save(buf, fmt)
+    return buf.getvalue()
+
+
+def busy_scene(seed=1) -> Image.Image:
+    rng = np.random.default_rng(seed)
+    img = Image.new("RGB", (800, 600))
+    from PIL import ImageDraw
+    d = ImageDraw.Draw(img)
+    for _ in range(80):
+        x, y = rng.integers(0, 800), rng.integers(0, 600)
+        r = int(rng.integers(20, 120))
+        d.ellipse((x - r, y - r, x + r, y + r), fill=tuple(int(v) for v in rng.integers(0, 255, 3)))
+    return img
+
+
+def test_load_upload_decodes_safely():
+    img = draw.load_upload(jpeg(photo()))
+    assert img.mode == "RGB" and max(img.size) == draw.UPLOAD_SIDE
+    rgba = Image.new("RGBA", (300, 200), (0, 0, 0, 0))  # black ink on transparent: composited on white
+    rgba.paste((0, 0, 0, 255), (100, 90, 200, 110))
+    flat = np.asarray(draw.load_upload(jpeg(rgba, "PNG")).convert("L"))
+    assert flat[0, 0] == 255 and flat[100, 150] == 0
+    for bad, msg in ((b"", "empty"), (b"not an image", "couldn't read"), (jpeg(photo(), "GIF"), "JPEG, PNG or WebP"),
+                     (jpeg(Image.new("RGB", (40, 40), "white")), "too small"),
+                     (b"x" * (draw.MAX_UPLOAD_BYTES + 1), "too big")):
+        with pytest.raises(draw.DrawingError, match=msg):
+            draw.load_upload(bad)
+
+
+def test_exif_rotation_is_applied_and_dropped():
+    img = photo()
+    exif = Image.Exif()
+    exif[0x0112] = 6  # rotate 90 degrees
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", exif=exif.tobytes())
+    up = draw.load_upload(buf.getvalue())
+    assert up.size[0] < up.size[1] and not up.getexif()  # portrait now, and no EXIF left
+
+
+def test_paper_check_tells_drawings_from_photos():
+    ok = draw.paper_stats(draw.load_upload(jpeg(photo())))
+    assert draw.upload_problem(ok) is None
+    assert draw.upload_problem(draw.paper_stats(draw.load_upload(jpeg(photo(strokes=[]))))) == draw.NO_INK
+    assert draw.upload_problem(draw.paper_stats(draw.load_upload(jpeg(busy_scene())))) == draw.NOT_A_DRAWING
+    assert draw.upload_problem(draw.paper_stats(draw.load_upload(jpeg(photo(table=True))))) == draw.EDGES
+    assert draw.upload_problem({**ok, "d_doodle": draw.MAX_DOODLE_DISTANCE + 0.01}) == draw.NOT_A_DRAWING
+    pic, stats = draw.prepare_upload(jpeg(photo()))
+    assert pic.size == (256, 256) and np.asarray(pic.convert("L")).min() < 100  # the lines survive the crop
+    assert stats["span"] < draw.MAX_SPAN
+
+
+def upload(c, body, concept="chair", **params):
+    q = "&".join(f"{k}={v}" for k, v in {"concept": concept, **params}.items())
+    return c.post(f"/api/draw/upload?{q}", content=body, headers={"content-type": "image/jpeg"})
+
+
+def test_upload_scores_a_photo_and_returns_what_the_model_saw(client):
+    r = upload(client, jpeg(photo()))
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["source"] == "upload" and body["originality"] == 0  # the fake model returns the typical chair
+    assert body["picture"].startswith("data:image/png;base64,")
+    pic = Image.open(io.BytesIO(__import__("base64").b64decode(body["picture"].split(",", 1)[1])))
+    assert pic.size == (256, 256) and pic.mode == "L"
+    assert "donation" not in body
+
+
+def test_upload_refuses_photos_of_things_and_counts_against_the_limits(client, monkeypatch):
+    r = upload(client, jpeg(busy_scene()))
+    assert r.status_code == 422 and "plain paper" in r.json()["detail"]
+    assert client.built == []  # refused before the model was needed
+    assert upload(client, b"garbage").status_code == 422
+    assert upload(client, jpeg(photo()), concept="dragon").status_code == 422
+    big = client.post("/api/draw/upload?concept=chair", content=b"x" * (draw.MAX_UPLOAD_BYTES + 1),
+                      headers={"content-type": "image/jpeg"})
+    assert big.status_code == 413
+    monkeypatch.setenv("TOT_LIMIT_DRAW_BURST", "4")
+    assert upload(client, jpeg(photo())).status_code == 429  # refused ones count too: four this minute already
+
+
+def test_upload_far_from_any_doodle_is_refused(client, ref):
+    client.fake.vec = -ref.concept("chair").human_centroid  # nothing like any doodle
+    r = upload(client, jpeg(photo()))
+    assert r.status_code == 422 and "plain paper" in r.json()["detail"]
+
+
+def test_uploads_are_not_logged(client, caplog):
+    caplog.set_level(logging.DEBUG)
+    assert upload(client, jpeg(photo())).status_code == 200
+    assert not any("JFIF" in rec.getMessage() or "base64" in rec.getMessage() for rec in caplog.records)
+
+
+# --- donations: off by default, opt-in, minimal -------------------------------------------------------
+
+from metalesionlab.web import draw_donations as donations  # noqa: E402
+
+
+@pytest.fixture
+def ddir(tmp_path, monkeypatch):
+    d = tmp_path / "donations"
+    monkeypatch.setenv("TIPPA_DONATIONS_DIR", str(d))
+    monkeypatch.delenv("TIPPA_DONATIONS", raising=False)
+    return d
+
+
+def files_in(d):
+    return sorted(p.relative_to(d).as_posix() for p in d.rglob("*") if p.is_file()) if d.exists() else []
+
+
+def donate_post(c, **extra):
+    return c.post("/api/draw", json={"concept": "chair", "strokes": CHAIR, "blind": True, "draw_ms": 4200, **extra})
+
+
+def test_donations_are_off_by_default(client, ddir):
+    st = client.get("/api/draw/status").json()
+    assert st["donations"] == {"enabled": False} and "never stored" in st["privacy"]
+    r = donate_post(client, donate=True, adult=True)
+    assert r.status_code == 200 and "donation" not in r.json()
+    assert upload(client, jpeg(photo()), donate=1, adult=1).status_code == 200
+    assert files_in(ddir) == []
+    assert "never stored or logged" in client.get("/draw").text
+
+
+def test_donation_needs_consent_and_age(client, ddir, monkeypatch):
+    monkeypatch.setenv("TIPPA_DONATIONS", "1")
+    st = client.get("/api/draw/status").json()
+    assert st["donations"]["enabled"] and st["privacy"] == "Not stored unless you choose to donate it."
+    assert st["donations"]["points"][-1] == ["Questions", "{{CONTACT}}"] and st["donations"]["irb"] == "{{IRB_NOTE}}"
+    assert "donation" not in donate_post(client).json()  # no tick: nothing kept
+    assert files_in(ddir) == []
+    r = donate_post(client, donate=True, adult=False)  # under 18 (or didn't say)
+    assert r.status_code == 200 and r.json()["donation"]["status"] == "declined" and "18" in r.json()["donation"]["reason"]
+    assert files_in(ddir) == []
+
+
+def test_pad_donation_keeps_strokes_and_the_picture_only(client, ddir, monkeypatch):
+    monkeypatch.setenv("TIPPA_DONATIONS", "1")
+    r = donate_post(client, donate=True, adult=True)
+    assert r.json()["donation"] == {"status": "saved"}
+    files = files_in(ddir)
+    assert files[0] == "donations.jsonl" and len(files) == 2 and files[1].startswith("png/")
+    rec = json.loads((ddir / "donations.jsonl").read_text())
+    assert set(rec) == {"id", "date", "concept", "source", "blind", "draw_seconds", "scores", "strokes", "png", "model", "consent"}
+    assert rec["source"] == "pad" and rec["blind"] is True and rec["draw_seconds"] == 4.2 and len(rec["date"]) == 10
+    assert rec["strokes"] == draw.normalize_strokes(CHAIR) and rec["png"] == f"png/{rec['id']}.png"
+    assert Image.open(ddir / rec["png"]).size == (256, 256)
+    assert "testclient" not in (ddir / "donations.jsonl").read_text()  # no address
+    donate_post(client, donate=True, adult=True)
+    assert len((ddir / "donations.jsonl").read_text().splitlines()) == 2  # appended
+
+
+def test_upload_donation_never_writes_the_photo(client, ddir, monkeypatch):
+    monkeypatch.setenv("TIPPA_DONATIONS", "1")
+    raw = jpeg(photo())
+    r = upload(client, raw, donate=1, adult=1, blind=0)
+    assert r.json()["donation"] == {"status": "saved"}
+    rec = json.loads((ddir / "donations.jsonl").read_text())
+    assert rec["source"] == "upload" and rec["strokes"] is None and rec["blind"] is False
+    png = Image.open(ddir / rec["png"])
+    assert png.size == (256, 256) and png.mode == "L" and not png.getexif()
+    for f in ddir.rglob("*"):
+        if f.is_file():
+            data = f.read_bytes()
+            assert raw[:2000] not in data and b"JFIF" not in data and b"Exif" not in data
+
+
+def test_writing_is_not_accepted_as_a_donation(client, ddir, monkeypatch):
+    from PIL import ImageDraw, ImageFont
+    monkeypatch.setenv("TIPPA_DONATIONS", "1")
+    img = Image.new("RGB", (900, 400), (236, 233, 226))
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 70)
+    except OSError:
+        font = ImageFont.load_default(size=70)
+    ImageDraw.Draw(img).text((40, 150), "Jane Doe 2026", fill=(30, 30, 30), font=font)
+    assert donations.text_like(ink_crop(img))
+    assert not donations.text_like(draw.render(CHAIR))
+    r = upload(client, jpeg(img), donate=1, adult=1)
+    assert r.status_code == 200 and r.json()["donation"]["status"] == "declined"
+    assert "writing" in r.json()["donation"]["reason"] and files_in(ddir) == []
+
+
+def test_export_donations_writes_a_reviewable_dataset(client, ddir, monkeypatch, tmp_path):
+    import importlib.util
+    monkeypatch.setenv("TIPPA_DONATIONS", "1")
+    donate_post(client, donate=True, adult=True)
+    upload(client, jpeg(photo()), donate=1, adult=1)
+    spec = importlib.util.spec_from_file_location("export_donations", web.HERE.parents[1] / "scripts" / "export_donations.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    out = tmp_path / "dataset"
+    monkeypatch.setattr(sys, "argv", ["export_donations.py", "--out", str(out), "--donations", str(ddir)])
+    assert mod.main() == 0
+    names = files_in(out)
+    assert {"README.md", "LICENSE", "drawings.jsonl", "summary.json"} <= set(names)
+    assert sum(n.startswith("png/") for n in names) == 2
+    assert "CC BY 4.0" in (out / "LICENSE").read_text() and "{{IRB_NOTE}}" in (out / "README.md").read_text()
+    assert json.loads((out / "summary.json").read_text())["by_source"] == {"pad": 1, "upload": 1}
+
+
+def test_bundles_and_git_never_take_donations(tmp_path):
+    import importlib.util
+    script = web.HERE.parents[1] / "scripts" / "build_site_bundle.py"
+    spec = importlib.util.spec_from_file_location("build_site_bundle_for_draw", script)
+    B = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(B)
+    out = tmp_path / "bundle"
+    (out / "donations" / "png").mkdir(parents=True)
+    (out / "donations" / "donations.jsonl").write_text("{}\n")
+    problems = B.check_bundle(out, require_patterns=False)
+    assert any("donations/donations.jsonl" in p and "donated drawings" in p for p in problems)
+    assert "donations/" in (web.HERE.parents[1] / ".gitignore").read_text().split()
