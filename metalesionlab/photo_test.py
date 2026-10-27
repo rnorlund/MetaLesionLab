@@ -4,7 +4,8 @@
    English name (for SAM) and a short description of how each one looks.
 2. SAM 3.1 finds each object in the photo.
 3. Muse Image redraws each object as a clean line drawing in the Test Studio style, from its
-   description (or, if real photos are preferred, the object is cropped from the photo).
+   description: two candidates, as in Test Studio, and the best one that passes the checks is
+   kept (or, if real photos are preferred, the object is cropped from the photo).
 4. The usual Test Studio checks run on every picture: SAM 3.1 must see exactly one clear object,
    and Muse Spark must name it with the target word.
 
@@ -99,7 +100,7 @@ def list_objects(api, photo_jpeg: bytes, lang: str, max_items: int) -> list[dict
 
 
 def build_from_photo(api, photo: bytes, mime: str, lang: str, style: str = "line", max_items: int = 8,
-                     judge=None, progress: Callable[[str], None] | None = None) -> dict:
+                     judge=None, progress: Callable[[str], None] | None = None, candidates: int = 2) -> dict:
     """Items for a private naming set: {"lang", "style", "items": [{target, alternates, image (data URL),
     status, checks, ...}], "listed": n}."""
     say = progress or (lambda _msg: None)
@@ -121,6 +122,7 @@ def build_from_photo(api, photo: bytes, mime: str, lang: str, style: str = "line
                 "depiction": obj["depiction"], "located": located is not None,
                 "located_confidence": round(located.confidence, 3) if located and located.confidence else None,
                 "style": style}
+        concept = Concept(word=obj["name"], gloss=obj["english"], depiction=obj["depiction"])
         if style == "photo":
             if not located:
                 return {**item, "status": "excluded", "note": "SAM 3.1 couldn't find this object in the photo."}
@@ -129,18 +131,20 @@ def build_from_photo(api, photo: bytes, mime: str, lang: str, style: str = "line
             crop.thumbnail((ITEM_SIDE, ITEM_SIDE))
             buf = io.BytesIO()
             crop.save(buf, "PNG")
-            to_check = buf.getvalue()  # the checks send PNG
-        else:
+            checks = check_candidate(api, buf.getvalue(), concept, lang, judge)  # the checks send PNG
+        else:  # as in Test Studio: draw candidates, keep the best one that passes both checks
             prompt = STYLES["line"].format(depiction=obj["depiction"])
-            drawn = api.generate_images(prompt, n=1)[0]
-            out = Image.open(io.BytesIO(drawn)).convert("RGB")
-            out.thumbnail((ITEM_SIDE, ITEM_SIDE))
-            buf = io.BytesIO()
-            out.save(buf, "PNG", optimize=True)
-            picture, pic_mime = buf.getvalue(), "image/png"
-            to_check = picture
-        concept = Concept(word=obj["name"], gloss=obj["english"], depiction=obj["depiction"])
-        checks = check_candidate(api, to_check, concept, lang, judge)
+            tried = []
+            for drawn in api.generate_images(prompt, n=candidates):
+                out = Image.open(io.BytesIO(drawn)).convert("RGB")
+                out.thumbnail((ITEM_SIDE, ITEM_SIDE))
+                buf = io.BytesIO()
+                out.save(buf, "PNG", optimize=True)
+                tried.append((buf.getvalue(), check_candidate(api, buf.getvalue(), concept, lang, judge)))
+            passing = [t for t in tried if t[1]["sam_ok"] and t[1]["spark_ok"]]
+            picture, checks = max(passing, key=lambda t: t[1]["sam_confidence"] or 0) if passing else tried[0]
+            pic_mime = "image/png"
+            item["candidates_drawn"] = len(tried)
         ok = checks["sam_ok"] and checks["spark_ok"]
         note = None if ok else ("SAM 3.1 didn't see exactly one clear object." if not checks["sam_ok"]
                                 else f"Muse Spark called it '{checks['spark_name']}'.")
