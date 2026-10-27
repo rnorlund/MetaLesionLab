@@ -150,3 +150,29 @@ def test_style_metrics_tell_a_clean_doodle_from_texture_and_color():
     red[..., 0] = 220
     red[:20] = 255
     assert style_metrics(red)["colorfulness"] > 50
+
+
+def test_name_categories_separate_other_objects_from_patterns():
+    from metalesionlab.plato_damage import name_category
+
+    assert name_category("bicycle", "chair", "a wheelchair") == "other_object"
+    assert name_category("Abstract", "chair", "a wheelchair") == "no_object"
+    assert name_category("optical illusion", "chair", "a rocking chair") == "no_object"
+    assert name_category("Wheelchair", "chair", "a wheelchair") == "kind"
+    assert name_category("chair", "chair", "a throne") == "basic"
+    assert name_category("Chair", "chair", "plain") == "kind"
+    assert name_category("The object in this picture is", "chair", "plain") == "empty"
+
+
+def test_damage_route_loads_and_caches_its_statistics(tmp_path):
+    import os
+
+    from metalesionlab.web.plato_damage_routes import load_data
+
+    f = tmp_path / "plato_damage.json"
+    assert load_data(f) is None
+    f.write_text('{"curves": {}}')
+    assert load_data(f) == {"curves": {}}
+    f.write_text("[1, 2]")  # not an object
+    os.utime(f, ns=(1, 10 ** 18))
+    assert load_data(f) is None

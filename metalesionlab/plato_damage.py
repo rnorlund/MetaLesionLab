@@ -338,6 +338,29 @@ def code_name(said: str | None, basic: str, kind: str) -> str:
     return "other"
 
 
+# Answers that name no object at all: the picture is read as a pattern, not a thing.
+NO_OBJECT_WORDS = {"abstract", "pattern", "patterns", "illusion", "texture", "design", "qr", "noise", "lines", "line",
+                   "scribble", "scribbles", "doodle", "sketch", "drawing", "art", "artwork", "image", "picture",
+                   "optical", "mosaic", "camouflage", "static", "grayscale", "distorted", "blur", "blurry", "smudge",
+                   "zigzag", "maze", "labyrinth", "fabric", "print", "geometric", "chaos", "mess", "shapes", "shape"}
+
+
+def name_category(said: str | None, basic: str, kind: str) -> str:
+    """What a damaged picture was named as: "kind" (the asked kind, or the concept itself for the
+    plain prompt), "basic" (just the concept's name, for a named kind), "no_object" (a pattern word:
+    abstract, texture, illusion ...), "other_object" (some other thing: car, bicycle, man ...), or
+    "empty"."""
+    code = code_name(said, basic, kind)
+    if code == "empty":
+        return "empty"
+    if code == "specific" or (code == "basic" and kind == "plain"):
+        return "kind"
+    if code == "basic":
+        return "basic"
+    toks = set(re.findall(r"[a-z]+", clean_name(said)))
+    return "no_object" if toks & NO_OBJECT_WORDS else "other_object"
+
+
 # ---------- clock rubric (scored by Muse Spark vision) ----------
 
 CLOCK_RUBRIC = (

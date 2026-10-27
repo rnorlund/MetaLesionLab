@@ -224,6 +224,56 @@ def summarize(rows: list[dict], concept: str | None = "chair") -> None:
 
 
 FAMILY_PAIRS = [("text-zero", "unet-zero"), ("text-noise", "unet-noise")]
+TARGETED_PAIR = ("text-spec", "text-spec-random")
+# Matched-severity contrasts, language minus drawing; the sign each hypothesis predicts.
+CONTRASTS = {
+    "delta_correct": ("H1a concept retention: still the asked kind", -1),
+    "delta_p_is_a": ("concept retention: P(yes) 'is this a drawing of a chair?'", -1),
+    "delta_p_clean": ("H1b drawing retention: P(yes) 'clean line drawing?'", +1),
+    "delta_midtone": ("pixels: gray share (shading, charcoal texture)", 0),
+    "delta_colorfulness": ("pixels: colorfulness", 0),
+    "delta_d_proto": ("H2 distance to the plain prototype", -1),
+    "delta_drift": ("H2 drift index d_kind - d_proto", +1),
+    "delta_tau": ("position on the kind-to-prototype line", +1),
+    "delta_drift_other": ("drift toward the other kinds", 0),
+    "is_plain": ("H3 labeled 'a plain, ordinary ...'", +1),
+    "is_cant": ("labeled 'can't tell, or not a ...'", -1),
+}
+TABLE_MEASURES = ["d_intact", "delta_correct", "is_plain", "is_cant", "is_other", "delta_p_is_a", "delta_p_clean",
+                  "p_clean", "delta_d_proto", "delta_drift", "delta_tau", "colorfulness", "midtone", "ink"]
+
+
+def merge_labels(rows: list[dict], labels_dir: Path) -> None:
+    """Add Glimmer's readings (labels_dir/<condition>.json) to the picture rows, and the paired changes."""
+    from metalesionlab.plato_damage import kind_outcome, name_category
+
+    found = {}
+    for f in labels_dir.glob("*.json"):
+        d = json.loads(f.read_text())
+        for it in d["items"]:
+            found[(d["condition"], it["key"], int(it["file"][1:-4]))] = it
+    for r in rows:
+        it = found.get((r["condition"], r["key"], r["seed_index"]))
+        if not it:
+            continue
+        n_kinds = len(CONCEPT_KINDS[r["concept"]][1])
+        r["outcome"] = kind_outcome(it["label"], it["true_kind"], n_kinds)
+        r["p_is_a"], r["p_clean"], r["said"] = it.get("p_is_a"), it.get("p_clean"), it.get("said")
+        r["name_category"] = name_category(it.get("said"), r["concept"], r["kind"])
+    base = {(r["key"], r["seed_index"]): r for r in rows if r["condition"] == "intact"}
+    for r in rows:
+        b = base.get((r["key"], r["seed_index"]))
+        if not b or "outcome" not in r or "outcome" not in b:
+            continue
+        for k in ("p_is_a", "p_clean"):
+            if r.get(k) is not None and b.get(k) is not None:
+                r[f"delta_{k}"] = r[k] - b[k]
+        target = "plain" if r["plain"] else "correct"
+        if b["outcome"] == target:  # outcome measures only for pictures read right when intact
+            r["delta_correct"] = float(r["outcome"] == target) - 1.0
+            r["is_plain"] = float(r["outcome"] == "plain") if not r["plain"] else np.nan
+            r["is_cant"] = float(r["outcome"] == "cant_tell")
+            r["is_other"] = float(r["outcome"] in ("other_kind", "specific"))
 
 
 def unit_matrix(rows: list[dict], family: str, measure: str, units: list[tuple]) -> tuple[np.ndarray, list[float]]:
@@ -233,55 +283,320 @@ def unit_matrix(rows: list[dict], family: str, measure: str, units: list[tuple])
     m = np.full((len(units), len(doses)), np.nan)
     for r in rows:
         if r["family"] == family and (r["key"], r["seed_index"]) in idx:
-            m[idx[(r["key"], r["seed_index"])], doses.index(r["dose"])] = r.get(measure, np.nan)
+            v = r.get(measure)
+            m[idx[(r["key"], r["seed_index"])], doses.index(r["dose"])] = np.nan if v is None else v
     return m, doses
 
 
-def family_table(rows: list[dict], concept: str, families: list[str], rng) -> list[dict]:
-    """Per family and dose: mean severity and drift measures with picture-level bootstrap CIs."""
+def named_units(rows: list[dict], concept: str) -> list[tuple]:
+    return sorted({(r["key"], r["seed_index"]) for r in rows if r["concept"] == concept and not r["plain"]
+                   and r["family"] != "intact"})
+
+
+def family_table(rows: list[dict], concept: str, rng, plain: bool = False) -> list[dict]:
+    """Per family and dose (named kinds, or the plain prompt): means with picture-level bootstrap CIs."""
     from metalesionlab.plato_damage import boot_mean_ci
 
     out = []
-    sel = [r for r in rows if r["concept"] == concept and not r["plain"]]
-    for fam in families:
+    sel = [r for r in rows if r["concept"] == concept and r["plain"] == plain]
+    fams = sorted({r["family"] for r in sel}, key=lambda f: (f != "intact", f))
+    for fam in fams:
         for dose in sorted({r["dose"] for r in sel if r["family"] == fam}):
             x = [r for r in sel if r["family"] == fam and r["dose"] == dose]
-            groups = np.array([r["key"] for r in x])
             row = {"family": fam, "dose": dose, "n": len(x)}
-            for k in ("d_intact", "delta_drift", "delta_tau", "delta_drift_other", "delta_d_proto", "delta_d_kind"):
-                v = np.array([r.get(k, np.nan) for r in x], float)
-                row[k] = boot_mean_ci(v, reps=2000, rng=rng)
-                if k == "delta_drift":
-                    row["delta_drift_by_kind_boot"] = boot_mean_ci(v, reps=2000, rng=rng, groups=groups)
+            for k in TABLE_MEASURES:
+                v = np.array([np.nan if r.get(k) is None else r.get(k) for r in x], float)
+                if np.isfinite(v).any():
+                    row[k] = boot_mean_ci(v, reps=1000, rng=rng)
+            names = [r.get("name_category") for r in x if r.get("name_category")]
+            if names:
+                row["names"] = {c: names.count(c) / len(names)
+                                for c in ("kind", "basic", "other_object", "no_object", "empty")}
             out.append(row)
     return out
 
 
-def drift_contrasts(rows: list[dict], concept: str, rng) -> dict:
-    """H1: language vs drawing damage at matched severity (pictures resampled; kinds as a check)."""
-    from metalesionlab.plato_damage import boot_mean_ci, boot_matched_contrast
+def matched_contrasts(rows: list[dict], concept: str, rng, reps: int = 4000) -> dict:
+    """Language minus drawing family at matched severity, for every measure in CONTRASTS."""
+    from metalesionlab.plato_damage import at_severity, boot_matched_contrast
 
-    units = sorted({(r["key"], r["seed_index"]) for r in rows if r["concept"] == concept and not r["plain"]
-                    and r["family"] != "intact"})
+    units = named_units(rows, concept)
     groups = np.array([u[0] for u in units])
     out = {}
     for a, b in FAMILY_PAIRS:
         if not any(r["family"] == a for r in rows) or not any(r["family"] == b for r in rows):
             continue
+        da, _ = unit_matrix(rows, a, "d_intact", units)
+        db, _ = unit_matrix(rows, b, "d_intact", units)
         res = {}
-        for measure in ("delta_drift", "delta_tau", "delta_drift_other"):
-            da, _ = unit_matrix(rows, a, "d_intact", units)
-            va, doses_a = unit_matrix(rows, a, measure, units)
-            db, _ = unit_matrix(rows, b, "d_intact", units)
-            vb, doses_b = unit_matrix(rows, b, measure, units)
-            res[measure] = {"by_picture": boot_matched_contrast(da, va, db, vb, rng=rng),
-                            "by_kind": boot_matched_contrast(da, va, db, vb, rng=rng, groups=groups, reps=2000)}
-        va, _ = unit_matrix(rows, a, "delta_drift", units)
-        res["pooled_delta_drift_" + a] = boot_mean_ci(np.nanmean(va, axis=1), rng=rng)
-        vb, _ = unit_matrix(rows, b, "delta_drift", units)
-        res["pooled_delta_drift_" + b] = boot_mean_ci(np.nanmean(vb, axis=1), rng=rng)
+        for measure, (label, sign) in CONTRASTS.items():
+            va, _ = unit_matrix(rows, a, measure, units)
+            vb, _ = unit_matrix(rows, b, measure, units)
+            if not (np.isfinite(va).any() and np.isfinite(vb).any()):
+                continue
+            ok = np.isfinite(va).any(1) & np.isfinite(vb).any(1)  # units measured under both
+            r1 = boot_matched_contrast(da[ok], va[ok], db[ok], vb[ok], reps=reps, rng=rng)
+            r2 = boot_matched_contrast(da[ok], va[ok], db[ok], vb[ok], reps=reps // 2, rng=rng, groups=groups[ok])
+            # each family alone at the matched severities (change from intact)
+            fam_a = float(np.mean(at_severity(np.nanmean(da[ok], 0), np.nanmean(va[ok], 0), r1["targets"])))
+            fam_b = float(np.mean(at_severity(np.nanmean(db[ok], 0), np.nanmean(vb[ok], 0), r1["targets"])))
+            res[measure] = {"label": label, "predicted_sign": sign, "language": fam_a, "drawing": fam_b,
+                            "difference": r1["estimate"], "ci95": r1["ci95"], "ci95_by_kind": r2["ci95"],
+                            "targets": r1["targets"], "n_units": r1["n_units"]}
         out[f"{a} vs {b}"] = res
     return out
+
+
+def pooled_family(rows: list[dict], concept: str, family: str, measure: str, rng) -> dict:
+    """A family's mean change over all its doses (per picture, then over pictures)."""
+    from metalesionlab.plato_damage import boot_mean_ci
+
+    m, _ = unit_matrix(rows, family, measure, named_units(rows, concept))
+    with np.errstate(all="ignore"), __import__("warnings").catch_warnings():
+        __import__("warnings").simplefilter("ignore")
+        per = np.nanmean(m, axis=1)
+    return boot_mean_ci(per, rng=rng)
+
+
+def targeted_vs_random(rows: list[dict], concept: str, rng) -> list[dict]:
+    """H5: the targeted 'specific-kind' lesion minus its matched random control, paired by picture, per dose."""
+    from metalesionlab.plato_damage import boot_mean_ci
+
+    a, b = TARGETED_PAIR
+    units = named_units(rows, concept)
+    out = []
+    for measure in ("d_intact", "delta_correct", "delta_d_proto", "delta_p_clean"):
+        ma, doses = unit_matrix(rows, a, measure, units)
+        mb, doses_b = unit_matrix(rows, b, measure, units)
+        if not doses or doses != doses_b:
+            continue
+        for j, dose in enumerate(doses):
+            out.append({"measure": measure, "dose": dose, "targeted": float(np.nanmean(ma[:, j])),
+                        "random": float(np.nanmean(mb[:, j])), "difference": boot_mean_ci(ma[:, j] - mb[:, j], rng=rng)})
+    return out
+
+
+def top_names(rows: list[dict], concept: str, families: list[str], k: int = 12) -> dict:
+    """The most common one-word names Glimmer gives damaged named-kind pictures, per family (top two doses)."""
+    from collections import Counter
+
+    from metalesionlab.plato_damage import clean_name
+
+    out = {}
+    for fam in families:
+        doses = sorted({r["dose"] for r in rows if r["family"] == fam})[-2:]
+        names = [" ".join(clean_name(r.get("said")).split()[:3]) for r in rows if r["family"] == fam
+                 and r["dose"] in doses and r["concept"] == concept and not r["plain"] and r.get("said")]
+        out[fam] = Counter(n for n in names if n).most_common(k)
+    return out
+
+
+def cmd_stats(args):
+    from metalesionlab.plato import to_jsonable
+
+    rng = np.random.default_rng(20261027)
+    run = DAMAGE_DIR / args.run
+    rows = json.loads((run / "measures.json").read_text())
+    if args.labels:
+        merge_labels(rows, DAMAGE_DIR / args.labels)
+        (run / "measures_labeled.json").write_text(json.dumps(rows))
+    families = sorted({r["family"] for r in rows} - {"intact"})
+    res = {"run": args.run, "n_pictures": len(rows), "concepts": {}}
+    for concept in CONCEPT_KINDS:
+        if not any(r["concept"] == concept for r in rows):
+            continue
+        c = {"table_named": family_table(rows, concept, rng), "table_plain": family_table(rows, concept, rng, plain=True),
+             "matched": matched_contrasts(rows, concept, rng, reps=args.reps),
+             "pooled": {f: {m: pooled_family(rows, concept, f, m, rng)
+                            for m in ("delta_d_proto", "delta_drift", "delta_correct", "d_intact")} for f in families},
+             "names": top_names(rows, concept, families)}
+        if any(r["family"] == TARGETED_PAIR[0] for r in rows):
+            c["targeted_vs_random"] = targeted_vs_random(rows, concept, rng)
+        res["concepts"][concept] = c
+        print(f"\n== {concept}")
+        for pair, d in c["matched"].items():
+            print(f"  {pair}")
+            for m, v in d.items():
+                print(f"    {m:20s} lang {v['language']:+.3f} draw {v['drawing']:+.3f}  diff {v['difference']:+.3f} "
+                      f"[{v['ci95'][0]:+.3f}, {v['ci95'][1]:+.3f}] by kind [{v['ci95_by_kind'][0]:+.3f}, "
+                      f"{v['ci95_by_kind'][1]:+.3f}] (pred {v['predicted_sign']:+d})")
+    out = DAMAGE_DIR / f"results_{args.run}.json"
+    out.write_text(json.dumps(to_jsonable(res), indent=1))
+    print(f"-> {out}")
+
+
+def glimmer_arm_stats(arm_dir: Path, rng) -> dict:
+    """H7: a damaged Glimmer reads Muse Image's named-kind doodles. Among pictures it labels right when
+    intact: the share now called "a plain, ordinary ..." (the semantic-dementia signature), "can't tell",
+    another kind, or still right; each lesion against its random control (same count per layer),
+    paired by picture, bootstrap over pictures and over concepts."""
+    from metalesionlab.plato_damage import RELIABLE_KINDS, boot_mean_ci, code_name, kind_outcome
+
+    conds = {}
+    for f in sorted(arm_dir.glob("*.json")):
+        d = json.loads(f.read_text())
+        conds[d["condition"]] = d
+    if "intact" not in conds:
+        return {}
+    kinds_cache = {}
+
+    def kinds_of(key):
+        if key not in kinds_cache:
+            path = DAMAGE_DIR.parent / "core" / "kinds_input" / "kinds" / f"{key}.json"
+            kinds_cache[key] = json.loads(path.read_text()) if path.exists() else []
+        return kinds_cache[key]
+
+    def items(cond):
+        out = {}
+        for it in conds[cond]["items"]:
+            if it["key"] not in RELIABLE_KINDS:
+                continue
+            o = kind_outcome(it["label"], it["true_kind"], it["n_kinds"])
+            kinds = kinds_of(it["key"])
+            kind = kinds[it["true_kind"]] if it["true_kind"] < len(kinds) else ""
+            basic = it["key"].replace("_", " ") if it["key"] != "yoga" else "person"
+            out[(it["key"], it["file"])] = {"outcome": o, "name": code_name(it.get("said"), basic, kind),
+                                            "said": it.get("said"), "key": it["key"]}
+        return out
+
+    base = items("intact")
+    keep = [u for u, v in base.items() if v["outcome"] == "correct"]
+    groups = np.array([u[0] for u in keep])
+    res = {"n_pictures": len(base), "n_intact_correct": len(keep),
+           "intact_accuracy": float(np.mean([v["outcome"] == "correct" for v in base.values()])),
+           "intact_names": {c: float(np.mean([base[u]["name"] == c for u in keep]))
+                            for c in ("specific", "basic", "other", "empty")},
+           "conditions": {}, "vs_random": {}}
+    ind = {}
+    for cond in conds:
+        cur = items(cond)
+        m = {k: np.array([float(cur[u]["outcome"] == k) if u in cur else np.nan for u in keep])
+             for k in ("correct", "plain", "cant_tell", "other_kind")}
+        m.update({f"name_{k}": np.array([float(cur[u]["name"] == k) if u in cur else np.nan for u in keep])
+                  for k in ("specific", "basic", "other", "empty")})
+        ind[cond] = m
+        row = {k: boot_mean_ci(v, reps=2000, rng=rng) for k, v in m.items()}
+        errors = m["plain"] + m["cant_tell"] + m["other_kind"]
+        row["plain_share_of_errors"] = float(np.nansum(m["plain"]) / np.nansum(errors)) if np.nansum(errors) else None
+        row["units"] = conds[cond].get("units")
+        res["conditions"][cond] = row
+    for cond in conds:
+        if cond.endswith("-random") or "-random@" in cond or cond == "intact":
+            continue
+        fam, _, dose = cond.partition("@")
+        ctrl = f"{fam}-random@{dose}"
+        if ctrl not in conds:
+            continue
+        cmp = {}
+        for k in ("plain", "cant_tell", "correct", "other_kind", "name_basic", "name_specific"):
+            diff = ind[cond][k] - ind[ctrl][k]
+            cmp[k] = {"lesion": float(np.nanmean(ind[cond][k])), "random": float(np.nanmean(ind[ctrl][k])),
+                      "difference": boot_mean_ci(diff, rng=rng),
+                      "difference_by_concept": boot_mean_ci(diff, rng=rng, groups=groups, reps=2000)}
+        # plain vs can't tell within the lesion (the signature: specific -> general, not -> unrecognisable)
+        cmp["plain_minus_cant_tell"] = boot_mean_ci(ind[cond]["plain"] - ind[cond]["cant_tell"], rng=rng)
+        res["vs_random"][cond] = cmp
+    # chair alone, for the page
+    chair = [i for i, u in enumerate(keep) if u[0] == "chair"]
+    res["chair"] = {cond: {k: float(np.nanmean(v[chair])) for k, v in m.items()} for cond, m in ind.items()} \
+        if chair else {}
+    res["chair_n"] = len(chair)
+    return res
+
+
+def cmd_glimmer(args):
+    from metalesionlab.plato import to_jsonable
+
+    rng = np.random.default_rng(20261028)
+    res = glimmer_arm_stats(DAMAGE_DIR / args.arm, rng)
+    out = DAMAGE_DIR / "results_glimmer_arm.json"
+    out.write_text(json.dumps(to_jsonable(res), indent=1))
+    print(f"intact accuracy {res.get('intact_accuracy', float('nan')):.3f}; {res.get('n_intact_correct')} intact-correct")
+    for cond, row in res.get("conditions", {}).items():
+        print(f"  {cond:30s} correct {row['correct']['mean']:.2f} plain {row['plain']['mean']:.2f} "
+              f"cant {row['cant_tell']['mean']:.2f} other {row['other_kind']['mean']:.2f} "
+              f"name basic {row['name_basic']['mean']:.2f} specific {row['name_specific']['mean']:.2f}")
+    for cond, cmp in res.get("vs_random", {}).items():
+        p = cmp["plain"]
+        print(f"  {cond:30s} plain {p['lesion']:.2f} vs random {p['random']:.2f}: diff {p['difference']['mean']:+.3f} "
+              f"[{p['difference']['ci95'][0]:+.3f}, {p['difference']['ci95'][1]:+.3f}] by concept "
+              f"[{p['difference_by_concept']['ci95'][0]:+.3f}, {p['difference_by_concept']['ci95'][1]:+.3f}]")
+    print(f"-> {out}")
+
+
+CLOCK_FEATURES = [("clock", "a clock"), ("contour", "outline"), ("numbers_ok", "12 numbers in order"),
+                  ("two_hands", "two hands"), ("time_ok", "the asked time"), ("shows_1010", "hands at 10:10")]
+
+
+def clock_stats(run: Path, rng) -> dict:
+    """H6: clock features per condition from Spark's rubric answers; the intact 10:10 bias; which feature
+    fails first under each family."""
+    from metalesionlab.plato_damage import BY_KEY as PROMPTS, boot_mean_ci, score_clock
+
+    scores = json.loads((run / "clock_scores.json").read_text())
+    rows = []
+    for name, v in scores.items():
+        cond, key, f = name.split("/")
+        t = PROMPTS[key].kind
+        sc = score_clock(v.get("rubric"), t)
+        fam, dose = parse_condition(cond)
+        rows.append({"condition": cond, "family": fam, "dose": dose, "time": t, "seed": int(f[1:-4]),
+                     "parsed": v.get("rubric") is not None, "time_read": (v.get("rubric") or {}).get("time_read"), **sc})
+    out = {"n_scored": len(rows), "n_unparsed": sum(not r["parsed"] for r in rows),
+           "features": [k for k, _ in CLOCK_FEATURES], "feature_labels": dict(CLOCK_FEATURES), "conditions": {}}
+    conds = sorted({r["condition"] for r in rows}, key=lambda c: (c != "intact", parse_condition(c)))
+    for cond in conds:
+        x = [r for r in rows if r["condition"] == cond and r["parsed"]]
+        row = {"n": len(x)}
+        for k, _ in CLOCK_FEATURES:
+            row[k] = boot_mean_ci(np.array([float(bool(r[k])) for r in x]), reps=2000, rng=rng)
+        row["total"] = boot_mean_ci(np.array([r["total"] for r in x], float), reps=2000, rng=rng)
+        out["conditions"][cond] = row
+    intact = [r for r in rows if r["condition"] == "intact" and r["parsed"]]
+    not1010 = [r for r in intact if r["time"] != "10:10"]
+    out["intact_1010_bias"] = {
+        "share_showing_1010_when_asked_other": boot_mean_ci(np.array([float(r["shows_1010"]) for r in not1010]), rng=rng),
+        "share_right_time_when_asked_other": boot_mean_ci(np.array([float(r["time_ok"]) for r in not1010]), rng=rng),
+        "share_right_time_when_asked_1010": boot_mean_ci(np.array([float(r["time_ok"]) for r in intact
+                                                                    if r["time"] == "10:10"]), rng=rng),
+        "times_read": {t: [r["time_read"] for r in intact if r["time"] == t] for t in sorted({r["time"] for r in intact})},
+        "n_other": len(not1010)}
+    base = out["conditions"].get("intact", {})
+    first = {}
+    for fam in sorted({r["family"] for r in rows} - {"intact"}):
+        doses = sorted({r["dose"] for r in rows if r["family"] == fam})
+        surv = []
+        for d in doses:
+            row = out["conditions"][f"{fam}@{d:g}"]
+            surv.append({k: (row[k]["mean"] / base[k]["mean"] if base.get(k) and base[k]["mean"] > 0 else None)
+                         for k, _ in CLOCK_FEATURES if k != "shows_1010"})
+        fails = None
+        for d, sv in zip(doses, surv):
+            lost = [k for k, v in sv.items() if v is not None and v < 0.5]
+            if lost:
+                fails = {"dose": d, "features": lost}
+                break
+        first[fam] = {"doses": doses, "survival_vs_intact": surv, "first_below_half": fails}
+    out["first_to_fail"] = first
+    return out
+
+
+def cmd_clockstats(args):
+    from metalesionlab.plato import to_jsonable
+
+    rng = np.random.default_rng(20261029)
+    res = clock_stats(DAMAGE_DIR / args.run, rng)
+    (DAMAGE_DIR / "results_clocks.json").write_text(json.dumps(to_jsonable(res), indent=1))
+    b = res["intact_1010_bias"]
+    print(f"{res['n_scored']} clocks ({res['n_unparsed']} unparsed). Intact: asked another time, hands at 10:10 "
+          f"{b['share_showing_1010_when_asked_other']['mean']:.2f}, right time {b['share_right_time_when_asked_other']['mean']:.2f} "
+          f"(n {b['n_other']}); asked 10:10, right {b['share_right_time_when_asked_1010']['mean']:.2f}")
+    print(f"{'condition':18s} {'n':>3s} " + " ".join(f"{k[:9]:>9s}" for k, _ in CLOCK_FEATURES) + "  total")
+    for cond, row in res["conditions"].items():
+        print(f"{cond:18s} {row['n']:3d} " + " ".join(f"{row[k]['mean']:9.2f}" for k, _ in CLOCK_FEATURES)
+              + f"  {row['total']['mean']:.2f}")
+    for fam, v in res["first_to_fail"].items():
+        print(f"  {fam}: first below half of intact: {v['first_below_half']}")
 
 
 def cmd_clocks(args):
@@ -366,6 +681,17 @@ def main():
     p = sub.add_parser("measures")
     p.add_argument("run")
     p.set_defaults(fn=cmd_measures)
+    p = sub.add_parser("stats")
+    p.add_argument("run")
+    p.add_argument("--labels", help="folder (under DAMAGE_DIR) of Glimmer label files for this run")
+    p.add_argument("--reps", type=int, default=4000)
+    p.set_defaults(fn=cmd_stats)
+    p = sub.add_parser("glimmer")
+    p.add_argument("--arm", default="glimmer_arm", help="folder (under DAMAGE_DIR) of the damaged-Glimmer results")
+    p.set_defaults(fn=cmd_glimmer)
+    p = sub.add_parser("clockstats")
+    p.add_argument("run")
+    p.set_defaults(fn=cmd_clockstats)
     p = sub.add_parser("clocks")
     p.add_argument("run")
     p.add_argument("--conditions", nargs="*")
