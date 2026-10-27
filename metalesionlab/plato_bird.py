@@ -57,6 +57,81 @@ def picture_label_prompt(phrase: str, noun: str) -> str:
             f"can tell (for example, for a fruit: apple). Answer with one word or a short name only.")
 
 
+# ---------- synonym map (hand-reviewed; same referent only, never two different members) ----------
+# Spelling and US/UK variants, abbreviations and clipped forms that name the same thing. Applied to people's
+# and the models' answers alike, after cleaning and singularizing.
+SYNONYMS = {
+    # US/UK names for the same thing
+    "eggplant": "aubergine", "zucchini": "courgette", "cilantro": "coriander", "arugula": "rocket",
+    "wrench": "spanner", "soccer": "football", "gasoline": "petrol", "lorry": "truck", "aeroplane": "airplane",
+    "plane": "airplane", "ladybug": "ladybird", "sweater": "jumper", "attorney": "lawyer",
+    "aluminum": "aluminium", "gray": "grey", "math": "maths", "mathematics": "maths", "whiskey": "whisky",
+    "bathtub": "bath", "settee": "sofa", "setee": "sofa", "couch": "sofa", "television": "tv",
+    "refrigerator": "fridge", "automobile": "car", "physician": "doctor", "mom": "mother", "mum": "mother",
+    "mommy": "mother", "mummy": "mother", "dad": "father", "daddy": "father",
+    # US/UK spelling
+    "meter": "metre", "centimeter": "centimetre", "millimeter": "millimetre", "kilometer": "kilometre",
+    "colour": "colour", "color": "colour", "jewelry": "jewellery", "chili": "chilli", "chili pepper": "chilli",
+    "chilli pepper": "chilli", "chilli powder": "chilli", "blond": "blonde", "sulfur": "sulphur",
+    "pediatrics": "paediatrics", "pediatric": "paediatrics", "paediatric": "paediatrics",
+    # short and long forms
+    "bike": "bicycle", "pushbike": "bicycle", "push bike": "bicycle", "pedal bike": "bicycle",
+    "motorbike": "motorcycle", "kilo": "kilogram", "kg": "kilogram", "gramme": "gram", "lab": "labrador",
+    "labrador retriever": "labrador", "alsatian": "german shepherd", "influenza": "flu", "common cold": "cold",
+    "tuberculosis": "tb", "covid-19": "covid", "coronavirus": "covid", "covid 19": "covid",
+    "obsessive compulsive disorder": "ocd", "bipolar disorder": "bipolar", "general practitioner": "gp",
+    "microwave oven": "microwave", "english language": "english", "gull": "seagull", "noon": "midday",
+    "tee shirt": "t-shirt", "tshirt": "t-shirt", "make-up": "makeup", "make up": "makeup",
+    "one half": "half", "1/2": "half", "a half": "half", "one quarter": "quarter", "1/4": "quarter",
+    "one third": "third", "1/3": "third", "3/4": "three quarters", "three-quarters": "three quarters",
+    "coughing": "cough", "sneezing": "sneeze",
+    # picture labels for "a game" (the singularizer would turn "bros" into "bro")
+    "super mario bro": "super mario", "super mario bros": "super mario", "mario": "super mario",
+    "super mario bros.": "super mario",
+}
+# Same-referent names that only hold within one category.
+_WATER = {"pacific ocean": "pacific", "atlantic ocean": "atlantic", "indian ocean": "indian",
+          "arctic ocean": "arctic", "amazon river": "amazon", "river amazon": "amazon", "nile river": "nile",
+          "river nile": "nile", "river thames": "thames", "thames river": "thames",
+          "mediterranean sea": "mediterranean"}
+_INJURY = {"fracture": "broken bone", "bone fracture": "broken bone"}
+# Forms of the same emotion or quality (the norms' referential version merges these, e.g. happiness = happy).
+_FEELINGS = {
+    "happiness": "happy", "sadness": "sad", "anger": "angry", "jealousy": "jealous", "excitement": "excited",
+    "loneliness": "lonely", "anxiety": "anxious", "fearful": "fear", "scared": "fear", "afraid": "fear",
+    "frightened": "fear", "joyful": "joy", "joyfulness": "joy", "disgusted": "disgust", "frustration": "frustrated",
+    "worry": "worried", "nervousness": "nervous", "depression": "depressed", "love": "love", "hatred": "hate",
+    "guilt": "guilty", "shame": "ashamed", "surprised": "surprise", "contentment": "content", "pride": "proud",
+    "gratitude": "grateful", "boredom": "bored", "embarrassment": "embarrassed", "stress": "stressed",
+}
+_QUALITIES = {
+    "honesty": "honest", "kindness": "kind", "friendliness": "friendly", "confidence": "confident",
+    "loyalty": "loyal", "selfishness": "selfish", "generosity": "generous", "rudeness": "rude", "being rude": "rude",
+    "cheerfulness": "cheerful", "helpfulness": "helpful", "intelligence": "intelligent", "arrogance": "arrogant",
+    "laziness": "lazy", "greed": "greedy", "greediness": "greedy", "dishonesty": "dishonest", "patience": "patient",
+    "compassion": "compassionate", "caringness": "caring", "caring nature": "caring", "gentleness": "gentle",
+    "boastfulness": "boastful", "narcissism": "narcissistic", "pessimism": "pessimistic", "optimism": "optimistic",
+    "stubbornness": "stubborn", "moodiness": "moody", "harshness": "harsh", "empathy": "empathetic",
+    "empathic": "empathetic", "jealousy": "jealous", "anger": "angry", "happiness": "happy", "bravery": "brave",
+    "courage": "courageous", "humility": "humble", "liar": "lying", "dishonest": "dishonest", "cruelty": "cruel",
+    "impatience": "impatient", "ignorance": "ignorant","creativity": "creative",
+    "reliability": "reliable", "integrity": "integrity", "respectfulness": "respectful", "humour": "funny",
+    "sense of humour": "funny", "humorous": "funny", "humourous": "funny",
+}
+_WEATHER = {"rainy": "rain", "raining": "rain", "sunny": "sun", "sunshine": "sun", "snowy": "snow",
+            "snowing": "snow", "windy": "wind", "cloudy": "cloud", "foggy": "fog", "stormy": "storm",
+            "thunderstorm": "storm", "hailstone": "hail", "hailing": "hail", "drizzly": "drizzle",
+            "misty": "mist", "breezy": "breeze"}
+_FEELING_CATS = ("emotion", "positive emotion", "negative emotion")
+_QUALITY_CATS = ("personal quality", "positive personal quality", "negative personal quality")
+CATEGORY_SYNONYMS = {**{c: _FEELINGS for c in _FEELING_CATS}, **{c: _QUALITIES for c in _QUALITY_CATS},
+                     "weather": _WEATHER, "body of water": _WATER, "injury": _INJURY}
+
+
+def synonyms_for(category: str) -> dict[str, str]:
+    return {**SYNONYMS, **CATEGORY_SYNONYMS.get(category, {})}
+
+
 # ---------- answer normalization ----------
 
 # Plurals that are not a plural of something shorter, or whose singular is irregular.
@@ -106,7 +181,7 @@ _SINGULAR_IRREGULAR = {
     "genies": "genie", "pixies": "pixie", "aunties": "auntie", "goalies": "goalie", "selfies": "selfie",
     "beanies": "beanie", "budgies": "budgie", "collies": "collie", "corgis": "corgi", "kiwis": "kiwi",
 }
-_ES_PLURAL = ("ches", "shes", "sses", "xes", "zzes", "oes")
+_ES_PLURAL = ("ches", "shes", "sses", "xes", "zzes")  # "-oes" plurals are listed (potatoes); shoes -> shoe
 
 
 def singular(word: str) -> str:
@@ -154,11 +229,14 @@ def clean(text: str) -> str:
     s = unicodedata.normalize("NFKC", text or "").strip()
     s = next((line for line in s.splitlines() if line.strip()), "")
     s = re.sub(r"[*_`\"“”‘]", "", s.replace("’", "'"))
-    s = re.sub(r"^\s*(?:answer|member|example)\s*:\s*", "", s, flags=re.I)
+    # a short label before a colon ("Answer: Robin", "1st matching response: Red") is not the answer
+    if re.match(r"^\s*(?:\S+\s+){0,3}\S+?:\s*\S", s):
+        s = s.split(":", 1)[1]
     s = re.sub(r"\(.*?\)|\[.*?\]", " ", s)  # parentheticals
     # keep the first item only; "and" is never a separator ("breaking and entering")
     s = re.split(r"[,;:]|\s[-–—]\s|\sor\s|\s/\s", s, maxsplit=1)[0]
     s = s.lower().strip().strip(".!?'").strip()
+    s = re.sub(r"'s\b|s'(?=\s|$)", "", s)  # possessives: "alzheimer's" -> "alzheimer"
     s = re.sub(r"^(a|an|the|one|some)\s+(?=\S)", "", s)
     s = re.sub(r"\s+", " ", s)
     return _NUMBER_WORDS.get(s, s)
@@ -175,6 +253,67 @@ def normalize(text: str, synonyms: dict[str, str] | None = None) -> str:
         return syn[s]
     s1 = s if re.fullmatch(r"[\d\s/.]+", s) else singular_phrase(s)
     return syn.get(s1, s1)
+
+
+def category_head(category: str) -> str | None:
+    """The category's head noun: "tree" for "tree", "vehicle" for "four-wheeled vehicle", and the noun before
+    the preposition for "room in a house" or "bird of prey" ("room", "bird")."""
+    m = re.match(r"^(.*?)\s+(?:of|in)\s+", category)
+    if m:
+        return singular(m.group(1).split()[-1])
+    return singular(category.split()[-1].split("-")[-1])
+
+
+def category_aliases(category: str, pooled: Counter | dict, preferred: set[str] | frozenset = frozenset()
+                     ) -> dict[str, str]:
+    """Merge forms of the same answer within one category, from all sources' normalized answers pooled
+    (people and every model), so both sides are merged the same way:
+    - spacing and hyphens: 'blue bird' = 'bluebird', 't shirt' = 't-shirt';
+    - the head noun: 'oak tree' = 'oak' and 'top hat' = 'top' when both forms occur (the norms' trial data
+      often drop the head: 'pine' for pine nut).
+    Each group is named by a `preferred` form if it has one (the norms' own referential member names, so
+    'top hat' and 'pine nut' but 'beef', not 'beef meat'), then by a form with the head noun, then by its most
+    frequent pooled form (ties: the longer, then alphabetical). Returns
+    {form: canonical} for every form that changes."""
+    head = category_head(category)
+    parent: dict[str, str] = {}
+
+    def find(k):
+        while parent.get(k, k) != k:
+            k = parent[k]
+        return k
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[rb] = ra
+
+    keys = [k for k in pooled if k]
+    for k in keys:
+        parent.setdefault(k, k)
+    by_join: dict[str, str] = {}
+    for k in keys:
+        j = re.sub(r"[\s\-']", "", k)
+        if j in by_join:
+            union(by_join[j], k)
+        else:
+            by_join[j] = k
+    with_head = set()
+    if head:
+        for k in keys:
+            if k.endswith(" " + head) and (short := k[: -len(head) - 1].strip()) in pooled:
+                union(short, k)
+                with_head.add(k)
+    groups: dict[str, list[str]] = {}
+    for k in keys:
+        groups.setdefault(find(k), []).append(k)
+    out = {}
+    for members in groups.values():
+        if len(members) < 2:
+            continue
+        canon = sorted(members, key=lambda m: (m not in preferred, m not in with_head, -pooled[m], -len(m), m))[0]
+        out.update({m: canon for m in members if m != canon})
+    return out
 
 
 # ---------- concentration measures ----------
