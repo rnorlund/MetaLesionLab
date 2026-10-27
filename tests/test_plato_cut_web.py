@@ -50,7 +50,7 @@ def test_shipped_figures_exist_and_are_small():
     names += re.findall(r"plato/([\w.]+\.webp)", page)
     for name in set(names):
         assert (IMG / name).is_file(), name
-    for f in IMG.rglob("*"):  # including series/ (the Plato series card pictures)
+    for f in IMG.rglob("*"):  # series/ holds the Plato series card pictures (metalesionlab/web/site.py)
         if f.is_file():
             assert f.suffix == ".webp" and f.stat().st_size <= 300 * 1024, f.name
     assert (DATA / "plato.json").stat().st_size <= 200 * 1024
