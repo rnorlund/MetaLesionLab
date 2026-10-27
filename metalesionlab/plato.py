@@ -89,7 +89,153 @@ PHOTO_KEYS = ["chair", "sailboat", "face", "yoga", "cat", "dog", "house", "tree"
 
 
 def prompt_for(concept: PlatoConcept, style: str) -> str:
+    """The Muse Image prompt. Styles: doodle, photo, and the variety prompts doodle_any and
+    doodle_unusual (the doodle template with a variety phrase; see variety_phrase)."""
+    if style.startswith("doodle_"):
+        return STYLES["doodle"].format(phrase=variety_phrase(concept, style.removeprefix("doodle_")))
     return STYLES[style].format(phrase=concept.phrase)
+
+
+# ---------- can you prompt it out of the Platonic chair? ----------
+# Conditions, each a folder ai/<style>/<key>/ next to ai/doodle/ (the default prompt):
+#   doodle_any      the doodle prompt with "a chair (any kind of chair)"
+#   doodle_unusual  "... (any kind of chair at all; pick an unusual or different kind)", tier 1 only
+#   doodle_listed   Muse Spark lists n_ai clearly different kinds; one doodle of each (p<i>.png = kinds[i])
+VARIETY_STYLES = ("doodle_any", "doodle_unusual", "doodle_listed")
+
+
+def variety_phrase(concept: PlatoConcept, condition: str) -> str:
+    """The noun phrase for the 'any' and 'unusual' prompts. Yoga asks for any person and any pose."""
+    noun = concept.quickdraw
+    if concept.key == "yoga":
+        return {"any": "a person doing yoga (any person, any pose)",
+                "unusual": "a person doing yoga (any person, any pose at all; pick an unusual or different one)"}[condition]
+    if condition == "any":
+        return f"{concept.phrase} (any kind of {noun})"
+    if condition == "unusual":
+        return f"{concept.phrase} (any kind of {noun} at all; pick an unusual or different kind)"
+    raise ValueError(f"no variety phrase for condition {condition!r}")
+
+
+def listing_prompt(concept: PlatoConcept, n: int) -> str:
+    """Muse Spark's request for n kinds (the pilot's wording, so its chair and umbrella lists still fit)."""
+    if concept.key == "yoga":
+        return (f"List {n} clearly different yoga poses that someone could draw a person doing, as short noun "
+                f"phrases starting with 'a person' (e.g. 'a person in tree pose'). One per line, nothing else.")
+    return (f"List {n} clearly different kinds of {concept.quickdraw} that someone could draw, as short noun phrases "
+            f"starting with 'a' or 'an' (e.g. 'a rocking chair'). One per line, nothing else.")
+
+
+def parse_kinds(text: str, n: int) -> list[str]:
+    """Spark's list as noun phrases: bullets, numbering, bold and trailing periods removed, duplicates
+    (case-insensitive) dropped, only lines that start with an article kept, at most n."""
+    import re
+
+    kinds, seen = [], set()
+    for line in text.splitlines():
+        s = re.sub(r"^\s*(?:[-*•]+|\d+\s*[.):-])\s*", "", line).replace("**", "").strip().rstrip(".;,").strip()
+        if not re.match(r"(?i)^(a|an)\s+\S", s) or s.lower() in seen:
+            continue
+        seen.add(s.lower())
+        kinds.append(s)
+    return kinds[:n]
+
+
+LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+
+def kind_options(concept: PlatoConcept, kinds: list[str]) -> list[str]:
+    """The labeler's choices for one concept: Spark's listed kinds, then the plain, ordinary one, then
+    'can't tell'. The last two are always plain_option() and none_option()."""
+    if len(kinds) + 2 > len(LETTERS):
+        raise ValueError("too many kinds for single-letter options")
+    return list(kinds) + [plain_option(concept), none_option(concept)]
+
+
+def plain_option(concept: PlatoConcept) -> str:
+    if concept.key == "yoga":
+        return "a person in a plain, simple pose (just standing or sitting)"
+    return f"a plain, ordinary {concept.quickdraw}"
+
+
+def none_option(concept: PlatoConcept) -> str:
+    if concept.key == "yoga":
+        return "can't tell, or not a person"
+    article = "an" if concept.quickdraw[0] in "aeiou" else "a"
+    return f"can't tell, or not {article} {concept.quickdraw}"
+
+
+def labeling_prompt(concept: PlatoConcept, options: list[str]) -> str:
+    """Multiple choice with letters; the answer is read from the letter logits."""
+    noun = "person doing yoga" if concept.key == "yoga" else concept.quickdraw
+    lines = "\n".join(f"{LETTERS[i]}. {o}" for i, o in enumerate(options))
+    return (f"Someone was asked to draw {concept.phrase}. Which kind of {noun} is in this drawing? Pick the one "
+            f"option that fits best. If it is just an ordinary {noun} and not clearly one of the specific kinds, "
+            f"pick \"{options[-2]}\".\n{lines}\nAnswer with the letter only.")
+
+
+def parse_letter(text: str, n_options: int) -> int | None:
+    """Index of the option a free-text answer names ('B', 'B.', '**B**', 'Answer: B', '(B) a sofa'),
+    or None. The letter must stand alone (end of text or punctuation after it), so an answer that
+    starts with the article 'A plain chair' is not read as option A."""
+    import re
+
+    m = re.match(r"^[\s*(\[]*(?:answer\s*(?:is)?\s*[:\-]?\s*)?[\s*(\[]*([A-Za-z])\s*(?:$|[.):\]*,])",
+                 text.strip(), flags=re.I)
+    if m and m.group(1).upper() in LETTERS[:n_options]:
+        return LETTERS.index(m.group(1).upper())
+    return None
+
+
+def kind_diversity(labels: list[str], plain: str | None = None, none: str | None = None) -> dict:
+    """How many kinds a set of pictures shows, from one hard label per picture.
+
+    'Can't tell' labels (`none`) are not a kind: they are counted in share_none and left out of the rest.
+    - distinct: number of different kinds
+    - simpson: chance that two different pictures show different kinds (unbiased Gini-Simpson,
+      1 - sum c(c-1) / n(n-1)); 0 = all one kind, it does not grow with n
+    - entropy_bits, effective_kinds (2**entropy, the Hill number of order 1)
+    - prototype: the most common kind (ties: the first in sorted order) and its share
+    - share_plain: share labeled as the plain, ordinary kind"""
+    from collections import Counter
+
+    n_all = len(labels)
+    kept = [x for x in labels if x != none]
+    n = len(kept)
+    counts = Counter(kept)
+    out = {"n": n_all, "n_kind": n, "share_none": (n_all - n) / n_all if n_all else float("nan")}
+    if not n:
+        return {**out, "distinct": 0, "simpson": float("nan"), "entropy_bits": float("nan"),
+                "effective_kinds": float("nan"), "prototype": None, "prototype_share": float("nan"),
+                "share_plain": float("nan")}
+    p = np.array(list(counts.values()), float) / n
+    entropy = float(-(p * np.log2(p)).sum())
+    c = np.array(list(counts.values()), float)
+    simpson = float(1 - (c * (c - 1)).sum() / (n * (n - 1))) if n > 1 else float("nan")
+    proto = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[0]
+    return {**out, "distinct": len(counts), "simpson": simpson, "entropy_bits": entropy,
+            "effective_kinds": float(2 ** entropy), "prototype": proto[0], "prototype_share": proto[1] / n,
+            "share_plain": counts.get(plain, 0) / n if plain is not None else float("nan")}
+
+
+def bootstrap_simpson(labels: list[str], none: str | None = None, reps: int = 2000,
+                      rng: np.random.Generator | None = None) -> np.ndarray:
+    """Simpson diversity of resampled pictures; a picture drawn twice is never paired with itself
+    (the same trick as bootstrap_spread), so a set of all-different kinds always gives 1."""
+    rng = rng or np.random.default_rng(0)
+    kept = [x for x in labels if x != none]
+    n = len(kept)
+    if n < 2:
+        return np.full(reps, np.nan)
+    _, codes = np.unique(kept, return_inverse=True)
+    same = (codes[:, None] == codes[None, :]).astype(float)
+    out = np.empty(reps)
+    for b in range(reps):
+        w = np.bincount(rng.integers(0, n, n), minlength=n).astype(float)
+        ww = np.outer(w, w)
+        np.fill_diagonal(ww, 0)
+        out[b] = 1 - (ww * same).sum() / ww.sum() if ww.sum() else np.nan
+    return out
 
 
 # ---------- pictures ----------

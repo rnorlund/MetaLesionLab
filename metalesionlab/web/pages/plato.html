@@ -78,6 +78,7 @@
 
 <nav class="pc-jump" aria-label="On this page">
   <a href="#everything">Almost everything</a>
+  <a href="#variety" id="var-jump" hidden>Ask for variety</a>
   <a href="#languages">In six languages</a>
   <a href="#inside">Inside the AI</a>
   <a href="#second-model">Is it just Meta’s model?</a>
@@ -102,6 +103,27 @@
     <summary>See the numbers</summary>
     <div class="table-wrap"><table class="data" id="rank-table"></table></div>
   </details>
+</section>
+
+<section class="pc-sec" id="variety" aria-labelledby="var-h" hidden>
+  <div class="pc-sec-head">
+    <span class="pc-kicker">Ask for variety</span>
+    <h2 id="var-h">Can you prompt it out of the Platonic chair?</h2>
+    <p class="pc-sec-lede" id="var-lede">Muse Image draws the textbook chair by default. Does it know any other chairs?</p>
+  </div>
+  <figure class="pc-var-fig" id="var-fig" hidden>
+    <img id="var-img" src="/static/img/plato/variety_chair.webp" width="1600" height="811" loading="lazy" alt="">
+    <figcaption class="pc-cap" id="var-cap"></figcaption>
+  </figure>
+  <div class="pc-ev">
+    <div class="pc-ev-chart">
+      <p class="pc-chart-title">How varied the pictures are with each prompt, compared with people’s</p>
+      <div class="pc-chart" id="var-chart"></div>
+      <div class="pc-legend" id="var-legend"></div>
+    </div>
+    <div class="pc-facts" id="var-facts"></div>
+  </div>
+  <div class="pc-var-kinds" id="var-kinds" aria-live="polite"></div>
 </section>
 
 <section class="pc-sec" id="languages" aria-labelledby="lang-h">
@@ -181,10 +203,10 @@
     <li><b>Small numbers.</b> 12–16 AI pictures per thing, 35 things, 10 doodles per language. Single-thing intervals are wide; the link to naming is exploratory.</li>
     <li><b>Stand-ins.</b> Quick, Draw! has no “boat”, “lamp” or “person”, so we used sailboat, floor lamp and yoga (Muse Image’s prompt was “a person doing yoga”).</li>
     <li><b>Two image models.</b> Stable Diffusion XL got the same prompt, but it adds shading, frames and scenes that make its pictures look more different, so its comparison with people is an upper bound.</li>
-    <li><b>One prompt, one measuring model.</b> Another wording would move Muse Image’s spread. DINOv2 measures how pictures look, not what they mean.</li>
+    <li><b>One prompt, one measuring model.</b> Another wording moves Muse Image’s spread a lot (see “Ask for variety”). DINOv2 measures how pictures look, not what they mean; for which kind of object a picture shows, we asked Muse Glimmer, and checked it on pictures whose kind we knew.</li>
   </ul>
   <p>The full data folder (pictures, embeddings and raw results) lives outside this repository. The app ships only statistics and the figures on this page. Read more: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato.md">35 things</a>, <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_languages.md">six languages</a>, <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_glimmer.md">inside Glimmer</a>.</p>
-  <p class="pc-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw! dataset</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image 1.0. Similarity: Meta DINOv2. Naming: Muse Glimmer 30B. Second model: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M.</p>
+  <p class="pc-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw! dataset</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image 1.0. Similarity: Meta DINOv2. Naming and kind labels: Muse Glimmer 30B. Kind lists: Muse Spark 1.3. Second model: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M.</p>
 </section>
 
 <div class="note note-error" id="load-error" hidden></div>

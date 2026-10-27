@@ -132,3 +132,38 @@ def test_tour_has_a_plato_step_and_stays_short():
     tour = (web.HERE / "static" / "js" / "tour.js").read_text()
     assert "page: '/plato'" in tour
     assert tour.count("{ page:") <= 13
+
+
+def test_variety_section_is_shipped(client):
+    c, _ = client
+    assert 'id="variety"' in c.get("/plato").text
+    v = c.get("/api/plato").json()["variety"]
+    cond = v["conditions"]
+    # "any kind" leaves Muse Image's spread where it was; one doodle of each named kind beats people's
+    assert cond["any"]["median_ratio"] < 0.6 and cond["listed"]["median_ratio"] > 1
+    assert cond["unusual"]["n"] == 10 and cond["listed"]["recognised"] < cond["default"]["recognised"]
+    k = v["kinds"]
+    assert k["n_pictures"] == 460 and k["chance"] < k["accuracy"] and k["reliable"] >= 10
+    assert k["summary"]["default"]["mean_simpson"] < k["summary"]["people"]["mean_simpson"] < k["summary"]["listed"]["mean_simpson"]
+    assert v["focus"]["chair"]["kinds"]["people"]["prototype"] == "a plain, ordinary chair"
+
+
+def test_variety_block_needs_a_default_and_one_more_prompt():
+    assert plato_web.variety_block(None) is None
+    vis = {"n_concepts": 35, "median_ratio_vs_people": 0.49, "concepts_above_people": 1,
+           "nearest_own_human_centroid": 0.85}
+    assert plato_web.variety_block({"visual": {"all": {"default": vis}}}) is None
+    res = {"visual": {"all": {"default": vis, "unusual": None,
+                              "any": {**vis, "median_ratio_vs_people": 1.2, "median_ratio_vs_default": 2.5}}},
+           "concepts": [{"key": "chair", "label": "chair",
+                         "default": {"spread": 0.13, "ratio_vs_people": 0.37, "human_spread": 0.36},
+                         "any": {"spread": float("nan"), "ratio_vs_people": 1.5},
+                         "kinds": {"people": {"simpson": 0.3, "prototype": "a plain, ordinary chair"}}}],
+           "kinds": {"validation": {"n_pictures": 0}}}
+    v = plato_web.variety_block(res)
+    assert set(v["conditions"]) == {"default", "any"} and v["conditions"]["any"]["median_vs_default"] == 2.5
+    assert v["concepts"] == [{"key": "chair", "label": "chair", "default": 0.37, "any": 1.5}]
+    chair = v["focus"]["chair"]
+    assert chair["people_spread"] == 0.36 and chair["spread"]["any"] is None  # NaN is cleaned for browsers
+    assert chair["kinds"]["people"]["prototype"] == "a plain, ordinary chair"
+    assert v["kinds"] is None  # no labeler validation yet

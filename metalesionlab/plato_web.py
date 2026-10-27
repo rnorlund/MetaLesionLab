@@ -1,4 +1,4 @@
-"""Plato's Chair for the web page: compact statistics from the three result files, no pictures.
+"""Plato's Chair for the web page: compact statistics from the result files, no pictures.
 
 The Plato's Chair data folder (AI and human pictures, embeddings, raw results) lives outside this
 repository. scripts/plato_web_export.py calls build() on it and writes the small JSON the /plato page
@@ -164,6 +164,62 @@ def sdxl_block(res: dict | None, n_total: int = 35) -> dict | None:
     })
 
 
+VARIETY_CONDITIONS = ["default", "any", "unusual", "listed", "sdxl_default", "sdxl_any", "sdxl_listed"]
+VARIETY_FOCUS = ["chair", "umbrella", "hat"]
+
+
+def variety_block(res: dict | None) -> dict | None:
+    """'Can you prompt it out of the Platonic chair?', from core/results_variety.json: visual spread by
+    prompt (ratio to people), the chair and umbrella numbers, and the kind labels (Glimmer) summary."""
+    if not isinstance(res, dict) or not isinstance(res.get("visual"), dict):
+        return None
+    vis = res["visual"].get("all") or {}
+    conds = {}
+    for cond in VARIETY_CONDITIONS:
+        s = vis.get(cond)
+        if s:
+            conds[cond] = {"n": s["n_concepts"], "median_ratio": s["median_ratio_vs_people"],
+                           "above_people": s["concepts_above_people"], "ci_above_people": s.get("concepts_ci_above_people"),
+                           "median_vs_default": s.get("median_ratio_vs_default"),
+                           "recognised": s.get("nearest_own_human_centroid")}
+    if "default" not in conds or len(conds) < 2:
+        return None
+    concepts, focus = [], {}
+    for r in res.get("concepts") or []:
+        row = {"key": r["key"], "label": r["label"]}
+        for cond in VARIETY_CONDITIONS:
+            if isinstance(r.get(cond), dict):
+                row[cond] = r[cond].get("ratio_vs_people")
+        concepts.append(row)
+        if r["key"] in VARIETY_FOCUS:
+            kinds = r.get("kinds") or {}
+            focus[r["key"]] = {
+                "people_spread": (r.get("default") or {}).get("human_spread"),
+                "spread": {c: r[c]["spread"] for c in VARIETY_CONDITIONS if isinstance(r.get(c), dict)},
+                "ratio": {c: r[c]["ratio_vs_people"] for c in VARIETY_CONDITIONS if isinstance(r.get(c), dict)},
+                "recognised": {c: r[c].get("nearest_own_human_centroid") for c in VARIETY_CONDITIONS
+                               if isinstance(r.get(c), dict)},
+                "kinds": {c: {f: kinds[c].get(f) for f in ("n", "distinct_at_n", "simpson", "share_plain", "share_none",
+                                                          "prototype", "prototype_share")}
+                          for c in ("default", "any", "unusual", "listed", "people") if isinstance(kinds.get(c), dict)}}
+    k = res.get("kinds") or {}
+    val = k.get("validation") or {}
+    rel = k.get("reliable") or {}
+    kinds = None
+    if val.get("n_pictures"):
+        kinds = {"accuracy": val.get("accuracy"), "lenient_accuracy": val.get("lenient_accuracy"),
+                 "n_pictures": val.get("n_pictures"), "chance": val.get("mean_chance"),
+                 "reliable": len(val.get("reliable_concepts") or []), "n_concepts": val.get("n_concepts"),
+                 "summary": {c: {f: (rel.get(c) or {}).get(f) for f in ("n_concepts", "median_simpson", "mean_simpson",
+                                                                     "mean_share_plain", "mean_share_none",
+                                                                     "mean_distinct_at_n", "concepts_prototype_plain")}
+                             for c in ("default", "any", "unusual", "listed", "people", "sdxl_default") if rel.get(c)},
+                 "people_vs_default": rel.get("people_vs_default"),
+                 "people_spread_within_prototype": rel.get("people_spread_within_prototype")}
+    return clean({"conditions": conds, "concepts": concepts, "focus": focus, "kinds": kinds,
+                  "prompts": res.get("conditions")})
+
+
 def build(core_dir: Path, lang_results_public: Path, inside_dir: Path) -> dict:
     """Everything the /plato page shows, from the data folder (core/, inside_glimmer/) and the public
     languages statistics. Statistics only: no pictures, embeddings or per-drawing data."""
@@ -174,13 +230,15 @@ def build(core_dir: Path, lang_results_public: Path, inside_dir: Path) -> dict:
     sdxl = sdxl_block(_read(core_dir / "results_sdxl.json"), core["n_concepts"]) or sdxl_block(core_res, core["n_concepts"])
     return clean({
         "about": "Plato's Chair: how varied Muse Image's doodles of a concept are, compared with people's drawings "
-                 "of the same word (Google Quick, Draw!), measured with Meta DINOv2; the same across six prompt "
-                 "languages; and inside Muse Glimmer. Derived statistics only.",
+                 "of the same word (Google Quick, Draw!), measured with Meta DINOv2; what happens when it is asked "
+                 "for variety; the same across six prompt languages; and inside Muse Glimmer. Derived statistics only.",
         "credits": {"human_drawings": QUICKDRAW_CREDIT, "ai_drawings": "Muse Image 1.0 (Meta)",
                     "embeddings": "DINOv2 (facebook/dinov2-base, Meta, Apache-2.0)",
-                    "namer": "Muse Glimmer 30B (Meta, open weights, self-hosted)"},
+                    "namer": "Muse Glimmer 30B (Meta, open weights, self-hosted)",
+                    "kind_lists": "Muse Spark 1.3 (Meta)"},
         "data_folder": DATA_FOLDER_NOTE,
         "core": core, "hero": hero_block(core), "languages": languages_block(pub_lang),
         "inside": inside_block(inside_res, _read(inside_dir / "raw" / "intact.json")),
         "sdxl": sdxl,
+        "variety": variety_block(_read(core_dir / "results_variety.json")),
     })
