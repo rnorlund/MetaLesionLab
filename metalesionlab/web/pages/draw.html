@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draw a chair · Tippa Lingua</title>
+<meta name="description" content="Meta’s image model, Muse Image, drew the same chair 16 times. Draw yours and see how original it is next to 200 people’s chairs, measured with Meta’s DINOv2.">
+<meta property="og:title" content="Draw a chair · Tippa Lingua">
+<meta property="og:description" content="Muse Image drew the same chair 16 times. How original is yours?">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/tour.css">
+<link rel="stylesheet" href="/static/css/draw.css">
+</head>
+<body class="draw">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/challenge">You vs. the AI</a>
+    <a href="/plato">Plato’s Chair</a>
+    <a href="/draw" aria-current="page">Draw</a>
+    <a href="/lab">Model Lab</a>
+    <a href="/ask">Ask the Lab</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/studio">Test Studio</a>
+  </nav>
+  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="dw-hero" aria-labelledby="hero-h">
+  <div class="dw-intro">
+    <span class="dw-kicker">A game from <a href="/plato">Plato’s Chair</a></span>
+    <h1 id="hero-h">Draw <span data-article>a chair</span></h1>
+    <p class="dw-hook" id="hook">Muse Image drew the same chair 16 times. How original is yours?</p>
+    <figure class="dw-muse">
+      <div class="dw-muse-strip" id="muse-strip" role="img" aria-label="Muse Image’s doodles of a chair"></div>
+      <figcaption class="dw-cap" id="muse-cap">Muse Image’s doodles of “a chair”, one prompt each time.</figcaption>
+    </figure>
+  </div>
+
+  <div class="dw-more">
+    <p class="dw-fair" id="fair"></p>
+    <fieldset class="dw-pick">
+      <legend>Or draw something else</legend>
+      <div class="dw-chips" id="chips" role="group" aria-label="What to draw"></div>
+    </fieldset>
+  </div>
+
+  <div class="dw-pad">
+    <div class="dw-canvas-wrap" id="canvas-wrap">
+      <canvas id="pad" aria-label="Drawing area: draw with a mouse, a finger or a pen" role="img"></canvas>
+      <p class="dw-placeholder" id="placeholder" aria-hidden="true"><span>Draw <span data-article>a chair</span> here</span></p>
+      <span class="dw-timer" id="timer" aria-live="off" hidden>20</span>
+    </div>
+    <div class="dw-actions">
+      <button type="button" class="btn btn-small" id="undo" disabled>Undo</button>
+      <button type="button" class="btn btn-small" id="clear" disabled>Clear</button>
+      <button type="button" class="btn btn-primary" id="go" disabled>See where it lands</button>
+    </div>
+    <p class="dw-status" id="status" role="status" aria-live="polite"></p>
+    <p class="dw-privacy"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 2.5 3.2v4.1c0 3.4 2.3 6.3 5.5 7.2 3.2-.9 5.5-3.8 5.5-7.2V3.2z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Your drawing is processed in memory to compute these numbers and is never stored or logged.</p>
+  </div>
+</section>
+
+<section class="dw-results" id="results" hidden aria-labelledby="results-h">
+  <h2 class="sr-only" id="results-h">Where your drawing lands</h2>
+  <div class="dw-tiles">
+    <article class="dw-card dw-orig" aria-labelledby="orig-h">
+      <h3 id="orig-h">Next to 200 people</h3>
+      <div class="dw-big"><span class="dw-big-num" id="orig-num">–</span><span class="dw-big-text" id="orig-text"></span></div>
+      <p class="dw-verdict" id="orig-verdict"></p>
+      <div class="dw-chart" id="orig-chart"></div>
+      <p class="dw-note" id="orig-note"></p>
+      <p class="dw-oops" id="looks-like" hidden></p>
+    </article>
+    <article class="dw-card dw-vsmuse" aria-labelledby="muse-h">
+      <h3 id="muse-h">Next to Muse Image</h3>
+      <p class="dw-headline" id="muse-text"></p>
+      <div class="dw-chart" id="muse-chart"></div>
+      <p class="dw-note" id="muse-note"></p>
+    </article>
+  </div>
+  <div class="dw-pair">
+    <article class="dw-card" aria-labelledby="map-h">
+      <h3 id="map-h">Where your <span data-label>chair</span> lands</h3>
+      <div class="dw-legend" id="map-legend"></div>
+      <div class="dw-chart dw-map" id="map-chart"></div>
+      <p class="dw-note" id="map-note"></p>
+    </article>
+    <article class="dw-card" aria-labelledby="near-h">
+      <h3 id="near-h">Closest drawings</h3>
+      <div class="dw-near" id="near"></div>
+      <p class="dw-note">Closest by DINOv2’s cosine distance, out of all of Muse Image’s doodles and all 200 people’s drawings.</p>
+      <details class="dw-numbers">
+        <summary>See the numbers</summary>
+        <div class="table-wrap"><table class="data" id="numbers"></table></div>
+      </details>
+    </article>
+  </div>
+  <article class="dw-card dw-share" aria-labelledby="share-h">
+    <div class="dw-share-text">
+      <h3 id="share-h">Share your <span data-label>chair</span></h3>
+      <p>Download the card, or post it. Then dare a friend to beat your score.</p>
+      <div class="dw-actions">
+        <button type="button" class="btn btn-dark" id="download">Download image</button>
+        <a class="btn" id="share-x" href="#" target="_blank" rel="noopener">Share on X</a>
+        <button type="button" class="btn" id="share-native" hidden>Share…</button>
+        <button type="button" class="btn btn-ghost" id="again">Draw another</button>
+      </div>
+    </div>
+    <canvas class="dw-card-preview" id="card" width="1200" height="675" aria-label="Your share card"></canvas>
+  </article>
+</section>
+
+<section class="dw-sec" id="how" aria-labelledby="how-h">
+  <h2 id="how-h">How it works</h2>
+  <ol class="dw-steps">
+    <li><b>Your drawing becomes a picture</b> exactly the way the 200 people’s drawings did: lines rescaled like Google’s Quick, Draw! game, drawn black on white, then cropped to the ink.</li>
+    <li><b>Meta’s DINOv2 vision model</b> turns the picture into 768 numbers. Pictures that look alike get similar numbers; we compare them by cosine distance.</li>
+    <li><b>Originality</b> is how far your drawing sits from the typical person’s drawing (the average of 200), compared with how far each of those 200 people’s drawings sits from the average of the others.</li>
+    <li><b>Next to Muse Image</b> is your distance from Muse’s prototype, the average of its own doodles, compared with people’s.</li>
+  </ol>
+  <ul class="dw-caveats">
+    <li><b>DINOv2 sees style too.</b> Muse Image draws clean marker sketches; people (and you) draw quick mouse or finger doodles. That is why everyone’s drawings sit far from Muse’s, and why originality only compares you with people.</li>
+    <li><b>It measures looks, not ideas.</b> A messy scribble can score as very original. If your drawing looks more like another thing, the page says so.</li>
+    <li><b>Muse Image can vary when asked.</b> These are its doodles for the plain prompt. <a href="/plato#variety">Asked for different kinds</a>, its drawings get far more varied, often more than people’s.</li>
+  </ul>
+  <p class="dw-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw!</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image. Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. Drawings are processed in memory and never stored or logged.</p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">A science game for fun. Research and teaching use only.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/draw.js"></script>
+<script src="/static/js/tour.js"></script>
+</body>
+</html>

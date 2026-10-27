@@ -13,3 +13,7 @@ fastapi==0.162.0
 uvicorn[standard]==0.54.0
 python-multipart==0.0.32
 fpdf2==2.8.9
+# Draw a chair (/draw): Meta DINOv2-base on the CPU through onnxruntime (no torch), and scipy for the
+# experiment's ink-crop step. The model file is fetched at build time (metalesionlab/draw_fetch.py).
+onnxruntime==1.31.1
+scipy==1.18.1
