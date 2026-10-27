@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plato’s Chair, Damaged · Tippa Lingua</title>
+<title>Plato’s Chair, Damaged · {{BRAND}}</title>
 <meta name="description" content="Damage the language part of an AI that draws and it forgets what a chair is; damage its drawing part and it forgets how to draw. An experiment on Stable Diffusion XL and Meta’s Muse Glimmer.">
-<meta property="og:title" content="Plato’s Chair, Damaged · Tippa Lingua">
+<meta property="og:title" content="Plato’s Chair, Damaged · {{BRAND}}">
 <meta property="og:description" content="Damage an AI’s language and a rocking chair turns into a car. Damage its drawing and the rocking chair stays, in charcoal.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,16 +18,7 @@
 <a class="skip" href="#main">Skip to content</a>
 <div class="page">
 <header class="topbar">
-  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
-  <nav class="topnav" aria-label="Tools">
-    <a href="/">Home</a>
-    <a href="/challenge">You vs. the AI</a>
-    <a href="/plato" aria-current="page">Plato’s Chair</a>
-    <a href="/lab">Model Lab</a>
-    <a href="/ask">Ask the Lab</a>
-    <a href="/scorer">Scorer</a>
-    <a href="/studio">Test Studio</a>
-  </nav>
+  <a class="brand" href="/"><b>{{BRAND}}</b></a>
 </header>
 
 <main id="main" tabindex="-1">
@@ -116,9 +107,10 @@
 
 <div class="note note-error" id="load-error" hidden></div>
 </main>
-<p class="footnote">Research and teaching use only. Tippa Lingua doesn't diagnose and doesn't give medical or treatment advice.</p>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
 </div>
 
+<script src="/static/js/common.js"></script>
 <script src="/static/js/plato_damage.js"></script>
 </body>
 </html>
