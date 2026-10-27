@@ -99,8 +99,15 @@ The honest answer for this model is "not much". Two layers can go with no measur
 | SAM 3.1 | Picture quality check |
 | Muse Spark 1.3 | Name agreement, meaning judge, second rater, experiment agent |
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
+| DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for the Plato's Chair experiment |
 
 Every AI step uses a Meta model. The other resources are non-AI: WordNet, the CMU Pronouncing Dictionary and wordfreq.
+
+## Experiment: Plato's Chair
+
+Ask Muse Image to draw 16 chairs: are they all the same chair? We compared how spread out 35 concepts are in Muse Image's doodles and in people's drawings of the same words, using DINOv2 embeddings. The AI was more uniform than people for 34 of the 35 concepts, with a median spread ratio of 0.49. Method, results and caveats are in [`docs/plato.md`](docs/plato.md), and the code is in `scripts/plato_*.py`.
+
+Human drawings come from the [Google Quick, Draw! dataset](https://github.com/googlecreativelab/quickdraw-dataset) (Google Creative Lab, CC BY 4.0). They are streamed at run time and never committed; `public_data/plato_concept_spread.json` holds only derived statistics.
 
 ## Data policy
 
