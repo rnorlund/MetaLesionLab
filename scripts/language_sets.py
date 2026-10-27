@@ -54,6 +54,13 @@ def main():
     for lang in args.langs:
         out = sets / f"{args.prefix}_{lang}"
         manifest = derive_language_manifest(en, {t["en"]: t["names"][lang] for t in table}, lang, en_dir.name)
+        if (out / "manifest.json").exists():  # keep an earlier Muse Spark check when only names change
+            old = {it["gloss"]: it for it in json.loads((out / "manifest.json").read_text())["items"]}
+            for it in manifest["items"]:
+                prev = old.get(it["gloss"], {})
+                if "spark_name" in prev and prev.get("image") == it["image"]:
+                    it["spark_name"] = prev["spark_name"]
+                    it["spark_code"] = classify(it["word"], prev["spark_name"], lang, tuple(it["alternates"])).code
         (out / "candidates").mkdir(parents=True, exist_ok=True)
         for it in manifest["items"]:
             for c in it["candidates"]:
