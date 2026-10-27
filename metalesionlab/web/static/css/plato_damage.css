@@ -15,7 +15,8 @@ body.plato-damage { background: #F7F6F1; }
 .pd-slider { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .pd-controls { display: flex; flex-wrap: wrap; gap: 8px 12px; }
 .pd-controls .seg { flex: 1 1 260px; }
-.pd-controls .seg button { font-size: 13px; }
+.pd-controls .seg { flex-wrap: wrap; }
+.pd-controls .seg button { font-size: 13px; min-width: 0; }
 .pd-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .pd-panel { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .pd-panel h2 { margin: 0; font-size: 17px; }

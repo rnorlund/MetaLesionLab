@@ -195,6 +195,6 @@ python scripts/plato_damage_analyze.py clockstats clocks
 python scripts/plato_damage_figures.py && python scripts/plato_damage_web.py
 ```
 
-Figures: `PlatosChair/damage/figures/` — `melt_{text,unet}-{zero,noise}.png` (every chair kind across the damage levels), `hero_rocking_chair_{zero,noise}.png`, `hero_wheelchair_{zero,noise}.png`, `dissociation.png`, `prototype.png`, `glimmer_arm.png`, `clocks_{text,unet}-{zero,noise}.png`, `series_card.webp`, and the pilot grids `pilot_grid_{zero,noise,spec}.png`.
+Figures: `PlatosChair/damage/figures/` — `melt_{text,unet}-{zero,noise}.png` (every chair kind across the damage levels), `hero_rocking_chair_{zero,noise}.png`, `hero_wheelchair_{zero,noise}.png`, `dissociation.png`, `prototype.png`, `glimmer_arm.png`, `clocks_{text,unet}-{zero,noise}.png`, `janus_draw.png` (Janus-Pro's chairs across its doses), `series_card.webp`, and the pilot grids `pilot_grid_{zero,noise,spec}.png`.
 
 Credits: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M. Janus-Pro-7B (DeepSeek), MIT. Meta Muse Image 1.0 (named-kind doodles), Muse Glimmer 30B (reader), Muse Spark 1.3 (clock reader), DINOv2 (Apache-2.0). Bozeat, S., Lambon Ralph, M. A., Graham, K. S., Patterson, K., Wilkin, H., Rowland, J., Rogers, T. T., & Hodges, J. R. (2003). A duck with four legs: Investigating the structure of conceptual knowledge using picture drawing in semantic dementia. *Cognitive Neuropsychology*, 20(1), 27–47.
