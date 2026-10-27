@@ -545,7 +545,9 @@ def cut_results() -> dict:
 
 def _bilingual_data():
     web = _web()
-    for path in (web.DATA_DIR / "bilingual" / "results.json", web.HERE / "data" / "bilingual.json"):
+    # the n = 100 replication (docs/bilingual.md) first, then the first run or a deployed bundle's copy
+    for path in (web.DATA_DIR / "bilingual_core100" / "results.json", web.DATA_DIR / "bilingual" / "results.json",
+                 web.HERE / "data" / "bilingual.json"):
         d = _load_json(path)
         if isinstance(d, dict) and isinstance(d.get("primary"), dict):
             return d
@@ -586,7 +588,7 @@ def bilingual_results(language: str | None = None) -> dict:
            "by_damage_type": {grp: {VARIANT_NAMES[k]: _pct((v.get(k) or {}).get("diff")) for k in langs if k in v}
                               for grp, v in (d.get("by_group") or {}).items()},
            "note": "Extra drop = (intact - lesioned accuracy in the language) - (same in English), same pictures, "
-                   "averaged over all lesion conditions. One model, 20 pictures: an analogy to bilingual aphasia, "
+                   "averaged over all lesion conditions. One model, " + str(meta.get("n_pictures") or "a few") + " pictures: an analogy to bilingual aphasia, "
                    "not evidence about brains.",
            "link": "/lab/bilingual"}
     if want:

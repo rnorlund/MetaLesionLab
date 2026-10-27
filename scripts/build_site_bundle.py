@@ -200,8 +200,10 @@ def bundle_small(runs: Path, out: Path) -> list[str]:
         if (runs / rel).is_file():
             write_json(out / rel, read_json(runs / rel), compact=rel.startswith("cache/"))
             copied.append(rel)
-    if (runs / "bilingual" / "results.json").is_file():
-        write_json(out / "bilingual" / "results.json", read_json(runs / "bilingual" / "results.json"), compact=True)
+    bilingual = next((d / "results.json" for d in (runs / "bilingual_core100", runs / "bilingual")
+                      if (d / "results.json").is_file()), None)  # the n = 100 replication when present
+    if bilingual:
+        write_json(out / "bilingual" / "results.json", read_json(bilingual), compact=True)
         copied.append("bilingual/results.json")
     print("  " + ", ".join(copied))
     return copied

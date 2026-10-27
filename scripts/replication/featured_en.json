@@ -1,0 +1,330 @@
+[
+ {
+  "localizer": "naming_c100",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean"
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "visual_c100",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean"
+ },
+ {
+  "localizer": "visual_c100",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "visual_c100",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "visual_c100",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "visual_c100",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "visual_c100",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "language_c100",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean"
+ },
+ {
+  "localizer": "language_c100",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "language_c100",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "language_c100",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "language_c100",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "language_c100",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean"
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "naming_c100",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean"
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "mlp",
+  "fraction": 0.2973,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "visual_en",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean"
+ },
+ {
+  "localizer": "visual_en",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "visual_en",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "visual_en",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "visual_en",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "visual_en",
+  "kind": "mlp",
+  "fraction": 0.2548,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "language_en",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean"
+ },
+ {
+  "localizer": "language_en",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "language_en",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "language_en",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "language_en",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "language_en",
+  "kind": "mlp",
+  "fraction": 0.3173,
+  "method": "mean",
+  "control_seed": 4
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean"
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 0
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 1
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 2
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 3
+ },
+ {
+  "localizer": "naming_en",
+  "kind": "heads",
+  "fraction": 0.4042,
+  "method": "mean",
+  "control_seed": 4
+ }
+]

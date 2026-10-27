@@ -2,9 +2,11 @@
 
 The design removes the differences between earlier runs, which used different pictures and
 differently worded prompts per language:
-  - Same pictures: the 20 kept pictures of the English demo set are named in every language.
-    Names in the other languages come from their demo sets, matched by English gloss, plus
-    accepted alternates (EXTRA_NAMES) chosen to be equally lenient in every language.
+  - Same pictures: the kept pictures of the English set are named in every language.
+    Names in the other languages come from their sets, matched by English gloss, plus
+    accepted alternates (EXTRA_NAMES) chosen to be equally lenient in every language. Sets are
+    <prefix>_<lang>: demo_* (20 pictures, the first run) or core100_* (100 pictures, the
+    replication; the other languages reuse the English pictures, see scripts/language_sets.py).
   - Matched prompts: one instruction with the same structure in each language, written natively,
     asking for a single word in that language with no article (PROMPTS). A control variant asks
     for Spanish in English ("es_xen"), separating the instruction language from the answer language.
@@ -73,6 +75,11 @@ GLOSS_FIX = {"teapot": "kettle"}  # demo_es glosses tetera as teapot; the Englis
 SET_FOR = {"en": "demo_en", "es": "demo_es", "fr": "demo_fr", "pt": "demo_pt"}
 
 
+def set_for(prefix: str = "demo") -> dict[str, str]:
+    """Set folder per language: demo -> demo_en, demo_es, ...; core100 -> core100_en, ..."""
+    return {lang: f"{prefix}_{lang}" for lang in LANGS}
+
+
 # --- items ------------------------------------------------------------------------------
 
 @dataclass
@@ -88,15 +95,15 @@ class BiItem:
         return tuple(self.names[lang][1:])
 
 
-def matched_items(sets_dir: Path, langs: tuple[str, ...] = LANGS) -> list[BiItem]:
+def matched_items(sets_dir: Path, langs: tuple[str, ...] = LANGS, prefix: str = "demo") -> list[BiItem]:
     """The English set's kept pictures with each language's names, matched by English gloss."""
-    sets_dir = Path(sets_dir)
-    en = json.loads((sets_dir / SET_FOR["en"] / "manifest.json").read_text())
+    sets_dir, sets = Path(sets_dir), set_for(prefix)
+    en = json.loads((sets_dir / sets["en"] / "manifest.json").read_text())
     by_lang = {}
     for lang in langs:
         if lang == "en":
             continue
-        manifest = json.loads((sets_dir / SET_FOR[lang] / "manifest.json").read_text())
+        manifest = json.loads((sets_dir / sets[lang] / "manifest.json").read_text())
         by_lang[lang] = {GLOSS_FIX.get(it.get("gloss", ""), it.get("gloss", "")): it for it in manifest["items"]}
     items = []
     for it in en["items"]:
@@ -115,7 +122,7 @@ def matched_items(sets_dir: Path, langs: tuple[str, ...] = LANGS) -> list[BiItem
             alts = [a for a in [*(other.get("alternates") or []), *EXTRA_NAMES.get(lang, {}).get(word, [])]
                     if _fold(a) not in english]
             names[lang] = _unique([other["word"], *alts])
-        items.append(BiItem(word, sets_dir / SET_FOR["en"] / it["image"], names))
+        items.append(BiItem(word, sets_dir / sets["en"] / it["image"], names))
     return items
 
 
@@ -374,7 +381,8 @@ def run_test(model, processor, test: LangTest, spec=None, stats=None, skip: list
                       for it, s, ln in zip(test.items, said, lenses)]}
 
 
-def pooled_unit_stats(model, processor, sets_dir: Path, variants: tuple[str, ...], batch_size: int = 10):
+def pooled_unit_stats(model, processor, sets_dir: Path, variants: tuple[str, ...], batch_size: int = 10,
+                      prefix: str = "demo"):
     """Reference statistics for mean and noise lesions from the held-out drawings of the English
     set (the other Muse Image picture of each word, never a test picture), each named with every
     variant's prompt, so no language sets the lesion's scale."""
@@ -384,10 +392,11 @@ def pooled_unit_stats(model, processor, sets_dir: Path, variants: tuple[str, ...
     from metalesionlab.localizers import localizer_images
     from metalesionlab.model_lab import build_batches, to_device
 
-    trials = localizer_images([Path(sets_dir) / SET_FOR["en"]], held_out=True)
+    en_set = set_for(prefix)["en"]
+    trials = localizer_images([Path(sets_dir) / en_set], held_out=True)
     examples = [(Image.open(t.image).convert("RGB"), PROMPTS[v]) for v in variants for t in trials]
     batches = [to_device(b, model.device) for b in build_batches(processor, examples, batch_size)]
-    source = f"{SET_FOR['en']}: {len(trials)} held-out drawings x prompts {'/'.join(variants)}"
+    source = f"{en_set}: {len(trials)} held-out drawings x prompts {'/'.join(variants)}"
     return compute_unit_stats(model, batches, source=source)
 
 

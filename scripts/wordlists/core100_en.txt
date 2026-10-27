@@ -1,0 +1,100 @@
+cat
+snail
+dog
+horse
+rabbit
+owl
+giraffe
+penguin
+butterfly
+octopus
+squirrel
+hedgehog
+saw: a hand saw, the tool
+scissors
+ladder
+hammer
+axe
+shovel
+rake: a garden rake
+pliers
+key: a door key
+funnel: a kitchen funnel
+carrot
+pineapple
+apple
+strawberry
+cherry
+lemon
+watermelon
+mushroom
+bread: a loaf of bread
+egg
+artichoke
+kettle
+spoon
+candle
+umbrella
+fork: a table fork
+bottle
+chair
+clock: a wall clock
+broom
+comb: a hair comb
+book
+hanger: a clothes hanger
+bicycle
+helicopter
+car
+boat: a small rowing boat
+airplane
+truck
+motorcycle
+rocket
+submarine
+sled: a snow sled
+hand
+foot
+eye
+ear
+nose
+tooth
+bone
+skull
+brain
+heart: the heart organ
+cactus
+tree
+leaf
+mountain
+sun
+moon: a crescent moon
+volcano
+feather
+acorn
+shell: a seashell
+nest: a bird's nest
+harp
+whistle
+guitar
+drum
+violin
+trumpet
+flute
+accordion
+bell
+tambourine
+glove
+hat
+shoe
+sock
+dress
+boot
+scarf
+tie: a necktie
+belt
+crown
+anchor
+bench: a park bench
+igloo
+house

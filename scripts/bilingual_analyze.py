@@ -9,6 +9,7 @@ within condition; p from a sign-flip permutation test over pictures.
 Writes runs/bilingual/results.json and runs/bilingual/figures/*.png.
 
 Usage: python scripts/bilingual_analyze.py [--dir runs/bilingual] [--sets runs/sets] [--boot 4000]
+       python scripts/bilingual_analyze.py --prefix core100 --dir runs/bilingual_core100   (the replication)
 """
 from __future__ import annotations
 
@@ -67,9 +68,10 @@ def main():
     ap.add_argument("--dir", type=Path, default=Path("runs/bilingual"))
     ap.add_argument("--sets", type=Path, default=Path("runs/sets"))
     ap.add_argument("--boot", type=int, default=4000)
+    ap.add_argument("--prefix", default="demo", help="picture sets <prefix>_en, _es, ... (demo or core100)")
     args = ap.parse_args()
     t0 = time.time()
-    items = B.matched_items(args.sets)
+    items = B.matched_items(args.sets, prefix=args.prefix)
     words = [it.en for it in items]
     runs = load(args.dir / "raw", items)
     plan = json.loads((args.dir / "plan.json").read_text())
@@ -325,7 +327,7 @@ def main():
         "meta": {"model": "meta-models/Muse-Glimmer-30B", "precision": "decoder FP8; vision tower, projector, lm_head BF16",
                  "hardware": "1x NVIDIA L40S (axon-server02)", "pictures": words, "n_pictures": len(words),
                  "names": {it.en: it.names for it in items}, "prompts": B.PROMPTS, "variants": list(VARIANTS),
-                 "reference_stats": "pooled over the 20 held-out demo_en drawings x en/es/fr/pt prompts (80 trials)",
+                 "reference_stats": f"pooled over the held-out {args.prefix}_en drawings x en/es/fr/pt prompts",
                  "judge": "none (accuracy never depends on it; Semantic vs Unrelated does)",
                  "lens_confident_p": B.CONFIDENT, "n_runs": len(runs), "n_main_conditions": len(main_conds),
                  "missing_conditions": missing, "analyzed": time.strftime("%Y-%m-%d %H:%M"),

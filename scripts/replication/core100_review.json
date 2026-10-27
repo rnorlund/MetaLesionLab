@@ -1,0 +1,25 @@
+{
+ "set": "core100_en",
+ "date": "2026-10-27",
+ "reviewer": "Claude, by eye from contact_sheet.png, before any GPU run",
+ "items": {
+  "lemon": {"action": "keep", "image": "candidates/lemon_1.png",
+            "reason": "SAM found no box in either drawing; by eye both are one clear lemon and Muse Spark named both 'lemon'. The textured drawing is kept."},
+  "watermelon": {"action": "keep", "image": "candidates/watermelon_0.png",
+                 "reason": "SAM found no box; by eye one clear whole watermelon, named 'Watermelon' by Muse Spark (the other drawing was named 'Melon')."},
+  "comb": {"action": "keep", "image": "candidates/comb_1.png",
+           "reason": "SAM found no box; comb_1 is a clear comb. comb_0 is an afro pick (Muse Spark: 'pick')."},
+  "ear": {"action": "keep", "image": "candidates/ear_1.png",
+          "reason": "SAM found no box; both drawings are one clear ear, named 'ear' by Muse Spark."},
+  "nose": {"action": "keep", "image": "candidates/nose_0.png",
+           "reason": "SAM found no box; a nose in profile, minimal but readable, named 'nose' by Muse Spark. nose_1 is too faint."},
+  "kettle": {"action": "keep", "image": "candidates/kettle_1.png",
+             "reason": "Both drawings read as teapots, as the first run's demo kettle did. Teapot is an accepted name in every language (word table, as in the first run), so Muse Spark's 'Teapot' agrees."},
+  "flute": {"action": "keep", "image": "candidates/flute_0.png",
+            "reason": "The automatic choice (flute_1) is a plain tube with holes that reads as a recorder or fife; flute_0 has keys."},
+  "whistle": {"action": "replace", "from": "core100_fix", "image": "candidates/whistle_1.png",
+              "reason": "whistle_0 reads as a fishing lure (Muse Spark: 'lure') and whistle_1 as an unclear tube; redrawn as 'a referee's whistle'."},
+  "tie": {"action": "replace", "from": "core100_fix", "image": "candidates/tie_0.png",
+          "reason": "Both drawings read as a ribbon or a scarf knot; redrawn as 'a men's necktie, long and narrow, with a small knot at the top'."}
+ }
+}

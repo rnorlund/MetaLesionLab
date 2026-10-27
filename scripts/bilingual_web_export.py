@@ -285,14 +285,14 @@ def _raw_intact(raw_dir: Path | None, v: str) -> dict:
     return {row["en"]: row for row in run.get("items", []) if row.get("lens")}
 
 
-def build(res: dict, raw_dir: Path | None = None) -> dict:
+def build(res: dict, raw_dir: Path | None = None, results_path: str = "runs/bilingual/results.json") -> dict:
     meta = res["meta"]
     trials = trial_counts(res, "en")["trials"]
     return {
         "schema": SCHEMA,
         "source": {"model": meta["model"], "precision": meta.get("precision"), "analyzed": meta.get("analyzed"),
                    "n_pictures": meta["n_pictures"], "n_conditions": meta.get("n_main_conditions"),
-                   "trials_per_language": trials, "results": "runs/bilingual/results.json",
+                   "trials_per_language": trials, "results": results_path,
                    "doc": "docs/bilingual.md"},
         "languages": {v: {"name": NAMES[v], "color": COLORS.get(v)} for v in ("en",) + LANGS},
         "intact": {v: {"correct": x["correct"], "n": meta["n_pictures"]} for v, x in res["intact"].items()},
@@ -310,7 +310,9 @@ def main() -> None:
     args = ap.parse_args()
     res = json.loads((args.dir / "results.json").read_text())
     raw = args.dir / "raw"
-    data = build(res, raw if raw.is_dir() else None)
+    src = (args.dir / "results.json").resolve()
+    src = src.relative_to(REPO) if src.is_relative_to(REPO) else src.name  # never a local absolute path
+    data = build(res, raw if raw.is_dir() else None, str(src))
     text = json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n"
     if len(text.encode()) > MAX_BYTES:
         raise SystemExit(f"bilingual.json would be {len(text.encode()) // 1024} KB; trim it below 200 KB")
