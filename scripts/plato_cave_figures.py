@@ -23,8 +23,7 @@ from metalesionlab import plato_cave as pc  # noqa: E402
 
 D = pc.CAVE_DIR
 FIG = D / "figures"
-# flat in static/img/plato/ (the package data pattern and the Plato's Chair asset test expect no subfolders)
-WEB = Path(__file__).resolve().parents[1] / "metalesionlab" / "web" / "static" / "img" / "plato"
+WEB = Path(__file__).resolve().parents[1] / "metalesionlab" / "web" / "static" / "img" / "plato_cave"
 FONT_SERIF_I = "/System/Library/Fonts/Supplemental/Georgia Italic.ttf"
 FONT_SERIF = "/System/Library/Fonts/Supplemental/Georgia.ttf"
 FONT_SANS = "/System/Library/Fonts/Avenir Next.ttc"
@@ -269,16 +268,16 @@ def web_assets(res: dict, game_words: list[str], wall: Image.Image, strip: Image
     WEB.mkdir(parents=True, exist_ok=True)
     w = wall.copy()
     w.thumbnail((1600, 1600))
-    w.save(WEB / "cave_wall.webp", quality=80, method=6)
+    w.save(WEB / "wall.webp", quality=80, method=6)
     s = strip.copy()
     s.thumbnail((900, 2000))
-    s.save(WEB / "cave_versions.webp", quality=82, method=6)
+    s.save(WEB / "versions.webp", quality=82, method=6)
     for word in game_words:
         for v in ("shadow", "original"):
             im = Image.open(D / "stimuli" / v / f"{word}.png").convert("RGB").resize((320, 320), Image.LANCZOS)
-            im.save(WEB / f"cave_{v}_{word}.webp", quality=78, method=6)
-    total = sum(p.stat().st_size for p in WEB.glob("cave_*.webp"))
-    print(f"web assets: {len(list(WEB.glob('cave_*.webp')))} files, {total / 1024:.0f} KB")
+            im.save(WEB / f"{v}_{word}.webp", quality=78, method=6)
+    total = sum(p.stat().st_size for p in WEB.glob("*.webp"))
+    print(f"web assets: {len(list(WEB.glob('*.webp')))} files, {total / 1024:.0f} KB")
 
 
 GAME_WORDS = ["rabbit", "anchor", "hat", "scissors", "glove", "bicycle", "sock", "guitar", "igloo", "cat",

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plato’s Cave · {{BRAND}}</title>
+<meta name="description" content="Plato's prisoners see only shadows. We showed Meta's open model Muse Glimmer 100 everyday objects as outlines, silhouettes and cast shadows. It named 67 of the shadows, and its most common wrong answer was the word “Shadow”. Try the shadows yourself.">
+<meta property="og:title" content="Plato’s Cave: name the shadow · {{BRAND}}">
+<meta property="og:description" content="Can you name these shadows? An AI named 67 of 100, and often just said “Shadow”.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_cave.css">
+</head>
+<body class="cave">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><a class="brand" href="/"><b>{{BRAND}}</b></a></header>
+
+<main id="main" tabindex="-1">
+
+<section class="cv-hero" aria-labelledby="hero-h">
+  <div class="cv-hero-text">
+    <span class="cv-kicker"><a href="/plato">Plato series</a> · Republic VII, the Cave · Meta’s open model Muse Glimmer</span>
+    <h1 id="hero-h">Name the shadow</h1>
+    <p class="cv-lede">Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed an AI 100 everyday objects as bare shadows. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
+    <p class="cv-lede" id="hero-answer">It named most of them. When it failed, its favorite answer was the word “Shadow”.</p>
+  </div>
+  <figure>
+    <img src="/static/img/plato_cave/wall.webp" width="1600" height="1538"
+         alt="Twelve soft shadows on a firelit rock wall: a rabbit, scissors, a hat, an anchor, a guitar, a bicycle, a glove, a cat, an igloo, a helicopter, a loaf of bread and an umbrella. Under each is what Muse Glimmer said: Shadow, scissors, UFO, anchor, Shadow, bicycle, hand, cat, Umbrella, helicopter, UFO, umbrella.">
+    <figcaption>What Muse Glimmer said for 12 of the 100 shadows. Orange: wrong.</figcaption>
+  </figure>
+  <div class="cv-tiles" id="tiles" aria-live="polite"></div>
+</section>
+
+<section class="cv-sec" id="game" aria-labelledby="game-h">
+  <div class="cv-sec-head">
+    <h2 id="game-h">Your turn: name the shadow</h2>
+    <p class="cv-sec-lede">Type what you think each shadow is, then reveal the object and what the AI said. Your answers stay in your browser; nothing is sent or stored.</p>
+  </div>
+  <div class="cv-score" aria-live="polite"><span id="score-you">You: <b>0</b> of 0</span><span id="score-ai"></span></div>
+  <div class="cv-grid" id="game-grid"></div>
+  <div class="cv-actions"><button type="button" id="reveal-all">Reveal all</button><button type="button" id="reset">Start over</button></div>
+</section>
+
+<section class="cv-sec" id="survive" aria-labelledby="survive-h">
+  <div class="cv-sec-head">
+    <h2 id="survive-h">How much of a thing survives as a shadow?</h2>
+    <p class="cv-sec-lede" id="survive-lede">Each of 100 checked drawings was shown four ways: the drawing, its outline only, a filled black silhouette, and a soft shadow cast on a wall. Taking away the inside detail cost little. The cast shadow cost the most.</p>
+  </div>
+  <div class="cv-two">
+    <div>
+      <p class="cv-legend" id="acc-legend"></p>
+      <div class="cv-chart" id="acc-chart"></div>
+      <details class="cv-numbers"><summary>The numbers</summary><table id="acc-table"></table></details>
+    </div>
+    <figure style="margin:0">
+      <img class="cv-strip" src="/static/img/plato_cave/versions.webp" width="900" height="949" loading="lazy"
+           alt="Four versions of a cat, scissors, a bicycle and a clock: the line drawing, the outline only, a black silhouette and a blurred gray shadow.">
+      <figcaption class="cv-cap">The four versions, made by code from the same drawing.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="cv-sec" id="medium" aria-labelledby="medium-h">
+  <div class="cv-sec-head">
+    <h2 id="medium-h">It knows it is looking at a shadow</h2>
+    <p class="cv-sec-lede" id="medium-lede"></p>
+  </div>
+  <div class="cv-two">
+    <div class="cv-facts" id="medium-facts"></div>
+    <div class="cv-facts" id="error-facts"></div>
+  </div>
+</section>
+
+<section class="cv-sec" id="people" aria-labelledby="people-h">
+  <div class="cv-sec-head">
+    <h2 id="people-h">Do people lose the same shadows?</h2>
+    <p class="cv-sec-lede" id="people-lede"></p>
+  </div>
+  <div class="cv-groups" id="people-groups"></div>
+  <p class="cv-cap" id="people-note"></p>
+</section>
+
+<section class="cv-sec" id="lens" aria-labelledby="lens-h">
+  <div class="cv-sec-head">
+    <h2 id="lens-h">Inside the model: the name arrives later for shadows</h2>
+    <p class="cv-sec-lede" id="lens-lede"></p>
+  </div>
+  <div class="cv-two">
+    <div>
+      <p class="cv-legend" id="lens-legend"></p>
+      <div class="cv-chart" id="lens-chart"></div>
+    </div>
+    <div class="cv-facts" id="lens-facts"></div>
+  </div>
+</section>
+
+<section class="cv-sec cv-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">Method and caveats</h2>
+  <ul id="method-list">
+    <li><b>Pictures.</b> The project’s 100 checked line drawings (each named correctly by Muse Spark when it was made). Outlines, silhouettes and shadows were made by code: the background is flooded from the picture’s edge, so whatever it can’t reach is the object. Holes are filled, as in the human study. Three open drawings (foot, ear, nose) were closed across their biggest opening.</li>
+    <li><b>Naming.</b> Muse Glimmer 30B, Meta’s open-weight model, running on our own GPU, was asked “Name the object in this picture with exactly one word.” Its answers were scored with the project’s standard naming coder. Muse Spark named a random half of the pictures as a second model. Muse Spark also rated each wrong real-word answer, flagging the ones that look like the picture but mean something else (“visual” errors).</li>
+    <li><b>People.</b> Published silhouette and outline identification rates for 260 classic drawings (Snodgrass and Vanderwart) from 356 Flemish students (Wagemans et al., 2008). Their drawings are not ours, so the comparison is by concept. Those data carry no licence, so we quote only published means and our own summary.</li>
+    <li><b>Pre-registered.</b> Predictions were committed before any model saw a picture (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cave_plan.md">plan</a>). Not every prediction held: see <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cave.md">the write-up</a>.</li>
+    <li><b>Limits.</b> One drawing per object, one prompt, one way of casting the shadow. 100 objects, so single-object results are anecdotes. Answers are capped at 8 tokens, so some descriptions are cut off.</li>
+  </ul>
+  <p class="cv-credit" id="credits"></p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_cave.js"></script>
+</body>
+</html>

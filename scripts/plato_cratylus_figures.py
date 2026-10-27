@@ -23,8 +23,7 @@ from metalesionlab.plato import ink_crop, load_dir  # noqa: E402
 
 D = Path(os.environ.get("CRATYLUS_DIR", "/Users/super/Documents/Meta_Hacking_Challenge/PlatosChair/cratylus"))
 FIG = D / "figures"
-# flat in static/img/plato/ (the package data pattern and the Plato's Chair asset test expect no subfolders)
-WEB = Path(__file__).resolve().parents[1] / "metalesionlab" / "web" / "static" / "img" / "plato"
+WEB = Path(__file__).resolve().parents[1] / "metalesionlab" / "web" / "static" / "img" / "plato_cratylus"
 FONT_SANS = "/System/Library/Fonts/Avenir Next.ttc"
 FONT_SERIF_I = "/System/Library/Fonts/Supplemental/Georgia Italic.ttf"
 INK, INK2, MUTED, GRID, PAPER = "#111827", "#374151", "#6B7280", "#E5E7EB", "#F7F6F1"
@@ -215,12 +214,12 @@ def web_assets(wall_img: Image.Image):
     WEB.mkdir(parents=True, exist_ok=True)
     w = wall_img.copy()
     w.thumbnail((1600, 1600))
-    w.save(WEB / "cratylus_wall.webp", quality=82, method=6)
+    w.save(WEB / "wall.webp", quality=82, method=6)
     pair_dir = WEB
     for seed in (0, 3):
         img = pk.pair_image(pk.round_shape(seed), pk.spiky_shape(seed))
         img.thumbnail((640, 320))
-        img.save(pair_dir / f"cratylus_pair_{seed}.webp", quality=85, method=6)
+        img.save(pair_dir / f"pair_{seed}.webp", quality=85, method=6)
     # a strip per word for the page's word picker (6 drawings each)
     for w in pk.WORDS:
         files = ai_files(w.word)[:6]
@@ -230,9 +229,9 @@ def web_assets(wall_img: Image.Image):
         strip = Image.new("RGB", (6 * cell + 5 * gap, cell), "white")
         for j, p in enumerate(files):
             strip.paste(tile(p, cell), (j * (cell + gap), 0))
-        strip.save(WEB / f"cratylus_word_{pk.slug(w.word)}.webp", quality=78, method=6)
-    total = sum(p.stat().st_size for p in WEB.glob("cratylus_*.webp"))
-    print(f"web assets: {len(list(WEB.glob('cratylus_*.webp')))} files, {total / 1024:.0f} KB")
+        strip.save(WEB / f"word_{pk.slug(w.word)}.webp", quality=78, method=6)
+    total = sum(p.stat().st_size for p in WEB.glob("*.webp"))
+    print(f"web assets: {len(list(WEB.glob('*.webp')))} files, {total / 1024:.0f} KB")
 
 
 def main():

@@ -1,0 +1,1523 @@
+{
+ "title": "Plato's Cratylus: bouba and kiki",
+ "prompt": "A simple black outline drawing of a shape called '{word}'. One shape only, no text.",
+ "baseline_prompt": "A simple black outline drawing of a shape. One shape only, no text.",
+ "n_pictures": 236,
+ "excluded_for_text": 0,
+ "words": [
+  {
+   "word": "bouba",
+   "group": "classic",
+   "consonants": "soft",
+   "vowels": "rounded",
+   "sound": "round",
+   "of": "",
+   "n": 12,
+   "img": "word_bouba.webp",
+   "prompt": "A simple black outline drawing of a shape called 'bouba'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.92,
+    "ci95": [
+     0.879,
+     0.945
+    ]
+   },
+   "corners": {
+    "mean": 0.583,
+    "ci95": [
+     0.0,
+     1.75
+    ]
+   },
+   "axis": {
+    "mean": 0.119,
+    "ci95": [
+     0.07,
+     0.171
+    ]
+   },
+   "share_with_corners": 0.083
+  },
+  {
+   "word": "kiki",
+   "group": "classic",
+   "consonants": "hard",
+   "vowels": "unrounded",
+   "sound": "spiky",
+   "of": "",
+   "n": 12,
+   "img": "word_kiki.webp",
+   "prompt": "A simple black outline drawing of a shape called 'kiki'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.551,
+    "ci95": [
+     0.535,
+     0.565
+    ]
+   },
+   "corners": {
+    "mean": 9.333,
+    "ci95": [
+     8.583,
+     10.083
+    ]
+   },
+   "axis": {
+    "mean": 0.804,
+    "ci95": [
+     0.752,
+     0.854
+    ]
+   },
+   "share_with_corners": 1.0
+  },
+  {
+   "word": "maluma",
+   "group": "classic",
+   "consonants": "soft",
+   "vowels": "mixed",
+   "sound": "round",
+   "of": "",
+   "n": 12,
+   "img": "word_maluma.webp",
+   "prompt": "A simple black outline drawing of a shape called 'maluma'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.937,
+    "ci95": [
+     0.92,
+     0.954
+    ]
+   },
+   "corners": {
+    "mean": 0.5,
+    "ci95": [
+     0.0,
+     1.167
+    ]
+   },
+   "axis": {
+    "mean": 0.174,
+    "ci95": [
+     0.137,
+     0.209
+    ]
+   },
+   "share_with_corners": 0.25
+  },
+  {
+   "word": "takete",
+   "group": "classic",
+   "consonants": "hard",
+   "vowels": "unrounded",
+   "sound": "spiky",
+   "of": "",
+   "n": 12,
+   "img": "word_takete.webp",
+   "prompt": "A simple black outline drawing of a shape called 'takete'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.552,
+    "ci95": [
+     0.54,
+     0.567
+    ]
+   },
+   "corners": {
+    "mean": 8.667,
+    "ci95": [
+     8.083,
+     9.333
+    ]
+   },
+   "axis": {
+    "mean": 0.827,
+    "ci95": [
+     0.762,
+     0.885
+    ]
+   },
+   "share_with_corners": 1.0
+  },
+  {
+   "word": "bomu",
+   "group": "grid",
+   "consonants": "soft",
+   "vowels": "rounded",
+   "sound": "round",
+   "of": "",
+   "n": 12,
+   "img": "word_bomu.webp",
+   "prompt": "A simple black outline drawing of a shape called 'bomu'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.928,
+    "ci95": [
+     0.911,
+     0.943
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.147,
+    "ci95": [
+     0.107,
+     0.19
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "lobu",
+   "group": "grid",
+   "consonants": "soft",
+   "vowels": "rounded",
+   "sound": "round",
+   "of": "",
+   "n": 12,
+   "img": "word_lobu.webp",
+   "prompt": "A simple black outline drawing of a shape called 'lobu'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.897,
+    "ci95": [
+     0.883,
+     0.909
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.186,
+    "ci95": [
+     0.127,
+     0.241
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "bemi",
+   "group": "grid",
+   "consonants": "soft",
+   "vowels": "unrounded",
+   "sound": "mixed",
+   "of": "",
+   "n": 12,
+   "img": "word_bemi.webp",
+   "prompt": "A simple black outline drawing of a shape called 'bemi'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.937,
+    "ci95": [
+     0.919,
+     0.953
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.175,
+    "ci95": [
+     0.139,
+     0.214
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "limi",
+   "group": "grid",
+   "consonants": "soft",
+   "vowels": "unrounded",
+   "sound": "mixed",
+   "of": "",
+   "n": 12,
+   "img": "word_limi.webp",
+   "prompt": "A simple black outline drawing of a shape called 'limi'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.957,
+    "ci95": [
+     0.941,
+     0.971
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.143,
+    "ci95": [
+     0.082,
+     0.208
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "kotu",
+   "group": "grid",
+   "consonants": "hard",
+   "vowels": "rounded",
+   "sound": "mixed",
+   "of": "",
+   "n": 12,
+   "img": "word_kotu.webp",
+   "prompt": "A simple black outline drawing of a shape called 'kotu'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.947,
+    "ci95": [
+     0.93,
+     0.964
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.206,
+    "ci95": [
+     0.146,
+     0.275
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "tupo",
+   "group": "grid",
+   "consonants": "hard",
+   "vowels": "rounded",
+   "sound": "mixed",
+   "of": "",
+   "n": 12,
+   "img": "word_tupo.webp",
+   "prompt": "A simple black outline drawing of a shape called 'tupo'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.851,
+    "ci95": [
+     0.762,
+     0.934
+    ]
+   },
+   "corners": {
+    "mean": 1.25,
+    "ci95": [
+     0.083,
+     3.25
+    ]
+   },
+   "axis": {
+    "mean": 0.317,
+    "ci95": [
+     0.185,
+     0.447
+    ]
+   },
+   "share_with_corners": 0.333
+  },
+  {
+   "word": "keti",
+   "group": "grid",
+   "consonants": "hard",
+   "vowels": "unrounded",
+   "sound": "spiky",
+   "of": "",
+   "n": 12,
+   "img": "word_keti.webp",
+   "prompt": "A simple black outline drawing of a shape called 'keti'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.959,
+    "ci95": [
+     0.94,
+     0.975
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.254,
+    "ci95": [
+     0.22,
+     0.287
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "tepi",
+   "group": "grid",
+   "consonants": "hard",
+   "vowels": "unrounded",
+   "sound": "spiky",
+   "of": "",
+   "n": 12,
+   "img": "word_tepi.webp",
+   "prompt": "A simple black outline drawing of a shape called 'tepi'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.979,
+    "ci95": [
+     0.969,
+     0.987
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.189,
+    "ci95": [
+     0.114,
+     0.27
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "fana",
+   "group": "control",
+   "consonants": "neutral",
+   "vowels": "neutral",
+   "sound": "neutral",
+   "of": "",
+   "n": 12,
+   "img": "word_fana.webp",
+   "prompt": "A simple black outline drawing of a shape called 'fana'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.928,
+    "ci95": [
+     0.901,
+     0.947
+    ]
+   },
+   "corners": {
+    "mean": 0.417,
+    "ci95": [
+     0.0,
+     1.25
+    ]
+   },
+   "axis": {
+    "mean": 0.232,
+    "ci95": [
+     0.177,
+     0.295
+    ]
+   },
+   "share_with_corners": 0.083
+  },
+  {
+   "word": "hasa",
+   "group": "control",
+   "consonants": "neutral",
+   "vowels": "neutral",
+   "sound": "neutral",
+   "of": "",
+   "n": 12,
+   "img": "word_hasa.webp",
+   "prompt": "A simple black outline drawing of a shape called 'hasa'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.956,
+    "ci95": [
+     0.941,
+     0.97
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.204,
+    "ci95": [
+     0.184,
+     0.227
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "nafa",
+   "group": "control",
+   "consonants": "neutral",
+   "vowels": "neutral",
+   "sound": "neutral",
+   "of": "",
+   "n": 12,
+   "img": "word_nafa.webp",
+   "prompt": "A simple black outline drawing of a shape called 'nafa'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.933,
+    "ci95": [
+     0.923,
+     0.943
+    ]
+   },
+   "corners": {
+    "mean": 0.167,
+    "ci95": [
+     0.0,
+     0.5
+    ]
+   },
+   "axis": {
+    "mean": 0.273,
+    "ci95": [
+     0.199,
+     0.354
+    ]
+   },
+   "share_with_corners": 0.083
+  },
+  {
+   "word": "safa",
+   "group": "control",
+   "consonants": "neutral",
+   "vowels": "neutral",
+   "sound": "neutral",
+   "of": "",
+   "n": 12,
+   "img": "word_safa.webp",
+   "prompt": "A simple black outline drawing of a shape called 'safa'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.943,
+    "ci95": [
+     0.931,
+     0.956
+    ]
+   },
+   "corners": {
+    "mean": 0.167,
+    "ci95": [
+     0.0,
+     0.5
+    ]
+   },
+   "axis": {
+    "mean": 0.255,
+    "ci95": [
+     0.207,
+     0.313
+    ]
+   },
+   "share_with_corners": 0.083
+  },
+  {
+   "word": "(no name)",
+   "group": "baseline",
+   "consonants": "neutral",
+   "vowels": "neutral",
+   "sound": "neutral",
+   "of": "",
+   "n": 12,
+   "img": "word_no_name.webp",
+   "prompt": "A simple black outline drawing of a shape. One shape only, no text.",
+   "solidity": {
+    "mean": 0.751,
+    "ci95": [
+     0.645,
+     0.857
+    ]
+   },
+   "corners": {
+    "mean": 3.667,
+    "ci95": [
+     2.5,
+     4.667
+    ]
+   },
+   "axis": {
+    "mean": 0.752,
+    "ci95": [
+     0.572,
+     0.919
+    ]
+   },
+   "share_with_corners": 0.917
+  },
+  {
+   "word": "b-o-u-b-a",
+   "group": "spelling",
+   "consonants": "soft",
+   "vowels": "rounded",
+   "sound": "round",
+   "of": "bouba",
+   "n": 8,
+   "img": "word_b_o_u_b_a.webp",
+   "prompt": "A simple black outline drawing of a shape called 'b-o-u-b-a'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.888,
+    "ci95": [
+     0.868,
+     0.905
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.231,
+    "ci95": [
+     0.166,
+     0.299
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "k-i-k-i",
+   "group": "spelling",
+   "consonants": "hard",
+   "vowels": "unrounded",
+   "sound": "spiky",
+   "of": "kiki",
+   "n": 8,
+   "img": "word_k_i_k_i.webp",
+   "prompt": "A simple black outline drawing of a shape called 'k-i-k-i'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.575,
+    "ci95": [
+     0.551,
+     0.596
+    ]
+   },
+   "corners": {
+    "mean": 10.375,
+    "ci95": [
+     9.5,
+     11.375
+    ]
+   },
+   "axis": {
+    "mean": 0.715,
+    "ci95": [
+     0.653,
+     0.779
+    ]
+   },
+   "share_with_corners": 1.0
+  },
+  {
+   "word": "bouba (pronounced BOO-bah)",
+   "group": "spelling",
+   "consonants": "soft",
+   "vowels": "rounded",
+   "sound": "round",
+   "of": "bouba",
+   "n": 8,
+   "img": "word_bouba_pronounced_boo_bah.webp",
+   "prompt": "A simple black outline drawing of a shape called 'bouba (pronounced BOO-bah)'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.924,
+    "ci95": [
+     0.905,
+     0.938
+    ]
+   },
+   "corners": {
+    "mean": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "axis": {
+    "mean": 0.126,
+    "ci95": [
+     0.058,
+     0.2
+    ]
+   },
+   "share_with_corners": 0.0
+  },
+  {
+   "word": "kiki (pronounced KEE-kee)",
+   "group": "spelling",
+   "consonants": "hard",
+   "vowels": "unrounded",
+   "sound": "spiky",
+   "of": "kiki",
+   "n": 8,
+   "img": "word_kiki_pronounced_kee_kee.webp",
+   "prompt": "A simple black outline drawing of a shape called 'kiki (pronounced KEE-kee)'. One shape only, no text.",
+   "solidity": {
+    "mean": 0.554,
+    "ci95": [
+     0.531,
+     0.579
+    ]
+   },
+   "corners": {
+    "mean": 9.875,
+    "ci95": [
+     8.625,
+     11.375
+    ]
+   },
+   "axis": {
+    "mean": 0.793,
+    "ci95": [
+     0.755,
+     0.83
+    ]
+   },
+   "share_with_corners": 1.0
+  }
+ ],
+ "contrasts": {
+  "kiki_vs_bouba": {
+   "solidity": {
+    "diff": 0.369,
+    "diff_ci": [
+     0.323,
+     0.402
+    ],
+    "d": 7.13,
+    "d_ci": [
+     4.249,
+     22.524
+    ],
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "means": {
+     "bouba": 0.92,
+     "kiki": 0.551
+    }
+   },
+   "corners": {
+    "diff": 8.75,
+    "diff_ci": [
+     7.25,
+     9.917
+    ],
+    "d": 5.068,
+    "d_ci": [
+     2.966,
+     14.925
+    ],
+    "auc": 0.997,
+    "auc_ci": [
+     0.979,
+     1.0
+    ],
+    "means": {
+     "bouba": 0.583,
+     "kiki": 9.333
+    }
+   },
+   "axis": {
+    "diff": 0.685,
+    "diff_ci": [
+     0.612,
+     0.755
+    ],
+    "d": 7.269,
+    "d_ci": [
+     5.576,
+     11.741
+    ],
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "means": {
+     "bouba": 0.119,
+     "kiki": 0.804
+    }
+   }
+  },
+  "takete_vs_maluma": {
+   "solidity": {
+    "diff": 0.385,
+    "diff_ci": [
+     0.362,
+     0.406
+    ],
+    "d": 13.3,
+    "d_ci": [
+     10.772,
+     20.416
+    ],
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "means": {
+     "maluma": 0.937,
+     "takete": 0.552
+    }
+   },
+   "corners": {
+    "diff": 8.167,
+    "diff_ci": [
+     7.25,
+     9.0
+    ],
+    "d": 7.033,
+    "d_ci": [
+     4.983,
+     13.811
+    ],
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "means": {
+     "maluma": 0.5,
+     "takete": 8.667
+    }
+   },
+   "axis": {
+    "diff": 0.653,
+    "diff_ci": [
+     0.576,
+     0.721
+    ],
+    "d": 6.79,
+    "d_ci": [
+     4.726,
+     12.399
+    ],
+    "auc": 1.0,
+    "auc_ci": [
+     1.0,
+     1.0
+    ],
+    "means": {
+     "maluma": 0.174,
+     "takete": 0.827
+    }
+   }
+  },
+  "spiky_vs_round_class": {
+   "solidity": {
+    "diff": 0.16,
+    "diff_ci": [
+     -0.051,
+     0.373
+    ],
+    "pooled_auc": 0.565,
+    "pooled_auc_ci": [
+     0.431,
+     0.694
+    ]
+   },
+   "corners": {
+    "diff": 4.229,
+    "diff_ci": [
+     -0.292,
+     8.896
+    ],
+    "pooled_auc": 0.729,
+    "pooled_auc_ci": [
+     0.648,
+     0.805
+    ]
+   },
+   "axis": {
+    "diff": 0.362,
+    "diff_ci": [
+     0.056,
+     0.666
+    ],
+    "pooled_auc": 0.842,
+    "pooled_auc_ci": [
+     0.759,
+     0.919
+    ]
+   }
+  }
+ },
+ "grid": {
+  "solidity": {
+   "consonant_effect": {
+    "diff": -0.004,
+    "diff_ci": [
+     -0.052,
+     0.061
+    ]
+   },
+   "vowel_effect": {
+    "diff": -0.052,
+    "diff_ci": [
+     -0.102,
+     -0.014
+    ]
+   },
+   "cells": {
+    "soft/rounded": -0.913,
+    "soft/unrounded": -0.947,
+    "hard/rounded": -0.899,
+    "hard/unrounded": -0.969
+   }
+  },
+  "corners": {
+   "consonant_effect": {
+    "diff": 0.312,
+    "diff_ci": [
+     0.0,
+     1.208
+    ]
+   },
+   "vowel_effect": {
+    "diff": -0.312,
+    "diff_ci": [
+     -1.188,
+     0.0
+    ]
+   },
+   "cells": {
+    "soft/rounded": 0.0,
+    "soft/unrounded": 0.0,
+    "hard/rounded": 0.625,
+    "hard/unrounded": 0.0
+   }
+  },
+  "axis": {
+   "consonant_effect": {
+    "diff": 0.079,
+    "diff_ci": [
+     0.011,
+     0.159
+    ]
+   },
+   "vowel_effect": {
+    "diff": -0.024,
+    "diff_ci": [
+     -0.121,
+     0.056
+    ]
+   },
+   "cells": {
+    "soft/rounded": 0.167,
+    "soft/unrounded": 0.159,
+    "hard/rounded": 0.262,
+    "hard/unrounded": 0.222
+   }
+  }
+ },
+ "controls": {
+  "solidity": {
+   "round_class": 0.921,
+   "spiky_class": 0.76,
+   "neutral_controls": 0.94,
+   "baseline": 0.751
+  },
+  "corners": {
+   "round_class": 0.271,
+   "spiky_class": 4.5,
+   "neutral_controls": 0.188,
+   "baseline": 3.667
+  },
+  "axis": {
+   "round_class": 0.157,
+   "spiky_class": 0.519,
+   "neutral_controls": 0.241,
+   "baseline": 0.752
+  }
+ },
+ "human_axis": {
+  "circle": {
+   "axis_mean": -0.03,
+   "n": 200
+  },
+  "cloud": {
+   "axis_mean": 0.03,
+   "n": 200
+  },
+  "star": {
+   "axis_mean": 1.135,
+   "n": 200
+  },
+  "zigzag": {
+   "axis_mean": 0.987,
+   "n": 200
+  },
+  "lightning": {
+   "axis_mean": 0.878,
+   "n": 200
+  }
+ },
+ "choice": {
+  "prompt": "There are two shapes in this picture, one on the left and one on the right. Which one is \"<word>\"? Answer with one word: left or right.",
+  "text_prompt": "Imagine two shapes. A is a rounded blob with smooth, curvy lobes. B is a spiky star with sharp, jagged points. Which one is called \"<word>\"? Answer with one letter: A or B.",
+  "pairs": 8,
+  "pair_imgs": [
+   "pair_0.webp",
+   "pair_3.webp"
+  ],
+  "glimmer_picture": {
+   "bouba": {
+    "p_round": 0.703,
+    "ci95": [
+     0.679,
+     0.724
+    ]
+   },
+   "kiki": {
+    "p_round": 0.507,
+    "ci95": [
+     0.474,
+     0.538
+    ]
+   },
+   "maluma": {
+    "p_round": 0.649,
+    "ci95": [
+     0.628,
+     0.667
+    ]
+   },
+   "takete": {
+    "p_round": 0.499,
+    "ci95": [
+     0.471,
+     0.527
+    ]
+   },
+   "bomu": {
+    "p_round": 0.576,
+    "ci95": [
+     0.569,
+     0.583
+    ]
+   },
+   "lobu": {
+    "p_round": 0.61,
+    "ci95": [
+     0.593,
+     0.627
+    ]
+   },
+   "bemi": {
+    "p_round": 0.562,
+    "ci95": [
+     0.548,
+     0.577
+    ]
+   },
+   "limi": {
+    "p_round": 0.55,
+    "ci95": [
+     0.53,
+     0.567
+    ]
+   },
+   "kotu": {
+    "p_round": 0.538,
+    "ci95": [
+     0.525,
+     0.556
+    ]
+   },
+   "tupo": {
+    "p_round": 0.551,
+    "ci95": [
+     0.54,
+     0.562
+    ]
+   },
+   "keti": {
+    "p_round": 0.558,
+    "ci95": [
+     0.543,
+     0.571
+    ]
+   },
+   "tepi": {
+    "p_round": 0.555,
+    "ci95": [
+     0.548,
+     0.562
+    ]
+   },
+   "fana": {
+    "p_round": 0.534,
+    "ci95": [
+     0.514,
+     0.552
+    ]
+   },
+   "hasa": {
+    "p_round": 0.56,
+    "ci95": [
+     0.55,
+     0.571
+    ]
+   },
+   "nafa": {
+    "p_round": 0.546,
+    "ci95": [
+     0.535,
+     0.557
+    ]
+   },
+   "safa": {
+    "p_round": 0.564,
+    "ci95": [
+     0.554,
+     0.575
+    ]
+   },
+   "(no name)": {
+    "p_round": 0.546,
+    "ci95": [
+     0.53,
+     0.562
+    ]
+   },
+   "b-o-u-b-a": {
+    "p_round": 0.593,
+    "ci95": [
+     0.575,
+     0.608
+    ]
+   },
+   "k-i-k-i": {
+    "p_round": 0.522,
+    "ci95": [
+     0.506,
+     0.54
+    ]
+   },
+   "bouba (pronounced BOO-bah)": {
+    "p_round": 0.653,
+    "ci95": [
+     0.634,
+     0.67
+    ]
+   },
+   "kiki (pronounced KEE-kee)": {
+    "p_round": 0.53,
+    "ci95": [
+     0.519,
+     0.54
+    ]
+   },
+   "b o u b a": {
+    "p_round": 0.601,
+    "ci95": [
+     0.58,
+     0.623
+    ]
+   },
+   "k i k i": {
+    "p_round": 0.533,
+    "ci95": [
+     0.522,
+     0.545
+    ]
+   },
+   "BOUBA": {
+    "p_round": 0.643,
+    "ci95": [
+     0.631,
+     0.655
+    ]
+   },
+   "KIKI": {
+    "p_round": 0.542,
+    "ci95": [
+     0.525,
+     0.557
+    ]
+   }
+  },
+  "glimmer_text": {
+   "bouba": {
+    "p_round": 0.73
+   },
+   "kiki": {
+    "p_round": 0.379
+   },
+   "maluma": {
+    "p_round": 0.808
+   },
+   "takete": {
+    "p_round": 0.364
+   },
+   "bomu": {
+    "p_round": 0.562
+   },
+   "lobu": {
+    "p_round": 0.808
+   },
+   "bemi": {
+    "p_round": 0.531
+   },
+   "limi": {
+    "p_round": 0.526
+   },
+   "kotu": {
+    "p_round": 0.439
+   },
+   "tupo": {
+    "p_round": 0.621
+   },
+   "keti": {
+    "p_round": 0.514
+   },
+   "tepi": {
+    "p_round": 0.514
+   },
+   "fana": {
+    "p_round": 0.54
+   },
+   "hasa": {
+    "p_round": 0.554
+   },
+   "nafa": {
+    "p_round": 0.527
+   },
+   "safa": {
+    "p_round": 0.514
+   },
+   "(no name)": {
+    "p_round": 0.5
+   },
+   "b-o-u-b-a": {
+    "p_round": 0.729
+   },
+   "k-i-k-i": {
+    "p_round": 0.515
+   },
+   "bouba (pronounced BOO-bah)": {
+    "p_round": 0.691
+   },
+   "kiki (pronounced KEE-kee)": {
+    "p_round": 0.415
+   },
+   "b o u b a": {
+    "p_round": 0.734
+   },
+   "k i k i": {
+    "p_round": 0.542
+   },
+   "BOUBA": {
+    "p_round": 0.643
+   },
+   "KIKI": {
+    "p_round": 0.486
+   }
+  },
+  "spark": {
+   "bouba": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "kiki": {
+    "p_round": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "n": 6
+   },
+   "maluma": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "takete": {
+    "p_round": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "n": 6
+   },
+   "bomu": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "lobu": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "bemi": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "limi": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "kotu": {
+    "p_round": 0.333,
+    "ci95": [
+     0.0,
+     0.667
+    ],
+    "n": 6
+   },
+   "tupo": {
+    "p_round": 0.667,
+    "ci95": [
+     0.333,
+     1.0
+    ],
+    "n": 6
+   },
+   "keti": {
+    "p_round": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "n": 6
+   },
+   "tepi": {
+    "p_round": 0.167,
+    "ci95": [
+     0.0,
+     0.5
+    ],
+    "n": 6
+   },
+   "fana": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "hasa": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "nafa": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   },
+   "safa": {
+    "p_round": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "n": 6
+   }
+  },
+  "glimmer_match": {
+   "bouba_kiki": 0.598,
+   "maluma_takete": 0.575,
+   "classes": 0.552
+  },
+  "glimmer_text_match": {
+   "bouba_kiki": 0.676,
+   "maluma_takete": 0.722,
+   "classes": 0.642
+  },
+  "spark_match": {
+   "bouba_kiki": 1.0,
+   "maluma_takete": 1.0,
+   "classes": 0.979
+  },
+  "glimmer_both_match": {
+   "p": 0.347,
+   "ci95": [
+    0.314,
+    0.386
+   ]
+  },
+  "spark_both_match": {
+   "p": 1.0,
+   "n": 6
+  },
+  "grid": {
+   "glimmer": {
+    "consonant_effect": {
+     "diff": 0.024,
+     "diff_ci": [
+      0.001,
+      0.051
+     ]
+    },
+    "vowel_effect": {
+     "diff": 0.013,
+     "diff_ci": [
+      -0.014,
+      0.042
+     ]
+    },
+    "cells": {
+     "soft/rounded": 0.593,
+     "soft/unrounded": 0.556,
+     "hard/rounded": 0.545,
+     "hard/unrounded": 0.556
+    }
+   },
+   "glimmer_text": {
+    "consonant_effect": {
+     "diff": 0.085,
+     "diff_ci": [
+      -0.081,
+      0.258
+     ]
+    },
+    "vowel_effect": {
+     "diff": 0.086,
+     "diff_ci": [
+      -0.084,
+      0.254
+     ]
+    },
+    "cells": {
+     "soft/rounded": 0.685,
+     "soft/unrounded": 0.528,
+     "hard/rounded": 0.53,
+     "hard/unrounded": 0.514
+    }
+   },
+   "spark": {
+    "consonant_effect": {
+     "diff": 0.708,
+     "diff_ci": [
+      0.417,
+      0.958
+     ]
+    },
+    "vowel_effect": {
+     "diff": 0.208,
+     "diff_ci": [
+      -0.333,
+      0.75
+     ]
+    },
+    "cells": {
+     "soft/rounded": 1.0,
+     "soft/unrounded": 1.0,
+     "hard/rounded": 0.5,
+     "hard/unrounded": 0.083
+    }
+   }
+  }
+ },
+ "people": {
+  "source": "Ćwiek, A., Fuchs, S., Draxler, C., et al. (2022). The bouba/kiki effect is robust across cultures and writing systems. Philosophical Transactions of the Royal Society B, 377(1841), 20200390 (CC BY 4.0). Published numbers only; the OSF data carry no licence.",
+  "n_people": 917,
+  "n_languages": 25,
+  "both_trials_match": 0.72,
+  "both_trials_match_cri95": [
+   0.56,
+   0.82
+  ],
+  "english_posterior": 0.84,
+  "english_cri95": [
+   0.71,
+   0.93
+  ],
+  "english_raw": 0.88,
+  "english_n": 41,
+  "english_note": "read from Fig. 4 (approximate)",
+  "bouba_round_first_trials": 0.82,
+  "bouba_round_cri95": [
+   0.68,
+   0.9
+  ],
+  "kiki_spiky_first_trials": 0.68,
+  "kiki_spiky_cri95": [
+   0.53,
+   0.78
+  ],
+  "per_word_note": "first trials only, read from Fig. 6 (approximate)",
+  "range_by_language": [
+   0.36,
+   1.0
+  ],
+  "roman_script": 0.75,
+  "other_scripts": 0.63,
+  "task": "heard a spoken 'bouba' or 'kiki' and picked one of two shapes (a rounded blob, a spiky star)"
+ },
+ "round_class": [
+  "bouba",
+  "maluma",
+  "bomu",
+  "lobu"
+ ],
+ "spiky_class": [
+  "kiki",
+  "takete",
+  "keti",
+  "tepi"
+ ],
+ "credits": {
+  "quickdraw": "Human drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0, https://github.com/googlecreativelab/quickdraw-dataset",
+  "people": "Ćwiek, A., Fuchs, S., Draxler, C., et al. (2022). The bouba/kiki effect is robust across cultures and writing systems. Philosophical Transactions of the Royal Society B, 377(1841), 20200390 (CC BY 4.0). Published numbers only; the OSF data carry no licence.",
+  "models": "Drawings: Meta Muse Image 1.0. Choices: Muse Glimmer 30B (open weights, self-hosted) and Muse Spark 1.3. Picture similarity: Meta DINOv2."
+ },
+ "data_folder": "Pictures and raw results live outside this repository."
+}

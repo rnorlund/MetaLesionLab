@@ -75,8 +75,8 @@ def main():
              for w in sorted(per)]
     game = []
     for w in GAME_WORDS:
-        g = {"word": w, "alternates": alts.get(w, []), "shadow_img": f"cave_shadow_{w}.webp",
-             "original_img": f"cave_original_{w}.webp",
+        g = {"word": w, "alternates": alts.get(w, []), "shadow_img": f"shadow_{w}.webp",
+             "original_img": f"original_{w}.webp",
              "glimmer": {v: {"said": per[w][v]["said"], "code": per[w][v]["code"]} for v in pc.VERSIONS}}
         if (w, "shadow") in spark_rows:
             g["spark"] = {"said": spark_rows[(w, "shadow")]["said"], "code": spark_rows[(w, "shadow")]["code"]}
