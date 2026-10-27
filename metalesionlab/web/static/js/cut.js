@@ -17,6 +17,8 @@
   function signed(x, d) { var v = Number(x).toFixed(d == null ? 1 : d); return (x > 0 ? '+' : x < 0 ? '−' : '') + v.replace('-', '') + '%'; }
   function billions(n) { return (n / 1e9).toFixed(2) + ' B'; }
   function listAnd(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+  // The results count layers from 0, as in the model's code; the page shows them 1–52.
+  function L1(i) { return String(Number(i) + 1); }
   function s(tag, attrs, kids) {
     var el = document.createElementNS(NS, tag);
     Object.keys(attrs || {}).forEach(function (k) { if (attrs[k] != null) el.setAttribute(k, attrs[k]); });
@@ -74,10 +76,10 @@
     var l0 = d.layers[0], lost0 = Math.round(-l0.skip_d_acc * d.guards.naming.n);
     var sav = cut && cut.savings_pct;
     var tiles = [
-      ['good', k + ' of ' + d.intact.layers, 'layers can go (' + listAnd(st.removed.slice().sort(function (a, b) { return a - b; }).map(String)) + '): about ' +
-        (sav ? Math.round(-sav.params) + '% smaller and ' + Math.round(-sav.ms_per_item) + '% faster' : 'that much smaller') + ', with no measured loss, even on held-out pictures.'],
+      ['good', k + ' of ' + d.intact.layers, 'layers can go (' + listAnd(st.removed.slice().sort(function (a, b) { return a - b; }).map(L1)) + '): about ' +
+        (sav ? Math.round(-sav.params) + '% smaller and ' + Math.round(-sav.ms_per_item) + '% faster' : 'that much smaller') + ', with no loss beyond run-to-run noise (at most one picture), even on held-out pictures.'],
       ['warn', kp + ' layers', 'is what the usual check (perplexity alone) would allow. That cut breaks Spanish: the model starts answering in English.'],
-      ['', 'Layer 0', 'is critical: skipping it alone loses ' + lost0 + ' of ' + d.guards.naming.n + ' pictures and doubles perplexity.'],
+      ['', 'Layer 1', 'is critical: skipping it alone loses ' + lost0 + ' of ' + d.guards.naming.n + ' pictures and doubles perplexity.'],
       ['', (d.block_influence_vs_skip.spearman_bi_answer_vs_acc_loss).toFixed(2), 'is how well a popular shortcut (block influence) tracked which layers naming needs: barely at all.']
     ];
     var box = $('cut-tiles');
@@ -93,7 +95,7 @@
     box.innerHTML = '';
     var active = Object.keys(S.guards).filter(function (g) { return S.guards[g]; });
     var removed = st.removed.slice().sort(function (a, b2) { return a - b2; });
-    var big = k === 0 ? 'Nothing can go' : 'Remove ' + k + ' of ' + total + ' layers: ' + listAnd(removed.map(String));
+    var big = k === 0 ? 'Nothing can go' : 'Remove ' + k + ' of ' + total + ' layers: ' + listAnd(removed.map(L1));
     if (!active.length) big = 'No checks: nothing stops the cut (' + k + ' layers)';
     box.appendChild(h('div', { class: 'big', text: big }));
     var params = d.intact.params - k * perLayer();
@@ -111,7 +113,7 @@
       if (S.guards.naming && !c.naming) why.push('naming falls to ' + next.correct + ' of ' + N + ' (your floor: ' + (keep * b.correct).toFixed(1) + ')');
       if (S.guards.heldout && !c.heldout) why.push('held-out pictures fall to ' + next.heldout_correct + ' of ' + NH + ' (your floor: ' + (keep * b.heldout_correct).toFixed(1) + ')');
       if (S.guards.ppl && !c.ppl) why.push('perplexity rises to ' + next.ppl.toFixed(1) + ' (your ceiling: ' + ((1 + S.pplTol / 100) * b.ppl).toFixed(1) + ')');
-      box.appendChild(h('p', { text: 'Why it stops here: removing the next layer (' + next.added + ') fails your checks: ' + listAnd(why) + '.' }));
+      box.appendChild(h('p', { text: 'Why it stops here: removing the next layer (' + L1(next.added) + ') fails your checks: ' + listAnd(why) + '.' }));
     }
     var dflt = defaultDeepest(), warn = k > dflt;
     box.classList.toggle('warn', warn);
@@ -212,7 +214,7 @@
       cross.setAttribute('x1', x(j)); cross.setAttribute('x2', x(j)); cross.setAttribute('opacity', 0.35);
       tip.innerHTML = '';
       var key = function (color) { var k2 = h('span', { class: 'key' }); k2.style.background = color; return k2; };
-      tip.appendChild(h('b', { text: j === 0 ? 'Intact (52 layers)' : j + ' removed (+ layer ' + st.added + ')' }));
+      tip.appendChild(h('b', { text: j === 0 ? 'Intact (52 layers)' : j + ' removed (+ layer ' + L1(st.added) + ')' }));
       tip.appendChild(h('div', null, [key(BLUE), st.correct + ' of ' + N + ' named']));
       tip.appendChild(h('div', null, [key(TEAL), st.heldout_correct + ' of ' + NH + ' held-out']));
       tip.appendChild(h('div', null, [key(INK2), 'perplexity ' + st.ppl.toFixed(1)]));
@@ -246,7 +248,7 @@
       h('th', { class: 'num', text: 'Perplexity' }), h('th', { text: 'Your checks' })])));
     var tb = h('tbody');
     d.greedy.forEach(function (st, i) {
-      tb.appendChild(h('tr', { class: i === k ? 'chosen' : null }, [h('td', { class: 'num', text: String(i) }), h('td', { class: 'num', text: st.added == null ? '–' : String(st.added) }),
+      tb.appendChild(h('tr', { class: i === k ? 'chosen' : null }, [h('td', { class: 'num', text: String(i) }), h('td', { class: 'num', text: st.added == null ? '–' : L1(st.added) }),
         h('td', { class: 'num', text: String(st.correct) }), h('td', { class: 'num', text: String(st.heldout_correct) }), h('td', { class: 'num', text: st.ppl.toFixed(1) }),
         h('td', { text: passes(st) ? 'pass' : 'fail' })]));
     });
@@ -257,13 +259,13 @@
   var MEASURES = {
     naming: { value: function (l) { return Math.max(0, Math.round(-l.skip_d_acc * S.d.guards.naming.n)); }, cuts: [1, 2, 3, 6],
       labels: ['none', '1', '2', '3–5', '6+ pictures'],
-      lede: 'Colour: how many of the guard pictures Glimmer gets wrong when this one layer is skipped. Dot: a full-attention layer (the others attend only to nearby words). Ringed: the layers in your cut.' },
+      lede: 'Color: how many of the guard pictures Glimmer gets wrong when this one layer is skipped. Dot: a full-attention layer (the others attend only to nearby words). Ringed: the layers in your cut.' },
     ppl: { value: function (l) { return Math.max(0, l.skip_d_ppl_rel * 100); }, cuts: [2, 5, 15, 40],
       labels: ['under 2%', '2–5%', '5–15%', '15–40%', '40%+'],
-      lede: 'Colour: how much plain-text perplexity rises when this one layer is skipped. Dot: a full-attention layer. Ringed: your cut.' },
+      lede: 'Color: how much plain-text perplexity rises when this one layer is skipped. Dot: a full-attention layer. Ringed: your cut.' },
     bi: { value: function (l) { return l.block_influence; }, cuts: [0.12, 0.15, 0.2, 0.25],
       labels: ['under 0.12', '0.12–0.15', '0.15–0.20', '0.20–0.25', '0.25+'],
-      lede: 'Colour: block influence, a popular shortcut that scores each layer without running any test (how much the layer changes what passes through it). Compare it with the other two views: it points at different layers.' }
+      lede: 'Color: block influence, a popular shortcut that scores each layer without running any test (how much the layer changes what passes through it). Compare it with the other two views: it points at different layers.' }
   };
   function bin(m, v) { var i = 0; while (i < m.cuts.length && v >= m.cuts[i] - 1e-9) i++; return i; }
   function layerText(l) {
@@ -271,7 +273,7 @@
     var type = l.type === 'full_attention' ? 'full attention' : 'sliding window';
     var naming = lost > 0 ? 'naming falls from ' + b.correct + ' to ' + (b.correct - lost) + ' of ' + N + ' (English ' + Math.round(l.acc_en * d.guards.naming.n_en) + '/' + d.guards.naming.n_en +
       ', Spanish ' + Math.round(l.acc_es * d.guards.naming.n_es) + '/' + d.guards.naming.n_es + ')' : lost < 0 ? 'naming gains ' + (-lost) + ' picture' : 'naming is unchanged';
-    return 'Layer ' + l.layer + ' (' + type + '), skipped alone: ' + naming + '; perplexity ' + b.ppl.toFixed(1) + ' → ' + l.ppl.toFixed(1) + ' (' + signed(l.skip_d_ppl_rel * 100) +
+    return 'Layer ' + L1(l.layer) + ' (' + type + '), skipped alone: ' + naming + '; perplexity ' + b.ppl.toFixed(1) + ' → ' + l.ppl.toFixed(1) + ' (' + signed(l.skip_d_ppl_rel * 100) +
       '); shortcut score ' + l.block_influence.toFixed(2) + '.';
   }
   function renderStrip() {
@@ -283,7 +285,7 @@
     d.layers.forEach(function (l) {
       var bi = bin(m, m.value(l));
       var cell = h('button', { type: 'button', class: 'cut-cell' + (bi >= 3 ? ' dark' : '') + (l.type === 'full_attention' ? ' full' : '') +
-        (removed.indexOf(l.layer) >= 0 ? ' removed' : ''), 'aria-pressed': String(S.selected === l.layer), 'aria-label': layerText(l), text: String(l.layer) });
+        (removed.indexOf(l.layer) >= 0 ? ' removed' : ''), 'aria-pressed': String(S.selected === l.layer), 'aria-label': layerText(l), text: L1(l.layer) });
       cell.style.background = RAMP[bi];
       cell.addEventListener('click', function () { S.selected = S.selected === l.layer ? null : l.layer; renderStrip(); });
       cell.addEventListener('mouseenter', function () { $('layer-detail').textContent = layerText(l); });
@@ -306,7 +308,7 @@
     var ft = d.by_type.full_attention, sw = d.by_type.sliding_attention, bv = d.block_influence_vs_skip;
     var box = $('findings');
     box.innerHTML = '';
-    [['Layer 0 is critical', 'Skipped alone, it loses ' + Math.round(-l0.skip_d_acc * N) + ' of ' + N + ' pictures (' + lostEs + ' Spanish, ' + lostEn + ' English) and perplexity rises ' +
+    [['Layer 1 is critical', 'Skipped alone, the first layer loses ' + Math.round(-l0.skip_d_acc * N) + ' of ' + N + ' pictures (' + lostEs + ' Spanish, ' + lostEn + ' English) and perplexity rises ' +
        signed(l0.skip_d_ppl_rel * 100, 0) + '.'],
      ['Full attention is not special', 'Skipping one of the ' + ft.n + ' full-attention layers cost a picture for ' + ft.layers_losing_naming + ' of them; for the ' + sw.n +
        ' sliding-window layers, ' + sw.layers_losing_naming + '. About the same share.'],
@@ -330,7 +332,7 @@
       allMatch = allMatch && ok;
       tb.appendChild(h('tr', { class: safe && p.name === safe.name ? 'row-best' : null }, [
         h('td', { text: CUT_NAMES[p.name] || p.name }),
-        h('td', { text: p.removed.length ? p.removed.length + ': ' + p.removed.join(', ') : 'none' }),
+        h('td', { text: p.removed.length ? p.removed.length + ': ' + p.removed.map(L1).join(', ') : 'none' }),
         cell(billions(p.params), intact ? '' : signed(sp.params)),
         cell(p.mem_gb.toFixed(2) + ' GiB', intact ? '' : signed(sp.mem_gb)),
         cell(Math.round(p.ms_per_item) + ' ms', intact ? '' : signed(sp.ms_per_item)),

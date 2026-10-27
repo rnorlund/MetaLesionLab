@@ -615,7 +615,7 @@
   function importSessions(file) {
     file.text().then(function (text) {
       var data = JSON.parse(text);
-      if (!data || data.format !== 'tippa-lingua-sessions' || !Array.isArray(data.sessions)) throw new Error('That file isn\'t a Tippa Lingua sessions export.');
+      if (!data || data.format !== 'tippa-lingua-sessions' || !Array.isArray(data.sessions)) throw new Error('That file isn\'t a ' + T.BRAND + ' sessions export.');
       var ok = data.sessions.filter(function (s) { return s && s.id && s.speaker && s.started && Array.isArray(s.items); });
       return Promise.all(ok.map(function (s) { return A.store.put('sessions', s); })).then(function () {
         T.toast('Imported ' + ok.length + ' session' + (ok.length === 1 ? '' : 's') + '.');

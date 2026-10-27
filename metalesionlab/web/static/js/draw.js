@@ -8,7 +8,7 @@
   // The address shared on X and printed on the card. A placeholder until the live demo has a URL: change
   // this line. When the page is served from a real host (not localhost), that host's /draw is used instead.
   var SITE_URL = 'https://tippa-lingua.example/draw';
-  var SITE_NAME = 'Tippa Lingua';
+  var SITE_NAME = T.BRAND;  // the product name, from metalesionlab/brand.py
   var HASHTAGS = 'Muse,MetaAI,Hackathon';
 
   var BLUE = '#1D4ED8', ORANGE = '#C2410C', TEAL = '#0D9488', INK = '#111827', INK2 = '#374151', MUTED = '#4B5563',
@@ -109,7 +109,7 @@
     var c = concept();
     document.querySelectorAll('[data-label]').forEach(function (el) { el.textContent = c.label; });
     document.querySelectorAll('[data-article]').forEach(function (el) { el.textContent = article(c.label); });
-    document.title = 'Draw ' + article(c.label) + ' · Tippa Lingua';
+    document.title = 'Draw ' + article(c.label) + ' · ' + T.BRAND;
     $('hook').textContent = hook(c) + ' How original is yours?';
     var strip = $('muse-strip');
     strip.textContent = '';
@@ -320,6 +320,7 @@
     renderNumbers(r, c);
     drawCard().catch(function () {});
     updateShareLinks();
+    socratesLink(r, c);
     var res = $('results');
     setTimeout(function () { res.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
   }
@@ -613,6 +614,20 @@
     $('share-x').href = url;
     var canFiles = navigator.canShare && window.File;
     $('share-native').hidden = !canFiles;
+  }
+  // "Discuss your chair with Socrates" (/socrates): only the numbers go in the link; the drawing stays here.
+  function socratesLink(r, c) {
+    var a = $('socrates-link');
+    if (!a) {
+      a = h('a', { class: 'btn', id: 'socrates-link' });
+      $('again').parentNode.insertBefore(a, $('again'));
+    }
+    var q = { draw: S.key, label: c.label, originality: r.originality, people_closer_to_muse: r.people_closer_to_muse,
+      muse_closer: r.muse_closer, d_nearest_ai: r.d_nearest_ai, d_nearest_human: r.d_nearest_human, n_people: c.n_human,
+      looks_like: (r.looks_like || []).map(function (x) { return x.key; }).join(',') };
+    a.textContent = 'Discuss your ' + c.label + ' with Socrates';
+    a.href = '/socrates?' + Object.keys(q).filter(function (k) { return q[k] != null && q[k] !== ''; })
+      .map(function (k) { return k + '=' + encodeURIComponent(q[k]); }).join('&');
   }
   function cardBlob() {
     return new Promise(function (resolve) { $('card').toBlob(resolve, 'image/png'); });
