@@ -307,8 +307,9 @@ def outcome_shares(outcomes: list[str]) -> dict:
     return out
 
 
-_CARRIER = re.compile(r"^(?:the\s+)?(?:object|item|thing|picture|drawing|image)(?:\s+(?:in|of)\s+(?:this|the)\s+"
-                      r"(?:picture|drawing|image))?\s+(?:is|shows|depicts)\b\s*(?:an?\s+|the\s+)?", re.I)
+_CARRIER = re.compile(r"^(?:the\s+)?(?:object|item|thing|picture|drawing|image)(?:\s+(?:depicted|shown|drawn))?"
+                      r"(?:\s+(?:in|of)\s+(?:this|the)\s+(?:picture|drawing|image))?\s+(?:is|shows|depicts)\b\s*"
+                      r"(?:an?\s+|the\s+)?", re.I)
 
 
 def clean_name(said: str | None) -> str:

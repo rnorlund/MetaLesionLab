@@ -97,6 +97,45 @@ def curves(res: dict, concept: str = "chair") -> dict:
     return out
 
 
+def finite(obj):
+    """NaN and infinity become None: browsers' JSON has no NaN (FastAPI refuses to send it)."""
+    import math
+
+    if isinstance(obj, dict):
+        return {k: finite(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [finite(v) for v in obj]
+    if isinstance(obj, float) and not math.isfinite(obj):
+        return None
+    return obj
+
+
+def clock_table(cr: dict) -> dict:
+    """Rows for the page's clock table: intact and each family's doses, the share of clocks with each feature."""
+    feats = ["clock", "contour", "numbers_ok", "two_hands", "numbers_given_clock"]
+    names = {"clock": "a clock", "contour": "outline", "numbers_ok": "12 numbers in order", "two_hands": "two hands",
+             "numbers_given_clock": "numbers, among clocks"}
+    rows = []
+    for cond, row in cr["conditions"].items():
+        fam, dose = parse_condition(cond)
+        label = "intact" if fam == "intact" else (("language" if fam.startswith("text") else "drawing") + ", "
+                                                  + dose_label(cond))
+        rows.append({"cond": cond, "label": label, "values": [row[f]["mean"] if row[f]["n"] else None for f in feats],
+                     "n": row["n"]})
+    b = cr["intact_1010_bias"]
+    n_o = b["n_other"]
+    summary = [f"Intact SDXL, asked for a time other than 10:10, drew hands at 10:10 on "
+               f"{round(b['share_showing_1010_when_asked_other']['mean'] * n_o)} of {n_o} clocks and the asked time on "
+               f"{round(b['share_right_time_when_asked_other']['mean'] * n_o)}. It cannot set a clock, so the asked time "
+               f"could not fail under damage.",
+               "Drawing damage strips the numbers first: at the mildest dose the outline survives but 12 numbers in "
+               "order fall from {:.0f}% to {:.0f}%.".format(cr["conditions"]["intact"]["numbers_ok"]["mean"] * 100,
+                                                             cr["conditions"]["unet-zero@0.1"]["numbers_ok"]["mean"] * 100),
+               "Language damage removes the whole clock instead (a portrait, a robot, a street), and the clocks it still "
+               "draws keep their numbers at the intact rate."]
+    return {"features": rows, "feature_names": [names[f] for f in feats], "summary": summary}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", default="main")
@@ -104,6 +143,7 @@ def main():
     ap.add_argument("--kinds", nargs="*", default=["chair__rocking_chair:1", "chair__wheelchair:2", "chair__throne:0",
                                                    "chair__high_chair:0"])
     ap.add_argument("--side", type=int, default=256)
+    ap.add_argument("--status", help="JSON object of parts still pending, shown on the page")
     args = ap.parse_args()
     run = DAMAGE_DIR / args.run
     res = json.loads((DAMAGE_DIR / f"results_{args.run}.json").read_text())
@@ -136,7 +176,29 @@ def main():
                             seq.append({"img": URL + name, "label": dose_label(c)})
                     strip.setdefault(fam, {})[t] = seq
         data["clocks"]["strip"] = strip
-    data = to_jsonable(data)
+        data["clocks"].update(clock_table(cr))
+    janus = DAMAGE_DIR / "results_janus.json"
+    if janus.exists():
+        data["janus"] = json.loads(janus.read_text())
+        jdir, seq = DAMAGE_DIR / "janus_draw", []
+        for c in sorted(data["janus"].get("draw", {}), key=lambda c: data["janus"]["draw"][c]["dose"]):
+            src = jdir / c / "chair__wheelchair" / "s0.png"
+            if src.exists():
+                name = f"janus_wheelchair_{c.replace('@', '_')}.webp"
+                save_webp(src, IMG / name, 200, quality=72)
+                seq.append({"img": URL + name, "dose": data["janus"]["draw"][c]["dose"]})
+        data["janus"]["strip"] = seq
+        rd, dr = data["janus"].get("read", {}), data["janus"].get("draw", {})
+        if "lm-zero@0.35" in rd and "lm-zero@0.35" in dr and "intact" in rd and "intact" in dr:
+            data["janus"]["summary"] = (
+                "The same damage takes both, reading first. With 35% of its language neurons off, Janus reads the right "
+                f"kind for {rd['lm-zero@0.35']['correct']['mean'] * 100:.0f}% of doodles (intact "
+                f"{rd['intact']['correct']['mean'] * 100:.0f}%) and draws the asked kind "
+                f"{dr['lm-zero@0.35']['kind_kept']['mean'] * 100:.0f}% of the time (intact "
+                f"{dr['intact']['kind_kept']['mean'] * 100:.0f}%). Its wheelchair becomes a tricycle, then a car.")
+    if args.status:
+        data["status"] = json.loads(args.status)
+    data = finite(to_jsonable(data))
     (WEB / "data").mkdir(parents=True, exist_ok=True)
     (WEB / "data" / "plato_damage.json").write_text(json.dumps(data, separators=(",", ":")))
     public = {k: v for k, v in data.items() if k != "slider"}

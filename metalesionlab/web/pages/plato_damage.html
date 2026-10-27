@@ -56,7 +56,7 @@
     </div>
     <div class="pd-range">
       <label for="level">Damage</label>
-      <input type="range" id="level" min="0" max="4" step="1" value="0" aria-valuetext="intact">
+      <input type="range" id="level" min="0" max="4" step="1" value="3" aria-valuetext="level 3 of 4">
       <output id="level-out" for="level">intact</output>
     </div>
     <figcaption class="pd-cap" id="slider-cap">Stable Diffusion XL, the same starting noise (seed) at every level, so each step shows what the damage did to this one picture. One example picture per kind; the doc shows all of them.</figcaption>
@@ -66,6 +66,7 @@
 <section class="pd-sec" aria-labelledby="diss-h">
   <h2 id="diss-h">The Form or the hand</h2>
   <p class="pd-intro" id="diss-intro">For 8 kinds of chair × 8 seeds we measured two things at each damage level: is it still the kind we asked for (Muse Glimmer reads the picture), and is it still a clean black-on-white line drawing (Glimmer again, and simple pixel counts)? To compare fairly, the two kinds of damage are matched on how much they changed the picture.</p>
+  <p class="pd-verdict" id="diss-primary"></p>
   <div class="pd-tiles" id="diss-tiles"></div>
   <div class="pd-charts" id="diss-charts"></div>
   <div class="pd-legend" id="diss-legend"></div>
@@ -85,6 +86,12 @@
   <div class="pd-glim" id="glim"></div>
 </section>
 
+<section class="pd-sec" aria-labelledby="janus-h" id="janus-sec">
+  <h2 id="janus-h">One model that draws and reads</h2>
+  <p class="pd-intro">Janus-Pro-7B (DeepSeek, open weights) draws pictures and reads them with the same language model. We switched off a share of that language model’s neurons and asked it both to draw chairs and to say which kind of thing Muse Image’s doodles show. Do the two fail together?</p>
+  <div class="pd-janus" id="janus"></div>
+</section>
+
 <section class="pd-sec" aria-labelledby="clock-h">
   <h2 id="clock-h">Clocks</h2>
   <p class="pd-intro">Drawing a clock is an old drawing task in neurology. We asked SDXL for “a simple clock face showing” six different times, intact and damaged, and had Muse Spark read each clock with a checklist we wrote (outline, the 12 numbers in order, two hands, the time shown).</p>
@@ -102,7 +109,7 @@
     <li><b>Pre-registered.</b> Hypotheses, measures and doses were committed before the main runs, after a small pilot that set the dose range.</li>
   </ul>
   <p>Read more: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_damage.md">the write-up</a> and <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_damage_plan.md">the pre-registered plan</a>. The pictures and raw results live outside this repository; the app ships only statistics and the pictures on this page.</p>
-  <p class="pd-credit">Drawer: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M. Doodles of named kinds: Meta Muse Image 1.0. Readers: Meta Muse Glimmer 30B, Muse Spark 1.3. Similarity: Meta DINOv2.</p>
+  <p class="pd-credit">Drawer: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M. Doodles of named kinds: Meta Muse Image 1.0. Readers: Meta Muse Glimmer 30B, Muse Spark 1.3. Similarity: Meta DINOv2. One model that draws and reads: Janus-Pro-7B (DeepSeek), MIT.</p>
 </section>
 
 <div class="note note-error" id="load-error" hidden></div>

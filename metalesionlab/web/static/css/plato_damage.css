@@ -96,6 +96,14 @@ body.plato-damage { background: #F7F6F1; }
 .pd-table td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
 .pd-table th.num { text-align: right; }
 
+.pd-janus { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.pd-janus p { margin: 0 0 10px; font-size: 15px; line-height: 1.6; color: var(--ink-2); }
+.pd-jstrip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.pd-jstrip figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.pd-jstrip img { width: 100%; aspect-ratio: 1; display: block; border-radius: 6px; border: 1px solid var(--line); background: #FCFCFB; }
+.pd-jstrip figcaption { font-size: 12px; color: var(--muted); text-align: center; }
+.pd-pending { margin: 0; font-size: 14px; color: var(--ink-2); background: var(--amber-soft); border: 1px solid #FCD34D; border-radius: 10px; padding: 10px 12px; }
+
 .pd-method { background: var(--soft); }
 .pd-method h2 { font-size: 22px; }
 .pd-method ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.6; color: var(--ink-2); }
@@ -104,7 +112,7 @@ body.plato-damage { background: #F7F6F1; }
 
 @media (max-width: 1000px) {
   .pd-hero { grid-template-columns: minmax(0, 1fr); padding: 24px; }
-  .pd-charts, .pd-proto, .pd-glim, .pd-clocks { grid-template-columns: minmax(0, 1fr); }
+  .pd-charts, .pd-proto, .pd-glim, .pd-clocks, .pd-janus { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
   .pd-hero { padding: 16px; }

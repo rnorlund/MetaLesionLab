@@ -114,6 +114,8 @@ def test_naming_answers_are_cleaned_and_coded():
 
     assert clean_name("The object in this picture is a throne.") == "throne"
     assert clean_name("Rocking chair") == "rocking chair"
+    assert clean_name("The object depicted is a chair.") == "chair"
+    assert clean_name("The object depicted in the image is a car") == "car"
     assert code_name("rockingchair", "chair", "a rocking chair") == "specific"
     assert code_name("Wheelchair", "chair", "a wheelchair") == "specific"
     assert code_name("The object in this picture is a chair.", "chair", "a throne") == "basic"
@@ -176,3 +178,15 @@ def test_damage_route_loads_and_caches_its_statistics(tmp_path):
     f.write_text("[1, 2]")  # not an object
     os.utime(f, ns=(1, 10 ** 18))
     assert load_data(f) is None
+
+
+def test_web_export_drops_nan_for_the_browser():
+    import importlib.util
+    import math
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("pdw", Path(__file__).resolve().parents[1] / "scripts" / "plato_damage_web.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    out = mod.finite({"a": float("nan"), "b": [1.0, math.inf, {"c": 2}], "d": "x"})
+    assert out == {"a": None, "b": [1.0, None, {"c": 2}], "d": "x"}

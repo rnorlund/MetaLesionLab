@@ -5,7 +5,7 @@
   'use strict';
   var NS = 'http://www.w3.org/2000/svg';
   var LANG = '#1D4ED8', DRAW = '#C2410C', GRID = '#E5E7EB', AXIS = '#9CA3AF', INK = '#111827';
-  var S = { data: null, kind: null, method: 'noise', level: 0 };
+  var S = { data: null, kind: null, method: 'noise', level: 3 };  // open on a damaged pair: the striking picture first
   var OUTCOME = { correct: 'the asked kind', plain: 'a plain, ordinary one', other_kind: 'another kind',
                   cant_tell: 'can’t tell, or not one', specific: 'a specific kind' };
 
@@ -100,7 +100,7 @@
   // ---------- charts ----------
   function lineChart(host, opts) {
     // opts: series [{name, colour, dash, points: [{x, y, lo, hi, tip}]}], xlab, ylab, ymin, ymax
-    var W = 440, H = 260, m = { l: 46, r: 92, t: 10, b: 40 };
+    var W = 440, H = 260, m = { l: 46, r: 100, t: 10, b: 40 };
     var xmax = 0, ymin = opts.ymin, ymax = opts.ymax;
     opts.series.forEach(function (se) { se.points.forEach(function (p) {
       xmax = Math.max(xmax, p.x);
@@ -134,7 +134,7 @@
       return { k: k, y: Y(q.y), x: X(q.x) };
     }).sort(function (a, b) { return a.y - b.y; });
     for (var e = 1; e < ends.length; e++) if (ends[e].y - ends[e - 1].y < 13) ends[e].y = ends[e - 1].y + 13;
-    var labelY = {};
+    var labelY = {}, labels = [];
     ends.forEach(function (o) { labelY[o.k] = o.y; });
     opts.series.forEach(function (se, k) {
       var p = se.points;
@@ -162,8 +162,9 @@
         svg.appendChild(dot); svg.appendChild(hit);
       });
       var last = p[p.length - 1];
-      svg.appendChild(s('text', { x: X(last.x) + 8, y: labelY[k] + 4, class: 'dlab' }, se.name));
+      labels.push(s('text', { x: X(last.x) + 8, y: labelY[k] + 4, class: 'dlab' }, se.name));
     });
+    labels.forEach(function (t) { svg.appendChild(t); });  // on top of every line
     host.appendChild(svg);
     host.appendChild(tip);
   }
@@ -204,6 +205,13 @@
   function renderDissociation() {
     var d = S.data, f = famPair(), key = f[0] + ' vs ' + f[1], m = d.matched[key] || {};
     var tiles = $('diss-tiles'); tiles.innerHTML = '';
+    var prim = (d.matched['text-zero vs unet-zero'] || {}).delta_correct;
+    var note = $('diss-primary');
+    if (prim && note) {
+      note.textContent = 'Pre-registered primary test (neurons switched off): at equal picture change, language damage left ' +
+        Math.abs(Math.round(prim.difference * 100)) + ' points fewer chairs that Glimmer reads as the asked kind (' + ciPts(prim.ci95) +
+        '). Showing below: ' + (S.method === 'zero' ? 'neurons switched off (primary).' : 'noise in the neurons (secondary); switch at the top.');
+    }
     tile(tiles, 'Still the kind we asked for (Glimmer), change from intact at matched picture change', m.delta_correct,
       pts, 'language', 'drawing');
     tile(tiles, 'Still a clean line drawing (Glimmer’s yes), change from intact', m.delta_p_clean, pts, 'language', 'drawing');
@@ -269,42 +277,92 @@
   // ---------- Glimmer arm ----------
   function renderGlimmer() {
     var g = S.data.glimmer, host = $('glim');
-    if (!g || !g.conditions) { host.textContent = 'Still running.'; return; }
+    if (!g || !g.conditions) { host.textContent = 'Pending.'; return; }
     host.innerHTML = '';
     var left = el('div'), right = el('div', { class: 'pd-chart' });
-    var vs = g.vs_random || {}, best = null;
-    Object.keys(vs).forEach(function (c) { if (c.indexOf('language') === 0 && (!best || vs[c].plain.lesion > vs[best].plain.lesion)) best = c; });
+    var ml = g.matched_loss || {}, cond = g.conditions || {};
     left.appendChild(el('p', { text: 'Intact, Glimmer picks the right kind for ' + pct(g.intact_accuracy) + ' of ' + g.n_pictures +
-      ' doodles of 22 things. Among the ' + g.n_intact_correct + ' it got right, we counted what the damaged Glimmer says instead.' }));
-    if (best) {
-      var p = vs[best].plain, ct = vs[best].cant_tell;
-      left.appendChild(el('p', { class: 'pd-verdict', text: 'Language-neuron damage: ' + pct(p.lesion) + ' of the specific kinds become “a plain, ordinary one”; random neurons: ' + pct(p.random) + '.' }));
-      left.appendChild(el('p', { text: 'Difference ' + pts(p.difference.mean) + ' (' + ciPts(p.difference.ci95) + '; by thing ' + ciPts(p.difference_by_concept.ci95).replace('95% CI ', '') +
-        '). The same lesion makes “can’t tell” ' + pct(ct.lesion) + ' (random ' + pct(ct.random) + '). That is the semantic-dementia-like pattern: the specific kind falls back to the general one.' }));
+      ' doodles of 22 things. For the ' + g.n_intact_correct + ' it got right, we counted what the damaged Glimmer answers instead. ' +
+      'We only trust an answer that stays the same when the options are listed in reverse order; the rest are letter habits, not readings.' }));
+    var L = [0.1, 0.2, 0.3].map(function (d) { return cond['language-mlp-mean@' + d]; });
+    if (L[0] && L[2]) {
+      left.appendChild(el('p', { class: 'pd-verdict', text: 'When a damaged Glimmer still answers steadily, its mistakes are “a plain, ordinary …”, almost never another specific kind. Language-neuron damage: ' +
+        L.map(function (x) { return pct(x.strict_plain.mean); }).join(', ') + ' of the specific kinds become plain at the three doses.' }));
+    }
+    if (ml['language-mlp-mean']) {
+      var a = ml['language-mlp-mean'].strict_plain, v = ml['visual-mlp-mean'];
+      left.appendChild(el('p', { text: 'That is the semantic-dementia-like fallback from the specific to the general. But it is not special to language neurons: the same number of random neurons, compared at the same loss of right answers, does the same (difference ' +
+        pts(a.difference) + ', ' + ciPts(a.ci95) + ').' +
+        (v ? ' Damage to the seeing neurons is different: almost no plain answers (' + pts(v.strict_plain.difference) + ' vs. random) and many more letter guesses (' + pts(v.strict_order_bias.difference) + ', ' + ciPts(v.strict_order_bias.ci95) + ').' : '') }));
     }
     host.appendChild(left);
     host.appendChild(right);
-    // dot chart: plain rate, lesion vs random, per family and dose
-    var rows = Object.keys(vs).sort();
+    // dot chart: steady "plain" answers, lesion vs its random control, per family and dose
+    var rows = [];
+    ['language', 'naming', 'visual'].forEach(function (f) {
+      [0.1, 0.2, 0.3].forEach(function (d) {
+        var a = cond[f + '-mlp-mean@' + d], b = cond[f + '-mlp-mean-random@' + d];
+        if (a && b) rows.push({ f: f, d: d, a: a.strict_plain.mean, b: b.strict_plain.mean, acc: a.correct.mean, accr: b.correct.mean });
+      });
+    });
     var W = 440, rowH = 22, H = 40 + rows.length * rowH, m = { l: 170, r: 20 };
-    var X = function (v) { return m.l + (W - m.l - m.r) * v; };
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Share of specific kinds called plain, lesion vs random control' });
-    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+    var X = function (v) { return m.l + (W - m.l - m.r) * v / 0.5; };
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Share of specific kinds steadily called plain, lesion vs random control' });
+    [0, 0.1, 0.2, 0.3, 0.4, 0.5].forEach(function (v) {
       svg.appendChild(s('line', { x1: X(v), x2: X(v), y1: 20, y2: H - 10, stroke: GRID }));
       svg.appendChild(s('text', { x: X(v), y: 14, 'text-anchor': 'middle', class: 'lab' }, pct(v)));
     });
-    rows.forEach(function (c, i) {
-      var y = 32 + i * rowH, v = vs[c];
-      var fam = c.split('-')[0], dose = c.split('@')[1];
-      svg.appendChild(s('text', { x: m.l - 8, y: y + 4, 'text-anchor': 'end', class: 'dlab' }, fam + ' neurons, top ' + Math.round(dose * 100) + '%'));
-      svg.appendChild(s('line', { x1: X(v.plain.random), x2: X(v.plain.lesion), y1: y, y2: y, stroke: AXIS }));
-      svg.appendChild(s('circle', { cx: X(v.plain.random), cy: y, r: 4.5, fill: '#fff', stroke: LANG, 'stroke-width': 2 }));
-      svg.appendChild(s('circle', { cx: X(v.plain.lesion), cy: y, r: 5, fill: LANG, stroke: '#fff', 'stroke-width': 1.5 }));
+    var NAME = { language: 'language', naming: 'naming', visual: 'seeing' };
+    rows.forEach(function (r, i) {
+      var y = 32 + i * rowH;
+      svg.appendChild(s('text', { x: m.l - 8, y: y + 4, 'text-anchor': 'end', class: 'dlab' }, NAME[r.f] + ' neurons, top ' + Math.round(r.d * 100) + '%'));
+      svg.appendChild(s('line', { x1: X(r.b), x2: X(r.a), y1: y, y2: y, stroke: AXIS }));
+      var c1 = s('circle', { cx: X(r.b), cy: y, r: 4.5, fill: '#fff', stroke: LANG, 'stroke-width': 2 });
+      var c2 = s('circle', { cx: X(r.a), cy: y, r: 5, fill: LANG, stroke: '#fff', 'stroke-width': 1.5 });
+      c1.appendChild(s('title', {}, 'random neurons: ' + pct(r.b) + ' plain; ' + pct(r.accr) + ' still right'));
+      c2.appendChild(s('title', {}, NAME[r.f] + ' neurons: ' + pct(r.a) + ' plain; ' + pct(r.acc) + ' still right'));
+      svg.appendChild(c1); svg.appendChild(c2);
     });
-    right.appendChild(el('h3', { text: 'Specific kinds now called “a plain, ordinary …”' }));
+    right.appendChild(el('h3', { text: 'Specific kinds now steadily called “a plain, ordinary …”' }));
     right.appendChild(svg);
-    right.appendChild(el('div', { class: 'pd-legend' }, [el('span', {}, [el('i', { style: 'border-color:' + LANG + ';width:10px;height:10px;border-radius:50%;background:' + LANG + ';border:0' }), 'targeted lesion']),
+    right.appendChild(el('div', { class: 'pd-legend' }, [el('span', {}, [el('i', { style: 'width:10px;height:10px;border-radius:50%;background:' + LANG + ';border:0' }), 'targeted neurons']),
       el('span', {}, [el('i', { style: 'width:10px;height:10px;border-radius:50%;border:2px solid ' + LANG }), 'same number of random neurons'])]));
+  }
+
+  // ---------- Janus: one model draws and reads ----------
+  function renderJanus() {
+    var j = S.data.janus, host = $('janus');
+    if (!j || !j.read) { host.textContent = 'Pending.'; return; }
+    host.innerHTML = '';
+    var doses = {};
+    Object.keys(j.read).forEach(function (c) { doses[j.read[c].dose] = doses[j.read[c].dose] || {}; doses[j.read[c].dose].read = j.read[c]; });
+    Object.keys(j.draw || {}).forEach(function (c) { doses[j.draw[c].dose] = doses[j.draw[c].dose] || {}; doses[j.draw[c].dose].draw = j.draw[c]; });
+    var tb = el('table', { class: 'pd-table' });
+    tb.appendChild(el('thead', {}, el('tr', {}, [el('th', { text: 'Neurons switched off' }),
+      el('th', { class: 'num', text: 'reads the right kind' }), el('th', { class: 'num', text: 'draws the asked kind' }),
+      el('th', { class: 'num', text: 'drawing changed' })])));
+    var body = el('tbody');
+    Object.keys(doses).map(Number).sort(function (a, b) { return a - b; }).forEach(function (d) {
+      var r = doses[d].read, w = doses[d].draw;
+      body.appendChild(el('tr', {}, [el('td', { text: d ? Math.round(d * 100) + '%' : 'none (intact)' }),
+        el('td', { class: 'num', text: r ? pct(r.correct.mean) + ' of ' + r.n : '–' }),
+        el('td', { class: 'num', text: w ? pct(w.kind_kept.mean) + ' of ' + w.n : 'pending' }),
+        el('td', { class: 'num', text: w ? f2(w.d_intact.mean) : '–' })]));
+    });
+    tb.appendChild(body);
+    var left = el('div');
+    if (j.summary) left.appendChild(el('p', { class: 'pd-verdict', text: j.summary }));
+    left.appendChild(tb);
+    left.appendChild(el('p', { class: 'pd-caveat', text: 'Reading: 40 Muse Image doodles of named chairs, hats and birds, multiple choice. Drawing: 8 chair kinds and the plain chair × 4 seeds; “draws the asked kind” means the drawing sits nearest its own kind among the intact drawings (DINOv2). Small n: a first look.' }));
+    host.appendChild(left);
+    if (j.strip && j.strip.length) {
+      var strip = el('div', { class: 'pd-jstrip' });
+      j.strip.forEach(function (p) {
+        strip.appendChild(el('figure', {}, [el('img', { src: p.img, alt: 'Janus-Pro asked for a wheelchair, ' + (p.dose ? Math.round(p.dose * 100) + '% of language neurons off' : 'intact'), loading: 'lazy' }),
+          el('figcaption', { text: p.dose ? Math.round(p.dose * 100) + '% off' : 'intact' })]));
+      });
+      host.appendChild(strip);
+    }
   }
 
   // ---------- clocks ----------
@@ -344,6 +402,16 @@
     host.appendChild(right);
   }
 
+  // parts of the experiment still running are named, never guessed
+  function renderStatus() {
+    var st = S.data.status;
+    if (!st) return;
+    Object.keys(st).forEach(function (id) {
+      var host = $(id);
+      if (host) host.insertBefore(el('p', { class: 'pd-pending', text: st[id] }), host.firstChild);
+    });
+  }
+
   function boot() {
     fetch('/api/plato/damage').then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -355,7 +423,9 @@
       renderDissociation();
       renderProto();
       renderGlimmer();
+      renderJanus();
       renderClocks();
+      renderStatus();
     }).catch(function (e) {
       var n = $('load-error');
       n.hidden = false;

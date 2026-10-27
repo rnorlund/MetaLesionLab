@@ -11,6 +11,8 @@ Writes to $DAMAGE_DIR/figures/:
   clocks_<method>.png        clock faces across the damage levels
   clock_features.{png,svg}   which clock features survive each kind of damage
   glimmer_arm.{png,svg}      what a damaged Glimmer calls Muse Image's named-kind doodles
+  series_card.webp           the series card (intact, language damaged, drawing damaged)
+With --run pilot every file name starts with pilot_ (melt grids need all 8 kinds, so only the main run).
 """
 import argparse
 import json
@@ -77,14 +79,14 @@ def strip_figure(run: Path, rows: list[tuple[str, list[str], str, int]], out: Pa
     print(out)
 
 
-def fig_hero(run: Path, figs: Path, key: str, seed: int, method: str) -> None:
+def fig_hero(run: Path, figs: Path, key: str, seed: int, method: str, prefix: str = "") -> None:
     rows = []
     for site in ("text", "unet"):
         fam = f"{site}-{method}"
         rows.append((("Language part" if site == "text" else "Drawing part") + "\n" + METHOD[method], levels(run, fam),
                      key, seed))
     kind = BY_KEY[key].kind
-    strip_figure(run, rows, figs / f"hero_{key.split('__')[1]}_{method}.png",
+    strip_figure(run, rows, figs / f"{prefix}hero_{key.split('__')[1]}_{method}.png",
                  col_labels=["intact", "level 1", "level 2", "level 3", "level 4"],
                  title=f"SDXL asked for {kind}, the same seed at each damage level")
 
@@ -144,6 +146,7 @@ def fig_lines(res: dict, figs: Path, panels: list[tuple[str, str, float]], name:
     axes = np.atleast_1d(axes)
     for ax, (measure, ylab, offset) in zip(axes, panels):
         _style(ax)
+        ends = []
         for fam in families:
             x, y, lo, hi = _curve(table, fam, measure)
             if len(x) < 2:
@@ -152,10 +155,16 @@ def fig_lines(res: dict, figs: Path, panels: list[tuple[str, str, float]], name:
             ls = "-" if fam.endswith("zero") else (0, (4, 2))
             ax.fill_between(x, lo + offset, hi + offset, color=colour, alpha=0.10, lw=0)
             ax.plot(x, y + offset, color=colour, ls=ls, lw=2, marker="o", ms=4, mec="white", mew=1)
-            ax.annotate(("language" if fam.startswith("text") else "drawing") + (", off" if fam.endswith("zero")
-                                                                                   else ", noise"),
-                        (x[-1], y[-1] + offset), xytext=(4, 0), textcoords="offset points", fontsize=8, color=INK,
-                        va="center")
+            ends.append([x[-1], y[-1] + offset, ("language" if fam.startswith("text") else "drawing")
+                         + (", off" if fam.endswith("zero") else ", noise")])
+        lo_y, hi_y = ax.get_ylim()
+        gap = 0.06 * (hi_y - lo_y)
+        ends.sort(key=lambda e: e[1])
+        for i in range(1, len(ends)):  # direct labels never overlap
+            if ends[i][1] - ends[i - 1][1] < gap:
+                ends[i][1] = ends[i - 1][1] + gap
+        for xe, ye, text in ends:
+            ax.annotate(text, (xe, ye), xytext=(5, 0), textcoords="offset points", fontsize=8, color=INK, va="center")
         ax.set_xlabel("how much the picture changed\n(DINOv2 distance to its intact twin)", fontsize=9, color=MUTED)
         ax.set_ylabel(ylab, fontsize=9, color=MUTED)
         ax.set_xlim(0, None)
@@ -168,30 +177,110 @@ def fig_lines(res: dict, figs: Path, panels: list[tuple[str, str, float]], name:
     print(figs / f"{name}.png")
 
 
+def fig_card(run: Path, out: Path, key: str = "chair__rocking_chair", seed: int = 1,
+             lang: str = "text-noise@0.75", draw: str = "unet-noise@0.9") -> None:
+    """The series card (about 1200 x 675, under 120 KB): intact | language damaged | drawing damaged."""
+    W, H, side, top = 1200, 675, 360, 150
+    card = Image.new("RGB", (W, H), "#F7F6F1")
+    d = ImageDraw.Draw(card)
+    d.text((40, 30), "Damage the painter", fill=INK, font=font(46))
+    d.text((40, 90), "SDXL asked for a rocking chair, the same seed each time", fill=MUTED, font=font(24))
+    xs = [30, 420, 810]
+    for x, (cond, label, colour) in zip(xs, [("intact", "intact", INK), (lang, "language part damaged", LANG),
+                                             (draw, "drawing part damaged", DRAW)]):
+        im = picture(run, cond, key, seed, side)
+        if im is not None:
+            card.paste(im, (x, top))
+        d.rectangle((x, top + side, x + side, top + side + 6), fill=colour)
+        d.text((x, top + side + 18), label, fill=colour, font=font(28))
+    d.text((40, H - 60), "Language damage changes what it draws. Drawing damage changes how.", fill=INK, font=font(26))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    card.save(out, "WEBP", quality=70, method=6)
+    print(out, f"{out.stat().st_size / 1e3:.0f} kB")
+
+
+def fig_glimmer(res: dict, figs: Path) -> None:
+    """Damaged Glimmer: share of intact-correct named kinds now called 'a plain, ordinary ...', per lesion
+    (filled) against its random control (open), and 'can't tell' alongside."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    conds = [c for c in res.get("conditions", {}) if c != "intact" and "-random@" not in c]
+    conds = sorted(conds, key=lambda c: (c.split("@")[0], float(c.split("@")[1])))
+    if not conds:
+        return
+    fig, ax = plt.subplots(figsize=(7.2, 0.5 * len(conds) + 1.4), dpi=150)
+    _style(ax)
+    ax.grid(axis="x", color=GRID, lw=0.8)
+    ax.grid(axis="y", visible=False)
+    for i, c in enumerate(conds):
+        row = res["conditions"][c]
+        y = len(conds) - 1 - i
+        ax.plot(row["strict_plain"]["mean"], y, "o", color=LANG, ms=8, mec="white", mew=1.2, zorder=3)
+        f, dose = c.split("@")
+        ctrl = res["conditions"].get(f"{f}-random@{dose}")
+        if ctrl:
+            r = ctrl["strict_plain"]["mean"]
+            ax.plot([r, row["strict_plain"]["mean"]], [y, y], color="#9CA3AF", lw=1.2, zorder=1)
+            ax.plot(r, y, "o", mfc="white", mec=LANG, mew=2, ms=7, zorder=2)
+        ax.plot(row["strict_order_bias"]["mean"], y, "s", color=DRAW, ms=6, mec="white", mew=1, zorder=3)
+    fam = {"language": "language", "naming": "naming", "visual": "seeing", "early": "noise, layers 9–16",
+           "late": "noise, layers 41–48"}
+    labels = []
+    for c in conds:
+        f, dose = c.split("@")
+        kind = f.split("-")[0]
+        labels.append(f"{fam.get(kind, kind)} neurons, top {float(dose) * 100:g}%" if "mlp" in f
+                      else f"{fam.get(kind, kind)} × {dose}")
+    ax.set_yticks(range(len(conds)))
+    ax.set_yticklabels(labels[::-1], fontsize=9, color=INK)
+    ax.set_xlim(0, 1)
+    ax.set_xlabel("share of the kinds Glimmer got right when intact", fontsize=9, color=MUTED)
+    ax.set_title("Damaged Glimmer reads Muse Image's named kinds: steady “a plain, ordinary …” answers (●), its random\n"
+                 "control (○), and answers that flip with the option order, i.e. letter guesses (■)", fontsize=9, color=INK,
+                 loc="left")
+    fig.tight_layout()
+    for ext in ("png", "svg"):
+        fig.savefig(figs / f"glimmer_arm.{ext}", bbox_inches="tight")
+    plt.close(fig)
+    print(figs / "glimmer_arm.png")
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--run", default="main")
+    ap.add_argument("--run", default="main", help="main, or pilot while the main run is not fetched")
     ap.add_argument("--clocks", default="clocks")
     ap.add_argument("--hero", nargs="*", default=["chair__rocking_chair:1", "chair__wheelchair:2"],
                     help="key:seed pairs for hero strips")
     args = ap.parse_args()
     run, figs = DAMAGE_DIR / args.run, DAMAGE_DIR / "figures"
     figs.mkdir(parents=True, exist_ok=True)
+    tag = "" if args.run == "main" else f"{args.run}_"
     for spec in args.hero:
         key, seed = spec.split(":")
         for method in ("zero", "noise"):
-            fig_hero(run, figs, key, int(seed), method)
-    for fam in ("text-zero", "unet-zero", "text-noise", "unet-noise"):
-        fig_melt(run, figs, fam)
+            fig_hero(run, figs, key, int(seed), method, prefix=tag)
+    all_kinds = all((run / "intact" / p.key).exists() for p in BY_KEY.values() if p.concept == "chair")
+    if all_kinds:
+        for fam in ("text-zero", "unet-zero", "text-noise", "unet-noise"):
+            fig_melt(run, figs, fam)
+    fig_card(run, figs / f"{tag}series_card.webp")
     res_path = DAMAGE_DIR / f"results_{args.run}.json"
     if res_path.exists():
         res = json.loads(res_path.read_text())
+        n = "8 chair kinds × 8 seeds" if args.run == "main" else f"{args.run}: 2 chair kinds × 4 seeds"
         fig_lines(res, figs, [("delta_correct", "share still the asked kind (Glimmer)", 1.0),
                               ("delta_p_clean", "change in P(clean line drawing) (Glimmer)", 0.0)],
-                  "dissociation", title="What it is vs. how it is drawn, as damage grows (8 chair kinds × 8 seeds)")
+                  f"{tag}dissociation", title=f"What it is vs. how it is drawn, as damage grows ({n})")
         fig_lines(res, figs, [("delta_d_proto", "change in distance to the plain chair", 0.0),
-                              ("delta_drift", "drift index (d_kind − d_proto), change", 0.0)],
-                  "prototype", title="Does a damaged rocking chair turn into the plain chair?")
+                              ("delta_p_is_a", "change in P(\"is this a chair?\") (Glimmer)", 0.0)],
+                  f"{tag}prototype", title="Away from Plato's chair: distance to the plain chair, and whether it is a "
+                                           "chair at all")
+    arm = DAMAGE_DIR / "results_glimmer_arm.json"
+    if arm.exists():
+        fig_glimmer(json.loads(arm.read_text()), figs)
     clocks = DAMAGE_DIR / args.clocks
     if clocks.exists():
         for method in ("zero", "noise"):

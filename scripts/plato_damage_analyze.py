@@ -223,7 +223,7 @@ def summarize(rows: list[dict], concept: str | None = "chair") -> None:
               f"{f('midtone'):7.3f}")
 
 
-FAMILY_PAIRS = [("text-zero", "unet-zero"), ("text-noise", "unet-noise")]
+FAMILY_PAIRS = [("text-zero", "unet-zero"), ("text-noise", "unet-noise"), ("text-spec", "text-spec-random")]  # predicted signs: first two pairs only
 TARGETED_PAIR = ("text-spec", "text-spec-random")
 # Matched-severity contrasts, language minus drawing; the sign each hypothesis predicts.
 CONTRASTS = {
@@ -238,9 +238,14 @@ CONTRASTS = {
     "delta_drift_other": ("drift toward the other kinds", 0),
     "is_plain": ("H3 labeled 'a plain, ordinary ...'", +1),
     "is_cant": ("labeled 'can't tell, or not a ...'", -1),
+    # exploratory (not in the plan): what Glimmer names the picture, one word
+    "name_kind": ("named as the asked kind", 0),
+    "name_other_object": ("named as some other object (car, bicycle, man ...)", 0),
+    "name_no_object": ("named as no object (abstract, pattern, illusion ...)", 0),
 }
 TABLE_MEASURES = ["d_intact", "delta_correct", "is_plain", "is_cant", "is_other", "delta_p_is_a", "delta_p_clean",
-                  "p_clean", "delta_d_proto", "delta_drift", "delta_tau", "colorfulness", "midtone", "ink"]
+                  "p_clean", "delta_d_proto", "delta_drift", "delta_tau", "colorfulness", "midtone", "ink",
+                  "name_kind", "name_other_object", "name_no_object"]
 
 
 def merge_labels(rows: list[dict], labels_dir: Path) -> None:
@@ -260,7 +265,9 @@ def merge_labels(rows: list[dict], labels_dir: Path) -> None:
         r["outcome"] = kind_outcome(it["label"], it["true_kind"], n_kinds)
         r["p_is_a"], r["p_clean"], r["said"] = it.get("p_is_a"), it.get("p_clean"), it.get("said")
         r["name_category"] = name_category(it.get("said"), r["concept"], r["kind"])
-    base = {(r["key"], r["seed_index"]): r for r in rows if r["condition"] == "intact"}
+        for cat in ("kind", "other_object", "no_object"):
+            r[f"name_{cat}"] = float(r["name_category"] == cat)
+    base = {(r["key"], r["seed_index"]): dict(r) for r in rows if r["condition"] == "intact"}  # copies: levels
     for r in rows:
         b = base.get((r["key"], r["seed_index"]))
         if not b or "outcome" not in r or "outcome" not in b:
@@ -268,6 +275,8 @@ def merge_labels(rows: list[dict], labels_dir: Path) -> None:
         for k in ("p_is_a", "p_clean"):
             if r.get(k) is not None and b.get(k) is not None:
                 r[f"delta_{k}"] = r[k] - b[k]
+        for cat in ("kind", "other_object", "no_object"):  # names as changes from the intact twin
+            r[f"name_{cat}"] = r[f"name_{cat}"] - b[f"name_{cat}"] if r["condition"] != "intact" else 0.0
         target = "plain" if r["plain"] else "correct"
         if b["outcome"] == target:  # outcome measures only for pictures read right when intact
             r["delta_correct"] = float(r["outcome"] == target) - 1.0
@@ -455,7 +464,10 @@ def glimmer_arm_stats(arm_dir: Path, rng) -> dict:
             kinds = kinds_of(it["key"])
             kind = kinds[it["true_kind"]] if it["true_kind"] < len(kinds) else ""
             basic = it["key"].replace("_", " ") if it["key"] != "yoga" else "person"
-            out[(it["key"], it["file"])] = {"outcome": o, "name": code_name(it.get("said"), basic, kind),
+            # strict: an answer that changes with the option order is a letter habit, not a reading
+            strict = o if it["label_fwd"] == it["label_rev"] else "order_bias"
+            out[(it["key"], it["file"])] = {"outcome": o, "strict": strict,
+                                            "name": code_name(it.get("said"), basic, kind),
                                             "said": it.get("said"), "key": it["key"]}
         return out
 
@@ -474,6 +486,8 @@ def glimmer_arm_stats(arm_dir: Path, rng) -> dict:
              for k in ("correct", "plain", "cant_tell", "other_kind")}
         m.update({f"name_{k}": np.array([float(cur[u]["name"] == k) if u in cur else np.nan for u in keep])
                   for k in ("specific", "basic", "other", "empty")})
+        m.update({f"strict_{k}": np.array([float(cur[u]["strict"] == k) if u in cur else np.nan for u in keep])
+                  for k in ("correct", "plain", "other_kind", "cant_tell", "order_bias")})
         ind[cond] = m
         row = {k: boot_mean_ci(v, reps=2000, rng=rng) for k, v in m.items()}
         errors = m["plain"] + m["cant_tell"] + m["other_kind"]
@@ -501,7 +515,54 @@ def glimmer_arm_stats(arm_dir: Path, rng) -> dict:
     res["chair"] = {cond: {k: float(np.nanmean(v[chair])) for k, v in m.items()} for cond, m in ind.items()} \
         if chair else {}
     res["chair_n"] = len(chair)
+    # Letter check: "plain" is always the second-to-last option, but its letter depends on how many kinds
+    # a thing has (12 kinds: M; 16 kinds: Q). A damaged model that just favours one letter would raise
+    # "plain" for one group only.
+    n_kinds = np.array([next(it["n_kinds"] for it in conds["intact"]["items"] if (it["key"], it["file"]) == u)
+                        for u in keep])
+    res["plain_by_letter"] = {cond: {f"{int(k)} kinds": float(np.nanmean(m["plain"][n_kinds == k]))
+                                     for k in np.unique(n_kinds)} for cond, m in ind.items()}
+    res["status"] = {"conditions_done": sorted(conds), "n_done": len(conds)}
+    res["matched_loss"] = arm_matched_loss(ind, rng)
     return res
+
+
+def arm_matched_loss(ind: dict, rng, reps: int = 2000) -> dict:
+    """Exploratory (not in the plan): a targeted lesion and its random control compared at the SAME loss
+    of correct kinds rather than the same unit count. For each, the share called "plain" (and "can't
+    tell", "another kind") is read off its loss curve (intact = 0) at losses both reach; paired bootstrap
+    over pictures."""
+    from metalesionlab.plato_damage import matched_contrast, matched_targets
+
+    out = {}
+    n = len(next(iter(ind.values()))["correct"])
+    for fam in ("language-mlp-mean", "naming-mlp-mean", "visual-mlp-mean"):
+        doses = sorted(float(c.split("@")[1]) for c in ind if c.startswith(fam + "@"))
+        if not doses or not all(f"{fam}-random@{d:g}" in ind for d in doses):
+            continue
+
+        def curves(idx, family):
+            loss = [1 - np.nanmean(ind[f"{family}@{d:g}"]["correct"][idx]) for d in doses]
+            vals = {k: [np.nanmean(ind[f"{family}@{d:g}"][k][idx]) for d in doses]
+                    for k in ("plain", "cant_tell", "other_kind", "strict_plain", "strict_other_kind", "strict_order_bias")}
+            return loss, vals
+
+        all_i = np.arange(n)
+        la, va = curves(all_i, fam)
+        lb, vb = curves(all_i, fam + "-random")
+        targets = matched_targets(la, lb)
+        row = {"targets_loss": targets}
+        for k in ("plain", "cant_tell", "other_kind", "strict_plain", "strict_other_kind", "strict_order_bias"):
+            est = matched_contrast(la, va[k], lb, vb[k], targets)
+            boots = []
+            for _ in range(reps):
+                i = rng.integers(0, n, n)
+                a_l, a_v = curves(i, fam)
+                b_l, b_v = curves(i, fam + "-random")
+                boots.append(matched_contrast(a_l, a_v[k], b_l, b_v[k], targets))
+            row[k] = {"difference": est, "ci95": [float(np.quantile(boots, 0.025)), float(np.quantile(boots, 0.975))]}
+        out[fam] = row
+    return out
 
 
 def cmd_glimmer(args):
@@ -551,6 +612,12 @@ def clock_stats(run: Path, rng) -> dict:
         for k, _ in CLOCK_FEATURES:
             row[k] = boot_mean_ci(np.array([float(bool(r[k])) for r in x]), reps=2000, rng=rng)
         row["total"] = boot_mean_ci(np.array([r["total"] for r in x], float), reps=2000, rng=rng)
+        # among pictures that are still clocks: are the numbers still there? (layout given the object)
+        clocks = [r for r in x if r["clock"]]
+        row["numbers_given_clock"] = boot_mean_ci(np.array([float(bool(r["numbers_ok"])) for r in clocks]),
+                                                  reps=2000, rng=rng)
+        row["two_hands_given_clock"] = boot_mean_ci(np.array([float(bool(r["two_hands"])) for r in clocks]),
+                                                    reps=2000, rng=rng)
         out["conditions"][cond] = row
     intact = [r for r in rows if r["condition"] == "intact" and r["parsed"]]
     not1010 = [r for r in intact if r["time"] != "10:10"]
@@ -599,6 +666,65 @@ def cmd_clockstats(args):
         print(f"  {fam}: first below half of intact: {v['first_below_half']}")
 
 
+def janus_stats(read_dir: Path, draw_dir: Path, rng) -> dict:
+    """Stretch: Janus-Pro-7B draws and reads with one language model. Same damage (lm-zero) for both.
+    Reading: the kind question on Muse Image's named-kind doodles (chair, hat, bird). Drawing: chair kinds
+    and the plain chair; 'kind kept' = the damaged picture's nearest intact centroid (DINOv2, leave-one-
+    seed-out, among the 9 chair prompts) is its own prompt's; d_intact as in the SDXL arm."""
+    from metalesionlab.plato import Embedder
+    from metalesionlab.plato_damage import boot_mean_ci, centroid, cos_dist, kind_outcome
+
+    out = {"model": "deepseek-community/Janus-Pro-7B (DeepSeek, MIT)", "read": {}, "draw": {}}
+    for f in sorted(read_dir.glob("*.json")):
+        d = json.loads(f.read_text())
+        oc = [kind_outcome(r["label"], r["true_kind"], r["n_kinds"]) for r in d["items"]]
+        out["read"][d["condition"]] = {"dose": d["dose"], "n": len(oc),
+                                       **{k: boot_mean_ci(np.array([float(o == k) for o in oc]), reps=2000, rng=rng)
+                                          for k in ("correct", "plain", "other_kind", "cant_tell")}}
+    conds = sorted([p.name for p in draw_dir.iterdir() if p.is_dir()], key=lambda c: (c != "intact", c)) \
+        if draw_dir.exists() else []
+    if "intact" not in conds:
+        return out
+    keys = sorted(p.name for p in (draw_dir / "intact").iterdir() if p.is_dir())
+    embed = Embedder()
+    emb = {}
+    for c in conds:
+        for k in keys:
+            files = sorted((draw_dir / c / k).glob("s*.png"), key=lambda p: int(p.stem[1:]))
+            if files:
+                emb[(c, k)] = embed([ink_crop(Image.open(x).convert("RGB")) for x in files])["cls"]
+    for c in conds:
+        kept, dist = [], []
+        for k in keys:
+            if (c, k) not in emb or ("intact", k) not in emb:
+                continue
+            e, e0 = emb[(c, k)], emb[("intact", k)]
+            n = min(len(e), len(e0))
+            for i in range(n):
+                cents = {kk: centroid(emb[("intact", kk)], leave_out=i if i < len(emb[("intact", kk)]) else None)
+                         for kk in keys if ("intact", kk) in emb}
+                best = min(cents, key=lambda kk: cos_dist(e[i:i + 1], cents[kk])[0])
+                kept.append(float(best == k))
+                dist.append(float(cos_dist(e[i:i + 1], e0[i])[0]))
+        dose = 0.0 if c == "intact" else float(c.split("@")[1])
+        out["draw"][c] = {"dose": dose, "n": len(kept), "kind_kept": boot_mean_ci(np.array(kept), reps=2000, rng=rng),
+                          "d_intact": boot_mean_ci(np.array(dist), reps=2000, rng=rng)}
+    return out
+
+
+def cmd_janus(args):
+    from metalesionlab.plato import to_jsonable
+
+    rng = np.random.default_rng(20261030)
+    res = janus_stats(DAMAGE_DIR / "janus_read", DAMAGE_DIR / "janus_draw", rng)
+    (DAMAGE_DIR / "results_janus.json").write_text(json.dumps(to_jsonable(res), indent=1))
+    for c, r in res["read"].items():
+        print(f"read {c:14s} correct {r['correct']['mean']:.2f} {r['correct']['ci95']} plain {r['plain']['mean']:.2f}")
+    for c, r in res["draw"].items():
+        print(f"draw {c:14s} kind kept {r['kind_kept']['mean']:.2f} {r['kind_kept']['ci95']} "
+              f"d_intact {r['d_intact']['mean']:.2f} (n {r['n']})")
+
+
 def cmd_clocks(args):
     """Muse Spark (vision, minimal reasoning) scores each clock with plato_damage.CLOCK_RUBRIC. Resumable;
     every call goes in the shared ledger ($MLL_LEDGER) and in RUN/clock_spend.jsonl, and scoring stops
@@ -617,15 +743,21 @@ def cmd_clocks(args):
         files = [f for f in files if f.parent.parent.name in args.conditions]
     if args.limit:
         files = files[:args.limit]
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
     api = MetaAPI()
     api.client = api.client.with_options(timeout=120, max_retries=2)
-    for f in files:
+    lock, stop = threading.Lock(), threading.Event()
+
+    def score(f):
         name = f"{f.parent.parent.name}/{f.parent.name}/{f.name}"
-        if name in done:
-            continue
-        if mine() > args.budget - 0.01 or spent() > args.shared_stop:
-            print(f"budget reached (mine ${mine():.2f}, project ${spent():.2f}); stopping")
-            break
+        if name in done or stop.is_set():
+            return
+        with lock:  # the cap is checked before every call (a few calls in flight can pass it by cents)
+            if mine() > args.budget - 0.01 or spent() > args.shared_stop:
+                stop.set()
+                return
         im = Image.open(f).convert("RGB")
         im.thumbnail((args.side, args.side))
         buf = io.BytesIO()
@@ -640,15 +772,21 @@ def cmd_clocks(args):
                 print(f"  {name} attempt {attempt + 1}: {type(e).__name__}", flush=True)
                 time.sleep(10 * 2 ** attempt)
         else:
-            continue
+            return
         usd = token_cost(CHAT_MODEL, resp.usage)
-        with log.open("a") as fh:
-            fh.write(json.dumps({"ts": round(time.time(), 1), "usd": usd, "file": name}) + "\n")
         text = (resp.choices[0].message.content or "").strip()
-        done[name] = {"raw": text[:600], "rubric": parse_clock_json(text)}
-        out_path.write_text(json.dumps(done, indent=0))
-        if len(done) % 25 == 0:
-            print(f"{len(done)} scored; this experiment ${mine():.3f}", flush=True)
+        with lock:
+            with log.open("a") as fh:
+                fh.write(json.dumps({"ts": round(time.time(), 1), "usd": usd, "file": name}) + "\n")
+            done[name] = {"raw": text[:600], "rubric": parse_clock_json(text)}
+            out_path.write_text(json.dumps(done, indent=0))
+            if len(done) % 25 == 0:
+                print(f"{len(done)} scored; this experiment ${mine():.3f}", flush=True)
+
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        list(pool.map(score, files))
+    if stop.is_set():
+        print(f"budget reached (mine ${mine():.2f}, project ${spent():.2f}); stopped")
     print(f"{len(done)} clocks scored; this experiment ${mine():.3f}; project ${spent():.2f}")
 
 
@@ -692,11 +830,14 @@ def main():
     p = sub.add_parser("clockstats")
     p.add_argument("run")
     p.set_defaults(fn=cmd_clockstats)
+    p = sub.add_parser("janus")
+    p.set_defaults(fn=cmd_janus)
     p = sub.add_parser("clocks")
     p.add_argument("run")
     p.add_argument("--conditions", nargs="*")
     p.add_argument("--limit", type=int)
     p.add_argument("--side", type=int, default=384)
+    p.add_argument("--workers", type=int, default=4)
     p.add_argument("--budget", type=float, default=2.5, help="this experiment's cap in USD")
     p.add_argument("--shared-stop", type=float, default=70.0)
     p.set_defaults(fn=cmd_clocks)

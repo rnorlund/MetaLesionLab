@@ -71,11 +71,18 @@ def draw(model, processor, prompt: str, seed: int):
 
     messages = [{"role": "user", "content": [{"type": "text", "text": prompt}]}]
     text = processor.apply_chat_template(messages, add_generation_prompt=True)
-    inputs = processor(text=text, generation_mode="image", return_tensors="pt").to(model.device, dtype=torch.bfloat16)
+    # a list: a bare string would be read as a batch of characters
+    inputs = processor(text=[text], generation_mode="image", return_tensors="pt").to(model.device, dtype=torch.bfloat16)
     torch.manual_seed(seed)
-    out = model.generate(**inputs, num_return_sequences=1, generation_mode="image", do_sample=True, use_cache=True)
-    img = model.decode_image_tokens(out)
-    return processor.postprocess(list(img.float()), return_tensors="PIL.Image.Image")["pixel_values"][0]
+    out = model.generate(**inputs, num_return_sequences=1, generation_mode="image", do_sample=True, use_cache=True,
+                         max_new_tokens=576)
+    img = model.decode_image_tokens(out).float()[0]  # (3, H, W) or (H, W, 3), values in [-1, 1]
+    if img.shape[0] == 3:
+        img = img.permute(1, 2, 0)
+    arr = ((img.clamp(-1, 1) + 1) * 127.5).round().byte().cpu().numpy()
+    from PIL import Image
+
+    return Image.fromarray(arr)
 
 
 def letter_ids(tok, n: int) -> list[list[int]]:
@@ -93,9 +100,10 @@ def letter_ids(tok, n: int) -> list[list[int]]:
 def mcq(model, processor, image, question: str, n_options: int) -> np.ndarray:
     import torch
 
-    messages = [{"role": "user", "content": [{"type": "image", "image": image}, {"type": "text", "text": question}]}]
-    inputs = processor.apply_chat_template(messages, add_generation_prompt=True, generation_mode="text", tokenize=True,
-                                           return_dict=True, return_tensors="pt").to(model.device, dtype=torch.bfloat16)
+    messages = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": question}]}]
+    text = processor.apply_chat_template(messages, add_generation_prompt=True)
+    inputs = processor(text=[text], images=[image], generation_mode="text", return_tensors="pt").to(
+        model.device, dtype=torch.bfloat16)
     with torch.no_grad():
         logits = model(**inputs).logits[0, -1].float()
     logp = torch.log_softmax(logits, -1)
