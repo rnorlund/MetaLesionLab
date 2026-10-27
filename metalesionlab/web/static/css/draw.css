@@ -106,5 +106,7 @@ body.draw { background: #F7F6F1; }
   .dw-sec { padding: 20px 18px; }
   .dw-near { gap: 8px; }
   .dw-actions #go { margin-left: 0; flex: 1 1 100%; }
+  /* On a phone the site's tour invitation would sit on top of the drawing pad; the Demo button still starts it. */
+  body.draw .tour-offer { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .dw-results { scroll-behavior: auto; } }
