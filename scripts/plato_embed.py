@@ -6,6 +6,9 @@ Doodles (AI and human) are ink-cropped to a square first (see plato.ink_crop); p
 Embeddings are cached per concept in $PLATO_DIR/embeddings/<source>/<key>.npz with the file list,
 the CLS token and the mean patch token; a concept is re-embedded only when its files or PREP change.
 Sources: ai_doodle (and ai_photo, ai_sdxl_doodle if present) and human. Runs on this Mac (MPS or CPU), never on a GPU server.
+The variety experiment adds ai_doodle_any, ai_doodle_unusual and ai_doodle_listed (Muse Image asked for
+any kind, an unusual kind, or each of Muse Spark's listed kinds) and ai_sdxl_any, ai_sdxl_listed.
+Use --sources to embed only some of them.
 """
 import argparse
 import sys
@@ -22,7 +25,11 @@ from metalesionlab.plato import CONCEPTS, DINO_MODEL, PLATO_DIR, Embedder, ink_c
 PREP = "flatten_paper(21, 215) + ink_crop(256, margin 0.06, threshold 200, speck 3px)"  # change it and everything re-embeds
 SOURCES = {"ai_doodle": PLATO_DIR / "ai" / "doodle", "ai_photo": PLATO_DIR / "ai" / "photo",
            "ai_sdxl_doodle": PLATO_DIR / "ai" / "sdxl_doodle",  # comparison generator (plato_sdxl_generate.py)
-           "human": PLATO_DIR / "human"}
+           "human": PLATO_DIR / "human",
+           # variety prompts (plato_generate.py --style doodle_any|doodle_unusual|doodle_listed)
+           "ai_doodle_any": PLATO_DIR / "ai" / "doodle_any", "ai_doodle_unusual": PLATO_DIR / "ai" / "doodle_unusual",
+           "ai_doodle_listed": PLATO_DIR / "ai" / "doodle_listed",
+           "ai_sdxl_any": PLATO_DIR / "ai" / "sdxl_any", "ai_sdxl_listed": PLATO_DIR / "ai" / "sdxl_listed"}
 
 
 def prepare(path: Path, source: str) -> Image.Image:
@@ -34,11 +41,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keys", nargs="*")
     ap.add_argument("--device")
+    ap.add_argument("--sources", nargs="*", choices=list(SOURCES))
     args = ap.parse_args()
     keys = args.keys or [c.key for c in CONCEPTS]
     embed = None
     t0, count = time.time(), 0
     for source, root in SOURCES.items():
+        if args.sources and source not in args.sources:
+            continue
         for key in keys:
             files = load_dir(root / key)
             if not files:
