@@ -97,7 +97,7 @@
       skip: function () { var d = P(); return !d || !d.sdxl || !d.sdxl.n_concepts; },
       body: function () {
         var s = P().sdxl, times = s.median_muse_over_sdxl ? (1 / s.median_muse_over_sdxl).toFixed(1) : null;
-        return 'Yes, mostly. From the same prompt, Stable Diffusion XL drew more varied pictures for ' + s.muse_more_uniform + ' of ' + s.n_concepts + ' things' +
+        return 'Mostly, it’s Meta’s model. From the same prompt, Stable Diffusion XL drew more varied pictures for ' + s.muse_more_uniform + ' of ' + s.n_concepts + ' things' +
           (times ? ', about ' + times + ' times Muse Image’s spread' : '') + ', though much of that is drawing style. So Plato’s Chair measures a model, not all AI.';
       } },
 
@@ -130,7 +130,7 @@
       },
       links: function () {
         var out = [];
-        if (hasDraw() && location.pathname !== '/draw') out.push(['Draw a chair', '/draw']);
+        if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair', '/draw']);
         if (hasSocrates()) out.push(['Ask Socrates', '/socrates']);
         out.push(['See the whole experiment', '/plato'], ['Look inside the Model Lab', '/lab']);
         return out;
@@ -260,7 +260,9 @@
     ui.skip.textContent = step.finish ? 'Close' : 'Skip tour';
     if (step.finish && step.links) {
       step.links().forEach(function (b, k) {
-        ui.extra.appendChild(h('a', { class: 'btn ' + (k === 0 ? 'btn-primary' : ''), href: b[1], onclick: function () { stop(); } }, b[0]));
+        var cls = 'btn ' + (k === 0 ? 'btn-primary' : '');
+        ui.extra.appendChild(b[1] ? h('a', { class: cls, href: b[1], onclick: function () { stop(); } }, b[0])
+          : h('button', { type: 'button', class: cls, onclick: function () { end(); var pad = q('#pad'); if (pad) pad.focus(); } }, b[0]));
       });
     }
   }
