@@ -185,6 +185,133 @@
     renderRank();
   }
 
+  // --- ask for variety ------------------------------------------------------------------------
+  var VAR_ROWS = [['Usual prompt', 'default'], ['“Any kind”', 'any'], ['“An unusual kind”', 'unusual'], ['Named kinds, one each', 'listed']];
+  function times(x) { return '×' + (x < 1 ? f2(x) : Number(x).toFixed(1)); }
+  /* One row of dots per prompt: every thing's spread ÷ people's spread, the median as a black bar, people at 1. */
+  function renderVarietyChart() {
+    var wrap = $('var-chart'), v = S.data && S.data.variety;
+    if (!wrap || !v) return;
+    var rows = VAR_ROWS.filter(function (r) { return v.conditions[r[1]]; });
+    var W = Math.max(280, wrap.clientWidth || 420), band = 44, gapY = 26, top = 22, left = 12, right = 14, bottom = 36;
+    var H = top + rows.length * (band + gapY) + bottom;
+    var all = [];
+    v.concepts.forEach(function (c) { rows.forEach(function (r) { if (c[r[1]] != null) all.push(c[r[1]]); }); });
+    var xMax = Math.min(4, Math.max(1.5, Math.ceil(Math.max.apply(null, all) * 2) / 2));
+    var x = function (val) { return left + Math.min(val, xMax) / xMax * (W - left - right); };
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
+      'aria-label': 'Dots: each thing’s spread with each prompt, divided by people’s spread. ' + rows.map(function (r) {
+        return r[0] + ': median ' + f2(v.conditions[r[1]].median_ratio); }).join('; ') + '. People are at 1.' });
+    for (var t = 0; t <= xMax + 1e-9; t += 0.5) {
+      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: top, y2: H - bottom + 4, stroke: GRID }));
+      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 11, fill: '#4B5563' }, String(t)));
+    }
+    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: '#374151' },
+      'Muse Image’s spread ÷ people’s spread'));
+    var labels = [];
+    rows.forEach(function (row, ri) {
+      var y0 = top + ri * (band + gapY) + 22, mid = y0 + band / 2, cond = row[1], med = v.conditions[cond].median_ratio;
+      var pts = v.concepts.filter(function (c) { return c[cond] != null; });
+      labels.push(s('text', { x: left, y: y0 - 7, 'font-size': 12, 'font-weight': 600, fill: '#111827', stroke: '#FFFFFF', 'stroke-width': 4,
+        'paint-order': 'stroke', 'pointer-events': 'none' }, row[0] + ' · median ' + f2(med) + (pts.length < 20 ? ' (' + pts.length + ' things)' : '')));
+      svg.appendChild(s('line', { x1: x(med), x2: x(med), y1: y0 + 2, y2: y0 + band - 2, stroke: '#111827', 'stroke-width': 2 }));
+      pts.forEach(function (c, i) {
+        var jitter = ((i * 37) % 11 - 5) / 5 * (band / 2 - 7), cy = mid + jitter, em = c.key === 'chair';
+        svg.appendChild(s('circle', { cx: x(c[cond]), cy: cy, r: em ? 6 : 4.5, fill: BLUE, stroke: em ? '#111827' : '#FFFFFF', 'stroke-width': 2 }));
+        if (em) labels.push(s('text', { x: x(c[cond]) + 9, y: cy + 4, 'font-size': 11, 'font-weight': 600, fill: '#111827', stroke: '#FFFFFF',
+          'stroke-width': 3, 'paint-order': 'stroke', 'pointer-events': 'none' }, 'chair'));
+        var hit = s('circle', { cx: x(c[cond]), cy: cy, r: 11, fill: 'transparent' });
+        hit.addEventListener('pointermove', function (e) {
+          showTip(wrap, e, [c.label + ': ' + f2(c[cond]), row[0] + (c[cond] < 1 ? ': less varied than people' : ': as varied as people or more')]);
+        });
+        hit.addEventListener('pointerleave', function () { hideTip(wrap); });
+        svg.appendChild(hit);
+      });
+    });
+    svg.appendChild(s('line', { x1: x(1), x2: x(1), y1: top, y2: H - bottom + 4, stroke: ORANGE, 'stroke-width': 2 }));
+    labels.forEach(function (l) { svg.appendChild(l); });
+    svg.appendChild(s('text', { x: x(1) + 5, y: 12, 'font-size': 11, fill: '#374151' }, 'people = 1'));
+    var old = wrap.querySelector('svg');
+    if (old) wrap.replaceChild(svg, old); else wrap.insertBefore(svg, wrap.firstChild);
+  }
+  function renderVariety() {
+    var v = S.data.variety, sec = $('variety');
+    if (!v || !v.conditions || !v.conditions.default) return;
+    sec.hidden = false;
+    $('var-jump').hidden = false;
+    var C = v.conditions, chair = (v.focus || {}).chair;
+    var best = ['listed', 'unusual', 'any'].filter(function (k) { return C[k]; });
+    $('var-lede').textContent = 'With the usual prompt, Muse Image draws the textbook chair every time. Does it know any other chairs? ' +
+      'We asked three more ways: for “any kind of chair”, for “an unusual or different kind”, and for each of 16 kinds that Meta’s Muse Spark listed (rocking chair, beanbag, wheelchair, throne …), one doodle each.';
+    var fig = (S.data.figures || {}).variety_chair;
+    if (fig) {
+      $('var-fig').hidden = false;
+      $('var-img').src = IMG + fig;
+      $('var-img').alt = 'Five rows of 16 chair doodles. Usual prompt: the same slatted wooden chair. “Any kind”: the same slatted chair again. ' +
+        '“An unusual kind”: spring chairs, egg chairs and other designer chairs. Named kinds: a rocking chair, armchair, folding chair, office chair, beanbag, wheelchair, throne and more. ' +
+        'People: quick line drawings, mostly the same simple chair seen from the side.';
+      $('var-cap').textContent = 'The same request, five ways. Spread: the average difference between two pictures of a row. Kinds: how many different kinds of chair Muse Glimmer recognised in the row. People’s drawings: Google Quick, Draw! dataset, CC BY 4.0.';
+    }
+    var facts = $('var-facts');
+    facts.innerHTML = '';
+    var add = function (big, text) { facts.appendChild(h('div', { class: 'pc-fact' }, [h('b', { text: big }), h('span', { text: text })])); };
+    if (C.any) {
+      add(times(C.any.median_ratio), '“Any kind” changes nothing: the typical spread stays at ' + times(C.any.median_ratio) + ' of people’s (usual prompt ' +
+        times(C.default.median_ratio) + '), and the chairs are the same slatted chair.');
+    }
+    if (C.listed) {
+      add(times(C.listed.median_ratio), 'Naming the kinds works: one doodle of each named kind is as varied as people’s drawings, or more, for ' +
+        C.listed.above_people + ' of ' + C.listed.n + ' things' + (C.listed.median_vs_default ? ' (' + Number(C.listed.median_vs_default).toFixed(1) + ' times the usual prompt’s spread)' : '') + '.');
+    }
+    if (chair && chair.ratio) {
+      var r = chair.ratio, top = best.filter(function (k) { return r[k] != null; })[0];
+      add(times(r.default) + ' → ' + times(r[top]), 'Chairs: Muse Image’s spread compared with people’s, with the usual prompt and when ' +
+        (top === 'listed' ? 'asked for named kinds' : top === 'unusual' ? 'asked for an unusual kind' : 'asked for any kind') + '.');
+    }
+    if (C.listed && C.listed.recognised != null && C.default.recognised != null) {
+      add(pct(C.default.recognised) + '% → ' + pct(C.listed.recognised) + '%', 'of the pictures look most like people’s drawings of the same thing. Variety has a price: some named kinds come from other meanings of the word (a piano key, a clock face).');
+    }
+    renderVarietyChart();
+    var lg = $('var-legend');
+    lg.innerHTML = '';
+    var key = function (color, label, line) { var i = h('i', { class: line ? 'line' : '' }); i.style.background = color; return h('span', null, [i, label]); };
+    [key(BLUE, 'one thing (Muse Image)'), key(ORANGE, 'People', true), h('span', { text: 'Black bar: median' })].forEach(function (k) { lg.appendChild(k); });
+    renderVarietyKinds();
+  }
+  function renderVarietyKinds() {
+    var v = S.data.variety, k = v.kinds, box = $('var-kinds');
+    box.innerHTML = '';
+    if (!k || !k.summary || !k.summary.people || !k.summary.default) return;
+    var P = k.summary.people, D = k.summary.default, L = k.summary.listed, pv = k.people_vs_default || {};
+    box.appendChild(h('h3', { text: 'Do people draw different chairs, or the same chair differently?' }));
+    box.appendChild(h('p', { text: 'Spread measures how different pictures look, and people’s quick drawings differ a lot just in how they are drawn. ' +
+      'So we also asked which kind of thing each picture shows. Muse Glimmer picked one option per picture from Muse Spark’s list of kinds, plus “a plain, ordinary one” and “can’t tell”.' }));
+    var same = pv.n_concepts ? pv.same_prototype + ' of ' + pv.n_concepts : null;
+    box.appendChild(h('p', { text: 'People mostly draw the textbook version too. ' + pct(P.mean_share_plain) + '% of their recognisable drawings are the plain, ordinary kind, the same as for Muse Image’s usual prompt (' +
+      pct(D.mean_share_plain) + '%)' + (same ? ', and for ' + same + ' things the most common kind is the same for both' : '') + '. ' +
+      'Pick two drawings of the same thing at random: they show different kinds ' + pct(P.mean_simpson) + '% of the time for people, ' + pct(D.mean_simpson) +
+      '% for Muse Image’s usual prompt' + (L ? ', and ' + pct(L.mean_simpson) + '% when it draws the named kinds.' : '.') +
+      ' So people draw a few more kinds than Muse Image does by default, and far fewer than it can.' }));
+    var noise = k.people_spread_within_prototype;
+    box.appendChild(h('p', { text: chairPeopleText() + (noise && noise.median_share ? 'Across things, people’s drawings of their most common kind alone are ' +
+      pct(noise.median_share) + '% as varied as all their drawings. People vary in how they draw a thing far more than in which one they draw.' : '') }));
+    var hat = ((v.focus || {}).hat || {}).kinds;
+    if (hat && hat.people && hat.default && hat.default.n) {
+      box.appendChild(h('p', { text: 'The exception is hats: two of people’s hats are different kinds ' + pct(hat.people.simpson) + '% of the time (brimmed hats, caps, top hats, party hats), while Muse Image drew a baseball cap for ' +
+        Math.round(hat.default.prototype_share * hat.default.n) + ' of its ' + hat.default.n + ' hats.' }));
+    }
+    box.appendChild(h('p', { class: 'pc-caveat', text: 'How we checked the labels: on Muse Image’s named-kind doodles, where we know the right answer, Glimmer picked the right kind ' +
+      pct(k.accuracy) + '% of the time (' + k.n_pictures + ' pictures; chance about ' + pct(k.chance) + '%), often choosing “plain” for kinds that look ordinary. ' +
+      'The numbers above use the ' + k.reliable + ' of ' + k.n_concepts + ' things where it got at least half right. Glimmer can miss kinds in rough 20-second drawings; ' +
+      'a second labeler, Muse Spark, sees more kinds in both people’s and Muse Image’s drawings, but puts them in the same order.' }));
+  }
+  function chairPeopleText() {
+    var c = ((S.data.variety || {}).focus || {}).chair;
+    if (!c || !c.kinds || !c.kinds.people || !c.kinds.default) return '';
+    var p = c.kinds.people, d = c.kinds.default;
+    return 'Chairs: ' + pct(p.share_plain) + '% of people’s recognisable chairs are a plain, ordinary chair (Muse Image’s usual prompt: ' + pct(d.share_plain) + '%). ';
+  }
+
   // --- six languages ------------------------------------------------------------------------
   var LANG_ALT = {
     chair: ['Grid of chair doodles by Muse Image, four for each prompt language (English, Spanish, Hindi, Mandarin Chinese, Arabic, Swahili): the same slatted wooden chair in every column.',
@@ -443,7 +570,7 @@
       if (window.innerWidth === lastW) return;
       lastW = window.innerWidth;
       clearTimeout(timer);
-      timer = setTimeout(function () { if (S.data) { renderRank(); renderScatter(); if ($('sdxl-chart')) renderSdxlChart($('sdxl-chart'), S.data.sdxl); } }, 120);
+      timer = setTimeout(function () { if (S.data) { renderRank(); renderVarietyChart(); renderScatter(); if ($('sdxl-chart')) renderSdxlChart($('sdxl-chart'), S.data.sdxl); } }, 120);
     });
   }
 
@@ -452,6 +579,7 @@
     S.data = d;
     renderHero();
     renderEverything();
+    renderVariety();
     renderLang();
     renderInside();
     renderSdxl();

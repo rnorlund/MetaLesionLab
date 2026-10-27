@@ -2,7 +2,7 @@
 
 Plato thought there is one ideal chair. If you ask an AI to draw 16 chairs and 16 boats, are its chairs all alike while its boats vary? How spread out is each concept in the AI's imagination, and does that match how varied people's drawings of the same thing are?
 
-**Short answer:** Muse Image draws almost every concept far more uniformly than people do. Its spread is about half of people's (median ratio 0.49), and 34 of 35 concepts fall below the human level. The concepts that people draw most variably are only somewhat more likely to be the ones the AI varies (rank correlation 0.38). Its chair is close to a Platonic one: the same slat-back dining chair, in the same three-quarter view, 16 times. **This is specific to Muse, not to image models in general.** Given the same prompt, Stable Diffusion XL varies far more than Muse: more for 34 of 35 concepts, at about 2.4 times the spread. On the same measure it is no more uniform than people, though much of its extra variety is drawing style, not different objects (see "Is it just Muse?").
+**Short answer:** Muse Image draws almost every concept far more uniformly than people do. Its spread is about half of people's (median ratio 0.49), and 34 of 35 concepts fall below the human level. The concepts that people draw most variably are only somewhat more likely to be the ones the AI varies (rank correlation 0.38). Its chair is close to a Platonic one: the same slat-back dining chair, in the same three-quarter view, 16 times. **This is specific to Muse, not to image models in general.** Given the same prompt, Stable Diffusion XL varies far more than Muse: more for 34 of 35 concepts, at about 2.4 times the spread. On the same measure it is no more uniform than people, though much of its extra variety is drawing style, not different objects (see "Is it just Muse?"). **Muse knows the variety:** "any kind of chair" still gives the textbook chair, but asked for named kinds it draws as varied as people. And people mostly draw the textbook chair too: their extra spread is in how they draw it, not which chair (see "Can you prompt it out of the Platonic chair?").
 
 ## Method
 
@@ -116,6 +116,69 @@ Results: `results_sdxl.json`. Figures:
 
 SDXL: Stability AI, CreativeML OpenRAIL++-M. Its pictures are kept outside the repository, like the others.
 
+## Can you prompt it out of the Platonic chair?
+
+Muse Spark can name 16 kinds of chair, and Muse Image draws every one of them when asked. So why does it draw one chair by default? And do people vary in **which** chair they draw, or only in **how** they draw it? We asked Muse Image for each thing in three more ways. Besides visual spread, we labeled which kind of object every picture shows.
+
+**Short answer:** Muse draws the textbook version by default, but it knows the variety and draws it when asked by name. People mostly draw the textbook version too.
+- **"Any kind" changes nothing.** "A chair (any kind of chair)" still gives the same slat-back dining chair 16 times. Across 35 things the spread stays at half of people's (median ratio 0.49; 0.96 times the usual prompt). SDXL ignores the phrase too (0.98 times its usual spread).
+- **Naming the kinds works.** When Muse Spark lists kinds and Muse Image draws one of each, the spread rises to 1.30 times people's: 2.7 times the usual prompt, and above people's for 27 of 35 things. Asking for "an unusual or different kind" gives 1.07 times people's (10 things).
+- **Variety has a price.** The new pictures look less like people's drawings of the thing: 66–67% sit nearest their own concept's human centroid, against 85% with the usual prompt. Glimmer answered "can't tell, or not a chair" for half of the "unusual" chairs, and "... not a car" for 14 of 16 "unusual" cars. Some of Spark's kinds come from other senses of the word: a piano key, a map legend key, a clock face, a bra cup.
+- **People mostly draw one kind too.** Of people's recognisable drawings, 83% are the plain, ordinary kind, the same share as Muse's usual prompt (83%). For 30 of 35 things, people's most common kind is also Muse's. People do draw somewhat more kinds: kind diversity 0.21 against 0.12, higher for 24 of 35 things and never lower. But that is far below what Muse draws when the kinds are named (0.81).
+- **People's spread is mostly "how", not "which".** People's drawings of their single most common kind are almost as spread out as all their drawings: a median of 96% of the full spread. A concept's human spread barely tracks how many kinds people draw (rho 0.30 [-0.08, 0.61]).
+
+**The chair.** 
+- Usual prompt: spread 0.13 (0.37 of people's). "Any kind": 0.09 (0.24), the same chair again.
+- "An unusual kind": 0.59 (1.62): spring chairs, egg chairs, a snail-shell chair. Glimmer calls half of them "not a chair", and only 3 of 16 sit nearest people's chairs in DINOv2 space.
+- Named kinds: 0.55 (1.50). Sixteen different chairs (rocking chair, beanbag, wheelchair, throne ...), each recognised as its kind; 13 of 16 sit nearest people's chairs.
+- People: spread 0.36. Of their recognisable chairs, 84% are a plain, ordinary chair, mostly the same simple side view. Those plain chairs alone carry 98% of people's spread.
+
+**The umbrella.** 
+- Muse: usual prompt 0.055 (0.14 of people's), "any kind" 0.065 (0.17), "an unusual kind" 0.40 (1.03), named kinds 0.33 (0.84).
+- Many of the named umbrellas (golf, stick, beach, patio, LED, studio) are drawn as the classic umbrella, and Glimmer labels 11 of 16 of them plain.
+- People: 98% of recognisable umbrellas are the plain one (kind diversity 0.04). So people and Muse both draw one umbrella. People's large visual spread (0.39) is how they draw it, not which umbrella.
+
+**Where people do vary the kind:** hats (kind diversity 0.80: brimmed hats, caps, top hats, party hats; Muse drew a baseball cap 11 of 12 times), yoga poses (0.76 against 0.53), and faces (0.45 against 0.13).
+
+| Step | What we did |
+|---|---|
+| Prompts | Four ways to ask for the same thing, all inside the core doodle template. **Usual**: the core prompt ("a chair"). **Any kind**: "a chair (any kind of chair)"; for yoga, "a person doing yoga (any person, any pose)". **An unusual kind**: "a chair (any kind of chair at all; pick an unusual or different kind)", tier 1 only (10 things). **Named kinds**: Muse Spark (`muse-spark-1.3`, reasoning effort low) was asked to "List 16 clearly different kinds of chair that someone could draw, as short noun phrases"; for yoga, 12 poses. Muse Image then drew each kind once. |
+| Pictures | n per thing as in the core run (16 for tier 1, 12 for tier 2): 460 "any kind" and 160 "unusual" (separate calls of n=4), 460 "named kinds" (one call each). Chair and umbrella reuse a pilot run with the same prompts. Spark's lists are kept as written. |
+| Visual spread | Unchanged: ink crop, DINOv2 CLS embeddings, mean pairwise cosine distance, bootstrap CIs, human drawings subsampled to the same n. Two ratios: to people's spread, and to the usual prompt's spread (CI from independent bootstraps of the two sets). |
+| Recognisability | Share of pictures whose nearest human centroid (of 35) is their own concept, as in the core run. |
+| Kind labels | Muse Glimmer 30B (FP8, self-hosted on one L40S) answered one multiple-choice question per picture: *"Someone was asked to draw a chair. Which kind of chair is in this drawing? Pick the one option that fits best. If it is just an ordinary chair and not clearly one of the specific kinds, pick 'a plain, ordinary chair'."* The options were Spark's kinds, then "a plain, ordinary chair", then "can't tell, or not a chair". We read the answer from the option letters' logits, not from generated text. Every picture was asked twice, with the kinds in forward and reversed order, and the two answers averaged. In total, 10,020 pictures: all 7 AI sets and the 200 cached human drawings per thing. |
+| Validation | For "named kinds" pictures the right answer is known: picture i shows kind i. We measured accuracy, accuracy counting "plain" as a near miss, and confusions. A thing's kind labels count as **reliable** if Glimmer names at least half of its listed pictures correctly. |
+| Kind diversity | Per set: **Simpson diversity**, the chance that two different pictures show different kinds (0 = all one kind; it does not grow with n; CI by bootstrap over pictures). Also: number of distinct kinds, entropy, share "plain", and the most common kind (the prototype). "Can't tell" is reported separately and left out of the kind measures. People: all 200 drawings, with distinct kinds counted in random sets of the AI's n. |
+| How or which | For people: spread of their drawings of the prototype kind only, against all their drawings, both subsampled to the AI's n. |
+| Second opinion | Muse Spark (vision, minimal reasoning) answered the same question for a random sample: 140 named-kind pictures, 156 human drawings and 70 usual-prompt doodles ($0.48). |
+| SDXL (stretch) | Stable Diffusion XL drew "any kind" and "named kinds" with the settings of its usual-prompt run and the same seeds (picture i of a thing has the same seed in every condition), on a lab GPU, $0. |
+
+| Question | Result |
+|---|---|
+| Does "any kind" add variety? | **No.** Median ratio to people 0.49, as with the usual prompt. "Any kind" is 0.96 times the usual spread, above it (CI) for 1 of 35 things. Kind diversity 0.13 against 0.12. SDXL: 0.98 times its usual spread. |
+| Does "an unusual kind" add variety? (10 things) | **Yes, with drift.** Ratio to people 1.07, above people's for 7 of 10 (CI for 4). 2.35 times the usual spread (CI for 9 of 10). Only 66% sit nearest their own human centroid (usual 96% for these 10). Glimmer says "can't tell, or not a ..." for 31%: car 88%, cup 75%, house 69%, chair 50%. |
+| Do named kinds add variety? | **Yes.** Ratio to people 1.30, above people's for 27 of 35 (CI for 17; below for 3). 2.73 times the usual spread (CI above for 32 of 35). 8.7 distinct kinds per set of 12–16 and kind diversity 0.81. Recognisability falls to 67%, lowest for kinds from other senses of the word (key 25%, clock 8%). |
+| Is the gap Muse-specific? | **Mostly.** SDXL named kinds: 1.69 times people's, but only 1.38 times SDXL's own usual spread (Muse 2.73). SDXL's usual prompt already shows several kinds (diversity 0.44, against 0.12 for Muse): its chairs are mostly armchairs. Muse's narrow default is a default, not a gap in what it knows. |
+| How good is the kind labeler? | Glimmer names the right kind for 58% of the 460 named-kind pictures (chance 7%), 88% counting "plain" as a near miss. Errors: "plain" 30%, another kind 8%, "can't tell" 4%. It is reliable (≥ 50%) for 22 of 35 things: hat, yoga 100%, chair, face 94%, umbrella 25%, cat 25%, apple 0%. Breeds, varieties and similar-looking kinds are often drawn and read as the plain one. Confident answers (probability ≥ 0.6) that name a specific kind are right 91% of the time (269 answers), unsure ones 65%. On SDXL's named kinds: 43% (67%). |
+| Do people draw more kinds than Muse's usual prompt? | **A few more.** Kind diversity 0.21 against 0.12 (reliable things: 0.30 against 0.17). People's diversity is higher for 24 of 35 things (CI for 13) and lower for none. Distinct kinds in a set of the AI's size: 1.65 against 1.49. Treating Glimmer's unsure specific answers as plain: 0.14 against 0.10. |
+| Same prototype? | **Yes, mostly.** For 30 of 35 things, people's most common kind is Muse's. It is "a plain, ordinary ..." for 33 things for people and 30 for Muse. The exceptions: hat (people plain, Muse baseball cap), shoe (plain vs sneaker), saw (plain vs hand saw), yoga (standing figure vs tree pose), harp. |
+| Is people's spread kinds or drawing? | **Drawing.** Of people's recognisable drawings, 83% are the plain kind (Glimmer). Their drawings of the prototype kind alone are 96% as spread as all their drawings (median over 34 things). Human spread and human kind diversity are only weakly related across things: rho 0.30 [-0.08, 0.61]. |
+| Second opinion (Muse Spark) | Spark is the better labeler on named-kind pictures: 66% against Glimmer's 55% on the same 140. It picks specific kinds more often everywhere. On its sample, kind diversity is 0.26 for Muse's usual prompt, 0.54 for people and 0.90 for named kinds; Glimmer on the same pictures: 0.11, 0.16 and 0.80. The two agree on only 44% of people's drawings. Glimmer says "can't tell" for 35% of them, Spark for 6%. So the order (Muse usual < people << named kinds) holds for both labelers, but how much more varied people are depends on the labeler. |
+
+**Caveats.**
+- **The labels are a model's reading.** Glimmer misses kinds that look ordinary in a doodle, and rough 20-second drawings make it worse: it says "can't tell" for 33% of people's drawings (harp 95%, scissors 77%, bicycle 74%). Spark sees more kinds in the same drawings. We report Glimmer for all pictures and Spark as a check. We trust the ordering of conditions more than any absolute level.
+- **The kind lists are Spark's.** Breeds and varieties (cat, apple, carrot, snail) cannot be told apart in a black-and-white doodle, so those things fall outside the reliable set. Lists that stray into other senses of the word (key, face, cup) inflate the named-kinds spread and lower recognisability. A list written for line drawings would be a fairer test of "kinds".
+- **Plain or specific?** A slat-back dining chair is both a dining chair and an ordinary chair. Glimmer labeled Muse's usual chair "plain" 15 of 16 times and "dining chair" once. The prototype comparison treats these as different kinds.
+- **One wording per condition.** "Any kind" and "unusual" are single phrasings. Other wordings, such as "a different chair each time", might do better. Each call of n=4 is independent, so Muse never sees its earlier pictures.
+- **Small n.** 12–16 pictures per set and 10 things for "unusual". Chair and umbrella reuse the pilot's "unusual" and "named kinds" pictures, made with the same prompts.
+
+Cost: 1,080 new Muse Image pictures, 35 Spark lists and the Spark sample: $11.51 including the pilot. Glimmer and SDXL ran on lab GPUs at $0.
+
+Code: `scripts/plato_generate.py --style doodle_any|doodle_unusual|doodle_listed`, `scripts/plato_kinds_label.py` (prepare, label on a GPU, spark), `scripts/plato_variety_analyze.py` and `scripts/plato_variety_figures.py`. SDXL: `scripts/plato_sdxl_generate.py --condition any|listed`. Results: `results_variety.json`; derived statistics: `public_data/plato_variety.json`. Figures:
+- `variety_<thing>.png` for the 10 tier-1 things: five rows of 16 (usual, any kind, an unusual kind, named kinds, people) with each row's spread and number of kinds
+- `variety_spread.{png,svg}`: spread compared with people's, by prompt, for Muse and SDXL
+- `variety_kinds.{png,svg}`: kind diversity by prompt and for people
+
 ## Link to naming (exploratory, n = 15)
 
 For the 15 demo words that exist in Quick, Draw!, we recorded:
@@ -137,19 +200,19 @@ Per-concept values are in `results.json` under `naming`.
 - **Style mismatch.** The AI's "20-second doodle" is a clean, sketchy marker cartoon. Quick, Draw! drawings are real 20-second mouse or finger drawings, often unfinished, by players worldwide.
   - Part of the human spread is skill and noise, not a different idea of the object. That is why the absolute index (about 0.5) matters less than the ranking across concepts and the relative (between-concept) version.
   - Style differs more for some concepts (person, dog) than others.
-- **Prompt sensitivity.** One prompt template, one style. A different wording ("a chair, any kind", "a children's drawing") would move the AI's spread. We have not measured how much. The realistic-photo style was skipped to save budget.
+- **Prompt sensitivity.** One prompt template, one style. "Any kind" leaves the spread unchanged, while naming the kinds or asking for an unusual one lifts it above people's (see "Can you prompt it out of the Platonic chair?"). Other wordings, such as "a children's drawing", are untested. The realistic-photo style was skipped to save budget.
 - **The image model's sampling.** There is no seed or temperature control, and separate calls are the only source of variety. Muse Image returned mostly 3:2 pictures (309 of 460) and some square ones; cropping to the ink removes that difference.
 - **Small n.**
   - Tier 2 concepts have only 12 AI pictures, so some CIs are wide: clock [0.09, 0.28] and harp [0.08, 0.28], each driven by one or two unusual drawings.
   - The cross-concept correlation rests on 35 concepts, and the naming link on 15.
 - **Category substitutes.** Boat is sailboat, lamp is floor lamp, and person is yoga. Humans saw only the word "yoga"; the AI got "a person doing yoga".
-- **One embedding model.** DINOv2 is a vision model. "Spread" is visual spread, not conceptual spread.
+- **One embedding model.** DINOv2 is a vision model. "Spread" is visual spread, not conceptual spread. The kind labels in "Can you prompt it out of the Platonic chair?" are a first measure of conceptual variety.
 - **Human sample.** We used the first 200 recognized drawings in file order, not a random sample of all drawings.
 
 ## Next steps
 
 1. **Second generator.** Done with SDXL (see "Is it just Muse?"). An SDXL guidance sweep would show how much one model's settings move its spread, since higher guidance usually means less variety.
-2. **Prompt sweep.** Vary the prompt on a few concepts (chair, boat, person, book) to measure prompt sensitivity, and add the realistic-photo style for 10 concepts (about $1.60).
+2. **Prompt sweep.** Done for variety prompts (see "Can you prompt it out of the Platonic chair?"). Still open: other wordings ("a different chair each time"), kind lists written for line drawings, and the realistic-photo style for 10 concepts (about $1.60).
 3. **Style-matched comparison.** Thin both sources to single-pixel strokes before embedding, or prompt for "one continuous thin line".
 4. **Spread inside Muse Glimmer.** Measure each concept's spread inside the model's layers (PlatosChair/inside_glimmer). Then test the lead's hypothesis on more items, with graded lesion severities rather than one accuracy score: diffuse concepts are harder to name and lost first under damage.
 5. **Web panel and video moment** (see the final report).

@@ -3,7 +3,7 @@
 Reads the Plato's Chair data folder, which lives outside this repository (default
 /Users/super/Documents/Meta_Hacking_Challenge/PlatosChair, or $PLATO_ROOT), and writes:
   metalesionlab/web/data/plato.json      statistics only (metalesionlab/plato_web.py)
-  metalesionlab/web/static/img/plato/    13-14 compressed WebP figures, each under 300 KB
+  metalesionlab/web/static/img/plato/    13-15 compressed WebP figures, each under 300 KB
 
 Figures that show people's drawings keep their Google Quick, Draw! (CC BY 4.0) credit inside the
 image. The two-panel hero grids are split into an AI half and a people half, and each half gets a
@@ -45,8 +45,9 @@ COPIES = {  # (source relative to the root, output name, width)
     "languages/figures/average_hat.png": ("lang_hat_average.webp", 1200),
     "inside_glimmer/figures/spread_by_layer.png": ("spread_by_layer.webp", 1200),
     "core/figures/grid3_chair.png": ("sdxl_chair.webp", 1500),  # Muse Image, SDXL and people; optional
+    "core/figures/variety_chair.png": ("variety_chair.webp", 1600),  # four prompts and people; optional
 }
-OPTIONAL = {"core/figures/grid3_chair.png"}
+OPTIONAL = {"core/figures/grid3_chair.png", "core/figures/variety_chair.png"}
 
 
 def font(size: int):
@@ -114,7 +115,8 @@ def main() -> None:
     root = args.root
     data = plato_web.build(root / "core", REPO / "public_data" / "plato_languages.json", root / "inside_glimmer")
     # Optional figures the page shows only when they were exported.
-    data["figures"] = {"sdxl_chair": "sdxl_chair.webp"} if (root / "core/figures/grid3_chair.png").exists() else {}
+    data["figures"] = {name: f"{name}.webp" for name, src in (("sdxl_chair", "grid3_chair"), ("variety_chair", "variety_chair"))
+                       if (root / f"core/figures/{src}.png").exists()}
     out = WEB / "data" / "plato.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n")
