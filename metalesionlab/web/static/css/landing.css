@@ -115,6 +115,19 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --sky: #60A5FA; }
 .plato-text { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; min-width: 0; }
 .plato-text h3 { margin: 0; font-size: 24px; letter-spacing: -0.01em; line-height: 1.25; }
 .plato-text p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+/* Second-language teaser: same card, a small bar chart in the language colors of /lab/bilingual */
+.bl-teaser-fig { display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: var(--ink-2); background: #FCFCFB; border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+.bl-teaser-cap { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.bl-teaser-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 44px; gap: 10px; align-items: center; font-size: 14px; }
+.bl-teaser-row b { font-weight: 600; color: var(--ink); text-align: right; }
+.bl-teaser-track { height: 14px; border-radius: 0 7px 7px 0; background: #EEF0F3; overflow: hidden; }
+.bl-teaser-track i { display: block; height: 100%; border-radius: 0 7px 7px 0; }
+.bl-teaser-en { background: #2a78d6; }
+.bl-teaser-es { background: #eb6834; }
+.bl-teaser-fr { background: #1baf7a; }
+.bl-teaser-pt { background: #eda100; }
+.bl-teaser-said { font-size: 14px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 10px; }
+.bl-teaser-said b { color: var(--ink); }
 
 /* three ways in */
 .doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
