@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plato’s Cratylus: bouba and kiki · {{BRAND}}</title>
+<meta name="description" content="People everywhere call a round blob “bouba” and a spiky star “kiki”. Meta’s image model, which has never heard a word, draws them the same way: 12 of 12 times. But a new word with kiki’s sounds, “keti”, comes out round. It learned the famous words, not the sounds.">
+<meta property="og:title" content="Plato’s Cratylus: bouba and kiki · {{BRAND}}">
+<meta property="og:description" content="Ask an AI to draw a “kiki”: 12 spiky stars. Ask for a “keti”: 12 round blobs.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_cratylus.css">
+</head>
+<body class="cratylus">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><a class="brand" href="/"><b>{{BRAND}}</b></a></header>
+
+<main id="main" tabindex="-1">
+
+<section class="ck-hero" aria-labelledby="hero-h">
+  <div class="ck-hero-text">
+    <span class="ck-kicker"><a href="/plato">Plato series</a> · Cratylus · Muse Image, Muse Glimmer and Muse Spark</span>
+    <h1 id="hero-h">Bouba and kiki</h1>
+    <p class="ck-lede">In the <i>Cratylus</i>, Socrates asks whether names fit things by nature. People all over the world call a round blob “bouba” and a spiky star “kiki”. Meta’s image model has never heard a word. We asked it to draw a shape called “bouba”, and one called “kiki”.</p>
+    <p class="ck-lede" id="hero-answer">It draws them exactly as people would. But a new word with kiki’s sounds, “keti”, comes out round: it learned the famous words, not the sounds.</p>
+    <div class="ck-tiles" id="tiles" aria-live="polite"></div>
+  </div>
+  <figure>
+    <img src="/static/img/plato_cratylus/wall.webp" width="1378" height="1600"
+         alt="Twelve drawings by Muse Image of a shape called bouba: round, cloud-like blobs, beside twelve people’s circles from Quick, Draw!. Twelve drawings of kiki: spiky stars, beside twelve people’s stars. And twelve drawings each of the made-up words keti and tepi: round blobs again.">
+    <figcaption class="ck-cap">Muse Image drew each word 12 times, in separate calls. People’s circles and stars: Google Quick, Draw! (CC BY 4.0).</figcaption>
+  </figure>
+</section>
+
+<section class="ck-sec" id="try" aria-labelledby="try-h">
+  <div class="ck-sec-head">
+    <h2 id="try-h">Your turn</h2>
+    <p class="ck-sec-lede">The same question people answered in 25 languages. Click a shape; your choice stays in your browser.</p>
+  </div>
+  <div class="ck-try">
+    <div>
+      <div class="ck-steps" id="try-steps"></div>
+      <p class="ck-q" id="try-q">Which one is <i>bouba</i>?</p>
+      <div class="ck-pair">
+        <img id="try-img" src="/static/img/plato_cratylus/pair_0.webp" width="640" height="320" alt="Two black shapes: on the left a rounded blob with soft lobes, on the right a spiky star.">
+        <div class="sides"><button type="button" data-side="left" aria-pressed="false" aria-label="The left shape"></button><button type="button" data-side="right" aria-pressed="false" aria-label="The right shape"></button></div>
+      </div>
+    </div>
+    <div class="ck-out" id="try-out" aria-live="polite"><p>Pick the left or the right shape.</p></div>
+  </div>
+</section>
+
+<section class="ck-sec" id="words" aria-labelledby="words-h">
+  <div class="ck-sec-head">
+    <h2 id="words-h">Every word, measured</h2>
+    <p class="ck-sec-lede" id="words-lede"></p>
+  </div>
+  <div class="seg ck-seg" id="measure-seg" role="group" aria-label="Roundness measure">
+    <button type="button" data-m="solidity" aria-pressed="true">Solidity</button>
+    <button type="button" data-m="corners" aria-pressed="false">Sharp corners</button>
+    <button type="button" data-m="axis" aria-pressed="false">People’s round→spiky scale</button>
+  </div>
+  <div class="ck-two">
+    <div>
+      <p class="ck-legend" id="words-legend"></p>
+      <div class="ck-chart" id="words-chart"></div>
+      <details class="ck-numbers"><summary>The numbers</summary><table id="words-table"></table></details>
+    </div>
+    <div class="ck-facts">
+      <p class="ck-cap" id="strip-cap"></p>
+      <img class="ck-strip" id="strip-img" src="/static/img/plato_cratylus/word_bouba.webp" width="880" height="140" alt="">
+      <p class="ck-cap" id="measure-note"></p>
+    </div>
+  </div>
+</section>
+
+<section class="ck-sec" id="sound" aria-labelledby="sound-h">
+  <div class="ck-sec-head">
+    <h2 id="sound-h">Sound, or a famous word?</h2>
+    <p class="ck-sec-lede" id="sound-lede"></p>
+  </div>
+  <div class="ck-two">
+    <div class="ck-facts" id="sound-facts"></div>
+    <div class="ck-facts" id="sound-facts-2"></div>
+  </div>
+</section>
+
+<section class="ck-sec" id="choice" aria-labelledby="choice-h">
+  <div class="ck-sec-head">
+    <h2 id="choice-h">Which one is bouba? The AIs and people</h2>
+    <p class="ck-sec-lede" id="choice-lede"></p>
+  </div>
+  <div class="ck-two">
+    <div>
+      <p class="ck-legend" id="choice-legend"></p>
+      <div class="ck-chart" id="choice-chart"></div>
+    </div>
+    <div class="ck-facts" id="choice-facts"></div>
+  </div>
+</section>
+
+<section class="ck-sec ck-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">Method and caveats</h2>
+  <ul>
+    <li><b>Drawings.</b> Muse Image got one prompt: “A simple black outline drawing of a shape called ‘bouba’. One shape only, no text.” 21 words and spellings, 12 pictures each (8 for the spelling variants), from separate calls of four. None of the 236 pictures showed any letters.</li>
+    <li><b>Words.</b> The classic bouba, kiki, maluma and takete; eight new words crossing soft consonants (b, m, l) or hard ones (k, t, p) with rounded vowels (o, u) or unrounded ones (i, e); four neutral words (fana, hasa, nafa, safa); and no name at all.</li>
+    <li><b>Roundness.</b> Measured three ways, by code: solidity (the shape’s area over the area of its convex hull: 1 for a blob, about 0.5 for a star); the number of sharp corners; and where the picture sits between 400 people’s circles and clouds and 600 people’s stars, zigzags and lightning bolts in Meta’s DINOv2 picture space.</li>
+    <li><b>Choices.</b> Eight code-drawn pairs of a round blob and a spiky star, each shown with the round one on the left and on the right. Muse Glimmer (open weights, on our own GPU): the probability of “left” vs. “right”. Muse Spark: six sampled answers per word.</li>
+    <li><b>People.</b> Published numbers from Ćwiek et al. (2022), 917 people, 25 languages, who heard the words spoken. Their data on OSF carry no licence, so nothing here is computed from them.</li>
+    <li><b>Caveats.</b> The classic words appear in thousands of web pages about this very effect, so a model can “know” the answer by reading. People heard the words; the models only ever see letters. Twelve pictures per word; the “corners” count also counts tight round lobes. Pre-registered: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cratylus_plan.md">plan</a>; results: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cratylus.md">write-up</a>.</li>
+  </ul>
+  <p class="ck-credit" id="credits"></p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_cratylus.js"></script>
+</body>
+</html>
