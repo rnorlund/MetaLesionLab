@@ -24,8 +24,6 @@ from dataclasses import dataclass
 import numpy as np
 from PIL import Image, ImageDraw
 
-from metalesionlab import plato_shapes as ps
-
 PROMPT = "A simple black outline drawing of a shape called '{word}'. One shape only, no text."
 BASELINE_PROMPT = "A simple black outline drawing of a shape. One shape only, no text."
 BASELINE = "(no name)"
@@ -180,6 +178,8 @@ class Roundness:
 def roundness(img: Image.Image) -> tuple[Roundness, np.ndarray]:
     """Fill the drawing (plato_shapes.silhouette_mask), keep the largest shape and measure it."""
     from scipy import ndimage as ndi
+
+    from metalesionlab import plato_shapes as ps  # scipy; not needed by the GPU side
 
     ink = ps.ink_mask(ps.to_gray(img, 512), min_fraction=1e-4)
     sil = ps.silhouette_mask(ink, radii=(0, 1, 2, 3, 5, 8))
