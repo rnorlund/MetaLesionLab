@@ -171,6 +171,7 @@ This pattern is suggestive, not established. It is one of 40 item-level lesion t
 ## Summary
 
 - Inside Glimmer, people's doodles of a concept stay spread out while Muse Image's collapse to one point by the naming layers.
+  - **Collapse layer**, a summary measure used by Ask Socrates (`public_data/plato_glimmer_inside.json`, from `scripts/plato_glimmer_inside_export.py`): the first decoder layer from which Muse Image's doodles stay less than 0.5 times as spread out as people's, through layer 52. Median layer 36 (range 30–44) across 35 things; "person" never collapses. The 0.5 threshold is a convention chosen after seeing the data, not a pre-registered test.
 - Concepts whose pictures vary more are harder for Glimmer to name: rho about −0.35 to −0.50 when spread is measured on the picture side (DINOv2, projector).
 - Within a concept, the atypical doodles are the ones it misnames (AUC 0.61–0.66).
 - That spread does not tell us which concepts break first under damage, nor how late the name appears.

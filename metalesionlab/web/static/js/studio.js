@@ -145,7 +145,7 @@
     $('set-h').textContent = d.name;
     var nCand = m ? m.items.reduce(function (a, it) { return a + (it.candidates || []).length; }, 0) : null;
     $('set-meta').textContent = m
-      ? T.langName(state.langs, m.lang) + ' · ' + m.items.length + ' words · ' + nCand + ' candidates · ' + d.kept + ' kept' + (d.review ? ' · ' + d.review + ' need review' : '') + (d.excluded ? ' · ' + d.excluded + ' excluded' : '')
+      ? T.langName(state.langs, m.lang) + ' · ' + m.items.length + ' words · ' + nCand + ' candidates · ' + d.kept + ' kept' + (d.review ? ' · ' + d.review + (d.review === 1 ? ' needs review' : ' need review') : '') + (d.excluded ? ' · ' + d.excluded + ' excluded' : '')
       : (d.lang ? T.langName(state.langs, d.lang) + ' · ' : '') + d.n_items + ' words';
 
     var statusBox = $('set-status');

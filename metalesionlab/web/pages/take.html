@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Take the naming test · Tippa Lingua</title>
+<title>Take the naming test · {{BRAND}}</title>
 <meta name="description" content="Name 20 pictures out loud and see how many you named and how fast. About 3 minutes, in English or Spanish. Not a medical test.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,14 +15,7 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="page">
-<header class="topbar">
-  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
-  <nav class="topnav" aria-label="Tools">
-    <a href="/">Home</a>
-    <a href="/take" aria-current="page">Take the test</a>
-    <a href="/assess">For clinicians</a>
-  </nav>
-</header>
+<header class="topbar"><!-- the site header (web/site.py) --></header>
 
 <main class="take" id="main" tabindex="-1">
   <h1 class="sr-only">Take the naming test</h1>
@@ -100,7 +93,7 @@
     </div>
   </section>
 </main>
-<p class="footnote">Tippa Lingua · pictures drawn by Muse Image, answers written down by Muse Voice Transcribe and coded automatically. Not a medical test. <a href="/assess">For clinicians and researchers</a>.</p>
+<p class="footnote">{{BRAND}} · pictures drawn by Muse Image, answers written down by Muse Voice Transcribe and coded automatically. Not a medical test. <a href="/assess">For clinicians and researchers</a>.</p>
 </div>
 
 <div class="admin" id="admin" hidden role="dialog" aria-modal="true" aria-label="Naming test">

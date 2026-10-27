@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Test Studio · Tippa Lingua</title>
+<title>Test Studio · {{BRAND}}</title>
 <meta name="description" content="Turn a word list into a checked picture-naming test in any language, with Muse Image, SAM 3.1 and Muse Spark.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,21 +16,10 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="page">
-<header class="topbar">
-  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
-  <nav class="topnav" aria-label="Tools">
-    <a href="/">Home</a>
-    <a href="/studio" aria-current="page">Test Studio</a>
-    <a href="/scorer">Scorer</a>
-    <a href="/assess">Assessment</a>
-    <a href="/lab">Model Lab</a>
-    <a href="/ask">Ask the Lab</a>
-    <a href="/plato">Plato’s Chair</a>
-  </nav>
-  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+<header class="topbar"><!-- the site header (web/site.py) -->
   <div class="chips"><span class="chip">Muse Image · SAM 3.1 · Muse Spark</span></div>
 </header>
-<div class="page-intro"><p><b>Test Studio</b> turns a word list into a checked picture-naming test in any language: Muse Image draws the pictures, SAM 3.1 and Muse Spark check them, and you export cards and a norms table. <button type="button" class="link-btn" data-tour-start="studio">Take the tour from here</button></p></div>
+<div class="page-intro"><p><b>Test Studio</b> turns a word list into a checked picture-naming test in any language: Muse Image draws the pictures, SAM 3.1 and Muse Spark check them, and you export cards and a norms table.</p></div>
 
 <h1 class="sr-only">Test Studio</h1>
 <div class="layout">
@@ -153,7 +142,7 @@ anchor</textarea>
   </section>
 </main>
 </div>
-<p class="footnote">Research and teaching use only. Tippa Lingua doesn't diagnose and doesn't give medical or treatment advice. Pictures are drawn by Muse Image.</p>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice. Pictures are drawn by Muse Image.</p>
 </div>
 
 <dialog id="item-dialog" aria-labelledby="dlg-title">

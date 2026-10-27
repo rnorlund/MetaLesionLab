@@ -1,5 +1,5 @@
 {
-  "_about": "Published, group-level picture-naming results for people with aphasia and healthy controls, used as reference profiles in the Model Lab. Only numbers printed in the cited sources; no individual-level data. Category names follow metalesionlab.naming_errors: Nonword = phonologically related nonword, Neologism = abstruse (unrelated) nonword. Checked against the sources on 2026-10-26.",
+  "_about": "Published, group-level picture-naming results for people with aphasia and controls without brain injury, used as reference profiles in the Model Lab. Only numbers printed in the cited sources; no individual-level data. Category names follow metalesionlab.naming_errors: Nonword = phonologically related nonword, Neologism = abstruse (unrelated) nonword. Checked against the sources on 2026-10-26.",
   "sources": {
     "schwartz2012": {
       "citation": "Schwartz MF, Faseyitan O, Kim J, Coslett HB (2012). The dorsal stream contribution to phonological retrieval in object naming. Brain 135(12):3799-3814.",
@@ -30,7 +30,7 @@
       "citation": "Walker GM, Schwartz MF, Kimberg DY, Faseyitan O, Brecher A, Dell GS, Coslett HB (2011). Support for anterior temporal involvement in semantic error production in aphasia: new evidence from VLSM. Brain and Language 117(3):110-122.",
       "doi": "10.1016/j.bandl.2010.09.008",
       "where": "Table 1, note a",
-      "note": "20 healthy participants (unpublished norms reported in the paper)."
+      "note": "20 participants without brain injury (unpublished norms reported in the paper)."
     },
     "yang2026": {
       "citation": "Yang Y, Guan X, Arheix-Parras S, Ahmadi S, Newman-Norlund R, Bonilha L, Rorden C, Fridriksson J, Desai RH, Nelakuditi S (2026). Lesioned multimodal language models reproduce aphasic picture-naming patterns. arXiv:2607.11621v2 (preprint).",

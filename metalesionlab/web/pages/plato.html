@@ -3,10 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plato’s Chair · Tippa Lingua</title>
+<title>Plato’s Chair · {{BRAND}}</title>
 <meta name="description" content="Plato said there is one ideal chair. We asked Meta's image model, Muse Image, to draw 16 chairs, and asked 16 people. Its chairs are 63% less varied, and it draws 34 of 35 things more alike than people do. Another image model, SDXL, does not.">
-<meta property="og:title" content="Plato’s Chair · Tippa Lingua">
-<meta property="og:description" content="Ask Meta's Muse Image to draw 16 chairs, and ask 16 people. Its chairs are 63% less varied.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="{{BRAND}}">
+<meta property="og:title" content="Plato’s Chair: is there one ideal chair?">
+<meta property="og:description" content="Ask Meta’s Muse Image to draw 16 chairs, and ask 16 people. Its chairs are 63% less varied, and it draws 34 of 35 things more alike than people do.">
+<meta property="og:url" content="{{ORIGIN}}/plato">
+<meta property="og:image" content="{{ORIGIN}}/static/img/og-plato-chair.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Left: 16 chair doodles by Meta’s Muse Image, nearly identical, and all 16 stacked into one sharp chair. Right: 16 chairs drawn by people, and the same 16 stacked into a cloud.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plato’s Chair: is there one ideal chair?">
+<meta name="twitter:description" content="Meta’s Muse Image drew the same chair 16 times. People drew 16 different ones, mostly of the same plain chair.">
+<meta name="twitter:image" content="{{ORIGIN}}/static/img/og-plato-chair.png">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,27 +29,15 @@
 <body class="plato">
 <a class="skip" href="#main">Skip to content</a>
 <div class="page">
-<header class="topbar">
-  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
-  <nav class="topnav" aria-label="Tools">
-    <a href="/">Home</a>
-    <a href="/challenge">You vs. the AI</a>
-    <a href="/plato" aria-current="page">Plato’s Chair</a>
-    <a href="/lab">Model Lab</a>
-    <a href="/ask">Ask the Lab</a>
-    <a href="/scorer">Scorer</a>
-    <a href="/studio">Test Studio</a>
-  </nav>
-  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
-</header>
+<header class="topbar"><!-- the site header (web/site.py) --></header>
 
 <main id="main" tabindex="-1">
 
 <section class="pc-hero" id="hero" aria-labelledby="hero-h">
   <div class="pc-hero-text">
-    <span class="pc-kicker">An experiment with Meta’s image model</span>
+    <span class="pc-kicker">What would Plato ask an AI? · Is there one ideal chair?</span>
     <h1 id="hero-h">Plato’s Chair</h1>
-    <p class="pc-lede">Plato said there is one ideal chair, and every real chair is a copy of it. We asked Meta’s image model, Muse Image, to draw 16 chairs, and asked 16 people.</p>
+    <p class="pc-lede">Plato held that each kind of thing has one ideal Form, and every real one is a copy (his own example was a bed). Is there one ideal chair? We asked Meta’s image model, Muse Image, to draw 16 chairs, and asked 16 people.</p>
   </div>
 
   <figure class="pc-hero-fig" id="hero-fig">
@@ -82,6 +81,7 @@
   <a href="#languages">In six languages</a>
   <a href="#inside">Inside the AI</a>
   <a href="#second-model">Is it just Meta’s model?</a>
+  <!--#if series--><a href="#series">More of Plato’s questions</a><!--#endif-->
   <a href="#method">Method and caveats</a>
 </nav>
 
@@ -195,6 +195,16 @@
   </div>
 </section>
 
+<!--#if series-->
+<section class="pc-sec" id="series" aria-labelledby="series-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">The Plato series</span>
+    <h2 id="series-h">More of Plato’s questions, put to an AI and to people</h2>
+  </div>
+  <!--#series:sub-->
+</section>
+<!--#endif-->
+
 <section class="pc-sec pc-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul>
@@ -211,7 +221,7 @@
 
 <div class="note note-error" id="load-error" hidden></div>
 </main>
-<p class="footnote">Research and teaching use only. Tippa Lingua doesn't diagnose and doesn't give medical or treatment advice.</p>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
 </div>
 
 <script src="/static/js/common.js"></script>

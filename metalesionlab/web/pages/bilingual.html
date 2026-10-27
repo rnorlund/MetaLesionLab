@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Second language · Model Lab · Tippa Lingua</title>
+<title>Second language · Model Lab · {{BRAND}}</title>
 <meta name="description" content="Does damage hurt a second language first? The same pictures and the same damage to Meta's open model Muse Glimmer in English, Spanish, French and Portuguese.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,16 +16,7 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="page">
-<header class="topbar">
-  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
-  <nav class="topnav" aria-label="Tools">
-    <a href="/">Home</a>
-    <a href="/studio">Test Studio</a>
-    <a href="/scorer">Scorer</a>
-    <a href="/lab" aria-current="page">Model Lab</a>
-    <a href="/plato">Plato’s Chair</a>
-  </nav>
-  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+<header class="topbar"><!-- the site header (web/site.py) -->
   <div class="chips">
     <span class="chip">Muse Glimmer 30B · FP8 · one L40S</span>
   </div>
@@ -134,7 +125,7 @@
   </section>
   <div class="note note-error" id="load-error" hidden></div>
 </main>
-<p class="footnote">Results come from a run on our GPU and are replayed here; this page makes no AI calls. Layers are numbered 0–51, as in the model’s code. Research and teaching use only. Not a medical test.</p>
+<p class="footnote">Results come from a run on our GPU and are replayed here; this page makes no AI calls. Layers are numbered 1–52 (the model’s code counts them from 0). Research and teaching use only. Not a medical test.</p>
 </div>
 
 <script src="/static/js/common.js"></script>

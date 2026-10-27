@@ -35,6 +35,16 @@ Free, with no API calls: every page, the replays (Model Lab, Plato's Chair, What
 game with typed answers (cached meaning judgments), browsing sets, exports (cards PDF, norms CSV, ZIP), the
 session report PDF and parallel forms.
 
+**Draw a chair (`POST /api/draw`)** is free too: it runs Meta's DINOv2-base on the container's CPU (about
+0.2 s a drawing on 2 vCPU, about 0.5 GB of memory once loaded; the model loads on the first drawing, not at
+startup). The guard lists it as free; it has its own limits instead: 20 drawings a minute and 300 a day per
+visitor (`TOT_LIMIT_DRAW_BURST`, `TOT_LIMIT_DRAW`), 512 KB per request, and `DRAW_SLOTS` drawings at a time
+(1 in the container; others wait up to 15 s). Drawings are processed in memory and never stored or logged.
+The 350 MB ONNX model is too big for the repository, so the Dockerfile fetches it at build time with
+`metalesionlab/draw_fetch.py` (pinned onnx-community export of facebook/dinov2-base, SHA-256 checked;
+`scripts/draw_model.py export` makes the same file from the original weights with torch). Without the
+model file the page still loads and the endpoint answers 503.
+
 **Kill switch:** set `TIPPA_PUBLIC_DAILY_USD=0` and restart. The site stays up with no API calls.
 
 Visitors can edit only the sets they built (`TOT_PUBLIC=1`), so nobody can change the demo sets the
@@ -173,6 +183,8 @@ which writes `public_data/naming_norms_<set>.json` only for sets with at least 1
 | `TIPPA_NORMS_DIR`, `MLL_LEDGER` | /data/norms, /data/costs.jsonl | Volunteers' summaries and the spend ledger |
 | `TOT_TRUST_PROXY`, `TOT_PROXY_HOPS`, `TOT_CLIENT_IP_HEADER` | 1, 1, none | How the visitor's address is found behind the host's proxy |
 | `TOT_RECEIPT_KEY` | random per start | Signs public-test receipts: a secret |
+| `DRAW_MODEL`, `DRAW_THREADS`, `DRAW_SLOTS` | /app/models/dinov2-base.onnx, 2, 1 | Draw a chair: the ONNX model, CPU threads per drawing, drawings at a time |
+| `TOT_LIMIT_DRAW`, `TOT_LIMIT_DRAW_BURST` | 300, 20 | Draw a chair: drawings per visitor per day and per minute |
 
 The host's ledger is separate from the laptop's `runs/costs.jsonl`: the laptop's $120 cap doesn't see what
 the site spends. Total spending is the two ledgers together (and the dev.meta.ai usage page).
