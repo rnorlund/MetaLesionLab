@@ -1,6 +1,6 @@
 /* Tippa Lingua live demo: today's AI budget, and what to do when it's used up.
    Added to every page by web/guard.py only when the server runs with PUBLIC_DEMO=1.
-   - A small note (bottom left) says how much of today's budget for Meta API calls is left.
+   - A slim note at the top says how much of today's budget for Meta API calls is left.
    - When the budget is used up, a banner at the top says so and offers recorded examples.
    - Any response the guard marks (X-Tippa-Guard: budget) brings up that banner; a guard note
      (X-Tippa-Guard-Note, e.g. fewer pictures per word) is shown as a toast. */
@@ -30,11 +30,11 @@
   }
 
   var css = '' +
-    '.tg-note{position:fixed;left:12px;bottom:12px;z-index:90;display:flex;align-items:center;gap:8px;max-width:calc(100% - 24px);' +
-    'background:var(--panel,#fff);color:var(--ink-2,#374151);border:1px solid var(--line-2,#D1D5DB);border-radius:999px;' +
-    'padding:6px 8px 6px 12px;font:13px/1.3 var(--sans,system-ui,sans-serif);box-shadow:0 4px 14px rgba(0,0,0,.08)}' +
+    '.tg-note{position:relative;padding:5px 44px 5px 16px;text-align:center;background:var(--soft,#F9FAFB);' +
+    'border-bottom:1px solid var(--line,#E5E7EB);color:var(--muted,#4B5563);font:13px/1.4 var(--sans,system-ui,sans-serif)}' +
     '.tg-note b{color:var(--ink,#111827);font-weight:600}' +
-    '.tg-note button{border:0;background:transparent;color:var(--faint,#6B7280);font:inherit;cursor:pointer;padding:2px 6px;border-radius:999px}' +
+    '.tg-note button{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;' +
+    'color:var(--faint,#6B7280);font:16px/1 var(--sans,system-ui,sans-serif);cursor:pointer;padding:3px 8px;border-radius:6px}' +
     '.tg-note button:hover,.tg-note button:focus-visible{background:var(--ground,#F3F4F6);color:var(--ink,#111827)}' +
     '.tg-banner{background:var(--amber-soft,#FEF3C7);border-bottom:1px solid var(--amber,#FDE68A);color:var(--ink,#111827);' +
     'font:15px/1.45 var(--sans,system-ui,sans-serif);padding:12px 16px}' +
@@ -61,12 +61,11 @@
     var hide = el('button', { type: 'button', 'aria-label': 'Hide this note', title: 'Hide', text: '×', onclick: function () {
       stored(HIDE_KEY, '1'); state.note.remove();
     } });
-    state.note = el('div', { class: 'tg-note', role: 'status',
-      title: 'Calls to Meta’s models on this live demo share a budget of ' + money(info.daily_cap_usd) +
-             ' a day, with a few per visitor per minute. Browsing, replays and exports are free.' }, [
-      el('span', {}, ['Live demo · AI budget today: ', el('b', { text: pct + '% left' })]), hide
+    state.note = el('div', { class: 'tg-note', role: 'status' }, [
+      el('span', {}, ['Live demo: calls to Meta’s models share a budget of ' + money(info.daily_cap_usd) + ' a day. ',
+        el('b', { text: pct + '% left today.' }), ' Browsing, replays and exports are free.']), hide
     ]);
-    document.body.appendChild(state.note);
+    document.body.insertBefore(state.note, document.body.firstChild);
   }
 
   function exampleLink(ex) {

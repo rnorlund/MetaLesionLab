@@ -129,6 +129,21 @@ def test_check_call_refuses_at_the_cap_and_resets_at_midnight(setup):
     g.check_call(0.05)
 
 
+def test_an_unwritable_ledger_refuses_every_call(tmp_path):
+    locked = tmp_path / "locked"
+    locked.mkdir()
+    g = G.Guard(G.Settings(public_demo=True), ledger_path=lambda: locked / "sub" / "costs.jsonl", clock=Clock())
+    g.check_call(0.01)  # a folder MetaAPI can create is fine
+    locked.chmod(0o500)
+    try:
+        if os.access(locked, os.W_OK):
+            pytest.skip("running as a user who can write anywhere")
+        with pytest.raises(G.DailyCapReached):
+            g.check_call(0.0)
+    finally:
+        locked.chmod(0o700)
+
+
 def test_meta_api_runs_registered_checks(setup, monkeypatch, tmp_path):
     monkeypatch.setattr(meta_api, "LEDGER", tmp_path / "global.jsonl")
     monkeypatch.setattr(meta_api, "budget_checks", [setup.guard.check_call])
@@ -284,7 +299,7 @@ def test_configure_web(monkeypatch):
     G.configure_web(web, G.Settings(public_demo=True))
     assert web.PUBLIC and web.ALLOW_BUILDS and web.MAX_WORDS == 4
     assert web.MAX_CLIP_S == {"naming": 30, "description": 90, "fluency": 60}
-    assert os.environ["TOT_LIMIT_BUILD"] == "2" and os.environ["TOT_LIMIT_SCENE"] == "1"
+    assert os.environ["TOT_LIMIT_BUILD"] == "3" and os.environ["TOT_LIMIT_SCENE"] == "2"
     assert os.environ["TOT_LIMIT_SCORE"] == "5"
     G.configure_web(web, G.Settings(public_demo=True, build_words=0))
     assert not web.ALLOW_BUILDS
@@ -322,6 +337,6 @@ def test_whole_app_in_public_mode(tmp_path):
     assert out["page"] and out["public"] and out["max_words"] == 4
     assert out["clip"] == {"naming": 30, "description": 90, "fluency": 60}
     assert out["guard"]["public_demo"] and out["guard"]["exhausted"] and out["guard"]["daily_cap_usd"] == 0.5
-    assert out["status"]["limits"]["build"]["per_day"] == 2
+    assert out["status"]["limits"]["build"]["per_day"] == 3
     assert out["typed"]["guard"] == "budget"
     assert out["hook"] == "DailyCapReached"

@@ -11,7 +11,7 @@ With PUBLIC_DEMO=1, visitors can't run up the Meta API bill:
   keep working. The overall cap (MLL_BUDGET_USD) still applies on top.
 - Per-visitor limits. A burst limit per minute on every paid route, a daily limit for routes that
   limits.py doesn't count (the Ask the Lab agent, unknown routes), tighter daily defaults in limits.py
-  (2 builds, 1 scene), and a ceiling on paid requests per minute from everyone together.
+  (3 builds, 2 scenes, 150 scored answers), and a ceiling on paid requests per minute from everyone together.
 - Test Studio builds are tiny: TIPPA_PUBLIC_BUILD_WORDS words (default 4; 0 turns building off) with
   at most TIPPA_PUBLIC_BUILD_CANDIDATES pictures per word (default 2). Personal tests from a photo are
   off (TIPPA_PUBLIC_PHOTO_TESTS=1 turns them on).
@@ -52,6 +52,7 @@ log = logging.getLogger("tot.guard")
 
 DAY_S = 24 * 3600
 MB = 1024 * 1024
+DRAIN_BYTES = 16 * MB  # an oversized upload is read and dropped up to this size, so its sender gets the reply
 BANNER_TAG = b'<script src="/static/js/guard-banner.js" defer></script>'
 # Picture, SAM check and Muse Spark naming per candidate, as in app.COST_PER_CANDIDATE.
 COST_PER_CANDIDATE = meta_api.IMAGE_PRICE + meta_api.SAM_PRICE + 0.002
@@ -62,11 +63,13 @@ EXAMPLES = [
     {"label": "Explore the Model Lab results", "href": "/lab"},
 ]
 # Paid requests per visitor per minute, by bucket.
-BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 15, "ask": 4, "other": 10}
+BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "other": 10}  # a fast /take is ~20 a minute
 # Daily limits the guard counts itself; limits.py counts builds, scenes and scored responses.
 OTHER_PER_DAY = 100
-# Daily limits.py defaults on the public demo (TOT_LIMIT_* in the environment still wins).
-PUBLIC_LIMITS = {"build": 2, "scene": 1, "score": 60}
+# Daily limits.py defaults on the public demo (TOT_LIMIT_* in the environment still wins). Scoring is cheap
+# (about $0.001-0.003 an answer) and visitors behind one office network share an address, so its limit is
+# generous; the daily dollar cap is what bounds spending.
+PUBLIC_LIMITS = {"build": 3, "scene": 2, "score": 150}
 WHAT = {"build": "picture sets", "scene": "scenes", "photo": "photo tests", "score": "scored answers",
         "ask": "questions", "other": "requests"}
 
@@ -253,7 +256,24 @@ class Guard:
     def resets_in_s(self) -> int:
         return int(DAY_S - self.clock() % DAY_S) + 1
 
+    def ledger_writable(self) -> bool:
+        """MetaAPI records a call after paying for it; if the ledger can't be written, the call would
+        go uncounted, so the guard refuses every call instead (fails closed)."""
+        path = Path(self.ledger.path_fn())
+        if path.exists():
+            return os.access(path, os.W_OK)
+        folder = path.parent
+        while not folder.exists() and folder != folder.parent:  # MetaAPI creates missing folders
+            folder = folder.parent
+        return os.access(folder, os.W_OK | os.X_OK)
+
     def would_exceed(self, estimate: float = 0.0) -> bool:
+        if not self.ledger_writable():
+            if not getattr(self, "_warned_ledger", False):
+                self._warned_ledger = True
+                log.error("The spend ledger %s isn't writable, so every Meta API call is refused.",
+                          self.ledger.path_fn())
+            return True
         spent = self.spent_today()
         return spent >= self.s.daily_usd or spent + max(0.0, estimate) > self.s.daily_usd
 
@@ -368,6 +388,7 @@ class Guard:
         spent = self.spent_today()
         out = {"public_demo": True, "daily_cap_usd": self.s.daily_usd, "spent_today_usd": round(spent, 4),
                "left_today_usd": round(max(0.0, self.s.daily_usd - spent), 4), "exhausted": self.would_exceed(),
+               "ledger_ok": self.ledger_writable(),
                "resets_in_s": self.resets_in_s(), "examples": EXAMPLES,
                "studio": {"build_words": self.s.build_words, "build_candidates": self.s.build_candidates,
                           "photo_tests": self.s.photo_tests},
@@ -382,19 +403,31 @@ class Guard:
 # --- ASGI middleware -----------------------------------------------------------------------------
 
 async def _read_body(receive, max_bytes: int) -> tuple[bytes, bool]:
-    chunks, size = [], 0
-    while True:
+    """The request body, or (b"", True) once it passes max_bytes (the rest is drained, not kept)."""
+    chunks, size, more = [], 0, True
+    while more:
         message = await receive()
         if message["type"] != "http.request":
             break
         chunk = message.get("body", b"")
         size += len(chunk)
+        more = bool(message.get("more_body"))
         if size > max_bytes:
+            await _drain(receive, more, size)
             return b"", True
         chunks.append(chunk)
-        if not message.get("more_body"):
-            break
     return b"".join(chunks), False
+
+
+async def _drain(receive, more: bool = True, size: int = 0) -> None:
+    """Read and drop the rest of an upload (up to DRAIN_BYTES) before answering: a server that
+    answers mid-upload resets the connection, and the browser shows a network error instead."""
+    while more and size <= DRAIN_BYTES:
+        message = await receive()
+        if message["type"] != "http.request":
+            return
+        size += len(message.get("body", b""))
+        more = bool(message.get("more_body"))
 
 
 def _replay(body: bytes, receive):
@@ -470,10 +503,15 @@ class GuardMiddleware:
             if method == "GET" and not path.startswith(("/api/", "/static/", "/media/")):
                 send = _with_banner(send)
             return await self.app(scope, receive, send)
-        if (d := self.guard.gate(rule)) is not None:
-            return await _respond(send, d)
         declared = Headers(scope=scope).get("content-length", "")
-        if declared.isdigit() and int(declared) > rule.max_bytes:
+        size = int(declared) if declared.isdigit() else None
+        if (d := self.guard.gate(rule)) is not None:
+            if size is None or size <= DRAIN_BYTES:
+                await _drain(receive)
+            return await _respond(send, d)
+        if size is not None and size > rule.max_bytes:
+            if size <= DRAIN_BYTES:
+                await _drain(receive)
             return await _respond(send, self.guard.too_large(rule))
         body, too_big = await _read_body(receive, rule.max_bytes)
         if too_big:
