@@ -82,7 +82,7 @@ FREE = [
     ({"POST"}, re.compile(r"/api/assess/norms/[^/]+/?")),
     ({"PATCH"}, re.compile(r"/api/sets/[^/]+/items/\d+/?")),
     ({"PATCH"}, re.compile(r"/api/scenes/[^/]+/?")),
-    ({"POST"}, re.compile(r"/api/draw/?")),  # Draw your chair: CPU only; draw_routes.py has its own limits
+    ({"POST"}, re.compile(r"/api/draw(/upload)?/?")),  # Draw a chair: CPU only, no API calls; draw_routes.py has its own limits
 ]
 MUTATING = {"POST", "PUT", "PATCH", "DELETE"}
 # (methods, path, rule name)

@@ -128,7 +128,10 @@ def test_series_override_file_sets_the_finding(client, tmp_path, monkeypatch):
 
 def test_calls_to_action_follow_the_routes(client):
     landing = client.get("/").text
-    assert site.has_page(web.app, "/draw") and 'href="/draw">Draw a chair in 20 seconds' in landing
+    # /draw is served: the pad is on the landing page itself (draw first, then the reveal), plus a link to /draw.
+    assert site.has_page(web.app, "/draw") and 'id="hero-draw"' in landing and 'id="skip-link"' in landing
+    assert 'href="/draw">Draw something else' in landing and "TOTDraw" not in landing  # landing.js mounts it
+    assert re.search(r'id="reveal"[^>]*hidden', landing) and landing.index('id="hero-draw"') < landing.index('id="chairs"')
     # Ask Socrates is served: hero button, its own band, and the nav (as an accent item).
     assert site.has_page(web.app, "/socrates") and landing.count('href="/socrates"') >= 3
     assert 'class="nav-accent"' in nav_links_block(client.get("/plato").text)

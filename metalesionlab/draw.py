@@ -143,6 +143,139 @@ def render(strokes) -> Image.Image:
     return ink_crop(render_strokes(normalize_strokes(strokes)))
 
 
+# ---------- an uploaded photo of a drawing on paper -> picture ----------
+
+MAX_UPLOAD_BYTES = 3 * 1024 * 1024    # the browser sends a JPEG of at most 1024 px, usually 100-400 KB
+MAX_UPLOAD_PIXELS = 40_000_000        # refuse decompression bombs before decoding
+UPLOAD_SIDE = 512                     # Muse Image's pictures were stored at 512 px before ink_crop
+NOT_A_DRAWING = ("That looks like a photo of a real object or a busy scene, not a line drawing. Draw it on plain "
+                 "paper with a dark pen, then photograph just the drawing.")
+NO_INK = ("We couldn't find a drawing in that photo. Draw with a dark pen or marker on plain paper and "
+          "photograph it close up.")
+EDGES = ("The edge of the paper (or the table) is in the photo, and it would count as part of your drawing. Take "
+         "the photo closer, so the paper fills the picture, or crop it to the drawing.")
+# Calibrated on synthetic pen-on-paper photos, Muse Image's doodles, children's tablet drawings and line-art
+# pictures (should pass) against photos of clocks, landscapes, flowers, colour illustrations and noise (should
+# not): scripts/draw_validate.py --uploads. The thresholds sit between the two groups' extremes.
+MAX_COLOUR = 0.25      # share of strongly coloured pixels in the middle of the picture (a table at the edges is fine)
+MAX_INK = 0.35         # share of dark pixels once the paper is flattened
+MAX_MIDTONE = 0.25     # share of mid-gray pixels once the paper is flattened (shading, texture, scenery)
+MIN_INK = 0.001        # less than this (at the looser ink threshold) is blank paper
+MAX_DOODLE_DISTANCE = 0.78  # cosine distance from the nearest centroid of people's doodles (35 things)
+MAX_SPAN = 0.95        # ink reaching across 95% of both width and height is the paper's edge or a frame
+MAX_BORDER = 0.25      # share of the picture's outer edge much darker than its middle: a table around the paper
+
+
+def load_upload(data: bytes) -> Image.Image:
+    """Decode an uploaded picture (JPEG, PNG or WebP) to RGB on white, at most 512 px on its longer side,
+    as Muse Image's pictures were stored before the experiment ink-cropped them. Raises DrawingError."""
+    import io
+
+    from PIL import ImageOps
+
+    if not data:
+        raise DrawingError("The upload is empty.")
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise DrawingError("That picture is too big. Please upload one under 3 MB.")
+    try:
+        img = Image.open(io.BytesIO(data))
+        if img.format not in ("JPEG", "PNG", "WEBP"):
+            raise DrawingError("Please upload a JPEG, PNG or WebP picture.")
+        w, h = img.size
+        if w * h > MAX_UPLOAD_PIXELS:
+            raise DrawingError("That picture has too many pixels. Please upload a smaller one.")
+        if min(w, h) < 64:
+            raise DrawingError("That picture is too small. Please upload one at least 64 pixels wide.")
+        img.draft("RGB", (2 * UPLOAD_SIDE, 2 * UPLOAD_SIDE))
+        img = ImageOps.exif_transpose(img)
+        if img.mode in ("RGBA", "LA", "PA") or (img.mode == "P" and "transparency" in img.info):
+            rgba = img.convert("RGBA")
+            white = Image.new("RGBA", rgba.size, (255, 255, 255, 255))
+            img = Image.alpha_composite(white, rgba)
+        img = img.convert("RGB")
+    except DrawingError:
+        raise
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as e:
+        raise DrawingError("We couldn't read that picture. Please upload a JPEG or PNG photo.") from e
+    img.thumbnail((UPLOAD_SIDE, UPLOAD_SIDE), Image.LANCZOS)
+    return img
+
+
+def paper_stats(img: Image.Image) -> dict:
+    """How much a picture looks like dark lines on plain paper.
+
+    colour: share of strongly coloured pixels (saturation > 0.35, not dark) in the middle 60% of the picture,
+    high for photos of things and colour illustrations; a wooden table around the paper doesn't count.
+    ink, faint_ink and midtone: shares of dark (< 128), darkish (< 200) and mid-gray (128-215) pixels after
+    the experiment's paper flattening, which turns plain paper, its texture and uneven light white;
+    shading, texture and scenery are left behind as midtones and ink.
+    span: how far the ink reaches across the picture (the smaller of its width and height shares), as
+    ink_crop's crop box sees it; near 1 means the paper's edge or a table is in the photo."""
+    from PIL import ImageFilter
+
+    from metalesionlab.plato import flatten_paper
+
+    hsv = np.asarray(img.convert("HSV"), dtype=np.float32) / 255.0
+    h, w = hsv.shape[:2]
+    mid = hsv[int(h * 0.2):int(h * 0.8), int(w * 0.2):int(w * 0.8)]
+    colour = float(np.mean((mid[..., 1] > 0.35) & (mid[..., 2] > 0.25)))
+    gray = flatten_paper(img.convert("L"))
+    flat = np.asarray(gray, dtype=np.float32)
+    thick = flatten_paper(thicken(img).convert("L"))  # what ink_crop gets in prepare_upload
+    box = thick.filter(ImageFilter.MaxFilter(3)).point(lambda v: 255 if v < 200 else 0).getbbox()
+    span = min((box[2] - box[0]) / w, (box[3] - box[1]) / h) if box else 0.0
+    return {"colour": round(colour, 4), "ink": round(float(np.mean(flat < 128)), 4),
+            "faint_ink": round(float(np.mean(flat < 200)), 4),
+            "midtone": round(float(np.mean((flat >= 128) & (flat < 215))), 4), "span": round(span, 4),
+            "border": round(border_dark(img), 4)}
+
+
+def border_dark(img: Image.Image) -> float:
+    """Share of the outer 5% of the picture that is much darker (under 60%) than its middle: near 1 when
+    the photo shows a table around the sheet, near 0 when the paper fills the photo (even in uneven light)."""
+    g = np.asarray(img.convert("L"), dtype=np.float32)
+    h, w = g.shape
+    b = max(2, int(0.05 * min(h, w)))
+    middle = float(np.median(g[int(h * 0.3):int(h * 0.7), int(w * 0.3):int(w * 0.7)]))
+    ring = np.concatenate([g[:b].ravel(), g[-b:].ravel(), g[:, :b].ravel(), g[:, -b:].ravel()])
+    return float(np.mean(ring < 0.6 * middle))
+
+
+def upload_problem(stats: dict) -> str | None:
+    """A friendly reason the picture isn't a line drawing on plain paper, or None if it looks like one.
+    `d_doodle`, once the picture is embedded, is its distance from the nearest kind of doodle."""
+    if stats["faint_ink"] < MIN_INK:
+        return NO_INK
+    if stats.get("d_doodle", 0) > MAX_DOODLE_DISTANCE:
+        return NOT_A_DRAWING
+    if stats["colour"] > MAX_COLOUR or stats["ink"] > MAX_INK or stats["midtone"] > MAX_MIDTONE:
+        return NOT_A_DRAWING
+    if stats.get("span", 0) > MAX_SPAN or stats.get("border", 0) > MAX_BORDER:
+        return EDGES
+    return None
+
+
+def thicken(img: Image.Image) -> Image.Image:
+    """Widen dark lines by a pixel on each side. A pen line in a 512 px photo is often 1-2 px wide, and
+    ink_crop ignores marks under 3 px (paper grain), so without this it would crop to a speck of grain."""
+    from PIL import ImageFilter
+
+    return img.filter(ImageFilter.MinFilter(3))
+
+
+def prepare_upload(data: bytes) -> tuple[Image.Image, dict]:
+    """Uploaded bytes -> (the picture DINOv2 sees, its paper statistics), or DrawingError with a friendly
+    message. The same steps as Muse Image's pictures in the experiment (flatten the paper, crop to the
+    ink), after widening thin pen lines by a pixel (thicken). The raw photo goes no further than this
+    function; only the 256 px ink-cropped picture comes back."""
+    img = load_upload(data)
+    stats = paper_stats(img)
+    problem = upload_problem(stats)
+    if problem and problem != EDGES:  # a frame might still be a photo of a thing: decided once it's embedded
+        raise DrawingError(problem)
+    return ink_crop(thicken(img)), stats
+
+
 def pixel_values(images: list[Image.Image]) -> np.ndarray:
     """The DINOv2 image processor in numpy: resize the shortest edge to 256 (bicubic), center-crop 224,
     scale to 0-1 and normalise with the ImageNet mean and std. Returns (n, 3, 224, 224) float32."""
@@ -321,10 +454,12 @@ def score(vec: np.ndarray, concept: Concept, library: tuple[list[str], np.ndarra
     }
     if library is not None:
         keys, cents = library
-        order = np.argsort(1.0 - unit(cents) @ v)
+        dist = 1.0 - unit(cents) @ v
+        order = np.argsort(dist)
         ranked = [keys[i] for i in order]
         out["looks_like"] = ranked[:3]
         out["own_rank"] = ranked.index(concept.key) + 1 if concept.key in ranked else None
+        out["d_doodle"] = round(float(dist[order[0]]), 4)  # how far from any kind of doodle at all
     return out
 
 
