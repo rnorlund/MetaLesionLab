@@ -942,3 +942,5 @@ app.include_router(importlib.import_module("metalesionlab.web.draw_routes").rout
 app.include_router(importlib.import_module("metalesionlab.web.socrates_routes").router)  # Ask Socrates (/socrates)
 app.include_router(importlib.import_module("metalesionlab.web.plato_bird_routes").router)  # Plato's Bird (/plato/bird)
 app.include_router(importlib.import_module("metalesionlab.web.plato_forms_routes").router)  # Plato's Forms (/plato/forms)
+app.include_router(importlib.import_module("metalesionlab.web.plato_cave_routes").router)  # Plato's Cave (/plato/cave)
+app.include_router(importlib.import_module("metalesionlab.web.plato_cratylus_routes").router)  # Plato's Cratylus (/plato/cratylus)
