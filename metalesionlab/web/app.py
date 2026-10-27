@@ -931,3 +931,4 @@ app.include_router(importlib.import_module("metalesionlab.web.plato_routes").rou
 app.include_router(importlib.import_module("metalesionlab.web.cut_routes").router)  # What can I cut? (/lab/cut)
 app.include_router(importlib.import_module("metalesionlab.web.bilingual_routes").router)  # Second language (/lab/bilingual)
 app.include_router(importlib.import_module("metalesionlab.web.agent_routes").router)  # Ask the Lab (/ask)
+app.include_router(importlib.import_module("metalesionlab.web.draw_routes").router)  # Draw your chair (/draw)
