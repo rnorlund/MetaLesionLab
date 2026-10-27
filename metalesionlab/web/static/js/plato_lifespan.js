@@ -170,7 +170,7 @@
     var r = value(s, 'recog');
     if (s.kind === 'damage') {
       pic.appendChild(h('p', { class: 'ls-damage' }, ['Plato’s lifespan doesn’t end at the top. What happens to the chair when the AI is damaged? ',
-        h('a', { href: '/plato/damage' }, 'Damage the painter'), ' shows it. In its pilot, damage to the image model’s language part made the chair wander into other things, and damage to its drawing part dissolved the lines but kept the chair. This is an analogy, not a claim about people.']));
+        h('a', { href: '/plato/damage' }, 'Damage the painter'), ' shows it. Damage to the image model’s language part made the chair wander into other things (a room, a car, a person), never back to the plain chair; damage to its drawing part dissolved the lines but mostly kept the chair. This is an analogy, not a claim about people.']));
     } else {
       var src = null;
       if (thing === 'chair') {
