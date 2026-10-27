@@ -44,7 +44,7 @@ from pathlib import Path
 from openai import BadRequestError
 from PIL import Image
 
-from metalesionlab.meta_api import REPO_ROOT, image_data_url
+from metalesionlab.meta_api import data_dir, image_data_url
 from metalesionlab.naming_errors import ARTICLES as NAMING_ARTICLES
 from metalesionlab.naming_errors import LANGUAGE_NAMES, WORDNET_LOCK, _strip_accents, _wordnet, tokens
 
@@ -56,8 +56,8 @@ SCENE_PROMPT_VERSION = 2
 DESCRIPTION_PROMPT_VERSION = 2
 FLUENCY_PROMPT_VERSION = 1
 
-CACHE_DIR = REPO_ROOT / "runs" / "cache"
-SCENE_DIR = REPO_ROOT / "runs" / "scenes"
+CACHE_DIR = data_dir() / "cache"  # runs/cache unless TIPPA_DATA_DIR says otherwise
+SCENE_DIR = data_dir() / "scenes"
 SCENE_SIZE = "1536x1024"  # landscape, like printed description pictures
 SCENE_SAVE_SIDE = 1280  # stored size; Muse Spark sees 1024 px
 RATER_IMAGE_SIDE = 512

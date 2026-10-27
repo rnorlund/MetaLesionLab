@@ -17,6 +17,11 @@ DAY_S = 24 * 3600
 DEFAULT_LIMITS = {"build": 3, "scene": 3, "score": 60}
 WHAT = {"build": "picture sets", "scene": "scenes", "score": "scored responses"}
 TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
+# Behind TOT_PROXY_HOPS trusted proxies the visitor is that many entries from the right of
+# X-Forwarded-For; entries further left are whatever the visitor sent, so they can't be trusted.
+PROXY_HOPS = max(1, int(os.environ.get("TOT_PROXY_HOPS", "1")))
+# A header the platform sets to the visitor's address (Fly.io: Fly-Client-IP); used first when set.
+CLIENT_IP_HEADER = os.environ.get("TOT_CLIENT_IP_HEADER", "").strip().lower()
 
 
 def limit_for(bucket: str) -> int:
@@ -24,9 +29,14 @@ def limit_for(bucket: str) -> int:
 
 
 def client_ip(request: Request) -> str:
-    """The caller's address. Behind a reverse proxy set TOT_TRUST_PROXY=1 to use X-Forwarded-For."""
+    """The caller's address. Behind a reverse proxy set TOT_TRUST_PROXY=1 to use X-Forwarded-For
+    (with TOT_PROXY_HOPS proxies in front), or TOT_CLIENT_IP_HEADER for a platform's own header."""
+    if CLIENT_IP_HEADER and (value := request.headers.get(CLIENT_IP_HEADER, "").strip()):
+        return value
     if TRUST_PROXY and (fwd := request.headers.get("x-forwarded-for")):
-        return fwd.split(",")[0].strip()
+        hops = [h.strip() for h in fwd.split(",") if h.strip()]
+        if hops:
+            return hops[-min(PROXY_HOPS, len(hops))]
     return request.client.host if request.client else "unknown"
 
 

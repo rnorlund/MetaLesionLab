@@ -40,11 +40,12 @@ from metalesionlab.meta_api import BudgetExceeded, MetaAPI, load_api_key
 from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, is_word, spark_semantic_judge, tokens
 from metalesionlab.web import exports
 from metalesionlab.web.limits import client_ip, limit_for, limiter
+from metalesionlab.web import guard
 
 log = logging.getLogger("tot.web")
 
 HERE = Path(__file__).resolve().parent
-DATA_DIR = Path(os.environ.get("TOT_DATA_DIR", meta_api.REPO_ROOT / "runs")).resolve()
+DATA_DIR = meta_api.data_dir().resolve()  # TIPPA_DATA_DIR (or TOT_DATA_DIR), default runs/
 SETS_DIR = DATA_DIR / "sets"
 SCENES_DIR = DATA_DIR / "scenes"
 LESION_DIR = DATA_DIR / "lesion"
@@ -74,6 +75,7 @@ BUDGET_MSG = ("This demo has reached its spending cap for Meta API calls, so new
 
 app = FastAPI(title="Tippa Lingua", version="0.1.0", docs_url="/api/docs", redoc_url=None)
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
+guard.install(app)  # PUBLIC_DEMO=1: daily spend cap, per-visitor limits, tiny builds (guard.py)
 
 
 # --- errors ----------------------------------------------------------------------------

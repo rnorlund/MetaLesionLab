@@ -21,7 +21,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from metalesionlab.meta_api import MetaAPI, image_data_url
+from metalesionlab.meta_api import MetaAPI, data_dir, image_data_url
 from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, phonemes, spark_semantic_judge, word_zipf
 
 STYLES = {
@@ -149,7 +149,7 @@ def check_candidate(api: MetaAPI, image: bytes, concept: Concept, lang: str, jud
 def build_set(words: list[str], lang: str, out_dir: Path, style: str = "line", candidates: int = 2,
               workers: int = 8, api: MetaAPI | None = None) -> dict:
     api = api or MetaAPI()
-    judge = spark_semantic_judge(api)
+    judge = spark_semantic_judge(api, data_dir() / "cache" / "semantic_judge.json")
     concepts = plan_concepts(api, parse_word_list(words), lang)
     (out_dir / "candidates").mkdir(parents=True, exist_ok=True)
 

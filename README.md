@@ -251,9 +251,9 @@ python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 
 Pages: `/` (home), `/challenge` (You vs. the AI), `/plato` (Plato's Chair), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
-- Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
+- Data lives in `TIPPA_DATA_DIR` (or `TOT_DATA_DIR`; default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.
-- For a public deployment, set `TOT_PUBLIC=1` so visitors can edit only the sets and scenes they built, `TOT_TRUST_PROXY=1` behind a reverse proxy, and `TOT_ALLOW_BUILDS=0` to turn off image generation.
+- For a public deployment, see [deploy/README.md](deploy/README.md): `scripts/build_site_bundle.py` copies the part of `runs/` the site reads and checks it for private data, and the container runs with `PUBLIC_DEMO=1`. That turns on `web/guard.py`: a daily cap on Meta API spending for all visitors together (`TIPPA_PUBLIC_DAILY_USD`, default $2), per-visitor limits on every paid route, tiny Test Studio builds, capped recordings, and visitors editing only what they built. When the day's budget is used up, the site shows recorded examples instead.
 - Scorer results stay in the browser until exported. The server doesn't store audio.
 - A full PNT-length session is 175 scored responses; on a local install raise `TOT_LIMIT_SCORE`. Set `TOT_RECEIPT_KEY` to keep public-test receipts valid across restarts.
 

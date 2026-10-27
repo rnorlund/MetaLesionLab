@@ -1,0 +1,14 @@
+# Build context for the public web app: an allowlist, so runs/, .env, the spend ledger, the
+# private data patterns and anything else on disk can't reach the image by accident.
+*
+!Dockerfile
+!requirements-web.txt
+!pyproject.toml
+!LICENSE
+!metalesionlab/
+!public_data/
+!dist/site_data/
+!deploy/start.sh
+**/__pycache__
+**/*.pyc
+**/.DS_Store

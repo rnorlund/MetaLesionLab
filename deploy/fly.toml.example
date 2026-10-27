@@ -1,0 +1,31 @@
+# Fly.io config for the Tippa Lingua public demo. Copy to the repo root as fly.toml, change `app`,
+# then follow deploy/README.md. No secrets here: MODEL_API_KEY goes in with `fly secrets set`.
+app = "tippa-lingua-demo"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  TOT_CLIENT_IP_HEADER = "fly-client-ip"  # Fly's own header for the visitor's address
+  TIPPA_PUBLIC_DAILY_USD = "2"
+  MLL_BUDGET_USD = "10"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+# Run one machine (fly deploy --ha=false): one ledger and one set of per-visitor counters.
+
+# The spend ledger and volunteers' summaries survive restarts on this volume:
+#   fly volumes create tippa_data --size 1 --region iad
+[[mounts]]
+  source = "tippa_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
