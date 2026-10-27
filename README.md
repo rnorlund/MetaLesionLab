@@ -150,7 +150,7 @@ It takes the largest picture on each slide, skips slides without one, pairs them
 
 We showed the same 20 pictures to Muse Glimmer with matched one-word instructions in English, Spanish, French and Portuguese, and applied identical damage in each language (41 lesion conditions, 490 runs).
 - **Bigger drop outside English.** Damage cost Spanish naming **28 percentage points more than English** (95% CI 23–32). French lost 33 more and Portuguese 35 more. Every picture fared worse in the non-English language.
-- **Falls back to English.** Damaged non-English trials often come out in English: 24% of damaged Spanish trials. The reverse happened in 2 of 1,780 English trials.
+- **Falls back to English.** Damaged non-English trials often come out in English: 24% of damaged Spanish trials, against 1.3% the other way. Counting only the picture's own name in the wrong language: 11% of Spanish trials, and 1 of 1,780 English trials.
 - **An English pivot.** Even intact, the word lens shows the English name as the top guess around layer 40, with the asked-for language taking over only at layer 47.
 
 It echoes the observation that in bilingual aphasia the non-dominant language can be hit harder. That is an analogy, not evidence about brains. Method, caveats (20 pictures, one model) and figures: [docs/bilingual.md](docs/bilingual.md).
