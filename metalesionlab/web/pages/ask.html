@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Ask the Lab · Tippa Lingua</title>
+<meta name="description" content="Ask a question in plain language. A Muse Spark agent runs the lab's tools over results already computed and answers with cited numbers, showing every step.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/ask.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/lab">Model Lab</a>
+    <a href="/plato">Plato’s Chair</a>
+    <a href="/ask" aria-current="page">Ask the Lab</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/studio">Test Studio</a>
+  </nav>
+  <div class="chips">
+    <span class="chip">Muse Spark 1.3 · tool calling</span>
+  </div>
+</header>
+
+<main id="main" class="ask" tabindex="-1">
+  <section class="panel ask-hero" aria-labelledby="ask-h">
+    <span class="ask-kicker">An agent that reads the lab’s results</span>
+    <h1 id="ask-h">Ask the Lab</h1>
+    <p class="ask-lede">Ask a question in plain language. A Muse Spark agent plans, runs the lab’s tools over results we have already measured, and answers with numbers you can check. Every step is shown.</p>
+    <form class="ask-form" id="ask-form">
+      <label class="sr-only" for="q">Your question</label>
+      <textarea id="q" name="q" rows="2" maxlength="500" placeholder="For example: which kind of damage makes sound errors?" autocomplete="off"></textarea>
+      <button type="submit" class="btn btn-primary" id="ask-btn">Ask</button>
+    </form>
+    <div class="ask-suggest" id="suggest" role="group" aria-label="Suggested questions"></div>
+    <p class="ask-meta" id="ask-meta"></p>
+    <div class="note note-warn" id="ask-off" hidden></div>
+  </section>
+
+  <div class="ask-thread" id="thread"></div>
+
+  <section class="panel ask-how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="ask-steps-how">
+      <li><b>Plan.</b> Muse Spark reads your question and picks tools, at most six per question.</li>
+      <li><b>Run the tools.</b> Each tool reads results the lab has already computed: lesioned Glimmer’s answers and error types, the word lens, layer removal, the bilingual test, Plato’s Chair and published group data. No GPU runs while you wait.</li>
+      <li><b>Answer.</b> The agent may only use numbers from the tool results, and cites a tool for each one.</li>
+      <li><b>Check.</b> Before you see it, every number in the answer is matched against the tool results; anything that doesn’t match is flagged.</li>
+    </ol>
+    <p class="xsmall muted" id="tool-list"></p>
+  </section>
+</main>
+<p class="footnote">Research and teaching use only. Ask the Lab answers questions about the AI model and published group studies. It doesn’t give medical advice, and it won’t answer questions about a particular person’s health; a speech-language pathologist or a doctor can. Questions are sent to the Meta Model API to be answered and aren’t stored by this site.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/ask.js"></script>
+</body>
+</html>

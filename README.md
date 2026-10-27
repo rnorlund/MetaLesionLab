@@ -175,6 +175,26 @@ Measured on one L40S with the FP8 decoder (`python scripts/what_can_i_cut.py sca
 
 The honest answer for this model is "not much". Two layers can go with no measurable loss, a saving of about 3%. Naming, not perplexity, was the binding guard: a perplexity check alone would allow five layers but lose three guard pictures and eight held-out ones, mostly in Spanish. The cut models often answered a Spanish prompt in English ("Umbrella" for *paraguas*), so language control broke before object recognition did. Full-attention layers mattered no more than sliding-window ones. Block influence, a cheap no-skip score, ranked layers poorly here. With about 20 pictures per language, one picture is about 5 points, so treat small differences as noise. Full results, including per-layer scores and the whole greedy path, are in `runs/compress/glimmer.json`. In the app, **Model Lab → What can I cut?** (`/lab/cut`) replays them: set how much naming and perplexity you'll give up, and the deepest passing cut moves with your limits. `runs/` isn't in the repository, so the app ships a compact copy (`metalesionlab/web/data/cut_glimmer.json`, written by `python scripts/cut_web_export.py`) and prefers `TOT_DATA_DIR/compress/glimmer.json` when it exists.
 
+## Ask the Lab
+
+`/ask` takes a question in plain language, such as "Which kind of damage makes sound errors like 'Caraloon'?" or "Does damage hurt Spanish more than English?". A **Muse Spark** agent then works through it in three steps:
+
+1. It plans and calls up to six read-only tools, using Muse Spark's native tool calling.
+2. The tools read results the lab has already computed, through the same loaders as the pages:
+   - lesion conditions, error profiles by damage site, a search over the model's answers and the word lens;
+   - layer removal, the bilingual test and Plato's Chair;
+   - the published group profiles of people with aphasia, and language support.
+3. It answers with numbers, a `[tool: id]` citation for each one, and links into `/lab`, `/plato` and `/lab/cut`.
+
+Each step streams to the page as it happens (JSON lines), so you watch the trace live. The code is in `metalesionlab/lab_agent.py` and `metalesionlab/web/agent_routes.py`.
+
+- **Checked numbers.** Before the answer is shown, every number in it is matched against the tool results; a difference or ratio of two numbers that match also passes. One repair call fixes any misses, and whatever is still unmatched is flagged on the page.
+- **No medical advice.** Questions about a particular person's health, test result, recovery or treatment are declined before any model call. The agent's instructions decline the subtler ones. Text inside the data (the model's own answers) is treated as data, never as instructions.
+- **Cost.** A typical answer costs $0.01–0.03 in Muse Spark calls; the page shows each answer's cost. Settings:
+  - `TIPPA_AGENT_DAILY_USD` (default $1): the agent's daily cap, read from ledger entries tagged `ask`;
+  - `TIPPA_AGENT_SESSION_QUESTIONS` (default 10): questions per browser per day;
+  - `TIPPA_AGENT_IP_QUESTIONS` (default 30): questions per address per day.
+
 ## Meta models used
 
 | Model | Role |
@@ -182,7 +202,7 @@ The honest answer for this model is "not much". Two layers can go with no measur
 | Muse Glimmer 30B (open weights, self-hosted) | Test-taker in Model Lab, with lesions and the word lens; name-agreement check |
 | Muse Image 1.0 | Draws test pictures |
 | SAM 3.1 | Picture quality check |
-| Muse Spark 1.3 | Name agreement, meaning judge, second rater, experiment agent |
+| Muse Spark 1.3 | Name agreement, meaning judge, second rater, experiment agent, Ask the Lab agent (tool calling) |
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
 | DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for the Plato's Chair experiment |
 
@@ -227,7 +247,7 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (home), `/challenge` (You vs. the AI), `/plato` (Plato's Chair), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
+Pages: `/` (home), `/challenge` (You vs. the AI), `/plato` (Plato's Chair), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.
