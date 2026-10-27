@@ -11,6 +11,7 @@ app.py includes this router with one line.
 from __future__ import annotations
 
 import json
+import sys
 import re
 import unicodedata
 from pathlib import Path
@@ -260,8 +261,9 @@ def challenge_page():
 @router.get("/api/pages")
 def pages():
     """Which optional pages this server has, so links to them can wait until they exist."""
-    paths = {getattr(r, "path", None) for r in web.app.routes}
-    return {"assess": "/assess" in paths, "challenge": True}
+    # FastAPI 0.16x keeps included routers nested (_IncludedRouter), so app.routes doesn't list their
+    # paths; app.py includes the assessment routes when that module loads.
+    return {"assess": "metalesionlab.web.assess_routes" in sys.modules, "challenge": True}
 
 
 @router.get("/api/challenge")
