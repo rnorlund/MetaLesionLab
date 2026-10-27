@@ -1,0 +1,2293 @@
+{
+ "about": "Plato's Chair inside Muse Glimmer 30B: how spread out each concept's drawings are at several stages inside the model, for Muse Image's doodles and for people's drawings (Google Quick, Draw!), where Muse's doodles collapse, and how well Glimmer names them. Derived statistics only. Exploratory: 35 concepts, 12-16 pictures per source, one model. See docs/plato_glimmer.md.",
+ "attribution": "Human drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0, https://github.com/googlecreativelab/quickdraw-dataset",
+ "models": {
+  "namer": "Muse Glimmer 30B (Meta, open weights, self-hosted)",
+  "doodles": "Muse Image 1.0 (Meta)"
+ },
+ "definitions": {
+  "spread": "mean pairwise cosine distance between a concept's pictures at the answer position, on states centered over all 920 pictures (higher = more varied)",
+  "collapse_layer": "the first decoder layer (of 52) from which Muse Image's doodles stay less than 0.5 times as spread out as people's drawings of the same thing, through layer 52; null if that never happens",
+  "name_appears_layer": "median first layer where the word lens reads the accepted name (logit lens)",
+  "stages": "projector = the picture after the vision adapter; L13...L52 = decoder layers"
+ },
+ "summary": {
+  "n_concepts": 35,
+  "median_collapse_layer": 36.0,
+  "earliest_collapse": 30,
+  "latest_collapse": 44,
+  "never_collapse": [
+   "person"
+  ],
+  "named_correctly_pct": {
+   "muse": 95.1,
+   "people": 66.2
+  },
+  "mean_spread_by_layer": {
+   "layers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+   ],
+   "muse": [
+    0.315,
+    0.348,
+    0.387,
+    0.412,
+    0.463,
+    0.487,
+    0.51,
+    0.525,
+    0.548,
+    0.575,
+    0.602,
+    0.617,
+    0.642,
+    0.584,
+    0.6,
+    0.611,
+    0.606,
+    0.58,
+    0.569,
+    0.599,
+    0.625,
+    0.643,
+    0.632,
+    0.643,
+    0.656,
+    0.614,
+    0.606,
+    0.606,
+    0.559,
+    0.505,
+    0.443,
+    0.387,
+    0.347,
+    0.337,
+    0.322,
+    0.261,
+    0.238,
+    0.225,
+    0.156,
+    0.126,
+    0.112,
+    0.103,
+    0.097,
+    0.083,
+    0.077,
+    0.077,
+    0.072,
+    0.071,
+    0.073,
+    0.079,
+    0.081,
+    0.085
+   ],
+   "people": [
+    0.479,
+    0.496,
+    0.52,
+    0.539,
+    0.57,
+    0.588,
+    0.606,
+    0.622,
+    0.639,
+    0.659,
+    0.677,
+    0.685,
+    0.703,
+    0.644,
+    0.659,
+    0.671,
+    0.674,
+    0.65,
+    0.643,
+    0.667,
+    0.692,
+    0.71,
+    0.701,
+    0.711,
+    0.723,
+    0.696,
+    0.693,
+    0.699,
+    0.674,
+    0.647,
+    0.626,
+    0.619,
+    0.619,
+    0.623,
+    0.619,
+    0.59,
+    0.585,
+    0.592,
+    0.533,
+    0.516,
+    0.511,
+    0.502,
+    0.495,
+    0.486,
+    0.486,
+    0.488,
+    0.494,
+    0.495,
+    0.505,
+    0.52,
+    0.532,
+    0.536
+   ]
+  },
+  "people_spread_vs_naming_rho": -0.4979,
+  "people_spread_vs_naming_ci95": [
+   -0.7012,
+   -0.2316
+  ]
+ },
+ "concepts": [
+  {
+   "key": "apple",
+   "label": "apple",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 31,
+   "spread": {
+    "projector": {
+     "muse": 0.292,
+     "people": 0.275
+    },
+    "L13": {
+     "muse": 0.698,
+     "people": 0.735
+    },
+    "L26": {
+     "muse": 0.576,
+     "people": 0.754
+    },
+    "L39": {
+     "muse": 0.127,
+     "people": 0.51
+    },
+    "L46": {
+     "muse": 0.04,
+     "people": 0.32
+    },
+    "L52": {
+     "muse": 0.045,
+     "people": 0.439
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 41.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "apple",
+     "n": 9
+    },
+    {
+     "answer": "the object is a bag",
+     "n": 1
+    },
+    {
+     "answer": "the object is a hand-drawn out",
+     "n": 1
+    },
+    {
+     "answer": "cherry",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "bench",
+   "label": "bench",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 39,
+   "spread": {
+    "projector": {
+     "muse": 0.199,
+     "people": 0.467
+    },
+    "L13": {
+     "muse": 0.633,
+     "people": 0.646
+    },
+    "L26": {
+     "muse": 0.656,
+     "people": 0.596
+    },
+    "L39": {
+     "muse": 0.157,
+     "people": 0.497
+    },
+    "L46": {
+     "muse": 0.098,
+     "people": 0.58
+    },
+    "L52": {
+     "muse": 0.073,
+     "people": 0.688
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 16.7
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 40.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "table",
+     "n": 3
+    },
+    {
+     "answer": "couch",
+     "n": 1
+    },
+    {
+     "answer": "mouth",
+     "n": 1
+    },
+    {
+     "answer": "bench",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "bicycle",
+   "label": "bicycle",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 32,
+   "spread": {
+    "projector": {
+     "muse": 0.082,
+     "people": 0.407
+    },
+    "L13": {
+     "muse": 0.44,
+     "people": 0.688
+    },
+    "L26": {
+     "muse": 0.533,
+     "people": 0.609
+    },
+    "L39": {
+     "muse": 0.122,
+     "people": 0.657
+    },
+    "L46": {
+     "muse": 0.057,
+     "people": 0.679
+    },
+    "L52": {
+     "muse": 0.023,
+     "people": 0.723
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 42.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "bicycle",
+     "n": 6
+    },
+    {
+     "answer": "cart",
+     "n": 1
+    },
+    {
+     "answer": "glasses",
+     "n": 1
+    },
+    {
+     "answer": "scooter",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "bird",
+   "label": "bird",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 36,
+   "spread": {
+    "projector": {
+     "muse": 0.257,
+     "people": 0.582
+    },
+    "L13": {
+     "muse": 0.663,
+     "people": 0.802
+    },
+    "L26": {
+     "muse": 0.598,
+     "people": 0.781
+    },
+    "L39": {
+     "muse": 0.196,
+     "people": 0.562
+    },
+    "L46": {
+     "muse": 0.086,
+     "people": 0.465
+    },
+    "L52": {
+     "muse": 0.097,
+     "people": 0.609
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 40.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "bird",
+     "n": 6
+    },
+    {
+     "answer": "duck",
+     "n": 3
+    },
+    {
+     "answer": "chick",
+     "n": 1
+    },
+    {
+     "answer": "seagulls",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "book",
+   "label": "book",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 44,
+   "spread": {
+    "projector": {
+     "muse": 0.364,
+     "people": 0.596
+    },
+    "L13": {
+     "muse": 0.707,
+     "people": 0.697
+    },
+    "L26": {
+     "muse": 0.664,
+     "people": 0.652
+    },
+    "L39": {
+     "muse": 0.344,
+     "people": 0.507
+    },
+    "L46": {
+     "muse": 0.201,
+     "people": 0.553
+    },
+    "L52": {
+     "muse": 0.245,
+     "people": 0.555
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 91.7,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 45.0,
+    "people": 46.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "book",
+     "n": 6
+    },
+    {
+     "answer": "the object is a bag",
+     "n": 1
+    },
+    {
+     "answer": "paper",
+     "n": 1
+    },
+    {
+     "answer": "a glass",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "cactus",
+   "label": "cactus",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 36,
+   "spread": {
+    "projector": {
+     "muse": 0.168,
+     "people": 0.585
+    },
+    "L13": {
+     "muse": 0.564,
+     "people": 0.729
+    },
+    "L26": {
+     "muse": 0.607,
+     "people": 0.726
+    },
+    "L39": {
+     "muse": 0.181,
+     "people": 0.713
+    },
+    "L46": {
+     "muse": 0.083,
+     "people": 0.682
+    },
+    "L52": {
+     "muse": 0.073,
+     "people": 0.749
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 66.7
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 50.5
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "cactus",
+     "n": 8
+    },
+    {
+     "answer": "finger",
+     "n": 1
+    },
+    {
+     "answer": "cross",
+     "n": 1
+    },
+    {
+     "answer": "the object is a finger",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "candle",
+   "label": "candle",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 31,
+   "spread": {
+    "projector": {
+     "muse": 0.223,
+     "people": 0.348
+    },
+    "L13": {
+     "muse": 0.736,
+     "people": 0.76
+    },
+    "L26": {
+     "muse": 0.632,
+     "people": 0.804
+    },
+    "L39": {
+     "muse": 0.124,
+     "people": 0.636
+    },
+    "L46": {
+     "muse": 0.049,
+     "people": 0.573
+    },
+    "L52": {
+     "muse": 0.053,
+     "people": 0.582
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 66.7
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 40.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "candle",
+     "n": 8
+    },
+    {
+     "answer": "test tube",
+     "n": 1
+    },
+    {
+     "answer": "the object is a phone",
+     "n": 1
+    },
+    {
+     "answer": "torch",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "car",
+   "label": "car",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 32,
+   "spread": {
+    "projector": {
+     "muse": 0.223,
+     "people": 0.398
+    },
+    "L13": {
+     "muse": 0.679,
+     "people": 0.74
+    },
+    "L26": {
+     "muse": 0.656,
+     "people": 0.801
+    },
+    "L39": {
+     "muse": 0.174,
+     "people": 0.446
+    },
+    "L46": {
+     "muse": 0.074,
+     "people": 0.342
+    },
+    "L52": {
+     "muse": 0.077,
+     "people": 0.408
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "car",
+     "n": 12
+    },
+    {
+     "answer": "the object is a vehicle drawn",
+     "n": 1
+    },
+    {
+     "answer": "jeep",
+     "n": 1
+    },
+    {
+     "answer": "the object is a truck",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "carrot",
+   "label": "carrot",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 30,
+   "spread": {
+    "projector": {
+     "muse": 0.132,
+     "people": 0.457
+    },
+    "L13": {
+     "muse": 0.558,
+     "people": 0.707
+    },
+    "L26": {
+     "muse": 0.535,
+     "people": 0.758
+    },
+    "L39": {
+     "muse": 0.103,
+     "people": 0.628
+    },
+    "L46": {
+     "muse": 0.044,
+     "people": 0.66
+    },
+    "L52": {
+     "muse": 0.037,
+     "people": 0.699
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 40.5
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "carrot",
+     "n": 5
+    },
+    {
+     "answer": "cone",
+     "n": 2
+    },
+    {
+     "answer": "the object is a stylized drawi",
+     "n": 1
+    },
+    {
+     "answer": "the object is a knife",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "cat",
+   "label": "cat",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 40,
+   "spread": {
+    "projector": {
+     "muse": 0.173,
+     "people": 0.387
+    },
+    "L13": {
+     "muse": 0.603,
+     "people": 0.586
+    },
+    "L26": {
+     "muse": 0.547,
+     "people": 0.719
+    },
+    "L39": {
+     "muse": 0.175,
+     "people": 0.343
+    },
+    "L46": {
+     "muse": 0.067,
+     "people": 0.233
+    },
+    "L52": {
+     "muse": 0.075,
+     "people": 0.242
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 93.8
+   },
+   "name_appears_layer": {
+    "muse": 45.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "cat",
+     "n": 15
+    },
+    {
+     "answer": "ant",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "chair",
+   "label": "chair",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 34,
+   "spread": {
+    "projector": {
+     "muse": 0.25,
+     "people": 0.384
+    },
+    "L13": {
+     "muse": 0.706,
+     "people": 0.614
+    },
+    "L26": {
+     "muse": 0.63,
+     "people": 0.559
+    },
+    "L39": {
+     "muse": 0.134,
+     "people": 0.509
+    },
+    "L46": {
+     "muse": 0.055,
+     "people": 0.5
+    },
+    "L52": {
+     "muse": 0.057,
+     "people": 0.484
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 43.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "chair",
+     "n": 11
+    },
+    {
+     "answer": "the object is a chair",
+     "n": 1
+    },
+    {
+     "answer": "the object is a person’s leg",
+     "n": 1
+    },
+    {
+     "answer": "boot",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "clock",
+   "label": "clock",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 39,
+   "spread": {
+    "projector": {
+     "muse": 0.145,
+     "people": 0.248
+    },
+    "L13": {
+     "muse": 0.568,
+     "people": 0.523
+    },
+    "L26": {
+     "muse": 0.53,
+     "people": 0.586
+    },
+    "L39": {
+     "muse": 0.154,
+     "people": 0.42
+    },
+    "L46": {
+     "muse": 0.039,
+     "people": 0.444
+    },
+    "L52": {
+     "muse": 0.062,
+     "people": 0.447
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 40.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "clock",
+     "n": 8
+    },
+    {
+     "answer": "egg",
+     "n": 1
+    },
+    {
+     "answer": "fishbowl",
+     "n": 1
+    },
+    {
+     "answer": "the object is a clock",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "cup",
+   "label": "cup",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 33,
+   "spread": {
+    "projector": {
+     "muse": 0.255,
+     "people": 0.422
+    },
+    "L13": {
+     "muse": 0.584,
+     "people": 0.767
+    },
+    "L26": {
+     "muse": 0.58,
+     "people": 0.722
+    },
+    "L39": {
+     "muse": 0.174,
+     "people": 0.534
+    },
+    "L46": {
+     "muse": 0.079,
+     "people": 0.472
+    },
+    "L52": {
+     "muse": 0.075,
+     "people": 0.604
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 56.2
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 42.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "mug",
+     "n": 7
+    },
+    {
+     "answer": "bag",
+     "n": 2
+    },
+    {
+     "answer": "cylinder",
+     "n": 1
+    },
+    {
+     "answer": "paper",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "dog",
+   "label": "dog",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 38,
+   "spread": {
+    "projector": {
+     "muse": 0.207,
+     "people": 0.477
+    },
+    "L13": {
+     "muse": 0.626,
+     "people": 0.718
+    },
+    "L26": {
+     "muse": 0.571,
+     "people": 0.7
+    },
+    "L39": {
+     "muse": 0.127,
+     "people": 0.403
+    },
+    "L46": {
+     "muse": 0.052,
+     "people": 0.436
+    },
+    "L52": {
+     "muse": 0.103,
+     "people": 0.469
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 42.5
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "dog",
+     "n": 5
+    },
+    {
+     "answer": "sheep",
+     "n": 1
+    },
+    {
+     "answer": "cow",
+     "n": 1
+    },
+    {
+     "answer": "a chameleon",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "face",
+   "label": "face",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 37,
+   "spread": {
+    "projector": {
+     "muse": 0.2,
+     "people": 0.361
+    },
+    "L13": {
+     "muse": 0.609,
+     "people": 0.618
+    },
+    "L26": {
+     "muse": 0.583,
+     "people": 0.675
+    },
+    "L39": {
+     "muse": 0.107,
+     "people": 0.351
+    },
+    "L46": {
+     "muse": 0.105,
+     "people": 0.403
+    },
+    "L52": {
+     "muse": 0.173,
+     "people": 0.455
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 56.2
+   },
+   "name_appears_layer": {
+    "muse": 45.5,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "smiley",
+     "n": 5
+    },
+    {
+     "answer": "face",
+     "n": 4
+    },
+    {
+     "answer": "potato",
+     "n": 2
+    },
+    {
+     "answer": "meme",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "key": "fish",
+   "label": "fish",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 33,
+   "spread": {
+    "projector": {
+     "muse": 0.258,
+     "people": 0.443
+    },
+    "L13": {
+     "muse": 0.638,
+     "people": 0.796
+    },
+    "L26": {
+     "muse": 0.664,
+     "people": 0.78
+    },
+    "L39": {
+     "muse": 0.162,
+     "people": 0.694
+    },
+    "L46": {
+     "muse": 0.05,
+     "people": 0.555
+    },
+    "L52": {
+     "muse": 0.053,
+     "people": 0.503
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 43.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "fish",
+     "n": 9
+    },
+    {
+     "answer": "a shoe",
+     "n": 1
+    },
+    {
+     "answer": "the object is a sleeping cat",
+     "n": 1
+    },
+    {
+     "answer": "infinity",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "floor_lamp",
+   "label": "lamp",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 39,
+   "spread": {
+    "projector": {
+     "muse": 0.224,
+     "people": 0.57
+    },
+    "L13": {
+     "muse": 0.63,
+     "people": 0.739
+    },
+    "L26": {
+     "muse": 0.674,
+     "people": 0.743
+    },
+    "L39": {
+     "muse": 0.177,
+     "people": 0.528
+    },
+    "L46": {
+     "muse": 0.133,
+     "people": 0.513
+    },
+    "L52": {
+     "muse": 0.198,
+     "people": 0.568
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 39.0,
+    "people": 39.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "lamp",
+     "n": 9
+    },
+    {
+     "answer": "the object is a hammer",
+     "n": 1
+    },
+    {
+     "answer": "telephone",
+     "n": 1
+    },
+    {
+     "answer": "quadrilateral",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "flower",
+   "label": "flower",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 32,
+   "spread": {
+    "projector": {
+     "muse": 0.224,
+     "people": 0.414
+    },
+    "L13": {
+     "muse": 0.659,
+     "people": 0.773
+    },
+    "L26": {
+     "muse": 0.589,
+     "people": 0.786
+    },
+    "L39": {
+     "muse": 0.153,
+     "people": 0.495
+    },
+    "L46": {
+     "muse": 0.05,
+     "people": 0.264
+    },
+    "L52": {
+     "muse": 0.06,
+     "people": 0.33
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 91.7
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 42.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "flower",
+     "n": 10
+    },
+    {
+     "answer": "the object is a flower on a st",
+     "n": 1
+    },
+    {
+     "answer": "turtle",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "guitar",
+   "label": "guitar",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 36,
+   "spread": {
+    "projector": {
+     "muse": 0.213,
+     "people": 0.632
+    },
+    "L13": {
+     "muse": 0.641,
+     "people": 0.761
+    },
+    "L26": {
+     "muse": 0.601,
+     "people": 0.716
+    },
+    "L39": {
+     "muse": 0.196,
+     "people": 0.515
+    },
+    "L46": {
+     "muse": 0.134,
+     "people": 0.387
+    },
+    "L52": {
+     "muse": 0.15,
+     "people": 0.526
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 83.3,
+    "people": 58.3
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 40.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "guitar",
+     "n": 7
+    },
+    {
+     "answer": "violin",
+     "n": 1
+    },
+    {
+     "answer": "the object is a violin",
+     "n": 1
+    },
+    {
+     "answer": "the object is a paperclip",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "harp",
+   "label": "harp",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 36,
+   "spread": {
+    "projector": {
+     "muse": 0.196,
+     "people": 0.466
+    },
+    "L13": {
+     "muse": 0.714,
+     "people": 0.637
+    },
+    "L26": {
+     "muse": 0.663,
+     "people": 0.589
+    },
+    "L39": {
+     "muse": 0.134,
+     "people": 0.688
+    },
+    "L46": {
+     "muse": 0.05,
+     "people": 0.758
+    },
+    "L52": {
+     "muse": 0.04,
+     "people": 0.83
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 33.3
+   },
+   "name_appears_layer": {
+    "muse": 51.0,
+    "people": 51.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "harp",
+     "n": 4
+    },
+    {
+     "answer": "d",
+     "n": 2
+    },
+    {
+     "answer": "the object is a flag",
+     "n": 1
+    },
+    {
+     "answer": "heart",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "hat",
+   "label": "hat",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 39,
+   "spread": {
+    "projector": {
+     "muse": 0.285,
+     "people": 0.459
+    },
+    "L13": {
+     "muse": 0.559,
+     "people": 0.758
+    },
+    "L26": {
+     "muse": 0.566,
+     "people": 0.733
+    },
+    "L39": {
+     "muse": 0.154,
+     "people": 0.489
+    },
+    "L46": {
+     "muse": 0.096,
+     "people": 0.436
+    },
+    "L52": {
+     "muse": 0.144,
+     "people": 0.57
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 8.3,
+    "people": 83.3
+   },
+   "name_appears_layer": {
+    "muse": 41.0,
+    "people": 41.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "hat",
+     "n": 5
+    },
+    {
+     "answer": "top hat",
+     "n": 2
+    },
+    {
+     "answer": "the object is a hat",
+     "n": 1
+    },
+    {
+     "answer": "cowboy hat",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "helicopter",
+   "label": "helicopter",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 34,
+   "spread": {
+    "projector": {
+     "muse": 0.236,
+     "people": 0.452
+    },
+    "L13": {
+     "muse": 0.747,
+     "people": 0.752
+    },
+    "L26": {
+     "muse": 0.683,
+     "people": 0.737
+    },
+    "L39": {
+     "muse": 0.138,
+     "people": 0.454
+    },
+    "L46": {
+     "muse": 0.061,
+     "people": 0.287
+    },
+    "L52": {
+     "muse": 0.04,
+     "people": 0.255
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 100.0
+   },
+   "name_appears_layer": {
+    "muse": 41.0,
+    "people": 41.5
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "helicopter",
+     "n": 12
+    }
+   ]
+  },
+  {
+   "key": "house",
+   "label": "house",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 36,
+   "spread": {
+    "projector": {
+     "muse": 0.119,
+     "people": 0.381
+    },
+    "L13": {
+     "muse": 0.64,
+     "people": 0.649
+    },
+    "L26": {
+     "muse": 0.634,
+     "people": 0.612
+    },
+    "L39": {
+     "muse": 0.158,
+     "people": 0.552
+    },
+    "L46": {
+     "muse": 0.07,
+     "people": 0.539
+    },
+    "L52": {
+     "muse": 0.048,
+     "people": 0.441
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 81.2
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 44.5
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "house",
+     "n": 11
+    },
+    {
+     "answer": "the object is a house",
+     "n": 2
+    },
+    {
+     "answer": "pencil",
+     "n": 1
+    },
+    {
+     "answer": "mushroom",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "key",
+   "label": "key",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 32,
+   "spread": {
+    "projector": {
+     "muse": 0.248,
+     "people": 0.547
+    },
+    "L13": {
+     "muse": 0.699,
+     "people": 0.728
+    },
+    "L26": {
+     "muse": 0.646,
+     "people": 0.769
+    },
+    "L39": {
+     "muse": 0.155,
+     "people": 0.775
+    },
+    "L46": {
+     "muse": 0.069,
+     "people": 0.696
+    },
+    "L52": {
+     "muse": 0.059,
+     "people": 0.698
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 62.5
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "key",
+     "n": 9
+    },
+    {
+     "answer": "the object is a key",
+     "n": 1
+    },
+    {
+     "answer": "the object is a musical eighth",
+     "n": 1
+    },
+    {
+     "answer": "segway",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "ladder",
+   "label": "ladder",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 37,
+   "spread": {
+    "projector": {
+     "muse": 0.165,
+     "people": 0.226
+    },
+    "L13": {
+     "muse": 0.621,
+     "people": 0.474
+    },
+    "L26": {
+     "muse": 0.615,
+     "people": 0.433
+    },
+    "L39": {
+     "muse": 0.142,
+     "people": 0.422
+    },
+    "L46": {
+     "muse": 0.052,
+     "people": 0.363
+    },
+    "L52": {
+     "muse": 0.037,
+     "people": 0.457
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 91.7
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "ladder",
+     "n": 9
+    },
+    {
+     "answer": "the object is a ladder",
+     "n": 2
+    },
+    {
+     "answer": "h",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "pineapple",
+   "label": "pineapple",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 31,
+   "spread": {
+    "projector": {
+     "muse": 0.163,
+     "people": 0.604
+    },
+    "L13": {
+     "muse": 0.493,
+     "people": 0.813
+    },
+    "L26": {
+     "muse": 0.518,
+     "people": 0.752
+    },
+    "L39": {
+     "muse": 0.078,
+     "people": 0.586
+    },
+    "L46": {
+     "muse": 0.028,
+     "people": 0.635
+    },
+    "L52": {
+     "muse": 0.021,
+     "people": 0.668
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 41.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "pineapple",
+     "n": 6
+    },
+    {
+     "answer": "a sack",
+     "n": 1
+    },
+    {
+     "answer": "plant",
+     "n": 1
+    },
+    {
+     "answer": "the object is a chicken",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "sailboat",
+   "label": "boat",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 35,
+   "spread": {
+    "projector": {
+     "muse": 0.255,
+     "people": 0.326
+    },
+    "L13": {
+     "muse": 0.702,
+     "people": 0.7
+    },
+    "L26": {
+     "muse": 0.642,
+     "people": 0.674
+    },
+    "L39": {
+     "muse": 0.172,
+     "people": 0.464
+    },
+    "L46": {
+     "muse": 0.05,
+     "people": 0.215
+    },
+    "L52": {
+     "muse": 0.045,
+     "people": 0.251
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 93.8
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 42.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "sailboat",
+     "n": 10
+    },
+    {
+     "answer": "boat",
+     "n": 4
+    },
+    {
+     "answer": "a flagpole with a triangular f",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "saw",
+   "label": "saw",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 36,
+   "spread": {
+    "projector": {
+     "muse": 0.279,
+     "people": 0.395
+    },
+    "L13": {
+     "muse": 0.759,
+     "people": 0.654
+    },
+    "L26": {
+     "muse": 0.701,
+     "people": 0.713
+    },
+    "L39": {
+     "muse": 0.102,
+     "people": 0.579
+    },
+    "L46": {
+     "muse": 0.053,
+     "people": 0.594
+    },
+    "L52": {
+     "muse": 0.039,
+     "people": 0.672
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "saw",
+     "n": 8
+    },
+    {
+     "answer": "key",
+     "n": 1
+    },
+    {
+     "answer": "a signature",
+     "n": 1
+    },
+    {
+     "answer": "a saw",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "scissors",
+   "label": "scissors",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 32,
+   "spread": {
+    "projector": {
+     "muse": 0.257,
+     "people": 0.469
+    },
+    "L13": {
+     "muse": 0.701,
+     "people": 0.731
+    },
+    "L26": {
+     "muse": 0.582,
+     "people": 0.672
+    },
+    "L39": {
+     "muse": 0.091,
+     "people": 0.607
+    },
+    "L46": {
+     "muse": 0.033,
+     "people": 0.598
+    },
+    "L52": {
+     "muse": 0.036,
+     "people": 0.641
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 39.0,
+    "people": 39.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "scissors",
+     "n": 5
+    },
+    {
+     "answer": "the object is a pair of crosse",
+     "n": 2
+    },
+    {
+     "answer": "mosquito",
+     "n": 1
+    },
+    {
+     "answer": "percent",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "shoe",
+   "label": "shoe",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 39,
+   "spread": {
+    "projector": {
+     "muse": 0.276,
+     "people": 0.287
+    },
+    "L13": {
+     "muse": 0.603,
+     "people": 0.659
+    },
+    "L26": {
+     "muse": 0.627,
+     "people": 0.648
+    },
+    "L39": {
+     "muse": 0.106,
+     "people": 0.37
+    },
+    "L46": {
+     "muse": 0.048,
+     "people": 0.423
+    },
+    "L52": {
+     "muse": 0.078,
+     "people": 0.544
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 50.0
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 42.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "shoe",
+     "n": 3
+    },
+    {
+     "answer": "boot",
+     "n": 2
+    },
+    {
+     "answer": "the object is a shoe",
+     "n": 2
+    },
+    {
+     "answer": "the object is a pipe",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "snail",
+   "label": "snail",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 31,
+   "spread": {
+    "projector": {
+     "muse": 0.178,
+     "people": 0.414
+    },
+    "L13": {
+     "muse": 0.659,
+     "people": 0.761
+    },
+    "L26": {
+     "muse": 0.558,
+     "people": 0.788
+    },
+    "L39": {
+     "muse": 0.115,
+     "people": 0.476
+    },
+    "L46": {
+     "muse": 0.041,
+     "people": 0.279
+    },
+    "L52": {
+     "muse": 0.026,
+     "people": 0.311
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 91.7
+   },
+   "name_appears_layer": {
+    "muse": 42.0,
+    "people": 42.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "snail",
+     "n": 11
+    },
+    {
+     "answer": "the object is a single continu",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "spoon",
+   "label": "spoon",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": 40,
+   "spread": {
+    "projector": {
+     "muse": 0.405,
+     "people": 0.311
+    },
+    "L13": {
+     "muse": 0.719,
+     "people": 0.678
+    },
+    "L26": {
+     "muse": 0.698,
+     "people": 0.66
+    },
+    "L39": {
+     "muse": 0.236,
+     "people": 0.424
+    },
+    "L46": {
+     "muse": 0.119,
+     "people": 0.489
+    },
+    "L52": {
+     "muse": 0.102,
+     "people": 0.606
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 41.7
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 40.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "spoon",
+     "n": 5
+    },
+    {
+     "answer": "the object is a pipe",
+     "n": 1
+    },
+    {
+     "answer": "needle",
+     "n": 1
+    },
+    {
+     "answer": "key",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "tree",
+   "label": "tree",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 39,
+   "spread": {
+    "projector": {
+     "muse": 0.294,
+     "people": 0.396
+    },
+    "L13": {
+     "muse": 0.75,
+     "people": 0.725
+    },
+    "L26": {
+     "muse": 0.797,
+     "people": 0.738
+    },
+    "L39": {
+     "muse": 0.332,
+     "people": 0.672
+    },
+    "L46": {
+     "muse": 0.189,
+     "people": 0.574
+    },
+    "L52": {
+     "muse": 0.21,
+     "people": 0.519
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 93.8,
+    "people": 68.8
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "tree",
+     "n": 11
+    },
+    {
+     "answer": "mushroom",
+     "n": 1
+    },
+    {
+     "answer": "the object is a cloud with two",
+     "n": 1
+    },
+    {
+     "answer": "hand",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "umbrella",
+   "label": "umbrella",
+   "pictures": {
+    "muse": 16,
+    "people": 16
+   },
+   "collapse_layer": 31,
+   "spread": {
+    "projector": {
+     "muse": 0.199,
+     "people": 0.417
+    },
+    "L13": {
+     "muse": 0.654,
+     "people": 0.747
+    },
+    "L26": {
+     "muse": 0.62,
+     "people": 0.763
+    },
+    "L39": {
+     "muse": 0.111,
+     "people": 0.664
+    },
+    "L46": {
+     "muse": 0.055,
+     "people": 0.601
+    },
+    "L52": {
+     "muse": 0.026,
+     "people": 0.654
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 100.0,
+    "people": 62.5
+   },
+   "name_appears_layer": {
+    "muse": 44.0,
+    "people": 44.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "umbrella",
+     "n": 10
+    },
+    {
+     "answer": "mushroom",
+     "n": 3
+    },
+    {
+     "answer": "tree",
+     "n": 1
+    },
+    {
+     "answer": "the object is a 9",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "key": "yoga",
+   "label": "person",
+   "pictures": {
+    "muse": 12,
+    "people": 12
+   },
+   "collapse_layer": null,
+   "spread": {
+    "projector": {
+     "muse": 0.2,
+     "people": 0.567
+    },
+    "L13": {
+     "muse": 0.506,
+     "people": 0.747
+    },
+    "L26": {
+     "muse": 0.507,
+     "people": 0.596
+    },
+    "L39": {
+     "muse": 0.152,
+     "people": 0.47
+    },
+    "L46": {
+     "muse": 0.167,
+     "people": 0.541
+    },
+    "L52": {
+     "muse": 0.295,
+     "people": 0.555
+    }
+   },
+   "named_correctly_pct": {
+    "muse": 50.0,
+    "people": 75.0
+   },
+   "name_appears_layer": {
+    "muse": 40.0,
+    "people": 49.0
+   },
+   "glimmer_answers_to_peoples_drawings": [
+    {
+     "answer": "stick figure",
+     "n": 4
+    },
+    {
+     "answer": "plank",
+     "n": 1
+    },
+    {
+     "answer": "the object is a stick figure i",
+     "n": 1
+    },
+    {
+     "answer": "the object is a person sitting",
+     "n": 1
+    }
+   ]
+  }
+ ]
+}
