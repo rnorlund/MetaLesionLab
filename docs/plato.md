@@ -2,7 +2,7 @@
 
 Plato thought there is one ideal chair. If you ask an AI to draw 16 chairs and 16 boats, are its chairs all alike while its boats vary? How spread out is each concept in the AI's imagination, and does that match how varied people's drawings of the same thing are?
 
-**Short answer:** Muse Image draws almost every concept far more uniformly than people do. Its spread is about half of people's (median ratio 0.49), and 34 of 35 concepts fall below the human level. The concepts that people draw most variably are only somewhat more likely to be the ones the AI varies (rank correlation 0.38). Its chair is close to a Platonic one: the same slat-back dining chair, in the same three-quarter view, 16 times.
+**Short answer:** Muse Image draws almost every concept far more uniformly than people do. Its spread is about half of people's (median ratio 0.49), and 34 of 35 concepts fall below the human level. The concepts that people draw most variably are only somewhat more likely to be the ones the AI varies (rank correlation 0.38). Its chair is close to a Platonic one: the same slat-back dining chair, in the same three-quarter view, 16 times. **This is specific to Muse, not to image models in general.** Given the same prompt, Stable Diffusion XL varies far more than Muse: more for 34 of 35 concepts, at about 2.4 times the spread. On the same measure it is no more uniform than people, though much of its extra variety is drawing style, not different objects (see "Is it just Muse?").
 
 ## Method
 
@@ -19,7 +19,7 @@ Plato thought there is one ideal chair. If you ask an AI to draw 16 chairs and 1
 | Homogenization index | AI spread divided by human spread, with a CI from independent bootstraps of both. Below 1 means the AI is more uniform than people. |
 | Between-concept baseline | Mean distance from a concept's pictures to every other concept's pictures in the same source. Relative spread is within-concept spread divided by this baseline. |
 
-Code: `metalesionlab/plato.py` and `scripts/plato_{generate,human,embed,analyze,figures}.py`. Data, results and figures live outside the repo, in `$PLATO_DIR` (default `PlatosChair/core/`). `public_data/plato_concept_spread.json` holds only derived statistics.
+Code: `metalesionlab/plato.py` and `scripts/plato_{generate,human,embed,analyze,figures}.py`; the SDXL comparison is `scripts/plato_sdxl_{generate,analyze,figures}.py`. Data, results and figures live outside the repo, in `$PLATO_DIR` (default `PlatosChair/core/`). `public_data/plato_concept_spread.json` holds only derived statistics.
 
 ## Findings (35 concepts)
 
@@ -53,6 +53,69 @@ Code: `metalesionlab/plato.py` and `scripts/plato_{generate,human,embed,analyze,
 - bench 17%
 - hat 25%
 
+## Is it just Muse? (a second generator)
+
+Do AI image models in general picture one prototype, or is it Muse? We drew the same 35 concepts with an open model, Stable Diffusion XL, and measured them the same way.
+
+**Short answer:** It is mostly Muse.
+- **SDXL vs. Muse.** SDXL's pictures vary far more than Muse's: more for 34 of 35 concepts, and about 2.4 times the spread.
+- **SDXL vs. people.** On the core measure SDXL is not more uniform than people: its spread is above people's for 26 of 35 concepts.
+- **What varies.** Much of SDXL's variety is in how it draws, not in what it draws. It adds frames, scenes, hatching and gray backgrounds despite "no shading" and a negative prompt. For bicycle, helicopter and umbrella it draws one classic object every time, in different settings.
+
+| Step | What we did |
+|---|---|
+| Generator | Stable Diffusion XL base 1.0 (`stabilityai/stable-diffusion-xl-base-1.0`, fp16, CreativeML OpenRAIL++-M), self-hosted on a lab GPU (L40S). 560 pictures in 21 minutes, $0. |
+| Prompt | The same doodle prompt as Muse. Negative prompt: *"shading, photo, photorealistic, paper texture, 3d render, color, text"*. Settings: 768 px, 25 steps, Euler scheduler, guidance 5 (the diffusers default). |
+| Pictures | 16 per concept for all 35 concepts, downscaled to 512 px. Each picture has its own seed, recorded in `meta.json`: 20261026 + 1000 × concept index + picture index. Muse has only 12 pictures for tier 2 concepts. That is fine: mean pairwise distance doesn't depend on n, and SDXL's first 12 pictures rank the concepts like all 16 (rho 0.98). |
+| Analysis | Unchanged: the same ink crop, DINOv2 CLS embeddings, cached human embeddings and bootstraps. For Muse vs. SDXL, the difference and ratio of spreads get CIs from independent bootstraps of both picture sets. |
+
+| Question | Result |
+|---|---|
+| Is SDXL more uniform than people? | **No, on the core measure.** Median SDXL/human ratio 1.22 (Muse: 0.49). SDXL is below people for 9 of 35 concepts; the CI is entirely below 1 for only 2: helicopter 0.49 [0.41, 0.58] and guitar 0.72 [0.59, 0.86]. It is entirely above 1 for 16, including saw 1.97 [1.75, 2.17], clock 1.89 and book 1.65. With patch-mean embeddings, SDXL is below people for only 2 concepts. |
+| ... relative to how distinct its concepts are? | **Mildly yes.** SDXL's concepts are far apart (between-concept distance 0.85; Muse 0.75, people 0.52). Relative to that, its median spread is 0.52, against 0.73 for people and 0.22 for Muse. The relative index is below 1 for 31 of 35 concepts (median 0.75; Muse 0.34). |
+| Is Muse more uniform than SDXL? | **Yes, for 34 of 35 concepts.** The CI of the difference excludes zero for 32 of them. Median Muse/SDXL spread ratio 0.42; mean spread Muse 0.18, SDXL 0.44, people 0.37. The one exception is helicopter, SDXL's most uniform concept (Muse/SDXL 1.22 [0.94, 1.56]). |
+| Do the two AIs flatten the same concepts? | **Only weakly.** Rank correlation of Muse and SDXL spread: rho 0.30 [-0.05, 0.60], p = 0.07. Holding people's spread constant: 0.27 [-0.09, 0.57]. SDXL's spread does not track people's either: 0.15 [-0.19, 0.45], against 0.38 for Muse. |
+
+| Concept | Muse spread | SDXL spread | People | Muse/human | SDXL/human | Rank, 1 = most uniform of 35 (Muse, SDXL) |
+|---|---|---|---|---|---|---|
+| umbrella | 0.05 [0.04, 0.07] | 0.43 [0.30, 0.56] | 0.39 | 0.14 | 1.11 [0.77, 1.46] | 1, 16 |
+| bicycle | 0.06 [0.05, 0.08] | 0.29 [0.22, 0.35] | 0.34 | 0.18 | 0.85 [0.64, 1.05] | 2, 3 |
+| chair | 0.13 [0.09, 0.20] | 0.43 [0.36, 0.49] | 0.36 | 0.37 | 1.17 [0.98, 1.37] | 10, 15 |
+| book | 0.36 [0.30, 0.42] | 0.57 [0.53, 0.63] | 0.35 | 1.04 | 1.65 [1.49, 1.81] | 35, 30 |
+| boat | 0.20 [0.15, 0.24] | 0.28 [0.22, 0.34] | 0.31 | 0.63 | 0.91 [0.71, 1.10] | 21, 2 |
+| face | 0.12 [0.10, 0.13] | 0.35 [0.27, 0.44] | 0.26 | 0.44 | 1.34 [1.05, 1.67] | 5, 8 |
+| person (yoga) | 0.22 [0.15, 0.28] | 0.42 [0.37, 0.47] | 0.43 | 0.52 | 0.97 [0.86, 1.08] | 26, 14 |
+
+How the two AIs compare on the lead's concepts:
+- **Bicycle: both flatten it.** It is the 2nd most uniform concept for Muse and the 3rd for SDXL. SDXL draws the same side-view bicycle every time.
+- **Book: both vary it.** It is the 35th of 35 for Muse and the 30th for SDXL.
+- **Umbrella: they disagree.** It is Muse's most uniform concept but only 16th for SDXL. SDXL's umbrellas are one classic shape, but seen from above, from below or as a beach parasol, in rain scenes, and once as a sheet of many umbrellas. DINOv2 counts that as variety.
+- **Chair: middling for both** (10th and 15th). Still, SDXL's chairs are different chairs: armchairs, an office chair, a dining chair, a folding chair. Muse draws one slat-back chair.
+
+**Style differences.** SDXL ignored "no shading" and most of the negative prompt.
+- **Frames and scenes.** 54% of its pictures have ink reaching all four edges (a frame, a scene or a background). Muse and people: 0%.
+- **Ink and gray.** Ink covers 27% of the cropped picture, against 10% for Muse and 4% for people. 18% of the raw picture is mid-gray, against 2% for Muse.
+- **Color.** 16 of its 560 pictures are partly in color.
+- **Stronger negative prompt.** A spot check with a longer negative prompt (adding hatching, background, scenery, frame, border, sketchbook) changed little: the same seeds gave the same compositions.
+
+So SDXL's spread includes style variation, and DINOv2 sees style. Partial controls:
+- **Dropping framed and scene pictures.** 26 concepts keep at least 6 pictures. Their SDXL spread comes close to people's (median ratio 1.07, below 1 for 11 of 26) and is still far above Muse's (24 of 26).
+- **Style lifts every concept rather than reordering them.** A concept's SDXL spread barely tracks its share of framed or scene pictures (rho 0.23 [-0.09, 0.53]).
+
+**Failures.** For "a saw", SDXL rarely drew a hand saw. It drew assorted tools, gears and a circular saw.
+- Only 6% of those pictures sit nearest the human saw centroid, so saw's top SDXL spread reflects confusion, not imagination.
+- Person (6%) and clock (25%) also match people's drawings poorly. SDXL draws detailed figures and ornate clocks, while people draw stick figures and circles.
+- Overall, 77% of SDXL pictures sit nearest their own concept's human centroid (Muse 85%).
+
+**Caveats.** One SDXL setting: base model without the refiner, guidance 5, one negative prompt. Higher guidance would probably reduce its variety. There is no style-matched measure, so "SDXL is as varied as people" is an upper bound on its variety in object ideas. The firm result is the Muse vs. SDXL contrast, which the grids confirm by eye.
+
+Results: `results_sdxl.json`. Figures:
+- `grid3_chair.png`, `grid3_umbrella.png`, `grid3_book.png` (16 Muse, 16 SDXL and 16 people, ink-cropped)
+- `index_ranked_two_ai.{png,svg}`
+- `scatter_muse_vs_sdxl.{png,svg}`
+
+SDXL: Stability AI, CreativeML OpenRAIL++-M. Its pictures are kept outside the repository, like the others.
+
 ## Link to naming (exploratory, n = 15)
 
 For the 15 demo words that exist in Quick, Draw!, we recorded:
@@ -85,7 +148,7 @@ Per-concept values are in `results.json` under `naming`.
 
 ## Next steps
 
-1. **Second generator.** A self-hosted SDXL run would test whether low diversity is specific to Muse Image or common to image models.
+1. **Second generator.** Done with SDXL (see "Is it just Muse?"). An SDXL guidance sweep would show how much one model's settings move its spread, since higher guidance usually means less variety.
 2. **Prompt sweep.** Vary the prompt on a few concepts (chair, boat, person, book) to measure prompt sensitivity, and add the realistic-photo style for 10 concepts (about $1.60).
 3. **Style-matched comparison.** Thin both sources to single-pixel strokes before embedding, or prompt for "one continuous thin line".
 4. **Spread inside Muse Glimmer.** Measure each concept's spread inside the model's layers (PlatosChair/inside_glimmer). Then test the lead's hypothesis on more items, with graded lesion severities rather than one accuracy score: diffuse concepts are harder to name and lost first under damage.

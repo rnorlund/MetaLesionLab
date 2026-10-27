@@ -5,7 +5,7 @@ Usage: python -I scripts/plato_embed.py [--keys chair ...] [--device mps|cpu]
 Doodles (AI and human) are ink-cropped to a square first (see plato.ink_crop); photos are used as is.
 Embeddings are cached per concept in $PLATO_DIR/embeddings/<source>/<key>.npz with the file list,
 the CLS token and the mean patch token; a concept is re-embedded only when its files or PREP change.
-Sources: ai_doodle (and ai_photo if present) and human. Runs on this Mac (MPS or CPU), never on a GPU server.
+Sources: ai_doodle (and ai_photo, ai_sdxl_doodle if present) and human. Runs on this Mac (MPS or CPU), never on a GPU server.
 """
 import argparse
 import sys
@@ -21,6 +21,7 @@ from metalesionlab.plato import CONCEPTS, DINO_MODEL, PLATO_DIR, Embedder, ink_c
 
 PREP = "flatten_paper(21, 215) + ink_crop(256, margin 0.06, threshold 200, speck 3px)"  # change it and everything re-embeds
 SOURCES = {"ai_doodle": PLATO_DIR / "ai" / "doodle", "ai_photo": PLATO_DIR / "ai" / "photo",
+           "ai_sdxl_doodle": PLATO_DIR / "ai" / "sdxl_doodle",  # comparison generator (plato_sdxl_generate.py)
            "human": PLATO_DIR / "human"}
 
 
