@@ -11,6 +11,8 @@ dependencies = ["openai>=1.40", "httpx", "numpy", "pillow", "nltk", "wordfreq", 
 gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"]
 web = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart", "fpdf2>=2.7"]
 dev = ["pytest"]
+# Plato's Chair experiment (scripts/plato_*.py): DINOv2 embeddings on a laptop (MPS or CPU), stats, figures
+experiments = ["torch", "transformers>=5.15", "scipy", "matplotlib"]
 
 [build-system]
 requires = ["setuptools>=68"]
