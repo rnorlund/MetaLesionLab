@@ -146,6 +146,15 @@ It takes the largest picture on each slide, skips slides without one, pairs them
 - **From a photo** of the person's home or belongings (no people): Muse Spark lists the clearly visible, nameable objects in the test's language, SAM 3.1 finds each one, and Muse Image redraws it as a line drawing in our style, two candidates as in Test Studio (or it is cropped from the photo). The Test Studio checks then run. On a synthetic kitchen photo, 4 of 7 drawings and 5 of 7 Spanish crops passed both checks; the rest were flagged for review.
 - **Parallel forms:** a set splits into two halves matched on word frequency (Zipf) and length in phonemes, for re-testing without repeating pictures. The English demo set splits into halves with mean Zipf 3.87 and 3.87, and 5.0 and 4.9 phonemes.
 
+## Does damage hurt the second language first?
+
+We showed the same 20 pictures to Muse Glimmer with matched one-word instructions in English, Spanish, French and Portuguese, and applied identical damage in each language (41 lesion conditions, 490 runs).
+- **Bigger drop outside English.** Damage cost Spanish naming **28 percentage points more than English** (95% CI 23–32). French lost 33 more and Portuguese 35 more. Every picture fared worse in the non-English language.
+- **Falls back to English.** Damaged non-English trials often come out in English: 24% of damaged Spanish trials. The reverse happened in 2 of 1,780 English trials.
+- **An English pivot.** Even intact, the word lens shows the English name as the top guess around layer 40, with the asked-for language taking over only at layer 47.
+
+It echoes the observation that in bilingual aphasia the non-dominant language can be hit harder. That is an analogy, not evidence about brains. Method, caveats (20 pictures, one model) and figures: [docs/bilingual.md](docs/bilingual.md).
+
 ## What can I cut?
 
 Which parts of a model can go while the abilities you care about stay? The tests you build become the guardrail. `metalesionlab/compress.py` removes whole decoder layers from Muse Glimmer:

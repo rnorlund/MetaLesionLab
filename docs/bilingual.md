@@ -138,7 +138,7 @@ The only intact miss in any language is already an English answer: "Igloo" for *
 - **French:** 37 worse, 2 better, 27 reliable.
 - **Portuguese:** 37 worse, 1 better, 28 reliable.
 
-![Accuracy, English vs other languages](../runs/bilingual/figures/accuracy_en_vs_lang.png)
+![Accuracy, English vs other languages](figures/bilingual/accuracy_en_vs_lang.png)
 
 `runs/bilingual/figures/accuracy_en_vs_lang.png`: each point is one lesion condition. Points below the diagonal mean the other language did worse than English under the same damage.
 
@@ -181,7 +181,7 @@ Vision damage still costs Spanish and French more, and Portuguese borderline mor
 
 ### 4. Dose-response
 
-![Dose-response](../runs/bilingual/figures/dose_response.png)
+![Dose-response](figures/bilingual/dose_response.png)
 
 **Mild doses.** At the mildest doses (bands 0–7 and 8–15 at ×0.7), every language stays at or near ceiling.
 
@@ -199,7 +199,7 @@ So the other languages don't degrade in proportion to English. Once the damage i
 
 ### 5. Switching into English
 
-![Language switching](../runs/bilingual/figures/switch_rate.png)
+![Language switching](figures/bilingual/switch_rate.png)
 
 Pooled over all lesions, 1,780 trials per language:
 
@@ -255,7 +255,7 @@ French gives more Descriptions because, under the MLP localizer lesion, it echoe
 
 ### 8. Word lens: English comes first
 
-![English pivot in the word lens](../runs/bilingual/figures/english_pivot.png)
+![English pivot in the word lens](figures/bilingual/english_pivot.png)
 
 **In the intact model, on Spanish trials** (15 testable pictures):
 
