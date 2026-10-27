@@ -44,9 +44,23 @@ def test_response_language(word, variant, said, label, switch, switch_code):
 def test_reverse_direction_on_english_trials():
     row, raw = code("cat", "en", "gato")
     assert row["switch"] and row["other_lang"] == ["es", "pt"]
+    assert row["wrong_name"] and row["other_name"] == ["es", "pt"]
     row, raw = code("cat", "en", "The object is a cat")
-    assert not row["switch"] and row["code"] == "Correct"
+    assert not row["switch"] and not row["wrong_name"] and row["code"] == "Correct"
     assert raw["accuracy"] == 1.0
+    row, _ = code("cactus", "en", "cactus")  # also the Spanish and French name, but correct in English
+    assert not row["wrong_name"]
+
+
+def test_wrong_name_and_later_english():
+    row, raw = code("umbrella", "es", "Umbrella")
+    assert row["wrong_name"] and raw["wrong_name_n"] == 1
+    row, _ = code("umbrella", "es", "paragu\n\nWait object is umbrella")
+    assert row["lang_label"] == "es" and row["later"]          # first attempt Spanish, English self-correction
+    row, _ = code("umbrella", "es", "paraguas\n\nparaguas")
+    assert not row["later"]
+    row, _ = code("umbrella", "en", "umbre\n\nWait object is umbrella")
+    assert not row["later"]
 
 
 def test_english_alternate_dropped_from_other_languages(tmp_path):

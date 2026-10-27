@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import time
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -104,7 +105,8 @@ def main():
                      "accuracy_ci95": B.bootstrap_mean([m], n_boot=args.boot)["ci95"],
                      "accuracy_by_seed": [r["accuracy"] for r in sorted(rs, key=lambda r: r["seed"])],
                      "switch_rate": round(float(sw.mean()), 4), "mixed_rate": round(float(mixed.mean()), 4),
-                     "english_name_rate": round(float(B.flag_matrix(rs, words, "english_name").mean()), 4),
+                     "wrong_name_rate": round(float(B.flag_matrix(rs, words, "wrong_name").mean()), 4),
+                     "later_rate": round(float(B.flag_matrix(rs, words, "later").mean()), 4),
                      "counts": dict(sum((Counter(r["counts"]) for r in rs), Counter())),
                      "counts_switch_aware": dict(sum((Counter(r["counts_switch_aware"]) for r in rs), Counter()))}
             if v != "en" and cname != "intact":
@@ -155,16 +157,33 @@ def main():
         return B.bootstrap_mean(ms, n_boot=args.boot)
 
     switching = {"lesioned": {v: {"english_answers": switch_pool(main_conds, v),
-                                  "english_name": switch_pool(main_conds, v, "english_name"),
+                                  "english_name": switch_pool(main_conds, v, "wrong_name"),
                                   "mixed": switch_pool(main_conds, v, "mixed"),
+                                  "english_after_first_attempt": switch_pool(main_conds, v, "later"),
                                   "english_share_of_errors": switch_pool(main_conds, v, errors_only=True)}
                               for v in NON_EN},
-                 "reverse_on_english_trials": {"non_english_answers": switch_pool(main_conds, "en"),
-                                               "mixed": switch_pool(main_conds, "en", "mixed")},
+                 "reverse_on_english_trials": {
+                     "non_english_answers": switch_pool(main_conds, "en"),
+                     "item_name_in_other_language": switch_pool(main_conds, "en", "wrong_name"),
+                     "mixed": switch_pool(main_conds, "en", "mixed"),
+                     "other_language_after_first_attempt": switch_pool(main_conds, "en", "later"),
+                     "examples": sorted({(c, r["en"], r["said"][:60]) for c in main_conds for run in conds[c]["en"]
+                                         for r in run["items"] if r["switch"] or r["wrong_name"]})},
+                 "wrong_name_by_family": {f: {v: switch_pool([n for n in main_conds if meta_of[n]["family"] == f], v,
+                                                             "wrong_name") for v in VARIANTS}
+                                          for f in families},
                  "intact": {v: {"switch_n": intact[v]["switch_n"], "mixed_n": intact[v]["mixed_n"],
                                 "items": [r["en"] for r in intact[v]["items"] if r["switch"]]} for v in VARIANTS},
                  "by_family": {f: {v: switch_pool([n for n in main_conds if meta_of[n]["family"] == f], v)
                                    for v in VARIANTS} for f in families}}
+
+    # Task narration ("The user asks for...", the model's reasoning voice) and the language it comes in.
+    narration_re = {"en": r"^\W*(?:=self)?\W*the user\b", "es": r"^\W*el usuario\b", "fr": r"^\W*l'utilisateur\b",
+                    "pt": r"^\W*o usu[aá]rio\b"}
+    switching["narration_language"] = {
+        v: dict(Counter(k for n in main_conds for run in conds[n].get(v, []) for row in run["items"]
+                        for k, p in narration_re.items() if re.search(p, row["said"].lower())))
+        for v in VARIANTS}
 
     # --- dose-response -----------------------------------------------------------------------
     dose = {}
@@ -294,9 +313,11 @@ def main():
     for (cname, v, seed), r in sorted(runs.items()):
         slim.append({k: r.get(k) for k in ("condition", "family", "dose", "seed", "variant", "lang", "stats", "skip",
                                            "accuracy", "correct", "n", "switch_n", "mixed_n", "english_name_n",
-                                           "counts", "counts_switch_aware", "seconds")}
+                                           "wrong_name_n", "later_n", "flags", "counts", "counts_switch_aware",
+                                           "seconds")}
                     | {"items": [{k: row.get(k) for k in ("en", "target", "said", "code", "head", "lang_label", "switch",
-                                                          "mixed", "english_name", "switch_code", "other_lang")}
+                                                          "mixed", "english_name", "wrong_name", "later", "switch_code",
+                                                          "other_lang", "other_name", "flags")}
                                  | {"final_logp": {lang: x[-1] for lang, x in row["lens"]["logp"].items()}}
                                  for row in r["items"]]})
 
@@ -332,9 +353,13 @@ def main():
     sw = switching["lesioned"]
     for v in NON_EN:
         print(f"  {v:7s} English answers {sw[v]['english_answers']['mean']:.3f} {sw[v]['english_answers']['ci95']}"
-              f"  English name {sw[v]['english_name']['mean']:.3f}  mixed {sw[v]['mixed']['mean']:.3f}")
-    rev = switching["reverse_on_english_trials"]["non_english_answers"]
-    print(f"  reverse (non-English answers on English trials) {rev['mean']:.3f} {rev['ci95']}")
+              f"  English name {sw[v]['english_name']['mean']:.3f} {sw[v]['english_name']['ci95']}"
+              f"  mixed {sw[v]['mixed']['mean']:.3f}  English later {sw[v]['english_after_first_attempt']['mean']:.3f}")
+    rev = switching["reverse_on_english_trials"]
+    print(f"  reverse on English trials: non-English answers {rev['non_english_answers']['mean']:.3f} "
+          f"{rev['non_english_answers']['ci95']}, item name in another language "
+          f"{rev['item_name_in_other_language']['mean']:.4f} {rev['item_name_in_other_language']['ci95']}, "
+          f"other language later {rev['other_language_after_first_attempt']['mean']:.3f}")
 
 
 def _spearman(x, y, n_perm: int = 20000, seed: int = 0) -> dict:

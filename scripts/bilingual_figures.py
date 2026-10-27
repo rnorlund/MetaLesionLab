@@ -58,10 +58,13 @@ def fig_accuracy(res: dict, out: Path):
         it = res["intact"]
         ax.plot(it["en"]["accuracy"], it[v]["accuracy"], marker="*", ms=14, color=INK, mec=SURFACE, zorder=4)
         p = res["primary"][v]
-        ax.set_title(f"{LABEL[v]}\nextra drop vs English {p['diff']:+.2f} "
-                     f"[{p['ci95'][0]:+.2f}, {p['ci95'][1]:+.2f}], p={p['p_sign_flip']:.3g}", loc="left")
-        ax.text(0.97, 0.04, f"below the line:\n{LABEL[v].split(',')[0]} worse", transform=ax.transAxes,
-                ha="right", va="bottom", color=INK2, fontsize=9)
+        ax.set_title(LABEL[v], loc="left", pad=18)
+        pval = "p < 0.0001" if p["p_sign_flip"] < 1e-4 else f"p = {p['p_sign_flip']:.2g}"
+        ax.text(0.0, 1.005, f"extra drop vs English {p['diff']:+.2f} [{p['ci95'][0]:+.2f}, {p['ci95'][1]:+.2f}], "
+                f"{pval}", transform=ax.transAxes, ha="left", va="bottom",
+                color=INK2, fontsize=9)
+        ax.text(0.03, 0.97, f"below the line:\n{LABEL[v].split(',')[0]} worse", transform=ax.transAxes,
+                ha="left", va="top", color=INK2, fontsize=9)
         ax.set_xlim(-0.03, 1.03)
         ax.set_ylim(-0.03, 1.03)
         ax.set_aspect("equal")
@@ -73,40 +76,48 @@ def fig_accuracy(res: dict, out: Path):
     handles.append(plt.Line2D([], [], marker="*", ls="", color=INK, ms=11, label="intact"))
     fig.legend(handles=handles, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.005))
     n = res["meta"]["n_pictures"]
-    fig.suptitle(f"Naming accuracy under the same lesions: English vs other languages ({n} pictures; "
-                 "each point one lesion condition, mean of its seeds, 95% CI)", x=0.02, ha="left", fontsize=11.5,
-                 color=INK)
-    fig.tight_layout(rect=(0, 0.03, 1, 0.97))
+    fig.suptitle(f"Naming accuracy under the same lesions: English vs other languages\n{n} pictures; each point "
+                 "is one lesion condition (mean of its seeds) with 95% CIs over pictures and seeds", x=0.02,
+                 ha="left", fontsize=11.5, color=INK)
+    fig.tight_layout(rect=(0, 0.03, 1, 0.95))
     fig.savefig(out / "accuracy_en_vs_lang.png", dpi=150)
     plt.close(fig)
 
 
 def fig_switch(res: dict, out: Path):
-    fam = res["switching"]["by_family"]
-    names = list(fam)
-    fig, ax = plt.subplots(figsize=(9, 0.42 * len(names) + 1.8))
+    sw = res["switching"]
+    names = list(sw["by_family"])
+    fig, axes = plt.subplots(1, 2, figsize=(14, 0.5 * len(names) + 3.0), sharey=True)
     y = np.arange(len(names))[::-1]
-    offs = {"es": 0.24, "fr": 0.08, "pt": -0.08, "es_xen": -0.24}
-    for v, dy in offs.items():
-        m = [fam[f][v]["mean"] for f in names]
-        lo = [fam[f][v]["mean"] - fam[f][v]["ci95"][0] for f in names]
-        hi = [fam[f][v]["ci95"][1] - fam[f][v]["mean"] for f in names]
-        ax.errorbar(m, y + dy, xerr=[lo, hi], fmt="o" if v != "es_xen" else "D", ms=5, color=COLOR[v],
-                    mec=SURFACE, elinewidth=1, label=f"English answer, {LABEL[v]} trials", ls="")
-    m = [fam[f]["en"]["mean"] for f in names]
-    ax.plot(m, y - 0.38, "x", color=INK2, ms=6, label="Spanish/French/Portuguese answer, English trials")
-    ax.set_yticks(y)
-    ax.set_yticklabels(names)
-    ax.set_xlabel("Share of trials (pooled over doses and seeds; 95% CI over pictures and seeds)")
-    ax.set_xlim(left=-0.01)
-    sw = res["switching"]["lesioned"]
-    rev = res["switching"]["reverse_on_english_trials"]["non_english_answers"]
-    ax.set_title("Language switching under damage: answers in English when another language was asked\n"
-                 f"all lesions: Spanish {sw['es']['english_answers']['mean']:.1%}, French "
-                 f"{sw['fr']['english_answers']['mean']:.1%}, Portuguese {sw['pt']['english_answers']['mean']:.1%}; "
-                 f"reverse direction {rev['mean']:.1%}", loc="left")
-    ax.legend(loc="lower right", fontsize=8.5)
-    fig.tight_layout()
+    offs = {"es": 0.27, "fr": 0.09, "pt": -0.09, "es_xen": -0.27}
+    panels = ((axes[0], sw["by_family"], "a. First attempt in English",
+               "English answer on {lang} trials", "Spanish/French/Portuguese answer on English trials\n(detector "
+               "noise floor: mostly garbled letters)"),
+              (axes[1], sw["wrong_name_by_family"], "b. The picture's own name, in the wrong language",
+               "English name on {lang} trials", "Spanish/French/Portuguese name on English trials"))
+    for ax, fam, title, lab, rev_lab in panels:
+        for v, dy in offs.items():
+            m = np.array([fam[f][v]["mean"] for f in names])
+            lo = m - np.array([fam[f][v]["ci95"][0] for f in names])
+            hi = np.array([fam[f][v]["ci95"][1] for f in names]) - m
+            ax.errorbar(m, y + dy, xerr=[np.clip(lo, 0, None), np.clip(hi, 0, None)],
+                        fmt="o" if v != "es_xen" else "D", ms=5, color=COLOR[v], mec=SURFACE, elinewidth=1,
+                        label=lab.format(lang=LABEL[v]), ls="")
+        ax.plot([fam[f]["en"]["mean"] for f in names], y - 0.42, "x", color=INK, ms=6, mew=1.5, label=rev_lab)
+        ax.set_title(title, loc="left")
+        ax.set_xlim(-0.02, 1.02)
+        ax.set_xlabel("share of trials (pooled over doses and seeds; 95% CI over pictures and seeds)", fontsize=9)
+        ax.legend(loc="lower center", bbox_to_anchor=(0.5, -0.36 - 0.1 * (len(names) < 10)), fontsize=8.3, ncol=1)
+    axes[0].set_yticks(y)
+    axes[0].set_yticklabels(names)
+    les, rev = sw["lesioned"], sw["reverse_on_english_trials"]
+    fig.suptitle("Language switching under damage, pooled over all lesions. First attempt in English: Spanish "
+                 f"{les['es']['english_answers']['mean']:.1%}, French {les['fr']['english_answers']['mean']:.1%}, "
+                 f"Portuguese {les['pt']['english_answers']['mean']:.1%}.\nThe picture's English name: Spanish "
+                 f"{les['es']['english_name']['mean']:.1%}, French {les['fr']['english_name']['mean']:.1%}, "
+                 f"Portuguese {les['pt']['english_name']['mean']:.1%}; reverse (another language's name on English "
+                 f"trials) {rev['item_name_in_other_language']['mean']:.1%}.", x=0.01, ha="left", fontsize=11)
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
     fig.savefig(out / "switch_rate.png", dpi=150)
     plt.close(fig)
 

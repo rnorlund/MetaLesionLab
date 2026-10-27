@@ -192,6 +192,22 @@ def language_of(said: str, lang: str, other: str, names: dict[str, list[str]], p
     first = first_attempt(said)
     if LEAK.search(first):
         return {"label": "leak", "words": [], "sides": []}
+    return _label(first, lang, other, names, prompt)
+
+
+def later_language(said: str, lang: str, other: str, names: dict[str, list[str]], prompt: str = "",
+                   min_words: int = 2) -> bool:
+    """Whether the text after the first attempt has at least `min_words` words leaning to `other`
+    (e.g. "paragu... Wait object is umbrella": a self-correction in English)."""
+    parts = re.split(r"(?<=[.!?])\s|\n", said.replace("*", "").strip(), maxsplit=1)
+    if len(parts) < 2:
+        return False
+    rest = LEAK.sub(" ", parts[1])
+    return _label(rest, lang, other, names, prompt)["sides"].count(other) >= min_words
+
+
+def _label(text: str, lang: str, other: str, names: dict[str, list[str]], prompt: str) -> dict:
+    first = text
     skip = FORMAT_WORDS | set(word_tokens(prompt))
     words = [w for w in word_tokens(first) if w not in skip]
     sides = [token_side(w, lang, other, names) for w in words]
@@ -234,6 +250,13 @@ def code_run(raw: dict, items: dict[str, BiItem], judge=None) -> dict:
             row["switch"] = bool(row["other_lang"])
             row["mixed"] = any(lab == "mixed" for lab in labels.values())
             row["switch_code"] = None
+            # The mirror of english_name: the item's own name in another test language, when the
+            # answer is not also its English name (cactus).
+            row["other_name"] = sorted(
+                o for o in it.names if o != "en" and c.code != "Correct" and
+                classify(it.target(o), answer_text(said, o), o, it.alternates(o)).code == "Correct")
+            row["wrong_name"] = bool(row["other_name"])  # the item's name, in the wrong language
+            row["later"] = any(later_language(said, "en", o, it.names, prompt) for o in it.names if o != "en")
         else:
             lab = language_of(said, lang, "en", it.names, prompt)
             row["lang_label"] = lab["label"]
@@ -241,6 +264,8 @@ def code_run(raw: dict, items: dict[str, BiItem], judge=None) -> dict:
             row["mixed"] = lab["label"] == "mixed"
             en_name = classify(it.target("en"), answer_text(said, "en"), "en", it.alternates("en")).code == "Correct"
             row["english_name"] = row["switch"] and en_name
+            row["wrong_name"] = row["english_name"]
+            row["later"] = later_language(said, lang, "en", it.names, prompt)  # English after the first attempt
             row["switch_code"] = (None if c.code == "Correct" else
                                   "EnglishName" if row["english_name"] else
                                   "EnglishOther" if row["switch"] else
@@ -257,6 +282,8 @@ def code_run(raw: dict, items: dict[str, BiItem], judge=None) -> dict:
     raw["switch_n"] = sum(r["switch"] for r in rows)
     raw["mixed_n"] = sum(r["mixed"] for r in rows)
     raw["english_name_n"] = sum(bool(r.get("english_name")) for r in rows)
+    raw["wrong_name_n"] = sum(bool(r.get("wrong_name")) for r in rows)
+    raw["later_n"] = sum(bool(r.get("later")) for r in rows)
     raw["flags"] = dict(Counter(f for r in rows for f in r["flags"]))
     raw["judge"] = "spark" if judge else "none"
     return raw
