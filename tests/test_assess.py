@@ -344,3 +344,28 @@ def test_wordnet_lookups_are_safe_from_many_threads():
     with ThreadPoolExecutor(8) as pool:
         codes = list(pool.map(lambda p: naming_errors.classify(p[0], p[1], "en").code, pairs))
     assert codes[:2] == ["Semantic", "Semantic"] and all(codes[k:k + 4] == codes[:4] for k in range(0, len(codes), 4))
+
+
+def test_aggregate_norms_writes_only_from_ten(tmp_path, monkeypatch, capsys):
+    import importlib.util
+    import sys
+    spec = importlib.util.spec_from_file_location("aggregate_norms", web.HERE.parents[1] / "scripts" / "aggregate_norms.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    (tmp_path / "norms").mkdir()
+    rec = {"set": "demo_en", "set_version": "v1", "lang": "en", "n_items": 20, "correct": 19, "accuracy_pct": 95.0,
+           "median_latency_ms": 950, "age_band": None, "date": "2026-10-31"}
+    path = tmp_path / "norms" / "demo_en.jsonl"
+    path.write_text("\n".join(json.dumps(rec) for _ in range(9)) + "\n")
+    out = tmp_path / "out"
+    out.mkdir()
+    monkeypatch.setattr(sys, "argv", ["x", "--data-dir", str(tmp_path), "--out-dir", str(out)])
+    mod.main()
+    assert not list(out.iterdir()) and "needs 10" in capsys.readouterr().out
+    path.write_text(path.read_text() + json.dumps({**rec, "correct": 17, "accuracy_pct": 85.0}) + "\n")
+    mod.main()
+    data = json.loads((out / "naming_norms_demo_en.json").read_text())
+    assert data["n"] == 10 and data["correct"]["min"] == 17 and data["set_version"] == "v1"
+    path.write_text(path.read_text() + json.dumps({**rec, "ip": "1.2.3.4"}) + "\n")
+    with pytest.raises(SystemExit, match="unexpected fields"):
+        mod.main()

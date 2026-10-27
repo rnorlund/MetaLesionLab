@@ -10,7 +10,8 @@ dependencies = ["openai>=1.40", "httpx", "numpy", "pillow", "nltk", "wordfreq", 
 [project.optional-dependencies]
 gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"]
 web = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart", "fpdf2>=2.7"]
-dev = ["pytest"]
+pptx = ["python-pptx>=1.0"]  # scripts/import_pptx_test.py
+dev = ["pytest", "python-pptx>=1.0"]
 
 [build-system]
 requires = ["setuptools>=68"]

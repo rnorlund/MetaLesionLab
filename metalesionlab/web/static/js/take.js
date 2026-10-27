@@ -30,7 +30,6 @@
   function chooseLang(set) {
     S.set = set;
     Array.prototype.forEach.call($('lang-choice').children, function (b) { b.setAttribute('aria-pressed', b.dataset.set === set.id ? 'true' : 'false'); });
-    document.documentElement.lang = set.lang;
     $('hello-word').textContent = '"' + (HELLO[set.lang] || 'hello') + '"';
     $('how-text').textContent = howText(set.lang);
     updateGo();
