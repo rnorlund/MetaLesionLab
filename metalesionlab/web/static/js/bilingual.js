@@ -460,7 +460,7 @@
     doesnt.appendChild(li('It’s a model, not people.', 'This is about one AI, Muse Glimmer 30B. We don’t claim the model works like a brain: the parallel with bilingual aphasia is an analogy.'));
     doesnt.appendChild(li('Nothing about any person.', 'Not a medical test. It says nothing about how a particular bilingual person will do after a stroke.'));
     doesnt.appendChild(li('Small and specific.', src.n_pictures + ' pictures, one model, one precision (FP8). One picture moves a score by ' + Math.round(100 / src.n_pictures) +
-      ' points. The intervals cover which pictures and noise seeds were used, not other models.'));
+      (Math.round(100 / src.n_pictures) === 1 ? ' point' : ' points') + '. The intervals cover which pictures and noise seeds were used, not other models.'));
     doesnt.appendChild(li('The lens shows, it doesn’t prove.', 'It shows where the English word can be read out, not that the model needs it: we didn’t switch that step off to test it.'));
     doesnt.appendChild(li('Why English?', 'Glimmer presumably saw more English than other languages in training, as most large models do. We didn’t check.'));
     var sn = $('source-note');
