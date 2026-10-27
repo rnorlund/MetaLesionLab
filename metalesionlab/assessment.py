@@ -6,7 +6,8 @@ first_complete_response
   The PNT scores a person's first complete attempt (Roach et al., 1996). A transcript such as
   "dog, no, cat" or "c-, cat" is split into attempts, and the first one that is complete is
   coded. Splitting happens only when there is a sign of a new attempt: a correction word ("no",
-  "I mean", "digo") or a run of short pieces ("tat, cat"). A description such as "it's round, you
+  "I mean", "digo", "je veux dire") or a run of short pieces ("tat, cat"). English, Spanish, French
+  and Portuguese only; other languages are coded whole. A description such as "it's round, you
   eat it" stays whole. Comments ("let me think"), refusals ("I don't know"), frames ("it's a",
   "es un") and fragments (a lone non-word that starts the next attempt, or of one or two letters)
   are not attempts.
@@ -42,7 +43,7 @@ from collections import Counter
 import numpy as np
 from wordfreq import zipf_frequency
 
-from metalesionlab.naming_errors import REFUSALS, _strip_accents, is_word, phonemes, tokens
+from metalesionlab.naming_errors import REFUSAL_KEYS, _strip_accents, is_word, phonemes, tokens
 
 CODES = ("Correct", "Semantic", "Formal", "Mixed", "Nonword", "Neologism", "Unrelated", "Description",
          "Visual", "NoResponse")
@@ -54,17 +55,24 @@ NORMS_MIN_N = 10  # a reference range is shown only from this many contributors
 CORRECTIONS = {
     "en": ("i mean", "no wait", "sorry", "wait", "actually", "not that", "oops", "no"),
     "es": ("quiero decir", "mejor dicho", "o sea", "perdón", "perdon", "espera", "digo", "no"),
+    "fr": ("je veux dire", "pardon", "plutôt", "plutot", "attends", "non"),
+    "pt": ("quero dizer", "quer dizer", "desculpa", "espera", "digo", "não", "nao"),
 }
+SPLIT_LANGS = {"en", "es", "fr", "pt"}  # space-separated words and checked correction words; others stay whole
 COMMENTS = {
     "en": {"let me think", "i know this", "i know it", "i know", "what is it", "what is that", "whats it called",
            "what do you call it", "what is it called", "hmm", "oh", "okay", "ok", "well", "yes", "yeah", "hold on"},
     "es": {"dejame pensar", "a ver", "lo se", "ya se", "como se llama", "que es", "que es eso", "pues", "bueno",
            "si", "vale", "espera"},
+    "fr": {"voyons", "je sais", "alors", "bon", "oui", "attends", "c est quoi", "cest quoi"},
+    "pt": {"deixa eu pensar", "deixa ver", "eu sei", "sei", "bom", "entao", "sim", "espera"},
 }
 FRAMES = {
     "en": re.compile(r"^(?:i think |i guess |maybe )?(?:it'?s|it is|that'?s|that is|this is|this'?s|looks like|"
                      r"it looks like)(?: an?| the)?\b\s*"),
     "es": re.compile(r"^(?:creo que |pues )?(?:es|eso es|esto es|parece)(?: una?| el| la| unos| unas)?\b\s*"),
+    "fr": re.compile(r"^(?:je pense que |je crois que )?(?:c'est|c est|ce sont|voilà|voila)(?: une?| le| la| les| des)?\b\s*"),
+    "pt": re.compile(r"^(?:acho que )?(?:é|isso é|isto é|parece)(?: uma?| o| a)?\b\s*"),
 }
 _SPLIT = re.compile(r"[.,;:!?¿¡…]+|\s[-–—]+\s|\.\.\.")
 
@@ -85,6 +93,9 @@ def _attempt_words(piece: str, lang: str) -> list[str]:
 
 def first_complete_response(response: str, lang: str, target: str = "") -> dict:
     """{"scored": text to code, "attempts": [each attempt], "split": bool}. See the module notes."""
+    if lang not in SPLIT_LANGS:  # e.g. Chinese (no spaces) and Hindi: coded whole, as the Scorer does
+        return {"scored": (response or "").strip(), "attempts": [(response or "").strip()] if (response or "").strip() else [],
+                "split": False}
     text = _norm(response)
     markers = CORRECTIONS.get(lang, ())
     marker_re = re.compile(r"\b(?:" + "|".join(re.escape(m) for m in markers) + r")\b") if markers else None
@@ -93,7 +104,7 @@ def first_complete_response(response: str, lang: str, target: str = "") -> dict:
     corrected = False
     for piece in _SPLIT.split(text):
         words = tokens(piece)
-        if not words or _plain(words) in REFUSALS or _plain(words) in comments:
+        if not words or _plain(words) in REFUSAL_KEYS or _plain(words) in comments:
             continue
         parts = [piece]
         if marker_re and marker_re.search(piece):
@@ -101,7 +112,7 @@ def first_complete_response(response: str, lang: str, target: str = "") -> dict:
             corrected = True
         for part in parts:
             words = _attempt_words(part, lang)
-            if words and _plain(words) not in REFUSALS and _plain(words) not in comments:
+            if words and _plain(words) not in REFUSAL_KEYS and _plain(words) not in comments:
                 attempts.append(words)
     whole = [w for a in attempts for w in a]
     if not attempts:

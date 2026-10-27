@@ -5,7 +5,8 @@
   'use strict';
   var T = window.TOT, A = window.TLA, h = T.h;
   var ITI_MS = 500;
-  var LANG_LABEL = { en: 'English', es: 'Español' };
+  var LANG_LABEL = { en: 'English', es: 'Español', fr: 'Français', pt: 'Português' };
+  var HELLO = { en: 'hello', es: 'hola', fr: 'bonjour', pt: 'olá' };
   var PLAIN = {
     Correct: ['named correctly', 'named correctly'],
     Semantic: ['related word (like "dog" for a cat)', 'related words (like "dog" for a cat)'],
@@ -30,8 +31,15 @@
     S.set = set;
     Array.prototype.forEach.call($('lang-choice').children, function (b) { b.setAttribute('aria-pressed', b.dataset.set === set.id ? 'true' : 'false'); });
     document.documentElement.lang = set.lang;
-    $('hello-word').textContent = set.lang === 'es' ? '"hola"' : '"hello"';
+    $('hello-word').textContent = '"' + (HELLO[set.lang] || 'hello') + '"';
+    $('how-text').textContent = howText(set.lang);
     updateGo();
+  }
+  function langInfo(code) { return ((S.config && S.config.languages) || []).filter(function (l) { return l.code === code; })[0] || null; }
+  function howText(code) {
+    var l = langInfo(code);
+    if (!l) return 'say the name with one word.';
+    return l.instruction.charAt(0).toLowerCase() + l.instruction.slice(1) + (l.example ? ' For example: "' + l.example + '".' : '');
   }
   function updateGo() { $('go-mic').disabled = !(S.set && $('agree').checked && A.Capture.supported()); }
 
@@ -80,8 +88,8 @@
     S.run = { k: 0, phase: 'ready' };
     $('admin').hidden = false;
     document.body.classList.add('admin-open');
-    message('Name each picture', 'Say its name with one word' + (S.set.lang === 'es' ? ', in Spanish,' : '') +
-      ' then tap Next or press the space bar.', 'Show the first picture');
+    message('Name each picture', 'In ' + ((langInfo(S.set.lang) || {}).name || S.set.lang) + ': ' + howText(S.set.lang) +
+      ' Then tap Next or press the space bar.', 'Show the first picture');
     $('admin-next').focus();
   }
   function message(title, text, label) {
@@ -195,11 +203,9 @@
           h('span', { class: 'said', text: it.status === 'done' ? (it.transcript ? '"' + it.transcript + '"' : '(no answer)') : '(not scored)' }),
           it.status === 'done' ? h('span', { class: 'xsmall muted', text: (PLAIN[T.normCode(it.code)] || ['', ''])[0] + (it.latency_ms != null && it.code === 'Correct' ? ' · ' + A.seconds(it.latency_ms, 1) : '') }) : null])]));
     });
-    $('c-lang').textContent = T.langName((S.status || {}).languages, S.set.lang) || S.set.lang;
+    $('c-lang').textContent = (langInfo(S.set.lang) || {}).name || S.set.lang;
     $('contribute').hidden = !!failed;
-    var other = S.sets.filter(function (s) { return s.id !== S.set.id; })[0];
-    $('other-lang').hidden = !other;
-    if (other) { $('other-lang').textContent = other.lang === 'es' ? 'Hacer la prueba en español' : 'Take it in ' + (LANG_LABEL[other.lang] || other.lang); $('other-lang').onclick = function () { restart(other); }; }
+    $('other-lang').hidden = S.sets.length < 2;
     reference(m);
     $('result-h').setAttribute('tabindex', '-1');
     $('result-h').focus();
@@ -255,6 +261,7 @@
   ['c-adult', 'c-fluent', 'c-consent'].forEach(function (id) { $(id).addEventListener('change', updateSend); });
   $('c-send').addEventListener('click', contribute);
   $('again').addEventListener('click', function () { restart(); });
+  $('other-lang').addEventListener('click', function () { location.href = '/take'; });
   document.addEventListener('keydown', function (e) {
     if (!S.run || $('admin').hidden) return;
     if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); next(e); }
@@ -265,7 +272,7 @@
     S.status = res[0];
     S.config = res[1];
     S.limitS = S.config.time_limit_s;
-    S.sets = S.config.public_sets.filter(function (s) { return s.lang === 'en' || s.lang === 'es'; });
+    S.sets = S.config.public_sets;  // demo sets in verified languages
     var box = $('lang-choice');
     S.sets.forEach(function (s) {
       box.appendChild(h('button', { type: 'button', class: 'btn', 'data-set': s.id, 'aria-pressed': 'false', onclick: function () { chooseLang(s); } },

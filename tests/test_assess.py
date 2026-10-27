@@ -297,19 +297,50 @@ def test_photo_test_route_hands_back_and_forgets(env, monkeypatch):
     assert bad.status_code == 415
 
 
-def test_transcription_retries_when_the_network_drops(env, monkeypatch):
+def test_a_network_failure_is_a_friendly_502(env):
     import httpx
     client, _, api = env
-    monkeypatch.setattr(assess_routes.time, "sleep", lambda s: None)
-    real, fails = api.transcribe, []
 
-    def flaky(wav, language=None):
-        if len(fails) < 2:
-            fails.append(1)
-            raise httpx.ConnectError("nodename nor servname provided, or not known")
-        return real(wav, language)
+    def down(wav, language=None):  # MetaAPI.transcribe has already retried by the time this reaches the app
+        raise httpx.ConnectError("nodename nor servname provided, or not known")
 
-    api.transcribe = flaky
-    api.transcripts = ["cat"]
+    api.transcribe = down
     r = post_clip(client, wav_with_speech(), set_id="demo_en", item=0)
-    assert r.status_code == 200 and r.json()["code"] == "Correct" and len(fails) == 2
+    assert r.status_code == 502 and "try again" in r.json()["detail"]
+
+
+def test_config_lists_language_status_and_answer_forms(env):
+    client, tmp, _ = env
+    _make_set(tmp / "sets" / "demo_zh", words=("cat", "dog", "cup", "pen", "hat"))
+    _make_set(tmp / "sets" / "demo_fr", words=("cat", "dog", "cup", "pen", "hat"))
+    for d in ("demo_zh", "demo_fr"):
+        m = json.loads((tmp / "sets" / d / "manifest.json").read_text())
+        (tmp / "sets" / d / "manifest.json").write_text(json.dumps({**m, "lang": d[-2:]}))
+    cfg = client.get("/api/assess/config").json()
+    langs = {l["code"]: l for l in cfg["languages"]}
+    assert [langs[c]["status"] for c in ("en", "es", "fr", "pt")] == ["verified"] * 4
+    assert langs["zh"]["status"] == "works with review" and langs["hi"]["status"] == "experimental"
+    assert langs["es"]["example"] == "el gato" and "measure word" in langs["zh"]["instruction"]
+    assert [p["id"] for p in cfg["public_sets"]] == ["demo_fr"]  # verified languages, 5+ pictures (demo_en has 2 here)
+    assert {l["code"]: l["verified"] for l in client.get("/api/status").json()["languages"]}["pt"] is True
+
+
+def test_other_languages_are_coded_whole():
+    assert assessment.first_complete_response("一只，猫。", "zh", "猫")["scored"] == "一只，猫。"
+    assert assessment.first_complete_response("chien, non, chat", "fr", "chat")["scored"] == "chien"
+    assert assessment.first_complete_response("Je ne sais pas. Le chat.", "fr", "chat")["scored"] == "le chat"
+    assert assessment.first_complete_response("Não sei, o gato", "pt", "gato")["scored"] == "o gato"
+
+
+def test_wordnet_lookups_are_safe_from_many_threads():
+    """The web app scores several responses at once; NLTK's WordNet reader isn't thread-safe."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from metalesionlab import naming_errors
+    naming_errors._wordnet.cache_clear()
+    wn = naming_errors._wordnet()
+    wn._data_file_map.clear()  # force the lazy file loading that raced on Oct 26
+    pairs = [("cat", "dog"), ("spoon", "fork"), ("anchor", "ladder"), ("kettle", "pot")] * 8
+    with ThreadPoolExecutor(8) as pool:
+        codes = list(pool.map(lambda p: naming_errors.classify(p[0], p[1], "en").code, pairs))
+    assert codes[:2] == ["Semantic", "Semantic"] and all(codes[k:k + 4] == codes[:4] for k in range(0, len(codes), 4))

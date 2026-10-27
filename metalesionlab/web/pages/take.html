@@ -29,7 +29,7 @@
 
   <section class="panel stack" id="step-intro" aria-labelledby="intro-h">
     <h2 id="intro-h">Take the naming test</h2>
-    <p class="lead">Name 20 pictures out loud, as quickly as you can. It takes about 3 minutes. Afterwards you'll see how many you named and how fast.</p>
+    <p class="lead">Name about 20 pictures out loud, as quickly as you can. It takes about 3 minutes. Afterwards you'll see how many you named and how fast.</p>
     <fieldset>
       <legend>Language</legend>
       <div class="choice" id="lang-choice"></div>
@@ -50,7 +50,8 @@
     <p class="lead">Allow the microphone, then say <b id="hello-word">"hello"</b> in your usual voice.</p>
     <div class="meter" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="meter-box"><div id="meter"></div></div>
     <p class="small" id="mic-msg" aria-live="polite">Waiting for the microphone…</p>
-    <p class="small muted" style="margin:0">Next: each picture appears on its own. Say its name with one word, then tap <b>Next</b> or press the space bar. If you don't know it, say so, or wait: after 20 seconds the test moves on.</p>
+    <p class="note" id="how-box"><b>How to answer:</b> <span id="how-text">say the name with one word.</span></p>
+    <p class="small muted" style="margin:0">Each picture appears on its own. After you answer, tap <b>Next</b> or press the space bar. If you don't know it, say so, or wait: after 20 seconds the test moves on.</p>
     <button type="button" class="btn btn-dark btn-big" id="go-test" disabled>Start the test</button>
   </section>
 
@@ -95,7 +96,7 @@
 
     <div class="btn-row">
       <button type="button" class="btn" id="again">Take it again</button>
-      <button type="button" class="btn" id="other-lang" hidden></button>
+      <button type="button" class="btn" id="other-lang">Choose another language</button>
     </div>
   </section>
 </main>

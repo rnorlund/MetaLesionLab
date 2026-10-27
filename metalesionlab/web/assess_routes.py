@@ -21,7 +21,6 @@ import threading
 import time
 from pathlib import Path
 
-import httpx
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
@@ -33,6 +32,7 @@ log = logging.getLogger("tot.assess")
 router = APIRouter()
 HERE = Path(__file__).resolve().parent
 NORMS_PUBLIC = HERE.parents[1] / "public_data"
+LANGUAGE_SUPPORT = HERE.parents[1] / "public_data" / "language_support.json"
 RECEIPT_KEY = os.environ.get("TOT_RECEIPT_KEY", "").encode() or secrets.token_bytes(32)
 RECEIPT_MAX_AGE_S = 3 * 3600
 TRANSCRIBE_LEAD_S = 0.05  # transcribe from just before the picture appeared
@@ -47,22 +47,18 @@ def _web():
     return web
 
 
-RETRY_ERRORS = (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, httpx.RemoteProtocolError)
+def _warm_wordnet() -> None:
+    """Load WordNet once in the background (20-40 s with current NLTK), holding the lock scoring
+    uses, so the first visitor's answers wait for it instead of racing it."""
+    from metalesionlab.naming_errors import WORDNET_LOCK, _wordnet
+    try:
+        with WORDNET_LOCK:
+            _wordnet().morphy("cats")
+    except Exception as e:  # scoring still loads it on first use
+        log.warning("WordNet warm-up failed: %s", e)
 
 
-def with_retry(fn, *args, attempts: int = 4, delay_s: float = 0.5, **kwargs):
-    """Call fn, retrying with exponential backoff (0.5, 1, 2 s) when the network drops (DNS
-    failures and refused or reset connections). Chat, SAM and image calls already retry inside
-    the OpenAI client; transcription goes through httpx and retries here."""
-    for k in range(attempts):
-        try:
-            return fn(*args, **kwargs)
-        except RETRY_ERRORS as e:
-            if k == attempts - 1:
-                raise
-            log.warning("Meta API connection failed (%s); retrying in %.1f s", type(e).__name__, delay_s)
-            time.sleep(delay_s)
-            delay_s *= 2
+router.add_event_handler("startup", lambda: threading.Thread(target=_warm_wordnet, daemon=True).start())
 
 
 # --- pages -------------------------------------------------------------------------------
@@ -96,17 +92,43 @@ def is_public_test(set_id: str | None) -> bool:
     return bool(set_id) and set_id.startswith("demo_")
 
 
+# How to answer, per language: spoken scoring is most reliable in these forms (docs/languages.md).
+ANSWER_FORMS = {
+    "en": {"instruction": "Say the name with one word.", "example": "cat"},
+    "es": {"instruction": "Say the word with its article: el or la (or un, una).", "example": "el gato"},
+    "fr": {"instruction": "Say the word with its article: le, la, un or une.", "example": "le chat"},
+    "pt": {"instruction": "Say the word with its article: o or a (or um, uma).", "example": "o gato"},
+    "zh": {"instruction": "Say the word with a measure word, such as 一只 or 一个.", "example": "一只猫"},
+    "hi": {"instruction": "Say the word on its own.", "example": "बिल्ली"},
+}
+
+
+def language_table() -> list[dict]:
+    """Every scoring language with its measured status (public_data/language_support.json):
+    verified, works with review, or experimental; and how to answer for the best scoring."""
+    web = _web()
+    support = web.read_json(LANGUAGE_SUPPORT) or {}
+    status = {row.get("language"): row.get("status") for row in support.get("table", []) if isinstance(row, dict)}
+    return [{"code": code, "name": name, "status": status.get(name) or "experimental",
+             **ANSWER_FORMS.get(code, {"instruction": "Say the word on its own.", "example": None})}
+            for code, name in web.LANGUAGE_NAMES.items()]
+
+
 @router.get("/api/assess/config")
 def config():
     web = _web()
+    languages = language_table()
+    verified = {l["code"] for l in languages if l["status"] == "verified"}
     public = []
-    for s in web.list_sets():
-        if s["demo"] and s["status"] == "done" and s["kept"] >= 5:
+    for s in web.list_sets():  # the public test uses the demo sets in verified languages
+        if s["demo"] and s["status"] == "done" and s["kept"] >= 5 and s["lang"] in verified:
             items = kept_items(s["id"])
             public.append({"id": s["id"], "lang": s["lang"], "n_items": len(items), "version": set_version(items)})
+    order = [l["code"] for l in languages]
+    public.sort(key=lambda p: order.index(p["lang"]) if p["lang"] in order else 99)
     return {"time_limit_s": assessment.DEFAULT_TIME_LIMIT_S, "max_time_limit_s": MAX_TIME_LIMIT_S,
             "norms_min_n": assessment.NORMS_MIN_N, "age_bands": list(assessment.AGE_BANDS),
-            "public_sets": public, "disclaimer": DISCLAIMER}
+            "languages": languages, "public_sets": public, "disclaimer": DISCLAIMER}
 
 
 # --- scoring one response ----------------------------------------------------------------------
@@ -195,7 +217,7 @@ def score_timed(request: Request, audio: UploadFile = File(...), target: str = F
         web.limiter.take("score", web.client_ip(request))
         clip = audio_mod.trim(wav, max(0.0, onset_s - TRANSCRIBE_LEAD_S), None)
         clip = audio_mod.pad_silence(clip, web.NAMING_PAD_S)
-        body = with_retry(api.transcribe, clip, language=lang)
+        body = api.transcribe(clip, language=lang)  # retries network and 5xx failures itself
         transcript = str(body.get("transcript") or "").strip()
         if timing.onset_s is None and transcript:
             flags.append("no_onset_found")

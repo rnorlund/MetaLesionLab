@@ -43,6 +43,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import threading
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass
@@ -117,6 +118,11 @@ def _refusal_key(text: str) -> str:
 REFUSAL_KEYS = {_refusal_key(r) for r in REFUSALS}
 
 
+# NLTK's WordNet reader loads lazily and reads through one shared file handle, so it isn't
+# thread-safe; the web app scores several responses at once. Every WordNet lookup holds this lock.
+WORDNET_LOCK = threading.RLock()
+
+
 @lru_cache(maxsize=1)
 def _wordnet():
     import nltk
@@ -171,8 +177,9 @@ def _same_word(target: str, word: str, lang: str) -> bool:
         if folded == bare or folded in (bare + "s", bare + "es"):
             return True
     if lang == "en":
-        wn = _wordnet()
-        return wn.morphy(word, wn.NOUN) == target
+        with WORDNET_LOCK:
+            wn = _wordnet()
+            return wn.morphy(word, wn.NOUN) == target
     if lang == "hi":
         word = word.replace("ँ", "ं")  # chandrabindu and anusvara spell the same nasal (आँख, आंख)
         if word == target.replace("ँ", "ं"):
@@ -494,6 +501,11 @@ def _sound_related_gendered(t: tuple[str, ...], r: tuple[str, ...]) -> bool:
 # --- meaning ---------------------------------------------------------------------------
 
 def wordnet_related(target: str, response: str) -> bool:
+    with WORDNET_LOCK:
+        return _wordnet_related(target, response)
+
+
+def _wordnet_related(target: str, response: str) -> bool:
     wn = _wordnet()
     targets, responses = wn.synsets(target, pos=wn.NOUN)[:3], wn.synsets(response, pos=wn.NOUN)[:3]
     for x in targets:

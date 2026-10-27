@@ -93,6 +93,7 @@
   function applyTest() {
     var t = S.test;
     if (t.lang && $('lang').querySelector('option[value="' + t.lang + '"]')) $('lang').value = t.lang;
+    onLang();
     var practice = t.items.filter(function (it) { return it.practice; }).length;
     $('practice-field').hidden = !practice;
     $('form').value = 'all';
@@ -118,6 +119,26 @@
         'Form B: ' + b.n + ' pictures, ' + b.zipf_mean + ', ' + b.phonemes_mean + ' sounds.';
       return r;
     });
+  }
+
+  // --- languages: measured status and how to answer -------------------------------------------
+  function langInfo(code) { return ((S.config && S.config.languages) || []).filter(function (l) { return l.code === code; })[0] || null; }
+  function fillLangs(select, selected) {
+    var list = (S.config && S.config.languages) || S.langs.map(function (l) { return { code: l.code, name: l.name, status: l.verified ? 'verified' : 'experimental' }; });
+    select.innerHTML = '';
+    list.forEach(function (l) { select.appendChild(h('option', { value: l.code, text: l.name + (l.status === 'verified' ? '' : ' (' + l.status + ')') })); });
+    if (selected) select.value = selected;
+  }
+  function answerText(code) {
+    var l = langInfo(code);
+    if (!l) return '';
+    return l.instruction + (l.example ? ' For example: "' + l.example + '".' : '');
+  }
+  function onLang() {
+    var l = langInfo($('lang').value);
+    $('lang-hint').textContent = l ? 'How to answer: ' + answerText(l.code) + (l.status === 'verified' ? ''
+      : l.status === 'works with review' ? ' Spoken scoring in this language works with review: check every code that isn\'t Correct.'
+        : ' Spoken scoring in this language is experimental: check every code.') : '';
   }
 
   // --- status ----------------------------------------------------------------------------
@@ -164,7 +185,9 @@
       applyFeatures();
       openAdmin();
       preload();
-      showMessage('Ready', 'Tell the person: "I\'ll show you some pictures, one at a time. Tell me the name of each one."', 'Start');
+      var how = answerText(S.session.lang);
+      showMessage('Ready', 'Tell the person: "I\'ll show you some pictures, one at a time. Tell me the name of each one."' +
+        (how ? ' ' + how : ''), 'Start');
     }).catch(function (e) {
       if (S.cap) S.cap.stop();
       S.cap = null;
@@ -730,7 +753,7 @@
   $('start').addEventListener('click', start);
   $('test').addEventListener('change', onTest);
   $('form').addEventListener('change', onForm);
-  $('lang').addEventListener('change', function () { if ($('form').value !== 'all') onForm(); });
+  $('lang').addEventListener('change', function () { onLang(); if ($('form').value !== 'all') onForm(); });
   $('admin-next').addEventListener('click', function (e) { if (S.run && S.run.closeOnNext) closeAfterFinish(); else onNext(e); });
   $('admin-pause').addEventListener('click', togglePause);
   $('admin-end').addEventListener('click', function () { if (S.run && S.run.closeOnNext) closeAfterFinish(); else endSession(); });
@@ -781,7 +804,8 @@
     S.status = res[0];
     S.config = res[1];
     S.langs = S.status ? S.status.languages : [{ code: 'en', name: 'English', verified: true }, { code: 'es', name: 'Spanish', verified: true }];
-    ['lang', 'import-lang', 'photo-lang'].forEach(function (id) { T.fillLanguages($(id), S.langs, 'en'); });
+    ['lang', 'import-lang', 'photo-lang'].forEach(function (id) { fillLangs($(id), 'en'); });
+    onLang();
     if (S.config) $('limit').value = S.config.time_limit_s;
     applyFeatures();
     return Promise.all([loadTests(), loadSessions()]);

@@ -108,7 +108,7 @@
       S.set = d;
       S.items = (d.manifest ? d.manifest.items : []).map(function (it, i) { return { index: i, word: it.word, image: it.image, status: it.status }; })
         .filter(function (it) { return it.status === 'kept' && it.image; });
-      if (d.lang) $('lang').value = d.lang;
+      if (d.lang) { $('lang').value = d.lang; languageHint(); }
       if (task() === 'naming') $('resp-empty').textContent = S.items.length + ' pictures ready. Press Start test; each response is transcribed, coded and listed here for review.';
     }).catch(function (e) { T.toast(e.message, 'error'); });
   }
@@ -251,7 +251,7 @@
     var last = S.idx === S.items.length - 1;
     if (voice) {
       setControls([btn(last ? 'Finish' : 'Next picture →', 'btn-record', nextNaming), btn('Redo', 'secondary', redoNaming), btn('End test', 'secondary', endNaming)]);
-      $('stage-help').textContent = 'Recording starts with each picture. Press Next (or the space bar) when the speaker has answered. End test stops without scoring this picture.';
+      $('stage-help').textContent = (S.answerHint ? S.answerHint + ' ' : '') + 'Recording starts with each picture. Press Next (or the space bar) when the speaker has answered. End test stops without scoring this picture.';
       startClip(NAMING_MAX_S, nextNaming);
     } else {
       $('typed-response').value = '';
@@ -655,6 +655,26 @@
   });
   $('task').addEventListener('change', onTask);
   $('set').addEventListener('change', onSet);
+  $('lang').addEventListener('change', languageHint);
+
+  /* Measured status per language (verified, works with review, experimental) and the answer form
+     that scores most reliably, e.g. Spanish with the article ("el gato"). */
+  function languageStatus() {
+    return T.api('/api/assess/config').then(function (cfg) {
+      S.langInfo = cfg.languages || [];
+      S.langInfo.forEach(function (l) {
+        var opt = $('lang').querySelector('option[value="' + l.code + '"]');
+        if (opt) opt.textContent = l.name + (l.status === 'verified' ? '' : ' (' + l.status + ')');
+      });
+      languageHint();
+    }).catch(function () { /* labels from /api/status stay */ });
+  }
+  function languageHint() {
+    var l = (S.langInfo || []).filter(function (x) { return x.code === $('lang').value; })[0];
+    S.answerHint = l ? 'How to answer: ' + l.instruction + (l.example ? ' For example: "' + l.example + '".' : '') : '';
+    $('lang-hint').textContent = !l ? '' : S.answerHint + (l.status === 'verified' ? ''
+      : l.status === 'works with review' ? ' Check every code that isn\'t Correct.' : ' Experimental: check every code.');
+  }
   $('speaker').addEventListener('change', function () { save(); renderTable(); });
   $('typed-response').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); nextNaming(); } });
   document.addEventListener('keydown', function (e) {
@@ -723,6 +743,7 @@
     S.status = st;
     S.langs = st ? st.languages : [{ code: 'en', name: 'English', verified: true }, { code: 'es', name: 'Spanish', verified: true }];
     T.fillLanguages($('lang'), S.langs, 'en');
+    languageStatus();
     var wantTask = T.param('task');
     if (wantTask && $('task').querySelector('option[value="' + wantTask + '"]')) $('task').value = wantTask;
     applyFeatures();

@@ -46,12 +46,13 @@
     </label>
     <div class="fields">
       <label class="field">Language
-        <select id="lang"></select>
+        <select id="lang" aria-describedby="lang-hint"></select>
       </label>
       <label class="field">Time limit per picture
         <span class="input-unit"><input type="number" id="limit" min="3" max="60" step="1" value="20" inputmode="numeric" aria-describedby="limit-hint"><span>s</span></span>
       </label>
     </div>
+    <span class="hint" id="lang-hint" aria-live="polite"></span>
     <span class="hint" id="limit-hint">20 s as in the Philadelphia Naming Test. Reaching the limit counts as no response.</span>
     <label class="field">Speaker code
       <input type="text" id="speaker" maxlength="24" autocomplete="off" spellcheck="false" placeholder="e.g. P-014" aria-describedby="speaker-hint">

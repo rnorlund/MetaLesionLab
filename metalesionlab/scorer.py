@@ -46,7 +46,7 @@ from PIL import Image
 
 from metalesionlab.meta_api import REPO_ROOT, image_data_url
 from metalesionlab.naming_errors import ARTICLES as NAMING_ARTICLES
-from metalesionlab.naming_errors import LANGUAGE_NAMES, _strip_accents, _wordnet, tokens
+from metalesionlab.naming_errors import LANGUAGE_NAMES, WORDNET_LOCK, _strip_accents, _wordnet, tokens
 
 CATEGORIES = ("Correct", "Semantic", "Formal", "Mixed", "Unrelated", "Nonword", "Neologism",
               "Description", "NoResponse", "Visual")
@@ -369,7 +369,8 @@ def _singular(word: str, lang: str) -> str:
     then a final -e after a consonant (tigr, leon)."""
     if lang == "en":
         # WordNet keeps some plurals as lemmas ("cows", "oxen", "tigers"), so prefer another base form.
-        bases = _wordnet()._morphy(word, "n") if len(word) > 3 else []
+        with WORDNET_LOCK:
+            bases = _wordnet()._morphy(word, "n") if len(word) > 3 else []
         if others := [b for b in bases if b != word]:
             return others[0]
         if bases:
