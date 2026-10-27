@@ -45,6 +45,7 @@ from starlette.datastructures import Headers, MutableHeaders
 from starlette.requests import Request as StarletteRequest
 
 from metalesionlab import meta_api
+from metalesionlab.brand import BRAND
 from metalesionlab.meta_api import BudgetExceeded
 from metalesionlab.web import limits
 
@@ -313,11 +314,11 @@ class Guard:
         if rule.bucket == "photo" and not self.s.photo_tests:
             return Decision(403, {"detail": "Personal tests from a photo are turned off on the live demo: they draw "
                                             "many pictures, and photos of people's homes shouldn't go through a public "
-                                            "server. Run Tippa Lingua yourself to make one.", "guard": "off"},
+                                            f"server. Run {BRAND} yourself to make one.", "guard": "off"},
                             {"X-Tippa-Guard": "off"})
         if rule.bucket == "build" and self.s.build_words <= 0:
             return Decision(403, {"detail": "Building new picture sets is turned off on the live demo. Open one of the "
-                                            "demo sets below, or run Tippa Lingua yourself to build your own.",
+                                            f"demo sets below, or run {BRAND} yourself to build your own.",
                                   "guard": "off"}, {"X-Tippa-Guard": "off"})
         return None
 
@@ -337,7 +338,7 @@ class Guard:
             return None, 0.25, None, None  # the route will reject it; meanwhile assume a large build
         if len(words) > self.s.build_words:
             return (Decision(422, {"detail": f"On the live demo a set has up to {self.s.build_words} words "
-                                             f"({len(words)} given). Run Tippa Lingua yourself for longer sets.",
+                                             f"({len(words)} given). Run {BRAND} yourself for longer sets.",
                                    "guard": "size"}, {"X-Tippa-Guard": "size"}), 0.0, None, None)
         new_body = note = None
         if cands > self.s.build_candidates:

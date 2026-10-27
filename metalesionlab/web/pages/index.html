@@ -3,309 +3,219 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tippa Lingua: the tip-of-the-tongue test, for people and AI</title>
-<meta name="description" content="Watch an AI find a word, and lose it. Tippa Lingua gives people and Meta's open model Muse Glimmer the same picture-naming test, so clinicians, researchers and AI teams can study word-finding with one test.">
-<meta property="og:title" content="Tippa Lingua: the tip-of-the-tongue test, for people and AI">
-<meta property="og:description" content="Watch an AI find a word, and lose it. One picture-naming test for people and AI, in any language.">
+<title>Plato’s Chair: what would Plato ask an AI? · {{BRAND}}</title>
+<meta name="description" content="Asked for a chair, Meta’s image model Muse Image drew the same one 16 times. People drew 16 different ones, mostly of the same plain chair. We put Plato’s questions to AI and to people.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{BRAND}}">
+<meta property="og:title" content="Asked for a chair, Meta’s AI drew the same one 16 times">
+<meta property="og:description" content="People drew 16 different ones, mostly of the same plain chair. What would Plato ask an AI? Draw yours and see where it lands.">
+<meta property="og:url" content="{{ORIGIN}}/">
+<meta property="og:image" content="{{ORIGIN}}/static/img/og-plato-chair.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Left: 16 chair doodles by Meta’s Muse Image, nearly identical, and all 16 stacked into one sharp chair. Right: 16 chairs drawn by people, and the same 16 stacked into a cloud.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Asked for a chair, Meta’s AI drew the same one 16 times">
+<meta name="twitter:description" content="People drew 16 different ones, mostly of the same plain chair. What would Plato ask an AI?">
+<meta name="twitter:image" content="{{ORIGIN}}/static/img/og-plato-chair.png">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/landing.css">
 <link rel="stylesheet" href="/static/css/tour.css">
 </head>
 <body class="landing">
 <a class="skip" href="#main">Skip to content</a>
-
-<header class="lhead">
-  <div class="wrap">
-    <nav class="lnav" aria-label="Main">
-      <a class="lbrand" href="/">Tippa Lingua</a>
-      <div class="lnav-links">
-        <a href="#ideas">The idea</a>
-        <a href="#science">Inside the AI</a>
-        <a href="/plato">Plato’s Chair</a>
-        <a href="/draw">Draw a chair</a>
-        <a href="/ask">Ask the Lab</a>
-        <a href="#start">Start here</a>
-        <a href="#trust">Responsible use</a>
-      </div>
-      <div class="lnav-cta">
-        <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
-        <a class="lbtn lbtn-line" href="https://github.com/rnorlund/MetaLesionLab">GitHub</a>
-        <a class="lbtn lbtn-dark" href="/challenge">Play</a>
-      </div>
-    </nav>
-  </div>
-</header>
+<div class="wrap lhead"><header class="topbar"></header></div>
 
 <main id="main" tabindex="-1">
+
 <section class="hero" aria-labelledby="hero-h">
-  <div class="wrap">
+  <div class="wrap hero-grid">
     <div class="hero-text">
-      <span class="kicker">A Rosetta Stone for how people and AI find words</span>
-      <h1 id="hero-h">Watch an AI find a word, and lose it.</h1>
-      <p class="hero-lede">People can lose words in a similar way after a stroke: they know exactly what they mean, but the word won’t come. Tippa Lingua gives people and an AI the same picture-naming test, so clinicians, researchers and AI teams can study word-finding with one test.</p>
+      <p class="kicker">What would Plato ask an AI? <span class="kicker-q">Question 1: Is there one ideal chair?</span></p>
+      <h1 id="hero-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h1>
+      <p class="hero-sub">People drew 16 different ones, mostly of the same plain chair.</p>
       <div class="hero-cta">
-        <a class="lbtn lbtn-accent lbtn-lg" href="/challenge">Play: You vs. the AI</a>
-        <a class="lbtn lbtn-dark lbtn-lg" href="/lab">Explore the Model Lab</a>
-        <button type="button" class="lbtn lbtn-ghost lbtn-lg" data-tour-start>Take the 2-minute tour</button>
+        <!--#if /draw--><a class="lbtn lbtn-accent lbtn-lg" href="/draw">Draw your own chair</a><!--#endif-->
+        <a class="lbtn lbtn-dark lbtn-lg" href="/plato">See the experiment</a>
+        <!--#if /socrates--><a class="lbtn lbtn-outline lbtn-lg" href="/socrates">Ask Socrates</a><!--#endif-->
       </div>
+      <button type="button" class="hero-tour" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Take the 90-second tour</button>
     </div>
 
-    <div class="hero-pair">
-      <figure class="pair pair-person">
-        <img src="/static/img/ill-tip-of-tongue-800.webp" srcset="/static/img/ill-tip-of-tongue-800.webp 800w, /static/img/ill-tip-of-tongue-1600.webp 1600w"
-             sizes="(max-width: 900px) 92vw, 600px" width="800" height="450" fetchpriority="high"
-             alt="Illustration: an older woman at her kitchen table points at a blue mug. A thought bubble shows the mug clearly, but the dotted line from her mouth toward it fades out: the word won’t come.">
-        <figcaption><b>A person.</b> The idea is clear; the word won’t come.</figcaption>
-      </figure>
-
-      <figure class="pair lens-card" aria-labelledby="lens-cap">
-        <div class="lens-card-head"><span>Word lens · Muse Glimmer</span><span class="lens-tag">Measured</span></div>
-        <div class="lens-row">
-          <img src="/static/img/hero-cat.webp" width="96" height="96" alt="Line drawing of a cat from the English demo set">
-          <ol class="lens-steps" aria-label="Glimmer’s top guess after selected layers">
-            <li><span>layer 41</span><b>“OK”</b></li>
-            <li class="concept"><span>layer 43</span><b lang="zh">“猫”</b><i>Chinese for cat</i></li>
-            <li class="word"><span>layer 45</span><b>“cat”</b></li>
-            <li class="word"><span>layer 52</span><b>“cat”</b><i>p = 0.60</i></li>
-          </ol>
+    <figure class="chairs" id="chairs" aria-labelledby="chairs-cap">
+      <div class="chairs-pair">
+        <div class="chairs-side" data-side="ai">
+          <p class="chairs-label"><i class="sw sw-ai" aria-hidden="true"></i>Meta’s Muse Image <b>16 chairs</b></p>
+          <div class="chairs-grid" role="img" aria-label="16 chair doodles by Meta’s Muse Image: nearly the same wooden chair with a slatted back, from the same three-quarter angle, every time. Stacked on top of each other, they make one sharp chair.">
+            <span style="--c:0;--r:0"></span><span style="--c:1;--r:0"></span><span style="--c:2;--r:0"></span><span style="--c:3;--r:0"></span>
+            <span style="--c:0;--r:1"></span><span style="--c:1;--r:1"></span><span style="--c:2;--r:1"></span><span style="--c:3;--r:1"></span>
+            <span style="--c:0;--r:2"></span><span style="--c:1;--r:2"></span><span style="--c:2;--r:2"></span><span style="--c:3;--r:2"></span>
+            <span style="--c:0;--r:3"></span><span style="--c:1;--r:3"></span><span style="--c:2;--r:3"></span><span style="--c:3;--r:3"></span>
+          </div>
+          <p class="chairs-stat"><span class="when-grid">spread <b>0.13</b></span><span class="when-stacked">stacked: <b>one chair</b></span></p>
         </div>
-        <svg viewBox="0 0 360 128" role="img" aria-label="Measured on Muse Glimmer: the probability of the word cat stays near zero through layer 41, the Chinese word for cat leads at layers 42 to 44, and cat leads from layer 45, reaching 0.60 at layer 52.">
-          <rect x="283" y="4" width="21" height="108" fill="#7C2D12" opacity="0.55"></rect>
-          <text x="293.5" y="17" font-size="12" fill="#FDBA74" text-anchor="middle">猫</text>
-          <line x1="0" y1="112" x2="360" y2="112" stroke="#4B5563"></line>
-          <polyline points="0,112 272.2,112.0 279.2,111.8 286.2,110.3 293.2,110.0 300.2,91.6 307.1,81.7 314.1,78.8 321.1,79.3 328.1,91.0 335.1,86.8 342.0,77.3 349.0,25.8 356.0,21.7" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
-          <circle cx="356" cy="21.7" r="4" fill="#60A5FA" stroke="#1F2937" stroke-width="2"></circle>
-          <text x="358" y="11" font-size="11" fill="#F9FAFB" text-anchor="end">0.60</text>
-          <text x="0" y="12" font-size="10" fill="#9CA3AF">p(cat), the chance it says “cat”</text>
-          <text x="0" y="126" font-size="10" fill="#9CA3AF">layer 1</text>
-          <text x="356" y="126" font-size="10" fill="#9CA3AF" text-anchor="end">52</text>
-        </svg>
-        <figcaption id="lens-cap"><b>An AI.</b> We can read its best guess after every layer: the idea of a cat appears first (as 猫), then the English word wins. <a href="/challenge">See it lose a word →</a></figcaption>
-      </figure>
-    </div>
+        <div class="chairs-side" data-side="people">
+          <p class="chairs-label"><i class="sw sw-people" aria-hidden="true"></i>16 people <b>16 chairs</b></p>
+          <div class="chairs-grid" role="img" aria-label="16 chairs drawn by people in 20 seconds each: mostly the same simple chair seen from the side, each drawn differently. Stacked on top of each other, they make a cloud of lines.">
+            <span style="--c:0;--r:0"></span><span style="--c:1;--r:0"></span><span style="--c:2;--r:0"></span><span style="--c:3;--r:0"></span>
+            <span style="--c:0;--r:1"></span><span style="--c:1;--r:1"></span><span style="--c:2;--r:1"></span><span style="--c:3;--r:1"></span>
+            <span style="--c:0;--r:2"></span><span style="--c:1;--r:2"></span><span style="--c:2;--r:2"></span><span style="--c:3;--r:2"></span>
+            <span style="--c:0;--r:3"></span><span style="--c:1;--r:3"></span><span style="--c:2;--r:3"></span><span style="--c:3;--r:3"></span>
+          </div>
+          <p class="chairs-stat"><span class="when-grid">spread <b>0.36</b></span><span class="when-stacked">stacked: <b>a cloud</b></span></p>
+        </div>
+      </div>
+      <div class="chairs-foot">
+        <button type="button" class="stack-btn" id="stack-btn" aria-pressed="false"><span class="when-grid">Stack all 16 on top of each other</span><span class="when-stacked">Spread them out again</span></button>
+        <figcaption id="chairs-cap" class="chairs-cap">The same prompt every time: “a quick simple doodle sketch of a chair”. <b>Spread</b> is how different two drawings look on average, measured with Meta’s DINOv2 (0 would be 16 copies). People: players of Google’s Quick, Draw!, 20 seconds each (CC BY 4.0).</figcaption>
+      </div>
+    </figure>
   </div>
 </section>
 
-<section id="ideas" class="band" aria-labelledby="ideas-h">
+<section class="band" id="findings" aria-labelledby="findings-h">
   <div class="wrap section">
     <div class="section-head">
-      <span class="kicker kicker-accent">New here?</span>
-      <h2 class="h2" id="ideas-h">Three ideas in 30 seconds</h2>
+      <p class="kicker">What we found</p>
+      <h2 class="h2" id="findings-h">Not just chairs. And not every AI.</h2>
     </div>
-    <ol class="ideas">
-      <li class="idea">
-        <img src="/static/img/ill-words-stuck-600.webp" srcset="/static/img/ill-words-stuck-600.webp 600w, /static/img/ill-words-stuck-1100.webp 1100w"
-             sizes="(max-width: 720px) 92vw, 380px" width="600" height="450" loading="lazy"
-             alt="Illustration: a man holds up a picture card of a cat. A glowing path runs from the card into his head and on toward his mouth, where it frays into specks before an empty speech bubble.">
-        <span class="idea-n">1</span>
-        <h3>Words can get stuck</h3>
-        <p>After a stroke, many people still know exactly what they mean, but the word won’t come out, or comes out wrong. This is called <span class="term-wrap"><button type="button" class="term" aria-describedby="def-aphasia" aria-expanded="false">aphasia</button><span class="term-pop" id="def-aphasia" role="tooltip">Aphasia: difficulty finding, saying or understanding words, most often after a stroke. It affects language, not intelligence.</span></span>.</p>
-      </li>
-      <li class="idea">
-        <img src="/static/img/ill-learn-from-damage-600.webp" srcset="/static/img/ill-learn-from-damage-600.webp 600w, /static/img/ill-learn-from-damage-1100.webp 1100w"
-             sizes="(max-width: 720px) 92vw, 380px" width="600" height="450" loading="lazy"
-             alt="Illustration: a simple brain shape with one small patch glowing orange. Beside it, one speech bubble shows a clear drawing of a cat and the other shows the same cat blurred and scrambled.">
-        <span class="idea-n">2</span>
-        <h3>Scientists learn from damage</h3>
-        <p>When one small area of the brain is damaged (a <span class="term-wrap"><button type="button" class="term" aria-describedby="def-lesion" aria-expanded="false">lesion</button><span class="term-pop" id="def-lesion" role="tooltip">Lesion: an area of damage, for example where a stroke cut off the blood supply to part of the brain.</span></span>), the mistakes a person makes, like “dog” for cat, hint at what that area did. But we can’t choose where the damage is, or look inside.</p>
-      </li>
-      <li class="idea">
-        <img src="/static/img/ill-ai-parts-600.webp" srcset="/static/img/ill-ai-parts-600.webp 600w, /static/img/ill-ai-parts-1100.webp 1100w"
-             sizes="(max-width: 720px) 92vw, 380px" width="600" height="450" loading="lazy"
-             alt="Illustration: a cat walks toward a tall tower of glass layers that stands for an AI model. A few middle layers are dimmed and switched off, and the speech bubble at the top shows a dog instead of a cat.">
-        <span class="idea-n">3</span>
-        <h3>AI has parts too</h3>
-        <p>An AI model passes each picture through a stack of <span class="term-wrap"><button type="button" class="term" aria-describedby="def-layer" aria-expanded="false">layers</button><span class="term-pop" id="def-layer" role="tooltip">Layer: one step in the stack an AI model passes information through. Muse Glimmer has 52 for language.</span></span>. We can switch some parts off, safely and reversibly, and see what it loses: a <span class="term-wrap"><button type="button" class="term" aria-describedby="def-virtual" aria-expanded="false">virtual lesion</button><span class="term-pop" id="def-virtual" role="tooltip">Virtual lesion: switching off or disturbing chosen parts of an AI model on purpose, then giving it the same test. Nothing is permanent; switch them back on and the model is unchanged.</span></span>. A <span class="term-wrap"><button type="button" class="term" aria-describedby="def-lens" aria-expanded="false">word lens</button><span class="term-pop" id="def-lens" role="tooltip">Word lens: a read-out of the model’s best guess for the word after each layer, so you can see when the right word appears and where it gets lost. Researchers call it a logit lens.</span></span> shows its best guess after every layer.</p>
-      </li>
+    <div class="finds">
+      <article class="find">
+        <p class="find-num">34<small> of 35</small></p>
+        <h3>things drawn more alike than people draw them</h3>
+        <p>We asked for 35 things, from apples to umbrellas. Muse Image’s drawings were typically about half as varied as people’s (median ratio <b>0.49</b>). Only books came out as varied.</p>
+      </article>
+      <article class="find">
+        <p class="find-num">1.30×</p>
+        <h3>“Any kind” changes nothing. Naming the kinds does.</h3>
+        <p>Ask for “a chair (any kind of chair)” and you get the same slat-back chair again. Have Meta’s Muse Spark list 16 kinds and draw one of each, and the spread rises to 1.30 times people’s. The narrow default is a default: Muse knows the variety.</p>
+      </article>
+      <article class="find">
+        <p class="find-num">83%</p>
+        <h3>People mostly draw the plain chair too</h3>
+        <p>Across the 35 things, 83% of people’s recognizable drawings show the plain, ordinary kind, the same share as Muse Image’s usual prompt. People vary in <i>how</i> they draw a thing far more than in <i>which</i> one they draw.</p>
+      </article>
+      <article class="find">
+        <p class="find-num">2.4×</p>
+        <h3>It’s Muse, not all AI</h3>
+        <p>From the same prompt, Stable Diffusion XL’s drawings were about 2.4 times as varied as Muse Image’s, and more varied for 34 of 35 things. Much of that extra variety is drawing style, not different objects.</p>
+      </article>
+    </div>
+    <ol class="how" aria-label="How we measured it">
+      <li><b>Muse Image</b> drew 12–16 doodles of each thing, one prompt each time.</li>
+      <li><b>Quick, Draw!</b> gave 200 people’s 20-second drawings of the same words.</li>
+      <li><b>DINOv2</b>, Meta’s vision model, measured how different two drawings look.</li>
+      <li><b>Muse Spark</b> listed kinds; <b>Muse Glimmer</b> labeled which kind each of 10,020 drawings shows.</li>
     </ol>
   </div>
 </section>
 
-<section id="science" class="band band-paper" aria-labelledby="science-h">
+<section class="band band-ink" id="plato" aria-labelledby="plato-h">
+  <div class="wrap section plato-sec">
+    <div class="plato-quote">
+      <p class="kicker kicker-light">Plato, the first AI skeptic</p>
+      <blockquote>
+        <p>“You would imagine that they had intelligence, but if you want to know anything and put a question to one of them, the speaker always gives one unvarying answer.”</p>
+        <footer>Socrates, on written words. Plato, <cite>Phaedrus</cite> 275d</footer>
+      </blockquote>
+      <p class="plato-note">Plato warned that writing would give its readers “the show of wisdom without the reality” (<cite>Phaedrus</cite> 275a–b). Ask Meta’s image model for a chair and you get one unvarying chair. So we put Plato’s questions to AI, and to people.</p>
+    </div>
+    <div class="plato-bed">
+      <h2 class="h3" id="plato-h">What Plato said: his example was a bed</h2>
+      <p>In <cite>Republic</cite> X, Socrates describes three beds: one “existing in nature, which is made by God”, one that is “the work of the carpenter”, and a third, “the work of the painter” (597b). The painter copies how the carpenter’s bed looks from where he stands: “you may look at a bed from different points of view, obliquely or directly or from any other point of view, and the bed will appear different, but there is no difference in reality” (598a).</p>
+      <p><b>An image model is Plato’s painter.</b> It learned from pictures, copies of copies. Asked for a chair, Muse Image paints one appearance: the same slat-back chair, from the same three-quarter angle, 16 times.</p>
+      <p class="plato-src">Quotations: Benjamin Jowett’s translation (public domain), as published by Project Gutenberg. Numbers are Stephanus pages.</p>
+    </div>
+  </div>
+</section>
+
+<!--#if /socrates-->
+<section class="band socrates-band" id="socrates" aria-labelledby="socrates-h">
+  <div class="wrap socrates-row">
+    <div>
+      <p class="kicker">Written words can’t answer back. This one does.</p>
+      <h2 class="h2" id="socrates-h">Ask Socrates</h2>
+      <p>A Muse Spark agent that answers your questions about these experiments from the real results, then asks you one question back.</p>
+    </div>
+    <a class="lbtn lbtn-accent lbtn-lg" href="/socrates">Ask Socrates</a>
+  </div>
+</section>
+<!--#endif-->
+
+<section class="band band-paper" id="series" aria-labelledby="series-h">
+  <div class="wrap section">
+    <div class="section-head">
+      <p class="kicker">The Plato series</p>
+      <h2 class="h2" id="series-h">What would Plato ask an AI?</h2>
+      <p class="section-lede">Each experiment is one of Plato’s questions, put to an AI and to people.</p>
+    </div>
+    <!--#series-->
+    <!--#if /draw--><p class="series-draw">Your turn: <a href="/draw">draw a chair</a> and see where it lands next to Muse Image’s chairs and 200 people’s.</p><!--#endif-->
+  </div>
+</section>
+
+<section class="band" id="inside" aria-labelledby="inside-h">
   <div class="wrap section">
     <div class="split">
-      <figure class="split-art">
-        <img src="/static/img/ill-same-test-700.webp" srcset="/static/img/ill-same-test-700.webp 700w, /static/img/ill-same-test-1100.webp 1100w"
-             sizes="(max-width: 900px) 92vw, 560px" width="700" height="394" loading="lazy"
-             alt="Illustration: on the left, a woman names a picture card of an umbrella. On the right, a glowing tower of glass layers, standing for an AI model, receives the same card. Between them stands a carved stone tablet, like the Rosetta Stone, linking the two.">
+      <figure class="split-art inside-fig">
+        <img src="/static/img/plato/spread_by_layer.webp" width="1200" height="560" loading="lazy"
+             alt="Line chart over Muse Glimmer’s 52 layers. The spread of people’s doodles (orange) stays between about 0.5 and 0.7 throughout. The spread of Muse Image’s doodles (blue) tracks just below it until about layer 28, then falls steeply to about 0.1 by layer 40 and stays there.">
+        <figcaption>Spread of a thing’s doodles inside Muse Glimmer, layer by layer: Muse Image’s (blue) and people’s (orange). People’s drawings: Google Quick, Draw! dataset, CC BY 4.0.</figcaption>
       </figure>
       <div class="split-text">
-        <span class="kicker kicker-accent">What’s new</span>
-        <h2 class="h2" id="science-h">The tip-of-the-tongue test, for people and AI, in any language.</h2>
-        <p>We can’t look inside a brain while it searches for a word, but we can look inside an AI. Tippa Lingua gives Muse Glimmer, Meta’s open model, the same picture-naming test people take, scores it the same way, and then opens it up:</p>
-        <ul class="checks">
-          <li><b>Damage on purpose.</b> Switch off chosen parts (neurons, attention units, whole layers, or the part that sees) and give the test again.</li>
-          <li><b>Compare with random damage</b> of the same size, so an effect means more than “less model”.</li>
-          <li><b>Watch the word form.</b> The word lens shows the best guess after each of the 52 layers.</li>
-          <li><b>Set results against people.</b> Error patterns are compared with published groups of people with aphasia, using cited, group-level numbers only.</li>
-        </ul>
-        <p class="finding"><span class="lens-tag lens-tag-light">Measured</span> With layers 41–48 disturbed, Glimmer still named 16 of 20 pictures, but for the umbrella it said only “Umb”: the start of the word, without the rest.</p>
+        <p class="kicker">Inside the model</p>
+        <h2 class="h2" id="inside-h">Inside Meta’s open model, the chairs become one point</h2>
+        <p>We showed both sets of doodles to Muse Glimmer, Meta’s open-weight model, and measured their spread after each of its 52 layers. By the naming layers at the end, Glimmer files all of Muse Image’s doodles of a thing in essentially one place (spread 0.09), while people’s stay spread out (0.54), for 35 of 35 things.</p>
+        <p>The things people draw in more different ways are harder for it to name: rank correlation −0.50 over 35 things. It named 95% of Muse Image’s doodles and 66% of people’s.</p>
         <div class="btn-line">
-          <a class="lbtn lbtn-dark" href="/lab">Explore the Model Lab</a>
-          <a class="lbtn lbtn-outline" href="/challenge">Try the same pictures yourself</a>
+          <a class="lbtn lbtn-dark" href="/plato#inside">See inside Glimmer</a>
+          <a class="lbtn lbtn-outline" href="/lab">Open the Model Lab</a>
         </div>
       </div>
     </div>
-
-    <article class="plato-teaser" aria-labelledby="plato-h">
-      <a class="plato-pics" href="/plato" tabindex="-1" aria-hidden="true">
-        <figure><img src="/static/img/plato/grid_chair_ai.webp" width="884" height="924" loading="lazy" alt=""><figcaption>Meta’s Muse Image</figcaption></figure>
-        <figure><img src="/static/img/plato/grid_chair_people.webp" width="884" height="924" loading="lazy" alt=""><figcaption>16 people</figcaption></figure>
-      </a>
-      <div class="plato-text">
-        <span class="kicker kicker-accent">New experiment · Plato’s Chair</span>
-        <h3 id="plato-h">Ask Meta’s image model for 16 chairs, and you get one chair.</h3>
-        <p>Plato said there is one ideal chair. Muse Image drew the same slat-back chair 16 times; 16 people drew 16 different chairs. Its chairs are 63% less varied than people’s, and it drew 34 of 35 things more alike. Another image model, SDXL, didn’t, so this is a way to measure any image model. We also looked inside Muse Glimmer: the things people draw in more ways are harder for it to name.</p>
-        <a class="lbtn lbtn-dark" href="/plato">See Plato’s Chair</a>
-      </div>
-    </article>
-
-    <article class="plato-teaser bl-teaser" id="bilingual-teaser" aria-labelledby="bl-teaser-h">
-      <a class="bl-teaser-fig" href="/lab/bilingual" tabindex="-1" aria-hidden="true">
-        <span class="bl-teaser-cap">Pictures named under the same damage (average of <span data-bl-kinds>41</span> kinds)</span>
-        <span class="bl-teaser-row"><span>English</span><span class="bl-teaser-track"><i class="bl-teaser-en" data-bl-bar="en" style="width:73%"></i></span><b data-bl-val="en">73%</b></span>
-        <span class="bl-teaser-row"><span>Spanish</span><span class="bl-teaser-track"><i class="bl-teaser-es" data-bl-bar="es" style="width:45%"></i></span><b data-bl-val="es">45%</b></span>
-        <span class="bl-teaser-row"><span>French</span><span class="bl-teaser-track"><i class="bl-teaser-fr" data-bl-bar="fr" style="width:39%"></i></span><b data-bl-val="fr">39%</b></span>
-        <span class="bl-teaser-row"><span>Portuguese</span><span class="bl-teaser-track"><i class="bl-teaser-pt" data-bl-bar="pt" style="width:38%"></i></span><b data-bl-val="pt">38%</b></span>
-        <span class="bl-teaser-said">damaged, asked for <i lang="es">paraguas</i>, it said <b>“Umbrella”</b></span>
-      </a>
-      <div class="plato-text">
-        <span class="kicker kicker-accent">New experiment · Second language</span>
-        <h3 id="bl-teaser-h">Damage an AI, and its second languages break first.</h3>
-        <p data-bl-teaser-text>We gave Muse Glimmer the same pictures in English, Spanish, French and Portuguese, and damaged it the same way each time. Spanish lost 28 points more than English, every picture fared worse, and about a quarter of damaged Spanish answers came out in English. Inside, the intact model finds the English word first and translates it at the end. It echoes bilingual aphasia, as an analogy only.</p>
-        <a class="lbtn lbtn-dark" href="/lab/bilingual">See the experiment</a>
-      </div>
-    </article>
   </div>
 </section>
 
-<section id="start" class="band" aria-labelledby="start-h">
+<section class="band band-gray" id="more" aria-labelledby="more-h">
   <div class="wrap section">
     <div class="section-head">
-      <span class="kicker kicker-accent">Start here</span>
-      <h2 class="h2" id="start-h">Three ways in</h2>
+      <p class="kicker">More from the lab</p>
+      <h2 class="h2" id="more-h">Where this started: how people and AI find words</h2>
+      <p class="section-lede">The same lab gives picture-naming tests to people and to Muse Glimmer, damages the model on purpose, and reads its best guess after every layer.</p>
     </div>
-    <div class="doors">
-      <article class="door">
-        <span class="door-who">Researchers and AI teams</span>
-        <h3>Model Lab</h3>
-        <p>Give Muse Glimmer the naming test with chosen parts damaged, read the word lens, compare targeted with random damage, and line the results up with published patient groups.</p>
-        <p class="door-soon"><b>New: <a href="/lab/cut">What can I cut?</a></b> Remove whole layers with your own tests as the guardrail, and measure the real savings.</p>
-        <a class="lbtn lbtn-dark" href="/lab">Explore the Model Lab</a>
-      </article>
-      <article class="door">
-        <span class="door-who">Clinicians</span>
-        <h3>Naming Assessment</h3>
-        <p>Measure accuracy, error types and naming speed; track change; build a personal test from a photo.</p>
-        <p>Spoken answers are written down and scored automatically (verified in 8 languages, more with review), and you review every code.</p>
-        <a class="lbtn lbtn-dark" href="/assess" data-assess data-fallback="/scorer" data-fallback-text="Open the Scorer">Open the Naming Assessment</a>
-      </article>
-      <article class="door door-accent">
-        <span class="door-who">Everyone</span>
-        <h3>You vs. the AI</h3>
-        <p>Name 10 pictures, see how the AI named the same ones, then watch a word get lost inside it. Two minutes, free, nothing stored.</p>
-        <a class="lbtn lbtn-accent" href="/challenge">Play: You vs. the AI</a>
-        <div class="door-extra" data-assess-box hidden>
-          <p><b>Take the naming test:</b> see your accuracy and speed, and how they compare with other adults who took the same test. <em>Not a medical test.</em></p>
-          <a class="tool-link" href="/assess">Take the naming test →</a>
-        </div>
-      </article>
+    <div class="more-grid">
+      <a class="more-card" id="bilingual-teaser" href="/lab/bilingual">
+        <span class="more-kicker">Second language</span>
+        <span class="more-title">Damage an AI, and its second language breaks first</span>
+        <span class="bl-mini" aria-hidden="true">
+          <span class="bl-cap">Pictures named under the same damage (average of <span data-bl-kinds>41</span> kinds)</span>
+          <span class="bl-row"><span>English</span><span class="bl-track"><i class="bl-en" data-bl-bar="en" style="width:71%"></i></span><b data-bl-val="en">71%</b></span>
+          <span class="bl-row"><span>Spanish</span><span class="bl-track"><i class="bl-es" data-bl-bar="es" style="width:42%"></i></span><b data-bl-val="es">42%</b></span>
+        </span>
+        <span class="more-text" data-bl-teaser-text>Under the same damage, Muse Glimmer named 28 points fewer pictures in Spanish than in English, and about a quarter of its damaged Spanish answers came out in English. It echoes bilingual aphasia, as an analogy only.</span>
+      </a>
+      <ul class="more-links">
+        <li><a href="/lab">Model Lab</a><span>Switch off parts of Meta’s open model and watch it lose words, layer by layer.</span></li>
+        <li><a href="/take">Take the naming test</a><span>Name about 20 pictures out loud in 3 minutes. Not a medical test.</span></li>
+        <li><a href="/ask">Ask the Lab</a><span>A Muse Spark agent that answers from the lab’s results and shows every step.</span></li>
+        <li><a href="/lab/cut">What can I cut?</a><span>Remove whole layers from the model, with your own tests as the guardrail.</span></li>
+        <li><a href="/challenge">You vs. the AI</a><span>Name 10 pictures, then see how the AI named them.</span></li>
+      </ul>
     </div>
-  </div>
-</section>
-
-<section id="languages" class="band band-paper" aria-labelledby="lang-h">
-  <div class="wrap section">
-    <div class="split split-rev">
-      <figure class="split-art">
-        <img src="/static/img/ill-any-language-600.webp" srcset="/static/img/ill-any-language-600.webp 600w, /static/img/ill-any-language-1100.webp 1100w"
-             sizes="(max-width: 900px) 92vw, 480px" width="600" height="450" loading="lazy"
-             alt="Illustration: a mother and her young daughter at a table look at picture cards of a cat, an umbrella, an anchor and a bicycle, on a tablet and on printed cards, with a globe beside them.">
-      </figure>
-      <div class="split-text">
-        <span class="kicker kicker-accent">Any language</span>
-        <h2 class="h2" id="lang-h">Fill the gaps with Test Studio</h2>
-        <p>Good picture-naming tests exist for only a few languages. Test Studio turns a word list into a checked picture set: for a language without one, for a person’s own everyday things, or for an extra version of a test.</p>
-        <ul class="checks">
-          <li><b>Muse Image</b> draws each picture in one consistent style.</li>
-          <li><b>SAM 3.1</b> checks that each picture shows one clear object.</li>
-          <li><b>Muse Spark</b> and <b>Muse Glimmer</b> check that people would call it by the intended name.</li>
-          <li>Export printable cards, a norms table and the whole set.</li>
-        </ul>
-        <p class="lang-claim">Build picture tests in any language; picture sets checked in 16. Automatic spoken scoring is verified in English, Spanish, French, Brazilian Portuguese, German, Turkish, Polish and Indonesian, works with a reviewer in Mandarin, Italian, Dutch, Arabic and Vietnamese, and is experimental in Hindi, Japanese, Korean and other languages. <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/languages.md">How we measured</a></p>
-        <ul class="catches" aria-label="Noticed while testing">
-          <li>Muse Spark named the Spanish <i lang="es">sierra</i> picture <i lang="es">serrucho</i>, the everyday word for a hand saw.</li>
-          <li>A harp was named <span lang="hi">वीणा</span> (veena) in Hindi: a reminder that picture items are cultural.</li>
-        </ul>
-        <div class="btn-line"><a class="lbtn lbtn-outline" href="/studio">Open Test Studio</a></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="new" class="band" aria-labelledby="new-h">
-  <div class="wrap section">
-    <h2 class="h2" id="new-h">What already exists, and what’s new</h2>
-    <div class="exists">
-      <div class="exists-col">
-        <h3>Already exists</h3>
-        <ul>
-          <li><b>Good picture-naming tests.</b> The <a href="https://rehabilitationresearch.jefferson.edu/innovations/philadelphia-naming-test.html">Philadelphia Naming Test</a> is a free download, and <a href="https://www.bcbl.eu/databases/multipic">MultiPic</a> offers 750 normed drawings in six European languages. Most other languages have far less.</li>
-          <li><b>Automatic error scoring, as research.</b> <a href="https://doi.org/10.1044/2022_JSLHR-22-00255">ParAlg</a> (Casilio et al., 2023) codes picture-naming errors automatically. In everyday practice, spoken answers are still mostly scored by hand, which is slow.</li>
-        </ul>
-      </div>
-      <div class="exists-col exists-new">
-        <h3>New here</h3>
-        <ul>
-          <li><b>One test for people and AI,</b> scored the same way, so their errors can be compared directly.</li>
-          <li><b>A look inside.</b> We can’t look inside a brain mid-word, but we can look inside an open AI model, layer by layer, with damage we choose and can undo.</li>
-          <li><b>End to end in several languages:</b> make the pictures, give the test by voice, write down and score the answers, with a person checking.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="trust" class="band band-gray" aria-labelledby="trust-h">
-  <div class="wrap section">
-    <h2 class="h2" id="trust-h">Responsible use</h2>
-    <div class="grid4">
-      <article class="tile"><h3>Measurements, not diagnosis</h3><p>Tippa Lingua reports accuracy, error types and speed: measurements only, with no diagnosis, no prognosis and no medical advice.</p></article>
-      <article class="tile"><h3>A person decides</h3><p>Every automatic code can be changed by a reviewer, and exports keep both the automatic and the final code.</p></article>
-      <article class="tile"><h3>No patient data stored</h3><p>Recordings are sent to be written down and aren’t kept; results stay in your browser until you export them. Comparisons with people use published group averages only.</p></article>
-      <article class="tile"><h3>Open source</h3><p>Apache 2.0 code, documented scoring rules, and a citation for every comparison with people.</p></article>
-    </div>
-  </div>
-</section>
-
-<section id="models" class="band" aria-labelledby="models-h">
-  <div class="wrap section">
-    <div class="section-head">
-      <span class="kicker kicker-accent">Built with Meta’s models</span>
-      <h2 class="h2" id="models-h">Who does what</h2>
-    </div>
-    <dl class="models-grid">
-      <div class="model-card model-main"><dt>Muse Glimmer 30B <span>open weights, on our own GPU</span></dt><dd>Takes the test in the Model Lab and in You vs. the AI. We damage its parts on purpose and read its word lens.</dd></div>
-      <div class="model-card"><dt>Muse Spark 1.3</dt><dd>Second rater for scored answers, judge of related meanings, picture-name checks, and the agent that plans experiments.</dd></div>
-      <div class="model-card"><dt>Muse Voice Transcribe</dt><dd>Writes down spoken answers, in the test’s language.</dd></div>
-      <div class="model-card"><dt>Muse Image</dt><dd>Draws the test pictures in Test Studio.</dd></div>
-      <div class="model-card"><dt>SAM 3.1</dt><dd>Checks that each picture shows one clear object.</dd></div>
-    </dl>
-    <p class="small-note">Every AI step uses a Meta model. The rest is plain, inspectable code: WordNet, the CMU Pronouncing Dictionary and wordfreq.</p>
   </div>
 </section>
 </main>
 
 <footer class="lfoot">
   <div class="wrap lfoot-row">
-    <span class="lbrand">Tippa Lingua</span>
-    <span>Built at the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026</span>
-    <span>Apache 2.0</span>
-    <a href="https://github.com/rnorlund/MetaLesionLab">github.com/rnorlund/MetaLesionLab</a>
+    <span class="lbrand">{{BRAND}}</span>
+    <span>Built at the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026 · Apache 2.0</span>
+    <a href="https://github.com/rnorlund/MetaLesionLab">Code on GitHub</a>
+    <p class="lfoot-credit">People’s drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image. Similarity: Meta DINOv2. Kinds: Muse Spark and Muse Glimmer. Second image model: Stable Diffusion XL (Stability AI). Plato’s <cite>Phaedrus</cite> and <cite>Republic</cite>: Benjamin Jowett’s translation, public domain. Research and teaching use only; nothing here is medical advice.</p>
   </div>
 </footer>
 <script src="/static/js/common.js"></script>

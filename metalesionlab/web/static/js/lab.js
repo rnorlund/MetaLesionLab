@@ -154,7 +154,8 @@
     var set = lesionedLayers(spec);
     var rows = [['Site', spec.site], ['Units chosen by', spec.localizer ? spec.localizer + ' localizer' : null], ['Method', spec.method],
       ['Decoder layers', rangeText(set) || null],
-      ['Amount', spec.fraction != null ? (spec.fraction <= 1 ? spec.fraction * 100 : spec.fraction) + '% of units' : spec.units != null ? spec.units + ' units' : null]];
+      ['Amount', spec.fraction != null ? +(spec.fraction <= 1 ? spec.fraction * 100 : spec.fraction).toFixed(2) + '% of units'
+        : spec.units != null ? Number(spec.units).toLocaleString('en-US') + ' units' : null]];
     rows.forEach(function (r) { if (r[1] != null && r[1] !== '') { dl.appendChild(h('dt', { text: r[0] })); dl.appendChild(h('dd', { text: String(r[1]) })); } });
   }
 
@@ -578,7 +579,10 @@
       return;
     }
     var want = T.param('c');
-    var first = L.list.filter(function (c) { return !c.baseline; })[0] || L.list[0];
+    // Open on the first featured condition (the curated demo list), never on a research control.
+    var first = L.list.filter(function (c) { return c.featured && !c.baseline; })[0] ||
+      L.list.filter(function (c) { return !c.baseline && /^demo_/.test(c.set || ''); })[0] ||
+      L.list.filter(function (c) { return !c.baseline; })[0] || L.list[0];
     var id = want && L.list.some(function (c) { return c.id === want; }) ? want : first.id;
     return select(id, T.param('item'));
   }).catch(function (e) { T.toast(e.message, 'error'); });

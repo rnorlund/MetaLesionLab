@@ -36,9 +36,11 @@
     return out;
   }
   function runText(layers) {
-    var r = runs(layers).map(function (x) { return x[0] === x[1] ? String(x[0]) : x[0] + '–' + x[1]; });
+    var r = runs(layers).map(function (x) { return x[0] === x[1] ? String(x[0] + 1) : (x[0] + 1) + '–' + (x[1] + 1); });  // shown 1–52
     return r.length < 2 ? r.join('') : r.slice(0, -1).join(', ') + ' and ' + r[r.length - 1];
   }
+  // Data labels count layers from 0, as in the model's code; pages count them 1–52.
+  function oneBased(text) { return String(text).replace(/\b(Layers?) (\d+)–(\d+)/g, function (m, w, a, b) { return w + ' ' + (+a + 1) + '–' + (+b + 1); }); }
   function lastRunStart(layers) { var r = runs(layers); return r.length ? r[r.length - 1][0] : null; }
 
   // --- tooltip: one per chart, positioned inside its wrapper ----------------------------------
@@ -192,7 +194,7 @@
     sel.innerHTML = '';
     S.d.dose.forEach(function (f) {
       if (!groups[f.group]) { groups[f.group] = h('optgroup', { label: f.group }); sel.appendChild(groups[f.group]); }
-      groups[f.group].appendChild(h('option', { value: f.key, text: f.label }));
+      groups[f.group].appendChild(h('option', { value: f.key, text: oneBased(f.label) }));
     });
     sel.value = S.site;
     sel.addEventListener('change', function () { setSite(sel.value); });
@@ -233,7 +235,7 @@
     }
     crosshair(svg, wrap, {
       n: n, W: W, top: m.t, bottom: y(0), left: x(0), right: x(n - 1), start: n - 1, xOf: x,
-      label: f.label + ': pictures named correctly by damage strength, English versus ' + name(v) + '. Use the arrow keys to step through the doses; the table below lists every value.',
+      label: oneBased(f.label) + ': pictures named correctly by damage strength, English versus ' + name(v) + '. Use the arrow keys to step through the doses; the table below lists every value.',
       nearest: function (px) { return Math.max(0, Math.min(n - 1, Math.round((px - x(0)) / Math.max(1, x(1) - x(0))))); },
       content: function (i) {
         var p = P[i], rows = [h('div', { text: (i ? p.tick + ' · ' : '') + p.detail })];
@@ -263,7 +265,7 @@
     if (last !== first) txt += ' At the strongest (' + last.tick + '), ' + said(last) + '.';
     note.appendChild(document.createTextNode(txt + ' '));
     var x = f.extra_drop && f.extra_drop[v];
-    if (x) note.appendChild(h('b', { text: 'Over this site’s doses, ' + L + ' lost ' + pts(x.diff) + ' points more than English (95% CI ' + ci(x.ci95) + ').' }));
+    if (x) note.appendChild(h('b', { text: 'At this damage location, across all doses, ' + L + ' lost ' + pts(x.diff) + ' points more than English (95% CI ' + ci(x.ci95) + ').' }));
     if (/control/.test(f.label)) note.appendChild(document.createTextNode(' This is a control: as many units as the naming lesion, chosen at random in the same layers.'));
     var t = $('dose-table');
     t.innerHTML = '';
@@ -347,7 +349,7 @@
     svg.appendChild(s('line', { class: 'axis', x1: m.l, x2: W - m.r, y1: y(0), y2: y(0) }));
     layers.forEach(function (layer) {
       if ((layer - from) % (narrow ? 4 : 2) && layer !== nL - 1) return;
-      svg.appendChild(s('text', { x: x(layer), y: y(0) + 16, 'text-anchor': 'middle' }, String(layer)));
+      svg.appendChild(s('text', { x: x(layer), y: y(0) + 16, 'text-anchor': 'middle' }, String(layer + 1)));
     });
     var tName = ex ? '“' + ex.target + '”' : name(v) + ' name', eName = ex ? '“' + ex.picture + '”' : 'English name';
     [['en', pe], [v, pt]].forEach(function (sr) {
@@ -362,7 +364,7 @@
       var ly = sr[0] === 'en' ? y(sr[1][endL]) - 12 : (narrow ? y(sr[1][endL]) - 12 : y(sr[1][endL]) + 4);
       svg.appendChild(s('text', { x: lx, y: Math.max(10, ly), 'text-anchor': anchor, class: 't-ink t-halo' }, lab));
     });
-    svg.appendChild(s('text', { x: m.l, y: m.t - 2 + ph + (ex ? 66 : 36), class: 't-ink2' }, 'Layer (0–' + (from - 1) + ' not shown: both near 0)'));
+    svg.appendChild(s('text', { x: m.l, y: m.t - 2 + ph + (ex ? 66 : 36), class: 't-ink2' }, 'Layer (1–' + from + ' not shown: both near 0)'));
     // Top guess strip: which word the lens ranks first after each layer.
     if (ex) {
       var sy = y(0) + 26, sh = 20, enSet = {}, tgSet = {};
@@ -392,7 +394,7 @@
         ': probability of the English name and of the ' + name(v) + ' name after each layer. Use the arrow keys to step through the layers; the table below lists every value.',
       nearest: function (px) { return Math.max(0, Math.min(layers.length - 1, Math.round((px - x(from)) / ((W - m.l - m.r) / (nL - 1 - from))))); },
       content: function (i) {
-        var layer = layers[i], rows = [h('div', { text: 'After layer ' + layer })];
+        var layer = layers[i], rows = [h('div', { text: 'After layer ' + (layer + 1) })];
         rows.push(tipRow('en', pe[layer].toFixed(2), eName));
         rows.push(tipRow(v, pt[layer].toFixed(2), tName));
         if (ex) rows.push(h('div', { class: 'sub', text: 'top guess: “' + ex.top1[layer] + '”' }));
@@ -418,12 +420,12 @@
       var start = lastRunStart(ex.target_top1_layers);
       note.appendChild(h('b', { text: 'For the ' + ex.picture + ', the top guess is the English “' + ex.picture + '” at layers ' + runText(ex.english_top1_layers) + '.' }));
       note.appendChild(document.createTextNode(' The ' + L + ' word' + (start != null && ex.top1[start] && ex.top1[start].toLowerCase() !== ex.target.toLowerCase() ? ' (its first piece, “' + ex.top1[start] + '”)' : '') +
-        ' takes over only at layer ' + start + ', ' + (Ld.n_layers - start) + ' layers before the answer. The model said “' + ex.said + '”.'));
+        ' takes over only at layer ' + (start + 1) + ', ' + (Ld.n_layers - start) + ' layers before the answer. The model said “' + ex.said + '”.'));
     } else {
-      note.appendChild(h('b', { text: 'At layer ' + Ld.peak_top1_layer + ', the English name is the top guess on ' + pct(Ld.peak_top1_english) + ' of the ' + Ld.n_items + ' pictures.' }));
-      note.appendChild(document.createTextNode(' The ' + L + ' word becomes the top guess on most pictures only at layer ' + Ld.target_majority_layer + '. ' +
+      note.appendChild(h('b', { text: 'At layer ' + (Ld.peak_top1_layer + 1) + ', the English name is the top guess on ' + pct(Ld.peak_top1_english) + ' of the ' + Ld.n_items + ' pictures.' }));
+      note.appendChild(document.createTextNode(' The ' + L + ' word becomes the top guess on most pictures only at layer ' + (Ld.target_majority_layer + 1) + '. ' +
         Ld.items_english_first + ' of ' + Ld.n_items + ' pictures show the English name first.' +
-        (et.english_majority_layer != null && v === 'es' ? ' Asked in English, the English name leads from layer ' + et.english_majority_layer + ', and the Spanish name is ' +
+        (et.english_majority_layer != null && v === 'es' ? ' Asked in English, the English name leads from layer ' + (et.english_majority_layer + 1) + ', and the Spanish name is ' +
           (et.max_share_spanish_top1 ? 'rarely' : 'never') + ' the top guess.' : '') +
         ' Pictures whose English and ' + L + ' names start the same way (like cactus) are left out, because the lens can’t tell them apart.'));
     }
@@ -435,7 +437,7 @@
     t.appendChild(h('thead', null, h('tr', null, head)));
     var tb = h('tbody');
     for (var l = from; l < nL; l++) {
-      tb.appendChild(h('tr', null, [h('td', { class: 'num', text: String(l) }), h('td', { class: 'num', text: pe[l].toFixed(3) }), h('td', { class: 'num', text: ptg[l].toFixed(3) }),
+      tb.appendChild(h('tr', null, [h('td', { class: 'num', text: String(l + 1) }), h('td', { class: 'num', text: pe[l].toFixed(3) }), h('td', { class: 'num', text: ptg[l].toFixed(3) }),
         ex ? h('td', { text: ex.top1[l] }) : h('td', { class: 'num', text: pct(Ld.top1_share.english[l]) + ' / ' + pct(Ld.top1_share.target[l]) })]));
     }
     t.appendChild(tb);

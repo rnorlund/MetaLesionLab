@@ -1,4 +1,4 @@
-/* Tippa Lingua: helpers shared by every page. */
+/* Helpers shared by every page, plus the site header's menus. */
 (function () {
   'use strict';
 
@@ -164,7 +164,31 @@
 
   function param(name) { return new URLSearchParams(location.search).get(name); }
 
+  // The product name and which optional pages this server has: web/site.py puts them in every page.
+  var site = { brand: '', tagline: '', pages: {} };
+  try {
+    var blob = document.getElementById('site-data');
+    if (blob) site = JSON.parse(blob.textContent);
+  } catch (e) { /* keep the defaults */ }
+  function hasPage(path) { return !!(site.pages && site.pages[path]); }
+
+  // Site header: close the More and Menu panels on Escape or a click elsewhere.
+  function closeMenus(except) {
+    document.querySelectorAll('.nav-more[open], .nav-menu[open]').forEach(function (d) { if (d !== except) d.open = false; });
+  }
+  document.addEventListener('click', function (e) {
+    closeMenus(e.target.closest ? e.target.closest('.nav-more, .nav-menu') : null);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var open = document.querySelector('.nav-more[open], .nav-menu[open]');
+    if (!open) return;
+    open.open = false;
+    open.querySelector('summary').focus();
+  });
+
   window.TOT = {
+    BRAND: site.brand, site: site, hasPage: hasPage,
     CODES: CODES, ORDER: ORDER, normCode: normCode, codeInfo: codeInfo, esc: esc, h: h, pill: pill, api: api,
     mediaUrl: mediaUrl, toast: toast, downloadCSV: downloadCSV, stackBar: stackBar, legend: legend,
     describeCounts: describeCounts, status: status, langName: langName, fillLanguages: fillLanguages, param: param

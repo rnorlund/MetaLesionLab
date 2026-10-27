@@ -10,6 +10,8 @@ from pathlib import Path
 
 from PIL import Image
 
+from metalesionlab.brand import BRAND
+
 NORMS_COLUMNS = ["item", "word", "hint", "gloss", "alternates", "status", "image", "zipf", "phonemes",
                  "ambiguous", "other_meanings", "sam_objects", "sam_confidence", "sam_area", "spark_name",
                  "spark_code", "spark_agreement", "candidates", "lang", "style"]
@@ -81,7 +83,7 @@ def cards_pdf(manifest: dict, set_dir: Path, title: str, per_page: int = 4, show
     pdf = FPDF(format=page_format, unit="mm")
     pdf.set_auto_page_break(False)
     pdf.set_title(title)
-    pdf.set_creator("Tippa Lingua")
+    pdf.set_creator(BRAND)
     words = " ".join(it["word"] for _, it in items) + title
     family = "Helvetica"
     try:
@@ -104,7 +106,7 @@ def cards_pdf(manifest: dict, set_dir: Path, title: str, per_page: int = 4, show
             pdf.add_page()
             pdf.set_font(family, size=8)
             pdf.set_text_color(90, 90, 90)
-            pdf.text(margin, pdf.h - 6, f"{title} · Tippa Lingua · pictures drawn with Muse Image")
+            pdf.text(margin, pdf.h - 6, f"{title} · {BRAND} · pictures drawn with Muse Image")
         slot = k % per_page
         x = margin + (slot % cols) * (cell_w + gap)
         y = margin + (slot // cols) * (cell_h + gap)
@@ -134,7 +136,7 @@ def set_zip(manifest: dict, set_dir: Path, set_id: str) -> bytes:
         z.writestr(f"{set_id}/manifest.json", json.dumps(manifest, ensure_ascii=False, indent=1))
         z.writestr(f"{set_id}/norms.csv", norms_csv(manifest))
         z.writestr(f"{set_id}/README.txt", (
-            f"Tippa Lingua picture set '{set_id}' ({manifest.get('lang')}, {manifest.get('style')} style).\n"
+            f"{BRAND} picture set '{set_id}' ({manifest.get('lang')}, {manifest.get('style')} style).\n"
             "pictures/   the kept picture for each item, numbered in test order\n"
             "candidates/ every drawn candidate; manifest.json has each one's checks\n"
             "norms.csv   word frequency (Zipf), length, SAM 3.1 checks and Muse Spark name agreement\n\n"

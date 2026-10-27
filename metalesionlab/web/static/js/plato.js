@@ -20,7 +20,7 @@
     face: { ai: 'Sixteen face doodles by Muse Image: round smiling faces with dot eyes and scribbled hair, all very similar.',
             people: 'Sixteen faces drawn by people: ovals and squares, open and closed mouths, glasses, tongues and different eyes.' },
     person: { ai: 'Twelve doodles by Muse Image of a person doing yoga: almost all the same cartoon woman in tree pose or lotus pose.',
-              people: 'Twelve yoga drawings by people: stick figures in many poses, some with mats, some barely recognisable.' }
+              people: 'Twelve yoga drawings by people: stick figures in many poses, some with mats, some barely recognizable.' }
   };
 
   function $(id) { return document.getElementById(id); }
@@ -250,7 +250,7 @@
       $('var-img').alt = 'Five rows of 16 chair doodles. Usual prompt: the same slatted wooden chair. “Any kind”: the same slatted chair again. ' +
         '“An unusual kind”: spring chairs, egg chairs and other designer chairs. Named kinds: a rocking chair, armchair, folding chair, office chair, beanbag, wheelchair, throne and more. ' +
         'People: quick line drawings, mostly the same simple chair seen from the side.';
-      $('var-cap').textContent = 'The same request, five ways. Spread: the average difference between two pictures of a row. Kinds: how many different kinds of chair Muse Glimmer recognised in the row. People’s drawings: Google Quick, Draw! dataset, CC BY 4.0.';
+      $('var-cap').textContent = 'The same request, five ways. Spread: the average difference between two pictures of a row. Kinds: how many different kinds of chair Muse Glimmer recognized in the row. People’s drawings: Google Quick, Draw! dataset, CC BY 4.0.';
     }
     var facts = $('var-facts');
     facts.innerHTML = '';
@@ -268,8 +268,8 @@
       add(times(r.default) + ' → ' + times(r[top]), 'Chairs: Muse Image’s spread compared with people’s, with the usual prompt and when ' +
         (top === 'listed' ? 'asked for named kinds' : top === 'unusual' ? 'asked for an unusual kind' : 'asked for any kind') + '.');
     }
-    if (C.listed && C.listed.recognised != null && C.default.recognised != null) {
-      add(pct(C.default.recognised) + '% → ' + pct(C.listed.recognised) + '%', 'of the pictures look most like people’s drawings of the same thing. Variety has a price: some named kinds come from other meanings of the word (a piano key, a clock face).');
+    if (C.listed && C.listed.recognized != null && C.default.recognized != null) {
+      add(pct(C.default.recognized) + '% → ' + pct(C.listed.recognized) + '%', 'of the pictures look most like people’s drawings of the same thing. Variety has a price: some named kinds come from other meanings of the word (a piano key, a clock face).');
     }
     renderVarietyChart();
     var lg = $('var-legend');
@@ -287,7 +287,7 @@
     box.appendChild(h('p', { text: 'Spread measures how different pictures look, and people’s quick drawings differ a lot just in how they are drawn. ' +
       'So we also asked which kind of thing each picture shows. Muse Glimmer picked one option per picture from Muse Spark’s list of kinds, plus “a plain, ordinary one” and “can’t tell”.' }));
     var same = pv.n_concepts ? pv.same_prototype + ' of ' + pv.n_concepts : null;
-    box.appendChild(h('p', { text: 'People mostly draw the textbook version too. ' + pct(P.mean_share_plain) + '% of their recognisable drawings are the plain, ordinary kind, the same as for Muse Image’s usual prompt (' +
+    box.appendChild(h('p', { text: 'People mostly draw the textbook version too. ' + pct(P.mean_share_plain) + '% of their recognizable drawings are the plain, ordinary kind, the same as for Muse Image’s usual prompt (' +
       pct(D.mean_share_plain) + '%)' + (same ? ', and for ' + same + ' things the most common kind is the same for both' : '') + '. ' +
       'Pick two drawings of the same thing at random: they show different kinds ' + pct(P.mean_simpson) + '% of the time for people, ' + pct(D.mean_simpson) +
       '% for Muse Image’s usual prompt' + (L ? ', and ' + pct(L.mean_simpson) + '% when it draws the named kinds.' : '.') +
@@ -309,7 +309,7 @@
     var c = ((S.data.variety || {}).focus || {}).chair;
     if (!c || !c.kinds || !c.kinds.people || !c.kinds.default) return '';
     var p = c.kinds.people, d = c.kinds.default;
-    return 'Chairs: ' + pct(p.share_plain) + '% of people’s recognisable chairs are a plain, ordinary chair (Muse Image’s usual prompt: ' + pct(d.share_plain) + '%). ';
+    return 'Chairs: ' + pct(p.share_plain) + '% of people’s recognizable chairs are a plain, ordinary chair (Muse Image’s usual prompt: ' + pct(d.share_plain) + '%). ';
   }
 
   // --- six languages ------------------------------------------------------------------------

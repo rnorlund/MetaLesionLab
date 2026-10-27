@@ -8,7 +8,7 @@
   // The address shared on X and printed on the card. A placeholder until the live demo has a URL: change
   // this line. When the page is served from a real host (not localhost), that host's /draw is used instead.
   var SITE_URL = 'https://tippa-lingua.example/draw';
-  var SITE_NAME = 'Tippa Lingua';
+  var SITE_NAME = T.BRAND;  // the product name, from metalesionlab/brand.py
   var HASHTAGS = 'Muse,MetaAI,Hackathon';
 
   var BLUE = '#1D4ED8', ORANGE = '#C2410C', TEAL = '#0D9488', INK = '#111827', INK2 = '#374151', MUTED = '#4B5563',
@@ -109,7 +109,7 @@
     var c = concept();
     document.querySelectorAll('[data-label]').forEach(function (el) { el.textContent = c.label; });
     document.querySelectorAll('[data-article]').forEach(function (el) { el.textContent = article(c.label); });
-    document.title = 'Draw ' + article(c.label) + ' · Tippa Lingua';
+    document.title = 'Draw ' + article(c.label) + ' · ' + T.BRAND;
     $('hook').textContent = hook(c) + ' How original is yours?';
     var strip = $('muse-strip');
     strip.textContent = '';

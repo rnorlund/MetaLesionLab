@@ -386,10 +386,9 @@ def test_ask_rejects_empty_and_long_questions(client):
 
 
 def test_nav_links_ask_the_lab():
-    pages = web.HERE / "pages"
-    for name in ("lab.html", "cut.html", "plato.html", "challenge.html", "studio.html", "scorer.html", "assess.html",
-                 "index.html", "ask.html"):
-        assert 'href="/ask"' in (pages / name).read_text(), name
+    c = TestClient(web.app)  # the nav comes from web/site.py, so check the pages as served
+    for path in ("/lab", "/lab/cut", "/plato", "/challenge", "/studio", "/scorer", "/assess", "/", "/ask"):
+        assert 'href="/ask"' in c.get(path).text, path
 
 
 def test_meta_api_tags_ledger_entries(tmp_path, monkeypatch):
