@@ -15,7 +15,7 @@ from metalesionlab.web import app as web
 from metalesionlab.web import site
 
 PAGES = ["/", "/plato", "/draw", "/challenge", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/scorer", "/studio",
-         "/assess", "/take"]
+         "/assess", "/take", "/socrates"]
 REPO = Path(web.__file__).resolve().parents[2]
 
 
@@ -103,12 +103,11 @@ def test_series_cards_and_links_appear_only_when_served(client):
     landing = client.get("/").text
     assert landing.count('class="series-card"') == 1 and 'href="/plato"' in landing  # Plato's Chair itself
     assert "Can you know a thing from its shadow?" not in landing and 'href="/plato/cave"' not in landing
-    assert 'href="/socrates"' not in landing and 'id="series"' not in client.get("/plato").text
-    with served("/plato/cave", "/socrates"):
+    assert 'id="series"' not in client.get("/plato").text
+    with served("/plato/cave"):
         landing = client.get("/").text
         assert landing.count('class="series-card"') == 2
         assert "Can you know a thing from its shadow?" in landing and "Republic VII · the Cave" in landing
-        assert landing.count('href="/socrates"') >= 3  # hero button, the Socrates band, the nav
         plato = client.get("/plato").text
         assert 'id="series"' in plato and plato.count('class="series-card"') == 1  # the sub-pages only
         assert 'href="/plato/cave"' in nav_links_block(client.get("/lab").text)
@@ -124,9 +123,12 @@ def test_series_override_file_sets_the_finding(client, tmp_path, monkeypatch):
         assert "It named 9 of 10 shadows." in client.get("/").text
 
 
-def test_draw_call_to_action_follows_the_route(client):
+def test_calls_to_action_follow_the_routes(client):
     landing = client.get("/").text
-    assert site.has_page(web.app, "/draw") and 'href="/draw">Draw your own chair' in landing
+    assert site.has_page(web.app, "/draw") and 'href="/draw">Draw a chair in 20 seconds' in landing
+    # Ask Socrates is served: hero button, its own band, and the nav (as an accent item).
+    assert site.has_page(web.app, "/socrates") and landing.count('href="/socrates"') >= 3
+    assert 'class="nav-accent"' in nav_links_block(client.get("/plato").text)
     assert "<!--#" not in landing and "{{" not in landing  # every template mark is filled in
 
 

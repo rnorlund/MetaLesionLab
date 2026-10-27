@@ -1,0 +1,468 @@
+{
+ "about": "Short passages from Plato in Benjamin Jowett's public-domain English translation, for Ask Socrates (/socrates). The agent may quote Plato only from this file, word for word. Each text was cut from the Project Gutenberg edition named in source_url and is checked against it by scripts/verify_plato_passages.py (whitespace collapsed, otherwise exact).",
+ "translation": "Benjamin Jowett (1892), public domain",
+ "license": "Public domain (Jowett's translation, 1892). Project Gutenberg texts are free of copyright in the United States; this file carries only short excerpts, without Gutenberg's header or trademark.",
+ "stephanus_note": "Gutenberg's Jowett texts have no Stephanus numbers. Each reference gives the page and section of the standard Stephanus pagination, placed by matching the passage with editions that print it (Perseus Digital Library); spot-checked for Republic 598a and 515b, Cratylus 427b and Phaedrus 275d.",
+ "verified": {
+  "date": "2026-10-27",
+  "method": "exact substring of the Gutenberg plain text, whitespace collapsed"
+ },
+ "passages": [
+  {
+   "id": "republic-596a",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "596a",
+   "speaker": "Socrates, to Glaucon",
+   "title": "One Form for each common name",
+   "topics": [
+    "form",
+    "forms",
+    "idea",
+    "ideas",
+    "name",
+    "names",
+    "common name",
+    "category",
+    "concept",
+    "chair",
+    "prototype",
+    "platonic"
+   ],
+   "related_pages": [
+    "/plato",
+    "/plato/forms"
+   ],
+   "text": "Whenever a number of individuals have a common name, we assume them to have also a corresponding idea or form:—do you understand me?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-596b",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "596a–b",
+   "speaker": "Socrates and Glaucon",
+   "title": "Many beds, one Form; the maker looks to the idea",
+   "topics": [
+    "bed",
+    "beds",
+    "table",
+    "tables",
+    "form",
+    "idea",
+    "maker",
+    "craftsman",
+    "carpenter",
+    "artisan",
+    "chair",
+    "furniture",
+    "make"
+   ],
+   "related_pages": [
+    "/plato",
+    "/plato/forms"
+   ],
+   "text": "Let us take any common instance; there are beds and tables in the world—plenty of them, are there not? Yes. But there are only two ideas or forms of them—one the idea of a bed, the other of a table. True. And the maker of either of them makes a bed or he makes a table for our use, in accordance with the idea—that is our way of speaking in this and similar instances—but no artificer makes the ideas themselves: how could he?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-596e",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "596e",
+   "speaker": "Socrates and Glaucon",
+   "title": "The painter, a creator of appearances",
+   "topics": [
+    "painter",
+    "painting",
+    "art",
+    "ai art",
+    "image",
+    "images",
+    "appearance",
+    "appearances",
+    "creator",
+    "picture",
+    "drawing",
+    "mirror"
+   ],
+   "related_pages": [
+    "/plato",
+    "/draw"
+   ],
+   "text": "And the painter too is, as I conceive, just such another—a creator of appearances, is he not?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-597b",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "597b",
+   "speaker": "Socrates and Glaucon",
+   "title": "Three beds: God's, the carpenter's, the painter's",
+   "topics": [
+    "three beds",
+    "bed",
+    "beds",
+    "carpenter",
+    "painter",
+    "god",
+    "nature",
+    "kinds",
+    "artist",
+    "maker",
+    "imitation"
+   ],
+   "related_pages": [
+    "/plato",
+    "/plato/forms"
+   ],
+   "text": "Well then, here are three beds: one existing in nature, which is made by God, as I think that we may say—for no one else can be the maker? No. There is another which is the work of the carpenter? Yes. And the work of the painter is a third? Yes. Beds, then, are of three kinds, and there are three artists who superintend them: God, the maker of the bed, and the painter?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-597c",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "597c",
+   "speaker": "Socrates and Glaucon",
+   "title": "Only one ideal bed",
+   "topics": [
+    "one bed",
+    "ideal",
+    "ideal bed",
+    "form",
+    "unique",
+    "one",
+    "same",
+    "nature",
+    "god",
+    "platonic",
+    "prototype",
+    "chair"
+   ],
+   "related_pages": [
+    "/plato",
+    "/plato/forms"
+   ],
+   "text": "God, whether from choice or from necessity, made one bed in nature and one only; two or more such ideal beds neither ever have been nor ever will be made by God. Why is that? Because even if He had made but two, a third would still appear behind them which both of them would have for their idea, and that would be the ideal bed and not the two others.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-598a",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "598a",
+   "speaker": "Socrates and Glaucon",
+   "title": "A bed seen from different points of view",
+   "topics": [
+    "point of view",
+    "view",
+    "viewpoint",
+    "angle",
+    "perspective",
+    "three-quarter",
+    "appearance",
+    "reality",
+    "same",
+    "bed",
+    "drawing",
+    "chair"
+   ],
+   "related_pages": [
+    "/plato",
+    "/draw"
+   ],
+   "text": "I mean, that you may look at a bed from different points of view, obliquely or directly or from any other point of view, and the bed will appear different, but there is no difference in reality. And the same of all things. Yes, he said, the difference is only apparent.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-598b",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "598b",
+   "speaker": "Socrates and Glaucon",
+   "title": "Painting imitates appearance, far from the truth",
+   "topics": [
+    "imitation",
+    "imitator",
+    "imitate",
+    "appearance",
+    "reality",
+    "truth",
+    "painting",
+    "painter",
+    "image",
+    "ai art",
+    "copy",
+    "art"
+   ],
+   "related_pages": [
+    "/plato",
+    "/plato/damage"
+   ],
+   "text": "Which is the art of painting designed to be—an imitation of things as they are, or as they appear—of appearance or of reality? Of appearance. Then the imitator, I said, is a long way off the truth, and can do all things because he lightly touches on a small part of them, and that part an image.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-514a",
+   "work": "Republic",
+   "book": "VII",
+   "stephanus": "514a–b",
+   "speaker": "Socrates",
+   "title": "The Cave",
+   "topics": [
+    "cave",
+    "den",
+    "prisoners",
+    "chained",
+    "shadows",
+    "light",
+    "allegory",
+    "enlightened",
+    "fire"
+   ],
+   "related_pages": [
+    "/plato/cave"
+   ],
+   "text": "And now, I said, let me show in a figure how far our nature is enlightened or unenlightened:—Behold! human beings living in a underground den, which has a mouth open towards the light and reaching all along the den; here they have been from their childhood, and have their legs and necks chained so that they cannot move, and can only see before them, being prevented by the chains from turning round their heads.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-515b",
+   "work": "Republic",
+   "book": "VII",
+   "stephanus": "515b",
+   "speaker": "Socrates, to Glaucon",
+   "title": "The prisoners name the shadows",
+   "topics": [
+    "naming",
+    "name",
+    "names",
+    "shadow",
+    "shadows",
+    "cave",
+    "converse",
+    "language",
+    "words",
+    "silhouette"
+   ],
+   "related_pages": [
+    "/plato/cave"
+   ],
+   "text": "And if they were able to converse with one another, would they not suppose that they were naming what was actually before them?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-515c",
+   "work": "Republic",
+   "book": "VII",
+   "stephanus": "515c",
+   "speaker": "Socrates and Glaucon",
+   "title": "Truth as nothing but shadows",
+   "topics": [
+    "truth",
+    "shadow",
+    "shadows",
+    "images",
+    "image",
+    "cave",
+    "training data",
+    "reality",
+    "copies"
+   ],
+   "related_pages": [
+    "/plato/cave"
+   ],
+   "text": "To them, I said, the truth would be literally nothing but the shadows of the images. That is certain.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "cratylus-383a",
+   "work": "Cratylus",
+   "stephanus": "383a–b",
+   "speaker": "Hermogenes, reporting Cratylus",
+   "title": "Names are natural, not conventional (Cratylus' view)",
+   "topics": [
+    "names",
+    "name",
+    "naming",
+    "nature",
+    "natural",
+    "convention",
+    "correctness",
+    "language",
+    "words",
+    "sound",
+    "bouba",
+    "kiki"
+   ],
+   "related_pages": [
+    "/plato/cratylus"
+   ],
+   "text": "I should explain to you, Socrates, that our friend Cratylus has been arguing about names; he says that they are natural and not conventional; not a portion of the human voice which men agree to use; but that there is a truth or correctness in them, which is the same for Hellenes as for barbarians.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1616",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1616/pg1616.txt"
+  },
+  {
+   "id": "cratylus-384d",
+   "work": "Cratylus",
+   "stephanus": "384c–d",
+   "speaker": "Hermogenes",
+   "title": "Names are convention and agreement (Hermogenes' view)",
+   "topics": [
+    "names",
+    "name",
+    "convention",
+    "agreement",
+    "arbitrary",
+    "correctness",
+    "language",
+    "words",
+    "bouba",
+    "kiki"
+   ],
+   "related_pages": [
+    "/plato/cratylus"
+   ],
+   "text": "I have often talked over this matter, both with Cratylus and others, and cannot convince myself that there is any principle of correctness in names other than convention and agreement; any name which you give, in my opinion, is the right one, and if you change that and give another, the new name is as correct as the old",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1616",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1616/pg1616.txt"
+  },
+  {
+   "id": "cratylus-427b",
+   "work": "Cratylus",
+   "stephanus": "427b",
+   "speaker": "Socrates",
+   "title": "Lambda, the sound of smoothness",
+   "topics": [
+    "sound",
+    "sounds",
+    "letter",
+    "letters",
+    "lambda",
+    "smooth",
+    "smoothness",
+    "round",
+    "shape",
+    "bouba",
+    "kiki",
+    "sound symbolism",
+    "tongue"
+   ],
+   "related_pages": [
+    "/plato/cratylus"
+   ],
+   "text": "he further observed the liquid movement of lambda, in the pronunciation of which the tongue slips, and in this he found the expression of smoothness",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1616",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1616/pg1616.txt"
+  },
+  {
+   "id": "phaedrus-275a",
+   "work": "Phaedrus",
+   "stephanus": "275a–b",
+   "speaker": "King Thamus, in Socrates' story",
+   "title": "The semblance of truth, the show of wisdom",
+   "topics": [
+    "writing",
+    "letters",
+    "memory",
+    "wisdom",
+    "appearance of wisdom",
+    "semblance",
+    "truth",
+    "knowledge",
+    "ai",
+    "technology",
+    "invention",
+    "learning"
+   ],
+   "related_pages": [
+    "/socrates"
+   ],
+   "text": "you give your disciples not truth, but only the semblance of truth; they will be hearers of many things and will have learned nothing; they will appear to be omniscient and will generally know nothing; they will be tiresome company, having the show of wisdom without the reality.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1636",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1636/pg1636.txt"
+  },
+  {
+   "id": "phaedrus-275d",
+   "work": "Phaedrus",
+   "stephanus": "275d",
+   "speaker": "Socrates",
+   "title": "Written words give one unvarying answer",
+   "topics": [
+    "writing",
+    "painting",
+    "question",
+    "questions",
+    "answer",
+    "same answer",
+    "silence",
+    "speech",
+    "ai",
+    "chatbot",
+    "dialogue",
+    "one answer"
+   ],
+   "related_pages": [
+    "/socrates",
+    "/plato"
+   ],
+   "text": "I cannot help feeling, Phaedrus, that writing is unfortunately like painting; for the creations of the painter have the attitude of life, and yet if you ask them a question they preserve a solemn silence. And the same may be said of speeches. You would imagine that they had intelligence, but if you want to know anything and put a question to one of them, the speaker always gives one unvarying answer.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1636",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1636/pg1636.txt"
+  },
+  {
+   "id": "meno-81d",
+   "work": "Meno",
+   "stephanus": "81c–d",
+   "speaker": "Socrates",
+   "title": "All learning is recollection",
+   "topics": [
+    "learning",
+    "recollection",
+    "memory",
+    "remember",
+    "knowledge",
+    "soul",
+    "enquiry",
+    "training",
+    "default",
+    "textbook"
+   ],
+   "related_pages": [
+    "/plato",
+    "/plato/bird"
+   ],
+   "text": "for as all nature is akin, and the soul has learned all things; there is no difficulty in her eliciting or as men say learning, out of a single recollection all the rest, if a man is strenuous and does not faint; for all enquiry and all learning is but recollection.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1643",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1643/pg1643.txt"
+  }
+ ]
+}

@@ -10,7 +10,7 @@ With PUBLIC_DEMO=1, visitors can't run up the Meta API bill:
   message and links to recorded examples; browsing, the replays, typed challenge games and exports
   keep working. The overall cap (MLL_BUDGET_USD) still applies on top.
 - Per-visitor limits. A burst limit per minute on every paid route, a daily limit for routes that
-  limits.py doesn't count (the Ask the Lab agent, unknown routes), tighter daily defaults in limits.py
+  limits.py doesn't count (the Ask the Lab and Ask Socrates agents, unknown routes), tighter daily defaults in limits.py
   (3 builds, 2 scenes, 150 scored answers), and a ceiling on paid requests per minute from everyone together.
 - Test Studio builds are tiny: TIPPA_PUBLIC_BUILD_WORDS words (default 4; 0 turns building off) with
   at most TIPPA_PUBLIC_BUILD_CANDIDATES pictures per word (default 2). Personal tests from a photo are
@@ -23,7 +23,8 @@ With PUBLIC_DEMO=1, visitors can't run up the Meta API bill:
   once it's used up, points to the recorded demos.
 
 Any POST, PUT, PATCH or DELETE under /api/ that isn't on the FREE list below counts as paid, so a new
-route is limited and stops at the cap until it's listed here. /api/ask... (Ask the Lab) is paid.
+route is limited and stops at the cap until it's listed here. /api/ask... (Ask the Lab) and
+/api/socrates... (Ask Socrates, one bucket per dialogue turn) are paid; their status polls (GET) are free.
 """
 from __future__ import annotations
 
@@ -64,7 +65,7 @@ EXAMPLES = [
     {"label": "Explore the Model Lab results", "href": "/lab"},
 ]
 # Paid requests per visitor per minute, by bucket.
-BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "other": 10}  # a fast /take is ~20 a minute
+BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "socrates": 5, "other": 10}  # a fast /take is ~20 a minute
 # Daily limits the guard counts itself; limits.py counts builds, scenes and scored responses.
 OTHER_PER_DAY = 100
 # Daily limits.py defaults on the public demo (TOT_LIMIT_* in the environment still wins). Scoring is cheap
@@ -72,7 +73,7 @@ OTHER_PER_DAY = 100
 # generous; the daily dollar cap is what bounds spending.
 PUBLIC_LIMITS = {"build": 3, "scene": 2, "score": 150}
 WHAT = {"build": "picture sets", "scene": "scenes", "photo": "photo tests", "score": "scored answers",
-        "ask": "questions", "other": "requests"}
+        "ask": "questions", "socrates": "dialogue turns", "other": "requests"}
 
 # Mutating /api/ routes that never call a Meta API. Everything else that mutates is treated as paid.
 FREE = [
@@ -94,6 +95,7 @@ PAID = [
     ({"POST"}, re.compile(r"/api/score/(description|fluency)/?"), "audio_long"),
     ({"POST"}, re.compile(r"/api/assess/rescore/?"), "text"),
     (MUTATING, re.compile(r"/api/ask(/.*)?"), "ask"),  # GET /api/ask/status is free
+    (MUTATING, re.compile(r"/api/socrates(/.*)?"), "socrates"),  # GET /api/socrates/status is free
 ]
 
 
@@ -117,6 +119,7 @@ class Settings:
     build_candidates: int = 2
     photo_tests: bool = False
     ask_per_day: int = 20
+    socrates_per_day: int = 30  # dialogue turns; a dialogue has up to 8
     global_per_min: int = 60
     audio_mb: float = 2.5  # one naming answer
     long_audio_mb: float = 4.0  # a description or fluency recording
@@ -131,6 +134,7 @@ class Settings:
             build_candidates=max(1, min(3, int(_env_num(env, "TIPPA_PUBLIC_BUILD_CANDIDATES", 2)))),
             photo_tests=env.get("TIPPA_PUBLIC_PHOTO_TESTS", "0") == "1",
             ask_per_day=int(_env_num(env, "TIPPA_PUBLIC_ASK_PER_DAY", 20)),
+            socrates_per_day=int(_env_num(env, "TIPPA_PUBLIC_SOCRATES_PER_DAY", 30)),
             global_per_min=int(_env_num(env, "TIPPA_PUBLIC_GLOBAL_PER_MIN", 60)),
             audio_mb=_env_num(env, "TIPPA_PUBLIC_AUDIO_MB", 2.5),
         )
@@ -152,6 +156,7 @@ def make_rules(s: Settings) -> dict[str, Rule]:
         "audio_long": Rule("score", int(s.long_audio_mb * MB), 0.02),
         "text": Rule("score", 32 * 1024, 0.005),
         "ask": Rule("ask", 64 * 1024, 0.05),
+        "socrates": Rule("socrates", 96 * 1024, 0.05),  # the dialogue so far rides along with each turn
         "other": Rule("other", 256 * 1024, 0.01),
     }
 
@@ -359,9 +364,9 @@ class Guard:
         now = self.clock()
         checks = [(("*", "*", 60), self.s.global_per_min, "busy"),
                   ((rule.bucket, ip, 60), BURST_PER_MIN.get(rule.bucket, 10), "burst")]
-        if rule.bucket in ("ask", "other"):
-            checks.append(((rule.bucket, ip, DAY_S), self.s.ask_per_day if rule.bucket == "ask" else OTHER_PER_DAY,
-                           "day"))
+        per_day = {"ask": self.s.ask_per_day, "socrates": self.s.socrates_per_day, "other": OTHER_PER_DAY}
+        if rule.bucket in per_day:
+            checks.append(((rule.bucket, ip, DAY_S), per_day[rule.bucket], "day"))
         with self.lock:
             for key, limit, kind in checks:
                 wait = self.windows.retry_after(key, limit, now)
@@ -396,7 +401,8 @@ class Guard:
                           "photo_tests": self.s.photo_tests},
                "audio": {"max_mb": {"naming": self.s.audio_mb, "description": self.s.long_audio_mb,
                                     "fluency": self.s.long_audio_mb}, "max_s": dict(self.s.clip_s)},
-               "per_minute": BURST_PER_MIN, "ask_per_day": self.s.ask_per_day}
+               "per_minute": BURST_PER_MIN, "ask_per_day": self.s.ask_per_day,
+               "socrates_per_day": self.s.socrates_per_day}
         if debug:  # to check the proxy settings after deploying: the address the limits count by
             out["you"] = {"ip_seen": self.client_ip(request), "x_forwarded_for": request.headers.get("x-forwarded-for")}
         return out

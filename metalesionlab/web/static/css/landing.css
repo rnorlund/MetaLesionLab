@@ -26,6 +26,7 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #
 .hero h1 { margin: 0; font-size: clamp(34px, 4.4vw, 56px); line-height: 1.04; letter-spacing: -0.025em; font-weight: 700; }
 .hero-sub { margin: 0; font-size: clamp(19px, 2vw, 23px); line-height: 1.4; color: var(--ink-2); max-width: 30ch; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.hero-invite { margin: -6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 44ch; }
 .hero-tour { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 8px 0; font: inherit; font-size: 15px; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .hero-tour svg { width: 10px; height: 10px; color: var(--orange); }
 .hero-tour:hover { color: var(--ink); }
@@ -170,7 +171,8 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #
   .hero-sub { order: 3; }
   .chairs { order: 4; margin-top: 6px; padding: 12px 12px 12px; border-radius: 16px; }
   .hero-cta { order: 5; flex-direction: column; align-items: stretch; margin-top: 8px; }
-  .hero-tour { order: 6; align-self: flex-start; }
+  .hero-invite { order: 6; margin: 0; }
+  .hero-tour { order: 7; align-self: flex-start; }
   .chairs-pair { gap: 10px; }
   .chairs-grid { --gap: 3px; }
   .chairs-grid span { border-radius: 3px; }

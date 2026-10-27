@@ -12,6 +12,9 @@ Limits for this route only (a site-wide guard may add its own):
   entries tagged "ask", plus a reserve for each question in flight.
 - MetaAPI's overall budget cap still applies.
 
+The spend tracker, the counters, the session cookie and the streaming wrapper are shared with Ask
+Socrates (socrates_routes.py), which keeps its own cookie, counters and ledger tag.
+
 app.py includes this router with one line.
 """
 from __future__ import annotations
@@ -23,6 +26,7 @@ import secrets
 import threading
 import time
 from collections import defaultdict, deque
+from typing import Callable, Iterator
 
 import httpx
 import openai
@@ -67,7 +71,14 @@ def ip_cap() -> int:
 # --- today's agent spend, read incrementally from the shared ledger ------------------------------
 
 class _Spend:
-    def __init__(self):
+    """Today's spend for one ledger tag (default: Ask the Lab's), with a reserve held per request in flight
+    so that parallel requests can't overshoot the daily cap."""
+
+    def __init__(self, tag: str | None = None, cap: Callable[[], float] | None = None,
+                 reserve_usd: float = RESERVE_USD):
+        self.tag = tag or lab_agent.LEDGER_TAG
+        self.cap = cap or daily_usd
+        self.reserve_usd = reserve_usd
         self.lock = threading.Lock()
         self.path = None
         self.offset = 0
@@ -80,7 +91,7 @@ class _Spend:
         return now - now % DAY_S
 
     def today(self) -> float:
-        """USD spent today (UTC) by calls tagged lab_agent.LEDGER_TAG. Reads only lines added since last time."""
+        """USD spent today (UTC) by calls with this tag. Reads only lines added since last time."""
         now = time.time()
         start = self._day_start(now)
         path = meta_api.LEDGER
@@ -102,22 +113,26 @@ class _Spend:
                     e = json.loads(line)
                 except ValueError:
                     continue
-                if e.get("tag") == lab_agent.LEDGER_TAG and float(e.get("ts", 0)) >= start:
+                if e.get("tag") == self.tag and float(e.get("ts", 0)) >= start:
                     self.total += float(e.get("usd", 0))
             self.offset += end
             return self.total
 
+    def left(self) -> bool:
+        """Whether one more request fits under today's cap."""
+        return self.today() + self.reserve_usd <= self.cap()
+
     def reserve(self) -> bool:
         spent = self.today()
         with self.lock:
-            if spent + self.reserved + RESERVE_USD > daily_usd():
+            if spent + self.reserved + self.reserve_usd > self.cap():
                 return False
-            self.reserved += RESERVE_USD
+            self.reserved += self.reserve_usd
             return True
 
     def release(self) -> None:
         with self.lock:
-            self.reserved = max(0.0, self.reserved - RESERVE_USD)
+            self.reserved = max(0.0, self.reserved - self.reserve_usd)
 
 
 spend = _Spend()
@@ -151,15 +166,46 @@ sessions = _Counter()
 addresses = _Counter()
 
 
-def _session(request: Request) -> tuple[str, bool]:
-    sid = request.cookies.get(COOKIE) or ""
+def _session(request: Request, cookie: str = COOKIE) -> tuple[str, bool]:
+    sid = request.cookies.get(cookie) or ""
     if 16 <= len(sid) <= 64 and sid.replace("-", "").replace("_", "").isalnum():
         return sid, False
     return secrets.token_urlsafe(18), True
 
 
-def _set_cookie(resp, sid: str) -> None:
-    resp.set_cookie(COOKIE, sid, max_age=DAY_S, httponly=True, samesite="lax")
+def _set_cookie(resp, sid: str, cookie: str = COOKIE) -> None:
+    resp.set_cookie(cookie, sid, max_age=DAY_S, httponly=True, samesite="lax")
+
+
+def stream_events(events: Callable[[], Iterator[dict]], release: Callable[[], None], name: str = "ask"
+                  ) -> StreamingResponse:
+    """An agent's events as JSON lines. A failure after the stream has started is reported as an "error"
+    line; `release` runs once, when the stream ends or (via a background task) if the client left first."""
+    released = threading.Event()
+
+    def release_once():
+        if not released.is_set():
+            released.set()
+            release()
+
+    def stream():
+        try:
+            for event in events():
+                yield json.dumps(event, ensure_ascii=False, default=str) + "\n"
+        except BudgetExceeded:
+            yield json.dumps({"type": "error", "message": web.BUDGET_MSG}) + "\n"
+        except (openai.OpenAIError, httpx.HTTPError) as e:
+            log.warning("%s: Meta API error: %s", name, e)
+            yield json.dumps({"type": "error", "message": f"The Meta Model API returned an error "
+                                                          f"({type(e).__name__}). Please try again in a minute."}) + "\n"
+        except Exception as e:  # the stream has started, so report the failure as a line
+            log.exception("%s failed", name)
+            yield json.dumps({"type": "error", "message": f"Something went wrong ({type(e).__name__})."}) + "\n"
+        finally:
+            release_once()
+
+    return StreamingResponse(stream(), media_type="application/x-ndjson", background=BackgroundTask(release_once),
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 # --- routes ------------------------------------------------------------------------------------
@@ -178,7 +224,7 @@ def ask_status(request: Request):
     left = max(0, min(session_cap() - sessions.count(sid), ip_cap() - addresses.count(client_ip(request))))
     body = {"enabled": web.api_key_present(), "suggested": SUGGESTED, "questions_left": left,
             "per_session": session_cap(), "daily_cap_usd": daily_usd(), "spent_today_usd": round(spent, 4),
-            "budget_left": spent + RESERVE_USD <= daily_usd(), "model": lab_agent.MODEL,
+            "budget_left": spent + spend.reserve_usd <= daily_usd(), "model": lab_agent.MODEL,
             "reasoning_effort": lab_agent.REASONING_EFFORT, "max_tool_calls": lab_agent.MAX_TOOL_CALLS,
             "tools": lab_agent.TOOL_NAMES}
     resp = JSONResponse(body)
@@ -216,32 +262,8 @@ def ask(body: Question, request: Request):
                                  "works, and the agent will be back tomorrow.")
     sessions.take(sid)
     addresses.take(ip)
-    released = threading.Event()
-
-    def release_once():
-        if not released.is_set():
-            released.set()
-            spend.release()
-
-    def stream():
-        try:
-            for event in agent.run(question):
-                yield json.dumps(event, ensure_ascii=False, default=str) + "\n"
-        except BudgetExceeded:
-            yield json.dumps({"type": "error", "message": web.BUDGET_MSG}) + "\n"
-        except (openai.OpenAIError, httpx.HTTPError) as e:
-            log.warning("ask: Meta API error: %s", e)
-            yield json.dumps({"type": "error", "message": f"The Meta Model API returned an error "
-                                                          f"({type(e).__name__}). Please try again in a minute."}) + "\n"
-        except Exception as e:  # the stream has started, so report the failure as a line
-            log.exception("ask failed")
-            yield json.dumps({"type": "error", "message": f"Something went wrong ({type(e).__name__})."}) + "\n"
-        finally:
-            release_once()
-
     # The background task also releases, in case the client left before the stream started.
-    resp = StreamingResponse(stream(), media_type="application/x-ndjson", background=BackgroundTask(release_once),
-                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+    resp = stream_events(lambda: agent.run(question), spend.release, "ask")
     if new:
         _set_cookie(resp, sid)
     return resp

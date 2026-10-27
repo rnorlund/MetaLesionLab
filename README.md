@@ -6,7 +6,7 @@
 
 Plato held that each kind of thing has one ideal Form, and every real one is a copy. We put his questions to Meta's AI and to people. The first one: *is there one ideal chair?* We asked Meta's image model, Muse Image, for 16 quick doodles of a chair and of 34 other things, took 200 people's 20-second drawings of the same words from Google's Quick, Draw!, and measured how varied each set is with Meta's DINOv2 vision model.
 
-- **See it:** run the site (below) and open `/` (the chairs), `/plato` (the whole experiment) and `/draw` (draw your own chair and see where it lands).
+- **See it:** run the site (below) and open `/` (the chairs), `/plato` (the whole experiment), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew) and `/socrates` (ask an AI playing Socrates).
 - **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages).
 
 ## What we found
@@ -44,7 +44,7 @@ Each experiment puts one of Plato's questions to an AI and to people. The site s
 | What happens to the Form when the mind is damaged? | Our own question | `/plato/damage` | In progress |
 | Is learning remembering the Forms? | *Meno* | `/plato/lifespan` | In progress |
 
-Also: **Draw a chair** (`/draw`) measures a visitor's drawing the same way, on the server's CPU, and shows where it lands among Muse Image's chairs and 200 people's. Drawings are processed in memory and never stored. **Ask Socrates** (`/socrates`, in progress) is a Muse Spark agent that answers questions about the experiments from the real results, then asks you one question back.
+Also: **Draw a chair** (`/draw`). Visitors draw blind, in 20 seconds, like the Quick, Draw! players; then Muse Image's 16 chairs are revealed, and the drawing is measured the same way, on the server's CPU, against 200 people's. Drawings are processed in memory and never stored. **Ask Socrates** (`/socrates`) is a Muse Spark agent that plays Socrates: it answers questions about the experiments from the real results, quotes Plato only from verified passages, and asks you one question back.
 
 ### How it works
 
@@ -80,6 +80,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 27 | Pre-registered replication of the lesion results at n = 100 ([docs/replication.md](docs/replication.md)) |
 | Oct 27 | Deploy kit: public-demo spend guard, site data bundle, container |
 | Oct 27 | Draw a chair (`/draw`): a visitor's drawing measured with DINOv2 on the CPU, against Muse Image's chairs and 200 people's |
+| Oct 27 | Ask Socrates (`/socrates`): Muse Spark plays Socrates over the Plato results |
 | Oct 27 | Plato-first site: new landing page, one header and nav on every page (`web/site.py`), the product name in one place (`metalesionlab/brand.py`), share card, a shorter tour |
 
 ### Prior research context (not part of this submission)
@@ -320,7 +321,7 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (Plato's Chair), `/plato` (the whole experiment), `/draw` (Draw a chair), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
+Pages: `/` (Plato's Chair), `/plato` (the whole experiment), `/draw` (Draw a chair), `/socrates` (Ask Socrates), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TIPPA_DATA_DIR` (or `TOT_DATA_DIR`; default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.

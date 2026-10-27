@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Ask Socrates · {{BRAND}}</title>
+<meta name="description" content="Talk with an AI playing Socrates about what the Plato experiments found. It answers from the real results, quotes Plato only from verified passages, and always asks you one question back.">
+<meta property="og:title" content="Ask Socrates · {{BRAND}}">
+<meta property="og:description" content="What would Plato ask an AI? Talk it through with an AI playing Socrates.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/socrates.css">
+</head>
+<body class="socrates">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><!-- the site header (web/site.py) --></header>
+
+<main id="main" class="so" tabindex="-1">
+  <section class="panel so-hero" aria-labelledby="so-h">
+    <span class="so-kicker">What would Plato ask an AI?</span>
+    <h1 id="so-h">Ask Socrates</h1>
+    <p class="so-lede">Talk with an AI playing Socrates about what the experiments found. He answers from the real results, quotes Plato only from verified passages, and always asks you one question back.</p>
+    <div class="so-key" aria-hidden="true"></div>
+  </section>
+
+  <section class="panel so-drawing" id="drawing" hidden aria-labelledby="drawing-h">
+    <div class="so-drawing-text">
+      <h2 id="drawing-h">Your <span data-concept>chair</span>, from Draw</h2>
+      <p id="drawing-facts"></p>
+      <p class="xsmall muted">Socrates sees these numbers, not your drawing. <a href="/draw">Draw another</a></p>
+    </div>
+    <button type="button" class="btn btn-ghost so-drop" id="drawing-drop">Leave it out</button>
+  </section>
+
+  <section class="panel so-dialogue" aria-labelledby="dialogue-h">
+    <div class="so-dialogue-head">
+      <h2 id="dialogue-h">The dialogue</h2>
+      <span class="so-turns" id="turns" aria-live="polite"></span>
+    </div>
+    <div class="so-empty" id="empty">
+      <p class="so-empty-lede">Start with one of these, or ask your own.</p>
+      <div class="so-starters" id="starters" role="group" aria-label="Starter questions"></div>
+    </div>
+    <ol class="so-thread" id="thread" aria-label="Dialogue"></ol>
+    <form class="so-form" id="form">
+      <label class="sr-only" for="msg">Your message to Socrates</label>
+      <textarea id="msg" rows="2" maxlength="500" placeholder="Ask Socrates, or answer his question…" autocomplete="off"></textarea>
+      <button type="submit" class="btn btn-primary" id="send">Send</button>
+    </form>
+    <div class="so-bar">
+      <p class="so-meta" id="meta"></p>
+      <div class="so-actions">
+        <button type="button" class="btn btn-ghost" id="share" disabled>Copy an excerpt</button>
+        <button type="button" class="btn btn-ghost" id="restart" disabled>New dialogue</button>
+      </div>
+    </div>
+    <div class="note note-warn" id="off" hidden></div>
+    <p class="so-toast" id="toast" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="panel so-how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="so-how-list">
+      <li><b>Look it up.</b> Muse Spark, playing Socrates, calls read-only tools over results already measured: Plato’s Chair, asking for variety, inside Muse Glimmer, the newer Plato experiments as they’re published, and a small set of Plato passages. At most five per turn.</li>
+      <li><b>Answer, then ask.</b> A short answer that cites where each number comes from, then one question back to you.</li>
+      <li><b>Check.</b> Every number must appear in a tool result, and every quotation of Plato must match a verified passage word for word. What fails is fixed once or left out.</li>
+      <li><b>Remember nothing.</b> Your browser keeps the dialogue (up to eight turns) and sends it with each message. This site stores none of it.</li>
+    </ol>
+    <p class="xsmall muted" id="tool-list"></p>
+  </section>
+</main>
+<p class="footnote">Ask Socrates is an AI (Muse Spark, by Meta) playing Socrates, not the historical one, and his answers can be wrong; the sources are linked so you can check. It doesn’t give medical advice. Messages are sent to the Meta Model API to be answered and aren’t stored by this site. People’s drawings: Google Quick, Draw! (CC BY 4.0). Plato: Benjamin Jowett’s translation (1892), public domain, via Project Gutenberg.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/socrates.js"></script>
+</body>
+</html>

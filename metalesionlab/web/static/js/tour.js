@@ -121,16 +121,19 @@
       } },
 
     { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw', id: 'draw', finish: true,
-      target: function () { return hasDraw() && location.pathname === '/draw' ? '#canvas-wrap' : null; },
+      target: function () {  // the drawing pad if the page has one; otherwise a centered card
+        if (!hasDraw() || location.pathname !== '/draw') return null;
+        return q('#canvas-wrap') ? '#canvas-wrap' : q('canvas') ? 'canvas' : null;
+      },
       title: function () { return hasDraw() ? 'Your turn: draw a chair' : 'Now try it yourself'; },
       body: function () {
         return hasDraw()
-          ? 'Draw a chair here, with a mouse or a finger, and see where it lands next to Muse Image’s 16 chairs and 200 people’s, measured the same way. Nothing you draw is stored.'
+          ? 'Draw a chair in 20 seconds, with a mouse or a finger, like the Quick, Draw! players did. Then see what Meta’s AI drew, and where your chair lands among 200 people’s, measured the same way. Nothing you draw is stored.'
           : 'Everything you saw comes from Meta’s models: Muse Image drew, DINOv2 measured, Muse Spark listed kinds and Muse Glimmer labeled them. Pick a starting point:';
       },
       links: function () {
         var out = [];
-        if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair', '/draw']);
+        if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw']);
         if (hasSocrates()) out.push(['Ask Socrates', '/socrates']);
         out.push(['See the whole experiment', '/plato'], ['Look inside the Model Lab', '/lab']);
         return out;
