@@ -924,3 +924,5 @@ def lab_human():
 
 app.include_router(importlib.import_module("metalesionlab.web.challenge").router)  # You vs. the AI (/challenge)
 app.include_router(importlib.import_module("metalesionlab.web.assess_routes").router)  # Naming Assessment
+app.include_router(importlib.import_module("metalesionlab.web.plato_routes").router)  # Plato's Chair (/plato)
+app.include_router(importlib.import_module("metalesionlab.web.cut_routes").router)  # What can I cut? (/lab/cut)

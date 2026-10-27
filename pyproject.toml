@@ -23,4 +23,4 @@ build-backend = "setuptools.build_meta"
 packages = ["metalesionlab", "metalesionlab.web"]
 
 [tool.setuptools.package-data]
-"metalesionlab.web" = ["pages/*.html", "static/*/*", "sample_lab/*.json"]
+"metalesionlab.web" = ["pages/*.html", "static/*/*", "static/*/*/*", "sample_lab/*.json", "data/*.json"]

@@ -85,6 +85,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .lede { margin: 0; font-size: 13px; color: var(--muted); }
 .footnote { margin: 24px 0 0; font-size: 12px; color: var(--muted); }
 
+/* --- Model Lab tabs (/lab and /lab/cut) ------------------------------------------------ */
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line-2); }
+.lab-tabs a { padding: 10px 14px; font-size: 14px; font-weight: 500; color: var(--ink-2); text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.lab-tabs a:hover { color: var(--ink); border-bottom-color: var(--line-2); }
+.lab-tabs a[aria-current="page"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--orange); }
+.lab-tabs .new { font-family: var(--mono); font-size: 10px; background: var(--orange-soft); color: var(--orange-dark); border-radius: 999px; padding: 2px 7px; margin-left: 6px; vertical-align: 1px; }
+
 /* --- forms ---------------------------------------------------------------------------- */
 .field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; min-width: 0; }
 .fields > .field { flex: 1 1 140px; }

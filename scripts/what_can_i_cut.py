@@ -8,6 +8,7 @@ Stages, each resumable and saved under OUT (default runs/compress/):
   reload  save the guarded cut with save_pretrained, load it back with stock
           transformers and check its answers                                 -> reload.json
   export  merge everything into the web app's file                          -> glimmer.json
+          (then scripts/cut_web_export.py ships a compact copy with the app)
 
 Usage: python scripts/what_can_i_cut.py STAGE [--sets runs/sets] [--out runs/compress]
 """
