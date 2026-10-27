@@ -25,7 +25,7 @@ Tippa Lingua has four tools that share one pipeline:
 4. **Model Lab:** the same tests are given to **Muse Glimmer**, Meta's open-weight model.
    - You damage chosen parts of the model on purpose and watch aphasia-like errors appear.
    - A word lens shows the model's best guess at every layer.
-   - A **Muse Spark** agent designs and runs the experiments and compares the results with published profiles from people with aphasia.
+   - **Ask the Lab** (`/ask`): a **Muse Spark** agent answers questions by querying the lab's results and comparing them with published profiles from people with aphasia, showing every step.
    - **What can I cut?** removes whole layers from the model, with your tests as the guardrail, and measures the real savings.
 
 > Research and teaching use only. Tippa Lingua doesn't diagnose, and it doesn't give medical or treatment advice.
@@ -75,7 +75,9 @@ The decision order follows the Philadelphia Naming Test scheme (Roach et al., 19
 | Sound | The PNT rule: shared first or last sound, shared stressed vowel, or two shared sounds anywhere. Sounds come from the CMU dictionary, or from spelling rules for non-words. | Same rule, adapted because nouns end in a gender vowel: a shared final vowel doesn't count |
 | Meaning | WordNet first. Muse Spark judges associations (milk for cat). | Muse Spark judges every pair |
 
-See `metalesionlab/naming_errors.py`. French, Brazilian Portuguese, Hindi and Mandarin Chinese have their own rules and measured results in [docs/languages.md](docs/languages.md).
+See `metalesionlab/naming_errors.py`. French, Brazilian Portuguese, Hindi, Mandarin Chinese, German, Italian, Dutch, Japanese, Korean, Arabic, Turkish, Polish, Indonesian and Vietnamese have their own rules and measured results in [docs/languages.md](docs/languages.md).
+
+**How we checked the coder.** `python scripts/verify_scorer.py rater` (about $0.12) codes 30 test responses (20 English, 10 Spanish) twice: once by these rules, and once by Muse Spark as an independent second rater working only from written category definitions. The 30 are constructed examples of each error type, not responses from real people. The two agreed on 93.3% (Cohen's kappa 0.92; English 90.0%, kappa 0.88; Spanish 100%). The two disagreements were *blorf* for ladder (rules: Neologism, Muse Spark: Nonword) and *sofa* for couch (rules: Semantic, Muse Spark: Correct; add *sofa* as an accepted name if your test allows it). Given the picture, Muse Spark also flags Visual errors the rules can't see (*grenade* for a pineapple drawing). This shows two independent coders agree on clear cases. It is not a comparison with trained human coders on real responses, which is still needed.
 
 ## Naming Assessment
 
@@ -150,7 +152,7 @@ It takes the largest picture on each slide, skips slides without one, pairs them
 
 We showed the same 20 pictures to Muse Glimmer with matched one-word instructions in English, Spanish, French and Portuguese, and applied identical damage in each language (41 lesion conditions, 490 runs).
 - **Bigger drop outside English.** Damage cost Spanish naming **28 percentage points more than English** (95% CI 23–32). French lost 33 more and Portuguese 35 more. Every picture fared worse in the non-English language.
-- **Falls back to English.** Damaged non-English trials often come out in English: 24% of damaged Spanish trials. The reverse happened in 1 of 1,780 English trials.
+- **Falls back to English.** Damaged non-English trials often come out in English: 24% of damaged Spanish trials, against 1.3% the other way. Counting only the picture's own name in the wrong language: 11% of Spanish trials, and 1 of 1,780 English trials.
 - **An English pivot.** Even intact, the word lens shows the English name as the top guess around layer 40, with the asked-for language taking over only at layer 47.
 
 It echoes the observation that in bilingual aphasia the non-dominant language can be hit harder. That is an analogy, not evidence about brains. Method, caveats (20 pictures, one model) and figures: [docs/bilingual.md](docs/bilingual.md).
@@ -161,7 +163,7 @@ Which parts of a model can go while the abilities you care about stay? The tests
 
 1. Each of the 52 layers is skipped alone. The result is scored by picture naming on the English and Spanish demo sets (39 pictures) and by perplexity on 150 plain sentences written by Muse Spark (`public_data/general_text_guard.json`).
 2. A greedy path removes one layer at a time. A cut passes if naming stays at or above 95% of intact and perplexity rises by 10% or less. The other Muse Image picture of each word is held out to check each cut.
-3. The chosen layers are deleted for real: the stock model code loads the smaller model from its own config. The outputs match the skip version exactly, and a saved copy reloads with identical logits.
+3. The chosen layers are deleted for real: the stock model code loads the smaller model from its own config, and a saved copy reloads with identical logits. Perplexity matches the skip version to 0.1. Naming counts from separate runs of the same cut can differ by one or two pictures (even intact: 36 vs. 37 held-out), so the table below (confirmation runs) and the step-by-step chart in the app (search runs) can disagree by that much.
 
 Measured on one L40S with the FP8 decoder (`python scripts/what_can_i_cut.py scan|greedy|prune|reload|export`):
 
@@ -175,6 +177,26 @@ Measured on one L40S with the FP8 decoder (`python scripts/what_can_i_cut.py sca
 
 The honest answer for this model is "not much". Two layers can go with no measurable loss, a saving of about 3%. Naming, not perplexity, was the binding guard: a perplexity check alone would allow five layers but lose three guard pictures and eight held-out ones, mostly in Spanish. The cut models often answered a Spanish prompt in English ("Umbrella" for *paraguas*), so language control broke before object recognition did. Full-attention layers mattered no more than sliding-window ones. Block influence, a cheap no-skip score, ranked layers poorly here. With about 20 pictures per language, one picture is about 5 points, so treat small differences as noise. Full results, including per-layer scores and the whole greedy path, are in `runs/compress/glimmer.json`. In the app, **Model Lab → What can I cut?** (`/lab/cut`) replays them: set how much naming and perplexity you'll give up, and the deepest passing cut moves with your limits. `runs/` isn't in the repository, so the app ships a compact copy (`metalesionlab/web/data/cut_glimmer.json`, written by `python scripts/cut_web_export.py`) and prefers `TOT_DATA_DIR/compress/glimmer.json` when it exists.
 
+## Ask the Lab
+
+`/ask` takes a question in plain language, such as "Which kind of damage makes sound errors like 'Caraloon'?" or "Does damage hurt Spanish more than English?". A **Muse Spark** agent then works through it in three steps:
+
+1. It plans and calls up to six read-only tools, using Muse Spark's native tool calling.
+2. The tools read results the lab has already computed, through the same loaders as the pages:
+   - lesion conditions, error profiles by damage site, a search over the model's answers and the word lens;
+   - layer removal, the bilingual test and Plato's Chair;
+   - the published group profiles of people with aphasia, and language support.
+3. It answers with numbers, a `[tool: id]` citation for each one, and links into `/lab`, `/plato` and `/lab/cut`.
+
+Each step streams to the page as it happens (JSON lines), so you watch the trace live. The code is in `metalesionlab/lab_agent.py` and `metalesionlab/web/agent_routes.py`.
+
+- **Checked numbers.** Before the answer is shown, every number in it is matched against the tool results; a difference or ratio of two numbers that match also passes. One repair call fixes any misses, and whatever is still unmatched is flagged on the page.
+- **No medical advice.** Questions about a particular person's health, test result, recovery or treatment are declined before any model call. The agent's instructions decline the subtler ones. Text inside the data (the model's own answers) is treated as data, never as instructions.
+- **Cost.** A typical answer costs $0.01–0.03 in Muse Spark calls; the page shows each answer's cost. Settings:
+  - `TIPPA_AGENT_DAILY_USD` (default $1): the agent's daily cap, read from ledger entries tagged `ask`;
+  - `TIPPA_AGENT_SESSION_QUESTIONS` (default 10): questions per browser per day;
+  - `TIPPA_AGENT_IP_QUESTIONS` (default 30): questions per address per day.
+
 ## Meta models used
 
 | Model | Role |
@@ -182,7 +204,7 @@ The honest answer for this model is "not much". Two layers can go with no measur
 | Muse Glimmer 30B (open weights, self-hosted) | Test-taker in Model Lab, with lesions and the word lens; name-agreement check |
 | Muse Image 1.0 | Draws test pictures |
 | SAM 3.1 | Picture quality check |
-| Muse Spark 1.3 | Name agreement, meaning judge, second rater, experiment agent |
+| Muse Spark 1.3 | Plans test sets, name agreement, meaning judge, second rater, Ask the Lab agent (tool calling) |
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
 | DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for the Plato's Chair experiment |
 
@@ -227,7 +249,7 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (home), `/challenge` (You vs. the AI), `/plato` (Plato's Chair), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
+Pages: `/` (home), `/challenge` (You vs. the AI), `/plato` (Plato's Chair), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.

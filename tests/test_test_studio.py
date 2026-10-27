@@ -8,7 +8,7 @@ from PIL import Image
 
 from metalesionlab.meta_api import SamMatch
 from metalesionlab.test_studio import (apply_review, build_set, derive_language_manifest, merge_alternates,
-                                       parse_word_list, plan_concepts)
+                                       naming_prompt, parse_word_list, plan_concepts)
 
 
 class FakeChatAPI:
@@ -141,3 +141,11 @@ def test_merge_alternates_keeps_existing_ones():
     merge_alternates(m, {"axe": ["axe", "ax", "hatchet"]})
     assert m["items"][0]["alternates"] == ["axe head", "ax", "hatchet"]
     assert m["items"][1]["alternates"] == []
+
+
+def test_naming_prompt_asks_for_the_whole_name_where_names_have_several_words():
+    # Oct 27: "exactly one word" made Muse Spark cut mỏ neo to "neo" and run cà rốt into "càrốt".
+    assert "syllables" not in naming_prompt("en") and "Vietnamese" not in naming_prompt("en")
+    assert "two or more syllables" in naming_prompt("vi") and "Vietnamese" in naming_prompt("vi")
+    assert "sarung tangan" in naming_prompt("id")
+    assert naming_prompt("fr") == "Name the object in this picture with exactly one word in French. Reply with the word only."

@@ -1,6 +1,6 @@
 {
- "_about": "How well Tip of the Tongue works in each language, measured on 2026-10-26. Picture sets were built from a 20-word list per language (the English demo list, translated); spoken naming was checked with speech synthesized by macOS voices, never recordings of people. Method and caveats: docs/languages.md.",
- "checked": "2026-10-26",
+ "_about": "How well Tip of the Tongue works in each language. English, Spanish, French, Brazilian Portuguese, Hindi and Mandarin were measured on 2026-10-26 with picture sets built from a 20-word list per language (the English demo list, translated). German, Italian, Dutch, Japanese, Korean, Arabic, Turkish, Polish, Indonesian and Vietnamese were measured on 2026-10-27 on the English demo set's pictures, named by Muse Spark in each language. Spoken naming was checked with speech synthesized by macOS voices, never recordings of people. Method and caveats: docs/languages.md.",
+ "checked": "2026-10-26; ten more languages 2026-10-27",
  "table": [
   {
    "language": "English",
@@ -57,6 +57,96 @@
    "status": "works with review"
   },
   {
+   "language": "German",
+   "picture_set": "20/20",
+   "named_by_muse_spark": "20/20",
+   "spoken_bare_word": "16/20, 15/20",
+   "spoken_recommended": "20/20, 19/20",
+   "recommended_form": "in a short sentence (Das ist eine Katze)",
+   "status": "verified"
+  },
+  {
+   "language": "Italian",
+   "picture_set": "19/20",
+   "named_by_muse_spark": "19/20",
+   "spoken_bare_word": "17/20, 17/20",
+   "spoken_recommended": "18/20, 17/20",
+   "recommended_form": "with the article (un gatto, un'arpa)",
+   "status": "works with review"
+  },
+  {
+   "language": "Dutch",
+   "picture_set": "20/20",
+   "named_by_muse_spark": "20/20",
+   "spoken_bare_word": "14/20, 13/20",
+   "spoken_recommended": "16/20, 16/20",
+   "recommended_form": "with the article (een kat)",
+   "status": "works with review"
+  },
+  {
+   "language": "Japanese",
+   "picture_set": "19/20",
+   "named_by_muse_spark": "19/20",
+   "spoken_bare_word": "13/20, 15/20",
+   "spoken_recommended": "16/20, 15/20",
+   "recommended_form": "with です (猫です)",
+   "status": "experimental"
+  },
+  {
+   "language": "Korean",
+   "picture_set": "20/20",
+   "named_by_muse_spark": "20/20",
+   "spoken_bare_word": "13/20, 14/20",
+   "spoken_recommended": "13/20, 14/20",
+   "recommended_form": "the bare word (고양이); 예요/이에요 didn't help",
+   "status": "experimental"
+  },
+  {
+   "language": "Arabic",
+   "picture_set": "19/20",
+   "named_by_muse_spark": "19/20",
+   "spoken_bare_word": "14/20, 14/20",
+   "spoken_recommended": "16/20, 17/20",
+   "recommended_form": "with the article al- (القطة)",
+   "status": "works with review"
+  },
+  {
+   "language": "Turkish",
+   "picture_set": "20/20",
+   "named_by_muse_spark": "20/20",
+   "spoken_bare_word": "17/20, 15/20",
+   "spoken_recommended": "18/20, 19/20",
+   "recommended_form": "with bir (bir kedi)",
+   "status": "verified"
+  },
+  {
+   "language": "Polish",
+   "picture_set": "19/20",
+   "named_by_muse_spark": "19/20",
+   "spoken_bare_word": "14/20, 15/20",
+   "spoken_recommended": "20/20, 19/20",
+   "recommended_form": "in a short sentence (To jest kot)",
+   "status": "verified"
+  },
+  {
+   "language": "Indonesian",
+   "picture_set": "19/20",
+   "named_by_muse_spark": "19/20",
+   "spoken_bare_word": "19/20, 18/20",
+   "spoken_recommended": "20/20, 20/20",
+   "recommended_form": "in a short sentence (Ini kucing)",
+   "status": "verified"
+  },
+  {
+   "language": "Vietnamese",
+   "picture_set": "20/20",
+   "named_by_muse_spark": "20/20",
+   "spoken_bare_word": "14/20, 15/20",
+   "spoken_recommended": "15/20, 18/20",
+   "recommended_form": "with the classifier (con mèo, cái ô)",
+   "status": "works with review"
+  },
+  {
    "language": "Any other language",
    "picture_set": "not measured",
    "named_by_muse_spark": "not measured",
@@ -67,15 +157,18 @@
  ],
  "status_levels": {
   "verified": "Picture set and Muse Spark naming at least 19/20, spoken naming at least 18/20 in the recommended answer form with two voices or runs, and the scoring rules for the language tested. Codes still get a person's review, as in every language.",
-  "works with review": "Pictures and naming work and spoken naming is mostly right in the recommended form, but known gaps mean a person should check every code that isn't Correct.",
+  "works with review": "Pictures and naming work and spoken naming is mostly right in the recommended form (for the languages added Oct 27: at least 16/20 averaged over two runs), but known gaps mean a person should check every code that isn't Correct.",
   "experimental": "Measured below that, or not measured. Usable for building pictures; don't rely on automatic spoken scoring."
  },
  "method": {
   "picture_sets": "scripts/build_test_set.py, line style, 2 candidates per word: Muse Spark plans each picture, Muse Image draws, SAM 3.1 checks for one clear object, Muse Spark names the picture in the test language and naming_errors.classify scores that name. kept = at least one candidate passed both checks. First-pass numbers, before reviewer edits.",
   "named_by_muse_spark": "Words for which Muse Spark's one-word name for at least one candidate picture was coded Correct.",
-  "spoken": "Each of the 20 words synthesized on its own with macOS `say`, converted to 16 kHz mono WAV, padded with 0.7 s of silence, transcribed by Muse Voice Transcribe with the language hint and coded by naming_errors.classify with the set's accepted alternates, as the Scorer does. correct = transcripts coded Correct. One run of 20 per entry; expect a few points of run-to-run variation."
+  "spoken": "Each of the 20 words synthesized on its own with macOS `say`, converted to 16 kHz mono WAV, padded with 0.7 s of silence, transcribed by Muse Voice Transcribe with the language hint and coded by naming_errors.classify with the set's accepted alternates, as the Scorer does. correct = transcripts coded Correct. One run of 20 per entry; expect a few points of run-to-run variation.",
+  "picture_sets_reused": "Languages added Oct 27: no new pictures. The translated 20-word list was planned by Muse Spark (accepted spellings, ambiguity flags) and Muse Spark named the English demo set's kept picture in the language; the second picture was named only when the first wasn't coded Correct. SAM 3.1 results come from demo_en (SAM checks the English gloss). kept and named use the final scoring rules; first_pass has the counts at build time.",
+  "spoken_reruns": "Languages added Oct 27: each count is coded with the final rules; correct_at_run is the count when the run was made. Where macOS has one natural voice for a language, both entries are two runs of that voice.",
+  "live_check": "Oct 27: 23 hand-written error responses (2 or 3 per added language: Semantic, Formal, Description) through the real Muse Spark judge; all 23 got the expected code."
  },
- "untested_languages": "Any other language: Test Studio will try (Muse Spark and Muse Image take any language) and Muse Voice Transcribe accepts a hint for 25 languages, but nothing is measured, so the status is experimental.",
+ "untested_languages": "Any other language: Test Studio will try (Muse Spark and Muse Image take any language) and Muse Voice Transcribe accepts a hint for 25 languages, of which 16 are measured here. Nothing else is measured, so the status is experimental.",
  "languages": [
   {
    "code": "en",
@@ -3134,6 +3227,5998 @@
     "Swapped by a reviewer: the kept 胡萝卜 (carrot) picture was orange in a line-style set, so the line drawing was used instead.",
     "Muse Spark named one umbrella picture 伞 instead of 雨伞; it is a good alternate to accept in review.",
     "Fixed: Chinese scoring crashed without the jieba package. It now splits words itself, removes measure words, and maps traditional characters to simplified."
+   ]
+  },
+  {
+   "code": "de",
+   "name": "German",
+   "status": "verified",
+   "summary": "Verified when people answer in a short sentence, Das ist ein/eine ... (20/20 and 19/20). With der/die/das it was 17/20 twice; bare words 16 and 15.",
+   "picture_set": {
+    "set": "demo_de",
+    "pictures_from": "demo_en",
+    "words": [
+     "katze",
+     "regenschirm",
+     "anker",
+     "kessel: kettle",
+     "leiter: ladder",
+     "bank: bench",
+     "handschuh",
+     "löffel",
+     "karotte",
+     "fahrrad",
+     "schere",
+     "kerze",
+     "hubschrauber",
+     "ananas",
+     "schnecke",
+     "säge",
+     "kaktus",
+     "pfeife: whistle",
+     "harfe",
+     "iglu"
+    ],
+    "kept": 20,
+    "of": 20,
+    "review": [],
+    "ambiguity_flags": {
+     "kessel": [
+      "cauldron",
+      "boiler",
+      "kettledrum"
+     ],
+     "leiter": [
+      "leader",
+      "conductor"
+     ],
+     "bank": [
+      "bank (financial institution)"
+     ],
+     "schnecke": [
+      "slug",
+      "cinnamon roll"
+     ],
+     "pfeife": [
+      "pipe for smoking",
+      "organ pipe"
+     ]
+    },
+    "named_by_muse_spark": 20,
+    "candidates_named_by_muse_spark": 20,
+    "candidates": 21,
+    "muse_spark_other_names": [
+     {
+      "word": "kessel",
+      "named": "Teekanne",
+      "code": "Mixed"
+     }
+    ],
+    "alternates": {
+     "kaktus": [
+      "cactus"
+     ],
+     "iglu": [
+      "igloo"
+     ]
+    },
+    "first_pass": {
+     "kept": 19,
+     "named": 19
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "de_base",
+      "voice": "Anna (de-DE)",
+      "correct": 16,
+      "of": 20,
+      "correct_at_run": 16,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "katze",
+        "said": "katze",
+        "transcript": "Katze.",
+        "code": "Correct"
+       },
+       {
+        "target": "regenschirm",
+        "said": "regenschirm",
+        "transcript": "Regenschirm",
+        "code": "Correct"
+       },
+       {
+        "target": "anker",
+        "said": "anker",
+        "transcript": "Anker.",
+        "code": "Correct"
+       },
+       {
+        "target": "kessel",
+        "said": "kessel",
+        "transcript": "Fesselfessel",
+        "code": "Nonword"
+       },
+       {
+        "target": "leiter",
+        "said": "leiter",
+        "transcript": "Leiter.",
+        "code": "Correct"
+       },
+       {
+        "target": "bank",
+        "said": "bank",
+        "transcript": "BankBank,",
+        "code": "Correct"
+       },
+       {
+        "target": "handschuh",
+        "said": "handschuh",
+        "transcript": "Handschuh.",
+        "code": "Correct"
+       },
+       {
+        "target": "löffel",
+        "said": "löffel",
+        "transcript": "Löffel.",
+        "code": "Correct"
+       },
+       {
+        "target": "karotte",
+        "said": "karotte",
+        "transcript": "Karotte.",
+        "code": "Correct"
+       },
+       {
+        "target": "fahrrad",
+        "said": "fahrrad",
+        "transcript": "Fahrrad,Fahrrad",
+        "code": "Correct"
+       },
+       {
+        "target": "schere",
+        "said": "schere",
+        "transcript": "Schere,",
+        "code": "Correct"
+       },
+       {
+        "target": "kerze",
+        "said": "kerze",
+        "transcript": "Herze",
+        "code": "Formal"
+       },
+       {
+        "target": "hubschrauber",
+        "said": "hubschrauber",
+        "transcript": "Hubschrauber,",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas,",
+        "code": "Correct"
+       },
+       {
+        "target": "schnecke",
+        "said": "schnecke",
+        "transcript": "Schnecke",
+        "code": "Correct"
+       },
+       {
+        "target": "säge",
+        "said": "säge",
+        "transcript": "Säge.",
+        "code": "Correct"
+       },
+       {
+        "target": "kaktus",
+        "said": "kaktus",
+        "transcript": "Kaktus",
+        "code": "Correct"
+       },
+       {
+        "target": "pfeife",
+        "said": "pfeife",
+        "transcript": "Pfeife.",
+        "code": "Correct"
+       },
+       {
+        "target": "harfe",
+        "said": "harfe",
+        "transcript": "Hafe,",
+        "code": "Nonword"
+       },
+       {
+        "target": "iglu",
+        "said": "iglu",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     },
+     {
+      "run": "de_base_r2",
+      "voice": "Anna (de-DE)",
+      "correct": 15,
+      "of": 20,
+      "correct_at_run": 15,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "katze",
+        "said": "katze",
+        "transcript": "KatzeKatze.",
+        "code": "Correct"
+       },
+       {
+        "target": "regenschirm",
+        "said": "regenschirm",
+        "transcript": "Regenschirm,",
+        "code": "Correct"
+       },
+       {
+        "target": "anker",
+        "said": "anker",
+        "transcript": "Anka,",
+        "code": "Formal"
+       },
+       {
+        "target": "kessel",
+        "said": "kessel",
+        "transcript": "Fessel",
+        "code": "Formal"
+       },
+       {
+        "target": "leiter",
+        "said": "leiter",
+        "transcript": "Leiter,",
+        "code": "Correct"
+       },
+       {
+        "target": "bank",
+        "said": "bank",
+        "transcript": "Bank.Bank,",
+        "code": "Correct"
+       },
+       {
+        "target": "handschuh",
+        "said": "handschuh",
+        "transcript": "Handschuh.",
+        "code": "Correct"
+       },
+       {
+        "target": "löffel",
+        "said": "löffel",
+        "transcript": "Löffel,",
+        "code": "Correct"
+       },
+       {
+        "target": "karotte",
+        "said": "karotte",
+        "transcript": "Karotte.",
+        "code": "Correct"
+       },
+       {
+        "target": "fahrrad",
+        "said": "fahrrad",
+        "transcript": "Fahrrad.",
+        "code": "Correct"
+       },
+       {
+        "target": "schere",
+        "said": "schere",
+        "transcript": "Schere,Schere,",
+        "code": "Correct"
+       },
+       {
+        "target": "kerze",
+        "said": "kerze",
+        "transcript": "Herze,",
+        "code": "Formal"
+       },
+       {
+        "target": "hubschrauber",
+        "said": "hubschrauber",
+        "transcript": "Hubschrauber.",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas.",
+        "code": "Correct"
+       },
+       {
+        "target": "schnecke",
+        "said": "schnecke",
+        "transcript": "Schnecke.",
+        "code": "Correct"
+       },
+       {
+        "target": "säge",
+        "said": "säge",
+        "transcript": "Säge.",
+        "code": "Correct"
+       },
+       {
+        "target": "kaktus",
+        "said": "kaktus",
+        "transcript": "Kaktus",
+        "code": "Correct"
+       },
+       {
+        "target": "pfeife",
+        "said": "pfeife",
+        "transcript": "Pfeife.Pfeife.",
+        "code": "Correct"
+       },
+       {
+        "target": "harfe",
+        "said": "harfe",
+        "transcript": "Hafe Hafe,",
+        "code": "Nonword"
+       },
+       {
+        "target": "iglu",
+        "said": "iglu",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "in a short sentence (Das ist eine Katze)",
+     "runs": [
+      {
+       "run": "de_frame",
+       "voice": "Anna (de-DE)",
+       "correct": 20,
+       "of": 20,
+       "correct_at_run": 20,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "katze",
+         "said": "Das ist eine Katze.",
+         "transcript": "DasDas ist eine Katze.",
+         "code": "Correct"
+        },
+        {
+         "target": "regenschirm",
+         "said": "Das ist ein Regenschirm.",
+         "transcript": "Das ist ein Regenschirm.",
+         "code": "Correct"
+        },
+        {
+         "target": "anker",
+         "said": "Das ist ein Anker.",
+         "transcript": "Das ist ein Anker.",
+         "code": "Correct"
+        },
+        {
+         "target": "kessel",
+         "said": "Das ist ein Kessel.",
+         "transcript": "Das ist ein Kessel.",
+         "code": "Correct"
+        },
+        {
+         "target": "leiter",
+         "said": "Das ist eine Leiter.",
+         "transcript": "Das ist eine Leiter.",
+         "code": "Correct"
+        },
+        {
+         "target": "bank",
+         "said": "Das ist eine Bank.",
+         "transcript": "Das ist ist eine Bank.",
+         "code": "Correct"
+        },
+        {
+         "target": "handschuh",
+         "said": "Das ist ein Handschuh.",
+         "transcript": "DasDas ist ein Handschuh.",
+         "code": "Correct"
+        },
+        {
+         "target": "löffel",
+         "said": "Das ist ein Löffel.",
+         "transcript": "DasDas ist ein Löffel.",
+         "code": "Correct"
+        },
+        {
+         "target": "karotte",
+         "said": "Das ist eine Karotte.",
+         "transcript": "Das ist eine Karotte.",
+         "code": "Correct"
+        },
+        {
+         "target": "fahrrad",
+         "said": "Das ist ein Fahrrad.",
+         "transcript": "Das istDas ist ein Fahrrad.",
+         "code": "Correct"
+        },
+        {
+         "target": "schere",
+         "said": "Das ist eine Schere.",
+         "transcript": "Das ist ist eine Schere.",
+         "code": "Correct"
+        },
+        {
+         "target": "kerze",
+         "said": "Das ist eine Kerze.",
+         "transcript": "Das ist eine Kerze.",
+         "code": "Correct"
+        },
+        {
+         "target": "hubschrauber",
+         "said": "Das ist ein Hubschrauber.",
+         "transcript": "Das ist ein Hubschrauber.",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "Das ist eine Ananas.",
+         "transcript": "DasDas ist eine Ananas.",
+         "code": "Correct"
+        },
+        {
+         "target": "schnecke",
+         "said": "Das ist eine Schnecke.",
+         "transcript": "Das ist eine Schnecke.",
+         "code": "Correct"
+        },
+        {
+         "target": "säge",
+         "said": "Das ist eine Säge.",
+         "transcript": "Das ist eine Säge.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktus",
+         "said": "Das ist ein Kaktus.",
+         "transcript": "Das ist ein Kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "pfeife",
+         "said": "Das ist eine Pfeife.",
+         "transcript": "Das ist eine Pfeife.",
+         "code": "Correct"
+        },
+        {
+         "target": "harfe",
+         "said": "Das ist eine Harfe.",
+         "transcript": "Das ist eine Harfe.",
+         "code": "Correct"
+        },
+        {
+         "target": "iglu",
+         "said": "Das ist ein Iglu.",
+         "transcript": "Das ist ein Iglu.",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "de_frame_r2",
+       "voice": "Anna (de-DE)",
+       "correct": 19,
+       "of": 20,
+       "correct_at_run": 19,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "katze",
+         "said": "Das ist eine Katze.",
+         "transcript": "Das istDas ist eine Katze.",
+         "code": "Correct"
+        },
+        {
+         "target": "regenschirm",
+         "said": "Das ist ein Regenschirm.",
+         "transcript": "Das ist ein Regenschirm.",
+         "code": "Correct"
+        },
+        {
+         "target": "anker",
+         "said": "Das ist ein Anker.",
+         "transcript": "Das ist ein Anker",
+         "code": "Correct"
+        },
+        {
+         "target": "kessel",
+         "said": "Das ist ein Kessel.",
+         "transcript": "Das ist ein Kessel.",
+         "code": "Correct"
+        },
+        {
+         "target": "leiter",
+         "said": "Das ist eine Leiter.",
+         "transcript": "Das ist eine Leiter.",
+         "code": "Correct"
+        },
+        {
+         "target": "bank",
+         "said": "Das ist eine Bank.",
+         "transcript": "Das ist eine Bank.",
+         "code": "Correct"
+        },
+        {
+         "target": "handschuh",
+         "said": "Das ist ein Handschuh.",
+         "transcript": "Das ist ein Handschuh.",
+         "code": "Correct"
+        },
+        {
+         "target": "löffel",
+         "said": "Das ist ein Löffel.",
+         "transcript": "Das istDas ist ein Löffel.",
+         "code": "Correct"
+        },
+        {
+         "target": "karotte",
+         "said": "Das ist eine Karotte.",
+         "transcript": "Das ist ist eine Karotte.",
+         "code": "Correct"
+        },
+        {
+         "target": "fahrrad",
+         "said": "Das ist ein Fahrrad.",
+         "transcript": "Das istDas ist ein Fahrrad.",
+         "code": "Correct"
+        },
+        {
+         "target": "schere",
+         "said": "Das ist eine Schere.",
+         "transcript": "Das ist eine Schere.",
+         "code": "Correct"
+        },
+        {
+         "target": "kerze",
+         "said": "Das ist eine Kerze.",
+         "transcript": "DasDas ist eine Kerze.",
+         "code": "Correct"
+        },
+        {
+         "target": "hubschrauber",
+         "said": "Das ist ein Hubschrauber.",
+         "transcript": "Das ist ist ein Hubschrauber.",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "Das ist eine Ananas.",
+         "transcript": "Das ist eine Ananas.",
+         "code": "Correct"
+        },
+        {
+         "target": "schnecke",
+         "said": "Das ist eine Schnecke.",
+         "transcript": "Das ist ist eine Schnecke.",
+         "code": "Correct"
+        },
+        {
+         "target": "säge",
+         "said": "Das ist eine Säge.",
+         "transcript": "Das ist eine Säge.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktus",
+         "said": "Das ist ein Kaktus.",
+         "transcript": "Das istDas ist ein Kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "pfeife",
+         "said": "Das ist eine Pfeife.",
+         "transcript": "Das ist eine Pfeife.",
+         "code": "Correct"
+        },
+        {
+         "target": "harfe",
+         "said": "Das ist eine Harfe.",
+         "transcript": "Das ist eine Hafe.",
+         "code": "Nonword"
+        },
+        {
+         "target": "iglu",
+         "said": "Das ist ein Iglu.",
+         "transcript": "Das ist ein Iglu.",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {
+     "de_article": {
+      "voice": "Anna (de-DE)",
+      "said": "per-word phrases",
+      "correct": 17,
+      "of": 20,
+      "empty_transcripts": 0
+     },
+     "de_article_r2": {
+      "voice": "Anna (de-DE)",
+      "said": "per-word phrases",
+      "correct": 17,
+      "of": 20,
+      "empty_transcripts": 0
+     }
+    }
+   },
+   "notes": [
+    "Anna is the only natural German voice on macOS, so both runs use her.",
+    "The kettle picture was named Teekessel. German compounds put the head last, so a compound ending in the name counts (Teekessel for Kessel).",
+    "Bare words and der/die/das failed on the same items: Kerze -> Herze/Karte, Harfe -> Hafe, Iglu -> Eglu or nothing. The frame fixed all of them in the first run."
+   ]
+  },
+  {
+   "code": "it",
+   "name": "Italian",
+   "status": "works with review",
+   "summary": "Works with review: 18/20 and 17/20 with the article. bollitore comes back as 'bolitore' (one l) and arpa as 'Art'/'arta'.",
+   "picture_set": {
+    "set": "demo_it",
+    "pictures_from": "demo_en",
+    "words": [
+     "gatto",
+     "ombrello",
+     "ancora: anchor",
+     "bollitore",
+     "scala: ladder",
+     "panchina",
+     "guanto",
+     "cucchiaio",
+     "carota",
+     "bicicletta",
+     "forbici",
+     "candela",
+     "elicottero",
+     "ananas",
+     "lumaca",
+     "sega: saw",
+     "cactus",
+     "fischietto",
+     "arpa",
+     "igloo"
+    ],
+    "kept": 19,
+    "of": 20,
+    "review": [
+     "bollitore"
+    ],
+    "ambiguity_flags": {
+     "scala": [
+      "staircase",
+      "scale"
+     ],
+     "candela": [
+      "spark plug"
+     ]
+    },
+    "named_by_muse_spark": 19,
+    "candidates_named_by_muse_spark": 19,
+    "candidates": 21,
+    "muse_spark_other_names": [
+     {
+      "word": "bollitore",
+      "named": "teiera",
+      "code": "Mixed"
+     },
+     {
+      "word": "bollitore",
+      "named": "teiera",
+      "code": "Mixed"
+     }
+    ],
+    "alternates": {
+     "igloo": [
+      "iglu"
+     ]
+    },
+    "first_pass": {
+     "kept": 19,
+     "named": 19
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "it_base",
+      "voice": "Alice (it-IT)",
+      "correct": 17,
+      "of": 20,
+      "correct_at_run": 16,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "gatto",
+        "said": "gatto",
+        "transcript": "gatto",
+        "code": "Correct"
+       },
+       {
+        "target": "ombrello",
+        "said": "ombrello",
+        "transcript": "ombrello.",
+        "code": "Correct"
+       },
+       {
+        "target": "ancora",
+        "said": "ancora",
+        "transcript": "Ancora.",
+        "code": "Correct"
+       },
+       {
+        "target": "bollitore",
+        "said": "bollitore",
+        "transcript": "bolitore",
+        "code": "Nonword"
+       },
+       {
+        "target": "scala",
+        "said": "scala",
+        "transcript": "scala",
+        "code": "Correct"
+       },
+       {
+        "target": "panchina",
+        "said": "panchina",
+        "transcript": "panchina.",
+        "code": "Correct"
+       },
+       {
+        "target": "guanto",
+        "said": "guanto",
+        "transcript": "Guanto,",
+        "code": "Correct"
+       },
+       {
+        "target": "cucchiaio",
+        "said": "cucchiaio",
+        "transcript": "cucchiaio",
+        "code": "Correct"
+       },
+       {
+        "target": "carota",
+        "said": "carota",
+        "transcript": "Carota.",
+        "code": "Correct"
+       },
+       {
+        "target": "bicicletta",
+        "said": "bicicletta",
+        "transcript": "bicicletta.",
+        "code": "Correct"
+       },
+       {
+        "target": "forbici",
+        "said": "forbici",
+        "transcript": "forbici,",
+        "code": "Correct"
+       },
+       {
+        "target": "candela",
+        "said": "candela",
+        "transcript": "Candela.",
+        "code": "Correct"
+       },
+       {
+        "target": "elicottero",
+        "said": "elicottero",
+        "transcript": "elicottero",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas",
+        "code": "Correct"
+       },
+       {
+        "target": "lumaca",
+        "said": "lumaca",
+        "transcript": "L'umaca.",
+        "code": "Correct"
+       },
+       {
+        "target": "sega",
+        "said": "sega",
+        "transcript": "Sega.",
+        "code": "Correct"
+       },
+       {
+        "target": "cactus",
+        "said": "cactus",
+        "transcript": "cactus",
+        "code": "Correct"
+       },
+       {
+        "target": "fischietto",
+        "said": "fischietto",
+        "transcript": "fischietto",
+        "code": "Correct"
+       },
+       {
+        "target": "arpa",
+        "said": "arpa",
+        "transcript": "Art.",
+        "code": "Formal"
+       },
+       {
+        "target": "igloo",
+        "said": "igloo",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     },
+     {
+      "run": "it_base_r2",
+      "voice": "Alice (it-IT)",
+      "correct": 17,
+      "of": 20,
+      "correct_at_run": 17,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "gatto",
+        "said": "gatto",
+        "transcript": "Gatto,atto",
+        "code": "Correct"
+       },
+       {
+        "target": "ombrello",
+        "said": "ombrello",
+        "transcript": "ombrello.",
+        "code": "Correct"
+       },
+       {
+        "target": "ancora",
+        "said": "ancora",
+        "transcript": "Ancora.ancora,",
+        "code": "Correct"
+       },
+       {
+        "target": "bollitore",
+        "said": "bollitore",
+        "transcript": "Bolitore.",
+        "code": "Nonword"
+       },
+       {
+        "target": "scala",
+        "said": "scala",
+        "transcript": "scala",
+        "code": "Correct"
+       },
+       {
+        "target": "panchina",
+        "said": "panchina",
+        "transcript": "panchinaPanchina.",
+        "code": "Correct"
+       },
+       {
+        "target": "guanto",
+        "said": "guanto",
+        "transcript": "Guanto.",
+        "code": "Correct"
+       },
+       {
+        "target": "cucchiaio",
+        "said": "cucchiaio",
+        "transcript": "cucchiaio",
+        "code": "Correct"
+       },
+       {
+        "target": "carota",
+        "said": "carota",
+        "transcript": "Carota.",
+        "code": "Correct"
+       },
+       {
+        "target": "bicicletta",
+        "said": "bicicletta",
+        "transcript": "Bicicletta,",
+        "code": "Correct"
+       },
+       {
+        "target": "forbici",
+        "said": "forbici",
+        "transcript": "forbici.",
+        "code": "Correct"
+       },
+       {
+        "target": "candela",
+        "said": "candela",
+        "transcript": "Candela.",
+        "code": "Correct"
+       },
+       {
+        "target": "elicottero",
+        "said": "elicottero",
+        "transcript": "elicottero",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "ananas",
+        "code": "Correct"
+       },
+       {
+        "target": "lumaca",
+        "said": "lumaca",
+        "transcript": "L'umaca.",
+        "code": "Correct"
+       },
+       {
+        "target": "sega",
+        "said": "sega",
+        "transcript": "Sega.",
+        "code": "Correct"
+       },
+       {
+        "target": "cactus",
+        "said": "cactus",
+        "transcript": "Cactus.",
+        "code": "Correct"
+       },
+       {
+        "target": "fischietto",
+        "said": "fischietto",
+        "transcript": "Fischietto",
+        "code": "Correct"
+       },
+       {
+        "target": "arpa",
+        "said": "arpa",
+        "transcript": "Art.",
+        "code": "Formal"
+       },
+       {
+        "target": "igloo",
+        "said": "igloo",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "with the article (un gatto, un'arpa)",
+     "runs": [
+      {
+       "run": "it_article",
+       "voice": "Alice (it-IT)",
+       "correct": 18,
+       "of": 20,
+       "correct_at_run": 18,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "gatto",
+         "said": "un gatto",
+         "transcript": "Un gatto.",
+         "code": "Correct"
+        },
+        {
+         "target": "ombrello",
+         "said": "un ombrello",
+         "transcript": "Un ombrello.",
+         "code": "Correct"
+        },
+        {
+         "target": "ancora",
+         "said": "un'ancora",
+         "transcript": "un'ancora",
+         "code": "Correct"
+        },
+        {
+         "target": "bollitore",
+         "said": "un bollitore",
+         "transcript": "Un bolitore.",
+         "code": "Nonword"
+        },
+        {
+         "target": "scala",
+         "said": "una scala",
+         "transcript": "Una scala.",
+         "code": "Correct"
+        },
+        {
+         "target": "panchina",
+         "said": "una panchina",
+         "transcript": "Una panchina.",
+         "code": "Correct"
+        },
+        {
+         "target": "guanto",
+         "said": "un guanto",
+         "transcript": "Un guanto.",
+         "code": "Correct"
+        },
+        {
+         "target": "cucchiaio",
+         "said": "un cucchiaio",
+         "transcript": "un cucchiaio",
+         "code": "Correct"
+        },
+        {
+         "target": "carota",
+         "said": "una carota",
+         "transcript": "Una carota.",
+         "code": "Correct"
+        },
+        {
+         "target": "bicicletta",
+         "said": "una bicicletta",
+         "transcript": "Una bicicletta.",
+         "code": "Correct"
+        },
+        {
+         "target": "forbici",
+         "said": "delle forbici",
+         "transcript": "delle forbici.",
+         "code": "Correct"
+        },
+        {
+         "target": "candela",
+         "said": "una candela",
+         "transcript": "Una candela.",
+         "code": "Correct"
+        },
+        {
+         "target": "elicottero",
+         "said": "un elicottero",
+         "transcript": "Un elicottero.",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "un ananas",
+         "transcript": "un ananas",
+         "code": "Correct"
+        },
+        {
+         "target": "lumaca",
+         "said": "una lumaca",
+         "transcript": "Una lumaca.",
+         "code": "Correct"
+        },
+        {
+         "target": "sega",
+         "said": "una sega",
+         "transcript": "Una sega.",
+         "code": "Correct"
+        },
+        {
+         "target": "cactus",
+         "said": "un cactus",
+         "transcript": "unUn cactus.",
+         "code": "Correct"
+        },
+        {
+         "target": "fischietto",
+         "said": "un fischietto",
+         "transcript": "Un fischietto.",
+         "code": "Correct"
+        },
+        {
+         "target": "arpa",
+         "said": "un'arpa",
+         "transcript": "Un'arta.",
+         "code": "Formal"
+        },
+        {
+         "target": "igloo",
+         "said": "un igloo",
+         "transcript": "Un igloo.",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "it_article_r2",
+       "voice": "Alice (it-IT)",
+       "correct": 17,
+       "of": 20,
+       "correct_at_run": 17,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "gatto",
+         "said": "un gatto",
+         "transcript": "un gatto",
+         "code": "Correct"
+        },
+        {
+         "target": "ombrello",
+         "said": "un ombrello",
+         "transcript": "un ombrello,",
+         "code": "Correct"
+        },
+        {
+         "target": "ancora",
+         "said": "un'ancora",
+         "transcript": "un'ancora",
+         "code": "Correct"
+        },
+        {
+         "target": "bollitore",
+         "said": "un bollitore",
+         "transcript": "un bolitore.",
+         "code": "Nonword"
+        },
+        {
+         "target": "scala",
+         "said": "una scala",
+         "transcript": "una scala",
+         "code": "Correct"
+        },
+        {
+         "target": "panchina",
+         "said": "una panchina",
+         "transcript": "Una panchina.",
+         "code": "Correct"
+        },
+        {
+         "target": "guanto",
+         "said": "un guanto",
+         "transcript": "Un guanto.",
+         "code": "Correct"
+        },
+        {
+         "target": "cucchiaio",
+         "said": "un cucchiaio",
+         "transcript": "Un cucchiaio.",
+         "code": "Correct"
+        },
+        {
+         "target": "carota",
+         "said": "una carota",
+         "transcript": "una carota",
+         "code": "Correct"
+        },
+        {
+         "target": "bicicletta",
+         "said": "una bicicletta",
+         "transcript": "una bicicletta",
+         "code": "Correct"
+        },
+        {
+         "target": "forbici",
+         "said": "delle forbici",
+         "transcript": "delle forbici.",
+         "code": "Correct"
+        },
+        {
+         "target": "candela",
+         "said": "una candela",
+         "transcript": "Una candela,",
+         "code": "Correct"
+        },
+        {
+         "target": "elicottero",
+         "said": "un elicottero",
+         "transcript": "un elicottero,",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "un ananas",
+         "transcript": "un ananas",
+         "code": "Correct"
+        },
+        {
+         "target": "lumaca",
+         "said": "una lumaca",
+         "transcript": "una lumaca,",
+         "code": "Correct"
+        },
+        {
+         "target": "sega",
+         "said": "una sega",
+         "transcript": "Una sega.",
+         "code": "Correct"
+        },
+        {
+         "target": "cactus",
+         "said": "un cactus",
+         "transcript": "un cactus.",
+         "code": "Correct"
+        },
+        {
+         "target": "fischietto",
+         "said": "un fischietto",
+         "transcript": "unun fischietto.",
+         "code": "Correct"
+        },
+        {
+         "target": "arpa",
+         "said": "un'arpa",
+         "transcript": "un'arta.",
+         "code": "Formal"
+        },
+        {
+         "target": "igloo",
+         "said": "un igloo",
+         "transcript": "unigro",
+         "code": "Nonword"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Alice is the only natural Italian voice on macOS, so both runs use her.",
+    "Both kettle pictures were named teiera (teapot), so bollitore went to review.",
+    "Italian elides like French: l'ancora and un'arpa are split before matching; an apostrophe the transcript put inside the name (L'umaca) is ignored."
+   ]
+  },
+  {
+   "code": "nl",
+   "name": "Dutch",
+   "status": "works with review",
+   "summary": "Works with review: 16/20 with both voices with een. Long and short vowels get confused: lepel -> label, kaars -> kaas, zaag -> zag.",
+   "picture_set": {
+    "set": "demo_nl",
+    "pictures_from": "demo_en",
+    "words": [
+     "kat",
+     "paraplu",
+     "anker",
+     "ketel: kettle",
+     "ladder",
+     "bank: bench",
+     "handschoen",
+     "lepel",
+     "wortel: carrot",
+     "fiets",
+     "schaar",
+     "kaars",
+     "helikopter",
+     "ananas",
+     "slak",
+     "zaag",
+     "cactus",
+     "fluitje: whistle",
+     "harp",
+     "iglo"
+    ],
+    "kept": 20,
+    "of": 20,
+    "review": [],
+    "ambiguity_flags": {
+     "ketel": [
+      "boiler",
+      "cauldron"
+     ],
+     "bank": [
+      "sofa",
+      "couch",
+      "financial institution"
+     ],
+     "wortel": [
+      "root"
+     ],
+     "slak": [
+      "slug"
+     ],
+     "fluitje": [
+      "small flute"
+     ]
+    },
+    "named_by_muse_spark": 20,
+    "candidates_named_by_muse_spark": 20,
+    "candidates": 21,
+    "muse_spark_other_names": [
+     {
+      "word": "ladder",
+      "named": "trap",
+      "code": "Mixed"
+     }
+    ],
+    "alternates": {
+     "helikopter": [
+      "helicopter"
+     ],
+     "cactus": [
+      "kaktus"
+     ],
+     "iglo": [
+      "igloo"
+     ]
+    },
+    "first_pass": {
+     "kept": 19,
+     "named": 19
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "nl_base",
+      "voice": "Xander (nl-NL)",
+      "correct": 14,
+      "of": 20,
+      "correct_at_run": 14,
+      "empty_transcripts": 0,
+      "rows": [
+       {
+        "target": "kat",
+        "said": "kat",
+        "transcript": "God.",
+        "code": "Unrelated"
+       },
+       {
+        "target": "paraplu",
+        "said": "paraplu",
+        "transcript": "Paraplu.",
+        "code": "Correct"
+       },
+       {
+        "target": "anker",
+        "said": "anker",
+        "transcript": "anker",
+        "code": "Correct"
+       },
+       {
+        "target": "ketel",
+        "said": "ketel",
+        "transcript": "ketel",
+        "code": "Correct"
+       },
+       {
+        "target": "ladder",
+        "said": "ladder",
+        "transcript": "ladder.",
+        "code": "Correct"
+       },
+       {
+        "target": "bank",
+        "said": "bank",
+        "transcript": "Bank.",
+        "code": "Correct"
+       },
+       {
+        "target": "handschoen",
+        "said": "handschoen",
+        "transcript": "Hanschoen.",
+        "code": "Nonword"
+       },
+       {
+        "target": "lepel",
+        "said": "lepel",
+        "transcript": "Label.",
+        "code": "Formal"
+       },
+       {
+        "target": "wortel",
+        "said": "wortel",
+        "transcript": "Wortel",
+        "code": "Correct"
+       },
+       {
+        "target": "fiets",
+        "said": "fiets",
+        "transcript": "Fiets,",
+        "code": "Correct"
+       },
+       {
+        "target": "schaar",
+        "said": "schaar",
+        "transcript": "Schaar.",
+        "code": "Correct"
+       },
+       {
+        "target": "kaars",
+        "said": "kaars",
+        "transcript": "Kras.",
+        "code": "Formal"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "Helikopter",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas",
+        "code": "Correct"
+       },
+       {
+        "target": "slak",
+        "said": "slak",
+        "transcript": "slak,",
+        "code": "Correct"
+       },
+       {
+        "target": "zaag",
+        "said": "zaag",
+        "transcript": "zag,",
+        "code": "Formal"
+       },
+       {
+        "target": "cactus",
+        "said": "cactus",
+        "transcript": "Kaktus.",
+        "code": "Correct"
+       },
+       {
+        "target": "fluitje",
+        "said": "fluitje",
+        "transcript": "Fluitje.",
+        "code": "Correct"
+       },
+       {
+        "target": "harp",
+        "said": "harp",
+        "transcript": "Hey.",
+        "code": "Formal"
+       },
+       {
+        "target": "iglo",
+        "said": "iglo",
+        "transcript": "Iglo,",
+        "code": "Correct"
+       }
+      ]
+     },
+     {
+      "run": "nl_base_ellen",
+      "voice": "Ellen (nl-BE)",
+      "correct": 13,
+      "of": 20,
+      "correct_at_run": 13,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "kat",
+        "said": "kat",
+        "transcript": "Kat.",
+        "code": "Correct"
+       },
+       {
+        "target": "paraplu",
+        "said": "paraplu",
+        "transcript": "paraplu",
+        "code": "Correct"
+       },
+       {
+        "target": "anker",
+        "said": "anker",
+        "transcript": "anker",
+        "code": "Correct"
+       },
+       {
+        "target": "ketel",
+        "said": "ketel",
+        "transcript": "Ketel.",
+        "code": "Correct"
+       },
+       {
+        "target": "ladder",
+        "said": "ladder",
+        "transcript": "ladder",
+        "code": "Correct"
+       },
+       {
+        "target": "bank",
+        "said": "bank",
+        "transcript": "Bank",
+        "code": "Correct"
+       },
+       {
+        "target": "handschoen",
+        "said": "handschoen",
+        "transcript": "handschoen",
+        "code": "Correct"
+       },
+       {
+        "target": "lepel",
+        "said": "lepel",
+        "transcript": "Label.",
+        "code": "Formal"
+       },
+       {
+        "target": "wortel",
+        "said": "wortel",
+        "transcript": "wortel",
+        "code": "Correct"
+       },
+       {
+        "target": "fiets",
+        "said": "fiets",
+        "transcript": "Fiets.",
+        "code": "Correct"
+       },
+       {
+        "target": "schaar",
+        "said": "schaar",
+        "transcript": "Schar",
+        "code": "Formal"
+       },
+       {
+        "target": "kaars",
+        "said": "kaars",
+        "transcript": "Kaas.",
+        "code": "Formal"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "helikopter",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas.",
+        "code": "Correct"
+       },
+       {
+        "target": "slak",
+        "said": "slak",
+        "transcript": "slik",
+        "code": "Formal"
+       },
+       {
+        "target": "zaag",
+        "said": "zaag",
+        "transcript": "zag.",
+        "code": "Formal"
+       },
+       {
+        "target": "cactus",
+        "said": "cactus",
+        "transcript": "cactus",
+        "code": "Correct"
+       },
+       {
+        "target": "fluitje",
+        "said": "fluitje",
+        "transcript": "Fluitje.",
+        "code": "Correct"
+       },
+       {
+        "target": "harp",
+        "said": "harp",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "iglo",
+        "said": "iglo",
+        "transcript": "Eglo.",
+        "code": "Nonword"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "with the article (een kat)",
+     "runs": [
+      {
+       "run": "nl_article",
+       "voice": "Xander (nl-NL)",
+       "correct": 16,
+       "of": 20,
+       "correct_at_run": 16,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kat",
+         "said": "een kat",
+         "transcript": "een kat.",
+         "code": "Correct"
+        },
+        {
+         "target": "paraplu",
+         "said": "een paraplu",
+         "transcript": "een paraplu.",
+         "code": "Correct"
+        },
+        {
+         "target": "anker",
+         "said": "een anker",
+         "transcript": "een anker.",
+         "code": "Correct"
+        },
+        {
+         "target": "ketel",
+         "said": "een ketel",
+         "transcript": "een ketel,",
+         "code": "Correct"
+        },
+        {
+         "target": "ladder",
+         "said": "een ladder",
+         "transcript": "een ladder een ladder,",
+         "code": "Correct"
+        },
+        {
+         "target": "bank",
+         "said": "een bank",
+         "transcript": "Een bank.",
+         "code": "Correct"
+        },
+        {
+         "target": "handschoen",
+         "said": "een handschoen",
+         "transcript": "een handschoen.",
+         "code": "Correct"
+        },
+        {
+         "target": "lepel",
+         "said": "een lepel",
+         "transcript": "een label",
+         "code": "Formal"
+        },
+        {
+         "target": "wortel",
+         "said": "een wortel",
+         "transcript": "een wortel,",
+         "code": "Correct"
+        },
+        {
+         "target": "fiets",
+         "said": "een fiets",
+         "transcript": "een fiets.",
+         "code": "Correct"
+        },
+        {
+         "target": "schaar",
+         "said": "een schaar",
+         "transcript": "een schaar.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaars",
+         "said": "een kaars",
+         "transcript": "een kaas",
+         "code": "Formal"
+        },
+        {
+         "target": "helikopter",
+         "said": "een helikopter",
+         "transcript": "een helikopter,",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "een ananas",
+         "transcript": "een ananas.",
+         "code": "Correct"
+        },
+        {
+         "target": "slak",
+         "said": "een slak",
+         "transcript": "een slak.",
+         "code": "Correct"
+        },
+        {
+         "target": "zaag",
+         "said": "een zaag",
+         "transcript": "een zag",
+         "code": "Formal"
+        },
+        {
+         "target": "cactus",
+         "said": "een cactus",
+         "transcript": "Een kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "fluitje",
+         "said": "een fluitje",
+         "transcript": "een fluitje,",
+         "code": "Correct"
+        },
+        {
+         "target": "harp",
+         "said": "een harp",
+         "transcript": "Z'n hart.",
+         "code": "Formal"
+        },
+        {
+         "target": "iglo",
+         "said": "een iglo",
+         "transcript": "een iglo",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "nl_article_ellen",
+       "voice": "Ellen (nl-BE)",
+       "correct": 16,
+       "of": 20,
+       "correct_at_run": 16,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kat",
+         "said": "een kat",
+         "transcript": "een kat.",
+         "code": "Correct"
+        },
+        {
+         "target": "paraplu",
+         "said": "een paraplu",
+         "transcript": "Een een paraplu,",
+         "code": "Correct"
+        },
+        {
+         "target": "anker",
+         "said": "een anker",
+         "transcript": "een anker",
+         "code": "Correct"
+        },
+        {
+         "target": "ketel",
+         "said": "een ketel",
+         "transcript": "een ketel",
+         "code": "Correct"
+        },
+        {
+         "target": "ladder",
+         "said": "een ladder",
+         "transcript": "een ladder,",
+         "code": "Correct"
+        },
+        {
+         "target": "bank",
+         "said": "een bank",
+         "transcript": "een bank",
+         "code": "Correct"
+        },
+        {
+         "target": "handschoen",
+         "said": "een handschoen",
+         "transcript": "een handschoen.",
+         "code": "Correct"
+        },
+        {
+         "target": "lepel",
+         "said": "een lepel",
+         "transcript": "een label",
+         "code": "Formal"
+        },
+        {
+         "target": "wortel",
+         "said": "een wortel",
+         "transcript": "een wortel.",
+         "code": "Correct"
+        },
+        {
+         "target": "fiets",
+         "said": "een fiets",
+         "transcript": "een fiets",
+         "code": "Correct"
+        },
+        {
+         "target": "schaar",
+         "said": "een schaar",
+         "transcript": "Een schaar.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaars",
+         "said": "een kaars",
+         "transcript": "een Een kaars,",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "een helikopter",
+         "transcript": "een helikopter.",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "een ananas",
+         "transcript": "een ananas",
+         "code": "Correct"
+        },
+        {
+         "target": "slak",
+         "said": "een slak",
+         "transcript": "Een slok.",
+         "code": "Formal"
+        },
+        {
+         "target": "zaag",
+         "said": "een zaag",
+         "transcript": "een zag",
+         "code": "Formal"
+        },
+        {
+         "target": "cactus",
+         "said": "een cactus",
+         "transcript": "Een een cactus.",
+         "code": "Correct"
+        },
+        {
+         "target": "fluitje",
+         "said": "een fluitje",
+         "transcript": "een fleutje.",
+         "code": "Nonword"
+        },
+        {
+         "target": "harp",
+         "said": "een harp",
+         "transcript": "een harp.",
+         "code": "Correct"
+        },
+        {
+         "target": "iglo",
+         "said": "een iglo",
+         "transcript": "Een iglo.",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Xander (Netherlands) and Ellen (Belgium).",
+    "The stepladder was named trap (stairs) and trapladder; compounds ending in the name count.",
+    "Dutch diminutives (bankje, katje) count as the name."
+   ]
+  },
+  {
+   "code": "ja",
+   "name": "Japanese",
+   "status": "experimental",
+   "summary": "Experimental: 16/20 and 15/20 with です, 13 and 15 bare. Kanji homophones (錨 -> 怒り, やかん -> 夜間) are matched by reading, with Muse Spark reading the transcript aloud in hiragana.",
+   "picture_set": {
+    "set": "demo_ja",
+    "pictures_from": "demo_en",
+    "words": [
+     "猫",
+     "傘",
+     "錨: anchor",
+     "やかん: kettle",
+     "はしご: ladder",
+     "ベンチ",
+     "手袋",
+     "スプーン",
+     "にんじん",
+     "自転車",
+     "はさみ",
+     "ろうそく",
+     "ヘリコプター",
+     "パイナップル",
+     "カタツムリ",
+     "のこぎり",
+     "サボテン",
+     "笛: whistle",
+     "ハープ",
+     "イグルー"
+    ],
+    "kept": 19,
+    "of": 20,
+    "review": [
+     "はしご"
+    ],
+    "ambiguity_flags": {
+     "はさみ": [
+      "claw",
+      "pincer"
+     ],
+     "笛": [
+      "flute",
+      "pipe",
+      "recorder"
+     ]
+    },
+    "named_by_muse_spark": 19,
+    "candidates_named_by_muse_spark": 19,
+    "candidates": 21,
+    "muse_spark_other_names": [
+     {
+      "word": "はしご",
+      "named": "脚立",
+      "code": "Semantic"
+     },
+     {
+      "word": "はしご",
+      "named": "脚立",
+      "code": "Semantic"
+     }
+    ],
+    "alternates": {
+     "猫": [
+      "ねこ",
+      "ネコ"
+     ],
+     "傘": [
+      "かさ",
+      "カサ"
+     ],
+     "錨": [
+      "いかり",
+      "イカリ"
+     ],
+     "やかん": [
+      "ヤカン",
+      "薬缶",
+      "薬罐"
+     ],
+     "はしご": [
+      "ハシゴ",
+      "梯子"
+     ],
+     "ベンチ": [
+      "bench"
+     ],
+     "手袋": [
+      "てぶくろ",
+      "テブクロ"
+     ],
+     "スプーン": [
+      "spoon"
+     ],
+     "にんじん": [
+      "ニンジン",
+      "人参"
+     ],
+     "自転車": [
+      "じてんしゃ",
+      "ジテンシャ"
+     ],
+     "はさみ": [
+      "ハサミ",
+      "鋏"
+     ],
+     "ろうそく": [
+      "ロウソク",
+      "蝋燭"
+     ],
+     "ヘリコプター": [
+      "helicopter"
+     ],
+     "パイナップル": [
+      "pineapple"
+     ],
+     "カタツムリ": [
+      "かたつむり",
+      "蝸牛"
+     ],
+     "のこぎり": [
+      "ノコギリ",
+      "鋸"
+     ],
+     "サボテン": [
+      "さぼてん",
+      "仙人掌",
+      "cactus"
+     ],
+     "笛": [
+      "ふえ",
+      "フエ"
+     ],
+     "ハープ": [
+      "harp"
+     ],
+     "イグルー": [
+      "igloo"
+     ]
+    },
+    "first_pass": {
+     "kept": 19,
+     "named": 19
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "ja_base",
+      "voice": "Kyoko (ja-JP)",
+      "correct": 13,
+      "of": 20,
+      "correct_at_run": 11,
+      "empty_transcripts": 2,
+      "rows": [
+       {
+        "target": "猫",
+        "said": "猫",
+        "transcript": "でこ。",
+        "code": "Formal"
+       },
+       {
+        "target": "傘",
+        "said": "傘",
+        "transcript": "傘。",
+        "code": "Correct"
+       },
+       {
+        "target": "錨",
+        "said": "錨",
+        "transcript": "怒り。",
+        "code": "Correct"
+       },
+       {
+        "target": "やかん",
+        "said": "やかん",
+        "transcript": "夜間、間。",
+        "code": "Unrelated"
+       },
+       {
+        "target": "はしご",
+        "said": "はしご",
+        "transcript": "はしご。",
+        "code": "Correct"
+       },
+       {
+        "target": "ベンチ",
+        "said": "ベンチ",
+        "transcript": "ベンチ。ベンチ。",
+        "code": "Correct"
+       },
+       {
+        "target": "手袋",
+        "said": "手袋",
+        "transcript": "デ袋",
+        "code": "Formal"
+       },
+       {
+        "target": "スプーン",
+        "said": "スプーン",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "にんじん",
+        "said": "にんじん",
+        "transcript": "人参。",
+        "code": "Correct"
+       },
+       {
+        "target": "自転車",
+        "said": "自転車",
+        "transcript": "自自転車。",
+        "code": "Correct"
+       },
+       {
+        "target": "はさみ",
+        "said": "はさみ",
+        "transcript": "はさみ。",
+        "code": "Correct"
+       },
+       {
+        "target": "ろうそく",
+        "said": "ろうそく",
+        "transcript": "ろうそく、",
+        "code": "Correct"
+       },
+       {
+        "target": "ヘリコプター",
+        "said": "ヘリコプター",
+        "transcript": "ヘリコプター。",
+        "code": "Correct"
+       },
+       {
+        "target": "パイナップル",
+        "said": "パイナップル",
+        "transcript": "バイナップル。",
+        "code": "Description"
+       },
+       {
+        "target": "カタツムリ",
+        "said": "カタツムリ",
+        "transcript": "片つむり。",
+        "code": "Correct"
+       },
+       {
+        "target": "のこぎり",
+        "said": "のこぎり",
+        "transcript": "のこぎのこぎり。",
+        "code": "Correct"
+       },
+       {
+        "target": "サボテン",
+        "said": "サボテン",
+        "transcript": "サボテン。",
+        "code": "Correct"
+       },
+       {
+        "target": "笛",
+        "said": "笛",
+        "transcript": "笛。",
+        "code": "Correct"
+       },
+       {
+        "target": "ハープ",
+        "said": "ハープ",
+        "transcript": "ラープ。",
+        "code": "Nonword"
+       },
+       {
+        "target": "イグルー",
+        "said": "イグルー",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     },
+     {
+      "run": "ja_base_r2",
+      "voice": "Kyoko (ja-JP)",
+      "correct": 15,
+      "of": 20,
+      "correct_at_run": 15,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "猫",
+        "said": "猫",
+        "transcript": "でこ。",
+        "code": "Formal"
+       },
+       {
+        "target": "傘",
+        "said": "傘",
+        "transcript": "傘。",
+        "code": "Correct"
+       },
+       {
+        "target": "錨",
+        "said": "錨",
+        "transcript": "怒り。",
+        "code": "Correct"
+       },
+       {
+        "target": "やかん",
+        "said": "やかん",
+        "transcript": "夜間。夜間。",
+        "code": "Correct"
+       },
+       {
+        "target": "はしご",
+        "said": "はしご",
+        "transcript": "はしご。",
+        "code": "Correct"
+       },
+       {
+        "target": "ベンチ",
+        "said": "ベンチ",
+        "transcript": "ベンチ。",
+        "code": "Correct"
+       },
+       {
+        "target": "手袋",
+        "said": "手袋",
+        "transcript": "手袋。",
+        "code": "Correct"
+       },
+       {
+        "target": "スプーン",
+        "said": "スプーン",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "にんじん",
+        "said": "にんじん",
+        "transcript": "人参、",
+        "code": "Correct"
+       },
+       {
+        "target": "自転車",
+        "said": "自転車",
+        "transcript": "自自転車。",
+        "code": "Correct"
+       },
+       {
+        "target": "はさみ",
+        "said": "はさみ",
+        "transcript": "ハサミ。",
+        "code": "Correct"
+       },
+       {
+        "target": "ろうそく",
+        "said": "ろうそく",
+        "transcript": "ろうそく。",
+        "code": "Correct"
+       },
+       {
+        "target": "ヘリコプター",
+        "said": "ヘリコプター",
+        "transcript": "ヘリコプター、",
+        "code": "Correct"
+       },
+       {
+        "target": "パイナップル",
+        "said": "パイナップル",
+        "transcript": "バイナップル。",
+        "code": "Description"
+       },
+       {
+        "target": "カタツムリ",
+        "said": "カタツムリ",
+        "transcript": "片つむり。",
+        "code": "Correct"
+       },
+       {
+        "target": "のこぎり",
+        "said": "のこぎり",
+        "transcript": "のこぎり。",
+        "code": "Correct"
+       },
+       {
+        "target": "サボテン",
+        "said": "サボテン",
+        "transcript": "サボテン。",
+        "code": "Correct"
+       },
+       {
+        "target": "笛",
+        "said": "笛",
+        "transcript": "笛。",
+        "code": "Correct"
+       },
+       {
+        "target": "ハープ",
+        "said": "ハープ",
+        "transcript": "ラープ。プ、",
+        "code": "Formal"
+       },
+       {
+        "target": "イグルー",
+        "said": "イグルー",
+        "transcript": "イグル。",
+        "code": "Unrelated"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "with です (猫です)",
+     "runs": [
+      {
+       "run": "ja_desu",
+       "voice": "Kyoko (ja-JP)",
+       "correct": 16,
+       "of": 20,
+       "correct_at_run": 13,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "猫",
+         "said": "猫です。",
+         "transcript": "猫です。",
+         "code": "Correct"
+        },
+        {
+         "target": "傘",
+         "said": "傘です。",
+         "transcript": "傘です。",
+         "code": "Correct"
+        },
+        {
+         "target": "錨",
+         "said": "錨です。",
+         "transcript": "怒りりです。",
+         "code": "Formal"
+        },
+        {
+         "target": "やかん",
+         "said": "やかんです。",
+         "transcript": "夜間です。",
+         "code": "Correct"
+        },
+        {
+         "target": "はしご",
+         "said": "はしごです。",
+         "transcript": "はしごです。",
+         "code": "Correct"
+        },
+        {
+         "target": "ベンチ",
+         "said": "ベンチです。",
+         "transcript": "ベンチンチです。",
+         "code": "Formal"
+        },
+        {
+         "target": "手袋",
+         "said": "手袋です。",
+         "transcript": "手袋です。",
+         "code": "Correct"
+        },
+        {
+         "target": "スプーン",
+         "said": "スプーンです。",
+         "transcript": "スプーンです。",
+         "code": "Correct"
+        },
+        {
+         "target": "にんじん",
+         "said": "にんじんです。",
+         "transcript": "人参です。",
+         "code": "Correct"
+        },
+        {
+         "target": "自転車",
+         "said": "自転車です。",
+         "transcript": "自自転車です。",
+         "code": "Correct"
+        },
+        {
+         "target": "はさみ",
+         "said": "はさみです。",
+         "transcript": "ハサミです。",
+         "code": "Correct"
+        },
+        {
+         "target": "ろうそく",
+         "said": "ろうそくです。",
+         "transcript": "ろう速です。",
+         "code": "Correct"
+        },
+        {
+         "target": "ヘリコプター",
+         "said": "ヘリコプターです。",
+         "transcript": "ヘリコプターです。",
+         "code": "Correct"
+        },
+        {
+         "target": "パイナップル",
+         "said": "パイナップルです。",
+         "transcript": "バイナップルです。",
+         "code": "Description"
+        },
+        {
+         "target": "カタツムリ",
+         "said": "カタツムリです。",
+         "transcript": "片つむりです。",
+         "code": "Correct"
+        },
+        {
+         "target": "のこぎり",
+         "said": "のこぎりです。",
+         "transcript": "のこぎりです。",
+         "code": "Correct"
+        },
+        {
+         "target": "サボテン",
+         "said": "サボテンです。",
+         "transcript": "サボテンです。",
+         "code": "Correct"
+        },
+        {
+         "target": "笛",
+         "said": "笛です。",
+         "transcript": "笛です。",
+         "code": "Correct"
+        },
+        {
+         "target": "ハープ",
+         "said": "ハープです。",
+         "transcript": "ワープです。",
+         "code": "Formal"
+        },
+        {
+         "target": "イグルー",
+         "said": "イグルーです。",
+         "transcript": "イイグルーです。",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "ja_desu_r2",
+       "voice": "Kyoko (ja-JP)",
+       "correct": 15,
+       "of": 20,
+       "correct_at_run": 15,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "猫",
+         "said": "猫です。",
+         "transcript": "猫です。",
+         "code": "Correct"
+        },
+        {
+         "target": "傘",
+         "said": "傘です。",
+         "transcript": "傘傘です。",
+         "code": "Correct"
+        },
+        {
+         "target": "錨",
+         "said": "錨です。",
+         "transcript": "怒りりです。",
+         "code": "Formal"
+        },
+        {
+         "target": "やかん",
+         "said": "やかんです。",
+         "transcript": "夜間です。",
+         "code": "Correct"
+        },
+        {
+         "target": "はしご",
+         "said": "はしごです。",
+         "transcript": "はししごです。",
+         "code": "Description"
+        },
+        {
+         "target": "ベンチ",
+         "said": "ベンチです。",
+         "transcript": "ベベンチです。",
+         "code": "Correct"
+        },
+        {
+         "target": "手袋",
+         "said": "手袋です。",
+         "transcript": "出袋です。",
+         "code": "Formal"
+        },
+        {
+         "target": "スプーン",
+         "said": "スプーンです。",
+         "transcript": "スプーンです。",
+         "code": "Correct"
+        },
+        {
+         "target": "にんじん",
+         "said": "にんじんです。",
+         "transcript": "人参です。",
+         "code": "Correct"
+        },
+        {
+         "target": "自転車",
+         "said": "自転車です。",
+         "transcript": "自転車です。",
+         "code": "Correct"
+        },
+        {
+         "target": "はさみ",
+         "said": "はさみです。",
+         "transcript": "はさみです。",
+         "code": "Correct"
+        },
+        {
+         "target": "ろうそく",
+         "said": "ろうそくです。",
+         "transcript": "ろうそくです。",
+         "code": "Correct"
+        },
+        {
+         "target": "ヘリコプター",
+         "said": "ヘリコプターです。",
+         "transcript": "ヘリコプターです。",
+         "code": "Correct"
+        },
+        {
+         "target": "パイナップル",
+         "said": "パイナップルです。",
+         "transcript": "バイナップルです。",
+         "code": "Description"
+        },
+        {
+         "target": "カタツムリ",
+         "said": "カタツムリです。",
+         "transcript": "片つむりです。",
+         "code": "Correct"
+        },
+        {
+         "target": "のこぎり",
+         "said": "のこぎりです。",
+         "transcript": "のこぎりです。",
+         "code": "Correct"
+        },
+        {
+         "target": "サボテン",
+         "said": "サボテンです。",
+         "transcript": "サボテンです。",
+         "code": "Correct"
+        },
+        {
+         "target": "笛",
+         "said": "笛です。",
+         "transcript": "笛です。",
+         "code": "Correct"
+        },
+        {
+         "target": "ハープ",
+         "said": "ハープです。",
+         "transcript": "ラープラープです。",
+         "code": "Nonword"
+        },
+        {
+         "target": "イグルー",
+         "said": "イグルーです。",
+         "transcript": "イグルーです。",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Kyoko is the only Japanese voice on macOS, so both runs use her.",
+    "The stepladder was named 脚立 (kyatatsu, a stepladder) rather than はしご, so はしご went to review.",
+    "Failures the rules can't fix: 猫 -> でこ, パイナップル -> バイナップル, ハープ -> ラープ/ワープ, スプーン -> nothing."
+   ]
+  },
+  {
+   "code": "ko",
+   "name": "Korean",
+   "status": "experimental",
+   "summary": "Experimental: bare words 13/20 and 14/20; with the copula 15 and 12. One-syllable names fail most: 닻 -> 탁, 톱 -> nothing.",
+   "picture_set": {
+    "set": "demo_ko",
+    "pictures_from": "demo_en",
+    "words": [
+     "고양이",
+     "우산",
+     "닻",
+     "주전자: kettle",
+     "사다리",
+     "벤치",
+     "장갑",
+     "숟가락",
+     "당근",
+     "자전거",
+     "가위: scissors",
+     "양초",
+     "헬리콥터",
+     "파인애플",
+     "달팽이",
+     "톱: saw",
+     "선인장",
+     "호루라기",
+     "하프",
+     "이글루"
+    ],
+    "kept": 20,
+    "of": 20,
+    "review": [],
+    "ambiguity_flags": {
+     "주전자": [
+      "teapot"
+     ],
+     "톱": [
+      "top"
+     ]
+    },
+    "named_by_muse_spark": 20,
+    "candidates_named_by_muse_spark": 20,
+    "candidates": 20,
+    "muse_spark_other_names": [],
+    "alternates": {
+     "벤치": [
+      "bench"
+     ],
+     "헬리콥터": [
+      "helicopter"
+     ],
+     "파인애플": [
+      "pineapple"
+     ],
+     "하프": [
+      "harp"
+     ],
+     "이글루": [
+      "igloo"
+     ]
+    },
+    "first_pass": {
+     "kept": 20,
+     "named": 20
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "ko_base",
+      "voice": "Yuna (ko-KR)",
+      "correct": 13,
+      "of": 20,
+      "correct_at_run": 12,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "고양이",
+        "said": "고양이",
+        "transcript": "고양이",
+        "code": "Correct"
+       },
+       {
+        "target": "우산",
+        "said": "우산",
+        "transcript": "우산",
+        "code": "Correct"
+       },
+       {
+        "target": "닻",
+        "said": "닻",
+        "transcript": "탁",
+        "code": "Unrelated"
+       },
+       {
+        "target": "주전자",
+        "said": "주전자",
+        "transcript": "주전자,",
+        "code": "Correct"
+       },
+       {
+        "target": "사다리",
+        "said": "사다리",
+        "transcript": "사다리",
+        "code": "Correct"
+       },
+       {
+        "target": "벤치",
+        "said": "벤치",
+        "transcript": "빈치",
+        "code": "Formal"
+       },
+       {
+        "target": "장갑",
+        "said": "장갑",
+        "transcript": "장갑",
+        "code": "Correct"
+       },
+       {
+        "target": "숟가락",
+        "said": "숟가락",
+        "transcript": "숟가락",
+        "code": "Correct"
+       },
+       {
+        "target": "당근",
+        "said": "당근",
+        "transcript": "당근",
+        "code": "Correct"
+       },
+       {
+        "target": "자전거",
+        "said": "자전거",
+        "transcript": "자전거",
+        "code": "Correct"
+       },
+       {
+        "target": "가위",
+        "said": "가위",
+        "transcript": "카위",
+        "code": "Nonword"
+       },
+       {
+        "target": "양초",
+        "said": "양초",
+        "transcript": "양초.",
+        "code": "Correct"
+       },
+       {
+        "target": "헬리콥터",
+        "said": "헬리콥터",
+        "transcript": "헬리콥터",
+        "code": "Correct"
+       },
+       {
+        "target": "파인애플",
+        "said": "파인애플",
+        "transcript": "파이네플",
+        "code": "Correct"
+       },
+       {
+        "target": "달팽이",
+        "said": "달팽이",
+        "transcript": "달팽이",
+        "code": "Correct"
+       },
+       {
+        "target": "톱",
+        "said": "톱",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "선인장",
+        "said": "선인장",
+        "transcript": "선인장,",
+        "code": "Correct"
+       },
+       {
+        "target": "호루라기",
+        "said": "호루라기",
+        "transcript": "고루라기",
+        "code": "Nonword"
+       },
+       {
+        "target": "하프",
+        "said": "하프",
+        "transcript": "해프",
+        "code": "Nonword"
+       },
+       {
+        "target": "이글루",
+        "said": "이글루",
+        "transcript": "이 글로",
+        "code": "Nonword"
+       }
+      ]
+     },
+     {
+      "run": "ko_base_r2",
+      "voice": "Yuna (ko-KR)",
+      "correct": 14,
+      "of": 20,
+      "correct_at_run": 14,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "고양이",
+        "said": "고양이",
+        "transcript": "고양이,",
+        "code": "Correct"
+       },
+       {
+        "target": "우산",
+        "said": "우산",
+        "transcript": "우산,우산",
+        "code": "Correct"
+       },
+       {
+        "target": "닻",
+        "said": "닻",
+        "transcript": "탁",
+        "code": "Unrelated"
+       },
+       {
+        "target": "주전자",
+        "said": "주전자",
+        "transcript": "주전자,",
+        "code": "Correct"
+       },
+       {
+        "target": "사다리",
+        "said": "사다리",
+        "transcript": "사다리",
+        "code": "Correct"
+       },
+       {
+        "target": "벤치",
+        "said": "벤치",
+        "transcript": "벤치",
+        "code": "Correct"
+       },
+       {
+        "target": "장갑",
+        "said": "장갑",
+        "transcript": "장갑",
+        "code": "Correct"
+       },
+       {
+        "target": "숟가락",
+        "said": "숟가락",
+        "transcript": "숟가락",
+        "code": "Correct"
+       },
+       {
+        "target": "당근",
+        "said": "당근",
+        "transcript": "당근",
+        "code": "Correct"
+       },
+       {
+        "target": "자전거",
+        "said": "자전거",
+        "transcript": "자전거",
+        "code": "Correct"
+       },
+       {
+        "target": "가위",
+        "said": "가위",
+        "transcript": "카위",
+        "code": "Nonword"
+       },
+       {
+        "target": "양초",
+        "said": "양초",
+        "transcript": "양초,",
+        "code": "Correct"
+       },
+       {
+        "target": "헬리콥터",
+        "said": "헬리콥터",
+        "transcript": "헬리콥터",
+        "code": "Correct"
+       },
+       {
+        "target": "파인애플",
+        "said": "파인애플",
+        "transcript": "파이네플",
+        "code": "Correct"
+       },
+       {
+        "target": "달팽이",
+        "said": "달팽이",
+        "transcript": "달팽이",
+        "code": "Correct"
+       },
+       {
+        "target": "톱",
+        "said": "톱",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "선인장",
+        "said": "선인장",
+        "transcript": "선인장,",
+        "code": "Correct"
+       },
+       {
+        "target": "호루라기",
+        "said": "호루라기",
+        "transcript": "코루라기고루라기",
+        "code": "Nonword"
+       },
+       {
+        "target": "하프",
+        "said": "하프",
+        "transcript": "해프,",
+        "code": "Nonword"
+       },
+       {
+        "target": "이글루",
+        "said": "이글루",
+        "transcript": "이글로이글로",
+        "code": "Nonword"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "the bare word (고양이); 예요/이에요 didn't help",
+     "runs": "same as bare_word"
+    },
+    "other_runs": {
+     "ko_yeyo": {
+      "voice": "Yuna (ko-KR)",
+      "said": "per-word phrases",
+      "correct": 15,
+      "of": 20,
+      "empty_transcripts": 0
+     },
+     "ko_yeyo_r2": {
+      "voice": "Yuna (ko-KR)",
+      "said": "per-word phrases",
+      "correct": 12,
+      "of": 20,
+      "empty_transcripts": 0
+     }
+    }
+   },
+   "notes": [
+    "Yuna is the only Korean voice on macOS, so both runs use her.",
+    "Liaison spellings of the same sounds count (파이네플 for 파인애플, 다치에요 for 닻이에요).",
+    "Aspirated and plain stops get confused: 가위 -> 카위, 호루라기 -> 고루라기/코루라기."
+   ]
+  },
+  {
+   "code": "ar",
+   "name": "Arabic",
+   "status": "works with review",
+   "summary": "Works with review: 16/20, 17/20 with al-, 14/20 bare twice. Emphatic and plain consonants get confused (صفارة -> السفارة, 'the embassy').",
+   "picture_set": {
+    "set": "demo_ar",
+    "pictures_from": "demo_en",
+    "words": [
+     "قطة",
+     "مظلة",
+     "مرساة",
+     "غلاية: kettle",
+     "سلم: ladder",
+     "مقعد: bench",
+     "قفاز",
+     "ملعقة",
+     "جزرة",
+     "دراجة: bicycle",
+     "مقص",
+     "شمعة",
+     "مروحية: helicopter",
+     "أناناس",
+     "حلزون",
+     "منشار",
+     "صبار: cactus",
+     "صفارة: whistle",
+     "قيثارة: harp",
+     "إغلو: igloo"
+    ],
+    "kept": 19,
+    "of": 20,
+    "review": [
+     "غلاية"
+    ],
+    "ambiguity_flags": {
+     "مظلة": [
+      "parasol",
+      "canopy",
+      "awning"
+     ],
+     "غلاية": [
+      "boiler"
+     ],
+     "سلم": [
+      "staircase",
+      "stairs"
+     ],
+     "مقعد": [
+      "seat",
+      "chair"
+     ],
+     "دراجة": [
+      "motorcycle"
+     ],
+     "شمعة": [
+      "spark plug"
+     ],
+     "صفارة": [
+      "siren"
+     ],
+     "قيثارة": [
+      "guitar",
+      "lyre"
+     ]
+    },
+    "named_by_muse_spark": 19,
+    "candidates_named_by_muse_spark": 20,
+    "candidates": 22,
+    "muse_spark_other_names": [
+     {
+      "word": "غلاية",
+      "named": "إبريق",
+      "code": "Semantic"
+     },
+     {
+      "word": "غلاية",
+      "named": "إبريق",
+      "code": "Semantic"
+     }
+    ],
+    "alternates": {
+     "أناناس": [
+      "ananas"
+     ],
+     "إغلو": [
+      "igloo"
+     ]
+    },
+    "first_pass": {
+     "kept": 19,
+     "named": 19
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "ar_base",
+      "voice": "Majed (ar)",
+      "correct": 14,
+      "of": 20,
+      "correct_at_run": 13,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "قطة",
+        "said": "قطة",
+        "transcript": "قطع",
+        "code": "Formal"
+       },
+       {
+        "target": "مظلة",
+        "said": "مظلة",
+        "transcript": "مضلة",
+        "code": "Formal"
+       },
+       {
+        "target": "مرساة",
+        "said": "مرساة",
+        "transcript": "مرسى",
+        "code": "Mixed"
+       },
+       {
+        "target": "غلاية",
+        "said": "غلاية",
+        "transcript": "غلاية",
+        "code": "Correct"
+       },
+       {
+        "target": "سلم",
+        "said": "سلم",
+        "transcript": "سلم",
+        "code": "Correct"
+       },
+       {
+        "target": "مقعد",
+        "said": "مقعد",
+        "transcript": "مقعد",
+        "code": "Correct"
+       },
+       {
+        "target": "قفاز",
+        "said": "قفاز",
+        "transcript": "خفاز",
+        "code": "Nonword"
+       },
+       {
+        "target": "ملعقة",
+        "said": "ملعقة",
+        "transcript": "ملعقة",
+        "code": "Correct"
+       },
+       {
+        "target": "جزرة",
+        "said": "جزرة",
+        "transcript": "جزرة",
+        "code": "Correct"
+       },
+       {
+        "target": "دراجة",
+        "said": "دراجة",
+        "transcript": "دراجة",
+        "code": "Correct"
+       },
+       {
+        "target": "مقص",
+        "said": "مقص",
+        "transcript": "مقص",
+        "code": "Correct"
+       },
+       {
+        "target": "شمعة",
+        "said": "شمعة",
+        "transcript": "شمع",
+        "code": "Correct"
+       },
+       {
+        "target": "مروحية",
+        "said": "مروحية",
+        "transcript": "مروحية",
+        "code": "Correct"
+       },
+       {
+        "target": "أناناس",
+        "said": "أناناس",
+        "transcript": "أنا ناس",
+        "code": "Correct"
+       },
+       {
+        "target": "حلزون",
+        "said": "حلزون",
+        "transcript": "حلزون",
+        "code": "Correct"
+       },
+       {
+        "target": "منشار",
+        "said": "منشار",
+        "transcript": "منشار",
+        "code": "Correct"
+       },
+       {
+        "target": "صبار",
+        "said": "صبار",
+        "transcript": "صبار",
+        "code": "Correct"
+       },
+       {
+        "target": "صفارة",
+        "said": "صفارة",
+        "transcript": "صفارة",
+        "code": "Correct"
+       },
+       {
+        "target": "قيثارة",
+        "said": "قيثارة",
+        "transcript": "قفارة.",
+        "code": "Nonword"
+       },
+       {
+        "target": "إغلو",
+        "said": "إغلو",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     },
+     {
+      "run": "ar_base_r2",
+      "voice": "Majed (ar)",
+      "correct": 14,
+      "of": 20,
+      "correct_at_run": 14,
+      "empty_transcripts": 0,
+      "rows": [
+       {
+        "target": "قطة",
+        "said": "قطة",
+        "transcript": "قطع.",
+        "code": "Formal"
+       },
+       {
+        "target": "مظلة",
+        "said": "مظلة",
+        "transcript": "مظلة",
+        "code": "Correct"
+       },
+       {
+        "target": "مرساة",
+        "said": "مرساة",
+        "transcript": "مرسى",
+        "code": "Mixed"
+       },
+       {
+        "target": "غلاية",
+        "said": "غلاية",
+        "transcript": "غلاية",
+        "code": "Correct"
+       },
+       {
+        "target": "سلم",
+        "said": "سلم",
+        "transcript": "صلّم",
+        "code": "Nonword"
+       },
+       {
+        "target": "مقعد",
+        "said": "مقعد",
+        "transcript": "مقعد",
+        "code": "Correct"
+       },
+       {
+        "target": "قفاز",
+        "said": "قفاز",
+        "transcript": "خفاز",
+        "code": "Nonword"
+       },
+       {
+        "target": "ملعقة",
+        "said": "ملعقة",
+        "transcript": "ملعقة",
+        "code": "Correct"
+       },
+       {
+        "target": "جزرة",
+        "said": "جزرة",
+        "transcript": "جزرة.",
+        "code": "Correct"
+       },
+       {
+        "target": "دراجة",
+        "said": "دراجة",
+        "transcript": "دراجة",
+        "code": "Correct"
+       },
+       {
+        "target": "مقص",
+        "said": "مقص",
+        "transcript": "مقص",
+        "code": "Correct"
+       },
+       {
+        "target": "شمعة",
+        "said": "شمعة",
+        "transcript": "شمع",
+        "code": "Correct"
+       },
+       {
+        "target": "مروحية",
+        "said": "مروحية",
+        "transcript": "مروحية",
+        "code": "Correct"
+       },
+       {
+        "target": "أناناس",
+        "said": "أناناس",
+        "transcript": "اناانا ناس",
+        "code": "Nonword"
+       },
+       {
+        "target": "حلزون",
+        "said": "حلزون",
+        "transcript": "حلزون.",
+        "code": "Correct"
+       },
+       {
+        "target": "منشار",
+        "said": "منشار",
+        "transcript": "منشار",
+        "code": "Correct"
+       },
+       {
+        "target": "صبار",
+        "said": "صبار",
+        "transcript": "صبار",
+        "code": "Correct"
+       },
+       {
+        "target": "صفارة",
+        "said": "صفارة",
+        "transcript": "صفارة",
+        "code": "Correct"
+       },
+       {
+        "target": "قيثارة",
+        "said": "قيثارة",
+        "transcript": "قيثارة",
+        "code": "Correct"
+       },
+       {
+        "target": "إغلو",
+        "said": "إغلو",
+        "transcript": "Hirou!",
+        "code": "Neologism"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "with the article al- (القطة)",
+     "runs": [
+      {
+       "run": "ar_article",
+       "voice": "Majed (ar)",
+       "correct": 16,
+       "of": 20,
+       "correct_at_run": 15,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "قطة",
+         "said": "القطة",
+         "transcript": "القطى",
+         "code": "Correct"
+        },
+        {
+         "target": "مظلة",
+         "said": "المظلة",
+         "transcript": "المظلة",
+         "code": "Correct"
+        },
+        {
+         "target": "مرساة",
+         "said": "المرساة",
+         "transcript": "المرساة",
+         "code": "Correct"
+        },
+        {
+         "target": "غلاية",
+         "said": "الغلاية",
+         "transcript": "الغلاية",
+         "code": "Correct"
+        },
+        {
+         "target": "سلم",
+         "said": "السلم",
+         "transcript": "السلم",
+         "code": "Correct"
+        },
+        {
+         "target": "مقعد",
+         "said": "المقعد",
+         "transcript": "المقعد",
+         "code": "Correct"
+        },
+        {
+         "target": "قفاز",
+         "said": "القفاز",
+         "transcript": "القفاز",
+         "code": "Correct"
+        },
+        {
+         "target": "ملعقة",
+         "said": "الملعقة",
+         "transcript": "الملعقة",
+         "code": "Correct"
+        },
+        {
+         "target": "جزرة",
+         "said": "الجزرة",
+         "transcript": "الجزرة.",
+         "code": "Correct"
+        },
+        {
+         "target": "دراجة",
+         "said": "الدراجة",
+         "transcript": "الدراجة",
+         "code": "Correct"
+        },
+        {
+         "target": "مقص",
+         "said": "المقص",
+         "transcript": "الميقصي",
+         "code": "Nonword"
+        },
+        {
+         "target": "شمعة",
+         "said": "الشمعة",
+         "transcript": "الشمعة",
+         "code": "Correct"
+        },
+        {
+         "target": "مروحية",
+         "said": "المروحية",
+         "transcript": "المروحية",
+         "code": "Correct"
+        },
+        {
+         "target": "أناناس",
+         "said": "الأناناس",
+         "transcript": "أنا الناس",
+         "code": "Formal"
+        },
+        {
+         "target": "حلزون",
+         "said": "الحلزون",
+         "transcript": "الحلزون",
+         "code": "Correct"
+        },
+        {
+         "target": "منشار",
+         "said": "المنشار",
+         "transcript": "المنشار",
+         "code": "Correct"
+        },
+        {
+         "target": "صبار",
+         "said": "الصبار",
+         "transcript": "الصبار",
+         "code": "Correct"
+        },
+        {
+         "target": "صفارة",
+         "said": "الصفارة",
+         "transcript": "السفارة",
+         "code": "Formal"
+        },
+        {
+         "target": "قيثارة",
+         "said": "القيثارة",
+         "transcript": "القيثارة",
+         "code": "Correct"
+        },
+        {
+         "target": "إغلو",
+         "said": "الإغلو",
+         "transcript": "قالوا.",
+         "code": "Formal"
+        }
+       ]
+      },
+      {
+       "run": "ar_article_r2",
+       "voice": "Majed (ar)",
+       "correct": 17,
+       "of": 20,
+       "correct_at_run": 17,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "قطة",
+         "said": "القطة",
+         "transcript": "القطة",
+         "code": "Correct"
+        },
+        {
+         "target": "مظلة",
+         "said": "المظلة",
+         "transcript": "المظلة",
+         "code": "Correct"
+        },
+        {
+         "target": "مرساة",
+         "said": "المرساة",
+         "transcript": "المرساة",
+         "code": "Correct"
+        },
+        {
+         "target": "غلاية",
+         "said": "الغلاية",
+         "transcript": "الغلاية",
+         "code": "Correct"
+        },
+        {
+         "target": "سلم",
+         "said": "السلم",
+         "transcript": "السلم",
+         "code": "Correct"
+        },
+        {
+         "target": "مقعد",
+         "said": "المقعد",
+         "transcript": "المقعد",
+         "code": "Correct"
+        },
+        {
+         "target": "قفاز",
+         "said": "القفاز",
+         "transcript": "القفاز.",
+         "code": "Correct"
+        },
+        {
+         "target": "ملعقة",
+         "said": "الملعقة",
+         "transcript": "الملعقة",
+         "code": "Correct"
+        },
+        {
+         "target": "جزرة",
+         "said": "الجزرة",
+         "transcript": "الجزرة",
+         "code": "Correct"
+        },
+        {
+         "target": "دراجة",
+         "said": "الدراجة",
+         "transcript": "الدراجة",
+         "code": "Correct"
+        },
+        {
+         "target": "مقص",
+         "said": "المقص",
+         "transcript": "الميقصي.",
+         "code": "Nonword"
+        },
+        {
+         "target": "شمعة",
+         "said": "الشمعة",
+         "transcript": "الشمعة",
+         "code": "Correct"
+        },
+        {
+         "target": "مروحية",
+         "said": "المروحية",
+         "transcript": "المروحية",
+         "code": "Correct"
+        },
+        {
+         "target": "أناناس",
+         "said": "الأناناس",
+         "transcript": "أنا الناس",
+         "code": "Formal"
+        },
+        {
+         "target": "حلزون",
+         "said": "الحلزون",
+         "transcript": "الحلزون.",
+         "code": "Correct"
+        },
+        {
+         "target": "منشار",
+         "said": "المنشار",
+         "transcript": "المنشار",
+         "code": "Correct"
+        },
+        {
+         "target": "صبار",
+         "said": "الصبار",
+         "transcript": "الصبار",
+         "code": "Correct"
+        },
+        {
+         "target": "صفارة",
+         "said": "الصفارة",
+         "transcript": "الصفارة",
+         "code": "Correct"
+        },
+        {
+         "target": "قيثارة",
+         "said": "القيثارة",
+         "transcript": "القيثارة",
+         "code": "Correct"
+        },
+        {
+         "target": "إغلو",
+         "said": "الإغلو",
+         "transcript": "Alhulo",
+         "code": "Neologism"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Majed is the only Arabic voice on macOS, so both runs use him.",
+    "Both kettle pictures were named إبريق (a jug or teapot), so غلاية went to review.",
+    "The transcriber split أناناس into أنا ناس ('I people'); a split name counts when joined.",
+    "إغلو came back in Latin letters ('Alhulo', 'Hirou!') or as قالوا."
+   ]
+  },
+  {
+   "code": "tr",
+   "name": "Turkish",
+   "status": "verified",
+   "summary": "Verified when people name with bir (18/20 and 19/20). Bare words 17 and 15: short words came back empty (düdük, iglo, mum).",
+   "picture_set": {
+    "set": "demo_tr",
+    "pictures_from": "demo_en",
+    "words": [
+     "kedi",
+     "şemsiye",
+     "çapa: anchor",
+     "çaydanlık: kettle",
+     "merdiven: ladder",
+     "bank: bench",
+     "eldiven",
+     "kaşık",
+     "havuç",
+     "bisiklet",
+     "makas",
+     "mum: candle",
+     "helikopter",
+     "ananas",
+     "salyangoz",
+     "testere: saw",
+     "kaktüs",
+     "düdük: whistle",
+     "arp: harp",
+     "iglo"
+    ],
+    "kept": 20,
+    "of": 20,
+    "review": [],
+    "ambiguity_flags": {
+     "çapa": [
+      "hoe"
+     ],
+     "merdiven": [
+      "stairs",
+      "staircase"
+     ],
+     "bank": [
+      "financial institution"
+     ]
+    },
+    "named_by_muse_spark": 20,
+    "candidates_named_by_muse_spark": 21,
+    "candidates": 21,
+    "muse_spark_other_names": [],
+    "alternates": {
+     "şemsiye": [
+      "semsiye"
+     ],
+     "çapa": [
+      "capa"
+     ],
+     "çaydanlık": [
+      "caydanlik"
+     ],
+     "kaşık": [
+      "kasik"
+     ],
+     "havuç": [
+      "havuc"
+     ],
+     "helikopter": [
+      "helicopter"
+     ],
+     "kaktüs": [
+      "cactus",
+      "kaktus"
+     ],
+     "düdük": [
+      "duduk"
+     ],
+     "arp": [
+      "harp"
+     ],
+     "iglo": [
+      "igloo",
+      "iglu"
+     ]
+    },
+    "first_pass": {
+     "kept": 20,
+     "named": 20
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "tr_base",
+      "voice": "Yelda (tr-TR)",
+      "correct": 17,
+      "of": 20,
+      "correct_at_run": 17,
+      "empty_transcripts": 2,
+      "rows": [
+       {
+        "target": "kedi",
+        "said": "kedi",
+        "transcript": "Kedi.",
+        "code": "Correct"
+       },
+       {
+        "target": "şemsiye",
+        "said": "şemsiye",
+        "transcript": "Şemsiye,",
+        "code": "Correct"
+       },
+       {
+        "target": "çapa",
+        "said": "çapa",
+        "transcript": "çapa",
+        "code": "Correct"
+       },
+       {
+        "target": "çaydanlık",
+        "said": "çaydanlık",
+        "transcript": "çaydanlık",
+        "code": "Correct"
+       },
+       {
+        "target": "merdiven",
+        "said": "merdiven",
+        "transcript": "merdiven,",
+        "code": "Correct"
+       },
+       {
+        "target": "bank",
+        "said": "bank",
+        "transcript": "Bank",
+        "code": "Correct"
+       },
+       {
+        "target": "eldiven",
+        "said": "eldiven",
+        "transcript": "eldiven.",
+        "code": "Correct"
+       },
+       {
+        "target": "kaşık",
+        "said": "kaşık",
+        "transcript": "Kaşık,",
+        "code": "Correct"
+       },
+       {
+        "target": "havuç",
+        "said": "havuç",
+        "transcript": "havuç",
+        "code": "Correct"
+       },
+       {
+        "target": "bisiklet",
+        "said": "bisiklet",
+        "transcript": "Bisiklet.",
+        "code": "Correct"
+       },
+       {
+        "target": "makas",
+        "said": "makas",
+        "transcript": "Makas.",
+        "code": "Correct"
+       },
+       {
+        "target": "mum",
+        "said": "mum",
+        "transcript": "mum",
+        "code": "Correct"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "Helikopter.",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "ananas",
+        "code": "Correct"
+       },
+       {
+        "target": "salyangoz",
+        "said": "salyangoz",
+        "transcript": "Sağ yangoz.",
+        "code": "Nonword"
+       },
+       {
+        "target": "testere",
+        "said": "testere",
+        "transcript": "testere",
+        "code": "Correct"
+       },
+       {
+        "target": "kaktüs",
+        "said": "kaktüs",
+        "transcript": "Kaktüs.",
+        "code": "Correct"
+       },
+       {
+        "target": "düdük",
+        "said": "düdük",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "arp",
+        "said": "arp",
+        "transcript": "arp,",
+        "code": "Correct"
+       },
+       {
+        "target": "iglo",
+        "said": "iglo",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     },
+     {
+      "run": "tr_base_r2",
+      "voice": "Yelda (tr-TR)",
+      "correct": 15,
+      "of": 20,
+      "correct_at_run": 15,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "kedi",
+        "said": "kedi",
+        "transcript": "Kedi.",
+        "code": "Correct"
+       },
+       {
+        "target": "şemsiye",
+        "said": "şemsiye",
+        "transcript": "şemsiye",
+        "code": "Correct"
+       },
+       {
+        "target": "çapa",
+        "said": "çapa",
+        "transcript": "Çapa,",
+        "code": "Correct"
+       },
+       {
+        "target": "çaydanlık",
+        "said": "çaydanlık",
+        "transcript": "çaydanlık,",
+        "code": "Correct"
+       },
+       {
+        "target": "merdiven",
+        "said": "merdiven",
+        "transcript": "Merdivan",
+        "code": "Nonword"
+       },
+       {
+        "target": "bank",
+        "said": "bank",
+        "transcript": "bak",
+        "code": "Formal"
+       },
+       {
+        "target": "eldiven",
+        "said": "eldiven",
+        "transcript": "eldiven",
+        "code": "Correct"
+       },
+       {
+        "target": "kaşık",
+        "said": "kaşık",
+        "transcript": "Kaşık,",
+        "code": "Correct"
+       },
+       {
+        "target": "havuç",
+        "said": "havuç",
+        "transcript": "Havuç",
+        "code": "Correct"
+       },
+       {
+        "target": "bisiklet",
+        "said": "bisiklet",
+        "transcript": "bisiklet",
+        "code": "Correct"
+       },
+       {
+        "target": "makas",
+        "said": "makas",
+        "transcript": "Makas,",
+        "code": "Correct"
+       },
+       {
+        "target": "mum",
+        "said": "mum",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "helikopter",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas,",
+        "code": "Correct"
+       },
+       {
+        "target": "salyangoz",
+        "said": "salyangoz",
+        "transcript": "Sağyangoz,",
+        "code": "Nonword"
+       },
+       {
+        "target": "testere",
+        "said": "testere",
+        "transcript": "testere",
+        "code": "Correct"
+       },
+       {
+        "target": "kaktüs",
+        "said": "kaktüs",
+        "transcript": "Kaktüs,",
+        "code": "Correct"
+       },
+       {
+        "target": "düdük",
+        "said": "düdük",
+        "transcript": "cudük",
+        "code": "Nonword"
+       },
+       {
+        "target": "arp",
+        "said": "arp",
+        "transcript": "arp",
+        "code": "Correct"
+       },
+       {
+        "target": "iglo",
+        "said": "iglo",
+        "transcript": "Iglo.",
+        "code": "Correct"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "with bir (bir kedi)",
+     "runs": [
+      {
+       "run": "tr_article",
+       "voice": "Yelda (tr-TR)",
+       "correct": 18,
+       "of": 20,
+       "correct_at_run": 18,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kedi",
+         "said": "bir kedi",
+         "transcript": "bir kedi.",
+         "code": "Correct"
+        },
+        {
+         "target": "şemsiye",
+         "said": "bir şemsiye",
+         "transcript": "birbir şemsiye,",
+         "code": "Correct"
+        },
+        {
+         "target": "çapa",
+         "said": "bir çapa",
+         "transcript": "bir çapa",
+         "code": "Correct"
+        },
+        {
+         "target": "çaydanlık",
+         "said": "bir çaydanlık",
+         "transcript": "bir çaydanlık,",
+         "code": "Correct"
+        },
+        {
+         "target": "merdiven",
+         "said": "bir merdiven",
+         "transcript": "bir merdiven",
+         "code": "Correct"
+        },
+        {
+         "target": "bank",
+         "said": "bir bank",
+         "transcript": "bir bank,",
+         "code": "Correct"
+        },
+        {
+         "target": "eldiven",
+         "said": "bir eldiven",
+         "transcript": "Bir eldiven.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaşık",
+         "said": "bir kaşık",
+         "transcript": "bir kaşık",
+         "code": "Correct"
+        },
+        {
+         "target": "havuç",
+         "said": "bir havuç",
+         "transcript": "bir havuç,",
+         "code": "Correct"
+        },
+        {
+         "target": "bisiklet",
+         "said": "bir bisiklet",
+         "transcript": "bir bisiklet.",
+         "code": "Correct"
+        },
+        {
+         "target": "makas",
+         "said": "bir makas",
+         "transcript": "bir Bir makas,",
+         "code": "Correct"
+        },
+        {
+         "target": "mum",
+         "said": "bir mum",
+         "transcript": "Bir mum",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "bir helikopter",
+         "transcript": "bir helikopter",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "bir ananas",
+         "transcript": "bir ananas",
+         "code": "Correct"
+        },
+        {
+         "target": "salyangoz",
+         "said": "bir salyangoz",
+         "transcript": "bir sağ yalnız",
+         "code": "Formal"
+        },
+        {
+         "target": "testere",
+         "said": "bir testere",
+         "transcript": "bir testere",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktüs",
+         "said": "bir kaktüs",
+         "transcript": "bir kaktüs.",
+         "code": "Correct"
+        },
+        {
+         "target": "düdük",
+         "said": "bir düdük",
+         "transcript": "Bir düdük,",
+         "code": "Correct"
+        },
+        {
+         "target": "arp",
+         "said": "bir arp",
+         "transcript": "Bir",
+         "code": "Unrelated"
+        },
+        {
+         "target": "iglo",
+         "said": "bir iglo",
+         "transcript": "Biriglo.",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "tr_article_r2",
+       "voice": "Yelda (tr-TR)",
+       "correct": 19,
+       "of": 20,
+       "correct_at_run": 19,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kedi",
+         "said": "bir kedi",
+         "transcript": "Bir kedi.",
+         "code": "Correct"
+        },
+        {
+         "target": "şemsiye",
+         "said": "bir şemsiye",
+         "transcript": "birbir şemsiye.",
+         "code": "Correct"
+        },
+        {
+         "target": "çapa",
+         "said": "bir çapa",
+         "transcript": "bir çapa,",
+         "code": "Correct"
+        },
+        {
+         "target": "çaydanlık",
+         "said": "bir çaydanlık",
+         "transcript": "bir çaydanlık,",
+         "code": "Correct"
+        },
+        {
+         "target": "merdiven",
+         "said": "bir merdiven",
+         "transcript": "bir merdiven",
+         "code": "Correct"
+        },
+        {
+         "target": "bank",
+         "said": "bir bank",
+         "transcript": "bir bank,",
+         "code": "Correct"
+        },
+        {
+         "target": "eldiven",
+         "said": "bir eldiven",
+         "transcript": "bir eldiven,",
+         "code": "Correct"
+        },
+        {
+         "target": "kaşık",
+         "said": "bir kaşık",
+         "transcript": "Bir kaşık,",
+         "code": "Correct"
+        },
+        {
+         "target": "havuç",
+         "said": "bir havuç",
+         "transcript": "bir havuç",
+         "code": "Correct"
+        },
+        {
+         "target": "bisiklet",
+         "said": "bir bisiklet",
+         "transcript": "bir bisiklet,",
+         "code": "Correct"
+        },
+        {
+         "target": "makas",
+         "said": "bir makas",
+         "transcript": "Bir bir makas,",
+         "code": "Correct"
+        },
+        {
+         "target": "mum",
+         "said": "bir mum",
+         "transcript": "Bir mum,",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "bir helikopter",
+         "transcript": "bir helikopter,",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "bir ananas",
+         "transcript": "bir ananas",
+         "code": "Correct"
+        },
+        {
+         "target": "salyangoz",
+         "said": "bir salyangoz",
+         "transcript": "bir salyangoz",
+         "code": "Correct"
+        },
+        {
+         "target": "testere",
+         "said": "bir testere",
+         "transcript": "Bir testere,",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktüs",
+         "said": "bir kaktüs",
+         "transcript": "bir kaktüs,",
+         "code": "Correct"
+        },
+        {
+         "target": "düdük",
+         "said": "bir düdük",
+         "transcript": "bir düdük.",
+         "code": "Correct"
+        },
+        {
+         "target": "arp",
+         "said": "bir arp",
+         "transcript": "Birer,",
+         "code": "Unrelated"
+        },
+        {
+         "target": "iglo",
+         "said": "bir iglo",
+         "transcript": "Bir iglo.",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Yelda is the only Turkish voice on macOS, so both runs use her.",
+    "The dotted capital İ (İglo) used to break matching; it is now lowercased to i.",
+    "salyangoz comes back as 'Sağ yangoz' or 'sağ yalnız'."
+   ]
+  },
+  {
+   "code": "pl",
+   "name": "Polish",
+   "status": "verified",
+   "summary": "Verified when people answer To jest ... (20/20 and 19/20). Bare words were 14 and 15: kot -> Kup, ławka -> UFK, igloo -> nothing.",
+   "picture_set": {
+    "set": "demo_pl",
+    "pictures_from": "demo_en",
+    "words": [
+     "kot",
+     "parasol",
+     "kotwica",
+     "czajnik",
+     "drabina",
+     "ławka",
+     "rękawiczka",
+     "łyżka",
+     "marchewka",
+     "rower",
+     "nożyczki",
+     "świeczka: candle",
+     "helikopter",
+     "ananas",
+     "ślimak",
+     "piła: saw",
+     "kaktus",
+     "gwizdek",
+     "harfa",
+     "igloo"
+    ],
+    "kept": 19,
+    "of": 20,
+    "review": [
+     "świeczka"
+    ],
+    "ambiguity_flags": {
+     "świeczka": [
+      "spark plug"
+     ]
+    },
+    "named_by_muse_spark": 19,
+    "candidates_named_by_muse_spark": 19,
+    "candidates": 21,
+    "muse_spark_other_names": [
+     {
+      "word": "świeczka",
+      "named": "świeca",
+      "code": "Mixed"
+     },
+     {
+      "word": "świeczka",
+      "named": "świeca",
+      "code": "Mixed"
+     }
+    ],
+    "alternates": {
+     "ławka": [
+      "lawka"
+     ],
+     "rękawiczka": [
+      "rekawiczka"
+     ],
+     "łyżka": [
+      "lyzka"
+     ],
+     "nożyczki": [
+      "nozyczki"
+     ],
+     "świeczka": [
+      "swieczka"
+     ],
+     "helikopter": [
+      "helicopter"
+     ],
+     "ślimak": [
+      "slimak"
+     ],
+     "piła": [
+      "pila"
+     ],
+     "kaktus": [
+      "cactus"
+     ],
+     "igloo": [
+      "iglo"
+     ]
+    },
+    "first_pass": {
+     "kept": 19,
+     "named": 19
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "pl_base",
+      "voice": "Zosia (pl-PL)",
+      "correct": 14,
+      "of": 20,
+      "correct_at_run": 14,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "kot",
+        "said": "kot",
+        "transcript": "Kup.",
+        "code": "Formal"
+       },
+       {
+        "target": "parasol",
+        "said": "parasol",
+        "transcript": "Parasol.",
+        "code": "Correct"
+       },
+       {
+        "target": "kotwica",
+        "said": "kotwica",
+        "transcript": "kotwica",
+        "code": "Correct"
+       },
+       {
+        "target": "czajnik",
+        "said": "czajnik",
+        "transcript": "czajnik,",
+        "code": "Correct"
+       },
+       {
+        "target": "drabina",
+        "said": "drabina",
+        "transcript": "Drobina.",
+        "code": "Nonword"
+       },
+       {
+        "target": "ławka",
+        "said": "ławka",
+        "transcript": "UFK.",
+        "code": "Neologism"
+       },
+       {
+        "target": "rękawiczka",
+        "said": "rękawiczka",
+        "transcript": "Rękawiczka.",
+        "code": "Correct"
+       },
+       {
+        "target": "łyżka",
+        "said": "łyżka",
+        "transcript": "Półyszka,",
+        "code": "Nonword"
+       },
+       {
+        "target": "marchewka",
+        "said": "marchewka",
+        "transcript": "marchewka",
+        "code": "Correct"
+       },
+       {
+        "target": "rower",
+        "said": "rower",
+        "transcript": "Rower",
+        "code": "Correct"
+       },
+       {
+        "target": "nożyczki",
+        "said": "nożyczki",
+        "transcript": "Nożyczki.",
+        "code": "Correct"
+       },
+       {
+        "target": "świeczka",
+        "said": "świeczka",
+        "transcript": "Świeczka.",
+        "code": "Correct"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "Helikopter",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas.",
+        "code": "Correct"
+       },
+       {
+        "target": "ślimak",
+        "said": "ślimak",
+        "transcript": "Ślimak,",
+        "code": "Correct"
+       },
+       {
+        "target": "piła",
+        "said": "piła",
+        "transcript": "Iła",
+        "code": "Formal"
+       },
+       {
+        "target": "kaktus",
+        "said": "kaktus",
+        "transcript": "kaktus",
+        "code": "Correct"
+       },
+       {
+        "target": "gwizdek",
+        "said": "gwizdek",
+        "transcript": "Gwizdek",
+        "code": "Correct"
+       },
+       {
+        "target": "harfa",
+        "said": "harfa",
+        "transcript": "Harfa",
+        "code": "Correct"
+       },
+       {
+        "target": "igloo",
+        "said": "igloo",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     },
+     {
+      "run": "pl_base_r2",
+      "voice": "Zosia (pl-PL)",
+      "correct": 15,
+      "of": 20,
+      "correct_at_run": 15,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "kot",
+        "said": "kot",
+        "transcript": "Kup,",
+        "code": "Formal"
+       },
+       {
+        "target": "parasol",
+        "said": "parasol",
+        "transcript": "parasol",
+        "code": "Correct"
+       },
+       {
+        "target": "kotwica",
+        "said": "kotwica",
+        "transcript": "Kotwica.",
+        "code": "Correct"
+       },
+       {
+        "target": "czajnik",
+        "said": "czajnik",
+        "transcript": "czajnik",
+        "code": "Correct"
+       },
+       {
+        "target": "drabina",
+        "said": "drabina",
+        "transcript": "Drobina.",
+        "code": "Nonword"
+       },
+       {
+        "target": "ławka",
+        "said": "ławka",
+        "transcript": "UFK",
+        "code": "Neologism"
+       },
+       {
+        "target": "rękawiczka",
+        "said": "rękawiczka",
+        "transcript": "Rękawiczka.",
+        "code": "Correct"
+       },
+       {
+        "target": "łyżka",
+        "said": "łyżka",
+        "transcript": "łyżka,",
+        "code": "Correct"
+       },
+       {
+        "target": "marchewka",
+        "said": "marchewka",
+        "transcript": "marchewka",
+        "code": "Correct"
+       },
+       {
+        "target": "rower",
+        "said": "rower",
+        "transcript": "Rower.",
+        "code": "Correct"
+       },
+       {
+        "target": "nożyczki",
+        "said": "nożyczki",
+        "transcript": "Nożyczki.",
+        "code": "Correct"
+       },
+       {
+        "target": "świeczka",
+        "said": "świeczka",
+        "transcript": "Świeczka,",
+        "code": "Correct"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "Helikopter.",
+        "code": "Correct"
+       },
+       {
+        "target": "ananas",
+        "said": "ananas",
+        "transcript": "Ananas.",
+        "code": "Correct"
+       },
+       {
+        "target": "ślimak",
+        "said": "ślimak",
+        "transcript": "Ślimak,",
+        "code": "Correct"
+       },
+       {
+        "target": "piła",
+        "said": "piła",
+        "transcript": "Iła.",
+        "code": "Formal"
+       },
+       {
+        "target": "kaktus",
+        "said": "kaktus",
+        "transcript": "Kaktus",
+        "code": "Correct"
+       },
+       {
+        "target": "gwizdek",
+        "said": "gwizdek",
+        "transcript": "Gwizdek.",
+        "code": "Correct"
+       },
+       {
+        "target": "harfa",
+        "said": "harfa",
+        "transcript": "Harfa,",
+        "code": "Correct"
+       },
+       {
+        "target": "igloo",
+        "said": "igloo",
+        "transcript": "",
+        "code": "NoResponse"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "in a short sentence (To jest kot)",
+     "runs": [
+      {
+       "run": "pl_frame",
+       "voice": "Zosia (pl-PL)",
+       "correct": 20,
+       "of": 20,
+       "correct_at_run": 20,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kot",
+         "said": "To jest kot.",
+         "transcript": "To jestTo jest kot.",
+         "code": "Correct"
+        },
+        {
+         "target": "parasol",
+         "said": "To jest parasol.",
+         "transcript": "To jest jest parasol.",
+         "code": "Correct"
+        },
+        {
+         "target": "kotwica",
+         "said": "To jest kotwica.",
+         "transcript": "To jest kotwica.",
+         "code": "Correct"
+        },
+        {
+         "target": "czajnik",
+         "said": "To jest czajnik.",
+         "transcript": "To jest czajnik.",
+         "code": "Correct"
+        },
+        {
+         "target": "drabina",
+         "said": "To jest drabina.",
+         "transcript": "To jest drabina.",
+         "code": "Correct"
+        },
+        {
+         "target": "ławka",
+         "said": "To jest ławka.",
+         "transcript": "To jest jest ławka.",
+         "code": "Correct"
+        },
+        {
+         "target": "rękawiczka",
+         "said": "To jest rękawiczka.",
+         "transcript": "To jest rękawiczka.",
+         "code": "Correct"
+        },
+        {
+         "target": "łyżka",
+         "said": "To jest łyżka.",
+         "transcript": "To jest łyżka.",
+         "code": "Correct"
+        },
+        {
+         "target": "marchewka",
+         "said": "To jest marchewka.",
+         "transcript": "To jest marchewka.",
+         "code": "Correct"
+        },
+        {
+         "target": "rower",
+         "said": "To jest rower.",
+         "transcript": "ToTo jest rower.",
+         "code": "Correct"
+        },
+        {
+         "target": "nożyczki",
+         "said": "To są nożyczki.",
+         "transcript": "To są nożyczki.",
+         "code": "Correct"
+        },
+        {
+         "target": "świeczka",
+         "said": "To jest świeczka.",
+         "transcript": "To jest świeczka.",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "To jest helikopter.",
+         "transcript": "To jest helikopter.",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "To jest ananas.",
+         "transcript": "To jest ananas.",
+         "code": "Correct"
+        },
+        {
+         "target": "ślimak",
+         "said": "To jest ślimak.",
+         "transcript": "To jest jest ślimak.",
+         "code": "Correct"
+        },
+        {
+         "target": "piła",
+         "said": "To jest piła.",
+         "transcript": "To jest piła.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktus",
+         "said": "To jest kaktus.",
+         "transcript": "To jest kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "gwizdek",
+         "said": "To jest gwizdek.",
+         "transcript": "To jest jest gwizdek.",
+         "code": "Correct"
+        },
+        {
+         "target": "harfa",
+         "said": "To jest harfa.",
+         "transcript": "To jest harfa.",
+         "code": "Correct"
+        },
+        {
+         "target": "igloo",
+         "said": "To jest igloo.",
+         "transcript": "To jest igloo,",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "pl_frame_r2",
+       "voice": "Zosia (pl-PL)",
+       "correct": 19,
+       "of": 20,
+       "correct_at_run": 19,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kot",
+         "said": "To jest kot.",
+         "transcript": "To jest kod,",
+         "code": "Formal"
+        },
+        {
+         "target": "parasol",
+         "said": "To jest parasol.",
+         "transcript": "To jest jest parasol.",
+         "code": "Correct"
+        },
+        {
+         "target": "kotwica",
+         "said": "To jest kotwica.",
+         "transcript": "To jest jest kotwica.",
+         "code": "Correct"
+        },
+        {
+         "target": "czajnik",
+         "said": "To jest czajnik.",
+         "transcript": "To jest jest czajnik.",
+         "code": "Correct"
+        },
+        {
+         "target": "drabina",
+         "said": "To jest drabina.",
+         "transcript": "ToTo jest drabina.",
+         "code": "Correct"
+        },
+        {
+         "target": "ławka",
+         "said": "To jest ławka.",
+         "transcript": "To jest ławka.",
+         "code": "Correct"
+        },
+        {
+         "target": "rękawiczka",
+         "said": "To jest rękawiczka.",
+         "transcript": "To jest rękawiczka.",
+         "code": "Correct"
+        },
+        {
+         "target": "łyżka",
+         "said": "To jest łyżka.",
+         "transcript": "To jest łyżka.",
+         "code": "Correct"
+        },
+        {
+         "target": "marchewka",
+         "said": "To jest marchewka.",
+         "transcript": "ToTo jest marchewka.",
+         "code": "Correct"
+        },
+        {
+         "target": "rower",
+         "said": "To jest rower.",
+         "transcript": "To jest rower.",
+         "code": "Correct"
+        },
+        {
+         "target": "nożyczki",
+         "said": "To są nożyczki.",
+         "transcript": "To sąTo są nożyczki.",
+         "code": "Correct"
+        },
+        {
+         "target": "świeczka",
+         "said": "To jest świeczka.",
+         "transcript": "To jest świeczka.",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "To jest helikopter.",
+         "transcript": "To jest helikopter.",
+         "code": "Correct"
+        },
+        {
+         "target": "ananas",
+         "said": "To jest ananas.",
+         "transcript": "To jest ananas.",
+         "code": "Correct"
+        },
+        {
+         "target": "ślimak",
+         "said": "To jest ślimak.",
+         "transcript": "ToTo jest ślimak.",
+         "code": "Correct"
+        },
+        {
+         "target": "piła",
+         "said": "To jest piła.",
+         "transcript": "To jest piła.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktus",
+         "said": "To jest kaktus.",
+         "transcript": "To jest kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "gwizdek",
+         "said": "To jest gwizdek.",
+         "transcript": "To jest gwizdek.",
+         "code": "Correct"
+        },
+        {
+         "target": "harfa",
+         "said": "To jest harfa.",
+         "transcript": "To jestTo jest harfa,",
+         "code": "Correct"
+        },
+        {
+         "target": "igloo",
+         "said": "To jest igloo.",
+         "transcript": "To jest jest igloo.",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Zosia is the only Polish voice on macOS, so both runs use her.",
+    "Muse Spark named both candle pictures świeca; the list had the diminutive świeczka, so it went to review. Accept świeca in a Polish test."
+   ]
+  },
+  {
+   "code": "id",
+   "name": "Indonesian",
+   "status": "verified",
+   "summary": "Verified: Ini ... scored 20/20 twice, and bare words 19/20 and 18/20.",
+   "picture_set": {
+    "set": "demo_id",
+    "pictures_from": "demo_en",
+    "words": [
+     "kucing",
+     "payung",
+     "jangkar",
+     "ketel: kettle",
+     "tangga: ladder",
+     "bangku: bench",
+     "sarung tangan",
+     "sendok",
+     "wortel",
+     "sepeda",
+     "gunting",
+     "lilin",
+     "helikopter",
+     "nanas",
+     "siput",
+     "gergaji",
+     "kaktus",
+     "peluit",
+     "harpa",
+     "iglo"
+    ],
+    "kept": 19,
+    "of": 20,
+    "review": [
+     "ketel"
+    ],
+    "ambiguity_flags": {
+     "tangga": [
+      "stairs",
+      "staircase"
+     ],
+     "bangku": [
+      "stool"
+     ]
+    },
+    "named_by_muse_spark": 19,
+    "candidates_named_by_muse_spark": 20,
+    "candidates": 23,
+    "muse_spark_other_names": [
+     {
+      "word": "ketel",
+      "named": "teko",
+      "code": "Mixed"
+     },
+     {
+      "word": "ketel",
+      "named": "teko",
+      "code": "Mixed"
+     },
+     {
+      "word": "iglo",
+      "named": "iglu",
+      "code": "Mixed"
+     }
+    ],
+    "alternates": {
+     "helikopter": [
+      "helicopter"
+     ],
+     "kaktus": [
+      "cactus"
+     ],
+     "harpa": [
+      "harp"
+     ],
+     "iglo": [
+      "igloo"
+     ]
+    },
+    "first_pass": {
+     "kept": 18,
+     "named": 18
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "id_base",
+      "voice": "Damayanti (id-ID)",
+      "correct": 19,
+      "of": 20,
+      "correct_at_run": 18,
+      "empty_transcripts": 0,
+      "rows": [
+       {
+        "target": "kucing",
+        "said": "kucing",
+        "transcript": "kucing",
+        "code": "Correct"
+       },
+       {
+        "target": "payung",
+        "said": "payung",
+        "transcript": "payung",
+        "code": "Correct"
+       },
+       {
+        "target": "jangkar",
+        "said": "jangkar",
+        "transcript": "jangkar",
+        "code": "Correct"
+       },
+       {
+        "target": "ketel",
+        "said": "ketel",
+        "transcript": "ketel,",
+        "code": "Correct"
+       },
+       {
+        "target": "tangga",
+        "said": "tangga",
+        "transcript": "tangga",
+        "code": "Correct"
+       },
+       {
+        "target": "bangku",
+        "said": "bangku",
+        "transcript": "Bangku.",
+        "code": "Correct"
+       },
+       {
+        "target": "sarung tangan",
+        "said": "sarung tangan",
+        "transcript": "sarungsarung tangan,",
+        "code": "Correct"
+       },
+       {
+        "target": "sendok",
+        "said": "sendok",
+        "transcript": "sendok,",
+        "code": "Correct"
+       },
+       {
+        "target": "wortel",
+        "said": "wortel",
+        "transcript": "wortel",
+        "code": "Correct"
+       },
+       {
+        "target": "sepeda",
+        "said": "sepeda",
+        "transcript": "sepedasepeda",
+        "code": "Correct"
+       },
+       {
+        "target": "gunting",
+        "said": "gunting",
+        "transcript": "gunting,",
+        "code": "Correct"
+       },
+       {
+        "target": "lilin",
+        "said": "lilin",
+        "transcript": "Lilin",
+        "code": "Correct"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "helikopter",
+        "code": "Correct"
+       },
+       {
+        "target": "nanas",
+        "said": "nanas",
+        "transcript": "nanas",
+        "code": "Correct"
+       },
+       {
+        "target": "siput",
+        "said": "siput",
+        "transcript": "siput",
+        "code": "Correct"
+       },
+       {
+        "target": "gergaji",
+        "said": "gergaji",
+        "transcript": "gergaji",
+        "code": "Correct"
+       },
+       {
+        "target": "kaktus",
+        "said": "kaktus",
+        "transcript": "kaktus",
+        "code": "Correct"
+       },
+       {
+        "target": "peluit",
+        "said": "peluit",
+        "transcript": "peluit,",
+        "code": "Correct"
+       },
+       {
+        "target": "harpa",
+        "said": "harpa",
+        "transcript": "harpa,",
+        "code": "Correct"
+       },
+       {
+        "target": "iglo",
+        "said": "iglo",
+        "transcript": "iglow",
+        "code": "Mixed"
+       }
+      ]
+     },
+     {
+      "run": "id_base_r2",
+      "voice": "Damayanti (id-ID)",
+      "correct": 18,
+      "of": 20,
+      "correct_at_run": 18,
+      "empty_transcripts": 0,
+      "rows": [
+       {
+        "target": "kucing",
+        "said": "kucing",
+        "transcript": "kucing",
+        "code": "Correct"
+       },
+       {
+        "target": "payung",
+        "said": "payung",
+        "transcript": "payung,",
+        "code": "Correct"
+       },
+       {
+        "target": "jangkar",
+        "said": "jangkar",
+        "transcript": "jangkar",
+        "code": "Correct"
+       },
+       {
+        "target": "ketel",
+        "said": "ketel",
+        "transcript": "ketel",
+        "code": "Correct"
+       },
+       {
+        "target": "tangga",
+        "said": "tangga",
+        "transcript": "Tanggal,",
+        "code": "Formal"
+       },
+       {
+        "target": "bangku",
+        "said": "bangku",
+        "transcript": "bangku",
+        "code": "Correct"
+       },
+       {
+        "target": "sarung tangan",
+        "said": "sarung tangan",
+        "transcript": "sarung tangan",
+        "code": "Correct"
+       },
+       {
+        "target": "sendok",
+        "said": "sendok",
+        "transcript": "sendok,",
+        "code": "Correct"
+       },
+       {
+        "target": "wortel",
+        "said": "wortel",
+        "transcript": "Wortel",
+        "code": "Correct"
+       },
+       {
+        "target": "sepeda",
+        "said": "sepeda",
+        "transcript": "sepeda",
+        "code": "Correct"
+       },
+       {
+        "target": "gunting",
+        "said": "gunting",
+        "transcript": "gunting",
+        "code": "Correct"
+       },
+       {
+        "target": "lilin",
+        "said": "lilin",
+        "transcript": "Lilin",
+        "code": "Correct"
+       },
+       {
+        "target": "helikopter",
+        "said": "helikopter",
+        "transcript": "helikopter",
+        "code": "Correct"
+       },
+       {
+        "target": "nanas",
+        "said": "nanas",
+        "transcript": "nanas,",
+        "code": "Correct"
+       },
+       {
+        "target": "siput",
+        "said": "siput",
+        "transcript": "siput",
+        "code": "Correct"
+       },
+       {
+        "target": "gergaji",
+        "said": "gergaji",
+        "transcript": "Gergaji,Gergaji",
+        "code": "Correct"
+       },
+       {
+        "target": "kaktus",
+        "said": "kaktus",
+        "transcript": "kaktus,",
+        "code": "Correct"
+       },
+       {
+        "target": "peluit",
+        "said": "peluit",
+        "transcript": "peluit",
+        "code": "Correct"
+       },
+       {
+        "target": "harpa",
+        "said": "harpa",
+        "transcript": "harpa",
+        "code": "Correct"
+       },
+       {
+        "target": "iglo",
+        "said": "iglo",
+        "transcript": "iglow",
+        "code": "Mixed"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "in a short sentence (Ini kucing)",
+     "runs": [
+      {
+       "run": "id_frame",
+       "voice": "Damayanti (id-ID)",
+       "correct": 20,
+       "of": 20,
+       "correct_at_run": 20,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kucing",
+         "said": "Ini kucing.",
+         "transcript": "Ini kucing.",
+         "code": "Correct"
+        },
+        {
+         "target": "payung",
+         "said": "Ini payung.",
+         "transcript": "Ini payung.",
+         "code": "Correct"
+        },
+        {
+         "target": "jangkar",
+         "said": "Ini jangkar.",
+         "transcript": "ini jangkar",
+         "code": "Correct"
+        },
+        {
+         "target": "ketel",
+         "said": "Ini ketel.",
+         "transcript": "ini ketel.",
+         "code": "Correct"
+        },
+        {
+         "target": "tangga",
+         "said": "Ini tangga.",
+         "transcript": "Ini tangga.",
+         "code": "Correct"
+        },
+        {
+         "target": "bangku",
+         "said": "Ini bangku.",
+         "transcript": "Iniini bangku",
+         "code": "Correct"
+        },
+        {
+         "target": "sarung tangan",
+         "said": "Ini sarung tangan.",
+         "transcript": "Ini sarung tangan.",
+         "code": "Correct"
+        },
+        {
+         "target": "sendok",
+         "said": "Ini sendok.",
+         "transcript": "iniIni sendok,",
+         "code": "Correct"
+        },
+        {
+         "target": "wortel",
+         "said": "Ini wortel.",
+         "transcript": "ini wortel.",
+         "code": "Correct"
+        },
+        {
+         "target": "sepeda",
+         "said": "Ini sepeda.",
+         "transcript": "IniIni sepeda.",
+         "code": "Correct"
+        },
+        {
+         "target": "gunting",
+         "said": "Ini gunting.",
+         "transcript": "Ini gunting.",
+         "code": "Correct"
+        },
+        {
+         "target": "lilin",
+         "said": "Ini lilin.",
+         "transcript": "ini lilin",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "Ini helikopter.",
+         "transcript": "Ini helikopter.",
+         "code": "Correct"
+        },
+        {
+         "target": "nanas",
+         "said": "Ini nanas.",
+         "transcript": "Ini nanas.",
+         "code": "Correct"
+        },
+        {
+         "target": "siput",
+         "said": "Ini siput.",
+         "transcript": "ini siput",
+         "code": "Correct"
+        },
+        {
+         "target": "gergaji",
+         "said": "Ini gergaji.",
+         "transcript": "ini gergaji",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktus",
+         "said": "Ini kaktus.",
+         "transcript": "iniIni kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "peluit",
+         "said": "Ini peluit.",
+         "transcript": "Ini peluit",
+         "code": "Correct"
+        },
+        {
+         "target": "harpa",
+         "said": "Ini harpa.",
+         "transcript": "Ini harpa.",
+         "code": "Correct"
+        },
+        {
+         "target": "iglo",
+         "said": "Ini iglo.",
+         "transcript": "Ini iglo.",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "id_frame_r2",
+       "voice": "Damayanti (id-ID)",
+       "correct": 20,
+       "of": 20,
+       "correct_at_run": 20,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "kucing",
+         "said": "Ini kucing.",
+         "transcript": "Ini kucing.",
+         "code": "Correct"
+        },
+        {
+         "target": "payung",
+         "said": "Ini payung.",
+         "transcript": "iniIni payung.",
+         "code": "Correct"
+        },
+        {
+         "target": "jangkar",
+         "said": "Ini jangkar.",
+         "transcript": "Ini jangkar.",
+         "code": "Correct"
+        },
+        {
+         "target": "ketel",
+         "said": "Ini ketel.",
+         "transcript": "Ini ketel",
+         "code": "Correct"
+        },
+        {
+         "target": "tangga",
+         "said": "Ini tangga.",
+         "transcript": "Ini tangga.",
+         "code": "Correct"
+        },
+        {
+         "target": "bangku",
+         "said": "Ini bangku.",
+         "transcript": "iniIni bangku,",
+         "code": "Correct"
+        },
+        {
+         "target": "sarung tangan",
+         "said": "Ini sarung tangan.",
+         "transcript": "Ini sarung tangan.",
+         "code": "Correct"
+        },
+        {
+         "target": "sendok",
+         "said": "Ini sendok.",
+         "transcript": "Ini sendok,",
+         "code": "Correct"
+        },
+        {
+         "target": "wortel",
+         "said": "Ini wortel.",
+         "transcript": "Ini wortel.",
+         "code": "Correct"
+        },
+        {
+         "target": "sepeda",
+         "said": "Ini sepeda.",
+         "transcript": "ini sepeda",
+         "code": "Correct"
+        },
+        {
+         "target": "gunting",
+         "said": "Ini gunting.",
+         "transcript": "Ini gunting,",
+         "code": "Correct"
+        },
+        {
+         "target": "lilin",
+         "said": "Ini lilin.",
+         "transcript": "Ini lilin.",
+         "code": "Correct"
+        },
+        {
+         "target": "helikopter",
+         "said": "Ini helikopter.",
+         "transcript": "ini helikopter",
+         "code": "Correct"
+        },
+        {
+         "target": "nanas",
+         "said": "Ini nanas.",
+         "transcript": "Ini nanas.",
+         "code": "Correct"
+        },
+        {
+         "target": "siput",
+         "said": "Ini siput.",
+         "transcript": "ini siput.",
+         "code": "Correct"
+        },
+        {
+         "target": "gergaji",
+         "said": "Ini gergaji.",
+         "transcript": "IniIni gergaji.",
+         "code": "Correct"
+        },
+        {
+         "target": "kaktus",
+         "said": "Ini kaktus.",
+         "transcript": "Ini kaktus.",
+         "code": "Correct"
+        },
+        {
+         "target": "peluit",
+         "said": "Ini peluit.",
+         "transcript": "Ini peluit.",
+         "code": "Correct"
+        },
+        {
+         "target": "harpa",
+         "said": "Ini harpa.",
+         "transcript": "Ini harpa.",
+         "code": "Correct"
+        },
+        {
+         "target": "iglo",
+         "said": "Ini iglo.",
+         "transcript": "ini iglo.",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Damayanti is the only Indonesian voice on macOS, so both runs use her.",
+    "Both kettle pictures were named teko (teapot), so ketel went to review.",
+    "iglo comes back as 'iglow'."
+   ]
+  },
+  {
+   "code": "vi",
+   "name": "Vietnamese",
+   "status": "works with review",
+   "summary": "Works with review: 15/20 and 18/20 with the classifier, 14 and 15 bare. Tones get lost or changed (cưa -> cơ, xương rồng -> xuống dòng).",
+   "picture_set": {
+    "set": "demo_vi",
+    "pictures_from": "demo_en",
+    "words": [
+     "mèo",
+     "ô: umbrella",
+     "mỏ neo",
+     "ấm: kettle",
+     "thang: ladder",
+     "ghế dài: bench",
+     "găng tay",
+     "thìa: spoon",
+     "cà rốt",
+     "xe đạp",
+     "kéo: scissors",
+     "nến: candle",
+     "trực thăng",
+     "dứa: pineapple",
+     "ốc sên",
+     "cưa: saw",
+     "xương rồng",
+     "còi: whistle",
+     "đàn hạc",
+     "lều tuyết: igloo"
+    ],
+    "kept": 20,
+    "of": 20,
+    "review": [],
+    "ambiguity_flags": {
+     "ô": [
+      "cell",
+      "compartment"
+     ],
+     "dứa": [
+      "screwpine"
+     ],
+     "còi": [
+      "horn",
+      "siren"
+     ]
+    },
+    "named_by_muse_spark": 20,
+    "candidates_named_by_muse_spark": 20,
+    "candidates": 21,
+    "muse_spark_other_names": [
+     {
+      "word": "ghế dài",
+      "named": "ghế băng",
+      "code": "Mixed"
+     }
+    ],
+    "alternates": {
+     "cà rốt": [
+      "carotte"
+     ],
+     "xương rồng": [
+      "cactus"
+     ]
+    },
+    "first_pass": {
+     "kept": 20,
+     "named": 20
+    }
+   },
+   "spoken": {
+    "bare_word": [
+     {
+      "run": "vi_base",
+      "voice": "Linh (vi-VN)",
+      "correct": 14,
+      "of": 20,
+      "correct_at_run": 11,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "mèo",
+        "said": "mèo",
+        "transcript": "Mèo",
+        "code": "Correct"
+       },
+       {
+        "target": "ô",
+        "said": "ô",
+        "transcript": "ôÔ",
+        "code": "Correct"
+       },
+       {
+        "target": "mỏ neo",
+        "said": "mỏ neo",
+        "transcript": "mỏ neo",
+        "code": "Correct"
+       },
+       {
+        "target": "ấm",
+        "said": "ấm",
+        "transcript": "ấm",
+        "code": "Correct"
+       },
+       {
+        "target": "thang",
+        "said": "thang",
+        "transcript": "Hang",
+        "code": "Formal"
+       },
+       {
+        "target": "ghế dài",
+        "said": "ghế dài",
+        "transcript": "ghếế dài",
+        "code": "Mixed"
+       },
+       {
+        "target": "găng tay",
+        "said": "găng tay",
+        "transcript": "Găng tay",
+        "code": "Correct"
+       },
+       {
+        "target": "thìa",
+        "said": "thìa",
+        "transcript": "thia",
+        "code": "Correct"
+       },
+       {
+        "target": "cà rốt",
+        "said": "cà rốt",
+        "transcript": "cà rốt,",
+        "code": "Correct"
+       },
+       {
+        "target": "xe đạp",
+        "said": "xe đạp",
+        "transcript": "xexe đạp,",
+        "code": "Correct"
+       },
+       {
+        "target": "kéo",
+        "said": "kéo",
+        "transcript": "kéo",
+        "code": "Correct"
+       },
+       {
+        "target": "nến",
+        "said": "nến",
+        "transcript": "nến",
+        "code": "Correct"
+       },
+       {
+        "target": "trực thăng",
+        "said": "trực thăng",
+        "transcript": "trực thăng",
+        "code": "Correct"
+       },
+       {
+        "target": "dứa",
+        "said": "dứa",
+        "transcript": "giữa",
+        "code": "Unrelated"
+       },
+       {
+        "target": "ốc sên",
+        "said": "ốc sên",
+        "transcript": "observe,",
+        "code": "Neologism"
+       },
+       {
+        "target": "cưa",
+        "said": "cưa",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "xương rồng",
+        "said": "xương rồng",
+        "transcript": "xuống dòng",
+        "code": "Formal"
+       },
+       {
+        "target": "còi",
+        "said": "còi",
+        "transcript": "coi",
+        "code": "Correct"
+       },
+       {
+        "target": "đàn hạc",
+        "said": "đàn hạc",
+        "transcript": "đàn hạc",
+        "code": "Correct"
+       },
+       {
+        "target": "lều tuyết",
+        "said": "lều tuyết",
+        "transcript": "lều tuyết",
+        "code": "Correct"
+       }
+      ]
+     },
+     {
+      "run": "vi_base_r2",
+      "voice": "Linh (vi-VN)",
+      "correct": 15,
+      "of": 20,
+      "correct_at_run": 15,
+      "empty_transcripts": 1,
+      "rows": [
+       {
+        "target": "mèo",
+        "said": "mèo",
+        "transcript": "mèo",
+        "code": "Correct"
+       },
+       {
+        "target": "ô",
+        "said": "ô",
+        "transcript": "Ô,ồ",
+        "code": "Correct"
+       },
+       {
+        "target": "mỏ neo",
+        "said": "mỏ neo",
+        "transcript": "mỏ neo",
+        "code": "Correct"
+       },
+       {
+        "target": "ấm",
+        "said": "ấm",
+        "transcript": "ấm",
+        "code": "Correct"
+       },
+       {
+        "target": "thang",
+        "said": "thang",
+        "transcript": "hang",
+        "code": "Formal"
+       },
+       {
+        "target": "ghế dài",
+        "said": "ghế dài",
+        "transcript": "Ghế dài,",
+        "code": "Correct"
+       },
+       {
+        "target": "găng tay",
+        "said": "găng tay",
+        "transcript": "găng tay",
+        "code": "Correct"
+       },
+       {
+        "target": "thìa",
+        "said": "thìa",
+        "transcript": "thia",
+        "code": "Correct"
+       },
+       {
+        "target": "cà rốt",
+        "said": "cà rốt",
+        "transcript": "càcà rốt",
+        "code": "Correct"
+       },
+       {
+        "target": "xe đạp",
+        "said": "xe đạp",
+        "transcript": "xe đạp",
+        "code": "Correct"
+       },
+       {
+        "target": "kéo",
+        "said": "kéo",
+        "transcript": "kéo",
+        "code": "Correct"
+       },
+       {
+        "target": "nến",
+        "said": "nến",
+        "transcript": "nến",
+        "code": "Correct"
+       },
+       {
+        "target": "trực thăng",
+        "said": "trực thăng",
+        "transcript": "trực thăng,",
+        "code": "Correct"
+       },
+       {
+        "target": "dứa",
+        "said": "dứa",
+        "transcript": "Rửa",
+        "code": "Unrelated"
+       },
+       {
+        "target": "ốc sên",
+        "said": "ốc sên",
+        "transcript": "Upsend",
+        "code": "Nonword"
+       },
+       {
+        "target": "cưa",
+        "said": "cưa",
+        "transcript": "",
+        "code": "NoResponse"
+       },
+       {
+        "target": "xương rồng",
+        "said": "xương rồng",
+        "transcript": "xuống rồng,",
+        "code": "Formal"
+       },
+       {
+        "target": "còi",
+        "said": "còi",
+        "transcript": "coi",
+        "code": "Correct"
+       },
+       {
+        "target": "đàn hạc",
+        "said": "đàn hạc",
+        "transcript": "Đàn hạc",
+        "code": "Correct"
+       },
+       {
+        "target": "lều tuyết",
+        "said": "lều tuyết",
+        "transcript": "Lều tuyết.",
+        "code": "Correct"
+       }
+      ]
+     }
+    ],
+    "recommended": {
+     "answer_form": "with the classifier (con mèo, cái ô)",
+     "runs": [
+      {
+       "run": "vi_classifier",
+       "voice": "Linh (vi-VN)",
+       "correct": 15,
+       "of": 20,
+       "correct_at_run": 15,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "mèo",
+         "said": "con mèo",
+         "transcript": "con mèo,",
+         "code": "Correct"
+        },
+        {
+         "target": "ô",
+         "said": "cái ô",
+         "transcript": "Cái ô,",
+         "code": "Correct"
+        },
+        {
+         "target": "mỏ neo",
+         "said": "cái mỏ neo",
+         "transcript": "cái mỏ neo",
+         "code": "Correct"
+        },
+        {
+         "target": "ấm",
+         "said": "cái ấm",
+         "transcript": "cáicái ấm",
+         "code": "Correct"
+        },
+        {
+         "target": "thang",
+         "said": "cái thang",
+         "transcript": "Cái thang",
+         "code": "Correct"
+        },
+        {
+         "target": "ghế dài",
+         "said": "cái ghế dài",
+         "transcript": "cái ghế cái ghế dài,",
+         "code": "Correct"
+        },
+        {
+         "target": "găng tay",
+         "said": "chiếc găng tay",
+         "transcript": "Chiếc găng tay",
+         "code": "Correct"
+        },
+        {
+         "target": "thìa",
+         "said": "cái thìa",
+         "transcript": "Cáicái thìa",
+         "code": "Correct"
+        },
+        {
+         "target": "cà rốt",
+         "said": "củ cà rốt",
+         "transcript": "củ cà rốt",
+         "code": "Correct"
+        },
+        {
+         "target": "xe đạp",
+         "said": "chiếc xe đạp",
+         "transcript": "Chiếc xe đạp",
+         "code": "Correct"
+        },
+        {
+         "target": "kéo",
+         "said": "cái kéo",
+         "transcript": "cáicái kéo,",
+         "code": "Correct"
+        },
+        {
+         "target": "nến",
+         "said": "cây nến",
+         "transcript": "cây nến",
+         "code": "Correct"
+        },
+        {
+         "target": "trực thăng",
+         "said": "chiếc trực thăng",
+         "transcript": "Chiếc trục thăng",
+         "code": "Formal"
+        },
+        {
+         "target": "dứa",
+         "said": "quả dứa",
+         "transcript": "quả dứa",
+         "code": "Correct"
+        },
+        {
+         "target": "ốc sên",
+         "said": "con ốc sên",
+         "transcript": "concon ốp sen",
+         "code": "Formal"
+        },
+        {
+         "target": "cưa",
+         "said": "cái cưa",
+         "transcript": "cáiCái cơ",
+         "code": "Formal"
+        },
+        {
+         "target": "xương rồng",
+         "said": "cây xương rồng",
+         "transcript": "Cây xuông rồng,",
+         "code": "Nonword"
+        },
+        {
+         "target": "còi",
+         "said": "cái còi",
+         "transcript": "cái còi",
+         "code": "Correct"
+        },
+        {
+         "target": "đàn hạc",
+         "said": "cây đàn hạc",
+         "transcript": "cây cây đàn hạ",
+         "code": "Mixed"
+        },
+        {
+         "target": "lều tuyết",
+         "said": "cái lều tuyết",
+         "transcript": "Cái lều tuyết,",
+         "code": "Correct"
+        }
+       ]
+      },
+      {
+       "run": "vi_classifier_r2",
+       "voice": "Linh (vi-VN)",
+       "correct": 18,
+       "of": 20,
+       "correct_at_run": 18,
+       "empty_transcripts": 0,
+       "rows": [
+        {
+         "target": "mèo",
+         "said": "con mèo",
+         "transcript": "conCon mèo",
+         "code": "Correct"
+        },
+        {
+         "target": "ô",
+         "said": "cái ô",
+         "transcript": "cái ôCái ô",
+         "code": "Correct"
+        },
+        {
+         "target": "mỏ neo",
+         "said": "cái mỏ neo",
+         "transcript": "cái mỏcái mỏ neo",
+         "code": "Correct"
+        },
+        {
+         "target": "ấm",
+         "said": "cái ấm",
+         "transcript": "Cái ấm,",
+         "code": "Correct"
+        },
+        {
+         "target": "thang",
+         "said": "cái thang",
+         "transcript": "Cái thang,",
+         "code": "Correct"
+        },
+        {
+         "target": "ghế dài",
+         "said": "cái ghế dài",
+         "transcript": "Cái ghế dài,",
+         "code": "Correct"
+        },
+        {
+         "target": "găng tay",
+         "said": "chiếc găng tay",
+         "transcript": "Chiếc găng tay",
+         "code": "Correct"
+        },
+        {
+         "target": "thìa",
+         "said": "cái thìa",
+         "transcript": "cái thìa,",
+         "code": "Correct"
+        },
+        {
+         "target": "cà rốt",
+         "said": "củ cà rốt",
+         "transcript": "củ cà rốt,",
+         "code": "Correct"
+        },
+        {
+         "target": "xe đạp",
+         "said": "chiếc xe đạp",
+         "transcript": "Chiếc xe đạp",
+         "code": "Correct"
+        },
+        {
+         "target": "kéo",
+         "said": "cái kéo",
+         "transcript": "cáicái kéo,",
+         "code": "Correct"
+        },
+        {
+         "target": "nến",
+         "said": "cây nến",
+         "transcript": "cây nến",
+         "code": "Correct"
+        },
+        {
+         "target": "trực thăng",
+         "said": "chiếc trực thăng",
+         "transcript": "Chiếc trực thăng",
+         "code": "Correct"
+        },
+        {
+         "target": "dứa",
+         "said": "quả dứa",
+         "transcript": "quả dứa",
+         "code": "Correct"
+        },
+        {
+         "target": "ốc sên",
+         "said": "con ốc sên",
+         "transcript": "Con ốc sên",
+         "code": "Correct"
+        },
+        {
+         "target": "cưa",
+         "said": "cái cưa",
+         "transcript": "cái cơ",
+         "code": "Formal"
+        },
+        {
+         "target": "xương rồng",
+         "said": "cây xương rồng",
+         "transcript": "cây suông rồng,",
+         "code": "Formal"
+        },
+        {
+         "target": "còi",
+         "said": "cái còi",
+         "transcript": "cái còi",
+         "code": "Correct"
+        },
+        {
+         "target": "đàn hạc",
+         "said": "cây đàn hạc",
+         "transcript": "cây đàn hạc",
+         "code": "Correct"
+        },
+        {
+         "target": "lều tuyết",
+         "said": "cái lều tuyết",
+         "transcript": "Cái lều tuyết",
+         "code": "Correct"
+        }
+       ]
+      }
+     ]
+    },
+    "other_runs": {}
+   },
+   "notes": [
+    "Linh is the only Vietnamese voice on macOS, so both runs use her.",
+    "Asked for 'exactly one word', Muse Spark cut names to one syllable (mỏ neo -> neo) or ran them together (càrốt). Test Studio now asks for every syllable in Vietnamese; the set was rebuilt with that prompt (11/20 named before, 20/20 after).",
+    "Marks aren't folded in Vietnamese (mèo 'cat' vs méo 'bent'), but a transcript with no marks at all (thia for thìa) still matches."
    ]
   }
  ]

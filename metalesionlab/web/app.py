@@ -54,7 +54,8 @@ HUMAN_PROFILES = meta_api.REPO_ROOT / "public_data" / "human_naming_profiles.jso
 
 PUBLIC = os.environ.get("TOT_PUBLIC") == "1"
 ALLOW_BUILDS = os.environ.get("TOT_ALLOW_BUILDS", "1") == "1"
-VERIFIED_LANGS = {"en", "es", "fr", "pt"}  # measured end to end (public_data/language_support.json)
+# Measured end to end (public_data/language_support.json).
+VERIFIED_LANGS = {"en", "es", "fr", "pt", "de", "tr", "pl", "id"}
 MAX_WORDS = int(os.environ.get("TOT_MAX_WORDS", "24"))
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 MAX_CLIP_S = {"naming": 30, "description": 240, "fluency": 120}
@@ -926,3 +927,5 @@ app.include_router(importlib.import_module("metalesionlab.web.challenge").router
 app.include_router(importlib.import_module("metalesionlab.web.assess_routes").router)  # Naming Assessment
 app.include_router(importlib.import_module("metalesionlab.web.plato_routes").router)  # Plato's Chair (/plato)
 app.include_router(importlib.import_module("metalesionlab.web.cut_routes").router)  # What can I cut? (/lab/cut)
+app.include_router(importlib.import_module("metalesionlab.web.bilingual_routes").router)  # Second language (/lab/bilingual)
+app.include_router(importlib.import_module("metalesionlab.web.agent_routes").router)  # Ask the Lab (/ask)

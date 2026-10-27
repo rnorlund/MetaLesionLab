@@ -101,6 +101,20 @@ def plan_concepts(api: MetaAPI, concepts: list[Concept], lang: str) -> list[Conc
     return concepts
 
 
+# Oct 27: asked for "exactly one word", Muse Spark cut Vietnamese names to one syllable (mỏ neo -> "neo",
+# ghế dài -> "ghế") or ran them together ("càrốt", and Indonesian "sarungtangan").
+NAME_NOTES = {
+    "vi": " A Vietnamese name may have two or more syllables (xe đạp); give all of them, without a classifier.",
+    "id": " If the usual name is two words (sarung tangan), give both.",
+}
+
+
+def naming_prompt(lang: str) -> str:
+    """What Muse Spark is asked when it names a candidate picture in the test's language."""
+    return (f"Name the object in this picture with exactly one word in {LANGUAGE_NAMES.get(lang, lang)}."
+            f"{NAME_NOTES.get(lang, '')} Reply with the word only.")
+
+
 def _resized_png(image: bytes, side: int) -> bytes:
     img = Image.open(io.BytesIO(image)).convert("RGB")
     img.thumbnail((side, side))
@@ -118,8 +132,7 @@ def check_candidate(api: MetaAPI, image: bytes, concept: Concept, lang: str, jud
     small = _resized_png(image, 512)
     reply = api.chat([{"role": "user", "content": [
         {"type": "image_url", "image_url": {"url": image_data_url(small)}},
-        {"type": "text", "text": f"Name the object in this picture with exactly one word in "
-                                 f"{LANGUAGE_NAMES.get(lang, lang)}. Reply with the word only."},
+        {"type": "text", "text": naming_prompt(lang)},
     ]}])
     spark_name = reply.choices[0].message.content.strip()
     spark_code = classify(concept.word, spark_name, lang, alternates=tuple(concept.alternates), judge=judge).code

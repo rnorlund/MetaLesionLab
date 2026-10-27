@@ -1,6 +1,6 @@
 # Language support
 
-Measured on **Oct 26, 2026**. "Any language" means you can type a word list in any language and Test Studio will try it. This page lists what we have actually measured. The same numbers, with every transcript, are in [`public_data/language_support.json`](../public_data/language_support.json).
+Measured on **Oct 26, 2026** (six languages) and **Oct 27** (ten more: see [Ten more languages](#ten-more-languages-oct-27)). "Any language" means you can type a word list in any language and Test Studio will try it. This page lists what we have actually measured. The same numbers, with every transcript, are in [`public_data/language_support.json`](../public_data/language_support.json).
 
 ## At a glance
 
@@ -12,7 +12,19 @@ Measured on **Oct 26, 2026**. "Any language" means you can type a word list in a
 | Brazilian Portuguese | 20 | 20 | 17 | with the article: 19, 18 | **verified** (name with the article) |
 | Mandarin Chinese | 18 | 19 | 14, 14 | with a measure word: 18, 17 | **works with review** |
 | Hindi | 18 | 18 | 14, 11 | bare word: 14, 11 | **experimental** |
+| German | 20 | 20 | 16, 15 | *Das ist eine Katze*: 20, 19 | **verified** (answer in a short sentence) |
+| Turkish | 20 | 20 | 17, 15 | with *bir*: 18, 19 | **verified** (name with *bir*) |
+| Polish | 19 | 19 | 14, 15 | *To jest kot*: 20, 19 | **verified** (answer in a short sentence) |
+| Indonesian | 19 | 19 | 19, 18 | *Ini kucing*: 20, 20 | **verified** |
+| Italian | 19 | 19 | 17, 17 | with the article: 18, 17 | **works with review** |
+| Arabic | 19 | 19 | 14, 14 | with al-: 16, 17 | **works with review** |
+| Vietnamese | 20 | 20 | 14, 15 | with a classifier: 15, 18 | **works with review** |
+| Dutch | 20 | 20 | 14, 13 | with the article: 16, 16 | **works with review** |
+| Japanese | 19 | 19 | 13, 15 | with *です*: 16, 15 | **experimental** |
+| Korean | 20 | 20 | 13, 14 | bare word: 13, 14 | **experimental** |
 | Any other language | not measured | not measured | not measured | not measured | **experimental** |
+
+The ten languages added on Oct 27 reuse the English demo set's pictures, so their picture-set column counts pictures that Muse Spark named correctly in the language; SAM's checks come from the English set. See [Ten more languages](#ten-more-languages-oct-27).
 
 - **Picture set:** words with at least one picture that passed both checks: SAM 3.1 sees one clear object, and Muse Spark's name for it is coded Correct. These are first-pass numbers, before any reviewer edits.
 - **Named by Muse Spark:** words for which Muse Spark gave a Correct name to at least one of the two candidate pictures.
@@ -26,6 +38,8 @@ Measured on **Oct 26, 2026**. "Any language" means you can type a word list in a
   | Brazilian Portuguese | Luciana, two runs; macOS has no second Brazilian voice |
   | Mandarin | Tingting (mainland), Meijia (Taiwan) |
   | Hindi | Lekha, two runs; the only Hindi voice |
+  | Dutch | Xander (Netherlands), Ellen (Belgium) |
+  | German, Italian, Japanese, Korean, Arabic, Turkish, Polish, Indonesian, Vietnamese | Anna, Alice, Kyoko, Yuna, Majed, Yelda, Zosia, Damayanti, Linh: two runs each; each is the only natural voice for its language on macOS |
 
 - Each number is one run of 20. Expect a couple of points of run-to-run variation: two identical Hindi runs gave 14 and 11.
 
@@ -37,7 +51,7 @@ Measured on **Oct 26, 2026**. "Any language" means you can type a word list in a
   - the language's scoring rules have unit tests and a live check.
 
   As in every language, a person still reviews the codes.
-- **works with review:** pictures and naming work, and spoken naming is mostly right in the recommended form. Known gaps mean a person should check every code that isn't Correct.
+- **works with review:** pictures and naming work, and spoken naming is mostly right in the recommended form. Known gaps mean a person should check every code that isn't Correct. For the Oct 27 languages, "mostly right" meant at least 16/20 averaged over two runs.
 - **experimental:** measured below that, or not measured. Fine for building picture sets; don't rely on automatic spoken scoring yet.
 
 ## What to tell test-takers
@@ -45,13 +59,17 @@ Measured on **Oct 26, 2026**. "Any language" means you can type a word list in a
 - **Spanish, French, Portuguese:** "Say the name with *un/una*, *un/une* or *um/uma*" (*un gato*, *un chat*, *um gato*). With bare words, short names are often heard as other words: *banc* → "Dans", *ancla* → "Acla".
 - **Mandarin:** "Say it with a measure word" (*一只猫*, *一把剪刀*). Bare one-syllable names come back as homophones (*锚* → 毛).
 - **English, Hindi:** the bare word. For both, the article or a frame (*यह … है*) didn't help.
+- **German:** "Answer with *Das ist ein …* or *Das ist eine …*". *Der/die/das* alone gave 17/20 twice.
+- **Polish:** "Answer with *To jest …*". **Indonesian:** "Answer with *Ini …*" (bare words also work: 19 and 18).
+- **Turkish:** "Say the name with *bir*" (*bir kedi*). **Italian, Dutch:** with *un/una/un'* or *een*. **Arabic:** with *al-* (*القطة*).
+- **Vietnamese:** "Say it with its classifier" (*con mèo*, *cái ô*). **Japanese:** with *です* (*猫です*). **Korean:** the bare word; *예요/이에요* didn't help.
 - In every language, a reviewer should listen to or re-record any response that comes back empty. The Scorer codes an empty transcript as No response.
 
 ## What the landing page can claim
 
-> Build picture tests in any language: picture sets are checked in English, Spanish, French, Portuguese, Hindi and Mandarin. Automatic spoken scoring is verified in English, Spanish, French and Brazilian Portuguese, works with a reviewer in Mandarin, and is experimental in Hindi and other languages.
+> Build picture tests in any language: picture sets are checked in 16. Automatic spoken scoring is verified in English, Spanish, French, Brazilian Portuguese, German, Turkish, Polish and Indonesian, works with a reviewer in Mandarin, Italian, Dutch, Arabic and Vietnamese, and is experimental in Hindi, Japanese, Korean and other languages.
 
-Don't claim "scores speech in any language". Pictures and typed scoring travel well. Spoken scoring has been measured in six languages, with synthesized voices only, and depends on how people answer.
+Don't claim "scores speech in any language". Pictures and typed scoring travel well. Spoken scoring has been measured in 16 languages, with synthesized voices only (one voice for most of them), and depends on how people answer. Muse Voice Transcribe takes a language hint for 25 languages; the other nine (Bengali, Hebrew, Kannada, Malay, Marathi, Tagalog, Tamil, Telugu, Thai) and every other language are not measured.
 
 ## Method
 
@@ -216,11 +234,190 @@ A response with exactly the target's sounds and stressed vowel counts as Correct
 - Hindi: sound is compared letter by letter.
 - Swahili is listed in the app's language menu but hasn't been measured beyond one picture named correctly (*paka*).
 
+## Ten more languages (Oct 27)
+
+German, Italian, Dutch, Japanese, Korean, Arabic, Turkish, Polish, Indonesian and Vietnamese. They were picked from the 25 languages Muse Voice Transcribe takes a hint for, by number of speakers and by whether macOS has a natural voice for them. Russian and Swedish have voices but no transcription hint, so they were left out.
+
+### Method
+
+**No new pictures.** Each language reuses the English demo set's 20 pictures (`scripts/reuse_test_set.py`, about $0.03 per language):
+1. The English list was translated, with ambiguous words pinned as `word: meaning`.
+2. Muse Spark planned the list as Test Studio does. Its other spellings became accepted alternates: kana for Japanese kanji (*猫* → *ねこ*, *ネコ*), and unaccented Turkish and Polish spellings.
+3. Muse Spark named the English set's kept picture in the language, and the name was coded by the classifier. The second picture was named only when the first wasn't coded Correct.
+4. SAM's checks were copied from the English set, since SAM checks the English gloss.
+
+The sets are in `runs/sets/demo_<lang>/`, and the lists in `runs/wordlists/demo_<lang>.txt`.
+
+**Spoken naming:** the same method as Oct 26. Each item was synthesized with `say`, converted to 16 kHz mono 16-bit WAV, padded with 0.7 s of silence, transcribed with the language hint, and coded with the set's alternates. Each language got:
+- the bare word;
+- its citation form: an article (*der/die/das*, *un/una*, *een*, *bir*, *al-*) or a classifier (*con mèo*).
+
+Where the citation form wasn't enough, or the language has none, a short frame was also tried: *Das ist eine …*, *To jest …*, *Ini …*, *…です*, *…예요*.
+
+Most languages have one natural macOS voice, so they got two runs of it. That's the same as Portuguese and Hindi; expect a point or two of run-to-run variation. All counts use the final rules; the JSON also keeps each run's count at the time (`correct_at_run`).
+
+| English | German | Italian | Dutch | Turkish | Polish |
+|---|---|---|---|---|---|
+| cat | Katze | gatto | kat | kedi | kot |
+| umbrella | Regenschirm | ombrello | paraplu | şemsiye | parasol |
+| anchor | Anker | ancora | anker | çapa | kotwica |
+| kettle | Kessel | bollitore | ketel | çaydanlık | czajnik |
+| ladder | Leiter | scala | ladder | merdiven | drabina |
+| bench | Bank | panchina | bank | bank | ławka |
+| glove | Handschuh | guanto | handschoen | eldiven | rękawiczka |
+| spoon | Löffel | cucchiaio | lepel | kaşık | łyżka |
+| carrot | Karotte | carota | wortel | havuç | marchewka |
+| bicycle | Fahrrad | bicicletta | fiets | bisiklet | rower |
+| scissors | Schere | forbici | schaar | makas | nożyczki |
+| candle | Kerze | candela | kaars | mum | świeczka |
+| helicopter | Hubschrauber | elicottero | helikopter | helikopter | helikopter |
+| pineapple | Ananas | ananas | ananas | ananas | ananas |
+| snail | Schnecke | lumaca | slak | salyangoz | ślimak |
+| saw | Säge | sega | zaag | testere | piła |
+| cactus | Kaktus | cactus | cactus | kaktüs | kaktus |
+| whistle | Pfeife | fischietto | fluitje | düdük | gwizdek |
+| harp | Harfe | arpa | harp | arp | harfa |
+| igloo | Iglu | igloo | iglo | iglo | igloo |
+
+| English | Japanese | Korean | Arabic | Indonesian | Vietnamese |
+|---|---|---|---|---|---|
+| cat | 猫 | 고양이 | قطة | kucing | mèo |
+| umbrella | 傘 | 우산 | مظلة | payung | ô |
+| anchor | 錨 | 닻 | مرساة | jangkar | mỏ neo |
+| kettle | やかん | 주전자 | غلاية | ketel | ấm |
+| ladder | はしご | 사다리 | سلم | tangga | thang |
+| bench | ベンチ | 벤치 | مقعد | bangku | ghế dài |
+| glove | 手袋 | 장갑 | قفاز | sarung tangan | găng tay |
+| spoon | スプーン | 숟가락 | ملعقة | sendok | thìa |
+| carrot | にんじん | 당근 | جزرة | wortel | cà rốt |
+| bicycle | 自転車 | 자전거 | دراجة | sepeda | xe đạp |
+| scissors | はさみ | 가위 | مقص | gunting | kéo |
+| candle | ろうそく | 양초 | شمعة | lilin | nến |
+| helicopter | ヘリコプター | 헬리콥터 | مروحية | helikopter | trực thăng |
+| pineapple | パイナップル | 파인애플 | أناناس | nanas | dứa |
+| snail | カタツムリ | 달팽이 | حلزون | siput | ốc sên |
+| saw | のこぎり | 톱 | منشار | gergaji | cưa |
+| cactus | サボテン | 선인장 | صبار | kaktus | xương rồng |
+| whistle | 笛 | 호루라기 | صفارة | peluit | còi |
+| harp | ハープ | 하프 | قيثارة | harpa | đàn hạc |
+| igloo | イグルー | 이글루 | إغلو | iglo | lều tuyết |
+
+Vietnamese uses northern words (*ô*, *thìa*, *dứa*, *nến*), matching the voice.
+
+### Pictures: what Muse Spark called them
+
+- **The kettle drawing** is a stovetop kettle, and its second candidate looks like a teapot. It was named:
+  - *Teekessel* in German, which counts under the compound rule;
+  - *teiera* (teapot) in Italian, *teko* in Indonesian and *إبريق* in Arabic, so those items went to review;
+  - correctly in Dutch, Japanese, Korean, Turkish, Polish and Vietnamese.
+- **The stepladder** was named *脚立* (a stepladder) in Japanese, so *はしご* went to review. In Dutch it was *trap* (stairs) and then *trapladder*, which counts.
+- **Polish *świeczka*:** both candle pictures were named *świeca*, the base word that *świeczka* is the diminutive of. Accept it in a Polish test.
+- **Vietnamese**, asked for "exactly one word":
+  - Muse Spark cut names to one syllable (*mỏ neo* → *neo*, *ghế dài* → *ghế*) or ran them together (*càrốt*, *xeđạp*).
+  - 11 of 20 were kept.
+  - Test Studio now asks for every syllable in Vietnamese, and for both words of a two-word Indonesian name (*sarung tangan*). With that prompt, Vietnamese kept 20 of 20.
+- **Before the final rules**, the first pass kept 19 German, 19 Dutch and 18 Indonesian items: *Teekessel*, *trapladder* and *sarungtangan* were coded as errors.
+- **Ambiguity flags**, as intended:
+  - German: *Bank* (bank), *Pfeife* (pipe), *Leiter* (leader).
+  - Italian: *scala* (stairs, scale), *candela* (spark plug).
+  - Dutch: *bank* (sofa), *wortel* (root).
+  - Turkish: *çapa* (hoe).
+  - Arabic: *سلم* (stairs), *مقعد* (seat).
+  - Korean: *톱* (top).
+
+### Spoken naming: what went wrong
+
+| Language | Failures in the recommended form (transcript) | Bare words |
+|---|---|---|
+| German | *Das ist eine Harfe* → "Das ist eine Hafe" (second run only) | Kessel → "Fessel", Kerze → "Herze", Harfe → "Hafe", Iglu → nothing. *Der/die/das* fixed Kessel but not the others (17, 17) |
+| Turkish | *bir salyangoz* → "bir sağ yalnız"; *bir arp* → "Bir", "Birer" | düdük, iglo, mum → nothing; salyangoz → "Sağ yangoz" |
+| Polish | *To jest kot* → "To jest kod" | kot → "Kup", ławka → "UFK", łyżka → "Półyszka", piła → "Iła", igloo → nothing |
+| Indonesian | none | tangga → "Tanggal", iglo → "iglow" |
+| Italian | *un bollitore* → "Un bolitore" (one l), *un'arpa* → "Un'arta", *un igloo* → "unigro" | igloo → nothing; arpa → "Art" |
+| Arabic | *المقص* → "الميقصي"; *الأناناس* → "أنا الناس"; *الصفارة* → "السفارة" ("the embassy"); *الإغلو* → "قالوا", "Alhulo" | قطة → "قطع", مرساة → "مرسى" (harbor), قفاز → "خفاز", إغلو → nothing or "Hirou!" |
+| Vietnamese | *cái cưa* → "cái cơ" (twice); *cây xương rồng* → "xuông/suông rồng"; *chiếc trực thăng* → "trục thăng" | dứa → "giữa"/"Rửa", ốc sên → "observe"/"Upsend", cưa → nothing, thang → "Hang" |
+| Dutch | *een lepel* → "een label", *een kaars* → "een kaas", *een zaag* → "een zag", *een slak* → "Een slok", *een harp* → "Z'n hart" | kat → "God", plus the same vowel confusions |
+| Japanese | *錨です* → "怒りりです"; *ベンチです* → "ベンチンチです"; *パイナップルです* → "バイナップルです"; *ハープです* → "ワープです" | 猫 → "でこ", スプーン → nothing, やかん → "夜間、間" |
+| Korean | (bare) 닻 → "탁", 톱 → nothing, 가위 → "카위", 호루라기 → "고루라기", 하프 → "해프", 이글루 → "이 글로" | the copula (*예요*) gave 15 and 12 |
+
+Patterns:
+- **A short sentence helps where an article doesn't.** For German, *Das ist eine …* gave 20 and 19, against 17 and 17 with *der/die/das*. Polish went from 14–15 bare to 20 and 19 with *To jest …*, and Indonesian *Ini …* gave 20 twice. The frame gives the transcriber context, as articles did for Spanish and French.
+- **Japanese and Korean didn't reach the bar.** Their failures are mostly the transcriber hearing a nearby word, not scoring rules. Both have one voice on macOS, so the voice may be part of it, as with Hindi.
+- **Transcript artifacts:**
+  - a doubled first syllable or word ("xexe đạp", "concon", "sarungsarung tangan", "Fesselfessel");
+  - a name split in two ("أنا ناس") or run together;
+  - an apostrophe inside the name ("L'umaca");
+  - every Vietnamese tone mark dropped ("thia", "coi").
+
+  The rules below undo the ones they safely can.
+- **Empty transcripts:** 18 of 840 clips came back empty, all of them bare words, mostly short ones such as *igloo*, *düdük*, *톱* and *cưa*. No clip in an article, classifier or frame form came back empty.
+
+### Scoring rules added
+
+All in `metalesionlab/naming_errors.py`, tested in `tests/test_naming_errors.py`. Earlier languages keep their codes: the new rules are per language, and the full suite passes.
+
+- **Articles, classifiers and frames:**
+  - *der/die/das/ein/eine*, *il/la/un/uno/una/l'/un'*, *de/het/een*, Turkish *bir*;
+  - Indonesian *seekor/sebuah*, Vietnamese *con/cái/chiếc/quả/cây*;
+  - frames: *das ist*, *è*, *dit is*, *bu*, *to jest*, *ini*, *đây là*, *هذه*, *이것은*.
+
+  Italian elides like French (*l'ancora*, *un'arpa*).
+- **Plurals:**
+  - German *-n/-en/-e/-er*, with or without an umlaut (*Bänke*, *Fahrräder*);
+  - Dutch *-en/-'s*, doubled consonants (*katten*), and diminutives as the name (*bankje*);
+  - Italian *gatti*, *carote*, *lumache*;
+  - Turkish *-ler/-lar*;
+  - Indonesian doubling (*kucing-kucing*);
+  - Arabic *-ات* and the collective (*جزر* for *جزرة*).
+- **German and Dutch compounds:** the head comes last, so a word ending in the name counts (*Teekessel*, *fluitketel*, *trapladder*). So does the name split by the transcript ("Regen Schirm").
+- **Arabic:** short-vowel marks and tatweel are dropped. Alef forms are folded together, and so are ta marbuta, ha and a final alef maqsura ("القطى" for *القطة*). The article *al-* may be attached, also after *wa-* or *bi-*.
+- **Korean:**
+  - Particles and the copula are allowed (*고양이가*, *우산이에요*).
+  - A compound ending in a name of two or more syllables counts (*고무장갑*).
+  - Sound comes from the jamo, with liaison and the ㅐ/ㅔ merger. A spelling with the same sounds counts as the name, as in French and Portuguese (*파이네플* for *파인애플*, *다치에요* for *닻이에요*).
+- **Japanese has its own path, like Chinese:**
+  - katakana equals hiragana (*ネコ* = *ねこ*), and half-width forms are normalized;
+  - kanji spellings count through the alternates;
+  - *これは* and *です* are dropped;
+  - a word ending in the name counts (*子猫*, *雨傘*);
+  - sound is compared in kana only.
+- **Japanese homophones:** a transcript in kanji that doesn't match is read aloud by Muse Spark in hiragana (cached in `runs/cache/ja_readings.json`), and the reading is compared with the target's kana. So *怒り* (anger, *いかり*) counts for *錨* (anchor, *いかり*), and *片つむり* for *カタツムリ*. This is the "same sounds" rule, needing one Muse Spark call per new kanji transcript. Any caller that passes `spark_semantic_judge` gets it.
+- **Vietnamese:**
+  - Marks aren't folded, because they are tones and vowels (*mèo* "cat", *méo* "bent").
+  - A transcript with no marks at all still matches (*thia* for *thìa*).
+  - Syllables run together count (*càrốt*).
+- **Turkish:** the dotted capital *İ* is lowercased to *i* (it used to turn *İglo* into an error).
+- **Transcript artifacts, for the new languages:**
+  - a name split in two or run together;
+  - a doubled first word of a several-word name ("xexe đạp");
+  - an apostrophe inside an Italian or French name ("L'umaca").
+- **Refusals** in every new language (*ich weiß nicht*, *non lo so*, *わかりません*, *모르겠어요*, *لا أعرف*, *bilmiyorum*, *nie wiem*, *tidak tahu*, *không biết*).
+- **Word lists:** wordfreq needs MeCab for Japanese and Korean, which isn't installed. Their words are now looked up directly in wordfreq's lists.
+
+**English (Oct 27):** a real word that wordfreq rates rare and the CMU dictionary lacks used to come out Neologism. Now it is a real word if:
+- WordNet lists it (*footstool*);
+- or it is a closed compound of two real words of three or more letters (*kiwifruit* = *kiwi* + *fruit*).
+
+Each part must also be a WordNet lemma, so *Caraloon* (*cara* + *loon*) stays a nonword.
+
+**Live check.** 23 hand-written error responses, two or three per new language (Semantic, Formal, Description), went through the real Muse Spark judge (and reader for Japanese). All 23 got the expected code.
+
+### Known gaps
+
+- One synthesized voice for nine of the ten languages. Real speakers, accents, noise and speech from people with aphasia will differ.
+- No spelling-to-sound rules for German, Italian, Dutch, Turkish, Polish, Indonesian, Vietnamese or Arabic. Sound is compared letter by letter, like Hindi, so "bolitore" for *bollitore* is a Nonword.
+- Accents still fold for Latin-script languages other than Vietnamese. So a German umlaut, or a Turkish or Polish letter, can be missed: *Sage* (legend) would count for *Säge*. No transcript needed it.
+- The compound rule can accept a different word with the same head (*Bauleiter*, a site manager, for *Leiter*); a reviewer should check.
+- Japanese homophone matching depends on Muse Spark's reading. Without the reader (offline), a kanji homophone is an error.
+- Korean and Japanese one-syllable or short names (*닻*, *톱*, *猫*) are the least reliable; consider longer items in a test.
+
 ## Reproduce
 
 ```bash
 export MLL_LEDGER=runs/costs.jsonl
 python scripts/build_test_set.py demo_fr fr runs/wordlists/demo_fr.txt
+# Oct 27 languages: the English demo set's pictures, named in the language (no new images)
+python scripts/reuse_test_set.py demo_de de runs/wordlists/demo_de.txt
 ```
 
 The speech check is a short loop per word:
@@ -229,4 +426,4 @@ The speech check is a short loop per word:
 3. Transcribe: `MetaAPI().transcribe(wav, language="fr")`.
 4. Code the transcript: `naming_errors.classify(target, transcript, "fr", alternates=item["alternates"], judge=...)`.
 
-The whole check cost under $0.10 per language. The picture sets cost about $0.55 each.
+The whole check cost under $0.10 per language. The picture sets cost about $0.55 each. For the ten Oct 27 languages, everything (sets, 42 runs of 20 clips, re-coding and the live check) cost about $0.65 in all.
