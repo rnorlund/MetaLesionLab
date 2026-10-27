@@ -62,7 +62,7 @@ def test_page_and_pages_flag(client):
     c, _ = client
     r = c.get("/challenge")
     assert r.status_code == 200 and "You vs. the AI" in r.text
-    assert c.get("/api/pages").json() == {"assess": False, "challenge": True}
+    assert c.get("/api/pages").json() == {"assess": True, "challenge": True}  # assessment pages are part of the app
 
 
 def test_game_uses_real_runs_and_shifts_layers_to_one_based(client):
