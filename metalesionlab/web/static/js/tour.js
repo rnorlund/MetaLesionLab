@@ -1,4 +1,4 @@
-/* Guided tour: about two minutes across the site, AI science first, with real demo data and no API calls.
+/* Guided tour: about two minutes across the site, AI science first (Model Lab, Plato's Chair), with real demo data and no API calls.
    The Scorer part replays answers recorded once with the real pipeline (static/tour/scorer_demo.json).
    The current step lives in sessionStorage, so the tour carries on across page loads. */
 (function () {
@@ -132,7 +132,7 @@
   // --- the steps ----------------------------------------------------------------------------
   var STEPS = [
     { page: '/', url: '/', target: function () { return phone() ? '.lens-card' : '.hero-pair'; }, title: 'Tippa Lingua in 2 minutes',
-      body: 'One picture-naming test for people and AI. On the left, a person who can’t find a word; on the right, Muse Glimmer, Meta’s open model, whose best guess we can read after every layer. First we look inside the AI, then you can play against it, then the tools for people. Real demo data, no microphone, no AI calls.' },
+      body: 'One picture-naming test for people and AI. On the left, a person who can’t find a word; on the right, Muse Glimmer, Meta’s open model, whose best guess we can read after every layer. First we look inside the AI and at how it pictures a chair, then you can play against it, then the tools for people. Real demo data, no microphone, no AI calls.' },
 
     { page: '/lab', url: '/lab', id: 'lab', before: labPrep, skip: noLab, target: '#items .card[aria-pressed="true"]', title: '1 · Look inside the AI',
       body: function () {
@@ -183,7 +183,26 @@
       body: function () {
         var f = labFacts();
         return 'Across all items, the model’s error profile is set beside published group averages for people with aphasia (cited papers; no participant data). ' +
-          'The closer the mix of error types, the higher the similarity. Next: try the same pictures yourself.' + (f.sample ? ' With sample data these numbers are illustrative.' : '');
+          'The closer the mix of error types, the higher the similarity. Next: what does Meta’s image model picture when it hears “chair”?' + (f.sample ? ' With sample data these numbers are illustrative.' : '');
+      } },
+
+    { page: '/plato', url: '/plato', id: 'plato', title: 'Plato’s Chair: one idea of a chair',
+      target: function () { return phone() ? '.pc-frame' : '#hero-fig'; },
+      before: function () {
+        if (!T.plato) return null;
+        return T.plato.ready.then(function () { T.plato.setConcept('chair'); T.plato.setWho('ai'); });
+      },
+      skip: function () { return !T.plato || !T.plato.state().data; },
+      onShow: function () {
+        var at = current;
+        return wait(2200).then(function () { if (current === at && T.plato) T.plato.setWho('people'); });
+      },
+      body: function () {
+        var d = T.plato.state().data, c = (d.hero || [])[0] || {}, core = d.core || {};
+        var less = c.index != null ? Math.round(100 * (1 - c.index)) + '% ' : '';
+        return 'Plato said there is one ideal chair. Asked for ' + (c.n || 16) + ' chairs, Meta’s Muse Image drew nearly the same chair every time; in a moment the picture switches to ' +
+          (c.n || 16) + ' people’s chairs. Its chairs are ' + less + 'less varied, and it drew ' + core.below_1 + ' of ' + core.n_concepts +
+          ' things more alike than people did. Another image model, SDXL, didn’t: Plato’s Chair measures a model, not all AI.';
       } },
 
     { page: '/challenge', url: '/challenge', id: 'challenge', target: function () { return phone() ? '#intro h1' : '.cg-intro-text'; }, title: '2 · You vs. the AI',
@@ -204,14 +223,6 @@
         return 'Spoken answers, scored automatically (verified in English, Spanish, French and Brazilian Portuguese). Here we replay three answers recorded once through the real pipeline: no microphone, no API call. For the ' +
           it.target + ' the speaker said ' + quote(it.said) + '. Muse Voice Transcribe heard ' + quote(it.transcript) + ', and the rules coded it ' +
           T.codeInfo(it.code).label + (it.code === 'Semantic' ? ': related in meaning, not in sound.' : '.');
-      } },
-
-    { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
-      target: '#resp-table', title: 'Sound errors too',
-      body: function () {
-        var a = fxItem(1), b = fxItem(2);
-        return quote(a.transcript) + ' for ' + a.target + ' shares sounds but not meaning: ' + T.codeInfo(a.code).label + '. ' + quote(b.transcript) + ' for ' + b.target + ' is ' +
-          T.codeInfo(b.code).label + '. The codes follow the Philadelphia Naming Test scheme: semantic, formal, mixed, nonword, neologism, unrelated, description and no response.';
       } },
 
     { page: '/scorer', url: '/scorer?set=demo_en', before: function () { return scorerPrep(2); }, skip: function () { return !fxData; },
@@ -390,7 +401,7 @@
     ui.next.hidden = !!step.finish;
     ui.skip.textContent = step.finish ? 'Close' : 'Skip tour';
     if (step.finish) {
-      [['Play: You vs. the AI', '/challenge'], ['Explore the Model Lab', '/lab'], ['Score a session', '/scorer'], ['Build a test in your language', '/studio']].forEach(function (b, k) {
+      [['Play: You vs. the AI', '/challenge'], ['Explore the Model Lab', '/lab'], ['See Plato’s Chair', '/plato'], ['Score a session', '/scorer'], ['Build a test in your language', '/studio']].forEach(function (b, k) {
         ui.extra.appendChild(h('a', { class: 'btn ' + (k === 0 ? 'btn-primary' : ''), href: b[1], onclick: function () { stop(); } }, b[0]));
       });
     }

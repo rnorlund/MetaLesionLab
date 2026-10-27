@@ -42,6 +42,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. |
 | Oct 26 | Naming Assessment: speech-onset latency (max error 5.6 ms on synthesized speech), first-complete-response coding, review and override, PDF report, tracking across sessions, parallel forms, bring-your-own test (ZIP, folder or PowerPoint), personal tests from a photo, and a public naming test with an opt-in reference range |
 | Oct 26 | "What can I cut?": every Glimmer decoder layer skipped alone, a greedy removal path guarded by picture naming (English and Spanish) and perplexity on Muse Spark-written text, and real deletion of the chosen layers with measured size, memory and speed |
+| Oct 26 | Web pages for both experiments: `/plato` (16 chairs from Muse Image vs. 16 people, 35 things, six languages, inside Glimmer, the second-model comparison) and `/lab/cut` (set your own guardrail on the greedy path, a 52-layer map, the real-deletion table). Both replay shipped statistics, with no API calls |
 
 ### Prior research context (not part of this submission)
 
@@ -163,7 +164,7 @@ Measured on one L40S with the FP8 decoder (`python scripts/what_can_i_cut.py sca
 | Perplexity guard only (5 layers) | 47 | 27.36B (−8.1%) | 29.80 GiB (−7.0%) | 519 (−7.7%) | 11.2 (+10.5%) | 34 | 29 | 51.8 |
 | 10 layers, no guard | 42 | 24.94B (−16.3%) | 27.54 GiB (−14.0%) | 472 (−16.1%) | 12.3 (+22.1%) | 24 | 24 | 67.6 |
 
-The honest answer for this model is "not much". Two layers can go with no measurable loss, a saving of about 3%. Naming, not perplexity, was the binding guard: a perplexity check alone would allow five layers but lose three guard pictures and eight held-out ones, mostly in Spanish. The cut models often answered a Spanish prompt in English ("Umbrella" for *paraguas*), so language control broke before object recognition did. Full-attention layers mattered no more than sliding-window ones. Block influence, a cheap no-skip score, ranked layers poorly here. With about 20 pictures per language, one picture is about 5 points, so treat small differences as noise. Full results, including per-layer scores and the whole greedy path, are in `runs/compress/glimmer.json`.
+The honest answer for this model is "not much". Two layers can go with no measurable loss, a saving of about 3%. Naming, not perplexity, was the binding guard: a perplexity check alone would allow five layers but lose three guard pictures and eight held-out ones, mostly in Spanish. The cut models often answered a Spanish prompt in English ("Umbrella" for *paraguas*), so language control broke before object recognition did. Full-attention layers mattered no more than sliding-window ones. Block influence, a cheap no-skip score, ranked layers poorly here. With about 20 pictures per language, one picture is about 5 points, so treat small differences as noise. Full results, including per-layer scores and the whole greedy path, are in `runs/compress/glimmer.json`. In the app, **Model Lab → What can I cut?** (`/lab/cut`) replays them: set how much naming and perplexity you'll give up, and the deepest passing cut moves with your limits. `runs/` isn't in the repository, so the app ships a compact copy (`metalesionlab/web/data/cut_glimmer.json`, written by `python scripts/cut_web_export.py`) and prefers `TOT_DATA_DIR/compress/glimmer.json` when it exists.
 
 ## Meta models used
 
@@ -183,6 +184,8 @@ Every AI step uses a Meta model. The other resources are non-AI: WordNet, the CM
 Ask Muse Image to draw 16 chairs: are they all the same chair? We compared how spread out 35 concepts are in Muse Image's doodles and in people's drawings of the same words, using DINOv2 embeddings. The AI was more uniform than people for 34 of the 35 concepts, with a median spread ratio of 0.49. Method, results and caveats are in [`docs/plato.md`](docs/plato.md), and the code is in `scripts/plato_*.py`.
 
 Human drawings come from the [Google Quick, Draw! dataset](https://github.com/googlecreativelab/quickdraw-dataset) (Google Creative Lab, CC BY 4.0). They are streamed at run time and never committed; `public_data/plato_concept_spread.json` holds only derived statistics.
+
+The `/plato` page tells the story for everyone: a toggle between Muse Image's 16 chairs and 16 people's, all 35 things, six languages, what Muse Glimmer does with the doodles, and the comparison with Stable Diffusion XL (the uniformity is Muse Image's, not every image model's). It reads statistics in `metalesionlab/web/data/plato.json` and 14 small figures in `static/img/plato/`, written by `python scripts/plato_web_export.py`; figures with people's drawings keep their Quick, Draw! credit. The full data folder (pictures, embeddings, raw results) lives outside the repository.
 
 ## Data policy
 
@@ -215,7 +218,7 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (home), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
+Pages: `/` (home), `/challenge` (You vs. the AI), `/plato` (Plato's Chair), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.

@@ -106,6 +106,16 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --sky: #60A5FA; }
 .catches { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.55; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
 .catches li::marker { color: var(--orange); }
 
+/* Plato's Chair teaser */
+.plato-teaser { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 32px; align-items: center; background: #FFFFFF; border: 1px solid #E7E5DF; border-radius: 16px; padding: 24px; }
+.plato-pics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-decoration: none; }
+.plato-pics figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.plato-pics img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); background: #FCFCFB; }
+.plato-pics figcaption { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: center; }
+.plato-text { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; min-width: 0; }
+.plato-text h3 { margin: 0; font-size: 24px; letter-spacing: -0.01em; line-height: 1.25; }
+.plato-text p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+
 /* three ways in */
 .doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .door { border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; min-width: 0; }
@@ -161,6 +171,8 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --sky: #60A5FA; }
   .split-rev .split-art { order: 0; }
   .split-art { max-width: 620px; }
   .exists { grid-template-columns: minmax(0, 1fr); }
+  .plato-teaser { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .plato-pics { max-width: 520px; }
   .models-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
@@ -179,6 +191,8 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --sky: #60A5FA; }
   .lens-row img { flex-basis: 72px; width: 72px; height: 72px; }
   .section { padding-top: 48px; padding-bottom: 56px; gap: 22px; }
   .door { padding: 20px; }
+  .plato-teaser { padding: 16px; }
+  .plato-text h3 { font-size: 21px; }
   .exists-col { padding: 20px; }
   .lfoot a { margin-left: 0; }
   .models-grid { grid-template-columns: minmax(0, 1fr); }

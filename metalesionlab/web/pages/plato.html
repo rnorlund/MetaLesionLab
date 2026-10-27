@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plato’s Chair · Tippa Lingua</title>
+<meta name="description" content="Plato said there is one ideal chair. We asked Meta's image model, Muse Image, to draw 16 chairs, and asked 16 people. Its chairs are 63% less varied, and it draws 34 of 35 things more alike than people do. Another image model, SDXL, does not.">
+<meta property="og:title" content="Plato’s Chair · Tippa Lingua">
+<meta property="og:description" content="Ask Meta's Muse Image to draw 16 chairs, and ask 16 people. Its chairs are 63% less varied.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/tour.css">
+<link rel="stylesheet" href="/static/css/plato.css">
+</head>
+<body class="plato">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/challenge">You vs. the AI</a>
+    <a href="/plato" aria-current="page">Plato’s Chair</a>
+    <a href="/lab">Model Lab</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/studio">Test Studio</a>
+  </nav>
+  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="pc-hero" id="hero" aria-labelledby="hero-h">
+  <div class="pc-hero-text">
+    <span class="pc-kicker">An experiment with Meta’s image model</span>
+    <h1 id="hero-h">Plato’s Chair</h1>
+    <p class="pc-lede">Plato said there is one ideal chair, and every real chair is a copy of it. We asked Meta’s image model, Muse Image, to draw 16 chairs, and asked 16 people.</p>
+  </div>
+
+  <figure class="pc-hero-fig" id="hero-fig">
+    <div class="seg pc-who" id="who-seg" role="group" aria-label="Whose drawings to show">
+      <button type="button" data-who="ai" aria-pressed="true">Ask an AI to draw 16 chairs</button>
+      <button type="button" data-who="people" aria-pressed="false">Ask 16 people</button>
+    </div>
+    <div class="pc-frame">
+      <img id="grid-img" src="/static/img/plato/grid_chair_ai.webp" width="884" height="924"
+           alt="16 chair doodles by Meta’s Muse Image: almost the same wooden chair with a slatted back, in the same three-quarter view, every time.">
+    </div>
+    <figcaption id="grid-cap" class="pc-cap">16 doodles by Meta’s Muse Image, one prompt each time.</figcaption>
+  </figure>
+
+  <div class="pc-hero-side">
+    <div class="pc-stat" id="hero-stat">
+      <span class="pc-stat-num" id="stat-num">63%</span>
+      <p class="pc-stat-text" id="stat-text">Muse Image’s chairs are 63% less varied than people’s.</p>
+      <p class="pc-stat-sub" id="stat-sub"></p>
+    </div>
+    <p class="pc-not-all" id="not-all" hidden>That’s Muse Image, not every AI: <a href="#second-model">another image model drew far more varied chairs</a> from the same prompt.</p>
+    <fieldset class="pc-pick">
+      <legend>Try another thing</legend>
+      <div class="seg" id="concept-seg">
+        <button type="button" data-concept="chair" aria-pressed="true">Chair</button>
+        <button type="button" data-concept="boat" aria-pressed="false">Boat</button>
+        <button type="button" data-concept="face" aria-pressed="false">Face</button>
+        <button type="button" data-concept="person" aria-pressed="false">Person</button>
+      </div>
+    </fieldset>
+    <details class="pc-how">
+      <summary>How do you measure “varied”?</summary>
+      <p>Meta’s DINOv2 vision model turns each picture into a list of numbers; similar pictures get similar numbers. A set’s <b>spread</b> is the average difference between two of its pictures: 0 would be 16 copies of one picture. We compare Muse Image’s spread with the spread of the same number of people’s drawings.</p>
+    </details>
+  </div>
+</section>
+
+<nav class="pc-jump" aria-label="On this page">
+  <a href="#everything">Almost everything</a>
+  <a href="#languages">In six languages</a>
+  <a href="#inside">Inside the AI</a>
+  <a href="#second-model">Is it just Meta’s model?</a>
+  <a href="#method">Method and caveats</a>
+</nav>
+
+<section class="pc-sec" id="everything" aria-labelledby="ev-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">35 things</span>
+    <h2 id="ev-h">Almost everything</h2>
+    <p class="pc-sec-lede" id="ev-lede">We did the same for 35 things.</p>
+  </div>
+  <div class="pc-ev">
+    <div class="pc-ev-chart">
+      <p class="pc-chart-title">How varied Muse Image’s drawings are, compared with people’s</p>
+      <div class="pc-chart" id="rank-chart"></div>
+      <p class="pc-note">Each dot is one thing. Left of the line: Muse Image draws it more alike than people do. Bars: 95% confidence intervals.</p>
+    </div>
+    <div class="pc-facts" id="ev-facts"></div>
+  </div>
+  <details class="pc-numbers">
+    <summary>See the numbers</summary>
+    <div class="table-wrap"><table class="data" id="rank-table"></table></div>
+  </details>
+</section>
+
+<section class="pc-sec" id="languages" aria-labelledby="lang-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">Six languages</span>
+    <h2 id="lang-h">In six languages</h2>
+    <p class="pc-sec-lede">We asked for the same doodles in English, Spanish, Hindi, Mandarin, Arabic and Swahili: 10 per language, 600 in all. Is the ideal chair the same everywhere?</p>
+  </div>
+  <div class="seg pc-lang-seg" id="lang-seg" role="group" aria-label="Which thing">
+    <button type="button" data-lang-concept="chair" aria-pressed="true">Chair</button>
+    <button type="button" data-lang-concept="hat" aria-pressed="false">Hat</button>
+  </div>
+  <div class="pc-lang">
+    <figure class="pc-lang-fig">
+      <img id="lang-img" src="/static/img/plato/lang_chair_ai.webp" width="1200" height="946" loading="lazy" alt="">
+      <figcaption class="pc-cap" id="lang-cap"></figcaption>
+    </figure>
+    <div class="pc-lang-side">
+      <div class="pc-lang-text" id="lang-text" aria-live="polite"></div>
+      <figure class="pc-lang-avg">
+        <img id="lang-avg" src="/static/img/plato/lang_chair_average.webp" width="1200" height="642" loading="lazy" alt="">
+        <figcaption class="pc-cap" id="lang-avg-cap"></figcaption>
+      </figure>
+      <p class="pc-aside"><b>One word, two meanings.</b> Swahili <i lang="sw">ndege</i> means both “bird” and “airplane”, and 1 of the 10 Swahili “birds” was an airplane.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pc-sec" id="inside" aria-labelledby="inside-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">Inside the AI</span>
+    <h2 id="inside-h">What happens inside Meta’s open model</h2>
+    <p class="pc-sec-lede" id="inside-lede">We showed the same doodles, Muse Image’s and people’s, to Muse Glimmer, the open model that takes the naming test in our <a href="/lab">Model Lab</a>, and read what it does with them layer by layer.</p>
+  </div>
+  <div class="pc-cards">
+    <article class="pc-card">
+      <h3>Muse Image’s doodles collapse to one point</h3>
+      <img src="/static/img/plato/spread_by_layer.webp" width="1200" height="560" loading="lazy"
+           alt="Line chart over Glimmer's 52 layers. The spread of people's doodles (orange) stays between about 0.5 and 0.7 throughout. The spread of Muse Image's doodles (blue) tracks just below it until about layer 28, then falls steeply to about 0.1 by layer 40 and stays there.">
+      <p id="collapse-text">Each line shows how spread out a thing’s doodles are inside Glimmer, layer by layer. From about layer 30, Glimmer files all of Muse Image’s chairs in essentially one place, while people’s drawings stay spread out.</p>
+    </article>
+    <article class="pc-card">
+      <h3>Harder to name</h3>
+      <div class="pc-chart" id="scatter-chart"></div>
+      <p id="scatter-text">Things that people draw in more different ways are harder for Glimmer to name.</p>
+    </article>
+    <article class="pc-card">
+      <h3>“Bench”, then “Table”</h3>
+      <div class="pc-lens" id="bench-lens"></div>
+      <p id="bench-text"></p>
+    </article>
+    <article class="pc-card">
+      <h3>An honest null</h3>
+      <p id="null-lede">Does spread predict which things Glimmer loses first when we damage it on purpose? No.</p>
+      <div class="table-wrap"><table class="data pc-null" id="null-table"></table></div>
+      <p class="pc-note" id="null-note"></p>
+    </article>
+  </div>
+  <p class="pc-more">Exploratory: 35 things and many comparisons, none pre-registered. <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_glimmer.md">Full write-up</a></p>
+</section>
+
+<section class="pc-sec pc-second" id="second-model" aria-labelledby="sdxl-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">A second image model</span>
+    <h2 id="sdxl-h">Is it just Meta’s model?</h2>
+  </div>
+  <div class="pc-sdxl" id="sdxl-card" aria-live="polite">
+    <p class="pc-pending"><span class="spinner" aria-hidden="true"></span> Comparison with a second image model: in progress</p>
+  </div>
+</section>
+
+<section class="pc-sec pc-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">Method and caveats</h2>
+  <ul>
+    <li><b>How.</b> Muse Image drew 16 doodles for each of 10 things and 12 for 25 more, from one prompt: “A quick simple doodle sketch of a chair, black marker on plain white, like a 20-second drawing”. People’s drawings come from Google’s Quick, Draw! game, where players had 20 seconds; we compared Muse Image’s set with random sets of the same size from 200 drawings per thing.</li>
+    <li><b>Style mismatch.</b> Muse Image’s doodles are clean marker sketches; people’s are quick mouse or finger drawings, often unfinished. Part of people’s spread is skill and noise, so the ranking across things means more than the exact percentage.</li>
+    <li><b>Small numbers.</b> 12–16 AI pictures per thing, 35 things, 10 doodles per language. Single-thing intervals are wide; the link to naming is exploratory.</li>
+    <li><b>Stand-ins.</b> Quick, Draw! has no “boat”, “lamp” or “person”, so we used sailboat, floor lamp and yoga (Muse Image’s prompt was “a person doing yoga”).</li>
+    <li><b>Two image models.</b> Stable Diffusion XL got the same prompt, but it adds shading, frames and scenes that make its pictures look more different, so its comparison with people is an upper bound.</li>
+    <li><b>One prompt, one measuring model.</b> Another wording would move Muse Image’s spread. DINOv2 measures how pictures look, not what they mean.</li>
+  </ul>
+  <p>The full data folder (pictures, embeddings and raw results) lives outside this repository. The app ships only statistics and the figures on this page. Read more: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato.md">35 things</a>, <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_languages.md">six languages</a>, <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_glimmer.md">inside Glimmer</a>.</p>
+  <p class="pc-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw! dataset</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image 1.0. Similarity: Meta DINOv2. Naming: Muse Glimmer 30B. Second model: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M.</p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. Tippa Lingua doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato.js"></script>
+<script src="/static/js/tour.js"></script>
+</body>
+</html>
