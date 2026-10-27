@@ -175,18 +175,22 @@ def cmd_severity(args):
 def resolve(entry: dict, dims) -> LesionSpec:
     """A condition from a short recipe: {"site": "vision_tower", "method": "noise", "noise_scale": 4},
     {"localizer": "naming_en", "kind": "mlp", "fraction": 0.3, "method": "mean", "control_seed": 0},
-    or a full spec dict."""
+    or a full spec dict. "seed" sets the noise seed; seeds other than 0 are added to the name
+    (" seed2"), so seed 0 keeps the name of the earlier single-seed runs."""
     method, scale = entry.get("method", "zero"), float(entry.get("noise_scale", 1.0))
+    seed = int(entry.get("seed", 0))
+    seed_tag = f" seed{seed}" if seed else ""
     if "site" in entry:
-        spec = site_spec(entry["site"], method, scale)
-        spec.name = f"{entry['site']}-{method}" + (f" x{scale:.4g}" if method == "noise" else "")
+        spec = site_spec(entry["site"], method, scale, seed=seed)
+        spec.name = f"{entry['site']}-{method}" + (f" x{scale:.4g}" if method == "noise" else "") + seed_tag
         return spec
     if "localizer" in entry:
         loc = Localizer.load(RUNS / "localizers" / f"{entry['localizer']}.pt")
         frac = float(entry["fraction"])
-        spec = localizer_spec(loc, entry.get("kind", "mlp"), frac, method, int(entry.get("direction", 1)), scale)
+        spec = localizer_spec(loc, entry.get("kind", "mlp"), frac, method, int(entry.get("direction", 1)), scale,
+                              seed=seed)
         tag = f"{loc.name}-{entry.get('kind', 'mlp')}-{method}" + (f"-f{frac:g} x{scale:.4g}" if method == "noise"
-                                                                   else f" f{frac:.4g}")
+                                                                   else f" f{frac:.4g}") + seed_tag
         spec.name = tag
         if "control_seed" in entry:
             spec = random_control(spec, dims, seed=int(entry["control_seed"]))
@@ -199,6 +203,8 @@ def cmd_batch(args):
     lab = Lab(args.set_dir, args.batch)
     for entry in json.loads(Path(args.specs).read_text()):
         spec = resolve(entry, lab.dims)
+        if args.skip_done and (lab.out_dir / f"{slug(spec.name)}.json").exists():
+            continue
         lab.run(spec, spec.name)
     write_index(lab.out_dir)
 
@@ -240,6 +246,7 @@ def main():
     with_set(sub.add_parser("agreement")).set_defaults(fn=cmd_agreement)
     p = with_set(sub.add_parser("batch"))
     p.add_argument("specs", help="JSON list of conditions (see resolve)")
+    p.add_argument("--skip-done", action="store_true", help="skip conditions whose result file exists (resume)")
     p.set_defaults(fn=cmd_batch)
     p = sub.add_parser("localize")
     p.add_argument("set_dirs", type=Path, nargs="+")

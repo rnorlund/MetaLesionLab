@@ -135,6 +135,26 @@ def parse_sam_output(text: str) -> list[SamMatch]:
     return matches
 
 
+def _network_errors() -> tuple[type[BaseException], ...]:
+    import openai
+    return (openai.APIConnectionError, openai.InternalServerError, openai.RateLimitError, httpx.TransportError)
+
+
+def retry_network(fn, tries: int = 8, base: float = 5.0, cap: float = 120.0, sleep=time.sleep,
+                  errors: tuple[type[BaseException], ...] | None = None):
+    """Call fn(), retrying network failures (DNS drops, timeouts, 5xx, rate limits) with
+    exponential backoff: base, 2x base, ... up to cap seconds between tries (about 6.5 minutes
+    in all with the defaults). Other errors, such as BudgetExceeded or a 4xx, are raised at once."""
+    errors = errors or _network_errors()
+    for attempt in range(tries):
+        try:
+            return fn()
+        except errors:
+            if attempt == tries - 1:
+                raise
+            sleep(min(cap, base * 2 ** attempt))
+
+
 def image_data_url(image: bytes, mime: str = "image/png") -> str:
     return f"data:{mime};base64,{base64.b64encode(image).decode()}"
 

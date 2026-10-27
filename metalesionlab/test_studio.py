@@ -14,6 +14,7 @@ from __future__ import annotations
 import io
 import json
 import re
+import threading
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
@@ -21,7 +22,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from metalesionlab.meta_api import MetaAPI, image_data_url
+from metalesionlab.meta_api import MetaAPI, image_data_url, retry_network
 from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, phonemes, spark_semantic_judge, word_zipf
 
 STYLES = {
@@ -133,32 +134,132 @@ def check_candidate(api: MetaAPI, image: bytes, concept: Concept, lang: str, jud
     }
 
 
+def load_progress(out_dir: Path, words: list[str]) -> tuple[list[Concept] | None, dict[str, dict]]:
+    """A resumable build's saved plan (None unless it covers every word) and finished items by word."""
+    plan_path, progress = out_dir / "plan.json", out_dir / "progress.jsonl"
+    plan = None
+    if plan_path.exists():
+        saved = {c["word"]: c for c in json.loads(plan_path.read_text())}
+        if all(w in saved for w in words):
+            plan = [Concept(**saved[w]) for w in words]
+    done = {}
+    if progress.exists():
+        for line in progress.read_text().splitlines():
+            if line.strip():
+                item = json.loads(line)
+                done[item["word"]] = item
+    return plan, done
+
+
 def build_set(words: list[str], lang: str, out_dir: Path, style: str = "line", candidates: int = 2,
-              workers: int = 8, api: MetaAPI | None = None) -> dict:
+              workers: int = 8, api: MetaAPI | None = None, resume: bool = False) -> dict:
+    """With resume, the plan and every finished item are saved as they come (plan.json,
+    progress.jsonl), and a rerun after a crash only pays for the items still missing. Network
+    calls are retried with backoff (retry_network) either way."""
     api = api or MetaAPI()
     judge = spark_semantic_judge(api)
-    concepts = plan_concepts(api, parse_word_list(words), lang)
+    parsed = parse_word_list(words)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    plan, done = load_progress(out_dir, [c.word for c in parsed]) if resume else (None, {})
+    concepts = plan or retry_network(lambda: plan_concepts(api, parsed, lang))
+    if resume:
+        (out_dir / "plan.json").write_text(json.dumps([asdict(c) for c in concepts], ensure_ascii=False))
     (out_dir / "candidates").mkdir(parents=True, exist_ok=True)
+    lock = threading.Lock()
 
     def run(concept: Concept) -> dict:
+        if concept.word in done:
+            return done[concept.word]
         prompt = STYLES[style].format(depiction=concept.depiction)
         results = []
-        for k, image in enumerate(api.generate_images(prompt, n=candidates)):
+        for k, image in enumerate(retry_network(lambda: api.generate_images(prompt, n=candidates))):
             path = out_dir / "candidates" / f"{concept.word}_{k}.png"
             path.write_bytes(_resized_png(image, SAVE_SIDE))
-            results.append({"file": str(path.relative_to(out_dir)), **check_candidate(api, image, concept, lang, judge)})
+            check = retry_network(lambda: check_candidate(api, image, concept, lang, judge))  # noqa: B023
+            results.append({"file": str(path.relative_to(out_dir)), **check})
         passing = [r for r in results if r["sam_ok"] and r["spark_ok"]]
         best = max(passing, key=lambda r: r["sam_confidence"] or 0) if passing else None
         ph, _ = phonemes(concept.word, lang)
-        return {
+        item = {
             **asdict(concept), "lang": lang, "style": style, "prompt": prompt,
             "zipf": round(word_zipf(concept.word, lang), 2), "phonemes": len(ph),
             "status": "kept" if best else "review", "image": best["file"] if best else None,
             "candidates": results,
         }
+        if resume:
+            with lock, (out_dir / "progress.jsonl").open("a") as f:
+                f.write(json.dumps(item, ensure_ascii=False) + "\n")
+        return item
 
     with ThreadPoolExecutor(workers) as pool:
         items = list(pool.map(run, concepts))
     manifest = {"lang": lang, "style": style, "items": items}
     (out_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1))
     return manifest
+
+
+# --- one set of pictures, named in several languages -------------------------------------
+
+def derive_language_manifest(en_manifest: dict, names: dict[str, list[str]], lang: str, source: str) -> dict:
+    """A set in another language that reuses an English set's pictures: the same items, order,
+    status and picture files, named with `names[english word]` (target first, then accepted
+    alternates). The gloss is the English word, so the bilingual test matches items by it.
+    The English set's checks (SAM, Muse Spark's English name) stay with the English set."""
+    items = []
+    for it in en_manifest["items"]:
+        word = it["word"]
+        if word not in names:
+            raise KeyError(f"no {lang} name for {word!r}")
+        target, *alts = [_nfc(n).strip().lower() for n in names[word]]
+        ph, _ = phonemes(target, lang)
+        items.append({
+            "word": target, "hint": it.get("hint", ""), "gloss": word, "depiction": it.get("depiction", ""),
+            "ambiguous": False, "other_meanings": [], "alternates": list(dict.fromkeys(a for a in alts if a != target)),
+            "lang": lang, "style": it.get("style", en_manifest.get("style")), "prompt": it.get("prompt", ""),
+            "zipf": round(word_zipf(target, lang), 2), "phonemes": len(ph),
+            "status": it.get("status"), "image": it.get("image"),
+            **({"drop_reason": it["drop_reason"]} if it.get("drop_reason") else {}),
+            "candidates": [{"file": c["file"], "source": source} for c in it.get("candidates", [])],
+        })
+    return {"lang": lang, "style": en_manifest.get("style"), "pictures_from": source, "items": items}
+
+
+def merge_alternates(manifest: dict, names: dict[str, list[str]]) -> dict:
+    """Add accepted alternates (names[word][1:]) to a manifest's items, keeping the ones it has."""
+    for it in manifest["items"]:
+        extra = [_nfc(n).strip().lower() for n in names.get(it["word"], [])[1:]]
+        it["alternates"] = list(dict.fromkeys([*(it.get("alternates") or []), *extra]))
+    return manifest
+
+
+def apply_review(manifest: dict, review: dict, redraws: dict[str, dict] | None = None) -> tuple[dict, list]:
+    """Apply review decisions to a manifest. redraws: set name -> its manifest. Returns the new
+    manifest and the files to copy, as (set name, source file, destination file) tuples."""
+    copies = []
+    by_word = {it["word"]: it for it in manifest["items"]}
+    for word, d in review["items"].items():
+        it = by_word.get(word)
+        if it is None:
+            raise KeyError(f"{word!r} is not in the set")
+        action = d["action"]
+        if action == "drop":
+            it["status"], it["drop_reason"] = "dropped", d["reason"]
+        elif action == "keep":
+            if d["image"] not in {c["file"] for c in it["candidates"]}:
+                raise ValueError(f"{word}: {d['image']} is not one of its candidates")
+            it["status"], it["image"] = "kept", d["image"]
+        elif action == "replace":
+            src = (redraws or {})[d["from"]]
+            new = next(x for x in src["items"] if x["word"] == word)
+            candidates = []
+            for c in new["candidates"]:
+                dest = c["file"].replace(f"{word}_", f"{word}_redraw_")
+                copies.append((d["from"], c["file"], dest))
+                candidates.append({**c, "file": dest, "redrawn_from": d["from"]})
+            it.update(depiction=new["depiction"], prompt=new["prompt"], hint=new.get("hint", it.get("hint", "")),
+                      candidates=candidates, status="kept",
+                      image=d["image"].replace(f"{word}_", f"{word}_redraw_"))
+        else:
+            raise ValueError(f"{word}: unknown action {action!r}")
+        it["review"] = {"action": action, "reason": d["reason"]}
+    return manifest, copies

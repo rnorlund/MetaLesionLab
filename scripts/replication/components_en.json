@@ -1,0 +1,640 @@
+[
+ {
+  "site": "vision_tower",
+  "method": "zero"
+ },
+ {
+  "site": "vision_tower",
+  "method": "mean"
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 2.0,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 2.0,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 2.0,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 2.0,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 2.0,
+  "seed": 4
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.364,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.364,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.364,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.364,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.364,
+  "seed": 4
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.831,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.831,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.831,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.831,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 3.831,
+  "seed": 4
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.223,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.223,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.223,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.223,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.223,
+  "seed": 4
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.362,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.362,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.362,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.362,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 4.362,
+  "seed": 4
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 5.657,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 5.657,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 5.657,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 5.657,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 5.657,
+  "seed": 4
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 0
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 1
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 2
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 3
+ },
+ {
+  "site": "vision_tower",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.181,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.181,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.181,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.181,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.181,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 4.756,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 4.756,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 4.756,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 4.756,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 4.756,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 6.168,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 6.168,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 6.168,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 6.168,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 6.168,
+  "seed": 4
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 0
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 1
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 2
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 3
+ },
+ {
+  "site": "layers:40-47",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 4
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 0
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 1
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 2
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 3
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.0,
+  "seed": 4
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.297,
+  "seed": 0
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.297,
+  "seed": 1
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.297,
+  "seed": 2
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.297,
+  "seed": 3
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.297,
+  "seed": 4
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 0
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 1
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 2
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 3
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 1.682,
+  "seed": 4
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 0
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 1
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 2
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 3
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 2.828,
+  "seed": 4
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 0
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 1
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 2
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 3
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 3.0,
+  "seed": 4
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 0
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 1
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 2
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 3
+ },
+ {
+  "site": "layers:0-7",
+  "method": "noise",
+  "noise_scale": 8.0,
+  "seed": 4
+ }
+]

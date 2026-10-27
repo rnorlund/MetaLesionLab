@@ -99,3 +99,36 @@ def test_transcribe_retries_network_errors(tmp_path, monkeypatch):
 
     monkeypatch.setattr(api.http, "post", flaky_post)
     assert api.transcribe(b"RIFF")["transcript"] == "gato" and len(calls) == 3
+
+
+def test_retry_network_backs_off_then_succeeds():
+    import httpx
+
+    calls, waits = [], []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) < 3:
+            raise httpx.ConnectError("DNS lookup failed")
+        return "ok"
+
+    assert meta_api.retry_network(flaky, base=5, cap=8, sleep=waits.append) == "ok"
+    assert waits == [5, 8]  # 5, then 10 capped at 8
+
+
+def test_retry_network_gives_up_and_never_retries_other_errors():
+    import httpx
+
+    def down():
+        raise httpx.ConnectError("down")
+
+    def broke():
+        raise BudgetExceeded("cap")
+
+    waits = []
+    with pytest.raises(httpx.ConnectError):
+        meta_api.retry_network(down, tries=3, sleep=waits.append)
+    assert len(waits) == 2
+    with pytest.raises(BudgetExceeded):
+        meta_api.retry_network(broke, sleep=waits.append)
+    assert len(waits) == 2

@@ -1,8 +1,10 @@
 """Build a checked picture-naming set and print a summary.
 
-Usage: python scripts/build_test_set.py NAME LANG WORDS_FILE [--style line|color] [--candidates 2]
+Usage: python scripts/build_test_set.py NAME LANG WORDS_FILE [--style line|color] [--candidates 2] [--fresh]
 WORDS_FILE has one word per line; "banco: bench" pins an ambiguous word's meaning.
 Output: runs/sets/NAME/ (manifest.json, candidates/, contact_sheet.png)
+A build saves its progress (plan.json, progress.jsonl); after a crash, run the same command again
+and only the missing words are paid for. --fresh ignores saved progress.
 """
 import argparse
 import time
@@ -41,12 +43,14 @@ def main():
     ap.add_argument("words_file")
     ap.add_argument("--style", default="line")
     ap.add_argument("--candidates", type=int, default=2)
+    ap.add_argument("--fresh", action="store_true", help="ignore progress saved by an earlier run")
     args = ap.parse_args()
 
     out_dir = REPO_ROOT / "runs" / "sets" / args.name
     words = Path(args.words_file).read_text().splitlines()
     t0, cost0 = time.time(), spent()
-    manifest = build_set(words, args.lang, out_dir, style=args.style, candidates=args.candidates)
+    manifest = build_set(words, args.lang, out_dir, style=args.style, candidates=args.candidates,
+                         resume=not args.fresh)
     for it in manifest["items"]:
         flags = " AMBIGUOUS: " + ", ".join(it["other_meanings"]) if it["ambiguous"] else ""
         names = ", ".join(f"{c['spark_name']}({'ok' if c['sam_ok'] else 'sam'})" for c in it["candidates"])

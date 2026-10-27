@@ -206,7 +206,7 @@ Pooled over all lesions, 1,780 trials per language:
 | | Spanish | French | Portuguese | Spanish, English instruction | Reverse: English trials |
 |---|---|---|---|---|---|
 | First attempt in English (other language on English trials) | 23.8% [20.6, 27.6] | 17.8% [15.2, 20.8] | 22.2% [20.0, 24.5] | 36.1% [32.8, 40.4] | 1.3% [0.6, 2.1]* |
-| The picture's own name in the wrong language | 11.0% [8.4, 14.2] | 7.6% [5.2, 10.3] | 9.0% [6.8, 11.3] | 23.9% [21.0, 27.0] | **0.1%** [0.0, 0.4] (2 of 1,780, both "pina") |
+| The picture's own name in the wrong language | 11.0% [8.4, 14.2] | 7.6% [5.2, 10.3] | 9.0% [6.8, 11.3] | 23.9% [21.0, 27.0] | **0.1%** [0.0, 0.4] (1 of 1,780: "pina") |
 | Share of errors that are English answers | 35% [32, 38] | 27% [25, 30] | 30% [27, 33] | 55% [53, 58] | not applicable |
 | Mixed answers (words of both languages) | 2.0% | 1.6% | 1.7% | 2.9% | 0.6% |
 | The wrong language after the first attempt (e.g. "anclaría … Wait object is anchor") | 20.6% | 15.6% | 17.2% | 21.7% | 0.0% |

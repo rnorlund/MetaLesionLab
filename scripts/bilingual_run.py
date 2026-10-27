@@ -12,6 +12,8 @@ Raw runs go to runs/bilingual/raw/<condition>__<variant>__s<seed>.json. Codes ma
 meaning judge (accuracy never depends on it); scripts/bilingual_analyze.py re-codes everything.
 
 Usage: python scripts/bilingual_run.py stats|pilot|run [--sets runs/sets] [--out runs/bilingual]
+The replication on 100 pictures (docs/replication_plan.md) runs the same plan on the core100 sets:
+  python scripts/bilingual_run.py run --prefix core100 --out runs/bilingual_core100 [--only REGEX]
 """
 from __future__ import annotations
 
@@ -114,13 +116,13 @@ def cmd_stats(args, model, processor):
             log(f"{path} exists")
             continue
         t0 = time.time()
-        st = B.pooled_unit_stats(model, processor, args.sets, variants)
+        st = B.pooled_unit_stats(model, processor, args.sets, variants, prefix=args.prefix)
         st.save(path)
         log(f"stats {which}: {st.n_tokens} tokens ({st.n_image_tokens} image) in {time.time() - t0:.0f}s -> {path}")
 
 
 def cmd_pilot(args, model, processor):
-    items = B.matched_items(args.sets)
+    items = B.matched_items(args.sets, prefix=args.prefix)
     tests = B.build_tests(processor, items, VARIANTS, args.batch)
     by = {it.en: it for it in items}
     for v, test in tests.items():
@@ -135,7 +137,7 @@ def cmd_pilot(args, model, processor):
 
 
 def cmd_run(args, model, processor):
-    items = B.matched_items(args.sets)
+    items = B.matched_items(args.sets, prefix=args.prefix)
     by = {it.en: it for it in items}
     tests = B.build_tests(processor, items, VARIANTS, args.batch)
     dims = site_dims(model)
@@ -169,7 +171,7 @@ def cmd_ids(args):
     from transformers import AutoTokenizer
 
     tok = AutoTokenizer.from_pretrained(glimmer.MODEL_ID)
-    items = B.matched_items(args.sets)
+    items = B.matched_items(args.sets, prefix=args.prefix)
     ids = {it.en: {lang: B.name_token_ids(tok, names) for lang, names in it.names.items()} for it in items}
     pieces = {it.en: {lang: [tok.decode([i]) for i in v] for lang, v in ids[it.en].items()} for it in items}
     args.out.mkdir(parents=True, exist_ok=True)
@@ -185,6 +187,7 @@ def main():
     ap.add_argument("--out", type=Path, default=Path("runs/bilingual"))
     ap.add_argument("--batch", type=int, default=10)
     ap.add_argument("--only", default="", help="regex on condition families")
+    ap.add_argument("--prefix", default="demo", help="picture sets <prefix>_en, _es, _fr, _pt (demo or core100)")
     args = ap.parse_args()
     torch.manual_seed(0)
     if args.cmd == "ids":

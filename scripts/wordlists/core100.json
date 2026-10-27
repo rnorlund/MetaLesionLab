@@ -1,0 +1,2207 @@
+{
+ "name": "core100",
+ "about": "100 concrete, easily pictured nouns for the n = 100 replication (docs/replication_plan.md). Nine categories plus four other objects; English Zipf frequency from wordfreq; includes the 20 demo words. Each language lists its target name first, then accepted alternates (synonyms, regional names, short forms, spellings), chosen on the same principle in every language. Pictures are drawn once from the English word; the Spanish, French and Portuguese sets reuse the English pictures (scripts/language_sets.py).",
+ "items": [
+  {
+   "en": "cat",
+   "category": "animals",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 4.78,
+   "names": {
+    "en": [
+     "cat",
+     "kitten"
+    ],
+    "es": [
+     "gato",
+     "gatito"
+    ],
+    "fr": [
+     "chat",
+     "chaton"
+    ],
+    "pt": [
+     "gato",
+     "gatinho"
+    ]
+   }
+  },
+  {
+   "en": "snail",
+   "category": "animals",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.67,
+   "names": {
+    "en": [
+     "snail"
+    ],
+    "es": [
+     "caracol"
+    ],
+    "fr": [
+     "escargot"
+    ],
+    "pt": [
+     "caracol"
+    ]
+   }
+  },
+  {
+   "en": "dog",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 5.1,
+   "names": {
+    "en": [
+     "dog",
+     "puppy"
+    ],
+    "es": [
+     "perro",
+     "perrito"
+    ],
+    "fr": [
+     "chien",
+     "chiot"
+    ],
+    "pt": [
+     "cachorro",
+     "cão",
+     "cachorrinho"
+    ]
+   }
+  },
+  {
+   "en": "horse",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.76,
+   "names": {
+    "en": [
+     "horse",
+     "pony"
+    ],
+    "es": [
+     "caballo",
+     "poni"
+    ],
+    "fr": [
+     "cheval",
+     "poney"
+    ],
+    "pt": [
+     "cavalo",
+     "pônei"
+    ]
+   }
+  },
+  {
+   "en": "rabbit",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.05,
+   "names": {
+    "en": [
+     "rabbit",
+     "bunny"
+    ],
+    "es": [
+     "conejo"
+    ],
+    "fr": [
+     "lapin"
+    ],
+    "pt": [
+     "coelho"
+    ]
+   }
+  },
+  {
+   "en": "owl",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.87,
+   "names": {
+    "en": [
+     "owl"
+    ],
+    "es": [
+     "búho",
+     "lechuza"
+    ],
+    "fr": [
+     "hibou",
+     "chouette"
+    ],
+    "pt": [
+     "coruja"
+    ]
+   }
+  },
+  {
+   "en": "giraffe",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.32,
+   "names": {
+    "en": [
+     "giraffe"
+    ],
+    "es": [
+     "jirafa"
+    ],
+    "fr": [
+     "girafe"
+    ],
+    "pt": [
+     "girafa"
+    ]
+   }
+  },
+  {
+   "en": "penguin",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.78,
+   "names": {
+    "en": [
+     "penguin"
+    ],
+    "es": [
+     "pingüino",
+     "pinguino"
+    ],
+    "fr": [
+     "pingouin",
+     "manchot"
+    ],
+    "pt": [
+     "pinguim"
+    ]
+   }
+  },
+  {
+   "en": "butterfly",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.93,
+   "names": {
+    "en": [
+     "butterfly"
+    ],
+    "es": [
+     "mariposa"
+    ],
+    "fr": [
+     "papillon"
+    ],
+    "pt": [
+     "borboleta"
+    ]
+   }
+  },
+  {
+   "en": "octopus",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.46,
+   "names": {
+    "en": [
+     "octopus"
+    ],
+    "es": [
+     "pulpo"
+    ],
+    "fr": [
+     "pieuvre",
+     "poulpe"
+    ],
+    "pt": [
+     "polvo"
+    ]
+   }
+  },
+  {
+   "en": "squirrel",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.69,
+   "names": {
+    "en": [
+     "squirrel"
+    ],
+    "es": [
+     "ardilla"
+    ],
+    "fr": [
+     "écureuil"
+    ],
+    "pt": [
+     "esquilo"
+    ]
+   }
+  },
+  {
+   "en": "hedgehog",
+   "category": "animals",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.25,
+   "names": {
+    "en": [
+     "hedgehog"
+    ],
+    "es": [
+     "erizo"
+    ],
+    "fr": [
+     "hérisson"
+    ],
+    "pt": [
+     "ouriço"
+    ]
+   }
+  },
+  {
+   "en": "saw",
+   "category": "tools",
+   "hint": "a hand saw, the tool",
+   "demo": true,
+   "zipf_en": 5.34,
+   "names": {
+    "en": [
+     "saw",
+     "handsaw"
+    ],
+    "es": [
+     "sierra",
+     "serrucho"
+    ],
+    "fr": [
+     "scie",
+     "égoïne"
+    ],
+    "pt": [
+     "serrote",
+     "serra"
+    ]
+   }
+  },
+  {
+   "en": "scissors",
+   "category": "tools",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.58,
+   "names": {
+    "en": [
+     "scissors"
+    ],
+    "es": [
+     "tijeras",
+     "tijera"
+    ],
+    "fr": [
+     "ciseaux"
+    ],
+    "pt": [
+     "tesoura"
+    ]
+   }
+  },
+  {
+   "en": "ladder",
+   "category": "tools",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 4.03,
+   "names": {
+    "en": [
+     "ladder",
+     "stepladder"
+    ],
+    "es": [
+     "escalera"
+    ],
+    "fr": [
+     "échelle",
+     "escabeau"
+    ],
+    "pt": [
+     "escada"
+    ]
+   }
+  },
+  {
+   "en": "hammer",
+   "category": "tools",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.16,
+   "names": {
+    "en": [
+     "hammer"
+    ],
+    "es": [
+     "martillo"
+    ],
+    "fr": [
+     "marteau"
+    ],
+    "pt": [
+     "martelo"
+    ]
+   }
+  },
+  {
+   "en": "axe",
+   "category": "tools",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.79,
+   "names": {
+    "en": [
+     "axe",
+     "ax",
+     "hatchet"
+    ],
+    "es": [
+     "hacha"
+    ],
+    "fr": [
+     "hache"
+    ],
+    "pt": [
+     "machado"
+    ]
+   }
+  },
+  {
+   "en": "shovel",
+   "category": "tools",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.5,
+   "names": {
+    "en": [
+     "shovel",
+     "spade"
+    ],
+    "es": [
+     "pala"
+    ],
+    "fr": [
+     "pelle"
+    ],
+    "pt": [
+     "pá"
+    ]
+   }
+  },
+  {
+   "en": "rake",
+   "category": "tools",
+   "hint": "a garden rake",
+   "demo": false,
+   "zipf_en": 3.38,
+   "names": {
+    "en": [
+     "rake"
+    ],
+    "es": [
+     "rastrillo"
+    ],
+    "fr": [
+     "râteau"
+    ],
+    "pt": [
+     "ancinho",
+     "rastelo"
+    ]
+   }
+  },
+  {
+   "en": "pliers",
+   "category": "tools",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 2.9,
+   "names": {
+    "en": [
+     "pliers"
+    ],
+    "es": [
+     "alicates",
+     "alicate",
+     "pinzas"
+    ],
+    "fr": [
+     "pince",
+     "tenaille"
+    ],
+    "pt": [
+     "alicate"
+    ]
+   }
+  },
+  {
+   "en": "key",
+   "category": "tools",
+   "hint": "a door key",
+   "demo": false,
+   "zipf_en": 5.12,
+   "names": {
+    "en": [
+     "key"
+    ],
+    "es": [
+     "llave"
+    ],
+    "fr": [
+     "clé",
+     "clef"
+    ],
+    "pt": [
+     "chave"
+    ]
+   }
+  },
+  {
+   "en": "funnel",
+   "category": "tools",
+   "hint": "a kitchen funnel",
+   "demo": false,
+   "zipf_en": 3.47,
+   "names": {
+    "en": [
+     "funnel"
+    ],
+    "es": [
+     "embudo"
+    ],
+    "fr": [
+     "entonnoir"
+    ],
+    "pt": [
+     "funil"
+    ]
+   }
+  },
+  {
+   "en": "carrot",
+   "category": "food",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.62,
+   "names": {
+    "en": [
+     "carrot"
+    ],
+    "es": [
+     "zanahoria"
+    ],
+    "fr": [
+     "carotte"
+    ],
+    "pt": [
+     "cenoura"
+    ]
+   }
+  },
+  {
+   "en": "pineapple",
+   "category": "food",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.58,
+   "names": {
+    "en": [
+     "pineapple"
+    ],
+    "es": [
+     "piña",
+     "ananá",
+     "ananás"
+    ],
+    "fr": [
+     "ananas"
+    ],
+    "pt": [
+     "abacaxi",
+     "ananás"
+    ]
+   }
+  },
+  {
+   "en": "apple",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.76,
+   "names": {
+    "en": [
+     "apple"
+    ],
+    "es": [
+     "manzana"
+    ],
+    "fr": [
+     "pomme"
+    ],
+    "pt": [
+     "maçã"
+    ]
+   }
+  },
+  {
+   "en": "strawberry",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.72,
+   "names": {
+    "en": [
+     "strawberry"
+    ],
+    "es": [
+     "fresa",
+     "frutilla"
+    ],
+    "fr": [
+     "fraise"
+    ],
+    "pt": [
+     "morango"
+    ]
+   }
+  },
+  {
+   "en": "cherry",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.18,
+   "names": {
+    "en": [
+     "cherry"
+    ],
+    "es": [
+     "cereza"
+    ],
+    "fr": [
+     "cerise"
+    ],
+    "pt": [
+     "cereja"
+    ]
+   }
+  },
+  {
+   "en": "lemon",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.1,
+   "names": {
+    "en": [
+     "lemon"
+    ],
+    "es": [
+     "limón"
+    ],
+    "fr": [
+     "citron"
+    ],
+    "pt": [
+     "limão"
+    ]
+   }
+  },
+  {
+   "en": "watermelon",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.35,
+   "names": {
+    "en": [
+     "watermelon"
+    ],
+    "es": [
+     "sandía",
+     "patilla"
+    ],
+    "fr": [
+     "pastèque"
+    ],
+    "pt": [
+     "melancia"
+    ]
+   }
+  },
+  {
+   "en": "mushroom",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.63,
+   "names": {
+    "en": [
+     "mushroom"
+    ],
+    "es": [
+     "hongo",
+     "seta",
+     "champiñón"
+    ],
+    "fr": [
+     "champignon"
+    ],
+    "pt": [
+     "cogumelo"
+    ]
+   }
+  },
+  {
+   "en": "bread",
+   "category": "food",
+   "hint": "a loaf of bread",
+   "demo": false,
+   "zipf_en": 4.5,
+   "names": {
+    "en": [
+     "bread",
+     "loaf"
+    ],
+    "es": [
+     "pan"
+    ],
+    "fr": [
+     "pain"
+    ],
+    "pt": [
+     "pão"
+    ]
+   }
+  },
+  {
+   "en": "egg",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.46,
+   "names": {
+    "en": [
+     "egg"
+    ],
+    "es": [
+     "huevo"
+    ],
+    "fr": [
+     "œuf",
+     "oeuf"
+    ],
+    "pt": [
+     "ovo"
+    ]
+   }
+  },
+  {
+   "en": "artichoke",
+   "category": "food",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 2.73,
+   "names": {
+    "en": [
+     "artichoke"
+    ],
+    "es": [
+     "alcachofa"
+    ],
+    "fr": [
+     "artichaut"
+    ],
+    "pt": [
+     "alcachofra"
+    ]
+   }
+  },
+  {
+   "en": "kettle",
+   "category": "household",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.54,
+   "names": {
+    "en": [
+     "kettle",
+     "teakettle",
+     "teapot"
+    ],
+    "es": [
+     "tetera",
+     "hervidor",
+     "hervidora",
+     "pava"
+    ],
+    "fr": [
+     "bouilloire",
+     "théière"
+    ],
+    "pt": [
+     "chaleira",
+     "bule"
+    ]
+   }
+  },
+  {
+   "en": "spoon",
+   "category": "household",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.88,
+   "names": {
+    "en": [
+     "spoon"
+    ],
+    "es": [
+     "cuchara"
+    ],
+    "fr": [
+     "cuillère",
+     "cuiller"
+    ],
+    "pt": [
+     "colher"
+    ]
+   }
+  },
+  {
+   "en": "candle",
+   "category": "household",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.88,
+   "names": {
+    "en": [
+     "candle"
+    ],
+    "es": [
+     "vela"
+    ],
+    "fr": [
+     "bougie",
+     "chandelle"
+    ],
+    "pt": [
+     "vela"
+    ]
+   }
+  },
+  {
+   "en": "umbrella",
+   "category": "household",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.89,
+   "names": {
+    "en": [
+     "umbrella"
+    ],
+    "es": [
+     "paraguas",
+     "sombrilla"
+    ],
+    "fr": [
+     "parapluie"
+    ],
+    "pt": [
+     "guarda-chuva",
+     "sombrinha"
+    ]
+   }
+  },
+  {
+   "en": "fork",
+   "category": "household",
+   "hint": "a table fork",
+   "demo": false,
+   "zipf_en": 4.03,
+   "names": {
+    "en": [
+     "fork"
+    ],
+    "es": [
+     "tenedor"
+    ],
+    "fr": [
+     "fourchette"
+    ],
+    "pt": [
+     "garfo"
+    ]
+   }
+  },
+  {
+   "en": "bottle",
+   "category": "household",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.57,
+   "names": {
+    "en": [
+     "bottle"
+    ],
+    "es": [
+     "botella"
+    ],
+    "fr": [
+     "bouteille"
+    ],
+    "pt": [
+     "garrafa"
+    ]
+   }
+  },
+  {
+   "en": "chair",
+   "category": "household",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.69,
+   "names": {
+    "en": [
+     "chair"
+    ],
+    "es": [
+     "silla"
+    ],
+    "fr": [
+     "chaise"
+    ],
+    "pt": [
+     "cadeira"
+    ]
+   }
+  },
+  {
+   "en": "clock",
+   "category": "household",
+   "hint": "a wall clock",
+   "demo": false,
+   "zipf_en": 4.43,
+   "names": {
+    "en": [
+     "clock"
+    ],
+    "es": [
+     "reloj"
+    ],
+    "fr": [
+     "horloge",
+     "pendule"
+    ],
+    "pt": [
+     "relógio"
+    ]
+   }
+  },
+  {
+   "en": "broom",
+   "category": "household",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.42,
+   "names": {
+    "en": [
+     "broom"
+    ],
+    "es": [
+     "escoba"
+    ],
+    "fr": [
+     "balai"
+    ],
+    "pt": [
+     "vassoura"
+    ]
+   }
+  },
+  {
+   "en": "comb",
+   "category": "household",
+   "hint": "a hair comb",
+   "demo": false,
+   "zipf_en": 3.52,
+   "names": {
+    "en": [
+     "comb"
+    ],
+    "es": [
+     "peine"
+    ],
+    "fr": [
+     "peigne"
+    ],
+    "pt": [
+     "pente"
+    ]
+   }
+  },
+  {
+   "en": "book",
+   "category": "household",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 5.43,
+   "names": {
+    "en": [
+     "book"
+    ],
+    "es": [
+     "libro"
+    ],
+    "fr": [
+     "livre"
+    ],
+    "pt": [
+     "livro"
+    ]
+   }
+  },
+  {
+   "en": "hanger",
+   "category": "household",
+   "hint": "a clothes hanger",
+   "demo": false,
+   "zipf_en": 3.24,
+   "names": {
+    "en": [
+     "hanger",
+     "coathanger"
+    ],
+    "es": [
+     "percha",
+     "gancho",
+     "colgador"
+    ],
+    "fr": [
+     "cintre"
+    ],
+    "pt": [
+     "cabide"
+    ]
+   }
+  },
+  {
+   "en": "bicycle",
+   "category": "vehicles",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.98,
+   "names": {
+    "en": [
+     "bicycle",
+     "bike"
+    ],
+    "es": [
+     "bicicleta",
+     "bici"
+    ],
+    "fr": [
+     "vélo",
+     "bicyclette"
+    ],
+    "pt": [
+     "bicicleta"
+    ]
+   }
+  },
+  {
+   "en": "helicopter",
+   "category": "vehicles",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 4.13,
+   "names": {
+    "en": [
+     "helicopter"
+    ],
+    "es": [
+     "helicóptero"
+    ],
+    "fr": [
+     "hélicoptère"
+    ],
+    "pt": [
+     "helicóptero"
+    ]
+   }
+  },
+  {
+   "en": "car",
+   "category": "vehicles",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 5.45,
+   "names": {
+    "en": [
+     "car"
+    ],
+    "es": [
+     "coche",
+     "carro",
+     "auto",
+     "automóvil"
+    ],
+    "fr": [
+     "voiture",
+     "auto"
+    ],
+    "pt": [
+     "carro",
+     "automóvel"
+    ]
+   }
+  },
+  {
+   "en": "boat",
+   "category": "vehicles",
+   "hint": "a small rowing boat",
+   "demo": false,
+   "zipf_en": 4.71,
+   "names": {
+    "en": [
+     "boat",
+     "rowboat"
+    ],
+    "es": [
+     "barco",
+     "bote",
+     "barca"
+    ],
+    "fr": [
+     "bateau",
+     "barque"
+    ],
+    "pt": [
+     "barco",
+     "bote"
+    ]
+   }
+  },
+  {
+   "en": "airplane",
+   "category": "vehicles",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.92,
+   "names": {
+    "en": [
+     "airplane",
+     "plane",
+     "aeroplane"
+    ],
+    "es": [
+     "avión"
+    ],
+    "fr": [
+     "avion"
+    ],
+    "pt": [
+     "avião"
+    ]
+   }
+  },
+  {
+   "en": "truck",
+   "category": "vehicles",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.64,
+   "names": {
+    "en": [
+     "truck",
+     "lorry"
+    ],
+    "es": [
+     "camión"
+    ],
+    "fr": [
+     "camion"
+    ],
+    "pt": [
+     "caminhão"
+    ]
+   }
+  },
+  {
+   "en": "motorcycle",
+   "category": "vehicles",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.07,
+   "names": {
+    "en": [
+     "motorcycle",
+     "motorbike"
+    ],
+    "es": [
+     "moto",
+     "motocicleta"
+    ],
+    "fr": [
+     "moto",
+     "motocyclette"
+    ],
+    "pt": [
+     "moto",
+     "motocicleta"
+    ]
+   }
+  },
+  {
+   "en": "rocket",
+   "category": "vehicles",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.31,
+   "names": {
+    "en": [
+     "rocket"
+    ],
+    "es": [
+     "cohete"
+    ],
+    "fr": [
+     "fusée"
+    ],
+    "pt": [
+     "foguete"
+    ]
+   }
+  },
+  {
+   "en": "submarine",
+   "category": "vehicles",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.81,
+   "names": {
+    "en": [
+     "submarine"
+    ],
+    "es": [
+     "submarino"
+    ],
+    "fr": [
+     "sous-marin"
+    ],
+    "pt": [
+     "submarino"
+    ]
+   }
+  },
+  {
+   "en": "sled",
+   "category": "vehicles",
+   "hint": "a snow sled",
+   "demo": false,
+   "zipf_en": 3.23,
+   "names": {
+    "en": [
+     "sled",
+     "sledge",
+     "sleigh"
+    ],
+    "es": [
+     "trineo"
+    ],
+    "fr": [
+     "luge",
+     "traîneau"
+    ],
+    "pt": [
+     "trenó"
+    ]
+   }
+  },
+  {
+   "en": "hand",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 5.41,
+   "names": {
+    "en": [
+     "hand"
+    ],
+    "es": [
+     "mano"
+    ],
+    "fr": [
+     "main"
+    ],
+    "pt": [
+     "mão"
+    ]
+   }
+  },
+  {
+   "en": "foot",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.87,
+   "names": {
+    "en": [
+     "foot"
+    ],
+    "es": [
+     "pie"
+    ],
+    "fr": [
+     "pied"
+    ],
+    "pt": [
+     "pé"
+    ]
+   }
+  },
+  {
+   "en": "eye",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 5.02,
+   "names": {
+    "en": [
+     "eye"
+    ],
+    "es": [
+     "ojo"
+    ],
+    "fr": [
+     "œil",
+     "oeil"
+    ],
+    "pt": [
+     "olho"
+    ]
+   }
+  },
+  {
+   "en": "ear",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.43,
+   "names": {
+    "en": [
+     "ear"
+    ],
+    "es": [
+     "oreja"
+    ],
+    "fr": [
+     "oreille"
+    ],
+    "pt": [
+     "orelha"
+    ]
+   }
+  },
+  {
+   "en": "nose",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.51,
+   "names": {
+    "en": [
+     "nose"
+    ],
+    "es": [
+     "nariz"
+    ],
+    "fr": [
+     "nez"
+    ],
+    "pt": [
+     "nariz"
+    ]
+   }
+  },
+  {
+   "en": "tooth",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.08,
+   "names": {
+    "en": [
+     "tooth"
+    ],
+    "es": [
+     "diente",
+     "muela"
+    ],
+    "fr": [
+     "dent"
+    ],
+    "pt": [
+     "dente"
+    ]
+   }
+  },
+  {
+   "en": "bone",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.47,
+   "names": {
+    "en": [
+     "bone"
+    ],
+    "es": [
+     "hueso"
+    ],
+    "fr": [
+     "os"
+    ],
+    "pt": [
+     "osso"
+    ]
+   }
+  },
+  {
+   "en": "skull",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.09,
+   "names": {
+    "en": [
+     "skull"
+    ],
+    "es": [
+     "calavera",
+     "cráneo"
+    ],
+    "fr": [
+     "crâne"
+    ],
+    "pt": [
+     "caveira",
+     "crânio"
+    ]
+   }
+  },
+  {
+   "en": "brain",
+   "category": "body",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.94,
+   "names": {
+    "en": [
+     "brain"
+    ],
+    "es": [
+     "cerebro"
+    ],
+    "fr": [
+     "cerveau"
+    ],
+    "pt": [
+     "cérebro"
+    ]
+   }
+  },
+  {
+   "en": "heart",
+   "category": "body",
+   "hint": "the heart organ",
+   "demo": false,
+   "zipf_en": 5.31,
+   "names": {
+    "en": [
+     "heart"
+    ],
+    "es": [
+     "corazón"
+    ],
+    "fr": [
+     "cœur",
+     "coeur"
+    ],
+    "pt": [
+     "coração"
+    ]
+   }
+  },
+  {
+   "en": "cactus",
+   "category": "nature",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.4,
+   "names": {
+    "en": [
+     "cactus"
+    ],
+    "es": [
+     "cactus",
+     "cacto"
+    ],
+    "fr": [
+     "cactus"
+    ],
+    "pt": [
+     "cacto"
+    ]
+   }
+  },
+  {
+   "en": "tree",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.85,
+   "names": {
+    "en": [
+     "tree"
+    ],
+    "es": [
+     "árbol"
+    ],
+    "fr": [
+     "arbre"
+    ],
+    "pt": [
+     "árvore"
+    ]
+   }
+  },
+  {
+   "en": "leaf",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.22,
+   "names": {
+    "en": [
+     "leaf"
+    ],
+    "es": [
+     "hoja"
+    ],
+    "fr": [
+     "feuille"
+    ],
+    "pt": [
+     "folha"
+    ]
+   }
+  },
+  {
+   "en": "mountain",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.73,
+   "names": {
+    "en": [
+     "mountain"
+    ],
+    "es": [
+     "montaña"
+    ],
+    "fr": [
+     "montagne"
+    ],
+    "pt": [
+     "montanha"
+    ]
+   }
+  },
+  {
+   "en": "sun",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.97,
+   "names": {
+    "en": [
+     "sun"
+    ],
+    "es": [
+     "sol"
+    ],
+    "fr": [
+     "soleil"
+    ],
+    "pt": [
+     "sol"
+    ]
+   }
+  },
+  {
+   "en": "moon",
+   "category": "nature",
+   "hint": "a crescent moon",
+   "demo": false,
+   "zipf_en": 4.7,
+   "names": {
+    "en": [
+     "moon"
+    ],
+    "es": [
+     "luna"
+    ],
+    "fr": [
+     "lune"
+    ],
+    "pt": [
+     "lua"
+    ]
+   }
+  },
+  {
+   "en": "volcano",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.76,
+   "names": {
+    "en": [
+     "volcano"
+    ],
+    "es": [
+     "volcán"
+    ],
+    "fr": [
+     "volcan"
+    ],
+    "pt": [
+     "vulcão"
+    ]
+   }
+  },
+  {
+   "en": "feather",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.69,
+   "names": {
+    "en": [
+     "feather"
+    ],
+    "es": [
+     "pluma"
+    ],
+    "fr": [
+     "plume"
+    ],
+    "pt": [
+     "pena",
+     "pluma"
+    ]
+   }
+  },
+  {
+   "en": "acorn",
+   "category": "nature",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.08,
+   "names": {
+    "en": [
+     "acorn"
+    ],
+    "es": [
+     "bellota"
+    ],
+    "fr": [
+     "gland"
+    ],
+    "pt": [
+     "bolota",
+     "glande"
+    ]
+   }
+  },
+  {
+   "en": "shell",
+   "category": "nature",
+   "hint": "a seashell",
+   "demo": false,
+   "zipf_en": 4.39,
+   "names": {
+    "en": [
+     "shell",
+     "seashell"
+    ],
+    "es": [
+     "concha",
+     "caracola"
+    ],
+    "fr": [
+     "coquillage",
+     "coquille"
+    ],
+    "pt": [
+     "concha"
+    ]
+   }
+  },
+  {
+   "en": "nest",
+   "category": "nature",
+   "hint": "a bird's nest",
+   "demo": false,
+   "zipf_en": 4.07,
+   "names": {
+    "en": [
+     "nest"
+    ],
+    "es": [
+     "nido"
+    ],
+    "fr": [
+     "nid"
+    ],
+    "pt": [
+     "ninho"
+    ]
+   }
+  },
+  {
+   "en": "harp",
+   "category": "instruments",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.4,
+   "names": {
+    "en": [
+     "harp"
+    ],
+    "es": [
+     "arpa"
+    ],
+    "fr": [
+     "harpe"
+    ],
+    "pt": [
+     "harpa"
+    ]
+   }
+  },
+  {
+   "en": "whistle",
+   "category": "instruments",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.88,
+   "names": {
+    "en": [
+     "whistle"
+    ],
+    "es": [
+     "silbato",
+     "pito"
+    ],
+    "fr": [
+     "sifflet"
+    ],
+    "pt": [
+     "apito"
+    ]
+   }
+  },
+  {
+   "en": "guitar",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.48,
+   "names": {
+    "en": [
+     "guitar"
+    ],
+    "es": [
+     "guitarra"
+    ],
+    "fr": [
+     "guitare"
+    ],
+    "pt": [
+     "violão",
+     "guitarra"
+    ]
+   }
+  },
+  {
+   "en": "drum",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.11,
+   "names": {
+    "en": [
+     "drum"
+    ],
+    "es": [
+     "tambor"
+    ],
+    "fr": [
+     "tambour"
+    ],
+    "pt": [
+     "tambor"
+    ]
+   }
+  },
+  {
+   "en": "violin",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.74,
+   "names": {
+    "en": [
+     "violin",
+     "fiddle"
+    ],
+    "es": [
+     "violín"
+    ],
+    "fr": [
+     "violon"
+    ],
+    "pt": [
+     "violino"
+    ]
+   }
+  },
+  {
+   "en": "trumpet",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.58,
+   "names": {
+    "en": [
+     "trumpet"
+    ],
+    "es": [
+     "trompeta"
+    ],
+    "fr": [
+     "trompette"
+    ],
+    "pt": [
+     "trompete"
+    ]
+   }
+  },
+  {
+   "en": "flute",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.52,
+   "names": {
+    "en": [
+     "flute"
+    ],
+    "es": [
+     "flauta"
+    ],
+    "fr": [
+     "flûte"
+    ],
+    "pt": [
+     "flauta"
+    ]
+   }
+  },
+  {
+   "en": "accordion",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.09,
+   "names": {
+    "en": [
+     "accordion"
+    ],
+    "es": [
+     "acordeón"
+    ],
+    "fr": [
+     "accordéon"
+    ],
+    "pt": [
+     "acordeão",
+     "sanfona"
+    ]
+   }
+  },
+  {
+   "en": "bell",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.59,
+   "names": {
+    "en": [
+     "bell"
+    ],
+    "es": [
+     "campana"
+    ],
+    "fr": [
+     "cloche"
+    ],
+    "pt": [
+     "sino"
+    ]
+   }
+  },
+  {
+   "en": "tambourine",
+   "category": "instruments",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 2.64,
+   "names": {
+    "en": [
+     "tambourine"
+    ],
+    "es": [
+     "pandereta",
+     "pandero"
+    ],
+    "fr": [
+     "tambourin"
+    ],
+    "pt": [
+     "pandeiro"
+    ]
+   }
+  },
+  {
+   "en": "glove",
+   "category": "clothing",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 3.73,
+   "names": {
+    "en": [
+     "glove"
+    ],
+    "es": [
+     "guante"
+    ],
+    "fr": [
+     "gant"
+    ],
+    "pt": [
+     "luva"
+    ]
+   }
+  },
+  {
+   "en": "hat",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.53,
+   "names": {
+    "en": [
+     "hat"
+    ],
+    "es": [
+     "sombrero"
+    ],
+    "fr": [
+     "chapeau"
+    ],
+    "pt": [
+     "chapéu"
+    ]
+   }
+  },
+  {
+   "en": "shoe",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.24,
+   "names": {
+    "en": [
+     "shoe"
+    ],
+    "es": [
+     "zapato"
+    ],
+    "fr": [
+     "chaussure"
+    ],
+    "pt": [
+     "sapato"
+    ]
+   }
+  },
+  {
+   "en": "sock",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.61,
+   "names": {
+    "en": [
+     "sock"
+    ],
+    "es": [
+     "calcetín",
+     "media"
+    ],
+    "fr": [
+     "chaussette"
+    ],
+    "pt": [
+     "meia"
+    ]
+   }
+  },
+  {
+   "en": "dress",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.76,
+   "names": {
+    "en": [
+     "dress"
+    ],
+    "es": [
+     "vestido"
+    ],
+    "fr": [
+     "robe"
+    ],
+    "pt": [
+     "vestido"
+    ]
+   }
+  },
+  {
+   "en": "boot",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.19,
+   "names": {
+    "en": [
+     "boot"
+    ],
+    "es": [
+     "bota"
+    ],
+    "fr": [
+     "botte"
+    ],
+    "pt": [
+     "bota"
+    ]
+   }
+  },
+  {
+   "en": "scarf",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 3.68,
+   "names": {
+    "en": [
+     "scarf"
+    ],
+    "es": [
+     "bufanda"
+    ],
+    "fr": [
+     "écharpe"
+    ],
+    "pt": [
+     "cachecol"
+    ]
+   }
+  },
+  {
+   "en": "tie",
+   "category": "clothing",
+   "hint": "a necktie",
+   "demo": false,
+   "zipf_en": 4.51,
+   "names": {
+    "en": [
+     "tie",
+     "necktie"
+    ],
+    "es": [
+     "corbata"
+    ],
+    "fr": [
+     "cravate"
+    ],
+    "pt": [
+     "gravata"
+    ]
+   }
+  },
+  {
+   "en": "belt",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.42,
+   "names": {
+    "en": [
+     "belt"
+    ],
+    "es": [
+     "cinturón"
+    ],
+    "fr": [
+     "ceinture"
+    ],
+    "pt": [
+     "cinto"
+    ]
+   }
+  },
+  {
+   "en": "crown",
+   "category": "clothing",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 4.56,
+   "names": {
+    "en": [
+     "crown"
+    ],
+    "es": [
+     "corona"
+    ],
+    "fr": [
+     "couronne"
+    ],
+    "pt": [
+     "coroa"
+    ]
+   }
+  },
+  {
+   "en": "anchor",
+   "category": "other",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 4.02,
+   "names": {
+    "en": [
+     "anchor"
+    ],
+    "es": [
+     "ancla"
+    ],
+    "fr": [
+     "ancre"
+    ],
+    "pt": [
+     "âncora"
+    ]
+   }
+  },
+  {
+   "en": "bench",
+   "category": "other",
+   "hint": "a park bench",
+   "demo": true,
+   "zipf_en": 4.39,
+   "names": {
+    "en": [
+     "bench"
+    ],
+    "es": [
+     "banco",
+     "banca"
+    ],
+    "fr": [
+     "banc"
+    ],
+    "pt": [
+     "banco"
+    ]
+   }
+  },
+  {
+   "en": "igloo",
+   "category": "other",
+   "hint": "",
+   "demo": true,
+   "zipf_en": 2.64,
+   "names": {
+    "en": [
+     "igloo"
+    ],
+    "es": [
+     "iglú"
+    ],
+    "fr": [
+     "igloo",
+     "iglou"
+    ],
+    "pt": [
+     "iglu"
+    ]
+   }
+  },
+  {
+   "en": "house",
+   "category": "other",
+   "hint": "",
+   "demo": false,
+   "zipf_en": 5.71,
+   "names": {
+    "en": [
+     "house"
+    ],
+    "es": [
+     "casa"
+    ],
+    "fr": [
+     "maison"
+    ],
+    "pt": [
+     "casa"
+    ]
+   }
+  }
+ ]
+}
