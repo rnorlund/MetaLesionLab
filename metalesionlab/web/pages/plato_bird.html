@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plato’s Bird · Tippa Lingua</title>
+<meta name="description" content="Ask 20 people to name a bird and you get 11 different birds. Ask Meta’s Muse Spark 50 times and you get a sparrow 49 times. Across 117 categories, the AI is far more stuck on one textbook answer than people are.">
+<meta property="og:title" content="Plato’s Bird · Tippa Lingua">
+<meta property="og:description" content="Name a bird. 20 people gave 11 different birds; Muse Spark said “sparrow” 49 times out of 50.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_bird.css">
+</head>
+<body class="pb">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/plato">Plato’s Chair</a>
+    <a href="/plato/bird" aria-current="page">Plato’s Bird</a>
+    <a href="/challenge">You vs. the AI</a>
+    <a href="/lab">Model Lab</a>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="pb-hero" aria-labelledby="hero-h">
+  <div class="pb-hero-text">
+    <span class="pb-kicker">An experiment with Meta’s Muse Spark, Muse Glimmer and Muse Image</span>
+    <h1 id="hero-h">Plato’s Bird</h1>
+    <p class="pb-lede" id="hero-lede">Ask 20 people to name a bird and you get 11 different birds. Ask Meta’s Muse Spark the same question 50 times.</p>
+    <div class="pb-stat" id="hero-stat">
+      <span class="pb-stat-num" id="stat-num">90%</span>
+      <p class="pb-stat-text" id="stat-text">Across 117 categories, Muse Spark’s favourite answer takes 90% of its answers. People’s favourite takes 48%.</p>
+      <p class="pb-stat-sub" id="stat-sub"></p>
+    </div>
+  </div>
+  <figure class="pb-hero-fig" aria-labelledby="hero-cap">
+    <p class="pb-q">“Name one member of the category <b>bird</b>.”</p>
+    <div class="pb-trio" id="hero-trio"></div>
+    <figcaption id="hero-cap" class="pb-cap">Each bar is one answer; its length is the share of answers. People: the first bird each of 20 UK adults named aloud (Banks &amp; Connell, 2023). Muse Spark: 50 separate calls.</figcaption>
+    <div class="pb-drawn">
+      <img src="/static/img/plato_bird/bird.webp" width="620" height="196" alt="12 doodles Muse Image drew for “a bird”: the same small songbird, side view, facing right, every time.">
+      <p class="pb-cap" id="hero-drawn-cap">And when Muse Image draws “a bird”, 12 times: the same little songbird.</p>
+    </div>
+  </figure>
+</section>
+
+<nav class="pb-jump" aria-label="On this page">
+  <a href="#pick">Pick a category</a>
+  <a href="#all">All 117 categories</a>
+  <a href="#draw">Does it draw what it names?</a>
+  <a href="#temp">Is it the temperature?</a>
+  <a href="#game">You vs. the AI</a>
+  <a href="#method">Method</a>
+</nav>
+
+<section class="pb-sec" id="pick" aria-labelledby="pick-h">
+  <div class="pb-sec-head">
+    <h2 id="pick-h">Pick a category</h2>
+    <p class="pb-sub">Wittgenstein said categories like “game” have no definition, only family resemblances; Eleanor Rosch showed they still have best examples. People’s first answer shows that pull toward the best example. Is the AI’s pull stronger?</p>
+  </div>
+  <div class="pb-pickrow">
+    <label class="field pb-select"><span>Category</span>
+      <select id="cat-select" aria-describedby="cat-hint"></select>
+    </label>
+    <div class="pb-quick" id="cat-quick" role="group" aria-label="Quick picks"></div>
+  </div>
+  <p class="pb-q" id="pick-q"></p>
+  <div class="pb-trio" id="pick-trio"></div>
+  <dl class="pb-facts" id="pick-facts"></dl>
+  <p class="pb-note" id="cat-hint">Shares at people’s sample size: the AI’s 50 answers are subsampled to the number of people (13–20) so both sides are measured alike. Answers are lower-cased, singular, and merged only when they name the same thing (“eggplant” = “aubergine”).</p>
+</section>
+
+<section class="pb-sec" id="all" aria-labelledby="all-h">
+  <div class="pb-sec-head">
+    <h2 id="all-h">All 117 categories</h2>
+    <p class="pb-sub" id="all-sub"></p>
+  </div>
+  <div class="seg pb-who" id="who-seg" role="group" aria-label="Which AI">
+    <button type="button" data-src="spark" aria-pressed="true">Muse Spark (50 calls)</button>
+    <button type="button" data-src="glimmer_T1.0" aria-pressed="false">Muse Glimmer (50 samples, temperature 1)</button>
+  </div>
+  <div class="pb-scatter-wrap">
+    <div class="pb-scatter" id="scatter" role="img" aria-labelledby="all-h all-sub"></div>
+    <div class="pb-tip" id="tip" role="status" hidden></div>
+  </div>
+  <div class="pb-legend" id="scatter-legend"></div>
+  <div class="pb-cards" id="all-cards"></div>
+  <details class="pb-table">
+    <summary>Show every category as a table</summary>
+    <div class="pb-table-scroll"><table id="all-table"><thead><tr>
+      <th scope="col">Category</th><th scope="col">Kind</th><th scope="col">People’s top first answer</th>
+      <th scope="col">Muse Spark’s top answer</th><th scope="col">Muse Glimmer’s top answer (T = 1)</th>
+    </tr></thead><tbody></tbody></table></div>
+  </details>
+</section>
+
+<section class="pb-sec" id="draw" aria-labelledby="draw-h">
+  <div class="pb-sec-head">
+    <h2 id="draw-h">Does it draw what it names?</h2>
+    <p class="pb-sub" id="draw-sub">Plato’s Chair found that Muse Image draws the textbook chair. We asked it for 12 doodles each of 12 categories and had Muse Spark (vision) say which member each doodle shows.</p>
+  </div>
+  <div class="pb-draw-grid" id="draw-grid"></div>
+</section>
+
+<section class="pb-sec" id="temp" aria-labelledby="temp-h">
+  <div class="pb-sec-head">
+    <h2 id="temp-h">Is it just the temperature?</h2>
+    <p class="pb-sub" id="temp-sub"></p>
+  </div>
+  <div class="pb-temp" id="temp-chart" role="img" aria-labelledby="temp-h temp-sub"></div>
+  <div class="pb-legend" id="temp-legend"></div>
+  <p class="pb-note" id="temp-note"></p>
+</section>
+
+<section class="pb-sec pb-game" id="game" aria-labelledby="game-h">
+  <div class="pb-sec-head">
+    <h2 id="game-h">You vs. the AI</h2>
+    <p class="pb-sub">Say the first one that comes to mind. Nothing you type leaves this page.</p>
+  </div>
+  <form class="pb-game-form" id="game-form" autocomplete="off">
+    <label class="field"><span id="game-label">Name a fruit</span>
+      <input type="text" id="game-input" maxlength="40" placeholder="Type one answer" aria-describedby="game-label">
+    </label>
+    <button type="submit" class="pb-btn">Compare</button>
+    <button type="button" class="pb-btn pb-btn-ghost" id="game-next">Another category</button>
+  </form>
+  <div class="pb-game-out" id="game-out" aria-live="polite"></div>
+</section>
+
+<section class="pb-sec pb-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">Method and caveats</h2>
+  <ul id="method-list">
+    <li><b>People.</b> The Banks &amp; Connell (2023) category production norms: 117 categories (67 concrete, 50 abstract), 20 UK adults per category, each naming aloud as many members as they could in 60 seconds. We use each person’s first answer. Production frequency is how many of the 20 named a member at all; typicality ratings (1–5) came from separate raters.</li>
+    <li><b>AI.</b> The same question for every category: “Name one member of the category bird. Answer with one word or a short name only.” Muse Spark 1.3: 50 separate calls, default settings, minimal reasoning. Muse Glimmer 30B (open weights, run on our own GPU): its probabilities for the first word of the answer, and 50 samples at temperatures 0.7, 1 and 1.5.</li>
+    <li><b>Fair comparison.</b> 20 answers look more varied than 50 only by chance, so every share and count is measured at people’s sample size. The plan, measures and predictions were written down and committed before any AI answers were collected.</li>
+    <li><b>Not the same task.</b> People named members aloud for a minute and we kept their first; the AI answered once per call. People are 20 UK adults, and the AI was likely tuned on American English (it says “soccer”, people say “football”; we merge such pairs).</li>
+    <li><b>Defaults are defaults.</b> The AI’s narrowness here is what it does when asked once, at its usual settings. Glimmer’s own probabilities are about as spread as people’s answers; how varied its answers look depends on the sampling temperature (see above).</li>
+  </ul>
+  <p class="pb-credit" id="credit">People’s answers: Banks, B., &amp; Connell, L. (2023). Category production norms for 117 concrete and abstract categories. <i>Behavior Research Methods</i>, 55(3), 1292–1313. <a href="https://doi.org/10.3758/s13428-021-01787-z">doi:10.3758/s13428-021-01787-z</a>. Data: <a href="https://osf.io/jgcu6/">osf.io/jgcu6</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; we show aggregate counts after our own normalization. AI: Meta Muse Spark 1.3, Muse Glimmer 30B and Muse Image 1.0. Full write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_bird.md">docs/plato_bird.md</a>.</p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. Tippa Lingua doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_bird.js"></script>
+</body>
+</html>

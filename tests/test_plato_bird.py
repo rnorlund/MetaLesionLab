@@ -1,5 +1,7 @@
+import json
 import math
 from collections import Counter
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -134,3 +136,114 @@ def test_prompts():
     assert len(PICTURE_CATEGORIES) == 12
     assert PICTURE_CATEGORIES["dog"] == ("a dog", "breed of dog")
     assert "Which fruit is in this drawing?" in picture_label_prompt("a fruit", "fruit")
+
+
+# ---------- category aliases and synonyms ----------
+
+def test_category_aliases_merge_spacing_and_head_noun_variants():
+    from metalesionlab.plato_bird import category_aliases, category_head
+
+    assert category_head("tree") == "tree" and category_head("four-wheeled vehicle") == "vehicle"
+    assert category_head("room in a house") == "room" and category_head("bird of prey") == "bird"
+    assert category_aliases("room in a house", Counter({"living": 2, "living room": 1})) == {"living": "living room"}
+    assert normalize("Alzheimer's") == "alzheimer" and normalize("fisherman's") == "fisherman"
+    # spacing: the most frequent form wins
+    assert category_aliases("bird", Counter({"bluebird": 4, "blue bird": 1})) == {"blue bird": "bluebird"}
+    # head noun: the fuller form names the group, and only when both forms occur
+    assert category_aliases("hat", Counter({"top": 5, "top hat": 1, "cap": 4})) == {"top": "top hat"}
+    assert category_aliases("nut", Counter({"pine nut": 3})) == {}
+    # the norms' own name for a merged group wins: "beef", not "beef meat"
+    assert category_aliases("meat", Counter({"beef": 40, "beef meat": 2}), {"beef"}) == {"beef meat": "beef"}
+    # different members are never merged
+    assert category_aliases("bird", Counter({"robin": 9, "sparrow": 9})) == {}
+
+
+def test_category_synonyms_stay_in_their_category():
+    from metalesionlab.plato_bird import synonyms_for
+
+    assert normalize("Happiness", synonyms_for("emotion")) == "happy"
+    assert normalize("Depression", synonyms_for("psychological illness")) == "depression"  # not "depressed"
+    assert normalize("Pacific Ocean", synonyms_for("body of water")) == "pacific"
+    assert normalize("Fracture", synonyms_for("injury")) == "broken bone"
+    assert normalize("Soccer", synonyms_for("sport")) == "football"
+    assert normalize("1/2", synonyms_for("fraction")) == "half"
+    assert normalize('1st matching response: "Red" – a basic colour name') == "red"
+
+
+# ---------- the public statistics file ----------
+
+PUBLIC = Path(__file__).resolve().parents[1] / "public_data" / "plato_bird.json"
+
+
+def _strict(text):
+    def bad(c):
+        raise ValueError(f"non-standard JSON constant {c}")
+    return json.loads(text, parse_constant=bad)
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_bird.json not written yet")
+def test_public_file_schema_and_credit():
+    text = PUBLIC.read_text()
+    d = _strict(text)  # no NaN: browsers reject it
+    assert d["n_categories"] == len(d["categories"]) == 117
+    assert "Banks" in d["credit"] and "CC BY 4.0" in d["credit"] and d["human_data"]["license"] == "CC BY 4.0"
+    assert d["prompt"] == "Name one member of the category {category}. Answer with one word or a short name only."
+    assert {r["domain"] for r in d["categories"]} == {"Concrete", "Abstract"}
+    assert [r["category"] for r in d["ai_only"]] == ["game"]
+    for r in d["categories"]:
+        assert 13 <= r["n_human"] <= 20
+        for src in ("human", "spark", "glimmer_logits", "glimmer_T1.0"):
+            assert 0 < r[src]["dominance"] <= 1 and r[src]["entropy_bits"] >= 0 and r[src]["top"]
+        t = r["tables"]
+        assert sum(n for _, n in t["human_first"]) == r["n_human"]
+        assert sum(n for _, n in t["spark"]) == 50
+        # production counts distinct people, so a merged member never exceeds the number of people
+        assert all(len(row) == 3 and 1 <= row[1] <= r["n_people"] <= 20 for row in t["human_named"])
+    s = d["summary"]
+    for src in ("spark", "glimmer_logits", "glimmer_T1.0"):
+        for m in ("dominance", "entropy_bits"):
+            c = s[src][m]["diff"]
+            assert c["ci95"][0] <= c["mean"] <= c["ci95"][1] and s[src][m]["n"] == 117
+    assert len(d["pictures"]) == 12 and all(len(p["spark"]["labels"]) == 12 for p in d["pictures"].values())
+    # aggregate counts only: no participant codes, ages or response times
+    for field in ("participant", "response_code", "trial.RT", "participant.age", "participant.sex", "mean.RT"):
+        assert f'"{field}"' not in text
+
+
+# ---------- the page ----------
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_bird.json not written yet")
+def test_page_and_api_render():
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+    from metalesionlab.web import plato_bird_routes
+
+    plato_bird_routes._cache.clear()
+    c = TestClient(web.app)
+    r = c.get("/plato/bird")
+    assert r.status_code == 200 and "Plato’s Bird" in r.text and 'id="game-form"' in r.text
+    assert "Banks" in r.text and "CC BY 4.0" in r.text
+    d = c.get("/api/plato/bird").json()
+    assert d["n_categories"] == 117 and any(x["category"] == "bird" for x in d["categories"])
+    for path in ("/static/js/plato_bird.js", "/static/css/plato_bird.css", "/static/img/plato_bird/bird.webp"):
+        assert c.get(path).status_code == 200
+
+
+def test_api_reports_missing_data(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+    from metalesionlab.web import plato_bird_routes
+
+    monkeypatch.setattr(plato_bird_routes, "DATA", tmp_path / "missing.json")
+    plato_bird_routes._cache.clear()
+    assert TestClient(web.app).get("/api/plato/bird").status_code == 503
+
+
+def test_page_static_files_stay_small():
+    from metalesionlab.web import app as web
+
+    files = [web.HERE / "static" / "js" / "plato_bird.js", web.HERE / "static" / "css" / "plato_bird.css",
+             *(web.HERE / "static" / "img" / "plato_bird").glob("*")]
+    assert sum(f.stat().st_size for f in files if f.exists()) < 1.5 * 1024 * 1024
