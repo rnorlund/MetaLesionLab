@@ -22,12 +22,13 @@
     <a href="/">Home</a>
     <a href="/studio">Test Studio</a>
     <a href="/scorer" aria-current="page">Scorer</a>
+    <a href="/assess">Assessment</a>
     <a href="/lab">Model Lab</a>
   </nav>
   <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
   <div class="chips"><span class="chip">Muse Voice Transcribe · Muse Spark</span></div>
 </header>
-<div class="page-intro"><p><b>Scorer</b> gives a picture test by voice: each answer is transcribed and coded automatically, Muse Spark gives a second opinion, and a person reviews before export. <button type="button" class="link-btn" data-tour-start="scorer">Take the tour from here</button></p></div>
+<div class="page-intro"><p><b>Scorer</b> gives a picture test by voice: each answer is transcribed and coded automatically, Muse Spark gives a second opinion, and a person reviews before export. For timed naming with latency, reports and tracking, use the <a href="/assess">Naming Assessment</a>. <button type="button" class="link-btn" data-tour-start="scorer">Take the tour from here</button></p></div>
 
 <h1 class="sr-only">Scorer</h1>
 <div class="layout">
@@ -43,9 +44,10 @@
         </select>
       </label>
       <label class="field">Language
-        <select id="lang"></select>
+        <select id="lang" aria-describedby="lang-hint"></select>
       </label>
     </div>
+    <p class="xsmall muted" id="lang-hint" style="margin:0" aria-live="polite"></p>
     <label class="field" id="set-field">Picture set
       <select id="set"></select>
     </label>

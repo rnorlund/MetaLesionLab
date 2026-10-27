@@ -2,7 +2,7 @@
 
 **Language tests for people and AI, in any language.** Build picture-based language tests in minutes, give them by voice, and score them automatically. Then run the same tests on Meta's open-weight model and see where language breaks.
 
-Tippa Lingua has three tools that share one pipeline:
+Tippa Lingua has four tools that share one pipeline:
 
 1. **Test Studio:** turns a word list into a picture test in your language.
    - **Muse Image** draws each item.
@@ -17,7 +17,12 @@ Tippa Lingua has three tools that share one pipeline:
    - A person reviews the codes, then exports.
 
    Tasks: picture naming, picture description and category fluency.
-3. **Model Lab:** the same tests are given to **Muse Glimmer**, Meta's open-weight model.
+3. **Naming Assessment:** a timed, computerized picture-naming test for clinicians and researchers, and a short public version anyone can take.
+   - It measures accuracy (first complete response), error types and naming latency, and tracks change across sessions.
+   - Tests can be our sets, a test you are licensed to use (pictures plus a CSV, or a PowerPoint), or a personal test made from a photo of the person's own things (**Muse Spark**, **SAM 3.1**, **Muse Image**).
+
+   It measures and reports, beside published reference values. It doesn't diagnose or predict; a qualified person interprets.
+4. **Model Lab:** the same tests are given to **Muse Glimmer**, Meta's open-weight model.
    - You damage chosen parts of the model on purpose and watch aphasia-like errors appear.
    - A word lens shows the model's best guess at every layer.
    - A **Muse Spark** agent designs and runs the experiments and compares the results with published profiles from people with aphasia.
@@ -35,6 +40,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 26 | Muse Glimmer in FP8 on a single L40S (32 GiB). Picture naming with the reasoning channel skipped. Word lens (logit lens) that matches the model's own output at the last layer |
 | Oct 26 | Naming-error classifier (English and Spanish), with WordNet plus a Muse Spark judge for meaning. It passes 34 unit tests and agreed with the expected code on 19 of 20 live cases; the one miss was a mistake in the expected answer. |
 | Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. |
+| Oct 26 | Naming Assessment: speech-onset latency (max error 5.6 ms on synthesized speech), first-complete-response coding, review and override, PDF report, tracking across sessions, parallel forms, bring-your-own test (ZIP, folder or PowerPoint), personal tests from a photo, and a public naming test with an opt-in reference range |
 | Oct 26 | "What can I cut?": every Glimmer decoder layer skipped alone, a greedy removal path guarded by picture naming (English and Spanish) and perplexity on Muse Spark-written text, and real deletion of the chosen layers with measured size, memory and speed |
 
 ### Prior research context (not part of this submission)
@@ -69,6 +75,75 @@ The decision order follows the Philadelphia Naming Test scheme (Roach et al., 19
 | Meaning | WordNet first. Muse Spark judges associations (milk for cat). | Muse Spark judges every pair |
 
 See `metalesionlab/naming_errors.py`. French, Brazilian Portuguese, Hindi and Mandarin Chinese have their own rules and measured results in [docs/languages.md](docs/languages.md).
+
+## Naming Assessment
+
+`/assess` is for clinicians and researchers; `/take` is a 3-minute public version. Both use the same engine (`metalesionlab/assessment.py`, `metalesionlab/web/assess_routes.py`, `static/js/assess-engine.js`).
+
+**For use by clinicians and researchers. Measurements only; no diagnosis or prognosis.** Every page and report says so. The public test reports numbers only, beside the range of adults who took the same test, and says it isn't a medical test.
+
+### What a session measures
+
+- **Accuracy** on the first complete response, as in the PNT. "Dog, no, cat" is coded *dog*; fragments ("c-, cat"), comments ("let me think"), refusals followed by an answer and frames ("it's a", "es un") are set aside. A description stays whole.
+- **Error types**, with the Scorer's coder and optionally Muse Spark as second rater. The reviewer can change any code or latency, or correct a transcript to re-code it; the reviewer's entries are final.
+- **Naming latency**: picture onset to speech onset. Median and interquartile range for correct responses, latency per item, and items that reached the time limit (default 20 s, as in the PNT; reaching it counts as no response).
+- A **reference panel** of published Philadelphia Naming Test group results (controls; pooled aphasia groups), labeled as group references on a different test, not norms for the person.
+- Exports: a one-page PDF report with an item appendix, and an item-level CSV.
+
+### How latency is measured
+
+The browser captures the microphone continuously (AudioWorklet) and places each picture's onset on the audio clock, at the frame the picture is painted. Each clip starts 300 ms before the picture and is sent as 16 kHz WAV with the onset's position. On the server, `audio.detect_speech` finds speech with a documented energy detector: RMS in 10 ms windows every 5 ms; noise floor = median of the first 150 ms; threshold 12 dB above it (at least −55 dBFS); speech = at least 60 ms above threshold, bridging dips under 30 ms; the onset is walked back to where energy first rose 6 dB above the floor. Device audio and display delays the browser doesn't report (typically 10–50 ms) are not corrected, so compare sessions on the same device.
+
+`python scripts/validate_latency.py` builds clips the way a session records them: 300 ms lead-in, then 200, 500, 1000 or 2000 ms of silence, then a word spoken by macOS `say` (8 English and 4 Spanish words). The true onset is the known silence plus the word's first sample above −50 dBFS.
+
+| Condition | Clips | Mean error | Mean absolute error | Largest error |
+|---|---|---|---|---|
+| Clean | 48 | −2.5 ms | 2.5 ms | 5.6 ms |
+| White noise at −60 dBFS | 48 | +1.2 ms | 2.5 ms | 14.4 ms |
+| White noise at −50 dBFS | 48 | +11.0 ms | 11.2 ms | 54.4 ms |
+
+The only errors over 50 ms were the soft /f/ of "fan" in the noisier condition, which was detected at the vowel. Through the running server, with real transcription, 8 clips in English and Spanish were within 3 ms.
+
+### Two modes
+
+- **Clinician or researcher (`/assess`):** choose a test, a speaker code (never a name), the time limit and, optionally, practice items, a parallel form and the second rater. The administration screen shows only the picture; Space, → or a tap on **Next** moves on. Sessions are kept per speaker code in the browser, with a chart of accuracy and median latency across sessions (points only: no trend line or prediction), and export, import and delete.
+- **Public (`/take`):** about 20 pictures in a verified language (English, Spanish, French or Portuguese demo set). The result is accuracy, median naming speed and a plain-language breakdown, beside the range of adults who took the same test once at least 10 have contributed ("being collected (n = k)" until then), plus the PNT control accuracy labeled as a different test.
+
+### Reference range for the public test
+
+Adults who report no neurological or language condition, and fluency in the test language, can add their result after a consent line. Only a summary is stored, in `TOT_DATA_DIR/norms/<set>.jsonl`: language, set and set version, accuracy, median latency on correct answers, optional age band and the date. No audio, transcripts, names or IP addresses. The server recomputes the summary from signed per-answer receipts, so it can't be typed in by hand, and limits each visitor to 3 a day. `python scripts/aggregate_norms.py` writes `public_data/naming_norms_<set>.json` (n, mean, SD, 5th–95th percentiles) only for sets with at least 10 contributors.
+
+### Privacy
+
+- Each answer's audio goes to the Meta Model API for transcription; the server processes it in memory and stores nothing about the person. Get your institution's approval before using this with patients.
+- Session results stay in the browser (IndexedDB) until exported or deleted. Audio clips are kept in memory for playback during review only.
+- Private sets (imported tests and photo tests) stay in the browser. Their pictures are never uploaded; during a session only the audio, the target word and its accepted alternates are sent.
+- A photo for a personal test goes to the Meta Model API, re-encoded without its metadata, and isn't saved; the finished pictures go back to the browser.
+
+### Bring your own test
+
+Import a ZIP or a folder of pictures with a CSV:
+
+```csv
+file,target,alternates,practice
+p1.png,house,home,yes
+01.png,cat,kitty;puss,
+```
+
+For a test that comes as a PowerPoint, such as the Philadelphia Naming Test obtained from its publisher, make the ZIP with:
+
+```bash
+pip install -e ".[pptx]"
+python scripts/import_pptx_test.py test.pptx targets.txt -o ~/my_test.zip --practice 2
+```
+
+It takes the largest picture on each slide, skips slides without one, pairs them in order with the target list (`cat: kitty; puss` per line, or a CSV), and refuses to write inside this repository. We don't distribute PNT pictures; use only tests you are licensed to use.
+
+### Personal tests and parallel forms
+
+- **From a word list:** Test Studio.
+- **From a photo** of the person's home or belongings (no people): Muse Spark lists the clearly visible, nameable objects in the test's language, SAM 3.1 finds each one, and Muse Image redraws it as a line drawing in our style, two candidates as in Test Studio (or it is cropped from the photo). The Test Studio checks then run. On a synthetic kitchen photo, 4 of 7 drawings and 5 of 7 Spanish crops passed both checks; the rest were flagged for review.
+- **Parallel forms:** a set splits into two halves matched on word frequency (Zipf) and length in phonemes, for re-testing without repeating pictures. The English demo set splits into halves with mean Zipf 3.87 and 3.87, and 5.0 and 4.9 phonemes.
 
 ## What can I cut?
 
@@ -118,7 +193,8 @@ Human drawings come from the [Google Quick, Draw! dataset](https://github.com/go
   git config core.hooksPath .githooks
   ```
 
-- Audio sent to the Scorer goes to the Meta Model API. Use speaker codes, never names, and don't upload identifiable patient recordings unless your institution has approved that.
+- Audio sent to the Scorer and the Naming Assessment goes to the Meta Model API. Use speaker codes, never names, and don't upload identifiable patient recordings unless your institution has approved that.
+- Assessment sessions and private test sets stay in the user's browser. The only thing the server keeps is the summary a volunteer chooses to add to the public test's reference range (see Naming Assessment).
 
 ## Setup
 
@@ -139,12 +215,13 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (home), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/scorer` (Scorer), `/studio` (Test Studio). Every page has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings.
+Pages: `/` (home), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.
 - For a public deployment, set `TOT_PUBLIC=1` so visitors can edit only the sets and scenes they built, `TOT_TRUST_PROXY=1` behind a reverse proxy, and `TOT_ALLOW_BUILDS=0` to turn off image generation.
 - Scorer results stay in the browser until exported. The server doesn't store audio.
+- A full PNT-length session is 175 scored responses; on a local install raise `TOT_LIMIT_SCORE`. Set `TOT_RECEIPT_KEY` to keep public-test receipts valid across restarts.
 
 ## License
 

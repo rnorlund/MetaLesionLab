@@ -52,6 +52,14 @@
     state.langs = langs;
     T.fillLanguages($('lang'), langs, 'en');
     T.fillLanguages($('scene-lang'), langs, 'en');
+    T.api('/api/assess/config').then(function (cfg) {  // measured status per language
+      (cfg.languages || []).forEach(function (l) {
+        ['lang', 'scene-lang'].forEach(function (id) {
+          var opt = $(id).querySelector('option[value="' + l.code + '"]');
+          if (opt) opt.textContent = l.name + (l.status === 'verified' ? '' : ' (' + l.status + ')');
+        });
+      });
+    }).catch(function () { /* keep the labels from /api/status */ });
     if (st) $('max-words').textContent = st.max_words;
     var sceneOk = st && st.features.scorer && st.features.builds && st.features.meta_api;
     $('scene-btn').disabled = !sceneOk;
