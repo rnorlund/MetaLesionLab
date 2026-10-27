@@ -320,6 +320,7 @@
     renderNumbers(r, c);
     drawCard().catch(function () {});
     updateShareLinks();
+    socratesLink(r, c);
     var res = $('results');
     setTimeout(function () { res.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
   }
@@ -613,6 +614,20 @@
     $('share-x').href = url;
     var canFiles = navigator.canShare && window.File;
     $('share-native').hidden = !canFiles;
+  }
+  // "Discuss your chair with Socrates" (/socrates): only the numbers go in the link; the drawing stays here.
+  function socratesLink(r, c) {
+    var a = $('socrates-link');
+    if (!a) {
+      a = h('a', { class: 'btn', id: 'socrates-link' });
+      $('again').parentNode.insertBefore(a, $('again'));
+    }
+    var q = { draw: S.key, label: c.label, originality: r.originality, people_closer_to_muse: r.people_closer_to_muse,
+      muse_closer: r.muse_closer, d_nearest_ai: r.d_nearest_ai, d_nearest_human: r.d_nearest_human, n_people: c.n_human,
+      looks_like: (r.looks_like || []).map(function (x) { return x.key; }).join(',') };
+    a.textContent = 'Discuss your ' + c.label + ' with Socrates';
+    a.href = '/socrates?' + Object.keys(q).filter(function (k) { return q[k] != null && q[k] !== ''; })
+      .map(function (k) { return k + '=' + encodeURIComponent(q[k]); }).join('&');
   }
   function cardBlob() {
     return new Promise(function (resolve) { $('card').toBlob(resolve, 'image/png'); });
