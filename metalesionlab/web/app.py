@@ -54,7 +54,8 @@ HUMAN_PROFILES = meta_api.REPO_ROOT / "public_data" / "human_naming_profiles.jso
 
 PUBLIC = os.environ.get("TOT_PUBLIC") == "1"
 ALLOW_BUILDS = os.environ.get("TOT_ALLOW_BUILDS", "1") == "1"
-VERIFIED_LANGS = {"en", "es", "fr", "pt"}  # measured end to end (public_data/language_support.json)
+# Measured end to end (public_data/language_support.json).
+VERIFIED_LANGS = {"en", "es", "fr", "pt", "de", "tr", "pl", "id"}
 MAX_WORDS = int(os.environ.get("TOT_MAX_WORDS", "24"))
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 MAX_CLIP_S = {"naming": 30, "description": 240, "fluency": 120}
