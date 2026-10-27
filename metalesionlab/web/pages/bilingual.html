@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Second language · Model Lab · Tippa Lingua</title>
+<meta name="description" content="Does damage hurt a second language first? The same pictures and the same damage to Meta's open model Muse Glimmer in English, Spanish, French and Portuguese.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/tour.css">
+<link rel="stylesheet" href="/static/css/bilingual.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>Tippa Lingua</b><span>language tests for people and AI</span></a>
+  <nav class="topnav" aria-label="Tools">
+    <a href="/">Home</a>
+    <a href="/studio">Test Studio</a>
+    <a href="/scorer">Scorer</a>
+    <a href="/lab" aria-current="page">Model Lab</a>
+    <a href="/plato">Plato’s Chair</a>
+  </nav>
+  <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
+  <div class="chips">
+    <span class="chip">Muse Glimmer 30B · FP8 · one L40S</span>
+  </div>
+</header>
+<nav class="lab-tabs" aria-label="Model Lab">
+  <a href="/lab">Lesions and word lens</a>
+  <a href="/lab/cut">What can I cut?</a>
+  <a href="/lab/bilingual" aria-current="page">Second language</a>
+</nav>
+
+<main id="main" class="bl" tabindex="-1">
+  <section class="panel bl-hero" aria-labelledby="bl-h">
+    <div class="bl-hero-text">
+      <span class="bl-kicker">Model Lab · same damage, four languages</span>
+      <h1 id="bl-h">Does damage hurt a second language first?</h1>
+      <p class="bl-lede">In this AI, yes. We asked Muse Glimmer to name the same pictures in English, Spanish, French and Portuguese, then damaged it in exactly the same way for each language. English held up best. The other languages broke first, and the damaged model often answered in English instead.</p>
+      <p class="bl-sub" id="bl-sub">A study of an AI model, not of people.</p>
+    </div>
+    <div class="bl-tiles" id="bl-tiles" aria-live="polite"></div>
+  </section>
+
+  <div class="bl-filter">
+    <span class="bl-filter-label" id="lang-label">Compare English with</span>
+    <div class="seg bl-seg" id="lang-seg" role="group" aria-labelledby="lang-label">
+      <button type="button" data-lang="es" aria-pressed="true">Spanish</button>
+      <button type="button" data-lang="fr" aria-pressed="false">French</button>
+      <button type="button" data-lang="pt" aria-pressed="false">Portuguese</button>
+    </div>
+  </div>
+
+  <section class="panel" id="bl-drop" aria-labelledby="drop-h">
+    <div class="panel-head">
+      <h2 id="drop-h">Same damage, more pictures lost</h2>
+      <span class="meta" id="drop-meta"></span>
+    </div>
+    <p class="lede bl-lede-sm" id="drop-lede"></p>
+    <figure class="bl-fig">
+      <div class="bl-chart" id="drop-chart"></div>
+      <div class="bl-legend" id="drop-legend"></div>
+    </figure>
+    <p class="bl-note" id="drop-note"></p>
+  </section>
+
+  <section class="panel" id="bl-dose" aria-labelledby="dose-h">
+    <div class="panel-head">
+      <h2 id="dose-h">As the damage gets stronger</h2>
+      <label class="bl-site" for="site">Where is the damage?
+        <select id="site"></select>
+      </label>
+    </div>
+    <p class="lede bl-lede-sm" id="dose-lede"></p>
+    <figure class="bl-fig">
+      <div class="bl-chart" id="dose-chart"></div>
+      <div class="bl-legend" id="dose-legend"></div>
+    </figure>
+    <p class="bl-note" id="dose-note" aria-live="polite"></p>
+    <details class="bl-numbers">
+      <summary>See the numbers</summary>
+      <div class="table-wrap"><table class="data" id="dose-table"></table></div>
+    </details>
+  </section>
+
+  <section class="panel bl-switch" id="bl-switch" aria-labelledby="switch-h">
+    <div class="panel-head">
+      <h2 id="switch-h">When it fails, it falls back on English</h2>
+      <span class="meta" id="switch-meta"></span>
+    </div>
+    <div class="bl-switch-grid">
+      <div class="bl-big" id="switch-big"></div>
+      <div class="bl-meters" id="switch-meters"></div>
+    </div>
+    <div class="bl-said" id="switch-said"></div>
+  </section>
+
+  <section class="panel" id="bl-lens" aria-labelledby="lens-h">
+    <div class="panel-head">
+      <h2 id="lens-h">Inside the intact model, English comes first</h2>
+      <span class="meta">word lens, before any damage</span>
+    </div>
+    <p class="lede bl-lede-sm" id="lens-lede"></p>
+    <div class="bl-pics" id="lens-pics" role="group" aria-label="Picture"></div>
+    <figure class="bl-fig">
+      <div class="bl-chart" id="lens-chart"></div>
+      <div class="bl-legend" id="lens-legend"></div>
+    </figure>
+    <p class="bl-note" id="lens-note" aria-live="polite"></p>
+    <details class="bl-numbers">
+      <summary>See the numbers</summary>
+      <div class="table-wrap"><table class="data" id="lens-table"></table></div>
+    </details>
+  </section>
+
+  <section class="panel bl-meaning" aria-labelledby="meaning-h">
+    <h2 id="meaning-h">What this means, and what it doesn’t</h2>
+    <div class="bl-meaning-grid">
+      <div class="bl-means">
+        <h3>What it shows</h3>
+        <ul id="means"></ul>
+      </div>
+      <div class="bl-doesnt">
+        <h3>What it doesn’t</h3>
+        <ul id="doesnt"></ul>
+      </div>
+    </div>
+    <p class="xsmall muted" id="source-note" style="margin:14px 0 0"></p>
+  </section>
+  <div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Results come from a run on our GPU and are replayed here; this page makes no AI calls. Layers are numbered 0–51, as in the model’s code. Research and teaching use only. Not a medical test.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/bilingual.js"></script>
+<script src="/static/js/tour.js"></script>
+</body>
+</html>
