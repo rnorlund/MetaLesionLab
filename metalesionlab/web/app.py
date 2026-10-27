@@ -922,5 +922,5 @@ def lab_human():
     controls = [{**c, "source": _source_info(sources, c.get("source", ""))} for c in data.get("controls", [])]
     return {"codes": SHARED_CODES, "pooled": pooled, "subtypes": subtypes, "controls": controls}
 
-
+app.include_router(importlib.import_module("metalesionlab.web.challenge").router)  # You vs. the AI (/challenge)
 app.include_router(importlib.import_module("metalesionlab.web.assess_routes").router)  # Naming Assessment

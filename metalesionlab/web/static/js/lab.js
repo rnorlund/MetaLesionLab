@@ -286,7 +286,9 @@
       tip.hidden = false;
       // beside the crosshair, on the side with room
       var px = cx / scale, right = px < rect.width / 2;
-      tip.style.left = (right ? px + 12 : px - 12 - tip.offsetWidth) + 'px';
+      var left = right ? px + 12 : px - 12 - tip.offsetWidth;
+      // keep it inside the chart so a narrow screen never scrolls sideways
+      tip.style.left = Math.max(0, Math.min(left, rect.width - tip.offsetWidth)) + 'px';
       tip.style.top = (y0 / scale + 4) + 'px';
     }
     function hide() {

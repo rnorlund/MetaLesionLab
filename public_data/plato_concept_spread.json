@@ -1,0 +1,760 @@
+{
+ "about": "Plato's Chair: how spread out each concept is in AI drawings (Muse Image) vs human drawings (Google Quick, Draw!), measured with Meta DINOv2 embeddings. Derived statistics only; no drawings.",
+ "attribution": "Human drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0, https://github.com/googlecreativelab/quickdraw-dataset",
+ "spread": "mean pairwise cosine distance within a concept",
+ "embedding_model": "facebook/dinov2-base",
+ "summary": {
+  "n_concepts": 35,
+  "rank_correlation_ai_vs_human_spread": {
+   "rho": 0.3779,
+   "ci95": [
+    0.0818,
+    0.6218
+   ],
+   "p_perm": 0.0252,
+   "n": 35
+  },
+  "median_homogenization_index": 0.4919,
+  "baseline_between_concepts": {
+   "ai": 0.7515,
+   "human": 0.52
+  }
+ },
+ "concepts": [
+  {
+   "label": "chair",
+   "quickdraw": "chair",
+   "kind": "many-style artifact",
+   "n_ai": 16,
+   "ai_spread": 0.1338,
+   "ai_spread_ci95": [
+    0.0875,
+    0.1929
+   ],
+   "human_spread": 0.3632,
+   "human_spread_ci95": [
+    0.3449,
+    0.3814
+   ],
+   "homogenization_index": 0.3683,
+   "homogenization_index_ci95": [
+    0.2401,
+    0.5488
+   ]
+  },
+  {
+   "label": "boat",
+   "quickdraw": "sailboat",
+   "kind": "many-style artifact",
+   "n_ai": 16,
+   "ai_spread": 0.195,
+   "ai_spread_ci95": [
+    0.151,
+    0.2392
+   ],
+   "human_spread": 0.3118,
+   "human_spread_ci95": [
+    0.2997,
+    0.3266
+   ],
+   "homogenization_index": 0.6253,
+   "homogenization_index_ci95": [
+    0.4892,
+    0.7747
+   ]
+  },
+  {
+   "label": "face",
+   "quickdraw": "face",
+   "kind": "person",
+   "n_ai": 16,
+   "ai_spread": 0.1158,
+   "ai_spread_ci95": [
+    0.0989,
+    0.1332
+   ],
+   "human_spread": 0.2628,
+   "human_spread_ci95": [
+    0.2459,
+    0.2795
+   ],
+   "homogenization_index": 0.4408,
+   "homogenization_index_ci95": [
+    0.3734,
+    0.5105
+   ]
+  },
+  {
+   "label": "house",
+   "quickdraw": "house",
+   "kind": "many-style artifact",
+   "n_ai": 16,
+   "ai_spread": 0.1227,
+   "ai_spread_ci95": [
+    0.1038,
+    0.1437
+   ],
+   "human_spread": 0.2969,
+   "human_spread_ci95": [
+    0.2842,
+    0.3068
+   ],
+   "homogenization_index": 0.4133,
+   "homogenization_index_ci95": [
+    0.3515,
+    0.4936
+   ]
+  },
+  {
+   "label": "cat",
+   "quickdraw": "cat",
+   "kind": "natural kind",
+   "n_ai": 16,
+   "ai_spread": 0.1218,
+   "ai_spread_ci95": [
+    0.1027,
+    0.1426
+   ],
+   "human_spread": 0.299,
+   "human_spread_ci95": [
+    0.2868,
+    0.3153
+   ],
+   "homogenization_index": 0.4075,
+   "homogenization_index_ci95": [
+    0.3426,
+    0.4763
+   ]
+  },
+  {
+   "label": "cup",
+   "quickdraw": "cup",
+   "kind": "many-style artifact",
+   "n_ai": 16,
+   "ai_spread": 0.1228,
+   "ai_spread_ci95": [
+    0.0903,
+    0.1608
+   ],
+   "human_spread": 0.3826,
+   "human_spread_ci95": [
+    0.3698,
+    0.3949
+   ],
+   "homogenization_index": 0.321,
+   "homogenization_index_ci95": [
+    0.2398,
+    0.4281
+   ]
+  },
+  {
+   "label": "tree",
+   "quickdraw": "tree",
+   "kind": "natural kind",
+   "n_ai": 16,
+   "ai_spread": 0.2613,
+   "ai_spread_ci95": [
+    0.2358,
+    0.2841
+   ],
+   "human_spread": 0.3486,
+   "human_spread_ci95": [
+    0.3318,
+    0.367
+   ],
+   "homogenization_index": 0.7497,
+   "homogenization_index_ci95": [
+    0.6653,
+    0.8246
+   ]
+  },
+  {
+   "label": "car",
+   "quickdraw": "car",
+   "kind": "many-style artifact",
+   "n_ai": 16,
+   "ai_spread": 0.1649,
+   "ai_spread_ci95": [
+    0.132,
+    0.1981
+   ],
+   "human_spread": 0.3805,
+   "human_spread_ci95": [
+    0.3684,
+    0.3915
+   ],
+   "homogenization_index": 0.4332,
+   "homogenization_index_ci95": [
+    0.347,
+    0.5224
+   ]
+  },
+  {
+   "label": "key",
+   "quickdraw": "key",
+   "kind": "fixed-shape artifact",
+   "n_ai": 16,
+   "ai_spread": 0.3086,
+   "ai_spread_ci95": [
+    0.2554,
+    0.354
+   ],
+   "human_spread": 0.4366,
+   "human_spread_ci95": [
+    0.428,
+    0.4526
+   ],
+   "homogenization_index": 0.7069,
+   "homogenization_index_ci95": [
+    0.5848,
+    0.8086
+   ]
+  },
+  {
+   "label": "umbrella",
+   "quickdraw": "umbrella",
+   "kind": "fixed-shape artifact",
+   "n_ai": 16,
+   "ai_spread": 0.0546,
+   "ai_spread_ci95": [
+    0.0418,
+    0.0689
+   ],
+   "human_spread": 0.3889,
+   "human_spread_ci95": [
+    0.3764,
+    0.4033
+   ],
+   "homogenization_index": 0.1403,
+   "homogenization_index_ci95": [
+    0.1067,
+    0.1779
+   ]
+  },
+  {
+   "label": "ladder",
+   "quickdraw": "ladder",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.1126,
+   "ai_spread_ci95": [
+    0.0812,
+    0.1487
+   ],
+   "human_spread": 0.3201,
+   "human_spread_ci95": [
+    0.3061,
+    0.3381
+   ],
+   "homogenization_index": 0.3517,
+   "homogenization_index_ci95": [
+    0.2496,
+    0.4671
+   ]
+  },
+  {
+   "label": "bench",
+   "quickdraw": "bench",
+   "kind": "many-style artifact",
+   "n_ai": 12,
+   "ai_spread": 0.1999,
+   "ai_spread_ci95": [
+    0.162,
+    0.2352
+   ],
+   "human_spread": 0.4045,
+   "human_spread_ci95": [
+    0.389,
+    0.4228
+   ],
+   "homogenization_index": 0.4943,
+   "homogenization_index_ci95": [
+    0.3976,
+    0.5797
+   ]
+  },
+  {
+   "label": "carrot",
+   "quickdraw": "carrot",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.141,
+   "ai_spread_ci95": [
+    0.1113,
+    0.1709
+   ],
+   "human_spread": 0.4315,
+   "human_spread_ci95": [
+    0.4178,
+    0.4457
+   ],
+   "homogenization_index": 0.3267,
+   "homogenization_index_ci95": [
+    0.2562,
+    0.3995
+   ]
+  },
+  {
+   "label": "bicycle",
+   "quickdraw": "bicycle",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.0624,
+   "ai_spread_ci95": [
+    0.0477,
+    0.0761
+   ],
+   "human_spread": 0.3433,
+   "human_spread_ci95": [
+    0.3321,
+    0.3543
+   ],
+   "homogenization_index": 0.1819,
+   "homogenization_index_ci95": [
+    0.1377,
+    0.2242
+   ]
+  },
+  {
+   "label": "candle",
+   "quickdraw": "candle",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.253,
+   "ai_spread_ci95": [
+    0.198,
+    0.3073
+   ],
+   "human_spread": 0.3315,
+   "human_spread_ci95": [
+    0.3196,
+    0.3452
+   ],
+   "homogenization_index": 0.7635,
+   "homogenization_index_ci95": [
+    0.5907,
+    0.9348
+   ]
+  },
+  {
+   "label": "helicopter",
+   "quickdraw": "helicopter",
+   "kind": "many-style artifact",
+   "n_ai": 12,
+   "ai_spread": 0.2514,
+   "ai_spread_ci95": [
+    0.2067,
+    0.2994
+   ],
+   "human_spread": 0.4161,
+   "human_spread_ci95": [
+    0.4021,
+    0.4319
+   ],
+   "homogenization_index": 0.6042,
+   "homogenization_index_ci95": [
+    0.4934,
+    0.7226
+   ]
+  },
+  {
+   "label": "pineapple",
+   "quickdraw": "pineapple",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.1588,
+   "ai_spread_ci95": [
+    0.1323,
+    0.1913
+   ],
+   "human_spread": 0.3786,
+   "human_spread_ci95": [
+    0.3663,
+    0.3889
+   ],
+   "homogenization_index": 0.4196,
+   "homogenization_index_ci95": [
+    0.3496,
+    0.5097
+   ]
+  },
+  {
+   "label": "snail",
+   "quickdraw": "snail",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.164,
+   "ai_spread_ci95": [
+    0.1399,
+    0.1895
+   ],
+   "human_spread": 0.3282,
+   "human_spread_ci95": [
+    0.3129,
+    0.3407
+   ],
+   "homogenization_index": 0.4998,
+   "homogenization_index_ci95": [
+    0.4232,
+    0.5806
+   ]
+  },
+  {
+   "label": "saw",
+   "quickdraw": "saw",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.144,
+   "ai_spread_ci95": [
+    0.0907,
+    0.1898
+   ],
+   "human_spread": 0.3338,
+   "human_spread_ci95": [
+    0.3204,
+    0.3502
+   ],
+   "homogenization_index": 0.4312,
+   "homogenization_index_ci95": [
+    0.2653,
+    0.563
+   ]
+  },
+  {
+   "label": "cactus",
+   "quickdraw": "cactus",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.2588,
+   "ai_spread_ci95": [
+    0.2111,
+    0.3119
+   ],
+   "human_spread": 0.4271,
+   "human_spread_ci95": [
+    0.4124,
+    0.4452
+   ],
+   "homogenization_index": 0.6059,
+   "homogenization_index_ci95": [
+    0.4957,
+    0.744
+   ]
+  },
+  {
+   "label": "harp",
+   "quickdraw": "harp",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.1788,
+   "ai_spread_ci95": [
+    0.0791,
+    0.2783
+   ],
+   "human_spread": 0.3919,
+   "human_spread_ci95": [
+    0.3755,
+    0.4033
+   ],
+   "homogenization_index": 0.4562,
+   "homogenization_index_ci95": [
+    0.1918,
+    0.7184
+   ]
+  },
+  {
+   "label": "flower",
+   "quickdraw": "flower",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.1975,
+   "ai_spread_ci95": [
+    0.1597,
+    0.2366
+   ],
+   "human_spread": 0.3371,
+   "human_spread_ci95": [
+    0.3228,
+    0.3529
+   ],
+   "homogenization_index": 0.5857,
+   "homogenization_index_ci95": [
+    0.4778,
+    0.7071
+   ]
+  },
+  {
+   "label": "bird",
+   "quickdraw": "bird",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.2136,
+   "ai_spread_ci95": [
+    0.1779,
+    0.2508
+   ],
+   "human_spread": 0.4342,
+   "human_spread_ci95": [
+    0.4211,
+    0.4481
+   ],
+   "homogenization_index": 0.4919,
+   "homogenization_index_ci95": [
+    0.3996,
+    0.5847
+   ]
+  },
+  {
+   "label": "fish",
+   "quickdraw": "fish",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.1907,
+   "ai_spread_ci95": [
+    0.1479,
+    0.2495
+   ],
+   "human_spread": 0.3351,
+   "human_spread_ci95": [
+    0.3173,
+    0.3478
+   ],
+   "homogenization_index": 0.5693,
+   "homogenization_index_ci95": [
+    0.4499,
+    0.7669
+   ]
+  },
+  {
+   "label": "dog",
+   "quickdraw": "dog",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.2085,
+   "ai_spread_ci95": [
+    0.1655,
+    0.2504
+   ],
+   "human_spread": 0.4395,
+   "human_spread_ci95": [
+    0.4284,
+    0.4548
+   ],
+   "homogenization_index": 0.4744,
+   "homogenization_index_ci95": [
+    0.3729,
+    0.5706
+   ]
+  },
+  {
+   "label": "shoe",
+   "quickdraw": "shoe",
+   "kind": "many-style artifact",
+   "n_ai": 12,
+   "ai_spread": 0.1119,
+   "ai_spread_ci95": [
+    0.0899,
+    0.1376
+   ],
+   "human_spread": 0.389,
+   "human_spread_ci95": [
+    0.3641,
+    0.3996
+   ],
+   "homogenization_index": 0.2876,
+   "homogenization_index_ci95": [
+    0.2347,
+    0.3687
+   ]
+  },
+  {
+   "label": "hat",
+   "quickdraw": "hat",
+   "kind": "many-style artifact",
+   "n_ai": 12,
+   "ai_spread": 0.2801,
+   "ai_spread_ci95": [
+    0.1976,
+    0.3528
+   ],
+   "human_spread": 0.3911,
+   "human_spread_ci95": [
+    0.379,
+    0.4045
+   ],
+   "homogenization_index": 0.7162,
+   "homogenization_index_ci95": [
+    0.4963,
+    0.9068
+   ]
+  },
+  {
+   "label": "clock",
+   "quickdraw": "clock",
+   "kind": "many-style artifact",
+   "n_ai": 12,
+   "ai_spread": 0.191,
+   "ai_spread_ci95": [
+    0.0926,
+    0.2844
+   ],
+   "human_spread": 0.2388,
+   "human_spread_ci95": [
+    0.2261,
+    0.2486
+   ],
+   "homogenization_index": 0.7999,
+   "homogenization_index_ci95": [
+    0.3848,
+    1.1999
+   ]
+  },
+  {
+   "label": "lamp",
+   "quickdraw": "floor lamp",
+   "kind": "many-style artifact",
+   "n_ai": 12,
+   "ai_spread": 0.2435,
+   "ai_spread_ci95": [
+    0.21,
+    0.2805
+   ],
+   "human_spread": 0.3934,
+   "human_spread_ci95": [
+    0.3759,
+    0.4047
+   ],
+   "homogenization_index": 0.619,
+   "homogenization_index_ci95": [
+    0.5408,
+    0.721
+   ]
+  },
+  {
+   "label": "book",
+   "quickdraw": "book",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.3637,
+   "ai_spread_ci95": [
+    0.3034,
+    0.4193
+   ],
+   "human_spread": 0.3496,
+   "human_spread_ci95": [
+    0.3341,
+    0.3623
+   ],
+   "homogenization_index": 1.0403,
+   "homogenization_index_ci95": [
+    0.8701,
+    1.2119
+   ]
+  },
+  {
+   "label": "guitar",
+   "quickdraw": "guitar",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.1591,
+   "ai_spread_ci95": [
+    0.0953,
+    0.2405
+   ],
+   "human_spread": 0.4671,
+   "human_spread_ci95": [
+    0.4531,
+    0.4794
+   ],
+   "homogenization_index": 0.3406,
+   "homogenization_index_ci95": [
+    0.2012,
+    0.5251
+   ]
+  },
+  {
+   "label": "apple",
+   "quickdraw": "apple",
+   "kind": "natural kind",
+   "n_ai": 12,
+   "ai_spread": 0.1329,
+   "ai_spread_ci95": [
+    0.0985,
+    0.1693
+   ],
+   "human_spread": 0.2691,
+   "human_spread_ci95": [
+    0.2577,
+    0.2803
+   ],
+   "homogenization_index": 0.494,
+   "homogenization_index_ci95": [
+    0.368,
+    0.6386
+   ]
+  },
+  {
+   "label": "scissors",
+   "quickdraw": "scissors",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.1389,
+   "ai_spread_ci95": [
+    0.1148,
+    0.1579
+   ],
+   "human_spread": 0.4351,
+   "human_spread_ci95": [
+    0.4244,
+    0.4507
+   ],
+   "homogenization_index": 0.3193,
+   "homogenization_index_ci95": [
+    0.2599,
+    0.3645
+   ]
+  },
+  {
+   "label": "spoon",
+   "quickdraw": "spoon",
+   "kind": "fixed-shape artifact",
+   "n_ai": 12,
+   "ai_spread": 0.2839,
+   "ai_spread_ci95": [
+    0.2057,
+    0.3669
+   ],
+   "human_spread": 0.4245,
+   "human_spread_ci95": [
+    0.4116,
+    0.441
+   ],
+   "homogenization_index": 0.6688,
+   "homogenization_index_ci95": [
+    0.4864,
+    0.8245
+   ]
+  },
+  {
+   "label": "person",
+   "quickdraw": "yoga",
+   "kind": "person",
+   "n_ai": 12,
+   "ai_spread": 0.2243,
+   "ai_spread_ci95": [
+    0.1474,
+    0.2884
+   ],
+   "human_spread": 0.4301,
+   "human_spread_ci95": [
+    0.4179,
+    0.446
+   ],
+   "homogenization_index": 0.5214,
+   "homogenization_index_ci95": [
+    0.3503,
+    0.6635
+   ]
+  }
+ ]
+}

@@ -12,6 +12,8 @@ gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"
 web = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart", "fpdf2>=2.7"]
 pptx = ["python-pptx>=1.0"]  # scripts/import_pptx_test.py
 dev = ["pytest", "python-pptx>=1.0"]
+# Plato's Chair experiment (scripts/plato_*.py): DINOv2 embeddings on a laptop (MPS or CPU), stats, figures
+experiments = ["torch", "transformers>=5.15", "scipy", "matplotlib"]
 
 [build-system]
 requires = ["setuptools>=68"]

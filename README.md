@@ -174,8 +174,15 @@ The honest answer for this model is "not much". Two layers can go with no measur
 | SAM 3.1 | Picture quality check |
 | Muse Spark 1.3 | Name agreement, meaning judge, second rater, experiment agent |
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
+| DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for the Plato's Chair experiment |
 
 Every AI step uses a Meta model. The other resources are non-AI: WordNet, the CMU Pronouncing Dictionary and wordfreq.
+
+## Experiment: Plato's Chair
+
+Ask Muse Image to draw 16 chairs: are they all the same chair? We compared how spread out 35 concepts are in Muse Image's doodles and in people's drawings of the same words, using DINOv2 embeddings. The AI was more uniform than people for 34 of the 35 concepts, with a median spread ratio of 0.49. Method, results and caveats are in [`docs/plato.md`](docs/plato.md), and the code is in `scripts/plato_*.py`.
+
+Human drawings come from the [Google Quick, Draw! dataset](https://github.com/googlecreativelab/quickdraw-dataset) (Google Creative Lab, CC BY 4.0). They are streamed at run time and never committed; `public_data/plato_concept_spread.json` holds only derived statistics.
 
 ## Data policy
 
@@ -208,7 +215,7 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (home), `/studio` (Test Studio), `/scorer` (Scorer), `/assess` (Naming Assessment), `/take` (public naming test), `/lab` (Model Lab). The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings.
+Pages: `/` (home), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page except the two assessment pages has a guided Demo tour. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TOT_DATA_DIR` (default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.

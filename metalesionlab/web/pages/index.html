@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tippa Lingua</title>
-<meta name="description" content="Language tests for people and AI, in any language. Build picture-based language tests in minutes, give them by voice, score them automatically, then run the same tests on Meta's open model.">
+<title>Tippa Lingua: the tip-of-the-tongue test, for people and AI</title>
+<meta name="description" content="Watch an AI find a word, and lose it. Tippa Lingua gives people and Meta's open model Muse Glimmer the same picture-naming test, so clinicians, researchers and AI teams can study word-finding with one test.">
+<meta property="og:title" content="Tippa Lingua: the tip-of-the-tongue test, for people and AI">
+<meta property="og:description" content="Watch an AI find a word, and lose it. One picture-naming test for people and AI, in any language.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,167 +16,253 @@
 <link rel="stylesheet" href="/static/css/tour.css">
 </head>
 <body class="landing">
-<a class="skip" href="#problem">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a>
 
-<div class="dark">
+<header class="lhead">
   <div class="wrap">
     <nav class="lnav" aria-label="Main">
       <a class="lbrand" href="/">Tippa Lingua</a>
       <div class="lnav-links">
-        <a href="#tools">Tools</a>
-        <a href="#how">How it works</a>
-        <a href="#who">Who it's for</a>
+        <a href="#ideas">The idea</a>
+        <a href="#science">Inside the AI</a>
+        <a href="#start">Start here</a>
         <a href="#trust">Responsible use</a>
       </div>
       <div class="lnav-cta">
         <button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Demo</button>
         <a class="lbtn lbtn-line" href="https://github.com/rnorlund/MetaLesionLab">GitHub</a>
-        <a class="lbtn lbtn-light" href="/studio">Open the app</a>
+        <a class="lbtn lbtn-dark" href="/challenge">Play</a>
       </div>
     </nav>
-
-    <section class="hero">
-      <div class="hero-text">
-        <span class="kicker">A Rosetta Stone for how people and AI find words</span>
-        <h1>The tip-of-the-tongue test, for people and AI, in any language.</h1>
-        <p class="hero-lede">After a stroke, many people know what they want to say but can't find the word. Clinicians measure this by asking people to name pictures, but those tests are costly, mostly English, and slow to score. Tippa Lingua makes them in any language in minutes and scores spoken answers automatically, with a person always checking. Then it gives the same test to an AI, so we can watch how finding a word works, and breaks, inside a machine.</p>
-        <div class="hero-cta">
-          <button type="button" class="lbtn lbtn-light lbtn-lg" data-tour-start>Take the 2-minute tour</button>
-          <a class="lbtn lbtn-accent lbtn-lg" href="/studio">Build a test</a>
-          <a class="lbtn lbtn-line lbtn-lg" href="/lab">Explore the Model Lab</a>
-        </div>
-      </div>
-      <figure class="hero-card" aria-label="Example item">
-        <span class="hero-card-tag">Example item</span>
-        <div class="hero-item">
-          <img src="/static/img/hero-gato.png" width="130" height="130" alt="Muse Image line drawing of a cat, from the Spanish demo set">
-          <dl>
-            <div><dt>Test</dt><dd>Picture naming · Spanish</dd></div>
-            <div><dt>Heard</dt><dd class="mono">“gato”</dd></div>
-            <div><dt>Code</dt><dd><span class="pill hero-pill">Correct</span></dd></div>
-            <div><dt>Checked by</dt><dd>SAM 3.1 · Muse Spark</dd></div>
-          </dl>
-        </div>
-        <div class="hero-lens">
-          <div class="hero-lens-head"><span>Word lens · Muse Glimmer</span><span class="mono">p("cat") by layer</span></div>
-          <svg viewBox="0 0 360 90" role="img" aria-label="Measured on Muse Glimmer: the probability of the word cat stays near zero until layer 40, the Chinese word for cat leads at layer 43, and cat reaches 0.62 at layer 52.">
-            <line x1="0" y1="80" x2="360" y2="80" stroke="#4B5563"></line>
-            <polyline points="0,80 272.2,80 293.2,79.3 314.1,63.8 335.1,66.4 356,30.6" fill="none" stroke="#60A5FA" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
-            <circle cx="356" cy="30.6" r="4" fill="#60A5FA" stroke="#1F2937" stroke-width="2"></circle>
-            <text x="293.2" y="60" font-size="11" fill="#FDBA74" text-anchor="middle">猫</text>
-            <text x="342" y="22" font-size="11" fill="#F9FAFB" text-anchor="end">cat 0.62</text>
-            <text x="0" y="74" font-size="10" fill="#9CA3AF">layer 1</text>
-            <text x="356" y="74" font-size="10" fill="#9CA3AF" text-anchor="end">52</text>
-          </svg>
-          <p>Measured: the concept appears (as 猫) three layers before the English word wins.</p>
-        </div>
-      </figure>
-    </section>
   </div>
-</div>
+</header>
 
-<main>
-<section id="problem" class="band band-gray">
-  <div class="wrap section">
-    <h2 class="h2">Language testing is slow, locked up, and mostly English.</h2>
-    <div class="grid3">
-      <article class="tile"><h3>Materials are scarce</h3><p>Standard picture tests are copyrighted and built for English. Making a new set by hand, with checked pictures and agreed names, takes weeks.</p></article>
-      <article class="tile"><h3>Scoring takes hours</h3><p>Every response is transcribed and coded by hand: was it right, a related word, a sound error, a made-up word? One session can take longer to score than to give.</p></article>
-      <article class="tile"><h3>The mechanism is hidden</h3><p>We see which errors people make, but can't open a brain to test which damage causes which error. In an AI model, we can.</p></article>
+<main id="main" tabindex="-1">
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div class="hero-text">
+      <span class="kicker">A Rosetta Stone for how people and AI find words</span>
+      <h1 id="hero-h">Watch an AI find a word, and lose it.</h1>
+      <p class="hero-lede">People can lose words in a similar way after a stroke: they know exactly what they mean, but the word won’t come. Tippa Lingua gives people and an AI the same picture-naming test, so clinicians, researchers and AI teams can study word-finding with one test.</p>
+      <div class="hero-cta">
+        <a class="lbtn lbtn-accent lbtn-lg" href="/challenge">Play: You vs. the AI</a>
+        <a class="lbtn lbtn-dark lbtn-lg" href="/lab">Explore the Model Lab</a>
+        <button type="button" class="lbtn lbtn-ghost lbtn-lg" data-tour-start>Take the 2-minute tour</button>
+      </div>
+    </div>
+
+    <div class="hero-pair">
+      <figure class="pair pair-person">
+        <img src="/static/img/ill-tip-of-tongue-800.webp" srcset="/static/img/ill-tip-of-tongue-800.webp 800w, /static/img/ill-tip-of-tongue-1600.webp 1600w"
+             sizes="(max-width: 900px) 92vw, 600px" width="800" height="450" fetchpriority="high"
+             alt="Illustration: an older woman at her kitchen table points at a blue mug. A thought bubble shows the mug clearly, but the dotted line from her mouth toward it fades out: the word won’t come.">
+        <figcaption><b>A person.</b> The idea is clear; the word won’t come.</figcaption>
+      </figure>
+
+      <figure class="pair lens-card" aria-labelledby="lens-cap">
+        <div class="lens-card-head"><span>Word lens · Muse Glimmer</span><span class="lens-tag">Measured</span></div>
+        <div class="lens-row">
+          <img src="/static/img/hero-cat.webp" width="96" height="96" alt="Line drawing of a cat from the English demo set">
+          <ol class="lens-steps" aria-label="Glimmer’s top guess after selected layers">
+            <li><span>layer 41</span><b>“OK”</b></li>
+            <li class="concept"><span>layer 43</span><b lang="zh">“猫”</b><i>Chinese for cat</i></li>
+            <li class="word"><span>layer 45</span><b>“cat”</b></li>
+            <li class="word"><span>layer 52</span><b>“cat”</b><i>p = 0.60</i></li>
+          </ol>
+        </div>
+        <svg viewBox="0 0 360 128" role="img" aria-label="Measured on Muse Glimmer: the probability of the word cat stays near zero through layer 41, the Chinese word for cat leads at layers 42 to 44, and cat leads from layer 45, reaching 0.60 at layer 52.">
+          <rect x="283" y="4" width="21" height="108" fill="#7C2D12" opacity="0.55"></rect>
+          <text x="293.5" y="17" font-size="12" fill="#FDBA74" text-anchor="middle">猫</text>
+          <line x1="0" y1="112" x2="360" y2="112" stroke="#4B5563"></line>
+          <polyline points="0,112 272.2,112.0 279.2,111.8 286.2,110.3 293.2,110.0 300.2,91.6 307.1,81.7 314.1,78.8 321.1,79.3 328.1,91.0 335.1,86.8 342.0,77.3 349.0,25.8 356.0,21.7" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+          <circle cx="356" cy="21.7" r="4" fill="#60A5FA" stroke="#1F2937" stroke-width="2"></circle>
+          <text x="358" y="11" font-size="11" fill="#F9FAFB" text-anchor="end">0.60</text>
+          <text x="0" y="12" font-size="10" fill="#9CA3AF">p(cat), the chance it says “cat”</text>
+          <text x="0" y="126" font-size="10" fill="#9CA3AF">layer 1</text>
+          <text x="356" y="126" font-size="10" fill="#9CA3AF" text-anchor="end">52</text>
+        </svg>
+        <figcaption id="lens-cap"><b>An AI.</b> We can read its best guess after every layer: the idea of a cat appears first (as 猫), then the English word wins. <a href="/challenge">See it lose a word →</a></figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
-<section id="tools" class="band">
+<section id="ideas" class="band" aria-labelledby="ideas-h">
   <div class="wrap section">
     <div class="section-head">
-      <span class="kicker kicker-accent">Three tools, one pipeline</span>
-      <h2 class="h2 h2-big">From a word list to scored results, for a person or a model.</h2>
+      <span class="kicker kicker-accent">New here?</span>
+      <h2 class="h2" id="ideas-h">Three ideas in 30 seconds</h2>
     </div>
-    <div class="tools">
-      <article class="tool">
-        <span class="step">01 · Build</span>
-        <h3>Test Studio</h3>
-        <p>Turn a word list into a ready-to-use picture test, in your language.</p>
-        <ul>
-          <li>Pictures drawn for each word, in a consistent style</li>
-          <li>Each picture checked for one clear object</li>
-          <li>Name agreement measured before you use it</li>
-          <li>Export printable cards, a norms table and the whole set</li>
-        </ul>
-        <div class="models"><span>Muse Image</span><span>SAM 3.1</span><span>Muse Spark</span></div>
-        <a class="tool-link" href="/studio">Open Test Studio →</a>
-      </article>
-      <article class="tool">
-        <span class="step">02 · Give and score</span>
-        <h3>Scorer</h3>
-        <p>Give the test by voice and get every response transcribed and coded.</p>
-        <ul>
-          <li>Naming errors coded by standard categories</li>
-          <li>Picture descriptions and fluency lists scored</li>
-          <li>A second AI rater flags disagreements</li>
-          <li>A person reviews, then exports</li>
-        </ul>
-        <div class="models"><span>Muse Voice Transcribe</span><span>Muse Spark</span></div>
-        <a class="tool-link" href="/scorer">Open Scorer →</a>
-      </article>
-      <article class="tool">
-        <span class="step">03 · Look inside</span>
-        <h3>Model Lab</h3>
-        <p>Give the same test to an AI model, damage it on purpose, and watch the errors appear.</p>
-        <ul>
-          <li>Targeted lesions in Meta’s open-weight model</li>
-          <li>Word lens: the best guess at every layer</li>
-          <li>Agent designs and runs the experiments</li>
-          <li>Compare with published human profiles</li>
-        </ul>
-        <div class="models"><span>Muse Glimmer (open weights)</span><span>Muse Spark agent</span></div>
-        <a class="tool-link" href="/lab">Open Model Lab →</a>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section id="how" class="band band-gray">
-  <div class="wrap section">
-    <h2 class="h2">How it works</h2>
-    <ol class="steps">
-      <li><span class="n">1</span><b>List words</b><span>Type them in any language; pin a meaning when a word has two.</span></li>
-      <li><span class="n">2</span><b>Draw</b><span>Muse Image draws several candidates per word.</span></li>
-      <li><span class="n">3</span><b>Check</b><span>SAM 3.1 confirms one clear object; Muse Spark confirms the name.</span></li>
-      <li><span class="n">4</span><b>Give</b><span>Show pictures; responses are recorded and transcribed.</span></li>
-      <li><span class="n">5</span><b>Score</b><span>Rules code each response; Muse Spark gives a second opinion.</span></li>
-      <li><span class="n">6</span><b>Review and export</b><span>A person confirms the codes; download the table.</span></li>
+    <ol class="ideas">
+      <li class="idea">
+        <img src="/static/img/ill-words-stuck-600.webp" srcset="/static/img/ill-words-stuck-600.webp 600w, /static/img/ill-words-stuck-1100.webp 1100w"
+             sizes="(max-width: 720px) 92vw, 380px" width="600" height="450" loading="lazy"
+             alt="Illustration: a man holds up a picture card of a cat. A glowing path runs from the card into his head and on toward his mouth, where it frays into specks before an empty speech bubble.">
+        <span class="idea-n">1</span>
+        <h3>Words can get stuck</h3>
+        <p>After a stroke, many people still know exactly what they mean, but the word won’t come out, or comes out wrong. This is called <span class="term-wrap"><button type="button" class="term" aria-describedby="def-aphasia" aria-expanded="false">aphasia</button><span class="term-pop" id="def-aphasia" role="tooltip">Aphasia: difficulty finding, saying or understanding words, most often after a stroke. It affects language, not intelligence.</span></span>.</p>
+      </li>
+      <li class="idea">
+        <img src="/static/img/ill-learn-from-damage-600.webp" srcset="/static/img/ill-learn-from-damage-600.webp 600w, /static/img/ill-learn-from-damage-1100.webp 1100w"
+             sizes="(max-width: 720px) 92vw, 380px" width="600" height="450" loading="lazy"
+             alt="Illustration: a simple brain shape with one small patch glowing orange. Beside it, one speech bubble shows a clear drawing of a cat and the other shows the same cat blurred and scrambled.">
+        <span class="idea-n">2</span>
+        <h3>Scientists learn from damage</h3>
+        <p>When one small area of the brain is damaged (a <span class="term-wrap"><button type="button" class="term" aria-describedby="def-lesion" aria-expanded="false">lesion</button><span class="term-pop" id="def-lesion" role="tooltip">Lesion: an area of damage, for example where a stroke cut off the blood supply to part of the brain.</span></span>), the mistakes a person makes, like “dog” for cat, hint at what that area did. But we can’t choose where the damage is, or look inside.</p>
+      </li>
+      <li class="idea">
+        <img src="/static/img/ill-ai-parts-600.webp" srcset="/static/img/ill-ai-parts-600.webp 600w, /static/img/ill-ai-parts-1100.webp 1100w"
+             sizes="(max-width: 720px) 92vw, 380px" width="600" height="450" loading="lazy"
+             alt="Illustration: a cat walks toward a tall tower of glass layers that stands for an AI model. A few middle layers are dimmed and switched off, and the speech bubble at the top shows a dog instead of a cat.">
+        <span class="idea-n">3</span>
+        <h3>AI has parts too</h3>
+        <p>An AI model passes each picture through a stack of <span class="term-wrap"><button type="button" class="term" aria-describedby="def-layer" aria-expanded="false">layers</button><span class="term-pop" id="def-layer" role="tooltip">Layer: one step in the stack an AI model passes information through. Muse Glimmer has 52 for language.</span></span>. We can switch some parts off, safely and reversibly, and see what it loses: a <span class="term-wrap"><button type="button" class="term" aria-describedby="def-virtual" aria-expanded="false">virtual lesion</button><span class="term-pop" id="def-virtual" role="tooltip">Virtual lesion: switching off or disturbing chosen parts of an AI model on purpose, then giving it the same test. Nothing is permanent; switch them back on and the model is unchanged.</span></span>. A <span class="term-wrap"><button type="button" class="term" aria-describedby="def-lens" aria-expanded="false">word lens</button><span class="term-pop" id="def-lens" role="tooltip">Word lens: a read-out of the model’s best guess for the word after each layer, so you can see when the right word appears and where it gets lost. Researchers call it a logit lens.</span></span> shows its best guess after every layer.</p>
+      </li>
     </ol>
-    <p class="after">Tasks: picture naming, picture description and category fluency. Every automatic code goes to a person for review before export.</p>
   </div>
 </section>
 
-<section id="who" class="band">
+<section id="science" class="band band-paper" aria-labelledby="science-h">
   <div class="wrap section">
-    <h2 class="h2">Who it's for</h2>
-    <div class="grid4">
-      <article class="who"><h3>Language researchers</h3><p>Aphasia, dementia, child language and bilingualism studies that need normed materials and consistent scoring.</p></article>
-      <article class="who"><h3>Clinicians in training</h3><p>Practice scoring with instant feedback, using pictures you are free to print and share.</p></article>
-      <article class="who"><h3>Teachers</h3><p>Show students how different kinds of damage produce different errors, live in class.</p></article>
-      <article class="who"><h3>AI researchers</h3><p>Test models with tasks from cognitive science and locate where words form inside a model.</p></article>
-    </div>
-    <div class="anylang">
-      <span class="anylang-title">Any language</span>
-      <span class="anylang-text">Muse Voice Transcribe covers 25 languages. Tested end to end so far: spoken English and Spanish; Muse Spark also named test pictures correctly in Hindi and Swahili. Other languages are marked experimental until checked.</span>
+    <div class="split">
+      <figure class="split-art">
+        <img src="/static/img/ill-same-test-700.webp" srcset="/static/img/ill-same-test-700.webp 700w, /static/img/ill-same-test-1100.webp 1100w"
+             sizes="(max-width: 900px) 92vw, 560px" width="700" height="394" loading="lazy"
+             alt="Illustration: on the left, a woman names a picture card of an umbrella. On the right, a glowing tower of glass layers, standing for an AI model, receives the same card. Between them stands a carved stone tablet, like the Rosetta Stone, linking the two.">
+      </figure>
+      <div class="split-text">
+        <span class="kicker kicker-accent">What’s new</span>
+        <h2 class="h2" id="science-h">The tip-of-the-tongue test, for people and AI, in any language.</h2>
+        <p>We can’t look inside a brain while it searches for a word, but we can look inside an AI. Tippa Lingua gives Muse Glimmer, Meta’s open model, the same picture-naming test people take, scores it the same way, and then opens it up:</p>
+        <ul class="checks">
+          <li><b>Damage on purpose.</b> Switch off chosen parts (neurons, attention units, whole layers, or the part that sees) and give the test again.</li>
+          <li><b>Compare with random damage</b> of the same size, so an effect means more than “less model”.</li>
+          <li><b>Watch the word form.</b> The word lens shows the best guess after each of the 52 layers.</li>
+          <li><b>Set results against people.</b> Error patterns are compared with published groups of people with aphasia, using cited, group-level numbers only.</li>
+        </ul>
+        <p class="finding"><span class="lens-tag lens-tag-light">Measured</span> With layers 41–48 disturbed, Glimmer still named 16 of 20 pictures, but for the umbrella it said only “Umb”: the start of the word, without the rest.</p>
+        <div class="btn-line">
+          <a class="lbtn lbtn-dark" href="/lab">Explore the Model Lab</a>
+          <a class="lbtn lbtn-outline" href="/challenge">Try the same pictures yourself</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="trust" class="band band-gray">
+<section id="start" class="band" aria-labelledby="start-h">
   <div class="wrap section">
-    <h2 class="h2">Responsible by design</h2>
-    <div class="grid4">
-      <article class="tile"><h3>No diagnosis</h3><p>Tippa Lingua produces error codes for review. It does not diagnose or give medical or treatment advice.</p></article>
-      <article class="tile"><h3>A person decides</h3><p>Every automatic code can be changed by the reviewer, and exports keep both.</p></article>
-      <article class="tile"><h3>Your data stays yours</h3><p>Use speaker codes, never names. Audio is sent for transcription and not stored by the app. Don’t upload identifiable patient recordings without approval.</p></article>
-      <article class="tile"><h3>Open and inspectable</h3><p>Apache 2.0 source, documented scoring rules, and a cited source for every human comparison.</p></article>
+    <div class="section-head">
+      <span class="kicker kicker-accent">Start here</span>
+      <h2 class="h2" id="start-h">Three ways in</h2>
     </div>
+    <div class="doors">
+      <article class="door">
+        <span class="door-who">Researchers and AI teams</span>
+        <h3>Model Lab</h3>
+        <p>Give Muse Glimmer the naming test with chosen parts damaged, read the word lens, compare targeted with random damage, and line the results up with published patient groups.</p>
+        <p class="door-soon"><b>Coming next: What can I cut?</b> Remove layers, then measure size, speed and accuracy.</p>
+        <a class="lbtn lbtn-dark" href="/lab">Explore the Model Lab</a>
+      </article>
+      <article class="door">
+        <span class="door-who">Clinicians</span>
+        <h3>Naming Assessment</h3>
+        <p>Measure accuracy, error types and naming speed; track change; build a personal test from a photo.</p>
+        <p>Spoken answers are written down and scored automatically (verified in English, Spanish, French and Brazilian Portuguese), and you review every code.</p>
+        <a class="lbtn lbtn-dark" href="/assess" data-assess data-fallback="/scorer" data-fallback-text="Open the Scorer">Open the Naming Assessment</a>
+      </article>
+      <article class="door door-accent">
+        <span class="door-who">Everyone</span>
+        <h3>You vs. the AI</h3>
+        <p>Name 10 pictures, see how the AI named the same ones, then watch a word get lost inside it. Two minutes, free, nothing stored.</p>
+        <a class="lbtn lbtn-accent" href="/challenge">Play: You vs. the AI</a>
+        <div class="door-extra" data-assess-box hidden>
+          <p><b>Take the naming test:</b> see your accuracy and speed, and how they compare with healthy adults who took the same test. <em>Not a medical test.</em></p>
+          <a class="tool-link" href="/assess">Take the naming test →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="languages" class="band band-paper" aria-labelledby="lang-h">
+  <div class="wrap section">
+    <div class="split split-rev">
+      <figure class="split-art">
+        <img src="/static/img/ill-any-language-600.webp" srcset="/static/img/ill-any-language-600.webp 600w, /static/img/ill-any-language-1100.webp 1100w"
+             sizes="(max-width: 900px) 92vw, 480px" width="600" height="450" loading="lazy"
+             alt="Illustration: a mother and her young daughter at a table look at picture cards of a cat, an umbrella, an anchor and a bicycle, on a tablet and on printed cards, with a globe beside them.">
+      </figure>
+      <div class="split-text">
+        <span class="kicker kicker-accent">Any language</span>
+        <h2 class="h2" id="lang-h">Fill the gaps with Test Studio</h2>
+        <p>Good picture-naming tests exist for only a few languages. Test Studio turns a word list into a checked picture set: for a language without one, for a person’s own everyday things, or for an extra version of a test.</p>
+        <ul class="checks">
+          <li><b>Muse Image</b> draws each picture in one consistent style.</li>
+          <li><b>SAM 3.1</b> checks that each picture shows one clear object.</li>
+          <li><b>Muse Spark</b> and <b>Muse Glimmer</b> check that people would call it by the intended name.</li>
+          <li>Export printable cards, a norms table and the whole set.</li>
+        </ul>
+        <p class="lang-claim">Build picture tests in any language; picture sets checked in six (English, Spanish, French, Portuguese, Hindi, Mandarin). Automatic spoken scoring is verified in English, Spanish, French and Brazilian Portuguese, works with a reviewer in Mandarin, and is experimental in Hindi and other languages. <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/languages.md">How we measured</a></p>
+        <ul class="catches" aria-label="Noticed while testing">
+          <li>Muse Spark named the Spanish <i lang="es">sierra</i> picture <i lang="es">serrucho</i>, the everyday word for a hand saw.</li>
+          <li>A harp was named <span lang="hi">वीणा</span> (veena) in Hindi: a reminder that picture items are cultural.</li>
+        </ul>
+        <div class="btn-line"><a class="lbtn lbtn-outline" href="/studio">Open Test Studio</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="new" class="band" aria-labelledby="new-h">
+  <div class="wrap section">
+    <h2 class="h2" id="new-h">What already exists, and what’s new</h2>
+    <div class="exists">
+      <div class="exists-col">
+        <h3>Already exists</h3>
+        <ul>
+          <li><b>Good picture-naming tests.</b> The <a href="https://rehabilitationresearch.jefferson.edu/innovations/philadelphia-naming-test.html">Philadelphia Naming Test</a> is a free download, and <a href="https://www.bcbl.eu/databases/multipic">MultiPic</a> offers 750 normed drawings in six European languages. Most other languages have far less.</li>
+          <li><b>Automatic error scoring, as research.</b> <a href="https://doi.org/10.1044/2022_JSLHR-22-00255">ParAlg</a> (Casilio et al., 2023) codes picture-naming errors automatically. In everyday practice, spoken answers are still mostly scored by hand, which is slow.</li>
+        </ul>
+      </div>
+      <div class="exists-col exists-new">
+        <h3>New here</h3>
+        <ul>
+          <li><b>One test for people and AI,</b> scored the same way, so their errors can be compared directly.</li>
+          <li><b>A look inside.</b> We can’t look inside a brain mid-word, but we can look inside an open AI model, layer by layer, with damage we choose and can undo.</li>
+          <li><b>End to end in several languages:</b> make the pictures, give the test by voice, write down and score the answers, with a person checking.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trust" class="band band-gray" aria-labelledby="trust-h">
+  <div class="wrap section">
+    <h2 class="h2" id="trust-h">Responsible use</h2>
+    <div class="grid4">
+      <article class="tile"><h3>Measurements, not diagnosis</h3><p>Tippa Lingua reports accuracy, error types and speed: measurements only, with no diagnosis, no prognosis and no medical advice.</p></article>
+      <article class="tile"><h3>A person decides</h3><p>Every automatic code can be changed by a reviewer, and exports keep both the automatic and the final code.</p></article>
+      <article class="tile"><h3>No patient data stored</h3><p>Recordings are sent to be written down and aren’t kept; results stay in your browser until you export them. Comparisons with people use published group averages only.</p></article>
+      <article class="tile"><h3>Open source</h3><p>Apache 2.0 code, documented scoring rules, and a citation for every comparison with people.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="models" class="band" aria-labelledby="models-h">
+  <div class="wrap section">
+    <div class="section-head">
+      <span class="kicker kicker-accent">Built with Meta’s models</span>
+      <h2 class="h2" id="models-h">Who does what</h2>
+    </div>
+    <dl class="models-grid">
+      <div class="model-card model-main"><dt>Muse Glimmer 30B <span>open weights, on our own GPU</span></dt><dd>Takes the test in the Model Lab and in You vs. the AI. We damage its parts on purpose and read its word lens.</dd></div>
+      <div class="model-card"><dt>Muse Spark 1.3</dt><dd>Second rater for scored answers, judge of related meanings, picture-name checks, and the agent that plans experiments.</dd></div>
+      <div class="model-card"><dt>Muse Voice Transcribe</dt><dd>Writes down spoken answers, in the test’s language.</dd></div>
+      <div class="model-card"><dt>Muse Image</dt><dd>Draws the test pictures in Test Studio.</dd></div>
+      <div class="model-card"><dt>SAM 3.1</dt><dd>Checks that each picture shows one clear object.</dd></div>
+    </dl>
+    <p class="small-note">Every AI step uses a Meta model. The rest is plain, inspectable code: WordNet, the CMU Pronouncing Dictionary and wordfreq.</p>
   </div>
 </section>
 </main>
@@ -188,6 +276,7 @@
   </div>
 </footer>
 <script src="/static/js/common.js"></script>
+<script src="/static/js/landing.js"></script>
 <script src="/static/js/tour.js"></script>
 </body>
 </html>
