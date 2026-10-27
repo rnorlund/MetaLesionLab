@@ -128,7 +128,7 @@ def averages(concept: str, words: dict) -> Path:
     return out
 
 
-def heatmap(results: dict) -> Path:
+def heatmap(results: dict, uniform: bool = False, vmax: float | None = None) -> Path:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -138,11 +138,13 @@ def heatmap(results: dict) -> Path:
                          "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2})
     ramp = ["#fcfcfb", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
     cmap = LinearSegmentedColormap.from_list("blue", ramp)
-    heat = results["heatmap"]
+    heat = results["style_control_uniform_lines"]["heatmap"] if uniform else results["heatmap"]
     mats = {dom: np.array(heat[dom]["between"]) * 1000 for dom in ("ai", "human")}
-    vmax = max(m.max() for m in mats.values())
+    vmax = vmax or max(m.max() for m in mats.values())
     fig, axes = plt.subplots(1, 2, figsize=(13, 6.4), facecolor=SURFACE)
-    names = {"ai": [LANGS[g] for g in heat["ai"]["groups"]], "human": [COUNTRIES[g] for g in heat["human"]["groups"]]}
+    short = {"zh": "Mandarin"}
+    names = {"ai": [short.get(g, LANGS[g]) for g in heat["ai"]["groups"]],
+             "human": [COUNTRIES[g] for g in heat["human"]["groups"]]}
     titles = {"ai": "Muse Image: prompt language vs prompt language", "human": "People: country vs country"}
     for ax, dom in zip(axes, ("ai", "human")):
         m = mats[dom].copy()
@@ -161,11 +163,13 @@ def heatmap(results: dict) -> Path:
                     v = mats[dom][i, j]
                     ax.text(j, i, f"{v:.1f}", ha="center", va="center", fontsize=11,
                             color="#ffffff" if v > 0.55 * vmax else INK)
-    fig.suptitle("How far apart are the average doodles? (mean over 10 concepts)", fontsize=17, color=INK, y=0.98)
+    title = "How far apart are the average doodles? (mean over 10 concepts)"
+    fig.suptitle(title + ("\nevery drawing redrawn with one uniform line, so only the form counts" if uniform else ""),
+                 fontsize=17, color=INK, y=0.985)
     fig.text(0.5, 0.015, "DINOv2 distance between group averages, minus what sampling noise alone gives (×1000; "
              "0 = no difference). " + CREDIT, ha="center", fontsize=10.5, color=MUTED)
-    fig.tight_layout(rect=(0, 0.04, 1, 0.95))
-    out = FIG / "heatmap_centroids.png"
+    fig.tight_layout(rect=(0, 0.06, 1, 0.93 if uniform else 0.95))
+    out = FIG / ("heatmap_centroids_uniform_lines.png" if uniform else "heatmap_centroids.png")
     fig.savefig(out, dpi=150, facecolor=SURFACE)
     plt.close(fig)
     return out
@@ -179,17 +183,21 @@ def share_plot(results: dict) -> Path:
     plt.rcParams.update({"font.family": "Helvetica Neue", "font.size": 13, "text.color": INK,
                          "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2})
     comp = results["comparison"]
+    uni = results["style_control_uniform_lines"]["share"]
     order = sorted(CONCEPTS, key=lambda c: comp[c]["share_ai"][0])
-    fig, ax = plt.subplots(figsize=(10, 6.6), facecolor=SURFACE)
+    fig, ax = plt.subplots(figsize=(10, 7.2), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
     y = np.arange(len(order))
-    for key, color, dy, label in (("share_ai", AI_COLOR, 0.17, "Muse Image: language of the prompt"),
-                                  ("share_human", HUMAN_COLOR, -0.17, "People: country")):
-        est = np.array([comp[c][key][0] for c in order]) * 100
-        lo = np.array([comp[c][key][1] for c in order]) * 100
-        hi = np.array([comp[c][key][2] for c in order]) * 100
-        ax.hlines(y + dy, lo, hi, color=color, lw=2)
-        ax.plot(est, y + dy, "o", ms=9, color=color, mec=SURFACE, mew=2, label=label)
+    series = (
+        ([comp[c]["share_ai"] for c in order], AI_COLOR, 0.24, "Muse Image: language of the prompt", True),
+        ([uni[c]["ai"] for c in order], AI_COLOR, 0.0, "Muse Image, same lines (style removed)", False),
+        ([comp[c]["share_human"] for c in order], HUMAN_COLOR, -0.24, "People: country", True),
+    )
+    for vals, color, dy, label, filled in series:
+        est, lo, hi = (np.array([v[i] for v in vals]) * 100 for i in range(3))
+        ax.hlines(y + dy, lo, hi, color=color, lw=2 if filled else 1.2, alpha=1 if filled else 0.7)
+        ax.plot(est, y + dy, "o", ms=9 if filled else 8, color=color if filled else SURFACE,
+                mec=color if not filled else SURFACE, mew=2, label=label)
     ax.axvline(0, color="#c3c2b7", lw=1)
     ax.set_yticks(y, order)
     ax.set_xlabel("Share of the variation in the drawings explained by group (%), 95% CI")
@@ -244,7 +252,11 @@ def main():
         print(grid(c, "human", words, args.seed))
         print(averages(c, words))
     results = json.loads((OUT / "results.json").read_text())
-    print(heatmap(results))
+    vmax = max(np.max(results[key]["heatmap"][dom]["between"]) if key == "style_control_uniform_lines"
+               else np.max(results["heatmap"][dom]["between"])
+               for key in ("heatmap", "style_control_uniform_lines") for dom in ("ai", "human")) * 1000
+    print(heatmap(results, uniform=False, vmax=vmax))
+    print(heatmap(results, uniform=True, vmax=vmax))
     print(share_plot(results))
 
 

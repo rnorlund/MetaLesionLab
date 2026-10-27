@@ -2,9 +2,11 @@
 
 Steps (each cached under $PLATO_LANG_DIR):
   embed    DINOv2-base CLS + mean-patch embeddings for AI doodles (canonicalized) and human renders
-           -> emb/ai.npz, emb/human.npz
+           -> emb/ai.npz, emb/human.npz; the same with every line redrawn at one width (style control)
+           -> emb/ai_uniform.npz, emb/human_uniform.npz
   analyze  spread, centroid shift with a permutation baseline, group share with bootstrap CIs, AI vs
-           human comparison at equal n, concept ranking, language-country alignment -> results.json
+           human comparison at equal n, concept ranking, language-country alignment, validity check,
+           mean-patch and uniform-line robustness -> results.json
 
 Runs locally (MPS or CPU); costs nothing. Reads only PNGs we rendered or generated.
 Usage: python scripts/plato_lang_analyze.py [embed] [analyze] [--perm 2000] [--boot 2000]
@@ -47,22 +49,23 @@ def prep(job):
 
 
 def embed(domain: str, dino: Dino | None, variant: str = "raw") -> Dino | None:
-    from concurrent.futures import ProcessPoolExecutor
+    from concurrent.futures import ThreadPoolExecutor  # threads: NumPy releases the GIL; no child processes
     cache = cache_path(domain, variant)
     have = {}
     if cache.exists():
         z = np.load(cache)
-        have = {k: (z["cls"][i], z["patch"][i]) for i, k in enumerate(z["keys"])}
+        cls, patch = z["cls"], z["patch"]  # read each array once; z[...] re-reads the file on every access
+        have = {k: (cls[i], patch[i]) for i, k in enumerate(z["keys"])}
     paths = [p for ps in files(domain).values() for p in ps]
     keys = [str(p.relative_to(OUT)) for p in paths]
     todo = [(k, p) for k, p in zip(keys, paths) if k not in have]
     if todo:
         dino = dino or Dino()
         t0 = time.time()
-        pool = ProcessPoolExecutor(6)
+        pool = ThreadPoolExecutor(8)
         for i in range(0, len(todo), 256):
             chunk = todo[i:i + 256]
-            images = list(pool.map(prep, [(domain, variant, p) for _, p in chunk], chunksize=8))
+            images = list(pool.map(prep, [(domain, variant, p) for _, p in chunk]))
             e = dino.embed(images)
             for j, (k, _) in enumerate(chunk):
                 have[k] = (e["cls"][j], e["patch"][j])
@@ -307,7 +310,8 @@ def main():
         robust = analyze(min(args.perm, 1000), min(args.boot, 1000), "patch")
         uniform = analyze(min(args.perm, 1000), min(args.boot, 1000), "cls", "uniform")
         short = lambda res: {"summary": res["summary"],  # noqa: E731
-                             "share": {c: {"ai": res["ai"][c]["share"], "human": res["human"][c]["share"]}
+                             "share": {c: {"ai": res["ai"][c]["share"], "human": res["human"][c]["share"],
+                                           "ai_p": res["ai"][c]["share_p"], "human_p": res["human"][c]["share_p"]}
                                        for c in CONCEPTS},
                              "between": {c: {"ai": res["ai"][c]["between"], "human": res["human"][c]["between"]}
                                          for c in CONCEPTS},

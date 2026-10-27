@@ -15,6 +15,7 @@ from metalesionlab.plato_lang import OUT, REPO_ROOT  # noqa: E402
 def main():
     res = json.loads((OUT / "results.json").read_text())
     concepts = res["concepts"]
+    uni = res["style_control_uniform_lines"]
     public = {
         "about": ("Plato's chair across languages and countries: how much quick doodles of everyday objects "
                   "change with the language of the prompt (Muse Image) or the country of the drawer "
@@ -39,11 +40,19 @@ def main():
             "share_ai": res["ai"][c]["share"], "share_ai_p": res["ai"][c]["share_p"],
             "share_human": res["human"][c]["share"], "share_human_p": res["human"][c]["share_p"],
             "spread_ai": res["ai"][c]["spread_mean"], "spread_human": res["human"][c]["spread_mean"],
+            "share_ai_style_removed": uni["share"][c]["ai"], "share_ai_style_removed_p": uni["share"][c]["ai_p"],
+            "share_human_style_removed": uni["share"][c]["human"],
         } for c in concepts},
         "summary": {k: res["summary"][k] for k in (
             "mean_share_ai", "mean_share_human", "mean_share_diff", "concepts_ai_gt_human",
+            "mean_between_ai", "mean_between_human",
             "rank_ai", "rank_human", "spearman_ai_human", "spearman_p", "mean_spread_ai", "mean_spread_human")},
+        "summary_style_removed": {k: uni["summary"][k] for k in (
+            "mean_share_ai", "mean_share_human", "mean_share_diff", "mean_between_ai", "mean_between_human",
+            "rank_ai", "rank_human", "spearman_ai_human", "spearman_p")},
+        "style_removed_note": "every drawing binarized, thinned and redrawn with one 3 px line before embedding",
         "heatmap": res["heatmap"],
+        "heatmap_style_removed": uni["heatmap"],
         "alignment": {k: res["alignment"][k] for k in ("matched_mean_cos", "null_mean", "p")},
     }
     path = REPO_ROOT / "public_data" / "plato_languages.json"
