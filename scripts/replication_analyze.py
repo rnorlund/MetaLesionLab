@@ -239,6 +239,9 @@ def main():
     ap.add_argument("--old-runs", type=Path, default=Path("runs"))
     ap.add_argument("--runs", type=Path, default=Path("runs"))
     ap.add_argument("--boot", type=int, default=10000)
+    ap.add_argument("--old-bilingual", type=Path, default=None,
+                    help="the first run's bilingual folder, re-analyzed with the current coder (default: "
+                         "OLD_RUNS/bilingual)")
     args = ap.parse_args()
     t0 = time.time()
     specs = json.loads((Path(__file__).resolve().parent / "replication" / "components_en.json").read_text())
@@ -270,7 +273,7 @@ def main():
                              "old_featured_dose": error_profiles(old_en, site_runs(old_en, old_specs, True), args.boot),
                              "new_featured_dose": error_profiles(new_en, site_runs(new_en, specs, True), args.boot)}
     # 2, 3a, 5
-    res["bilingual"] = {"old": bilingual_summary(args.old_runs / "bilingual" / "results.json"),
+    res["bilingual"] = {"old": bilingual_summary((args.old_bilingual or args.old_runs / "bilingual") / "results.json"),
                         "new": bilingual_summary(args.runs / "bilingual_core100" / "results.json")}
     out = args.runs / "replication" / "results.json"
     out.parent.mkdir(parents=True, exist_ok=True)
