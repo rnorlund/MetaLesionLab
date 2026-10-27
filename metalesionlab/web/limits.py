@@ -14,8 +14,10 @@ from fastapi import HTTPException, Request
 
 DAY_S = 24 * 3600
 # Calls per IP per day. Override with TOT_LIMIT_BUILD, TOT_LIMIT_SCENE, TOT_LIMIT_SCORE.
-DEFAULT_LIMITS = {"build": 3, "scene": 3, "score": 60}
-WHAT = {"build": "picture sets", "scene": "scenes", "score": "scored responses"}
+# "draw" (Draw your chair) spends CPU, not API credit; "draw_burst" is its per-minute limit (draw_routes.py).
+DEFAULT_LIMITS = {"build": 3, "scene": 3, "score": 60, "draw": 300, "draw_burst": 20}
+WHAT = {"build": "picture sets", "scene": "scenes", "score": "scored responses", "draw": "drawings",
+        "draw_burst": "drawings"}
 TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # Behind TOT_PROXY_HOPS trusted proxies the visitor is that many entries from the right of
 # X-Forwarded-For; entries further left are whatever the visitor sent, so they can't be trusted.

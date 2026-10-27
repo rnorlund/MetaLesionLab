@@ -3,9 +3,11 @@ import argparse
 
 import uvicorn
 
+from metalesionlab.brand import BRAND
+
 
 def main():
-    ap = argparse.ArgumentParser(description="Run the Tippa Lingua web app")
+    ap = argparse.ArgumentParser(description=f"Run the {BRAND} web app")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8000)
     ap.add_argument("--reload", action="store_true")

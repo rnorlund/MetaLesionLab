@@ -9,7 +9,8 @@ dependencies = ["openai>=1.40", "httpx", "numpy", "pillow", "nltk", "wordfreq", 
 
 [project.optional-dependencies]
 gpu = ["torch", "torchvision", "transformers>=5.15", "accelerate", "safetensors"]
-web = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart", "fpdf2>=2.7"]
+web = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart", "fpdf2>=2.7",
+       "onnxruntime>=1.20", "scipy"]  # onnxruntime and scipy: Draw a chair (/draw)
 pptx = ["python-pptx>=1.0"]  # scripts/import_pptx_test.py
 dev = ["pytest", "python-pptx>=1.0"]
 # Plato's Chair experiment (scripts/plato_*.py): DINOv2 embeddings on a laptop (MPS or CPU), stats, figures
@@ -23,4 +24,5 @@ build-backend = "setuptools.build_meta"
 packages = ["metalesionlab", "metalesionlab.web"]
 
 [tool.setuptools.package-data]
-"metalesionlab.web" = ["pages/*.html", "static/*/*", "static/*/*/*", "sample_lab/*.json", "data/*.json"]
+"metalesionlab.web" = ["pages/*.html", "static/*/*", "static/*/*/*", "sample_lab/*.json", "data/*.json",
+                      "data/*/*.json"]

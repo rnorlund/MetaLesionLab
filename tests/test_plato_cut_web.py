@@ -119,19 +119,21 @@ def test_cut_prefers_the_run_folder(client):
     assert d["source"] == "run" and d["answers_lost"] == shipped["answers_lost"]
 
 
-def test_navigation_and_landing_link_the_new_pages():
-    pages = web.HERE / "pages"
-    for name in ("challenge.html", "lab.html", "studio.html", "scorer.html", "assess.html", "cut.html", "plato.html", "index.html"):
-        assert 'href="/plato"' in (pages / name).read_text(), name
-    assert 'href="/lab/cut"' in (pages / "lab.html").read_text()
-    landing = (pages / "index.html").read_text()
-    assert 'href="/lab/cut"' in landing and "plato-teaser" in landing
+def test_navigation_and_landing_link_the_new_pages(client):
+    """The nav comes from web/site.py, so check the pages as served."""
+    c, _ = client
+    for path in ("/challenge", "/lab", "/studio", "/scorer", "/assess", "/lab/cut", "/plato", "/"):
+        assert 'href="/plato"' in c.get(path).text, path
+    assert 'href="/lab/cut"' in (web.HERE / "pages" / "lab.html").read_text()  # the Model Lab tabs
+    landing = c.get("/").text
+    assert 'href="/lab/cut"' in landing and 'href="/lab/bilingual"' in landing and 'id="series"' in landing
+    assert 'class="series-card" href="/plato"' in landing  # Plato's Chair heads the series
 
 
 def test_tour_has_a_plato_step_and_stays_short():
     tour = (web.HERE / "static" / "js" / "tour.js").read_text()
     assert "page: '/plato'" in tour
-    assert tour.count("{ page:") <= 13
+    assert tour.count("{ page:") <= 10
 
 
 def test_variety_section_is_shipped(client):
