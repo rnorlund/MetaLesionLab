@@ -82,19 +82,21 @@ def clock_wall(res: dict) -> None:
         ax.set_axis_off()
         g = res["groups"].get(group)
         eye = (res.get("byeye_no_time") or {}).get(group)
-        sub = ""
+        # short stacked lines, each well inside its own column (they used to run into the next one)
+        head, more = "", []
         if g:
             t = g["ten_ten"]
             if eye:
-                sure = eye["sure"] if eye["sure"] == eye["max"] else f"{eye['sure']}-{eye['max']}"
-                sub = f"about 10:10: {sure} of {eye['n']} by eye ({t['k']} by the automatic reader)"
+                sure = eye["sure"] if eye["sure"] == eye["max"] else f"{eye['sure']}–{eye['max']}"
+                head = f"About 10:10: {sure} of {eye['n']} by eye"
+                more = [f"{t['k']} of {t['n']} by the automatic reader"]
             else:
-                sub = f"about 10:10: {t['k']} of {t['n']} ({100 * t['share']:.0f}%)"
+                head = f"About 10:10: {t['k']} of {t['n']} ({100 * t['share']:.0f}%)"
+                more = ["16 of 200 shown, at random", "Google Quick, Draw! (CC BY 4.0)"]
         ax.set_title(f"{title}\n", fontsize=15, fontweight="bold", color=INK, loc="left")
-        ax.text(0, -0.02, sub, transform=ax.transAxes, fontsize=13, color=color, fontweight="bold", va="top")
-        if group == "people":
-            ax.text(0, -0.09, "16 of 200 drawings, at random. Google Quick, Draw! (CC BY 4.0)", transform=ax.transAxes,
-                    fontsize=10, color=MUTED, va="top")
+        ax.text(0, -0.02, head, transform=ax.transAxes, fontsize=13, color=color, fontweight="bold", va="top")
+        for i, line in enumerate(more):
+            ax.text(0, -0.085 - 0.055 * i, line, transform=ax.transAxes, fontsize=11, color=MUTED, va="top")
     fig.suptitle('"A quick simple doodle sketch of a clock" (no time asked)', x=0.02, ha="left", fontsize=13,
                  color=MUTED, y=1.0)
     save(fig, "clock_wall")
