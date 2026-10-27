@@ -214,7 +214,7 @@
       S.norms = norms;
       if (norms.ready) {
         var c = norms.correct, n = norms.n_items || m.n;
-        $('r-acc-ref').textContent = 'Healthy adults who took this test scored ' + Math.round(c.p5) + '–' + Math.round(c.p95) + ' out of ' + n +
+        $('r-acc-ref').textContent = 'Adult volunteers who took this test scored ' + Math.round(c.p5) + '–' + Math.round(c.p95) + ' out of ' + n +
           ' (the middle 90% of ' + norms.n + ' volunteers).';
         A.rangeStrip($('r-acc-strip'), m.correct, [c.p5, c.p95], n, function (v) { return String(Math.round(v)); });
         var l = norms.median_latency_ms;

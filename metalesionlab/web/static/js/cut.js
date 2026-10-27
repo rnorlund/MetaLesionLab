@@ -103,7 +103,8 @@
       : k ? ' · speed and memory were measured at ' + listAnd(d.pruned.map(function (p) { return String(p.removed.length); })) + ' layers removed' : '';
     box.appendChild(h('p', { text: size }));
     box.appendChild(h('p', { text: 'At this cut: naming ' + st.correct + ' of ' + N + ' pictures (intact ' + b.correct + '), held-out ' + st.heldout_correct + ' of ' + NH +
-      ' (intact ' + b.heldout_correct + '), perplexity ' + st.ppl.toFixed(1) + ' (intact ' + b.ppl.toFixed(1) + ').' }));
+      ' (intact ' + b.heldout_correct + '), perplexity ' + st.ppl.toFixed(1) + ' (intact ' + b.ppl.toFixed(1) + ').' +
+      ' From the search run; a separate run of the same cut can differ by a picture or two.' }));
     var next = steps[k + 1];
     if (next && active.length) {
       var c = checks(next), keep = 1 - S.tol / 100, why = [];

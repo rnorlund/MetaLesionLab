@@ -25,7 +25,7 @@ Tippa Lingua has four tools that share one pipeline:
 4. **Model Lab:** the same tests are given to **Muse Glimmer**, Meta's open-weight model.
    - You damage chosen parts of the model on purpose and watch aphasia-like errors appear.
    - A word lens shows the model's best guess at every layer.
-   - A **Muse Spark** agent designs and runs the experiments and compares the results with published profiles from people with aphasia.
+   - **Ask the Lab** (in progress): a **Muse Spark** agent answers questions by querying the lab's results and comparing them with published profiles from people with aphasia, showing every step.
    - **What can I cut?** removes whole layers from the model, with your tests as the guardrail, and measures the real savings.
 
 > Research and teaching use only. Tippa Lingua doesn't diagnose, and it doesn't give medical or treatment advice.
@@ -76,6 +76,8 @@ The decision order follows the Philadelphia Naming Test scheme (Roach et al., 19
 | Meaning | WordNet first. Muse Spark judges associations (milk for cat). | Muse Spark judges every pair |
 
 See `metalesionlab/naming_errors.py`. French, Brazilian Portuguese, Hindi and Mandarin Chinese have their own rules and measured results in [docs/languages.md](docs/languages.md).
+
+**How we checked the coder.** `python scripts/verify_scorer.py rater` (about $0.12) codes 30 test responses (20 English, 10 Spanish) twice: once by these rules, and once by Muse Spark as an independent second rater working only from written category definitions. The 30 are constructed examples of each error type, not responses from real people. The two agreed on 93.3% (Cohen's kappa 0.92; English 90.0%, kappa 0.88; Spanish 100%). The two disagreements were *blorf* for ladder (rules: Neologism, Muse Spark: Nonword) and *sofa* for couch (rules: Semantic, Muse Spark: Correct; add *sofa* as an accepted name if your test allows it). Given the picture, Muse Spark also flags Visual errors the rules can't see (*grenade* for a pineapple drawing). This shows two independent coders agree on clear cases. It is not a comparison with trained human coders on real responses, which is still needed.
 
 ## Naming Assessment
 
@@ -161,7 +163,7 @@ Which parts of a model can go while the abilities you care about stay? The tests
 
 1. Each of the 52 layers is skipped alone. The result is scored by picture naming on the English and Spanish demo sets (39 pictures) and by perplexity on 150 plain sentences written by Muse Spark (`public_data/general_text_guard.json`).
 2. A greedy path removes one layer at a time. A cut passes if naming stays at or above 95% of intact and perplexity rises by 10% or less. The other Muse Image picture of each word is held out to check each cut.
-3. The chosen layers are deleted for real: the stock model code loads the smaller model from its own config. The outputs match the skip version exactly, and a saved copy reloads with identical logits.
+3. The chosen layers are deleted for real: the stock model code loads the smaller model from its own config, and a saved copy reloads with identical logits. Perplexity matches the skip version to 0.1. Naming counts from separate runs of the same cut can differ by one or two pictures (even intact: 36 vs. 37 held-out), so the table below (confirmation runs) and the step-by-step chart in the app (search runs) can disagree by that much.
 
 Measured on one L40S with the FP8 decoder (`python scripts/what_can_i_cut.py scan|greedy|prune|reload|export`):
 
@@ -182,7 +184,7 @@ The honest answer for this model is "not much". Two layers can go with no measur
 | Muse Glimmer 30B (open weights, self-hosted) | Test-taker in Model Lab, with lesions and the word lens; name-agreement check |
 | Muse Image 1.0 | Draws test pictures |
 | SAM 3.1 | Picture quality check |
-| Muse Spark 1.3 | Name agreement, meaning judge, second rater, experiment agent |
+| Muse Spark 1.3 | Plans test sets, name agreement, meaning judge, second rater, Ask the Lab agent |
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
 | DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for the Plato's Chair experiment |
 
