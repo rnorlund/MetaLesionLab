@@ -5,24 +5,24 @@ body.plato-inside { background: #F7F6F1; }
 .pi-back { font-size: 14px; text-decoration: none; }
 
 /* hero */
-.pi-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 32px;
-  display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 24px 40px; align-items: center; }
+.pi-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px);
+  display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 24px clamp(40px, 4vw, 112px); align-items: center; }
 .pi-hero-text { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.pi-hero-text h1 { margin: 0; font-size: clamp(34px, 4.6vw, 52px); letter-spacing: -0.02em; line-height: 1.03; }
-.pi-lede { margin: 0; font-size: 18px; line-height: 1.55; color: var(--ink-2); max-width: 720px; }
-.pi-answer { margin: 0; font-size: 19px; line-height: 1.5; font-weight: 600; color: var(--ink); border-left: 4px solid var(--blue);
-  padding: 4px 0 4px 16px; max-width: 720px; }
+.pi-hero-text h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.03; }
+.pi-lede { margin: 0; font-size: clamp(18px, calc(13px + 0.4vw), 24px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.pi-answer { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.5; font-weight: 600; color: var(--ink); border-left: 4px solid var(--blue);
+  padding: 4px 0 4px 16px; max-width: var(--measure); }
 .pi-tiles { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .pi-tile { display: grid; grid-template-columns: minmax(96px, max-content) minmax(0, 1fr); gap: 14px; align-items: baseline; border: 1px solid var(--line);
   border-radius: 12px; padding: 12px 16px; background: var(--soft); }
-.pi-tile b { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; white-space: nowrap; }
-.pi-tile span { font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+.pi-tile b { font-size: clamp(30px, calc(18px + 0.9vw), 42px); font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; white-space: nowrap; }
+.pi-tile span { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); }
 
 /* explorer */
-.pi-explorer { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px 28px 22px;
+.pi-explorer { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 2vw, 52px) clamp(28px, 2.4vw, 60px) clamp(22px, 1.8vw, 48px);
   display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 12px; }
 .pi-explorer-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; }
-.pi-explorer-head h2 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
+.pi-explorer-head h2 { margin: 0; font-size: clamp(24px, calc(14px + 0.9vw), 40px); letter-spacing: -0.01em; }
 .pi-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .pi-pick { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
 .pi-pick select { font-weight: 500; min-height: 40px; padding: 6px 34px 6px 12px; border: 1px solid var(--line-2); border-radius: 10px;
@@ -31,7 +31,7 @@ body.plato-inside { background: #F7F6F1; }
 .pi-view { min-width: 190px; }
 .pi-view button { padding: 8px 12px; }
 
-.pi-stage { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 20px 28px; align-items: start; }
+.pi-stage { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 20px clamp(28px, 2.5vw, 64px); align-items: start; }
 .pi-mapcol { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .pi-mapfig { margin: 0; display: flex; flex-direction: column; gap: 8px; }
 .pi-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-2); }
@@ -120,7 +120,7 @@ body.plato-inside { background: #F7F6F1; }
   display: inline-block; min-width: 1.3em; text-align: right; }
 .pi-phase { font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line-2); color: var(--ink); }
 .pi-phase.collapsed, .pi-phase.named { background: var(--ink); border-color: var(--ink); color: #FFFFFF; }
-.pi-phase-text { font-size: 15px; line-height: 1.55; color: var(--ink-2); min-height: 4.65em; }
+.pi-phase-text { max-width: var(--measure); font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); min-height: 4.65em; }
 .pi-bars { display: flex; flex-direction: column; gap: 7px; }
 .bar-row { display: grid; grid-template-columns: 104px minmax(0, 1fr) 40px; gap: 10px; align-items: center; }
 .bar-lab { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
@@ -136,7 +136,7 @@ body.plato-inside { background: #F7F6F1; }
 
 /* spread chart */
 .pi-chartbox { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.pi-chartbox h3 { margin: 0; font-size: 15px; }
+.pi-chartbox h3 { margin: 0; font-size: clamp(15px, calc(10px + 0.3vw), 18px); }
 .pi-chart-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--ink-2); }
 .pi-chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .pi-chart-legend .line { display: inline-block; width: 16px; height: 0; border-top: 2px solid; border-radius: 1px; }
@@ -166,23 +166,23 @@ body.plato-inside { background: #F7F6F1; }
 .pi-table thead th { position: sticky; top: 0; background: var(--soft); }
 .pi-table .num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pi-table tr.after td { background: rgba(17, 24, 39, 0.03); }
-.pi-cap { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); max-width: 1000px; border-top: 1px solid var(--line); padding-top: 12px; }
+.pi-cap { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--muted); max-width: 120ch; border-top: 1px solid var(--line); padding-top: 12px; }
 
 /* sections */
-.pi-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px 32px; display: flex; flex-direction: column; gap: 16px; }
-.pi-sec h2 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
-.pi-sec h3 { margin: 0; font-size: 17px; }
-.pi-intro { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); max-width: 880px; }
-.pi-caveat { margin: 0; font-size: 14px; line-height: 1.6; color: var(--muted); border-left: 3px solid var(--line-2); padding-left: 12px; max-width: 880px; }
-.pi-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.pi-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.2vw, 56px) clamp(32px, 2.5vw, 64px); display: flex; flex-direction: column; gap: 16px; }
+.pi-sec h2 { margin: 0; font-size: clamp(26px, calc(14px + 1.1vw), 44px); letter-spacing: -0.01em; }
+.pi-sec h3 { margin: 0; font-size: clamp(17px, calc(12px + 0.4vw), 23px); }
+.pi-intro { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
+.pi-caveat { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--muted); border-left: 3px solid var(--line-2); padding-left: 12px; max-width: var(--measure); }
+.pi-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.2vw, 28px); }
 .pi-step { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--soft); }
 .pi-step .n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #FFFFFF; font-weight: 700; font-size: 14px;
   display: inline-flex; align-items: center; justify-content: center; }
 .pi-step > div { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; min-width: 0; }
 .pi-step .when { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.pi-step p { margin: 2px 0 6px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
-.pi-why { border-left: 4px solid var(--blue); padding: 2px 0 2px 16px; max-width: 880px; }
-.pi-why p { margin: 6px 0 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+.pi-step p { margin: 2px 0 6px; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
+.pi-why { border-left: 4px solid var(--blue); padding: 2px 0 2px 16px; max-width: var(--measure); }
+.pi-why p { margin: 6px 0 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.6; color: var(--ink-2); }
 
 /* the 35 things */
 .pi-dumb-legend { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--ink-2); }
@@ -213,12 +213,23 @@ body.plato-inside { background: #F7F6F1; }
 
 /* method */
 .pi-method { background: var(--soft); }
-.pi-method h2 { font-size: 22px; }
-.pi-method ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.6; color: var(--ink-2); max-width: 980px; }
-.pi-method p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-2); }
+.pi-method h2 { font-size: clamp(22px, calc(14px + 0.65vw), 32px); }
+.pi-method ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
+.pi-method p { margin: 0; max-width: 120ch; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
 .pi-method code { font-family: var(--mono); font-size: 13px; }
 .pi-credit { font-size: 13px !important; color: var(--muted) !important; }
 
+/* Wide windows: the map stops at 900px square (it holds 80px drawings), and the readout and chart beside it take
+   the rest; the 35 things get a wider chart with their caveat beside it; the method notes run in columns. */
+@media (min-width: 1700px) {
+  .pi-stage { grid-template-columns: minmax(0, 900px) minmax(0, 1fr); }
+  #every { display: grid; grid-template-columns: minmax(0, 1200px) minmax(0, 1fr); column-gap: clamp(32px, 3vw, 80px); row-gap: 16px; align-items: start; }
+  #every > * { grid-column: 1 / -1; }
+  #every > .pi-dumb { grid-column: 1; max-width: none; }
+  #every > .pi-caveat { grid-column: 2; grid-row: 4; }
+  .pi-method ul { display: block; columns: 28em 3; column-gap: clamp(40px, 4vw, 112px); max-width: none; }
+  .pi-method li { break-inside: avoid; margin-bottom: 10px; }
+}
 @media (max-width: 1060px) {
   .pi-hero { grid-template-columns: minmax(0, 1fr); padding: 24px; }
   .pi-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
