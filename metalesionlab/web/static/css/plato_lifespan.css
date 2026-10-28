@@ -5,44 +5,44 @@
   --gridline: #E1E0D9; --axis: #C3C2B7;
   background: #F7F6F1;
 }
-/* the page grows with the window: no column cap, fluid side padding; prose keeps a 70-80ch measure */
-.ls .page { max-width: none; padding-inline: clamp(16px, 4vw, 96px); }
+/* The page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its header
+   lines up with every other page; prose keeps a 75ch measure. */
 .ls main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.ls-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
-.ls-note { font-size: 13px; line-height: 1.5; color: var(--muted); margin: 0; }
-.ls-sub { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); max-width: 75ch; }
+.ls-note { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
+.ls-sub { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 
 /* hero */
-.ls-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 32px;
+.ls-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px);
   display: flex; flex-direction: column; gap: 22px; }
-.ls-hero-text { display: flex; flex-direction: column; gap: 12px; max-width: 75ch; }
-.ls-hero-text h1 { margin: 0; font-size: clamp(36px, 4vw, 72px); letter-spacing: -0.02em; line-height: 1.02; }
-.ls-lede { margin: 0; font-size: 19px; line-height: 1.55; color: var(--ink-2); }
+.ls-hero-text { display: flex; flex-direction: column; gap: 12px; }
+.ls-hero-text > p { max-width: var(--measure); }
+.ls-hero-text h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
+.ls-lede { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.55; color: var(--ink-2); }
 
 .ls-timeline { display: flex; flex-direction: column; gap: 14px; }
 .ls-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
-.ls-thing { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+.ls-thing { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: clamp(14px, calc(10px + 0.25vw), 17px); }
 .ls-thing select { font: inherit; font-weight: 400; padding: 6px 10px; min-height: 40px; border-radius: 8px;
   border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); }
 
-.ls-stage { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: stretch; }
+.ls-stage { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 2vw, 56px); align-items: stretch; }
 .ls-pic { background: var(--chart); border: 1px solid var(--line); border-radius: 12px; padding: 16px;
   display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 260px; justify-content: center; }
 .ls-pic img { width: 100%; max-width: 1218px; height: auto; display: block; margin: 0 auto; border-radius: 6px; background: #FFFFFF; }
 .ls-pic .ls-icons { width: 100%; max-width: clamp(320px, 30vw, 640px); height: auto; display: block; margin: 0 auto; }
-.ls-pic .ls-pic-cap { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.ls-pic .ls-pic-cap { margin: 0; max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
 .ls-pic .ls-pic-cap b { color: var(--ink); }
-.ls-pic .ls-damage { font-size: 16px; line-height: 1.55; color: var(--ink-2); margin: 0; }
+.ls-pic .ls-damage { max-width: var(--measure); font-size: calc(var(--fs-body) + 1px); line-height: 1.55; color: var(--ink-2); margin: 0; }
 
 .ls-read { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.ls-read h3 { margin: 0; font-size: 26px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
+.ls-read h3 { margin: 0; font-size: clamp(26px, calc(16px + 0.8vw), 38px); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; }
 .ls-read h3 .key { width: 14px; height: 14px; border-radius: 50%; flex: none; }
-.ls-read .who { margin: -8px 0 0; font-size: 14px; color: var(--muted); }
+.ls-read .who { margin: -8px 0 0; font-size: var(--fs-sm); color: var(--muted); }
 .ls-meter { display: flex; flex-direction: column; gap: 4px; }
-.ls-meter .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 14px; }
-.ls-meter .top b { font-size: 20px; font-weight: 700; }
+.ls-meter .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--fs-sm); }
+.ls-meter .top b { font-size: clamp(20px, calc(13px + 0.55vw), 28px); font-weight: 700; }
 .ls-meter .top span { color: var(--ink-2); }
-.ls-meter svg { width: 100%; height: auto; display: block; overflow: visible; }
+.ls-meter svg { width: 100%; height: auto; display: block; overflow: visible; }  /* drawn at the column's own width (plato_lifespan.js) */
 .ls-meter .hint { font-size: 12px; color: var(--muted); margin: 0; }
 .ls-meter .ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; margin-top: -4px; }
 
@@ -58,12 +58,12 @@
 .ls-ticks .grp.muse { border-color: var(--muse); }
 .ls-ticks .grp.sd { border-color: var(--sd); }
 .ls-ticks .on { color: var(--ink); font-weight: 600; }
-.ls-stop-label { margin: 0; font-size: 13px; color: var(--ink-2); }
+.ls-stop-label { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); }
 
 .ls-answer { border-left: 4px solid var(--people); padding: 2px 0 2px 16px; }
-.ls-answer h2 { margin: 0 0 8px; font-size: 18px; }
-.ls-answer ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.5;
-  color: var(--ink-2); max-width: 80ch; }
+.ls-answer h2 { margin: 0 0 8px; font-size: clamp(18px, calc(12px + 0.45vw), 24px); }
+.ls-answer ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-body); line-height: 1.5;
+  color: var(--ink-2); max-width: var(--measure); }
 .ls-answer b { color: var(--ink); }
 
 .ls-jump { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -72,9 +72,9 @@
 .ls-jump a:hover { border-color: var(--ink); }
 
 /* sections */
-.ls-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px 32px;
+.ls-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.2vw, 56px) clamp(32px, 2.5vw, 64px);
   display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 12px; min-width: 0; }
-.ls-sec h2 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
+.ls-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.01em; }
 .ls-chart { position: relative; min-width: 0; }
 .ls-chart svg { width: 100%; height: auto; max-height: 72vh; display: block; overflow: visible; font-family: var(--sans); }
 .ls-chart .tick { font-size: 11px; fill: var(--muted); }
@@ -94,10 +94,10 @@
   background: var(--panel); color: var(--ink); cursor: pointer; }
 .ls-tabs button:hover { border-color: var(--ink); }
 .ls-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; font-weight: 600; }
-.ls-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.ls-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(16px, 1.4vw, 32px); }
 .ls-pair.ls-three { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
 .ls-panel { margin: 0; background: var(--chart); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; min-width: 0; }
-.ls-panel figcaption { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.ls-panel figcaption { font-size: clamp(14px, calc(10px + 0.25vw), 17px); font-weight: 600; margin-bottom: 4px; }
 .ls-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 4px 0; font-size: 14px; }
 .ls-numbers table { border-collapse: collapse; font-size: 13px; margin-top: 8px; }
 .ls-numbers th, .ls-numbers td { padding: 4px 10px; border-bottom: 1px solid var(--line); text-align: left; }
@@ -105,7 +105,7 @@
 .ls-numbers div { overflow-x: auto; }
 
 /* watch an AI learn: the time-lapse player (a 5 x 4 sprite of 20 checkpoints), the stroke-by-stroke chair, the verdict */
-.ls-h3 { margin: 8px 0 0; font-size: 18px; }
+.ls-h3 { margin: 8px 0 0; font-size: var(--fs-h3); }
 .ls-learn { display: grid; grid-template-columns: minmax(0, 3fr) minmax(min(100%, 300px), 2fr); gap: clamp(16px, 2vw, 40px); align-items: center; }
 .ls-learn-pic { background: var(--chart); border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-width: 0; }
 .ls-learn-frames { position: relative; width: min(100%, 80vh); aspect-ratio: 1 / 1; margin: 0 auto; }
@@ -118,7 +118,7 @@
 .ls-learn-step span { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .ls-learn-step b { font-family: var(--mono); font-weight: 500; font-size: clamp(40px, 5vw, 96px); line-height: 1; color: var(--ink);
   font-variant-numeric: tabular-nums; }
-.ls-learn-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 15px; color: var(--ink-2); }
+.ls-learn-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: var(--fs-body); color: var(--ink-2); }
 .ls-learn-row b { font-size: clamp(22px, 1.6vw, 32px); color: var(--ink); font-variant-numeric: tabular-nums; }
 .ls-learn-bar svg { width: 100%; height: auto; max-height: 72px; display: block; overflow: visible; font-family: var(--sans); }
 .ls-learn-controls { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
@@ -138,25 +138,41 @@
 .ls-stroke-fig .ls-play { background: var(--panel); color: var(--ink); }
 .ls-stroke-fig .ls-play:hover { border-color: var(--ink); background: var(--soft); }
 .ls-stroke-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.ls-stroke-text h3 { margin: 0; font-size: 18px; }
+.ls-stroke-text h3 { margin: 0; font-size: var(--fs-h3); }
 
 .ls-verdict { border-left: 4px solid var(--ink); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 10px; }
-.ls-verdict p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink-2); max-width: 80ch; }
+.ls-verdict p { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .ls-verdict p b { color: var(--ink); }
 .ls-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 10px; }
 .ls-tile { background: var(--chart); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex;
   flex-direction: column; gap: 2px; min-width: 0; }
 .ls-tile span { font-size: 12px; color: var(--muted); }
-.ls-tile b { font-size: 22px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.ls-tile b { font-size: clamp(22px, calc(14px + 0.6vw), 32px); color: var(--ink); font-variant-numeric: tabular-nums; }
 .ls-tile small { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
 .ls-learn-tabs { display: flex; flex-wrap: wrap; gap: 8px 20px; }
 @media (prefers-reduced-motion: reduce) { .ls-learn-top.fade { transition: none; } }
 
-.ls-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.55;
-  color: var(--ink-2); max-width: 80ch; }
+.ls-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: var(--fs-body); line-height: 1.55;
+  color: var(--ink-2); max-width: var(--measure); }
 .ls-method ul ul { margin-top: 6px; gap: 4px; }
-.ls-credit { margin: 0; font-size: 13px; line-height: 1.55; color: var(--muted); max-width: 80ch; }
+.ls-credit { margin: 0; font-size: var(--fs-sm); line-height: 1.55; color: var(--muted); max-width: 120ch; }
 
+/* Wide windows: charts drawn in fixed viewBoxes (760, 400 and 300 units) stop at about 1.6 times, and their
+   legends and notes sit beside them; the method notes run in columns of a readable width. */
+@media (min-width: 1700px) {
+  #paths { display: grid; grid-template-columns: minmax(0, 1220px) minmax(0, 1fr); column-gap: clamp(32px, 3vw, 80px); row-gap: 14px; align-items: start; }
+  #paths > h2, #paths > .ls-sub { grid-column: 1 / -1; }
+  #paths > .ls-chart { grid-column: 1; grid-row: 3 / span 2; }
+  #paths > .ls-legend { grid-column: 2; grid-row: 3; flex-direction: column; align-items: flex-start; }
+  #paths > .ls-note { grid-column: 2; grid-row: 4; }
+  #curves { display: grid; grid-template-columns: minmax(0, 1340px) minmax(0, 1fr); column-gap: clamp(32px, 3vw, 80px); row-gap: 14px; align-items: start; }
+  #curves > * { grid-column: 1 / -1; }
+  #curves > .ls-pair { grid-column: 1; }
+  #curves > .ls-note { grid-column: 2; grid-row: 4; }
+  .ls-pair.ls-three { grid-template-columns: repeat(3, minmax(0, 500px)); }
+  .ls-method ul { display: block; columns: 28em 3; column-gap: clamp(40px, 4vw, 112px); max-width: none; }
+  .ls-method > ul > li { break-inside: avoid; margin-bottom: 10px; }
+}
 @media (max-width: 900px) {
   .ls-stage { grid-template-columns: minmax(0, 1fr); }
   .ls-learn { grid-template-columns: minmax(0, 1fr); }

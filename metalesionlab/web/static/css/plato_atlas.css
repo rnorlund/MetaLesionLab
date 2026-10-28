@@ -1,23 +1,23 @@
 /* The Atlas of Forms (/plato/atlas). Same paper and colors as Plato's Chair: blue = Muse Image, teal = SDXL,
    orange = people; green and violet mark natural things and artifacts in the predictor charts only. */
 body.atlas { background: #F7F6F1; }
-/* fluid: the page grows with the window (no narrow centred column); prose keeps a readable measure */
-body.atlas .page { max-width: none; padding-left: clamp(16px, 4vw, 96px); padding-right: clamp(16px, 4vw, 96px); }
+/* fluid: the page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its
+   header lines up with every other page; prose keeps a readable measure */
 .atlas main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .atlas { --muse: #1D4ED8; --sdxl: #0D9488; --people: #C2410C; --natural: #15803D; --artifact: #7C3AED; }
 .k-muse { box-shadow: inset 0 -3px 0 var(--muse); }
 .k-people { box-shadow: inset 0 -3px 0 var(--people); }
 .at-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
 .at-kicker a { color: inherit; }
-.at-cap { font-size: 13px; line-height: 1.5; color: var(--muted); margin: 0; }
+.at-cap { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
 
 /* hero */
-.at-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 32px; display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 24px 32px; align-items: center; }
+.at-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px); display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 24px clamp(32px, 3.5vw, 96px); align-items: center; }
 .at-hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.at-hero h1 { margin: 0; font-size: clamp(36px, 5vw, 56px); letter-spacing: -0.02em; line-height: 1.02; }
-.at-lede { margin: 0; font-size: 19px; line-height: 1.55; color: var(--ink-2); max-width: 70ch; }
-.at-answer { margin: 0; font-size: 21px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em;
+.at-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
+.at-lede { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.at-answer { margin: 0; font-size: clamp(21px, calc(14px + 0.55vw), 29px); font-weight: 700; line-height: 1.4; letter-spacing: -0.01em;
   border-left: 4px solid var(--muse); padding-left: 16px; max-width: 60ch; }
 .at-hero-fig { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .at-hero-forms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 10px; }
@@ -31,10 +31,10 @@ body.atlas .page { max-width: none; padding-left: clamp(16px, 4vw, 96px); paddin
 .at-hf img.p { border-color: var(--people); }
 .at-hf span { font-size: 13px; font-weight: 600; text-align: center; }
 .at-hf small { display: block; font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--muted); }
-.at-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.at-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1vw, 24px); }
 .at-tile { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--soft); }
-.at-tile b { font-size: 32px; letter-spacing: -0.01em; line-height: 1.05; }
-.at-tile span { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+.at-tile b { font-size: clamp(32px, calc(20px + 1vw), 46px); letter-spacing: -0.01em; line-height: 1.05; }
+.at-tile span { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
 .at-tile small { font-size: 12px; color: var(--muted); font-family: var(--mono); }
 
 .at-jump { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -43,11 +43,12 @@ body.atlas .page { max-width: none; padding-left: clamp(16px, 4vw, 96px); paddin
 .at-jump a:hover { border-color: var(--ink); }
 
 /* sections */
-.at-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px 32px; display: flex;
+.at-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.2vw, 56px) clamp(32px, 2.5vw, 64px); display: flex;
   flex-direction: column; gap: 16px; scroll-margin-top: 12px; min-width: 0; }
-.at-sec-head { display: flex; flex-direction: column; gap: 8px; max-width: 78ch; }
-.at-sec h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); letter-spacing: -0.015em; }
-.at-sec-lede { margin: 0; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+.at-sec-head { display: flex; flex-direction: column; gap: 8px; }
+.at-sec-head > p { max-width: var(--measure); }
+.at-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.015em; }
+.at-sec-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
 
 /* gallery controls */
 .at-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -113,22 +114,26 @@ body.atlas .page { max-width: none; padding-left: clamp(16px, 4vw, 96px); paddin
 .at-numbers td.n { font-variant-numeric: tabular-nums; text-align: right; }
 
 /* predictors */
-.at-why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.at-why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 1.4vw, 32px); }
 .at-panel { margin: 0; border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.at-panel figcaption { display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 1.5; color: var(--ink-2); max-width: 70ch; }
-.at-panel figcaption b { font-size: 16px; color: var(--ink); }
+.at-panel figcaption { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); max-width: var(--measure); }
+.at-panel figcaption b { font-size: clamp(16px, calc(11px + 0.4vw), 22px); color: var(--ink); }
 
 /* run it */
-.at-run { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.at-run { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 2vw, 56px); }
 .at-run-label { margin: 0 0 6px; font-weight: 600; font-size: 14px; }
 .at-code { margin: 0 0 14px; background: #0F172A; color: #E2E8F0; font-family: var(--mono); font-size: 13px; line-height: 1.55;
   padding: 12px 14px; border-radius: 10px; overflow-x: auto; white-space: pre; }
 .at-code.wrap { white-space: pre-wrap; }
-.at-run-note { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); max-width: 70ch; }
+.at-run-note { margin: 0; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 
 /* method */
-.at-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.6; color: var(--ink-2); max-width: 80ch; }
-.at-credit { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.at-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
+@media (min-width: 1700px) {  /* the method notes run in columns of a readable width */
+  .at-method ul { display: block; columns: 28em 3; column-gap: clamp(40px, 4vw, 112px); max-width: none; }
+  .at-method li { break-inside: avoid; margin-bottom: 10px; }
+}
+.at-credit { margin: 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.5; max-width: 120ch; }
 
 /* the card detail */
 .at-dialog { width: min(880px, calc(100vw - 24px)); max-height: calc(100vh - 32px); border: 0; border-radius: 16px; padding: 22px 24px;

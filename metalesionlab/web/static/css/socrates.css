@@ -8,9 +8,9 @@
   --bronze-line: #E4D3B4;
 }
 
-/* Fluid: the page grows with the window (no narrow centred column); prose keeps a 70-80ch measure. On wide
-   windows the dialogue takes the main column and "How it works" and the method sit beside it. */
-body.socrates .page { max-width: none; padding-inline: clamp(16px, 4vw, 96px); }
+/* Fluid: the page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its
+   header lines up with every other page; prose keeps a 75ch measure. On wide windows the dialogue takes the main
+   column and "How it works" and the method sit beside it. */
 body.socrates .footnote { max-width: 110ch; }
 .so { margin: 20px 0 0; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 1.4vw, 28px); align-items: start; outline: none; }
 .so-side { display: flex; flex-direction: column; gap: clamp(18px, 1.4vw, 28px); min-width: 0; }
@@ -22,14 +22,13 @@ body.socrates .footnote { max-width: 110ch; }
 }
 @media (min-width: 1800px) {
   .so { grid-template-columns: minmax(0, 1fr) minmax(360px, 28%); }
-  .so-body, .so-said, .so-how-list, .so-method-list { font-size: 17px; }
 }
-.so-text p, .so-text ul, .so-text ol, .so-said, .so-examine-intro p { max-width: 78ch; }
+.so-text p, .so-text ul, .so-text ol, .so-said, .so-examine-intro p { max-width: var(--measure); }
 .so-ask p { max-width: 62ch; }
 .so-hero { padding: clamp(20px, 2vw, 40px) clamp(18px, 2.2vw, 44px) clamp(16px, 1.6vw, 32px); display: flex; flex-direction: column; gap: 10px; }
-.so-kicker { font-family: var(--mono); font-size: 12px; color: var(--bronze); letter-spacing: 0.02em; }
-.so-hero h1 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: clamp(34px, 5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; }
-.so-lede { margin: 0; font-size: clamp(16px, 0.35vw + 12.5px, 21px); line-height: 1.55; color: var(--ink-2); max-width: 75ch; }
+.so-hero .title-kicker { color: var(--bronze); }  /* the composed title (app.css), in the page's bronze */
+.so-hero h1 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: var(--fs-h1); letter-spacing: -0.01em; line-height: 1.05; }
+.so-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .so-key {
   height: 12px; margin-top: 8px; background: var(--bronze-line);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M0 11.25H24M9.75 11.25V.75H2.25V8.25H6.75V3.75H5.25M21.75 11.25V.75H14.25V8.25H18.75V3.75H17.25' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x left center / 24px 12px;
@@ -38,33 +37,33 @@ body.socrates .footnote { max-width: 110ch; }
 
 /* the visitor's drawing, from /draw */
 .so-drawing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; border-color: var(--bronze-line); background: var(--bronze-soft); }
-.so-drawing h2 { margin: 0 0 4px; font-size: 15px; }
-.so-drawing p { margin: 0; font-size: 14px; line-height: 1.5; }
+.so-drawing h2 { margin: 0 0 4px; font-size: clamp(15px, calc(10px + 0.3vw), 18px); }
+.so-drawing p { margin: 0; font-size: var(--fs-sm); line-height: 1.5; }
 .so-drawing-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 380px; }
 .so-drop { min-height: 36px; padding: 6px 12px; }
 
 /* the dialogue */
-.so-dialogue { display: flex; flex-direction: column; gap: 16px; padding: 22px 24px; }
+.so-dialogue { display: flex; flex-direction: column; gap: 16px; padding: clamp(22px, 1.6vw, 40px) clamp(24px, 1.8vw, 44px); }
 .so-dialogue-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
-.so-dialogue-head h2 { font-size: 15px; }
+.so-dialogue-head h2 { font-size: clamp(15px, calc(10px + 0.3vw), 18px); }
 .so-turns { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.so-empty-lede { margin: 0 0 10px; font-size: 14px; color: var(--muted); }
+.so-empty-lede { margin: 0 0 10px; font-size: var(--fs-sm); color: var(--muted); }
 .so-starters { display: flex; flex-wrap: wrap; gap: 8px; }
-.so-starter { border: 1px solid var(--line-2); background: var(--soft); color: var(--ink-2); border-radius: 999px; padding: 8px 14px; font-size: 14px; line-height: 1.35; cursor: pointer; text-align: left; min-height: 38px; }
+.so-starter { border: 1px solid var(--line-2); background: var(--soft); color: var(--ink-2); border-radius: 999px; padding: 8px 14px; font-size: var(--fs-sm); line-height: 1.35; cursor: pointer; text-align: left; min-height: 38px; }
 .so-starter:hover { border-color: var(--bronze); color: var(--ink); }
 .so-starter.mine { border-color: var(--bronze); background: var(--bronze-soft); color: var(--ink); font-weight: 500; }
 .so-starter:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .so-thread { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .so-thread:empty { display: none; }
-.so-turn { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 18px; row-gap: 8px; padding: 16px 0; border-top: 1px solid var(--line); }
+.so-turn { display: grid; grid-template-columns: clamp(92px, 5vw, 120px) minmax(0, 1fr); column-gap: clamp(18px, 1.2vw, 28px); row-gap: 8px; padding: 16px 0; border-top: 1px solid var(--line); }
 .so-turn:first-child { border-top: 0; padding-top: 4px; }
 .so-turn > :not(.so-speaker) { grid-column: 2; }
 .so-speaker { grid-column: 1; grid-row: 1 / span 6; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding-top: 2px; }
 .so-name { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .so-socrates .so-name { color: var(--bronze); }
 .so-ai { font-family: var(--mono); font-size: 10px; line-height: 1; padding: 3px 5px; border-radius: 4px; border: 1px solid var(--bronze-line); color: var(--bronze); }
-.so-said { margin: 0; font-size: 16px; line-height: 1.55; font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
+.so-said { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.55; font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
 .so-state { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
 
 .so-trace { border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
@@ -83,7 +82,7 @@ body.socrates .footnote { max-width: 110ch; }
 .so-data summary { cursor: pointer; font-size: 12px; color: var(--blue); width: fit-content; }
 .so-data pre { max-height: 240px; overflow: auto; margin: 6px 0 0; padding: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: 11.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; color: var(--ink-2); }
 
-.so-body { font-size: 16px; line-height: 1.65; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 12px; }
+.so-body { font-size: calc(var(--fs-body) + 1px); line-height: 1.65; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 12px; }
 .so-text p { margin: 0 0 10px; }
 .so-text p:last-child, .so-text ul:last-child, .so-text ol:last-child { margin-bottom: 0; }
 .so-text ul, .so-text ol { margin: 0 0 10px; padding-left: 22px; }
@@ -95,7 +94,7 @@ body.socrates .footnote { max-width: 110ch; }
 a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-ask { border-left: 3px solid var(--bronze); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 4px; }
 .so-ask-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bronze); }
-.so-ask p { margin: 0; font-family: var(--serif); font-style: italic; font-size: 18.5px; line-height: 1.5; color: var(--ink); }
+.so-ask p { margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(18.5px, calc(13px + 0.45vw), 24px); line-height: 1.5; color: var(--ink); }
 .so-error { margin: 0; color: var(--red); font-size: 14px; }
 
 .so-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
@@ -109,7 +108,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-cost { font-family: var(--mono); font-size: 12px; color: var(--muted); }
 
 .so-form { display: flex; gap: 10px; align-items: stretch; }
-.so-form textarea { flex: 1 1 auto; font-size: 16px; min-height: 54px; resize: vertical; line-height: 1.4; }
+.so-form textarea { flex: 1 1 auto; font-size: clamp(16px, calc(11px + 0.35vw), 20px); min-height: 54px; resize: vertical; line-height: 1.4; }
 .so-form textarea:disabled { background: var(--soft); }
 .so-form .btn { min-width: 104px; }
 .so-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
@@ -121,7 +120,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-toast.on { opacity: 1; }
 
 .so-how h2 { margin-bottom: 10px; }
-.so-how-list { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.so-how-list { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
 .so-how-list b { color: var(--ink); }
 
 /* the portrait: a Muse Image doodle, kept on white paper in both themes */
@@ -141,7 +140,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-mode input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
 .so-mode input:disabled + span { opacity: 0.6; cursor: not-allowed; }
 .so-examine-intro { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
-.so-examine-intro p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.so-examine-intro p { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); }
 .so-concepts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; border: 0; }
 .so-concepts legend { float: left; margin-right: 6px; padding: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
 .so-concept { position: relative; display: inline-flex; }
@@ -150,11 +149,11 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-concept input:checked + span { border-color: var(--bronze); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--bronze); }
 .so-concept input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
 .so-concept input:disabled + span { opacity: 0.6; cursor: not-allowed; }
-.so-opening .so-ask p { font-size: 20px; }
+.so-opening .so-ask p { font-size: clamp(20px, calc(14px + 0.5vw), 27px); }
 
 /* the end of an examination */
 .so-aporia { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
-.so-verdict { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 15px; line-height: 1.5; }
+.so-verdict { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: var(--fs-body); line-height: 1.5; }
 .so-verdict dt { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); padding-top: 3px; }
 .so-verdict dt.broke { color: var(--red); }
 .so-verdict dd { margin: 0; color: var(--ink); }
@@ -163,12 +162,11 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 
 /* What is the Socratic method? */
 .so-method h2 { margin-bottom: 10px; }
-.so-method-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.so-method-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
 .so-method-list b { color: var(--ink); }
 .so-method-list i { font-family: var(--serif); }
 
 @media (max-width: 720px) {
-  .page { padding-left: 16px; padding-right: 16px; }
   .so-hero { padding: 20px 18px 16px; }
   .so-lede { font-size: 16px; }
   .so-dialogue { padding: 18px 16px; }
