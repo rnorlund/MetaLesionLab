@@ -74,3 +74,46 @@ Chosen now, so nothing is picked after looking:
 - GPU: axon-server01 (L40S), working only in `~/MetaLesionLab_sketch` under nohup with logs. We check `nvidia-smi` first and never touch other users' processes.
 - Analysis and figures run on the Mac.
 - Credits: Quick, Draw! (Google Creative Lab, CC BY 4.0); Sketch-RNN design (Ha & Eck 2017); DINOv2 (Meta, Apache-2.0).
+
+## Addendum (2026-10-28): does the narrowing replicate in a stronger model?
+
+Written and committed before replicate runs 2, 3 and 4 below were trained.
+
+**Why.** The small model's last chairs are recognizable to DINOv2 (87%) but rough to a person's eye. For the animation we piloted stronger learners, one run each, and chose a larger Sketch-RNN. The 8-run result above belongs to the small model and stays true of it. This addendum asks whether it replicates in the larger model.
+
+**What we have already seen.**
+- The larger model's pilot run (seed 1): its drawings at every checkpoint and temperature, and that one run's three measures at temperatures 1.0, 0.6 and 0.4.
+- At step 102,400 and temperature 1.0 it is 85.5% recognizable, with spread 0.338 against 0.376 for 1,000 of its training chairs, a difference of about −0.038. So seed 1 can't test the question, and the test uses new runs only.
+- Also seen: a pixel diffusion pilot (`scripts/plato_sketch_diffusion.py`, one run) and Magenta's pretrained Sketch-RNN chair (`scripts/plato_sketch_magenta.py`), compared in `scripts/plato_sketch_compare.py`.
+
+**The model** (`scripts/plato_sketch_big.py`, `plato_sketch.BIG`, fixed before the pilot):
+- The small model's decoder (`plato_lifespan_sketch.build`), with 2,048 units instead of 512: one LSTM layer, dropout 0.1, a 20-component bivariate Gaussian mixture and 3 pen states, the same loss.
+- We first tried Ha & Eck's layer-normalized LSTM with recurrent dropout. Without a fused kernel it ran about 20 times slower per step in PyTorch, so we dropped it before the pilot.
+- Data: every recognized Quick, Draw! chair after the 200 adult reference chairs: 203,326 drawings, of which 203,324 have at most 199 points and are used.
+- Training: Adam 1e-3, decayed by 0.9999 per step down to a floor of 1e-5, gradient norm clipped at 1, batch 100, **102,400 steps** (about 50 passes). Ha & Eck's random scaling: each drawing's x and y offsets are multiplied by U(0.85, 1.15).
+- Checkpoints: the small model's 20, plus 38,400, 51,200, 76,800 and 102,400 (24 in all).
+- Temperatures: **1.0, 0.8, 0.6, 0.4 and 0.2**. At every checkpoint, 200 drawings at each, from noise fixed per seed as above.
+- Rendering, embedding and measures exactly as above. "The drawings it learned from": a fixed random 1,000 of the 203,324 (numpy seed 20261027), rendered and embedded the same way.
+
+**Seeds.** **2, 3 and 4.** A run whose loss becomes NaN is replaced by the next unused seed (5, 6, …), and that is reported.
+
+**P1′ (primary).** At temperature 1.0 and step 102,400, over seeds 2–4: Δs = spread(200 drawings) − spread(the 1,000 training chairs).
+- **Narrower** only if both the 95% t-interval across seeds (2 df) and the two-level bootstrap CI (2,000 replicates, as above) lie below 0.
+- **Wider** if both lie above 0. Otherwise **no clear difference**.
+- Reported alongside: each seed's Δs, and the same test with the pilot included (seeds 1–4).
+
+**P2′.** The same test at 0.8, 0.6, 0.4 and 0.2, two-sided.
+
+**Robustness** (temperature 1.0, seeds 2–4): (a) the mean of the last three checkpoints (51,200, 76,800, 102,400); (b) the training chairs passed through the stroke-5 round trip; (c) DINOv2 patch-mean embeddings.
+
+**P3′ (descriptive).** The learning path at every checkpoint and temperature: the mean over all four runs, with a 95% t-interval.
+
+**The animation.**
+- Seed 1 (the pilot) at temperature **0.4**: the first 16 of its 200 drawings, at all 24 checkpoints.
+- The temperature was chosen by eye from the pilot's drawings. At 0.4 its chairs are clean and varied. At 0.2 some collapse into dense loops. At 0.6 and above more of them are rough.
+- The measures shown with the animation are at that temperature. The test at 0.4 (P2′) is reported next to the primary one.
+- Stroke by stroke: at step 102,400, the first of those 16 that DINOv2 calls a chair.
+
+**Reading.** We report whatever comes out. If the larger model ends narrower, the narrowing replicates in a stronger model. If not, or if it ends wider, the page says so, and the 8-run result is reported as the small model's only.
+
+**Compute.** Axon L40S GPUs on axon-server02 and axon-server03, at most two at a time, in `~/MetaLesionLab_learn`. No paid API calls.
