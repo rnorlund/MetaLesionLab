@@ -10,7 +10,8 @@ it) passes through it, and it:
 - replaces the page's <header class="topbar">…</header>, whatever it holds, with the site header built
   from the site's NAV and MORE below, so the nav is the same on every page of a site (model chips such
   as #sample-chip are kept). The Plato site's brand slot holds its logo, the Form chair (FORM_CHAIR);
-- fills <!--#series--> (every Plato series card) and <!--#series:sub--> (the series without /plato);
+- fills <!--#series--> (every Plato series card) and <!--#series:sub--> (the series without /plato), and
+  <!--#series:hub--> (the Experiments hub on /plato: one even grid, picture, question and one-line answer);
 - fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py), with its speaker's face;
 - on the Plato site, adds the portraits (portraits.py): Plato beside "What would Plato ask an AI?" and Socrates
   as a floating guide on the series pages, and the "drawn by Meta's Muse Image" credit wherever one is shown;
@@ -53,14 +54,17 @@ TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # ("exact": the path itself only). Everything else the site has goes under "More" (MORE, and the series).
 NAV = {
     "plato": [
-        {"href": "/", "label": "Home", "current": ["/"]},
-        {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"]},
-        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside", "/plato/gallery"]},
-        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"]},
+        {"href": "/", "label": "Home", "current": ["/"], "icon": "home"},
+        {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"], "icon": "draw"},
+        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside", "/plato/gallery"],
+         "icon": "experiments"},
+        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"], "icon": "gallery"},
         # its own page once /plato/inside is served, else the section on /plato
-        {"href": "/plato/inside", "label": "Inside the model", "needs": "/plato/inside", "current": ["/plato/inside"]},
-        {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato", "unless": "/plato/inside"},
-        {"href": "/socrates", "label": "Ask Socrates", "needs": "/socrates", "current": ["/socrates"], "accent": True},
+        {"href": "/plato/inside", "label": "Inside the model", "needs": "/plato/inside", "current": ["/plato/inside"],
+         "icon": "inside"},
+        {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato", "unless": "/plato/inside", "icon": "inside"},
+        {"href": "/socrates", "label": "Ask Socrates", "needs": "/socrates", "current": ["/socrates"], "accent": True,
+         "icon": "socrates"},
         {"href": GITHUB, "label": "Code", "external": True},
     ],
     "lingua": [
@@ -86,6 +90,20 @@ MORE = {
 }
 FAVICON = {"plato": "/static/img/favicon-plato.svg", "lingua": "/static/img/favicon.svg"}
 SHARE_IMAGE = {"plato": "/static/img/og-plato-chair.png", "lingua": "/static/img/og-tippa-lingua.jpg"}  # 1200 x 630
+
+# Nav icons: an item with "icon" is drawn as an even-weighted button, a small line icon then its label (16-unit
+# box, stroke = currentColor). Items without one (Code, More, the Lingua site's) stay plain links.
+NAV_ICONS = {
+    "home": '<path d="M2.5 7.5L8 3l5.5 4.5M4 6.5V13h8V6.5"/>',
+    "draw": '<path d="M10.5 2.5l3 3L6 13H3v-3z"/><path d="M9 4l3 3"/>',
+    "experiments": '<rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/>'
+                   '<rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/>',
+    "gallery": '<rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2.5 11.5l3.5-3.5 2.5 2.5 2-2 3 3"/>'
+               '<circle cx="10.5" cy="6" r="1"/>',
+    "inside": '<path d="M2.5 4.5L8 2l5.5 2.5L8 7z"/><path d="M2.5 8L8 10.5 13.5 8M2.5 11.5L8 14l5.5-2.5"/>',
+    "socrates": '<path d="M2.5 4a1.5 1.5 0 0 1 1.5-1.5h8A1.5 1.5 0 0 1 13.5 4v5.5A1.5 1.5 0 0 1 12 11H7l-3 2.5V11'
+                'a1.5 1.5 0 0 1-1.5-1.5z"/>',
+}
 
 # The Plato site's logo: the geometric "Form" chair, drawn in a 64-unit box. The header's brand slot
 # holds it; the landing page's opening animation (static/js/splash.js) clones it, draws it stroke by
@@ -222,6 +240,61 @@ _ART = {
 }
 
 
+# --- the Experiments hub (/plato): one even grid of cards, picture, question and a one-line answer -------------
+# The answers come from the same write-ups as the cards' findings (data/series/<slug>.json can override "answer").
+# An experiment without one shows the first sentence of its finding. Pictures: static/img/plato/hub/<slug>.webp
+# (scripts/plato_hub_thumbs.py), else the series picture, else the drawn icon. The hub sits after the chair results,
+# so its pictures may show Muse Image's chairs; the invisible Forms card shows Plato, never Muse Image's God.
+HUB_IMG = HERE / "static" / "img" / "plato" / "hub"
+HUB_ANSWERS = {
+    "chair": "Muse Image drew the same chair 16 times; people drew 16 different ones.",
+    "inside": "From about layer 36 of 52, Meta’s open model files Muse Image’s doodles of a thing as one point.",
+    "ideas": "For 10 of 11 ideas, one emblem filled at least half of Muse Image’s 16 drawings.",
+    "forms": "Muse Image put the advert’s 10:10 on 13 of 16 clocks. People almost never do.",
+    "cave": "Meta’s open model named 67 of 100 everyday objects from their shadows.",
+    "cratylus": "“Kiki” gave 12 spiky stars. “Keti”, built from the same hard sounds, gave 12 round blobs.",
+    "bird": "Muse Spark said “sparrow” 49 times in 50. Twenty people named 11 different birds.",
+    "damage": "Damage its language part and a rocking chair becomes a room, a car or a person.",
+    "lifespan": "Children’s chairs grow toward adults’. Stable Diffusion’s training stages don’t.",
+    "atlas": "Muse Image drew 131 of 135 everyday things more alike than people did.",
+    "telephone": "Copied ten times, chairs drift apart instead of back to the textbook chair.",
+    "scale": "Bigger open models break fewer drawings, but up to 33 billion parameters their chairs don’t become one.",
+}
+
+
+def hub_image(item: dict) -> str | None:
+    for ext in ("webp", "png", "jpg"):
+        if (HUB_IMG / f"{item['slug']}.{ext}").is_file():
+            return f"/static/img/plato/hub/{item['slug']}.{ext}"
+    return item.get("image")
+
+
+def hub_answer(item: dict) -> str | None:
+    if item.get("answer"):
+        return item["answer"]
+    if HUB_ANSWERS.get(item["slug"]):
+        return HUB_ANSWERS[item["slug"]]
+    finding = item.get("finding")
+    return re.split(r"(?<=[.!?])\s", finding, maxsplit=1)[0] if finding else None
+
+
+def render_hub(items: list[dict]) -> str:
+    cards = []
+    for s in items:
+        img = hub_image(s)
+        art = (f'<img src="{_esc(img)}" alt="" loading="lazy" width="960" height="540">' if img else
+               f'<svg viewBox="0 0 120 90" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" '
+               f'stroke-linecap="round" stroke-linejoin="round">{_ART.get(s["slug"], _ART["chair"])}</svg>')
+        answer = hub_answer(s)
+        cards.append(
+            f'<li><a class="hub-card" href="{_esc(s["path"])}"><span class="hub-art">{art}</span>'
+            f'<span class="hub-body"><span class="hub-q">{_esc(s["question"])}</span>'
+            + (f'<span class="hub-a">{_esc(answer)}</span>' if answer else
+               '<span class="hub-a hub-new">New: see what we found</span>')
+            + f'<span class="hub-go">{_esc(s["title"])} <span aria-hidden="true">→</span></span></span></a></li>')
+    return f'<ul class="hub-grid" role="list">{"".join(cards)}</ul>' if cards else ""
+
+
 # --- which site, which pages ---------------------------------------------------------------------
 
 def site_of(app) -> str:
@@ -258,7 +331,8 @@ def series(app) -> list[dict]:
         extra = SERIES_DIR / f"{entry['slug']}.json"
         if extra.is_file():
             try:
-                item.update({k: v for k, v in json.loads(extra.read_text()).items() if k in entry or k == "image"})
+                item.update({k: v for k, v in json.loads(extra.read_text()).items()
+                             if k in entry or k in ("image", "answer")})
             except ValueError:
                 pass
         if not item.get("image"):
@@ -303,6 +377,8 @@ def _is_current(item: dict, path: str) -> bool:
 
 def _link(item: dict, path: str, cls: str = "") -> str:
     attrs = [f'href="{_esc(item["href"])}"']
+    icon = NAV_ICONS.get(item.get("icon", ""))
+    cls = " ".join(c for c in (cls, "nav-btn" if icon else "") if c)
     if cls:
         attrs.append(f'class="{cls}"')
     if _is_current(item, path) or (not item.get("current") and item["href"] == path):
@@ -310,6 +386,10 @@ def _link(item: dict, path: str, cls: str = "") -> str:
     if item.get("external"):
         attrs.append('rel="noopener"')
     label = _esc(item["label"]) + (' <span class="ext" aria-hidden="true">↗</span>' if item.get("external") else "")
+    if icon:
+        label = (f'<svg class="nav-ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" '
+                 f'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{icon}</svg>'
+                 f'<span class="nav-label">{label}</span>')
     return f"<a {' '.join(attrs)}>{label}</a>"
 
 
@@ -449,6 +529,7 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     page = _HEADER.sub(header, page, count=1)
     if "<!--#series" in page:
         items = series(app)
+        page = page.replace("<!--#series:hub-->", render_hub([s for s in items if s["path"] != "/plato"]))
         page = page.replace("<!--#series:sub-->", render_series([s for s in items if s["path"] != "/plato"]))
         page = page.replace("<!--#series-->", render_series(items))
     if "<!--#epigraph:" in page:

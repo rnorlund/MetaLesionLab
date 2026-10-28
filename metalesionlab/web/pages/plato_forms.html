@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_forms.css">
 </head>
 <body class="pf">
@@ -23,16 +25,18 @@
 
 <main id="main" tabindex="-1">
 
-<section class="pf-hero" aria-labelledby="hero-h">
-  <div class="pf-hero-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one ideal clock, bed or table? · <i>Republic</i> X · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">What time does an AI draw?</h1>
-    </div>
-    <!--#epigraph:republic-596a-->
-    <p class="pf-lede">We asked Meta’s image model, Muse Image, for a quick doodle of a clock, 16 times, without saying what time. Then we looked at 200 people’s 20-second drawings of a clock.</p>
+<section class="fl pf-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one ideal clock, bed or table? · <i>Republic</i> X · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">What time does an AI draw?</h1>
   </div>
-  <div class="pf-walls">
+  <!--#epigraph:republic-596a-->
+  <div class="fl-ctx">
+    <p class="pf-lede">We asked Meta’s image model, Muse Image, for a quick doodle of a clock, 16 times, without saying what time. Then we looked at 200 people’s 20-second drawings of a clock.</p>
+    <p class="pf-why fl-small">10:10 is the time on almost every watch and clock advert: the hands frame the brand name and look like a smile. Plato said a painter copies a carpenter’s bed, and so makes a copy of a copy. Muse Image’s clock looks like a copy of a photo of a product.</p>
+  </div>
+  <p class="fl-answer" id="verdict">Ask Muse Image for a clock, without a time, and it draws 10:10, the time on watch adverts; people almost never do.</p>
+  <div class="fl-visual pf-walls">
     <figure class="pf-wall">
       <div class="seg pf-ai-seg" id="ai-seg" role="group" aria-label="Which AI">
         <button type="button" data-ai="muse" aria-pressed="true">Muse Image</button>
@@ -49,17 +53,8 @@
       <figcaption class="pf-wall-cap"><b id="wall-people-stat">…</b> <span id="wall-people-sub"></span></figcaption>
     </figure>
   </div>
-  <div class="pf-hero-side">
-    <p class="pf-verdict" id="verdict">…</p>
-    <figure class="pf-hero-avg">
-      <div class="pf-hero-avg-imgs">
-        <img src="/static/img/plato_forms/avg_muse.webp" width="256" height="256" alt="The pixel average of Muse Image's 16 clocks: a crisp ring of ticks and two sharp hands at 10:10.">
-        <img src="/static/img/plato_forms/avg_people.webp" width="256" height="256" alt="The pixel average of 200 people's clocks: a soft gray ring with a stroke up to the 12, and no clear second hand.">
-      </div>
-      <figcaption><b>The average clock.</b> Average the pixels of Muse Image’s 16 clocks (left) and one sharp 10:10 comes out. People’s 200 (right) blur into a ring. No AI reading involved. <a href="#average">More</a></figcaption>
-    </figure>
-    <p class="pf-why">10:10 is the time on almost every watch and clock advert: the hands frame the brand name and look like a smile. Plato said a painter copies a carpenter’s bed, and so makes a copy of a copy. Muse Image’s clock looks like a copy of a photo of a product.</p>
-  </div>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-note"></p>
 </section>
 
 <nav class="pf-jump" aria-label="On this page">
@@ -116,7 +111,7 @@
   <div class="pf-sec-head">
     <span class="pf-kicker">No AI reading involved</span>
     <h2 id="avg-h">The average clock</h2>
-    <p class="pf-sec-lede">The hands above were read by another AI. As a check that needs no reading at all, we averaged the pixels of each set of doodles. If the clocks agree, the average shows sharp hands.</p>
+    <p class="pf-sec-lede">The hands above were read by another AI. As a check that needs no reading at all, we averaged the pixels of each set of doodles. If the clocks agree, the average shows sharp hands. Average Muse Image’s 16 clocks and one sharp 10:10 comes out; people’s 200 blur into a ring.</p>
   </div>
   <div class="pf-avgs">
     <figure><img src="/static/img/plato_forms/avg_muse.webp" width="256" height="256" loading="lazy" alt="The pixel average of Muse Image's 16 clocks: a crisp ring of ticks and two sharp hands at 10:10."><figcaption>Muse Image, 16 clocks</figcaption></figure>
@@ -183,6 +178,8 @@
 </div>
 <div class="pf-tip" id="tip" role="tooltip" hidden></div>
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_forms.js"></script>
 </body>
 </html>

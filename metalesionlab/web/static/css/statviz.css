@@ -1,0 +1,67 @@
+/* statviz (static/js/statviz.js): a headline number drawn as a small graphic. Colours are the site's tokens only
+   (blue is Muse Image, orange is people), so a dark theme that redefines the tokens restyles these too. */
+.sv { --sv-cell: clamp(13px, calc(8px + 0.55vw), 24px); --sv-w: clamp(260px, calc(150px + 10vw), 440px); --sv-seg: clamp(6px, calc(3px + 0.36vw), 13px);
+  display: flex; flex-direction: column; gap: 8px; margin: 0; min-width: 0; color: var(--ink); }
+.sv.sv-s { --sv-cell: clamp(10px, calc(6px + 0.4vw), 17px); --sv-w: clamp(200px, calc(120px + 7vw), 320px); --sv-seg: clamp(5px, calc(2px + 0.3vw), 10px); }
+.sv.sv-l { --sv-cell: clamp(16px, calc(10px + 0.75vw), 30px); --sv-w: clamp(280px, calc(170px + 13vw), 560px); --sv-seg: clamp(6px, calc(4px + 0.45vw), 16px); }
+.sv-val { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 2px; line-height: 1; }
+.sv-num { font-family: var(--sans); font-weight: 700; font-size: clamp(30px, calc(18px + 1.5vw), 60px); letter-spacing: -0.02em; }
+.sv-s .sv-num { font-size: clamp(24px, calc(16px + 1vw), 44px); }
+.sv-unit { margin-left: 0.22em; font-size: clamp(15px, calc(10px + 0.5vw), 24px); font-weight: 600; color: var(--muted); }
+.sv-cap { margin: 0; font-size: var(--fs-sm, 14px); line-height: 1.4; color: var(--ink-2); max-width: 34ch; }
+.sv-plot { min-width: 0; }
+.sv-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* number beside the graphic */
+.sv.sv-row { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: clamp(10px, 1vw, 20px); row-gap: 6px; }
+.sv.sv-row > .sv-cap { grid-column: 1 / -1; }
+
+/* fills: Muse Image blue, people orange */
+.sv .sv-blue { fill: var(--blue); background: var(--blue); }
+.sv .sv-orange { fill: var(--orange); background: var(--orange); }
+.sv .sv-ink { fill: var(--ink); background: var(--ink); }
+.sv .sv-green { fill: var(--green); background: var(--green); }
+.sv .sv-muted { fill: var(--muted); background: var(--muted); }
+.sv .sv-off { fill: none; stroke: var(--line-2); stroke-width: 1.3; }
+.sv .sv-off-fill { fill: var(--line); }
+
+/* dots: k of n */
+.sv-dots .sv-svg { width: min(100%, calc(var(--cols) * var(--sv-cell))); }
+
+/* spread: two clusters, tight and wide */
+.sv-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(8px, 1vw, 18px); width: min(100%, var(--sv-w)); }
+.sv-side { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.sv-side .sv-svg { border-radius: 50%; }
+.sv .sv-ring { fill: none; stroke: var(--line-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.sv-pair .sv-on { stroke: var(--panel); stroke-width: 1; }
+.sv-key { display: block; font-size: var(--fs-sm, 14px); line-height: 1.3; color: var(--ink-2); text-align: center; }
+.sv-key b { color: var(--ink); font-family: var(--mono); font-weight: 500; }
+.sv-s .sv-key { font-size: 13px; }
+.sv-sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+@container (max-width: 120px) { .sv-key b { display: block; } }
+.sv-side { container-type: inline-size; }
+
+/* layers: an n-segment bar with a marker */
+.sv-lay { width: min(100%, max(9rem, calc(var(--n) * var(--sv-seg)))); display: flex; flex-direction: column; gap: 3px; }
+.sv-ticks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--muted); }
+.sv .sv-mark { fill: var(--ink); }
+
+/* bars: before and after, one scale */
+.sv-bars { display: flex; flex-direction: column; gap: 6px; width: min(100%, calc(var(--sv-w) * 1.2)); }
+.sv-bar { display: grid; grid-template-columns: minmax(5.5em, auto) minmax(40px, 1fr) auto; gap: 8px; align-items: center; font-size: var(--fs-sm, 14px); }
+.sv-bar-l { color: var(--ink-2); }
+.sv-bar-v { font-family: var(--mono); color: var(--ink); }
+.sv-track { height: clamp(10px, calc(6px + 0.4vw), 16px); background: var(--line); border-radius: 4px; overflow: hidden; }
+.sv-fill { display: block; height: 100%; border-radius: 0 4px 4px 0; }
+
+/* a gentle entrance, only when motion is welcome */
+@media (prefers-reduced-motion: no-preference) {
+  .sv-dots .sv-on, .sv-pair .sv-on, .sv-layers .sv-on { animation: sv-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); transform-box: fill-box; transform-origin: center; }
+  .sv-fill { animation: sv-grow 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); transform-origin: left; }
+}
+@keyframes sv-in { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: none; } }
+@keyframes sv-grow { from { transform: scaleX(0); } to { transform: none; } }
+@media (forced-colors: active) {
+  .sv .sv-on, .sv .sv-mark { fill: CanvasText; }
+  .sv-fill { background: CanvasText; }
+}

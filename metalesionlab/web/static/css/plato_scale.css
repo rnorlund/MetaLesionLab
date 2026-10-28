@@ -15,13 +15,23 @@
 .sc-sub { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .sc .kicker-q a { color: inherit; }
 
-/* hero */
-.sc-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
-  padding: clamp(18px, 2.5vw, 64px); display: flex; flex-direction: column; gap: 18px; }
-.sc-hero-text { display: flex; flex-direction: column; gap: 10px; }
-.sc-hero-text > p { max-width: var(--measure); }
-.sc-hero-text h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
+/* first look (plato_firstlook.css lays it out): five rows of the wall of chairs are the picture */
 .sc-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.55; color: var(--ink-2); }
+.sc-lead-wall { display: flex; flex-direction: column; gap: 4px; }
+.sc-lead-group { margin: 8px 0 0; font-family: var(--mono); font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--orange); }
+.sc-lead-group:first-child { margin-top: 0; }
+.sc-lead-row { display: grid; grid-template-columns: minmax(6.5em, 9em) minmax(0, 1fr); gap: 4px clamp(8px, 1vw, 18px); align-items: center; }
+.sc-lead-head { margin: 0; display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.sc-lead-head b { font-size: var(--fs-sm); }
+.sc-lead-head span { font-size: max(11px, calc(var(--fs-sm) * 0.85)); color: var(--muted); }
+.sc-lead .sc-tiles { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(2px, 0.3vw, 6px); }
+.sc-lead .sc-tile { border-radius: 4px; background-color: var(--fl-paper); }
+.sc-lead .sc-tile i { background: var(--fl-paper-ink); }
+.sc-lead .sc-tile.fail span { display: none; }  /* too small for the reason; each tile's label still names it */
+@media (max-width: 600px) {  /* a phone: the name above its row, so the tiles get the width */
+  .sc-lead-row { grid-template-columns: minmax(0, 1fr); }
+  .sc-lead-head { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+}
 .sc-answer { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; }
 .sc table.sc-pred td, .sc table.sc-pred th { text-align: left; white-space: normal; }
 .sc-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: var(--soft);

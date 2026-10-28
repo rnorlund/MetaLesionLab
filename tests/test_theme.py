@@ -19,11 +19,13 @@ LINGUA_PAGES = ["/", "/take", "/scorer", "/lab", "/ask"]
 
 # Every stylesheet the Plato site uses besides the shared app.css (which holds the token definitions).
 PLATO_CSS = sorted({p.name for p in CSS.glob("plato*.css")} | {
-    "landing.css", "draw.css", "tour.css", "splash.css", "portraits.css", "epigraph.css", "gallery-strip.css", "socrates.css"})
+    "landing.css", "draw.css", "tour.css", "splash.css", "portraits.css", "epigraph.css", "gallery-strip.css", "socrates.css",
+    "statviz.css"} & {p.name for p in CSS.glob("*.css")})
 # Charts and pictures drawn by the Plato site's scripts. Hex colours are allowed only where a picture is
 # meant to look the same in every theme: the drawing pad and the share card (paper and ink, draw.js) and the
 # opening animation's chair (splash.js), which is drawn on paper.
-PLATO_JS = sorted({p.name for p in JS.glob("plato*.js")} | {"draw.js", "landing.js", "gallery-strip.js", "splash.js"})
+PLATO_JS = sorted({p.name for p in JS.glob("plato*.js")} | {"draw.js", "landing.js", "gallery-strip.js", "splash.js", "statviz.js"}
+                  & {p.name for p in JS.glob("*.js")})
 JS_ALLOW = {
     "draw.js": {"#FFFFFF", "#111827", "#374151", "#4B5563", "#F7F6F1", "#9A3412", "#C2410C", "#1D4ED8", "#0D9488"},
     "splash.js": {"#141a26", "#F9FAFB", "#C2410C"},
@@ -35,8 +37,10 @@ NEUTRAL_RGB = re.compile(r"^\s*(0,\s*0,\s*0|255,\s*255,\s*255)\s*(,\s*[\d.]+\s*)
 
 
 def _strip_css(text: str) -> str:
-    """A stylesheet without comments and without custom-property definitions (the tokens)."""
+    """A stylesheet without comments, custom-property definitions (the tokens) or a token's fallback
+    (var(--paper, #fbfaf5) uses the token; the fallback only matters where app.css is missing)."""
     text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+    text = re.sub(r"var\((--[\w-]+)\s*,[^()]*\)", r"var(\1)", text)
     return re.sub(r"--[\w-]+\s*:[^;{}]*;?", "", text)
 
 

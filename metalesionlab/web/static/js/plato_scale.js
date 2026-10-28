@@ -271,6 +271,36 @@
       }));
   }
 
+  // ---------- the first look: a few rows of the wall, and three numbers drawn as graphics ----------
+  var LEAD = [['qwen25_0.5b', 'Bigger open model'], ['qwen25_7b'], ['qwen25_32b'], ['spark', 'Meta’s models'], ['wonder']];
+
+  function leadWall(w) {
+    var host = $('lead-wall'), by = {}, said = [];
+    host.innerHTML = '';
+    w.models.forEach(function (m) { by[m.key] = m; });
+    LEAD.forEach(function (l) {
+      var m = by[l[0]];
+      if (!m) return;
+      if (l[1]) host.appendChild(el('p', { 'class': 'sc-lead-group' }, esc(l[1])));
+      var row = el('div', { 'class': 'sc-lead-row' });
+      row.appendChild(el('p', { 'class': 'sc-lead-head' }, '<b>' + esc(m.label) + '</b><span>' +
+        (m.kind === 'api' ? 'size undisclosed' : 'failed ' + m.failed + ' of 12') + '</span>'));
+      row.appendChild(tiles(m, w.models.length, SPRITES.models, m.label));
+      host.appendChild(row);
+      said.push(m.label + (m.kind === 'api' ? '' : ', ' + m.failed + ' of 12 failed') +
+        (m.spread_ratio == null ? '' : ', spread ' + f2(m.spread_ratio) + ' times people’s'));
+    });
+    host.setAttribute('role', 'img');  // one description for the rows; each tile's own label stays for the full wall below
+    host.setAttribute('aria-label', 'Twelve chairs drawn by each of ' + said.length + ' models: ' + said.join('; ') + '.');
+  }
+
+  function leadStats(d) {
+    var lead = window.FirstLook.scale(d);
+    window.FirstLook.render($('hero-stats'), lead);
+    $('hero-note').textContent = lead.note + ' ';
+    $('hero-note').appendChild(el('a', { href: '#answer' }, 'The short answer, in four parts'));
+  }
+
   function credits(d) { $('credits').innerHTML = (d.credits || []).map(esc).join(' · '); }
 
   function render(d) {
@@ -285,6 +315,7 @@
       chips.appendChild(b);
     });
     wallData(d.wall);
+    leadWall(d.wall); leadStats(d);
     chartsB(d); chartsA(d); tables(d); credits(d);
   }
 

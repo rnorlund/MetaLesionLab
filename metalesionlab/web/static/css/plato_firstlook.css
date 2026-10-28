@@ -1,0 +1,81 @@
+/* First look: the first screen of /plato/inside, /plato/forms, /plato/atlas and /plato/scale. The question, one
+   picture made of the experiment's own material, the answer in one sentence and at most three numbers, each drawn
+   as a small graphic (statviz.js, or the page's own where statviz has no such kind), with its honest qualifier in
+   a smaller line. The epigraph and the longer introduction follow inside the same card, below the numbers.
+
+   Source order stays title, epigraph, introduction, answer, picture, numbers (a screen reader hears the page as
+   before); the grid shows the answer, picture and numbers first. Colours are the site's tokens only; line art sits
+   on paper (--paper) so it reads the same in a dark theme. */
+.fl {
+  --fl-paper: var(--paper, #fbfaf5);
+  --fl-paper-ink: var(--paper-ink, #1f2328);  /* ink on paper: stays dark when the page is dark */
+  --fl-gap: clamp(14px, 1.3vw, 34px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(18px, 2.2vw, 56px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "title" "answer" "visual" "stats" "note" "quote" "ctx";
+  gap: var(--fl-gap) clamp(24px, 3vw, 84px);
+  align-items: start;
+}
+.fl > .title-pair { grid-area: title; min-width: 0; }
+.fl > .title-pair h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
+.fl-answer { grid-area: answer; margin: 0; max-width: 40ch; font-size: clamp(20px, calc(12px + 0.78vw), 36px); font-weight: 650;
+  line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); text-wrap: pretty; }
+.fl-visual { grid-area: visual; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.fl-cap { margin: 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); max-width: var(--measure); }
+.fl-cap a { color: inherit; }
+.fl-key { display: inline-block; width: 0.62em; height: 0.62em; border-radius: 50%; margin: 0 0.3em 0 0.1em; vertical-align: 0.05em; }
+.fl-key.muse { background: var(--blue); }
+.fl-key.people { background: var(--orange); }
+.fl-paper { background: var(--fl-paper); border: 1px solid var(--line); border-radius: 12px; }
+
+/* the numbers: a row of up to three, each a statviz graphic with its qualifier under it */
+.fl-stats { grid-area: stats; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: var(--fl-gap) clamp(20px, 2.4vw, 64px); padding-top: var(--fl-gap); border-top: 1px solid var(--line); min-width: 0; }
+.fl-stat { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fl-stat .sv-cap { max-width: 46ch; color: var(--ink-2); }
+.fl-stat .sv-pair { width: min(100%, max(18rem, var(--sv-w))); }  /* the two clusters: small enough to sit in a row of numbers */
+.fl-stat .sv-side .sv-svg { width: 74%; }
+.fl-q { margin: 0; font-size: max(12px, calc(var(--fs-sm) * 0.92)); line-height: 1.45; color: var(--muted); max-width: 52ch; }
+.fl-stat.plain .fl-num { margin: 0; font-weight: 700; font-size: clamp(30px, calc(18px + 1.5vw), 60px); line-height: 1; letter-spacing: -0.02em; }
+.fl-stat.plain .fl-lab { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); }
+.fl-note { grid-area: note; margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); max-width: 110ch; }
+
+/* the graphics statviz has no kind for (plato_firstlook.js draws them in statviz's classes) */
+.sv .fl-band { fill: var(--blue); fill-opacity: 0.14; }  /* lrange: the range over all things, behind the segments */
+.fl-lticks { position: relative; }
+.fl-lband { position: absolute; top: 0; transform: translateX(-50%); color: var(--blue); white-space: nowrap; }
+.fl-fails { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: repeat(2, auto); column-gap: 8px; align-items: center;
+  width: min(100%, var(--sv-w, 16rem)); }
+.fl-fails > span { grid-column: 1; font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--muted); }
+.fl-fails > svg { grid-column: 2; grid-row: 1 / span 2; }
+.fl-rs { width: min(100%, calc(var(--sv-w, 18rem) * 1.25)); }
+.fl-rs-axis { stroke: var(--line-2); stroke-width: 1; }
+.fl-rs-people { stroke: var(--orange); stroke-width: 2; }
+.fl-rs-lab { font-family: var(--mono); font-size: 9px; fill: var(--ink-2); }
+.fl-rs-tick { font-family: var(--mono); font-size: 8.5px; fill: var(--muted); }
+.fl-rs-ring { fill: none; stroke: var(--blue); stroke-width: 2; }
+.fl-rs .sv-on { stroke: var(--panel); stroke-width: 1.5; }
+.fl-rs-key { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: max(11px, calc(var(--fs-sm) * 0.85)); color: var(--ink-2); }
+.fl-rs-key span { display: inline-flex; align-items: center; gap: 5px; }
+.fl-ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--blue); }
+
+/* below the first screen, still in the card: the epigraph and the longer introduction */
+.fl > figure.epigraph { grid-area: quote; margin: 0; padding-top: var(--fl-gap); border-top: 1px solid var(--line); align-self: stretch; }
+.fl-ctx { grid-area: ctx; display: flex; flex-direction: column; gap: 12px; min-width: 0; padding-top: var(--fl-gap);
+  border-top: 1px solid var(--line); }
+.fl-ctx p { margin: 0; font-size: var(--fs-lede); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.fl-ctx p.fl-small { font-size: var(--fs-body); }
+
+@media (min-width: 960px) {
+  .fl { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr auto auto auto;
+    grid-template-areas: "title visual" "answer visual" "stats stats" "note note" "quote ctx"; }
+  .fl.fl-noquote { grid-template-areas: "title visual" "answer visual" "stats stats" "note note" "ctx ctx"; }
+  .fl.fl-noquote .fl-ctx { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 44ch), 1fr)); gap: 12px clamp(24px, 3vw, 84px); align-items: start; }
+}
+@media (max-width: 600px) {
+  .fl { padding: 18px 16px; }
+}

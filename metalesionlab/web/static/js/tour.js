@@ -126,7 +126,7 @@
       q: 'Plato had more questions than chairs. Which would you put to a machine?',
       p: 'Each card puts one of his questions to an AI and to people, and opens its results, the predictions that failed included.' },
 
-    { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw', id: 'draw', finish: true, face: 'neutral', kicker: 'Your turn',
+    { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw?thing=chair', id: 'draw', finish: true, face: 'neutral', kicker: 'Your turn',
       target: function () {  // the drawing pad if the page has one; otherwise a centered card
         if (!hasDraw() || location.pathname !== '/draw') return null;
         return q('#canvas-wrap') ? '#canvas-wrap' : q('canvas') ? 'canvas' : null;
@@ -142,7 +142,7 @@
       },
       links: function () {
         var out = [];
-        if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw']);
+        if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw?thing=chair']);
         if (hasSocrates()) out.push(['Ask me yourself', '/socrates'], ['Let me examine you', '/socrates?mode=examine']);
         out.push(['See the whole experiment', '/plato'], ['Look inside the model', T.hasPage('/plato/inside') ? '/plato/inside' : '/plato#inside']);
         return out;

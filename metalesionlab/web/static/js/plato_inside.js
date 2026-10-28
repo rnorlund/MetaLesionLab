@@ -492,19 +492,59 @@
     });
   }
 
+  // --- the first look: the chair at three layers, and three numbers drawn as graphics ----------------------
+  var TRIP = [1, 26, 52];
+
+  function tripPanel(c, L) {
+    var n = c.n.muse, N = c.pictures.length, xy = c.xy[L - 1], pad = 72, size = 124, sc = (1000 - 2 * pad) / GRID;
+    var px = function (v) { return pad + v * sc; };
+    var svg = s('svg', { viewBox: '0 0 1000 1000', class: 'pi-trip-svg', 'aria-hidden': 'true' });
+    var groups = { muse: groupStats(xy, 0, n), people: groupStats(xy, n, N) };
+    ['people', 'muse'].forEach(function (src) {
+      var g = groups[src];
+      svg.appendChild(s('circle', { class: 'pi-trip-halo ' + src, cx: px(g.x).toFixed(1), cy: px(g.y).toFixed(1), r: Math.max(24, g.r * sc).toFixed(1) }));
+    });
+    // people's doodles first, so Muse's sit on top of the pile; a dot under each stands in if the sprite is missing
+    for (var k = 0; k < N; k++) {
+      var i = (k + n) % N, x = px(xy[2 * i]), y = px(xy[2 * i + 1]), src = i < n ? 'muse' : 'people';
+      svg.appendChild(s('circle', { class: 'pi-trip-dot ' + src, cx: x.toFixed(1), cy: y.toFixed(1), r: 15 }));
+      svg.appendChild(s('svg', { x: (x - size / 2).toFixed(1), y: (y - size / 2).toFixed(1), width: size, height: size, viewBox: i + ' 0 1 1',
+        class: 'pi-trip-pic' }, s('image', { href: SPRITES + c.sprite, width: N, height: 1, preserveAspectRatio: 'none' })));
+    }
+    var ph = phase(c, L);
+    return h('div', { class: 'pi-trip-p' }, [
+      h('div', { class: 'pi-trip-paper' }, svg),
+      h('p', { class: 'pi-trip-lab' }, [h('b', { text: 'Layer ' + L }), h('span', { text: ph.label })])
+    ]);
+  }
+
+  function renderTrip() {
+    var D = S.data, c = D.concepts.filter(function (x) { return x.key === 'chair'; })[0] || D.concepts[0];
+    var box = $('hero-trip'), last = TRIP[TRIP.length - 1];
+    box.innerHTML = '';
+    TRIP.forEach(function (L) { box.appendChild(tripPanel(c, L)); });
+    var m0 = c.spread.muse[0], p0 = c.spread.people[0], m1 = c.spread.muse[last - 1], p1 = c.spread.people[last - 1];
+    box.setAttribute('aria-label', c.n.muse + ' of Muse Image’s doodles of ' + aThing(c.label) + ' and ' + c.n.people + ' of people’s, mapped inside Muse Glimmer at layers ' +
+      TRIP.join(', ') + ' of ' + N_LAYERS + '. At layer 1 both sets are spread out (spread ' + f2(m0) + ' and ' + f2(p0) + '). At layer ' + last +
+      ' Muse’s doodles sit in a tight pile (' + f2(m1) + ') while people’s stay spread out (' + f2(p1) + ').');
+    var img = new Image();
+    img.onerror = function () { box.classList.add('no-sprite'); };
+    img.src = SPRITES + c.sprite;
+  }
+
+  function renderLead() {
+    var lead = window.FirstLook.inside(S.data);
+    window.FirstLook.render($('hero-stats'), lead);
+    $('hero-note').textContent = lead.note;
+    renderTrip();
+  }
+
   // --- static text from the data -----------------------------------------------------------------------
   function renderText() {
     var D = S.data, sm = D.summary, ms = sm.mean_spread, nb = sm.same_thing_neighbour;
     var last = N_LAYERS - 1, mid = 25;
     var times = ms.people[last] / ms.muse[last];
-    var tiles = $('hero-tiles');
-    tiles.innerHTML = '';
-    [[String(sm.median_collapse_layer), 'median layer (of 52) where Muse’s doodles of a thing collapse; range ' + sm.earliest_collapse + '–' +
-      sm.latest_collapse + ' over ' + sm.n_concepts + ' things. “' + sm.never_collapse.join('”, “') + '” never does.'],
-     [Math.round(times) + '×', 'more spread out: people’s doodles of a thing against Muse’s at the last layer (' + f2(ms.people[last]) + ' vs ' +
-      f2(ms.muse[last]) + ', mean of ' + sm.n_concepts + ' things).'],
-     [sm.collapse_at_or_before_name + ' of ' + sm.n_with_both, 'things whose doodles collapse at or before the layer where the word lens can read the name.']
-    ].forEach(function (t) { tiles.appendChild(h('div', { class: 'pi-tile' }, [h('b', { text: t[0] }), h('span', { text: t[1] })])); });
+    renderLead();
 
     var steps = $('steps');
     steps.innerHTML = '';

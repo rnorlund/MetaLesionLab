@@ -308,6 +308,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .chips { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; font-family: var(--mono); font-size: 11px; }
 .topbar .chips { flex-basis: 100%; margin-left: 0; }
 @media (min-width: 1100px) { .topbar .chips { flex-basis: auto; } }
+/* The Plato site's main items (site.py: NAV items with an "icon"): even-weighted buttons, each a line icon and a
+   label in the same weight, so the current page changes the fill only, never the size. Ask Socrates keeps its accent. */
+.topnav:has(> a.nav-btn) { gap: clamp(4px, 0.35vw, 10px); }
+.topnav > a.nav-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px clamp(10px, 0.55vw, 16px); font-weight: 600;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 24%, transparent); }
+.topnav > a.nav-btn[aria-current="page"], .topnav > a.nav-btn.nav-accent { box-shadow: none; }
+.nav-ico { width: 16px; height: 16px; flex: none; }
+.nav-panel .nav-btn { display: flex; align-items: center; gap: 10px; }
+@media (min-width: 861px) and (max-width: 1500px) {  /* one row with the Tour button: Home becomes its icon, the tagline goes */
+  .topbar:has(.nav-btn) .brand-tag { display: none; }
+  .topnav > a.nav-btn[href="/"] { gap: 0; }
+  .topnav > a.nav-btn[href="/"] .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
 @media (max-width: 860px) {
   .topnav { display: none; }
   .nav-menu { display: block; }

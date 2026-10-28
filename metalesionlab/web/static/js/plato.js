@@ -593,8 +593,20 @@
     }
   }
 
+  // --- the result first: stack the 16 chairs (Muse Image's make one chair, people's a cloud) -----------------
+  function stack(on) {
+    var fig = $('chairs'), btn = $('stack-btn');
+    if (!fig || !btn) return;
+    on = on == null ? !fig.classList.contains('stacked') : !!on;
+    fig.classList.toggle('stacked', on);
+    btn.setAttribute('aria-pressed', String(on));
+  }
+  // This page shows Muse Image's chairs, so a chair drawn afterwards (on the home page) is not a blind drawing.
+  try { window.sessionStorage.setItem('tot-draw-seen', '1'); } catch (e) { /* storage off */ }
+
   // --- wiring --------------------------------------------------------------------------------
   function bind() {
+    if ($('stack-btn')) $('stack-btn').addEventListener('click', function () { stack(); });
     document.querySelectorAll('#who-seg button').forEach(function (b) { b.addEventListener('click', function () { setWho(b.getAttribute('data-who')); }); });
     document.querySelectorAll('#concept-seg button').forEach(function (b) { b.addEventListener('click', function () { setConcept(b.getAttribute('data-concept')); }); });
     document.querySelectorAll('#lang-seg button').forEach(function (b) {
@@ -627,5 +639,5 @@
     readyResolve();
   });
 
-  T.plato = { ready: ready, setWho: setWho, setConcept: setConcept, state: function () { return S; } };
+  T.plato = { ready: ready, setWho: setWho, setConcept: setConcept, stack: stack, state: function () { return S; } };
 })();
