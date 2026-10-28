@@ -1,5 +1,6 @@
 /* Plato's Forms (/plato/forms). Same paper and colors as Plato's Chair: blue = Muse Image, teal = SDXL, orange = people. */
-body.pf { background: #F7F6F1; }
+body.pf { background: var(--ground-warm); --pf-ten: var(--amber); }  /* --pf-ten: the 10:10 band (plato_forms.js) */
+:root[data-theme="dark"] body.pf { --pf-ten: var(--amber-line); }
 .pf main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .pf-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
 .pf-cap { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
@@ -13,8 +14,8 @@ body.pf { background: #F7F6F1; }
 .pf-wall-who { margin: 0; font-weight: 700; font-size: var(--fs-body); padding: 10px 0; border-bottom: 3px solid var(--orange); }
 .pf-ai-seg button { font-weight: 600; font-size: 14px; }
 .pf-ai-seg button[data-ai="muse"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--blue), 0 1px 2px rgba(0, 0, 0, 0.08); }
-.pf-ai-seg button[data-ai="sdxl"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 #0D9488, 0 1px 2px rgba(0, 0, 0, 0.08); }
-.pf-frame { aspect-ratio: 1 / 1; background: #FCFCFB; border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+.pf-ai-seg button[data-ai="sdxl"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--teal), 0 1px 2px rgba(0, 0, 0, 0.08); }
+.pf-frame { aspect-ratio: 1 / 1; background: var(--paper-mat); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
   display: flex; align-items: center; justify-content: center; }
 .pf-frame img { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 0.18s ease; }
 .pf-frame img.swapping { opacity: 0.15; }
@@ -33,7 +34,7 @@ body.pf { background: #F7F6F1; }
 .pf-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.015em; }
 .pf-sec-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
 .pf-fig { margin: 0; display: flex; flex-direction: column; gap: 8px; max-width: 898px; }  /* the picture's own width */
-.pf-fig img, .pf-kinds img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: #FCFCFB; }
+.pf-fig img, .pf-kinds img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-mat); }
 .pf-two { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(28px, 2.5vw, 64px); align-items: start; }
 .pf-chart-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .pf-chart-title { margin: 0; font-size: clamp(14px, calc(10px + 0.25vw), 17px); font-weight: 600; }
@@ -48,7 +49,7 @@ body.pf { background: #F7F6F1; }
 .pf-fact b { font-size: clamp(26px, calc(16px + 0.8vw), 38px); letter-spacing: -0.01em; line-height: 1.15; }
 .pf-fact span { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
 .pf-fact.muse { border-left: 4px solid var(--blue); }
-.pf-fact.sdxl { border-left: 4px solid #0D9488; }
+.pf-fact.sdxl { border-left: 4px solid var(--teal); }
 .pf-fact.people { border-left: 4px solid var(--orange); }
 
 /* dials */
@@ -65,7 +66,7 @@ body.pf { background: #F7F6F1; }
 /* averages */
 .pf-avgs { display: grid; grid-template-columns: repeat(3, minmax(0, clamp(220px, 13vw, 300px))); gap: clamp(20px, 1.6vw, 40px); }
 .pf-avgs figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
-.pf-avgs img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: block; }
+.pf-avgs img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); display: block; }
 .pf-avgs figcaption { font-size: var(--fs-sm); color: var(--ink-2); font-weight: 600; }
 
 /* bed and table */
@@ -92,7 +93,7 @@ body.pf { background: #F7F6F1; }
 .pf-method p { margin: 0; max-width: 120ch; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
 .pf-credit { font-size: 13px !important; color: var(--muted) !important; }
 
-.pf-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px;
+.pf-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px;
   font-size: 12px; line-height: 1.5; z-index: 10; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 240px; }
 .pf-tip b { font-size: 14px; }
 

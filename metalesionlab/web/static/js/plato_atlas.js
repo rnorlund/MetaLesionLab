@@ -6,8 +6,9 @@
   var T = window.TOT, h = T.h;
   var IMG = '/static/img/plato_atlas/';
   var NS = 'http://www.w3.org/2000/svg';
-  var C = { muse: '#1D4ED8', sdxl: '#0D9488', people: '#C2410C', natural: '#15803D', artifact: '#7C3AED',
-            ink: '#111827', ink2: '#374151', muted: '#6B7280', grid: '#E5E7EB', axis: '#9CA3AF', surface: '#FFFFFF' };
+  // the theme's tokens (app.css), so the charts follow the light or dark theme without redrawing
+  var C = { muse: 'var(--blue)', sdxl: 'var(--teal)', people: 'var(--orange)', natural: 'var(--green)', artifact: 'var(--violet)',
+            ink: 'var(--ink)', ink2: 'var(--ink-2)', muted: 'var(--faint)', grid: 'var(--line)', axis: 'var(--line-3)', surface: 'var(--chart-halo)' };
   var BAR_MAX = 1.6;
   var D = null, BY = {}, S = { q: '', sort: 'platonic', domain: '', all: false }, shown = [], cur = -1;
 
@@ -250,7 +251,7 @@
     }
     svg.appendChild(s('text', { x: m.l + 4, y: y(1) - 6, 'font-size': 11.5, fill: C.ink2 }, 'people = 1'));
     var gap = band > 4 ? 1.5 : 0.5, cw = Math.min(24, Math.max(1, band - gap));
-    var cols = s('g'), dots = s('g'), hl = s('rect', { fill: 'rgba(17,24,39,0.07)', width: band, height: H - m.t - m.b + 6, y: m.t - 6, visibility: 'hidden' });
+    var cols = s('g'), dots = s('g'), hl = s('rect', { fill: 'var(--tint-2)', width: band, height: H - m.t - m.b + 6, y: m.t - 6, visibility: 'hidden' });
     svg.appendChild(hl);
     rows.forEach(function (r, i) {
       var top = y(r.ratio), base = y(0), rad = Math.min(cw / 2, 3);

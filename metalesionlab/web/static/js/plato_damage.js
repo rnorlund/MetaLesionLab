@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   var NS = 'http://www.w3.org/2000/svg';
-  var LANG = '#1D4ED8', DRAW = '#C2410C', GRID = '#E5E7EB', AXIS = '#9CA3AF', INK = '#111827';
+  var LANG = 'var(--blue)', DRAW = 'var(--orange)', GRID = 'var(--line)', AXIS = 'var(--line-3)', INK = 'var(--ink)';
   var S = { data: null, kind: null, method: 'noise', level: 3 };  // open on a damaged pair: the striking picture first
   var OUTCOME = { correct: 'the asked kind', plain: 'a plain, ordinary one', other_kind: 'another kind',
                   cant_tell: 'can’t tell, or not one', specific: 'a specific kind' };
@@ -147,7 +147,7 @@
         fill: 'none', stroke: se.colour, 'stroke-width': 2, 'stroke-dasharray': se.dash ? '5 3' : null,
         'stroke-linejoin': 'round' }));
       p.forEach(function (q) {
-        var dot = s('circle', { cx: X(q.x), cy: Y(q.y), r: 4, fill: se.colour, stroke: '#fff', 'stroke-width': 2 });
+        var dot = s('circle', { cx: X(q.x), cy: Y(q.y), r: 4, fill: se.colour, stroke: 'var(--chart-halo)', 'stroke-width': 2 });
         var hit = s('circle', { cx: X(q.x), cy: Y(q.y), r: 12, fill: 'transparent', tabindex: 0 });
         var show = function () {
           tip.innerHTML = '<b>' + se.name + '</b><br>' + q.tip;
@@ -317,8 +317,8 @@
       var y = 32 + i * rowH;
       svg.appendChild(s('text', { x: m.l - 8, y: y + 4, 'text-anchor': 'end', class: 'dlab' }, NAME[r.f] + ' neurons, top ' + Math.round(r.d * 100) + '%'));
       svg.appendChild(s('line', { x1: X(r.b), x2: X(r.a), y1: y, y2: y, stroke: AXIS }));
-      var c1 = s('circle', { cx: X(r.b), cy: y, r: 4.5, fill: '#fff', stroke: LANG, 'stroke-width': 2 });
-      var c2 = s('circle', { cx: X(r.a), cy: y, r: 5, fill: LANG, stroke: '#fff', 'stroke-width': 1.5 });
+      var c1 = s('circle', { cx: X(r.b), cy: y, r: 4.5, fill: 'var(--chart-halo)', stroke: LANG, 'stroke-width': 2 });
+      var c2 = s('circle', { cx: X(r.a), cy: y, r: 5, fill: LANG, stroke: 'var(--chart-halo)', 'stroke-width': 1.5 });
       c1.appendChild(s('title', {}, 'random neurons: ' + pct(r.b) + ' plain; ' + pct(r.accr) + ' still right'));
       c2.appendChild(s('title', {}, NAME[r.f] + ' neurons: ' + pct(r.a) + ' plain; ' + pct(r.acc) + ' still right'));
       svg.appendChild(c1); svg.appendChild(c2);

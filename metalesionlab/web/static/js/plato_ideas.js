@@ -6,8 +6,9 @@
   'use strict';
   var T = window.TOT, h = T.h;
   var NS = 'http://www.w3.org/2000/svg';
-  var C = { muse: '#1D4ED8', muse2: '#93C5FD', thing: '#6B7280', people: '#C2410C', ink: '#111827', ink2: '#374151',
-            muted: '#6B7280', grid: '#E5E7EB', surface: '#FFFFFF' };
+  // the site's colour tokens (app.css), so a theme switch recolours the charts
+  var C = { muse: 'var(--blue)', muse2: 'var(--blue-mid)', thing: 'var(--faint)', people: 'var(--orange)', ink: 'var(--ink)', ink2: 'var(--ink-2)',
+            muted: 'var(--faint)', grid: 'var(--line)', surface: 'var(--chart-halo)', none: 'var(--line-2)' };
   var D = null, BY = {};
 
   function $(id) { return document.getElementById(id); }
@@ -123,7 +124,7 @@
       ', so that prediction failed. Muse drew ' + missed.join('; ') + '.';
     var legend = $('emblem-legend');
     legend.textContent = '';
-    [['top emblem', C.muse], ['other emblems', C.muse2], ['something else, or no clear symbol', '#D1D5DB']].forEach(function (l) {
+    [['top emblem', C.muse], ['other emblems', C.muse2], ['something else, or no clear symbol', C.none]].forEach(function (l) {
       legend.appendChild(h('span', null, [h('i', { style: { background: l[1] } }), l[0]]));
     });
     legend.appendChild(h('span', null, [h('i', { class: 'line', style: { background: C.ink2 } }), 'half the drawings (8 of 16)']));

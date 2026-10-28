@@ -1,9 +1,9 @@
 /* The invisible Forms (/plato/ideas). Same paper and colours as Plato's Chair: blue is Muse Image. The things
    (everyday objects) are neutral gray context. The page uses the shared fluid tokens (app.css: --gutter,
    --page-max, --measure, fluid type), so it grows with the window; prose keeps a readable measure. */
-body.ideas { background: #F7F6F1; }
+body.ideas { background: var(--ground-warm); }
 .ideas main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.ideas { --muse: #1D4ED8; --muse-2: #93C5FD; --muse-3: #DBEAFE; --thing: #6B7280; --teal: #0D9488; }
+.ideas { --muse: var(--blue); --muse-2: var(--blue-mid); --muse-3: var(--blue-soft); --thing: var(--faint); }  /* --teal: app.css */
 .iv-cap { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
 
 /* hero: the text beside Muse Image's 16 drawings of God */
@@ -16,9 +16,9 @@ body.ideas { background: #F7F6F1; }
   border-left: 4px solid var(--muse); padding-left: 16px; max-width: 46ch; }
 .iv-god { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .iv-god-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 0.5vw, 12px); padding: clamp(8px, 0.6vw, 14px);
-  background: #FCFCFB; border: 1px solid var(--line); border-radius: 14px; }
-.iv-cell { aspect-ratio: 1; background-repeat: no-repeat; background-color: #FFFFFF; border-radius: 6px; }
-.iv-god-grid .iv-cell { border: 1px solid #ECEAE4; }
+  background: var(--paper-mat); border: 1px solid var(--line); border-radius: 14px; }
+.iv-cell { aspect-ratio: 1; background-repeat: no-repeat; background-color: var(--paper); border-radius: 6px; }
+.iv-god-grid .iv-cell { border: 1px solid var(--paper-line); }
 .iv-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(12px, 1vw, 24px); }
 .iv-tile { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--soft); }
 .iv-tile b { font-size: clamp(30px, calc(18px + 1vw), 46px); letter-spacing: -0.01em; line-height: 1.05; }
@@ -48,7 +48,7 @@ body.ideas { background: #F7F6F1; }
 .iv-cmp { display: flex; flex-direction: column; gap: 6px; }
 .iv-cmp-top { display: flex; justify-content: space-between; gap: 10px; font-size: var(--fs-sm); color: var(--ink-2); }
 .iv-cmp-top b { color: var(--ink); font-variant-numeric: tabular-nums; }
-.iv-cmp-bar { height: 14px; border-radius: 4px; background: #E9E7E1; overflow: hidden; }
+.iv-cmp-bar { height: 14px; border-radius: 4px; background: var(--chart-track); overflow: hidden; }
 .iv-cmp-bar i { display: block; height: 100%; border-radius: 4px; }
 .iv-cmp-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
 
@@ -59,7 +59,7 @@ body.ideas { background: #F7F6F1; }
 .iv-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .iv-card-head b { font-size: clamp(17px, calc(12px + 0.35vw), 22px); }
 .iv-card-head span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.iv-strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; background: #FCFCFB; border: 1px solid #ECEAE4; border-radius: 8px; padding: 4px; }
+.iv-strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; background: var(--paper-mat); border: 1px solid var(--paper-line); border-radius: 8px; padding: 4px; }
 .iv-strip .iv-cell { border-radius: 3px; }
 .iv-card-top { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
 .iv-card-top b { color: var(--ink); }
@@ -81,13 +81,13 @@ body.ideas { background: #F7F6F1; }
 .iv-bar span:only-child { border-radius: 4px; }
 .iv-bar span.top { background: var(--muse); }
 .iv-bar span.other { background: var(--muse-2); }
-.iv-bar span.none { background: #D1D5DB; }
+.iv-bar span.none { background: var(--line-2); }
 .iv-bar span:hover, .iv-bar span:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 1; }
 .iv-bar-half { position: absolute; top: -4px; bottom: -4px; left: 50%; width: 0; border-left: 1.5px dashed var(--ink-2); pointer-events: none; }
 .iv-bar-label { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.35; }
 .iv-bar-label b { color: var(--ink); }
 .iv-bar-label small { display: block; font-size: 12px; color: var(--muted); }
-.iv-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: #F9FAFB; padding: 8px 10px; border-radius: 8px;
+.iv-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--tip); color: var(--tip-ink); padding: 8px 10px; border-radius: 8px;
   font-size: 12.5px; line-height: 1.45; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); max-width: 260px; }
 .iv-tip b { font-size: 14px; display: block; }
 .iv-numbers summary { cursor: pointer; font-size: 14px; color: var(--ink-2); }
@@ -109,7 +109,7 @@ body.ideas { background: #F7F6F1; }
 .iv-try-links a { font-size: clamp(15px, calc(10px + 0.35vw), 19px); padding: 8px 16px; min-height: 40px; display: inline-flex; align-items: center;
   border-radius: 999px; border: 1.5px dashed var(--muse-2); background: var(--panel); color: var(--ink); text-decoration: none; }
 .iv-try-links a:hover { border-style: solid; border-color: var(--muse); }
-.iv-try-links a.lead { background: var(--ink); border: 1.5px solid var(--ink); color: #FFFFFF; font-weight: 600; }
+.iv-try-links a.lead { background: var(--ink); border: 1.5px solid var(--ink); color: var(--on-ink); font-weight: 600; }
 
 /* method */
 .iv-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }

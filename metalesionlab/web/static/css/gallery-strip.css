@@ -56,7 +56,9 @@
 
 /* ---------- card pictures (shared with the gallery page) ---------- */
 .lab-pic { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2;
-  background: #FFFFFF; overflow: hidden; container-type: size; }
+  background: var(--paper); overflow: hidden; container-type: size;
+  /* on the picture: paper in every theme */
+  --lab-arrow: #6B7280; --lab-label: rgba(17, 24, 39, 0.8); --lab-label-ink: #FFFFFF; --lab-track: rgba(17, 24, 39, 0.1); }
 .lab-pic > img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .lab-cell { position: relative; display: block; overflow: hidden; flex: none; max-width: 100%;
   width: min(100cqw, 100cqh * var(--r, 1)); }
@@ -65,12 +67,12 @@
 .lab-pic-pair .lab-cell { width: min(44cqw, 100cqh * var(--r, 1)); }
 .lab-pic-pair.is-pair .lab-cell { width: min(58cqw, 100cqh * var(--r, 1)); }
 .lab-pic-pair.is-pair .lab-cell.is-half { width: min(29cqw, 100cqh * var(--r, 1)); }
-.lab-arrow { flex: none; color: #6B7280; font-size: 18px; }
+.lab-arrow { flex: none; color: var(--lab-arrow); font-size: 18px; }
 .lab-frame { position: absolute; left: 8px; bottom: 9px; z-index: 0; font: 500 11px/1.2 var(--mono, ui-monospace, monospace);
-  background: rgba(17, 24, 39, 0.8); color: #FFFFFF; padding: 3px 7px; border-radius: 6px; max-width: calc(100% - 16px);
+  background: var(--lab-label); color: var(--lab-label-ink); padding: 3px 7px; border-radius: 6px; max-width: calc(100% - 16px);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lab-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(17, 24, 39, 0.1); }
-.lab-bar i { display: block; height: 100%; background: #C2410C; transition: width 0.3s ease; }
+.lab-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--lab-track); }
+.lab-bar i { display: block; height: 100%; background: var(--orange-fill); transition: width 0.3s ease; }
 
 @media (prefers-reduced-motion: reduce) {
   .lab-strip-track { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.35) transparent; scroll-snap-type: x proximity; }

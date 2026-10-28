@@ -6,8 +6,8 @@
   var T = window.TOT, h = T.h;
   var IMG = '/static/img/plato_cave/';
   var NS = 'http://www.w3.org/2000/svg';
-  var C = { glimmer: '#2a78d6', spark: '#6250d6', people: '#eb6834', ink: '#111827', grid: '#E5E7EB', muted: '#6B7280',
-            original: '#111827', outline: '#1baf7a', silhouette: '#2a78d6', shadow: '#eb6834' };
+  var C = { glimmer: 'var(--s-blue)', spark: 'var(--s-violet)', people: 'var(--s-orange)', ink: 'var(--ink)', grid: 'var(--line)', muted: 'var(--faint)',
+            original: 'var(--ink)', outline: 'var(--s-green)', silhouette: 'var(--s-blue)', shadow: 'var(--s-orange)' };
   var LABEL = { original: 'Original', outline: 'Outline', silhouette: 'Silhouette', shadow: 'Cast shadow' };
   var VERSIONS = ['original', 'outline', 'silhouette', 'shadow'];
   var D = null;
@@ -155,7 +155,7 @@
       VERSIONS.forEach(function (v, i) {
         var e = se.get(v);
         if (e.ci95 && e.ci95.length) svg.appendChild(s('line', { x1: pts[i][0], x2: pts[i][0], y1: y(e.ci95[0]), y2: y(e.ci95[1]), stroke: se.color, 'stroke-width': 2, 'stroke-linecap': 'round' }));
-        svg.appendChild(s('circle', { cx: pts[i][0], cy: pts[i][1], r: 5, fill: se.color, stroke: '#fff', 'stroke-width': 2 }));
+        svg.appendChild(s('circle', { cx: pts[i][0], cy: pts[i][1], r: 5, fill: se.color, stroke: 'var(--chart-halo)', 'stroke-width': 2 }));
         if (se.key === 'glimmer') svg.appendChild(s('text', { x: pts[i][0] - 10, y: pts[i][1] + 4, 'text-anchor': 'end', class: 'lbl em' }, pct(e.accuracy) + '%'));
         var hit = s('rect', { x: pts[i][0] - 12, y: Tp, width: 24, height: H - Tp - B, class: 'hit' });
         hit.addEventListener('mousemove', function (evt) {

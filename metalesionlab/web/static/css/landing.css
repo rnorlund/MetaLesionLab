@@ -1,26 +1,28 @@
 /* Landing pages: the Plato site's (pages/index.html), and the shared parts of the Lingua site's (lingua.css adds its own).
    Paper #F7F6F1, ink navy, Muse Image blue, people orange. */
-body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #C2410C; }
+body.landing { background: var(--l-white); --l-white: var(--panel); --ai: var(--blue); --people: var(--orange);
+  --l-shadow: 0 18px 40px rgba(17, 24, 39, 0.06); --l-teal: #0F766E; }
+:root[data-theme="dark"] body.landing { --l-white: var(--soft); --l-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); --l-teal: var(--teal); }
 .landing main { outline: none; }
 .wrap { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
-.lhead { background: var(--paper); max-width: none; padding-top: 16px; padding-bottom: 0; }
+.lhead { background: var(--ground-warm); max-width: none; padding-top: 16px; padding-bottom: 0; }
 .lhead > .topbar { max-width: calc(2400px - 2 * var(--gutter)); margin: 0 auto; }  /* lines up with .wrap's content */
 
 /* buttons */
 .lbtn { font: inherit; border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px; padding: 10px 16px; border-radius: 10px; font-weight: 600; min-height: 44px; }
-.lbtn-dark { color: #FFFFFF; background: var(--ink); }
-.lbtn-dark:hover { color: #FFFFFF; background: #1F2937; }
-.lbtn-accent { color: #FFFFFF; background: var(--orange); }
-.lbtn-accent:hover { color: #FFFFFF; background: var(--orange-dark); }
-.lbtn-outline { color: var(--ink); background: #FFFFFF; border: 1px solid var(--ink); }
+.lbtn-dark { color: var(--on-ink); background: var(--ink); }
+.lbtn-dark:hover { color: var(--on-ink); background: var(--ink-hover); }
+.lbtn-accent { color: var(--on-accent); background: var(--orange-fill); }
+.lbtn-accent:hover { color: var(--on-accent); background: var(--orange-fill-hover); }
+.lbtn-outline { color: var(--ink); background: var(--panel); border: 1px solid var(--ink); }
 .lbtn-outline:hover { color: var(--ink); background: var(--soft); }
 .lbtn-lg { font-size: clamp(16px, calc(11px + 0.3vw), 19px); padding: 14px 22px; min-height: 52px; }
 
 .landing .kicker { margin: 0; font-family: var(--mono); font-size: 13px; line-height: 1.5; color: var(--orange-dark); letter-spacing: 0.01em; }
-.landing .kicker-light { color: #FDBA74; }
+.landing .kicker-light { color: var(--bar-accent); }
 
 /* hero ------------------------------------------------------------------------------------- */
-.hero { background: var(--paper); padding: clamp(36px, 3vw, 72px) 0 clamp(64px, 4.5vw, 110px); }
+.hero { background: var(--ground-warm); padding: clamp(36px, 3vw, 72px) 0 clamp(64px, 4.5vw, 110px); }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(40px, 4vw, 112px); align-items: center; }
 .hero-text { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
 .kicker-q { display: block; margin-top: 4px; color: var(--ink-2); }
@@ -43,7 +45,7 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #
 /* draw first: the pad (draw.js) and Plato's question, before anything about the AI's chairs */
 .hero-draw { padding: clamp(32px, 2.6vw, 64px) 0 clamp(52px, 3.6vw, 90px); }
 .draw-grid { display: grid; grid-template-columns: minmax(0, clamp(460px, 32vw, 682px)) minmax(0, 1fr); gap: 32px clamp(56px, 6vw, 160px); align-items: center; }
-.hero-pad { background: #FFFFFF; border: 1px solid #E7E5DF; border-radius: 20px; padding: 20px 20px 16px; box-shadow: 0 18px 40px rgba(17, 24, 39, 0.06); }
+.hero-pad { background: var(--panel); border: 1px solid var(--line-warm); border-radius: 20px; padding: 20px 20px 16px; box-shadow: var(--l-shadow); }
 .hero-pad .dw-title { font-size: clamp(22px, calc(10px + 1.1vw), 36px); line-height: 1.15; }
 .hero-pad .dw-instr { font-size: var(--fs-lede); }
 .hero-ask { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
@@ -54,17 +56,17 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #
 }
 .hero-skip { font-size: clamp(16px, calc(11px + 0.3vw), 19px); font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; padding: 6px 0; }
 /* Draw the invisible: a small invitation to the abstract ideas (on /draw); the chair stays the pad's thing here */
-.hero-ideas { order: 9; margin: 0; padding-top: 12px; border-top: 1px dashed #D6D3CB; font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
+.hero-ideas { order: 9; margin: 0; padding-top: 12px; border-top: 1px dashed var(--line-warm-2); font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
 .hero-ideas a { font-weight: 600; text-underline-offset: 3px; }
 .hero-skip:hover { color: var(--orange-dark); }
-.hero-draw + .reveal-band { border-top: 1px solid #E7E5DF; padding-top: clamp(44px, 3.4vw, 88px); }
+.hero-draw + .reveal-band { border-top: 1px solid var(--line-warm); padding-top: clamp(44px, 3.4vw, 88px); }
 .hero .reveal-h { margin: 0; font-size: clamp(30px, calc(16px + 2.6vw), 76px); line-height: 1.05; letter-spacing: -0.025em; font-weight: 700; }
 .hero-results { margin-top: 32px; }
 .hero-results .dw-fair { max-width: var(--measure); }
 body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation off the drawing pad */
 
 /* the two grids, and the stacking moment */
-.chairs { margin: 0; background: #FFFFFF; border: 1px solid #E7E5DF; border-radius: 20px; padding: 18px 18px 16px; box-shadow: 0 18px 40px rgba(17, 24, 39, 0.06); }
+.chairs { margin: 0; background: var(--panel); border: 1px solid var(--line-warm); border-radius: 20px; padding: 18px 18px 16px; box-shadow: var(--l-shadow); }
 .chairs-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
 .chairs-side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .chairs-label { margin: 0; display: flex; align-items: center; gap: 8px; font-size: var(--fs-body); font-weight: 600; flex-wrap: wrap; }
@@ -72,9 +74,9 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 .sw { width: 10px; height: 18px; border-radius: 2px; display: inline-block; flex: none; }
 .sw-ai { background: var(--ai); }
 .sw-people { background: var(--people); }
-.chairs-grid { --gap: 6px; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); isolation: isolate; background: #FFFFFF; }
-.chairs-grid span { aspect-ratio: 1; display: block; background-color: #FFFFFF; background-size: 400% 400%; background-repeat: no-repeat;
-  background-position: calc(var(--c) * 100% / 3) calc(var(--r) * 100% / 3); border-radius: 6px; box-shadow: 0 0 0 1px #ECEAE4;
+.chairs-grid { --gap: 6px; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); isolation: isolate; background: var(--paper); }
+.chairs-grid span { aspect-ratio: 1; display: block; background-color: var(--paper); background-size: 400% 400%; background-repeat: no-repeat;
+  background-position: calc(var(--c) * 100% / 3) calc(var(--r) * 100% / 3); border-radius: 6px; box-shadow: 0 0 0 1px var(--paper-line);
   transform-origin: 50% 50%; transition: transform 0.9s cubic-bezier(0.2, 0.75, 0.2, 1), opacity 0.7s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
   transition-delay: calc((var(--c) + var(--r) * 4) * 24ms); }
 [data-side="ai"] .chairs-grid span { background-image: url(/static/img/plato/hero_chairs_ai.webp); }
@@ -89,18 +91,18 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 .chairs.stacked .when-grid { display: none; }
 .chairs.stacked .when-stacked { display: inline; }
 .chairs-foot { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
-.stack-btn { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--paper); border: 1px solid #D6D3CA; border-radius: 999px; padding: 8px 16px; min-height: 40px; cursor: pointer; }
+.stack-btn { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--ground-warm); border: 1px solid var(--line-warm-2); border-radius: 999px; padding: 8px 16px; min-height: 40px; cursor: pointer; }
 .stack-btn:hover { border-color: var(--ink); }
-.stack-btn[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; border-color: var(--ink); }
+.stack-btn[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
 .chairs-cap { margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); max-width: var(--measure); }
 
 /* sections --------------------------------------------------------------------------------- */
-.band { background: #FFFFFF; }
-.band-paper { background: var(--paper); }
+.band { background: var(--l-white); }
+.band-paper { background: var(--ground-warm); }
 .band-gray { background: var(--ground); }
-.band-ink { background: var(--ink); color: #E5E7EB; }
+.band-ink { background: var(--band-ink); color: var(--bar-ink-2); }
 /* The quote band below the reveal: three verified passages in a row (epigraph.css), between hairlines. */
-.quote-band { border-bottom: 1px solid #ECEAE4; }
+.quote-band { border-bottom: 1px solid var(--line-warm); }
 .quote-band-in { padding-top: clamp(44px, 3.2vw, 88px); padding-bottom: clamp(48px, 3.4vw, 92px); display: flex; flex-direction: column; gap: clamp(22px, 1.8vw, 44px); }
 .landing .quote-band-h { font-weight: 500; max-width: var(--measure); }
 .section { padding-top: clamp(72px, 5vw, 128px); padding-bottom: clamp(80px, 5.5vw, 140px); display: flex; flex-direction: column; gap: clamp(28px, 2vw, 48px); }
@@ -113,30 +115,30 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 
 /* findings */
 .finds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 1.2vw, 32px); }
-.find { border: 1px solid var(--line); border-radius: 16px; padding: clamp(22px, 1.6vw, 40px) clamp(20px, 1.6vw, 40px); display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; }
+.find { border: 1px solid var(--line); border-radius: 16px; padding: clamp(22px, 1.6vw, 40px) clamp(20px, 1.6vw, 40px); display: flex; flex-direction: column; gap: 8px; background: var(--panel); }
 .find .find-num { margin: 0; font-size: clamp(46px, calc(26px + 1.6vw), 72px); line-height: 1; font-weight: 700; letter-spacing: -0.03em; color: var(--ai); }
 .find .find-num small { font-size: 0.4em; font-weight: 600; letter-spacing: 0; color: var(--muted); }
 .find:nth-child(3) .find-num { color: var(--people); }
-.find:nth-child(4) .find-num { color: #0F766E; }
+.find:nth-child(4) .find-num { color: var(--l-teal); }
 .find h3 { margin: 4px 0 0; font-size: clamp(18px, calc(12px + 0.45vw), 24px); line-height: 1.3; letter-spacing: -0.005em; }
 .find p { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); }
 .how { list-style: none; counter-reset: how; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 1.2vw, 32px); }
-.how li { counter-increment: how; position: relative; padding: 14px 14px 14px 48px; background: var(--paper); border-radius: 12px; font-size: clamp(14px, calc(9.5px + 0.3vw), 17px); line-height: 1.5; color: var(--ink-2); }
-.how li::before { content: counter(how); position: absolute; left: 14px; top: 13px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #FFFFFF; font-family: var(--mono); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.how li { counter-increment: how; position: relative; padding: 14px 14px 14px 48px; background: var(--ground-warm); border-radius: 12px; font-size: clamp(14px, calc(9.5px + 0.3vw), 17px); line-height: 1.5; color: var(--ink-2); }
+.how li::before { content: counter(how); position: absolute; left: 14px; top: 13px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--on-ink); font-family: var(--mono); font-size: 12px; display: flex; align-items: center; justify-content: center; }
 .how b { color: var(--ink); }
 
 /* Plato, the first AI skeptic */
 .plato-sec { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(56px, 6vw, 160px); align-items: start; }
 .plato-quote { display: flex; flex-direction: column; gap: 18px; }
 .plato-quote blockquote { margin: 0; }
-.plato-quote blockquote p { margin: 0; font-size: clamp(24px, calc(8px + 1.9vw), 56px); max-width: 30em; line-height: 1.3; font-style: italic; color: #FFFFFF; letter-spacing: -0.01em; }
-.plato-quote blockquote footer { margin-top: 12px; font-family: var(--mono); font-size: 13px; color: #9CA3AF; }
-.plato-note { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: #D1D5DB; max-width: var(--measure); }
-.plato-bed { border-left: 3px solid #FDBA74; padding-left: 28px; display: flex; flex-direction: column; gap: 14px; }
-.plato-bed h2 { color: #FFFFFF; }
-.plato-bed p { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.65; color: #D1D5DB; max-width: var(--measure); }
-.plato-bed b { color: #FFFFFF; }
-.plato-src { font-size: 13px !important; color: #9CA3AF !important; }
+.plato-quote blockquote p { margin: 0; font-size: clamp(24px, calc(8px + 1.9vw), 56px); max-width: 30em; line-height: 1.3; font-style: italic; color: var(--bar-ink); letter-spacing: -0.01em; }
+.plato-quote blockquote footer { margin-top: 12px; font-family: var(--mono); font-size: 13px; color: var(--bar-faint); }
+.plato-note { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: var(--bar-muted); max-width: var(--measure); }
+.plato-bed { border-left: 3px solid var(--bar-accent); padding-left: 28px; display: flex; flex-direction: column; gap: 14px; }
+.plato-bed h2 { color: var(--bar-ink); }
+.plato-bed p { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.65; color: var(--bar-muted); max-width: var(--measure); }
+.plato-bed b { color: var(--bar-ink); }
+.plato-src { font-size: 13px !important; color: var(--bar-faint) !important; }
 .band-ink cite { font-style: italic; }
 
 /* Ask Socrates (shown once /socrates exists) */
@@ -156,18 +158,18 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 .btn-line { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* footer */
-.lfoot { background: var(--ink); color: #D1D5DB; }
+.lfoot { background: var(--band-ink); color: var(--bar-muted); }
 .lfoot-row { padding-top: 36px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; font-size: 14px; }
-.lfoot .lbrand { font-weight: 700; font-size: 18px; color: #F9FAFB; }
-.lfoot a { color: #F9FAFB; margin-left: auto; padding: 10px 0; }
+.lfoot .lbrand { font-weight: 700; font-size: 18px; color: var(--bar-ink); }
+.lfoot a { color: var(--bar-ink); margin-left: auto; padding: 10px 0; }
 /* "Sister project: …" (site.py fills <!--#sister--> when MLL_SISTER_URL is set) */
 .lfoot-sister { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; flex-basis: 100%; order: 1; }
 .lfoot-credit { order: 2; }
 .lfoot-sister:empty { display: none; }
 .lfoot .lfoot-sister a { margin-left: 0; }
-.lfoot .sister-tag { color: #9CA3AF; }
-.lfoot-credit { flex-basis: 100%; margin: 4px 0 0; font-size: var(--fs-sm); max-width: 120ch; line-height: 1.55; color: #9CA3AF; }
-.landing :focus-visible { outline-color: #2563EB; }
+.lfoot .sister-tag { color: var(--bar-faint); }
+.lfoot-credit { flex-basis: 100%; margin: 4px 0 0; font-size: var(--fs-sm); max-width: 120ch; line-height: 1.55; color: var(--bar-faint); }
+.landing :focus-visible { outline-color: var(--focus); }
 
 @media (prefers-reduced-motion: reduce) {
   .chairs-grid span { transition: none; }
