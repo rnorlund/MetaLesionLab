@@ -13,6 +13,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_damage.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="plato-damage">
 <a class="skip" href="#main">Skip to content</a>
@@ -23,50 +25,58 @@
 
 <main id="main" tabindex="-1">
 
-<section class="pd-hero" aria-labelledby="hero-h">
-  <div class="pd-hero-text">
+<section class="pd-hero fs-hero" aria-labelledby="hero-h">
+  <div class="pd-hero-text fs-text">
     <div class="title-pair">
       <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to the Form when the mind is damaged? · our own question · <a href="/plato">Plato series</a></span></p>
       <h1 id="hero-h">Plato’s Chair, damaged</h1>
     </div>
     <!--#epigraph:timaeus-28a-->
-    <p class="pd-lede">Plato said every real chair copies one ideal Form. An AI that draws (here Stable Diffusion XL) has a part that reads the words and a part that draws. We damaged each part, step by step, and asked it for a rocking chair.</p>
-    <p class="pd-answer" id="hero-answer">Damage the language part and it loses <b>what</b> it is drawing: the rocking chair becomes a room, a car, a person, never the plain chair. Damage the drawing part and it loses <b>how</b>: the lines dissolve, and the rocking chair survives more often. The planned split held only in part (see “The Form or the hand”).</p>
+    <p class="fs-answer" id="hero-answer">Damage an AI’s language part and it forgets <b>what</b> it is drawing (the rocking chair becomes a car); damage its drawing part and it forgets <b>how</b>, but keeps the chair more often.</p>
+    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
+    <p class="fs-qual" id="hero-qual">The planned split held only in part: see <a href="#diss-h">The Form or the hand</a>. An analogy, not a claim about people.</p>
   </div>
 
-  <figure class="pd-slider" id="slider" aria-label="Damage slider">
-    <div class="pd-controls">
-      <div class="seg" role="group" aria-label="Which picture" id="kind-seg"></div>
-      <div class="seg" role="group" aria-label="Kind of damage" id="method-seg">
-        <button type="button" data-method="noise" aria-pressed="true">Noise in the neurons</button>
-        <button type="button" data-method="zero" aria-pressed="false">Neurons switched off</button>
+  <div class="fs-visual pd-visual">
+    <figure class="pd-slider" id="slider" aria-label="Damage slider">
+      <div class="pd-controls">
+        <div class="seg" role="group" aria-label="Which picture" id="kind-seg"></div>
+        <div class="seg" role="group" aria-label="Kind of damage" id="method-seg">
+          <button type="button" data-method="noise" aria-pressed="true">Noise in the neurons</button>
+          <button type="button" data-method="zero" aria-pressed="false">Neurons switched off</button>
+        </div>
       </div>
-    </div>
-    <div class="pd-pair">
-      <div class="pd-panel lang">
-        <h2>Language part damaged</h2>
-        <p class="pd-sub">its two text encoders</p>
-        <div class="pd-frame"><img id="img-lang" alt="" width="512" height="512"></div>
-        <p class="pd-read" id="read-lang"></p>
+      <div class="pd-pair">
+        <div class="pd-panel lang">
+          <h2>Language part damaged</h2>
+          <p class="pd-sub">its two text encoders</p>
+          <div class="pd-frame"><img id="img-lang" alt="" width="512" height="512"></div>
+          <p class="pd-read" id="read-lang"></p>
+        </div>
+        <div class="pd-panel draw">
+          <h2>Drawing part damaged</h2>
+          <p class="pd-sub">its image-making UNet</p>
+          <div class="pd-frame"><img id="img-draw" alt="" width="512" height="512"></div>
+          <p class="pd-read" id="read-draw"></p>
+        </div>
       </div>
-      <div class="pd-panel draw">
-        <h2>Drawing part damaged</h2>
-        <p class="pd-sub">its image-making UNet</p>
-        <div class="pd-frame"><img id="img-draw" alt="" width="512" height="512"></div>
-        <p class="pd-read" id="read-draw"></p>
+      <div class="pd-range">
+        <label for="level">Damage</label>
+        <input type="range" id="level" min="0" max="4" step="1" value="3" aria-valuetext="level 3 of 4">
+        <output id="level-out" for="level">intact</output>
       </div>
-    </div>
-    <div class="pd-range">
-      <label for="level">Damage</label>
-      <input type="range" id="level" min="0" max="4" step="1" value="3" aria-valuetext="level 3 of 4">
-      <output id="level-out" for="level">intact</output>
-    </div>
-    <figcaption class="pd-cap" id="slider-cap">Stable Diffusion XL, the same starting noise (seed) at every level, so each step shows what the damage did to this one picture. One example picture per kind; the doc shows all of them.</figcaption>
-  </figure>
+      <figcaption class="pd-cap" id="slider-cap">Stable Diffusion XL, the same starting noise (seed) at every level, so each step shows what the damage did to this one picture. One example picture per kind; the doc shows all of them.</figcaption>
+    </figure>
+    <figure class="pd-heroclocks" id="hero-clocks" aria-labelledby="hero-clocks-cap" hidden>
+      <div class="pd-heroclocks-row" id="hero-clocks-row"></div>
+      <figcaption class="fs-cap" id="hero-clocks-cap"></figcaption>
+    </figure>
+  </div>
 </section>
 
 <section class="pd-sec" aria-labelledby="diss-h">
   <h2 id="diss-h">The Form or the hand</h2>
+  <p class="fs-intro pd-lede">Plato said every real chair copies one ideal Form. An AI that draws (here Stable Diffusion XL) has a part that reads the words and a part that draws. We damaged each part, step by step, and asked it for a rocking chair. Damage the language part and the rocking chair becomes a room, a car, a person, never the plain chair; damage the drawing part and the lines dissolve, but the rocking chair survives more often.</p>
   <p class="pd-intro" id="diss-intro">For 8 kinds of chair × 8 seeds we measured two things at each damage level: is it still the kind we asked for (Muse Glimmer reads the picture), and is it still a clean black-on-white line drawing (Glimmer again, and simple pixel counts)? To compare fairly, the two kinds of damage are matched on how much they changed the picture.</p>
   <p class="pd-verdict" id="diss-primary"></p>
   <div class="pd-tiles" id="diss-tiles"></div>
@@ -120,6 +130,7 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato_damage.js"></script>
 </body>
 </html>

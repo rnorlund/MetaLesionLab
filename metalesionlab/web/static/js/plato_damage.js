@@ -87,6 +87,7 @@
         [].forEach.call($('method-seg').children, function (x) { x.setAttribute('aria-pressed', String(x === b)); });
         renderSlider();
         renderDissociation();
+        renderHeroClocks();
       });
     });
     $('level').addEventListener('input', function (e) { S.level = Number(e.target.value); renderSlider(); });
@@ -402,6 +403,101 @@
     host.appendChild(right);
   }
 
+  // ---------- the first screen: three headline numbers as small graphics (statviz.js), and the clocks ----------
+  function verdictChip(ok, rev) {
+    return el('p', { class: 'fs-verdict ' + (ok ? 'yes' : rev ? 'no' : 'part'),
+      text: ok ? 'As predicted' : rev ? 'Prediction reversed' : 'Not distinguishable at this n' });
+  }
+  function heroStat(host, opts, chip) {
+    var li = el('li', { class: 'fs-stat' });
+    var g = el('div');
+    li.appendChild(g);
+    if (chip) li.appendChild(chip);
+    host.appendChild(li);
+    if (window.StatViz) window.StatViz.render(g, opts);
+    return li;
+  }
+
+  function renderHero() {
+    var d = S.data, host = $('hero-stats');
+    if (!host) return;
+    host.innerHTML = '';
+    var m = d.matched['text-zero vs unet-zero'] || {};
+    // 1. What: the asked kind, lost faster after language damage (pre-registered primary test)
+    var kc = m.delta_correct;
+    if (kc) {
+      var lang = Math.round(-kc.language * 100), draw = Math.round(-kc.drawing * 100);
+      var ok = excludesZero(kc.ci95) && Math.sign(kc.difference) === kc.predicted_sign;
+      var rev = excludesZero(kc.ci95) && Math.sign(kc.difference) === -kc.predicted_sign;
+      heroStat(host, { kind: 'bars', values: [lang, draw], labels: ['language', 'drawing'], tones: ['blue', 'orange'], max: 100,
+        value: lang + ' vs ' + draw, unit: ' pts',
+        label: 'fewer chairs still the asked kind, at equal picture change',
+        alt: 'Language part damaged: ' + lang + ' points fewer chairs still read as the asked kind; drawing part damaged: ' + draw +
+          ' points fewer, at the same amount of picture change (neurons switched off).' }, verdictChip(ok, rev));
+    }
+    // 2. Back to the plain chair? Farther from it, not closer (the prediction failed)
+    var pz = (d.pooled['text-zero'] || {}).delta_d_proto, pd = (d.pooled['unet-zero'] || {}).delta_d_proto;
+    if (pz && pd) {
+      var farther = pz.ci95[0] > 0;
+      heroStat(host, { kind: 'bars', values: [pz.mean, pd.mean], labels: ['language', 'drawing'], tones: ['blue', 'orange'], digits: 2,
+        value: farther ? 'Farther' : 'No closer', unit: '',
+        label: 'from the plain chair, not back to it (change in distance)',
+        alt: 'Back to the plain chair? No. Distance to the plain chair grew by ' + pz.mean.toFixed(2) + ' after language damage and by ' +
+          pd.mean.toFixed(2) + ' after drawing damage (neurons switched off, averaged over the damage levels).' }, el('p', { class: 'fs-verdict no', text: 'Prediction failed' }));
+    }
+    // 3. Clocks: the mildest drawing damage strips the numbers first
+    var c = d.clocks, fi = c && c.feature_names ? c.feature_names.indexOf('12 numbers in order') : -1;
+    if (fi >= 0) {
+      var intact = c.features.filter(function (r) { return r.cond === 'intact'; })[0];
+      var mild = c.features.filter(function (r) { return r.cond.indexOf('unet-zero@') === 0; })
+        .sort(function (a, b) { return parseFloat(a.cond.split('@')[1]) - parseFloat(b.cond.split('@')[1]); })[0];
+      if (intact && mild) {
+        var a = Math.round(intact.values[fi] * 100), b = Math.round(mild.values[fi] * 100);
+        heroStat(host, { kind: 'bars', values: [a, b], labels: ['intact', 'drawing'], tones: ['ink', 'orange'], max: 100,
+          value: a + '% → ' + b + '%', unit: '',
+          label: 'clocks with all 12 numbers in order: drawing damage strips them first',
+          alt: 'Clocks with all 12 numbers in order: ' + a + '% intact, ' + b + '% after the mildest drawing damage (' + mild.label + ').' });
+      }
+    }
+    // the honest qualifiers, from the same numbers
+    var q = $('hero-qual'), clean = m.delta_p_clean, cn = (d.matched['text-noise vs unet-noise'] || {}).delta_p_clean;
+    if (q && kc && clean && cn) {
+      var heldNoise = excludesZero(cn.ci95) && Math.sign(cn.difference) === cn.predicted_sign;
+      var revOff = excludesZero(clean.ci95) && Math.sign(clean.difference) === -clean.predicted_sign;
+      q.innerHTML = '';
+      var whatHeld = excludesZero(kc.ci95) && Math.sign(kc.difference) === kc.predicted_sign;
+      var heldOff = excludesZero(clean.ci95) && Math.sign(clean.difference) === clean.predicted_sign;
+      q.appendChild(el('b', { text: whatHeld && heldNoise && heldOff ? 'Supported. ' : whatHeld || heldNoise || heldOff ? 'Partly supported. ' : 'Not supported. ' }));
+      q.appendChild(document.createTextNode('The “what” half held in the pre-registered test (neurons switched off: difference ' + pts(kc.difference) + ', ' + ciPts(kc.ci95) +
+        '). The “how” half ' + (heldNoise ? 'held for noise' : 'did not hold for noise') + (revOff ? ' but reversed for neurons switched off' : '') +
+        ' ('));
+      q.appendChild(el('a', { href: '#diss-h', text: 'details' }));
+      q.appendChild(document.createTextNode('). The readers are AI models; an analogy, not a claim about people.'));
+    }
+    renderHeroClocks();
+  }
+
+  // three clocks asked to show 8:45: intact, and the most damaged language and drawing parts, for the chosen kind of damage
+  function renderHeroClocks() {
+    var c = S.data.clocks, fig = $('hero-clocks'), row = $('hero-clocks-row');
+    if (!fig || !c || !c.strip) return;
+    var m = S.data.slider.methods[S.method], t = '8_45';
+    var lang = ((c.strip[m.lang] || {})[t] || []), draw = ((c.strip[m.draw] || {})[t] || []);
+    if (!lang.length || !draw.length) { fig.hidden = true; return; }
+    row.innerHTML = '';
+    [[lang[0], 'intact', ''], [lang[lang.length - 1], 'language part', 'lang'], [draw[draw.length - 1], 'drawing part', 'draw']].forEach(function (x) {
+      var p = x[0];
+      row.appendChild(el('figure', { class: 'pd-heroclock ' + x[2] }, [
+        el('img', { src: p.img, width: 180, height: 180, loading: 'lazy',
+          alt: 'A clock asked to show 8:45, ' + (x[2] ? x[1] + ' damaged, ' + p.label : 'intact') }),
+        el('figcaption', {}, [el('b', { text: x[1] }), x[2] ? el('span', { text: p.label }) : null])]));
+    });
+    $('hero-clocks-cap').innerHTML = '';
+    $('hero-clocks-cap').appendChild(document.createTextNode('And clocks: SDXL asked for “a simple clock face showing 8:45”, intact and at the strongest damage. '));
+    $('hero-clocks-cap').appendChild(el('a', { href: '#clock-h', text: 'All the clocks' }));
+    fig.hidden = false;
+  }
+
   // parts of the experiment still running are named, never guessed
   function renderStatus() {
     var st = S.data.status;
@@ -420,6 +516,7 @@
       S.data = d;
       if (d.hero_answer) $('hero-answer').innerHTML = d.hero_answer;
       setupSlider();
+      renderHero();
       renderDissociation();
       renderProto();
       renderGlimmer();

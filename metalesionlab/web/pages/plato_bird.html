@@ -13,6 +13,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_bird.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="pb">
 <a class="skip" href="#main">Skip to content</a>
@@ -30,28 +32,25 @@
 
 <main id="main" tabindex="-1">
 
-<section class="pb-hero" aria-labelledby="hero-h">
-  <div class="pb-hero-text">
+<section class="pb-hero fs-hero" aria-labelledby="hero-h">
+  <div class="pb-hero-text fs-text">
     <div class="title-pair">
       <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one best example of a kind? · the Forms, Wittgenstein, Rosch · <a href="/plato">Plato series</a></span></p>
       <h1 id="hero-h">Plato’s Bird</h1>
     </div>
     <!--#epigraph:theaetetus-155d-->
-    <p class="pb-lede" id="hero-lede">Ask 20 people to name a bird and you get 11 different birds. Ask Meta’s Muse Spark the same question 50 times.</p>
-    <div class="pb-stat" id="hero-stat">
-      <span class="pb-stat-num" id="stat-num">90%</span>
-      <p class="pb-stat-text" id="stat-text">Across 117 categories, Muse Spark’s favourite answer takes 90% of its answers. People’s favourite takes 48%.</p>
-      <p class="pb-stat-sub" id="stat-sub"></p>
-    </div>
+    <p class="fs-answer" id="hero-answer">Ask Meta’s Muse Spark to name a bird and it says “sparrow” 49 times out of 50; ask 20 people and you get 11 different birds.</p>
+    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
+    <p class="fs-qual" id="hero-qual">The 117-category shares are measured at people’s sample size. The AI answered once per call at its default settings; people named birds aloud for a minute and we kept their first.</p>
   </div>
-  <figure class="pb-hero-fig" aria-labelledby="hero-cap">
+  <figure class="fs-visual pb-hero-fig" aria-labelledby="hero-cap">
     <p class="pb-q">“Name one member of the category <b>bird</b>.”</p>
-    <div class="pb-trio" id="hero-trio"></div>
-    <figcaption id="hero-cap" class="pb-cap">Each bar is one answer; its length is the share of answers. People: the first bird each of 20 UK adults named aloud (Banks &amp; Connell, 2023). Muse Spark: 50 separate calls.</figcaption>
+    <div class="pb-shares" id="hero-shares"></div>
     <div class="pb-drawn">
       <img src="/static/img/plato_bird/bird.webp" width="620" height="196" alt="12 doodles Muse Image drew for “a bird”: the same small songbird, side view, facing right, every time.">
       <p class="pb-cap" id="hero-drawn-cap">And when Muse Image draws “a bird”, 12 times: the same little songbird.</p>
     </div>
+    <figcaption id="hero-cap" class="pb-cap">Each bar is everyone’s answers; each piece is one bird, as wide as its share. People: the first bird each of 20 UK adults named aloud (Banks &amp; Connell, 2023). Muse Spark: 50 separate calls. Muse Glimmer: 50 samples at temperature 1.</figcaption>
   </figure>
 </section>
 
@@ -78,7 +77,7 @@
   <p class="pb-q" id="pick-q"></p>
   <div class="pb-trio" id="pick-trio"></div>
   <dl class="pb-facts" id="pick-facts"></dl>
-  <p class="pb-note" id="cat-hint">Shares at people’s sample size: the AI’s 50 answers are subsampled to the number of people (13–20) so both sides are measured alike. Answers are lower-cased, singular, and merged only when they name the same thing (“eggplant” = “aubergine”).</p>
+  <p class="pb-note" id="cat-hint">Each bar is one answer; its length is the share of answers. People: the first answer each UK adult named aloud (Banks &amp; Connell, 2023); Muse Spark: 50 separate calls. Shares at people’s sample size: the AI’s 50 answers are subsampled to the number of people (13–20) so both sides are measured alike. Answers are lower-cased, singular, and merged only when they name the same thing (“eggplant” = “aubergine”).</p>
 </section>
 
 <section class="pb-sec" id="all" aria-labelledby="all-h">
@@ -156,6 +155,7 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato_bird.js"></script>
 </body>
 </html>

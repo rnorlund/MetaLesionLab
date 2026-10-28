@@ -13,6 +13,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_cave.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="cave">
 <a class="skip" href="#main">Skip to content</a>
@@ -21,27 +23,27 @@
 
 <main id="main" tabindex="-1">
 
-<section class="cv-hero" aria-labelledby="hero-h">
-  <div class="cv-hero-text">
+<section class="cv-hero fs-hero" aria-labelledby="hero-h">
+  <div class="cv-hero-text fs-text">
     <div class="title-pair">
       <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Can you know a thing from its shadow? · <i>Republic</i> VII, the Cave · <a href="/plato">Plato series</a></span></p>
       <h1 id="hero-h">Name the shadow</h1>
     </div>
     <!--#epigraph:republic-518b-->
-    <p class="cv-lede">Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed Meta’s open model Muse Glimmer 100 everyday objects as bare shadows. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
-    <p class="cv-lede" id="hero-answer">It named most of them. When it failed, its favorite answer was the word “Shadow”.</p>
+    <p class="fs-answer" id="hero-answer">It named most of the shadows, and when it failed, its favorite answer was simply the word “Shadow”.</p>
+    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
+    <p class="fs-qual" id="hero-qual">One drawing per object, one prompt, one way of casting the shadow. People saw different drawings, so that comparison is by concept.</p>
   </div>
-  <figure>
-    <img src="/static/img/plato_cave/wall.webp" width="1600" height="1538"
-         alt="Twelve soft shadows on a firelit rock wall: a rabbit, scissors, a hat, an anchor, a guitar, a bicycle, a glove, a cat, an igloo, a helicopter, a loaf of bread and an umbrella. Under each is what Muse Glimmer said: Shadow, scissors, UFO, anchor, Shadow, bicycle, hand, cat, Umbrella, helicopter, UFO, umbrella.">
-    <figcaption>What Muse Glimmer said for 12 of the 100 shadows. Orange: wrong.</figcaption>
+  <figure class="fs-visual cv-pairs" aria-labelledby="pairs-cap">
+    <div class="cv-pairs-grid" id="hero-pairs"></div>
+    <figcaption class="fs-cap" id="pairs-cap">Six of the 100 shadows Meta’s open model Muse Glimmer was shown, each beside the drawing that cast it, with the one word it answered.</figcaption>
   </figure>
-  <div class="cv-tiles" id="tiles" aria-live="polite"></div>
 </section>
 
 <section class="cv-sec" id="game" aria-labelledby="game-h">
   <div class="cv-sec-head">
     <h2 id="game-h">Your turn: name the shadow</h2>
+    <p class="fs-intro">Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed Meta’s open model Muse Glimmer 100 everyday objects as bare shadows. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
     <p class="cv-sec-lede">Type what you think each shadow is, then reveal the object and what the AI said. Your answers stay in your browser; nothing is sent or stored.</p>
   </div>
   <div class="cv-score" aria-live="polite"><span id="score-you">You: <b>0</b> of 0</span><span id="score-ai"></span></div>
@@ -74,8 +76,15 @@
     <p class="cv-sec-lede" id="medium-lede"></p>
   </div>
   <div class="cv-two">
-    <div class="cv-facts" id="medium-facts"></div>
-    <div class="cv-facts" id="error-facts"></div>
+    <div class="cv-facts">
+      <div class="cv-facts" id="medium-facts"></div>
+      <div class="cv-facts" id="error-facts"></div>
+    </div>
+    <figure class="cv-wall">
+      <img src="/static/img/plato_cave/wall.webp" width="1600" height="1538" loading="lazy"
+           alt="Twelve soft shadows on a firelit rock wall: a rabbit, scissors, a hat, an anchor, a guitar, a bicycle, a glove, a cat, an igloo, a helicopter, a loaf of bread and an umbrella. Under each is what Muse Glimmer said: Shadow, scissors, UFO, anchor, Shadow, bicycle, hand, cat, Umbrella, helicopter, UFO, umbrella.">
+      <figcaption class="cv-cap">What Muse Glimmer said for 12 of the 100 shadows. Orange: wrong.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -120,6 +129,7 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato_cave.js"></script>
 </body>
 </html>

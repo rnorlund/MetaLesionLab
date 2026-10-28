@@ -1,4 +1,4 @@
-/* Plato's Cratylus: tiles, "Which one is bouba?" (your choice stays in the browser), every word's roundness,
+/* Plato's Cratylus: the first screen's numbers, "Which one is bouba?" (your choice stays in the browser), every word's roundness,
    sound vs. famous word, and the choice arm next to people's published rates. Data: /api/plato/cratylus
    (statistics only); no API calls. */
 (function () {
@@ -47,17 +47,38 @@
   }
   function hideTip(wrap) { var t = wrap.querySelector('.ck-tip'); if (t) t.hidden = true; }
 
-  // --- hero ------------------------------------------------------------------------------------
-  function tiles() {
-    var k = D.contrasts.kiki_vs_bouba.solidity, b = word('bouba'), ki = word('kiki'), ke = word('keti'), te = word('tepi');
-    var box = $('tiles');
-    box.innerHTML = '';
-    box.appendChild(h('div', { class: 'ck-tile' }, [h('b', { text: '12 of 12' }), h('span', { text: '“kiki” pictures were stars, and every one is spikier than every “bouba” (solidity ' + f2(ki.solidity.mean) + ' vs ' + f2(b.solidity.mean) + ').' })]));
-    box.appendChild(h('div', { class: 'ck-tile em' }, [h('b', { text: '0 of 24' }), h('span', { text: '“keti” and “tepi” pictures with a sharp corner. Same hard sounds as kiki, drawn as blobs (solidity ' + f2(ke.solidity.mean) + ' and ' + f2(te.solidity.mean) + ').' })]));
-    var sp = D.choice.spark_both_match, g = D.choice.glimmer_both_match;
-    box.appendChild(h('div', { class: 'ck-tile' }, [h('b', { text: pct(sp.p) + '%' }), h('span', { text: 'of Muse Spark’s answers matched both words; ' + pct(D.people.both_trials_match) + '% of 917 people in 25 languages did.' })]));
-    box.appendChild(h('div', { class: 'ck-tile' }, [h('b', { text: pct(g.p) + '%' }), h('span', { text: 'Muse Glimmer, Meta’s open model, would match both: it leans round for bouba but has no preference for kiki.' })]));
-    void k;
+  // --- the first screen: three numbers as small graphics (statviz.js) -------------------------------------------
+  function corners(w) { var x = word(w); return x ? { k: Math.round(x.share_with_corners * x.n), n: x.n } : { k: 0, n: 0 }; }
+  function heroStat(host, opts, chip) {
+    var g = h('div');
+    host.appendChild(h('li', { class: 'fs-stat' }, chip ? [g, chip] : [g]));
+    if (window.StatViz) window.StatViz.render(g, opts);
+  }
+  function chip(cls, words) { return h('p', { class: 'fs-verdict ' + cls, text: words }); }
+  function hero() {
+    var host = $('hero-stats');
+    host.innerHTML = '';
+    var ki = corners('kiki'), ke = corners('keti'), te = corners('tepi'), kiw = word('kiki'), bw = word('bouba');
+    heroStat(host, { kind: 'dots', k: ki.k, n: ki.n, tone: 'orange', cols: 6,
+      label: '“kiki” pictures with sharp corners: stars, every one spikier than every “bouba”',
+      alt: ki.k + ' of ' + ki.n + ' pictures of kiki have sharp corners (solidity ' + f2(kiw.solidity.mean) + ' vs ' + f2(bw.solidity.mean) + ' for bouba).' },
+      // pre-registered: kiki spikier than bouba, the AUC's CI above 0.5 on at least two of the three measures
+      ['solidity', 'corners', 'axis'].filter(function (m) { var c = D.contrasts.kiki_vs_bouba[m]; return c && c.auc_ci && c.auc_ci[0] > 0.5; }).length >= 2 ?
+        chip('yes', 'As predicted') : chip('no', 'Prediction failed'));
+    heroStat(host, { kind: 'dots', k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12,
+      label: '“keti” and “tepi” pictures with a sharp corner: kiki’s hard sounds, drawn as blobs',
+      alt: (ke.k + te.k) + ' of ' + (ke.n + te.n) + ' pictures of the new words keti and tepi have a sharp corner (solidity ' +
+        f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + ').' },
+      // pre-registered: words with kiki's sounds come out spikier than words with bouba's (solidity, CI above 0)
+      D.contrasts.spiky_vs_round_class.solidity.diff_ci[0] > 0 ? chip('yes', 'As predicted') : chip('no', 'Prediction failed'));
+    var sp = pct(D.choice.spark_both_match.p), pe = pct(D.people.both_trials_match), gl = pct(D.choice.glimmer_both_match.p);
+    heroStat(host, { kind: 'bars', values: [sp, pe, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100,
+      value: sp + '%', unit: 'vs ' + pe + '%', label: 'chose round for “bouba” and spiky for “kiki”',
+      alt: 'Matched both words: Muse Spark ' + sp + '% of its answers, people ' + pe + '% (' + D.people.n_people + ' people, ' + D.people.n_languages +
+        ' languages), Muse Glimmer ' + gl + '%.' },
+      sp >= pe && gl >= pe ? chip('yes', 'As predicted') : sp >= pe ? chip('part', 'Partly: Glimmer no') : chip('no', 'Prediction failed'));
+    $('hero-qual').textContent = 'People: ' + D.people.n_people + ' in ' + D.people.n_languages + ' languages (Ćwiek et al., 2022), who heard the words; the models only saw letters. ' +
+      'Muse Glimmer, Meta’s open model, leans round for “bouba” but has no preference for “kiki”. The classic words appear on thousands of web pages about this very effect.';
   }
 
   // --- your turn ---------------------------------------------------------------------------------
@@ -240,7 +261,7 @@
   function init() {
     T.api('/api/plato/cratylus').then(function (d) {
       D = d;
-      tiles(); tryRender(); wordsChart(); strip(); wordsTable(); sound(); choiceChart(); credits();
+      hero(); tryRender(); wordsChart(); strip(); wordsTable(); sound(); choiceChart(); credits();
     }).catch(function (e) {
       var el = $('load-error');
       el.hidden = false;
