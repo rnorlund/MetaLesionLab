@@ -52,16 +52,63 @@ PUBLIC = meta_api.REPO_ROOT / "public_data"
 PASSAGES_FILE = "plato_passages.json"
 EXPERIMENTS = {
     "forms": ("Plato's Forms: the Platonic clock, bed and table", "/plato/forms"),
-    "damage": ("Damage an image model: does a rocking chair drift back to the plain chair?", "/plato/damage"),
+    "damage": ("Damage an image model: what happens to the chair, and does it drift back to the plain chair?", "/plato/damage"),
     "bird": ("Name a bird: is the AI more stuck on textbook examples than people?", "/plato/bird"),
     "cave": ("The Cave: name the shadow", "/plato/cave"),
     "cratylus": ("Cratylus: bouba, kiki and whether names fit things", "/plato/cratylus"),
+    "lifespan": ("The life of a chair: children growing up, an AI in training, a model learning from people's chairs",
+                 "/plato/lifespan"),
 }
 _EXPERIMENT_ALIASES = {
     "form": "forms", "clock": "forms", "bed": "forms", "table": "forms", "platonic clock": "forms",
     "damaged": "damage", "lesion": "damage", "lesions": "damage", "rocking chair": "damage",
     "birds": "bird", "name a bird": "bird", "shadow": "cave", "shadows": "cave", "name the shadow": "cave",
     "bouba": "cratylus", "kiki": "cratylus", "bouba/kiki": "cratylus", "bouba kiki": "cratylus", "names": "cratylus",
+    "life": "lifespan", "life of a chair": "lifespan", "children": "lifespan", "meno": "lifespan",
+    "sketch model": "lifespan", "development": "lifespan",
+}
+# Each experiment's short answer, as its write-up states it (docs/plato_<name>.md). Sent with the data so the
+# headline (and its honest limits) is never lost when a large results file is cut to fit.
+SHORT_ANSWERS = {
+    "forms": "Without a time asked, Muse Image drew 10:10 (the watch-advert time) on 13 of 16 clock doodles by eye "
+             "(8 of 16 by the automatic reader). People drew it on 4 of 200 Quick, Draw! clocks (2%); their favourite "
+             "is the hands on the 12 and the 3 (64 of 200). Asked for a time, Muse Image never drew 10:10 (0 of 72 "
+             "doodles) and had the minute hand right on 93%; Stable Diffusion XL drew the asked time on only 4%. "
+             "Plato's own bed and table: Muse Image's tables are 0.39 times and its beds 0.47 times as varied as "
+             "people's; asked for 16 named kinds, both become more varied than people's.",
+    "damage": "Damaging Stable Diffusion XL's language part (its text encoders) changes what it draws; damaging its "
+              "drawing part (the UNet) changes how. In the pre-registered test (neurons switched off, compared at "
+              "equal picture change), language damage left 12 points fewer chairs of the asked kind (95% CI -20 to "
+              "-4). The other half of the planned double dissociation held for noise but reversed for neurons "
+              "switched off, so it is only partly supported. Damaged language never sends a rocking chair back to "
+              "the plain chair: it moves chairs away from it, into scenes and other things (a room, a car, a "
+              "person). When Muse Glimmer itself is damaged it falls back from specific kinds to 'a plain, ordinary' "
+              "one, but random neurons do the same at the same loss of right answers: a generic fallback, not a sign "
+              "of language damage. Clocks: drawing damage strips the numbers first (12 numbers in order, 33% to 4%); "
+              "language damage removes the whole clock. These are models; the link to semantic dementia is an "
+              "analogy, not a claim about people.",
+    "bird": "Across 117 categories, Muse Spark's most common answer takes 90% of its answers; people's most common "
+            "first answer takes 48% (Banks & Connell 2023 norms, about 20 UK adults per category). Name a bird: 20 "
+            "people gave 11 different birds, and Spark said sparrow 49 of 50 times. Meta's open model Muse Glimmer, "
+            "read from its own probabilities, is about as varied as people (49%). Spark's favourites are typical "
+            "members, and Muse Image's drawn favourite matches Spark's named one in 6 of 12 categories.",
+    "cave": "Muse Glimmer named 100 of 100 line drawings, 86% of their outlines, 90% of filled silhouettes and 67% "
+            "of soft cast shadows. When it failed on a cast shadow, its most common answer was 'Shadow' (10 times), "
+            "then 'UFO' (7). Objects people find hard as silhouettes are harder for it too (rank correlation 0.32), "
+            "though it named more of them (91% vs 75% on 78 shared objects; Wagemans et al. 2008).",
+    "cratylus": "Muse Image drew all 12 'kiki's as spiky stars and all 12 'bouba's as round blobs, but eight new "
+                "words built from the same sounds (keti and tepi among them) all came out as round blobs: it knows "
+                "the famous words, not the rule. Muse Spark matched bouba and kiki every time (people: 72% of 917 "
+                "people in 25 languages; Ćwiek et al. 2022) and, for new words, followed the consonants as people "
+                "do. Muse Glimmer leaned round for nearly every word and matched both only 35% of the time.",
+    "lifespan": "Children's drawings of 20 things (ages 2 to 10; Long et al. 2024, statistics only) become more "
+                "recognizable (39% to 72%, +4.5 points a year) and closer to the adults' average; their variety "
+                "narrows, mostly by age 6. At 10 they are still less recognizable than adults (72% vs 86%). Stable "
+                "Diffusion's public training stages (v1.1 to v1.5) don't follow that path in any robust way: v1.1 is "
+                "already as recognizable as a 10-year-old. A small sketch model trained from scratch on 20,000 "
+                "Quick, Draw! chairs goes from scribbles (13% recognizable) to adult-like chairs (80%) and ends less "
+                "varied than the chairs it learned from (0.32 vs 0.37). Losing the chair is the damage experiment: "
+                "an analogy, not a claim about people.",
 }
 QUICKDRAW = "Google Quick, Draw! (Google Creative Lab), CC BY 4.0"
 PEOPLE_PER_CONCEPT = 200  # Quick, Draw! drawings per concept (recognized, first 200 in file order; docs/plato.md)
@@ -171,6 +218,9 @@ def plato_variety(concept: str | None = None) -> dict:
         "plain_ordinary_kind_pct": {"usual_prompt": _pct((ks.get("default") or {}).get("mean_share_plain")),
                                     "people": _pct((ks.get("people") or {}).get("mean_share_plain")),
                                     "named_kinds": _pct((ks.get("listed") or {}).get("mean_share_plain"))},
+        "plain_ordinary_kind_scope": "Mean over all 35 concepts. On the 22 concepts whose kind labels are reliable "
+                                     "it is 75% for people and for the usual prompt alike; the /plato page quotes "
+                                     "that subset. Say which one you quote.",
         "mean_kind_diversity": {v: round(ks[x]["mean_simpson"], 2) for x, v in [*_COND.items(), ("people", "people")]
                                 if x in ks},
         "people_vs_usual_prompt": {"same_most_common_kind": f"{pv.get('same_prototype')} of {pv.get('n_concepts')}",
@@ -297,6 +347,8 @@ def plato_experiment(name: str, focus: str | None = None) -> dict:
     data = next(iter(loaded.values())) if len(loaded) == 1 else loaded
     out = {"experiment": key, "title": title, "available": True, "files": [f"public_data/{n}" for n in loaded],
            "link": page}
+    if key in SHORT_ANSWERS:
+        out["short_answer"] = SHORT_ANSWERS[key]
     if focus:
         hit = _focus(data, _norm(focus))
         if hit is not None:
@@ -373,9 +425,9 @@ TOOLS = [
                    "one point while people's stay spread out, and how well Glimmer names each.",
                    {"concept": {"type": "string", "description": "e.g. 'chair'. Omit for the summary."}}),
     engine.fn_spec("plato_experiment", "The newer Plato experiments, read from their published results: forms (the "
-                   "Platonic clock, bed, table), damage (damage an image model: does a rocking chair drift back to the "
-                   "plain chair?), bird (name a bird), cave (name the shadow), cratylus (bouba/kiki). Says when one isn't "
-                   "published yet.",
+                   "Platonic clock, bed, table), damage (damage an image model: what happens to a rocking chair?), bird "
+                   "(name a bird), cave (name the shadow), cratylus (bouba/kiki), lifespan (the life of a chair: "
+                   "children, an AI in training). Each comes with its short answer. Says when one isn't published yet.",
                    {"name": {"type": "string", "enum": list(EXPERIMENTS)},
                     "focus": {"type": "string", "description": "Optional: one item to zoom in on, e.g. 'robin', 'chair'."}},
                    ["name"]),
@@ -634,7 +686,7 @@ The experiments, behind your tools:
 - plato_stats: Plato's Chair. Muse Image drew 35 things (chair, boat, umbrella, ...) 12-16 times each with the same doodle prompt; Meta DINOv2 measured how varied ("spread") its drawings are against 200 people's drawings of each thing from Google's Quick, Draw! game (CC BY 4.0). Index = AI spread / people's spread; below 1 means the AI is more uniform. Its chair: one slat-back dining chair, 16 times.
 - plato_variety: asking for "any kind", "an unusual kind" or named kinds, and which KIND of object Muse and people draw.
 - glimmer_inside: inside Muse Glimmer, the layer where Muse's doodles of a thing collapse to one point while people's drawings stay spread out, and how well Glimmer names each.
-- plato_experiment: newer experiments (forms: the Platonic clock, bed and table; damage: damage an image model and see whether a rocking chair drifts back to the plain chair; bird: name a bird; cave: name the shadow; cratylus: bouba/kiki). Some aren't published yet; then say so, and don't guess.
+- plato_experiment: newer experiments (forms: the Platonic clock, bed and table; damage: damage an image model and see what happens to a rocking chair; bird: name a bird; cave: name the shadow; cratylus: bouba/kiki; lifespan: the life of a chair, from children's drawings to an AI in training). Each result has a short_answer: lead with it and keep its limits (for example, the damage experiment's double dissociation is only partly supported). Some aren't published yet; then say so, and don't guess.
 - plato_passage: verified passages of Plato in Benjamin Jowett's public-domain translation.
 
 How to answer:

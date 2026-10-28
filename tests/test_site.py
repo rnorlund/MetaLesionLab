@@ -124,6 +124,12 @@ def test_series_cards_and_links_appear_only_when_served(client):
     assert f'href="{path}"' not in client.get("/").text
 
 
+def test_every_served_experiment_card_states_its_finding(client):
+    """All seven experiments are finished: no card falls back to the "see what we found" link."""
+    for item in client.get("/api/site").json()["series"]:
+        assert item.get("finding"), item["path"]
+
+
 def test_series_override_file_sets_the_finding(client, tmp_path, monkeypatch):
     monkeypatch.setattr(site, "SERIES_DIR", tmp_path)
     (tmp_path / "cave.json").write_text(json.dumps({"finding": "It named 9 of 10 shadows.", "slug": "ignored"}))

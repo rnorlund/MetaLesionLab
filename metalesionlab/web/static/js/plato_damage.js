@@ -291,8 +291,8 @@
     }
     if (ml['language-mlp-mean']) {
       var a = ml['language-mlp-mean'].strict_plain, v = ml['visual-mlp-mean'];
-      left.appendChild(el('p', { text: 'That is the semantic-dementia-like fallback from the specific to the general. But it is not special to language neurons: the same number of random neurons, compared at the same loss of right answers, does the same (difference ' +
-        pts(a.difference) + ', ' + ciPts(a.ci95) + ').' +
+      left.appendChild(el('p', { text: 'That looks like the slide from the specific to the general seen in semantic dementia, but it is not a sign of language damage: the same number of random neurons, compared at the same loss of right answers, does the same (difference ' +
+        pts(a.difference) + ', ' + ciPts(a.ci95) + '). It is a generic fallback of a damaged reader.' +
         (v ? ' Damage to the seeing neurons is different: almost no plain answers (' + pts(v.strict_plain.difference) + ' vs. random) and many more letter guesses (' + pts(v.strict_order_bias.difference) + ', ' + ciPts(v.strict_order_bias.ci95) + ').' : '') }));
     }
     host.appendChild(left);
@@ -352,7 +352,7 @@
     tb.appendChild(body);
     var left = el('div');
     if (j.summary) left.appendChild(el('p', { class: 'pd-verdict', text: j.summary }));
-    left.appendChild(tb);
+    left.appendChild(el('div', { class: 'pd-tablewrap' }, tb));
     left.appendChild(el('p', { class: 'pd-caveat', text: 'Reading: 40 Muse Image doodles of named chairs, hats and birds, multiple choice. Drawing: 8 chair kinds and the plain chair × 4 seeds; “draws the asked kind” means the drawing sits nearest its own kind among the intact drawings (DINOv2). Small n: a first look.' }));
     host.appendChild(left);
     if (j.strip && j.strip.length) {
@@ -384,7 +384,7 @@
         body.appendChild(tr);
       });
       tb.appendChild(body);
-      left.appendChild(tb);
+      left.appendChild(el('div', { class: 'pd-tablewrap' }, tb));
     }
     var strip = c.strip || {}, method = 'noise';
     ['3_00', '8_45'].forEach(function (t) {

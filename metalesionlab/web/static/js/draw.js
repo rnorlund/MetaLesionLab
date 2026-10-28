@@ -710,6 +710,7 @@
       q('fair').textContent = fair(c);
       showResults(r, c);
       if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
+      document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
       var target = o.scrollTo || res;
       setTimeout(function () { target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
     }

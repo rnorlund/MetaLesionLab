@@ -6,8 +6,10 @@
 
 Plato held that each kind of thing has one ideal Form, and every real one is a copy. We put his questions to Meta's AI and to people. The first one: *is there one ideal chair?* We asked Meta's image model, Muse Image, for 16 quick doodles of a chair and of 34 other things, took 200 people's 20-second drawings of the same words from Google's Quick, Draw!, and measured how varied each set is with Meta's DINOv2 vision model.
 
-- **See it:** run the site (below) and open `/` (the chairs), `/plato` (the whole experiment), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew) and `/socrates` (ask an AI playing Socrates).
-- **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages).
+The series follows the life of a chair, as an analogy: children's drawings move toward the adult chair from age 2 to 10, a small model trained on people's chairs grows from scribbles to adult-like chairs, and damage to an image model's language part makes its chair wander off into other things, much as drawings lose their distinctive features in some brain diseases (Bozeat et al. 2003; published neurology, not our data).
+
+- **See it:** run the site (below) and open `/` (the chairs), `/plato` (the whole experiment), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
+- **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md).
 
 ## What we found
 
@@ -34,17 +36,19 @@ Quotations are from Benjamin Jowett's public-domain translation, as published by
 
 Each experiment puts one of Plato's questions to an AI and to people. The site shows a card for each page once it is served (`metalesionlab/web/site.py`).
 
-| Plato's question | Where he asks it | Page | Status |
-|---|---|---|---|
-| Is there one ideal chair? | *Republic* X, the Forms | `/plato` | Done (above) |
-| Is there one ideal clock, bed or table? | *Republic* X | `/plato/forms` | In progress |
-| Can you know a thing from its shadow? | *Republic* VII, the Cave | `/plato/cave` | In progress |
-| Do names fit things by nature? | *Cratylus* (bouba and kiki) | `/plato/cratylus` | In progress |
-| Is there one best example of a kind? | The Forms, with Wittgenstein and Rosch | `/plato/bird` | In progress |
-| What happens to the Form when the mind is damaged? | Our own question | `/plato/damage` | In progress |
-| Is learning remembering the Forms? | *Meno* | `/plato/lifespan` | In progress |
+All seven are done; each write-up gives its pre-registered predictions, including the ones that failed.
 
-Also: **Draw a chair** (`/draw`). Visitors draw blind, in 20 seconds, like the Quick, Draw! players; then Muse Image's 16 chairs are revealed, and the drawing is measured the same way, on the server's CPU, against 200 people's. Drawings are processed in memory and never stored. **Ask Socrates** (`/socrates`) is a Muse Spark agent that plays Socrates: it answers questions about the experiments from the real results, quotes Plato only from verified passages, and asks you one question back.
+| Plato's question | Where he asks it | Page | What we found |
+|---|---|---|---|
+| Is there one ideal chair? | *Republic* X, the Forms | `/plato` | Muse Image drew 34 of 35 things more alike than people (median ratio 0.49). It is a default: named kinds lift it to 1.30 times people's, and Stable Diffusion XL varies about 2.4 times as much. ([doc](docs/plato.md)) |
+| Is there one ideal clock, bed or table? | *Republic* X | `/plato/forms` | With no time asked, Muse Image drew the advert's 10:10 on 13 of 16 clocks by eye (8 by the automatic reader); people on 2%. Asked for a time, it never drew 10:10 (0 of 72), against our prediction. Its table and bed are about as uniform as its chair (0.39 and 0.47 of people's spread). ([doc](docs/plato_forms.md)) |
+| Can you know a thing from its shadow? | *Republic* VII, the Cave | `/plato/cave` | Muse Glimmer named 67% of cast shadows (outlines 86%, silhouettes 90%); its most common wrong answer was "Shadow". It finds hard the silhouettes people find hard (rho 0.32), but names more of them. The predicted silhouette delay inside the model did not appear. ([doc](docs/plato_cave.md)) |
+| Do names fit things by nature? | *Cratylus* (bouba and kiki) | `/plato/cratylus` | Muse Image drew every "kiki" spiky and every "bouba" round, but new words with kiki's sounds ("keti", "tepi") came out round: it knows the famous answer, not the rule. Muse Spark follows the consonants as people do; Glimmer barely separates bouba from kiki. ([doc](docs/plato_cratylus.md)) |
+| Is there one best example of a kind? | The Forms, with Wittgenstein and Rosch | `/plato/bird` | Muse Spark's favourite answer takes 90% of its answers across 117 categories, people's 48% ("name a bird": sparrow 49 of 50; 20 people gave 11 birds). Glimmer's own probabilities are as varied as people's. The predicted larger gap for abstract categories was absent. ([doc](docs/plato_bird.md)) |
+| What happens to the Form when the mind is damaged? | Our own question | `/plato/damage` | Damage to Stable Diffusion XL's language part loses the asked kind faster than damage to its drawing part (−12 points [−20, −4]); the "how" half held for noise but reversed for neurons switched off, so the double dissociation is only partly supported. Chairs move away from the plain chair, never back to it. Damaged Glimmer's fallback to "a plain, ordinary" kind is generic: random neurons do the same. ([doc](docs/plato_damage.md)) |
+| Is learning remembering the Forms? | *Meno* | `/plato/lifespan` | Children's drawings move toward adults' from age 2 to 10 (recognizable 39% → 72%). Stable Diffusion's training stages don't follow that path robustly; a small model trained on people's chairs does, and ends narrower than its data (spread 0.32 vs 0.37). ([doc](docs/plato_lifespan.md)) |
+
+Also: **Draw a chair** (`/draw`, and the pad on the landing page). Visitors draw blind, in 20 seconds, like the Quick, Draw! players; then Muse Image's 16 chairs are revealed, and the drawing is measured the same way, on the server's CPU, against 200 people's. Drawings are processed in memory and never stored (an opt-in donation exists but is off by default: [docs/draw_donations.md](docs/draw_donations.md)). **Ask Socrates** (`/socrates`) is a Muse Spark agent that plays Socrates: it answers questions about the experiments from the real results, quotes Plato only from verified passages, and asks you one question back.
 
 ### How it works
 
@@ -82,6 +86,12 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 27 | Draw a chair (`/draw`): a visitor's drawing measured with DINOv2 on the CPU, against Muse Image's chairs and 200 people's |
 | Oct 27 | Ask Socrates (`/socrates`): Muse Spark plays Socrates over the Plato results |
 | Oct 27 | Plato-first site: new landing page, one header and nav on every page (`web/site.py`), the product name in one place (`metalesionlab/brand.py`), share card, a shorter tour |
+| Oct 27 | Plato's Bird (`/plato/bird`): "name a member of the category" for 117 categories, Muse Spark and Muse Glimmer against published norms, pre-registered |
+| Oct 27 | Plato's Forms (`/plato/forms`): the Platonic clock (what time Muse Image, SDXL and people draw), and Plato's own bed and table, pre-registered |
+| Oct 27 | Plato's Cave (`/plato/cave`, name the shadow) and Cratylus (`/plato/cratylus`, bouba and kiki), pre-registered, with a game on each page |
+| Oct 27 | Draw a chair, round 2: the pad on the landing page, draw blind and then the reveal, photo upload, opt-in donation (off by default) |
+| Oct 27 | The life of a chair (`/plato/lifespan`): children's drawings by age, Stable Diffusion's training stages, and a sketch model trained from scratch, pre-registered |
+| Oct 27 | Plato's Chair, damaged (`/plato/damage`): reversible lesions in SDXL's text encoders and UNet, damaged Muse Glimmer reading doodles, clocks, and Janus-Pro, pre-registered |
 
 ### Prior research context (not part of this submission)
 
@@ -89,7 +99,7 @@ The research question comes from the author's earlier work on simulating aphasia
 
 Built new during the hackathon:
 - everything on Meta's models (Muse Glimmer, Muse Spark, Muse Image, SAM 3.1, Muse Voice Transcribe, DINOv2),
-- Plato's Chair and Draw a chair,
+- Plato's Chair, the six other experiments of the series, and Draw a chair,
 - the test-building and scoring tools for people,
 - the word lens,
 - the agent,
@@ -280,14 +290,14 @@ Each step streams to the page as it happens (JSON lines), so you watch the trace
 
 | Model | Role |
 |---|---|
-| Muse Glimmer 30B (open weights, self-hosted) | Test-taker in Model Lab, with lesions and the word lens; looks at Plato's Chair doodles layer by layer; labels the kind of object in 10,020 drawings; name-agreement check on the demo sets (offline) |
-| Muse Image 1.0 | Draws the Plato's Chair doodles and the test pictures |
+| Muse Glimmer 30B (open weights, self-hosted) | Looks at Plato's Chair doodles layer by layer; labels the kind of object in 10,020 drawings; names the Cave's shadows; picks bouba or kiki; answers "name a bird" from its own probabilities; reads doodles while damaged; test-taker in the Model Lab, with lesions and the word lens |
+| Muse Image 1.0 | Draws the doodles of every experiment (things, kinds, clocks, beds and tables, bouba and kiki) and the test pictures |
 | SAM 3.1 | Picture quality check |
-| Muse Spark 1.3 | Kind lists for Plato's Chair, plans test sets, name agreement, meaning judge, second rater, Ask the Lab agent (tool calling) |
+| Muse Spark 1.3 | Kind lists, "name a bird" answers, clock reading, Ask Socrates and Ask the Lab agents (tool calling); in the lab, plans test sets, name agreement, meaning judge, second rater |
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
 | DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for Plato's Chair and Draw a chair |
 
-Every AI step in the tools uses a Meta model; Plato's Chair also runs Stable Diffusion XL (Stability AI) as an outside comparison. The other resources are non-AI: WordNet, the CMU Pronouncing Dictionary and wordfreq.
+Every AI step in the tools uses a Meta model. As outside comparisons, the Plato series also runs Stable Diffusion XL and Stable Diffusion v1.1–v1.5 (CreativeML OpenRAIL licences), Janus-Pro-7B (DeepSeek, MIT) and a small sketch model we trained ourselves. Human data: Google Quick, Draw! (CC BY 4.0), Banks & Connell (2023) category norms (CC BY 4.0), children's drawings from Long et al. (2024; CC BY-NC-SA 4.0, statistics only), and published numbers from Wagemans et al. (2008) and Ćwiek et al. (2022). The other resources are non-AI: WordNet, the CMU Pronouncing Dictionary and wordfreq.
 
 ## Data policy
 
@@ -299,7 +309,7 @@ Every AI step in the tools uses a Meta model; Plato's Chair also runs Stable Dif
   ```
 
 - Audio sent to the Scorer and the Naming Assessment goes to the Meta Model API. Use speaker codes, never names, and don't upload identifiable patient recordings unless your institution has approved that.
-- Draw a chair processes each drawing in memory and never stores or logs it.
+- Draw a chair processes each drawing in memory and never stores or logs it, unless the opt-in donation is switched on (`TIPPA_DONATIONS=1`; off by default).
 - Assessment sessions and private test sets stay in the user's browser. The only thing the server keeps is the summary a volunteer chooses to add to the public test's reference range (see Naming Assessment).
 
 ## Setup
@@ -321,7 +331,7 @@ pip install -e ".[web]"
 python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
 ```
 
-Pages: `/` (Plato's Chair), `/plato` (the whole experiment), `/draw` (Draw a chair), `/socrates` (Ask Socrates), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
+Pages: `/` (Plato's Chair), `/plato` (the whole experiment), the rest of the Plato series (`/plato/forms`, `/plato/cave`, `/plato/cratylus`, `/plato/bird`, `/plato/damage`, `/plato/lifespan`), `/draw` (Draw a chair), `/socrates` (Ask Socrates), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TIPPA_DATA_DIR` (or `TOT_DATA_DIR`; default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.
