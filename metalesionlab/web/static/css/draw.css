@@ -88,6 +88,8 @@ body.draw .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation 
 .dw-chart .lbl { font-size: 12px; fill: var(--ink-2); }
 .dw-chart .lbl-you { font-size: 12px; font-weight: 700; fill: var(--ink); }
 .dw-map svg { touch-action: pan-y; }
+/* people's dots are see-through so overlaps show; on a dark ground that turns the orange brown, so less so */
+:root[data-theme="dark"] .dw-chart circle[fill-opacity^="0.5"] { fill-opacity: 0.8; }
 .dw-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
 .dw-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .dw-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }

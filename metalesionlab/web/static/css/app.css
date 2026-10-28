@@ -15,6 +15,7 @@
   --line: #E5E7EB;
   --line-2: #D1D5DB;
   --line-3: #9CA3AF;
+  --btn-edge: #111827;         /* the outline of a plain button */
   --line-warm: #E7E5DF;        /* the Plato pages' warm hairlines */
   --line-warm-2: #D6D3CA;
   /* text */
@@ -129,6 +130,7 @@
   --line: #262D38;
   --line-2: #36404E;
   --line-3: #566070;
+  --btn-edge: #7D8796;
   --line-warm: #262D38;
   --line-warm-2: #3A4351;
   --ink: #ECEEF2;
@@ -143,7 +145,7 @@
   --blue-mid: #3F66B3;
   --orange: #FB923C;
   --orange-dark: #FDB57A;
-  --orange-soft: #3A2213;
+  --orange-soft: #301F14;
   --orange-mid: #9A4A1C;
   --blue-fill: #2F5FE0;
   --blue-fill-hover: #3B68E6;
@@ -393,7 +395,7 @@ legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
 .seg button:disabled, .seg input:disabled + span { color: var(--faint); cursor: not-allowed; }
 
 /* --- buttons -------------------------------------------------------------------------- */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--ink); background: var(--panel); color: var(--ink); text-decoration: none; cursor: pointer; min-height: 44px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--btn-edge); background: var(--panel); color: var(--ink); text-decoration: none; cursor: pointer; min-height: 44px; }
 .btn:hover { background: var(--soft); color: var(--ink); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .btn-primary { background: var(--blue-fill); border-color: var(--blue-fill); color: var(--on-accent); }

@@ -219,7 +219,7 @@
   // --- ask for variety ------------------------------------------------------------------------
   var VAR_ROWS = [['Usual prompt', 'default'], ['“Any kind”', 'any'], ['“An unusual kind”', 'unusual'], ['Named kinds, one each', 'listed']];
   function times(x) { return '×' + (x < 1 ? f2(x) : Number(x).toFixed(1)); }
-  /* One row of dots per prompt: every thing's spread ÷ people's spread, the median as a black bar, people at 1. */
+  /* One row of dots per prompt: every thing's spread ÷ people's spread, the median as a bar, people at 1. */
   function renderVarietyChart() {
     var wrap = $('var-chart'), v = S.data && S.data.variety;
     if (!wrap || !v) return;

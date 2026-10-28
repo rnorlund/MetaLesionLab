@@ -658,7 +658,7 @@
       });
     });
     var nm = LEARN.thing, tl = b.tests[LEARN.temp].last;
-    document.getElementById('learn-curves-sub').textContent = 'Each panel: the mean of the ' + b.seeds.length + ' runs (dark line), a 95% band across runs, and each run on its own (thin lines). ' +
+    document.getElementById('learn-curves-sub').textContent = 'Each panel: the mean of the ' + b.seeds.length + ' runs (thick line), a 95% band across runs, and each run on its own (thin lines). ' +
       '200 drawings per run and step, at temperature ' + TEMP_NAME[LEARN.temp] + '. Dashed: the 1,000 ' + nm + 's it learned from (a random sample of its 20,000).' +
       (kids['2'] ? ' Orange: children’s ' + nm + 's at 2 and at 10.' : '');
     document.getElementById('learn-curves-note').textContent = 'At the last step its variety is ' + f2(tl.model_spread) + ' against ' + f2(tl.ref_spread) +
