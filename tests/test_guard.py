@@ -373,7 +373,7 @@ def test_plato_site_in_public_mode(tmp_path):
     assert out["socrates"] == [503, "budget"]  # paid, and today's budget is used up
     assert out["lingua"] == [404, 404, 404, 404]  # no Test Studio, test or lab on this site
     assert "Socrates" in g["paused"] and "/draw" in [e["href"] for e in g["examples"]]
-    assert "studio" not in g and "socrates_per_day" in g and set(g["per_minute"]) == {"socrates", "other"}
+    assert "studio" not in g and "socrates_per_day" in g and set(g["per_minute"]) == {"socrates", "phaedrus", "other"}
     assert not out["public"] and out["max_words"] == 24  # the Lingua settings are left alone
 
 
