@@ -1,0 +1,4911 @@
+{
+ "experiment": "Plato's Telephone",
+ "written": "2026-10-27",
+ "n_pictures": 330,
+ "n_chains": 30,
+ "n_complete": 30,
+ "protocol": {
+  "describe_prompt": "Describe this drawing so someone could redraw it. One or two sentences. Don't name an artist.",
+  "image_template": "A quick simple doodle sketch of {description}, black marker on plain white, like a 20-second drawing, no text, no shading.",
+  "reasoning_effort": "minimal",
+  "generations": 10,
+  "chains_per_seed": 3,
+  "spark_model": "muse-spark-1.3",
+  "image_model": "muse-image-1.0",
+  "embedding": "facebook/dinov2-base CLS, flatten_paper(21, 215) + ink_crop(256, margin 0.06, threshold 200, speck 3px)",
+  "bootstrap": "2000 two-level (seeds, then chains), seed 20261028"
+ },
+ "seeds": [
+  {
+   "key": "rocking_chair",
+   "label": "rocking chair",
+   "concept": "chair",
+   "kind": "a rocking chair",
+   "control": false,
+   "kind_word": "rock(?:ing|er)",
+   "label_g0": "a rocking chair"
+  },
+  {
+   "key": "throne",
+   "label": "throne",
+   "concept": "chair",
+   "kind": "a throne",
+   "control": false,
+   "kind_word": "throne",
+   "label_g0": "a throne"
+  },
+  {
+   "key": "beanbag",
+   "label": "beanbag",
+   "concept": "chair",
+   "kind": "a beanbag chair",
+   "control": false,
+   "kind_word": "bean[\\s-]?bag",
+   "label_g0": "a beanbag chair"
+  },
+  {
+   "key": "wheelchair",
+   "label": "wheelchair",
+   "concept": "chair",
+   "kind": "a wheelchair",
+   "control": false,
+   "kind_word": "wheel[\\s-]?chair",
+   "label_g0": "a wheelchair"
+  },
+  {
+   "key": "office_chair",
+   "label": "office chair",
+   "concept": "chair",
+   "kind": "an office chair",
+   "control": false,
+   "kind_word": "office",
+   "label_g0": "an office chair"
+  },
+  {
+   "key": "folding_chair",
+   "label": "folding chair",
+   "concept": "chair",
+   "kind": "a folding chair",
+   "control": false,
+   "kind_word": "fold",
+   "label_g0": "a folding chair"
+  },
+  {
+   "key": "high_chair",
+   "label": "high chair",
+   "concept": "chair",
+   "kind": "a highchair",
+   "control": false,
+   "kind_word": "high[\\s-]?chair",
+   "label_g0": "a highchair"
+  },
+  {
+   "key": "adirondack",
+   "label": "Adirondack chair",
+   "concept": "chair",
+   "kind": "an Adirondack chair",
+   "control": false,
+   "kind_word": "adirondack",
+   "label_g0": "an Adirondack chair"
+  },
+  {
+   "key": "top_hat",
+   "label": "top hat",
+   "concept": "hat",
+   "kind": "a top hat",
+   "control": true,
+   "kind_word": "top[\\s-]?hat",
+   "label_g0": "a top hat"
+  },
+  {
+   "key": "cuckoo_clock",
+   "label": "cuckoo clock",
+   "concept": "clock",
+   "kind": "a cuckoo clock",
+   "control": true,
+   "kind_word": "cuckoo",
+   "label_g0": "a cuckoo clock"
+  }
+ ],
+ "reference": {
+  "floor": {
+   "chair": 0.0738,
+   "hat": 0.1655,
+   "clock": 0.1091
+  },
+  "default_spread": {
+   "chair": 0.1338,
+   "hat": 0.2801,
+   "clock": 0.191
+  },
+  "floor_grand_chair": 0.5426,
+  "floor_human_chair": 0.4977,
+  "note": "floor: Muse's default doodles' leave-one-out distance to their own prototype; default_spread: their mean pairwise distance (core run)"
+ },
+ "gens": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "curves": {
+  "d_proto": {
+   "mean": [
+    0.5131,
+    0.517,
+    0.5307,
+    0.5494,
+    0.5544,
+    0.5284,
+    0.5248,
+    0.5408,
+    0.5214,
+    0.5696,
+    0.5788
+   ],
+   "ci95": [
+    [
+     0.4001,
+     0.6182
+    ],
+    [
+     0.3858,
+     0.6363
+    ],
+    [
+     0.4082,
+     0.6507
+    ],
+    [
+     0.4189,
+     0.6685
+    ],
+    [
+     0.4129,
+     0.6798
+    ],
+    [
+     0.397,
+     0.642
+    ],
+    [
+     0.3933,
+     0.648
+    ],
+    [
+     0.4107,
+     0.6542
+    ],
+    [
+     0.3942,
+     0.6432
+    ],
+    [
+     0.4352,
+     0.6867
+    ],
+    [
+     0.4336,
+     0.7082
+    ]
+   ]
+  },
+  "d_start": {
+   "mean": [
+    0.0,
+    0.1484,
+    0.1914,
+    0.224,
+    0.2422,
+    0.2668,
+    0.2454,
+    0.2612,
+    0.2833,
+    0.3522,
+    0.3807
+   ],
+   "ci95": [
+    [
+     -0.0,
+     0.0
+    ],
+    [
+     0.1085,
+     0.192
+    ],
+    [
+     0.1335,
+     0.2483
+    ],
+    [
+     0.148,
+     0.3125
+    ],
+    [
+     0.1494,
+     0.3524
+    ],
+    [
+     0.1644,
+     0.3876
+    ],
+    [
+     0.1717,
+     0.3321
+    ],
+    [
+     0.1811,
+     0.3581
+    ],
+    [
+     0.198,
+     0.3881
+    ],
+    [
+     0.2245,
+     0.4805
+    ],
+    [
+     0.2428,
+     0.5195
+    ]
+   ]
+  },
+  "kind_word": {
+   "mean": [
+    0.875,
+    0.75,
+    0.75,
+    0.6667,
+    0.625,
+    0.625,
+    0.5833,
+    0.5833,
+    0.5833,
+    0.5,
+    0.4583
+   ],
+   "ci95": [
+    [
+     0.625,
+     1.0
+    ],
+    [
+     0.5,
+     0.9583
+    ],
+    [
+     0.5,
+     0.9583
+    ],
+    [
+     0.4167,
+     0.9167
+    ],
+    [
+     0.3333,
+     0.875
+    ],
+    [
+     0.3333,
+     0.875
+    ],
+    [
+     0.2917,
+     0.875
+    ],
+    [
+     0.25,
+     0.875
+    ],
+    [
+     0.25,
+     0.875
+    ],
+    [
+     0.2083,
+     0.7917
+    ],
+    [
+     0.125,
+     0.7917
+    ]
+   ]
+  },
+  "category_word": {
+   "mean": [
+    1.0,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9167,
+    0.9167,
+    0.9167,
+    0.9167,
+    0.875,
+    0.7917,
+    0.75
+   ],
+   "ci95": [
+    [
+     1.0,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.75,
+     1.0
+    ],
+    [
+     0.75,
+     1.0
+    ],
+    [
+     0.75,
+     1.0
+    ],
+    [
+     0.75,
+     1.0
+    ],
+    [
+     0.7083,
+     1.0
+    ],
+    [
+     0.5417,
+     1.0
+    ],
+    [
+     0.4583,
+     1.0
+    ]
+   ]
+  },
+  "label_kind": {
+   "mean": [
+    1.0,
+    0.9583,
+    0.9167,
+    0.875,
+    0.875,
+    0.875,
+    0.8333,
+    0.8333,
+    0.8333,
+    0.7917,
+    0.7917
+   ],
+   "ci95": [
+    [
+     1.0,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.75,
+     1.0
+    ],
+    [
+     0.6667,
+     1.0
+    ],
+    [
+     0.6667,
+     1.0
+    ],
+    [
+     0.6667,
+     1.0
+    ],
+    [
+     0.625,
+     1.0
+    ],
+    [
+     0.5823,
+     1.0
+    ],
+    [
+     0.5823,
+     1.0
+    ],
+    [
+     0.5406,
+     1.0
+    ],
+    [
+     0.5,
+     1.0
+    ]
+   ]
+  },
+  "label_category": {
+   "mean": [
+    1.0,
+    1.0,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9583,
+    0.9583
+   ],
+   "ci95": [
+    [
+     1.0,
+     1.0
+    ],
+    [
+     1.0,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ],
+    [
+     0.8333,
+     1.0
+    ]
+   ]
+  },
+  "label_plain": {
+   "mean": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ci95": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  "d_grand": {
+   "mean": [
+    0.622,
+    0.6492,
+    0.6464,
+    0.655,
+    0.6383,
+    0.6251,
+    0.6241,
+    0.6343,
+    0.6155,
+    0.6096,
+    0.5975
+   ],
+   "ci95": [
+    [
+     0.5519,
+     0.6902
+    ],
+    [
+     0.5701,
+     0.7254
+    ],
+    [
+     0.5594,
+     0.7282
+    ],
+    [
+     0.5748,
+     0.7301
+    ],
+    [
+     0.5453,
+     0.7239
+    ],
+    [
+     0.5448,
+     0.697
+    ],
+    [
+     0.56,
+     0.6883
+    ],
+    [
+     0.5724,
+     0.6977
+    ],
+    [
+     0.555,
+     0.6749
+    ],
+    [
+     0.5352,
+     0.685
+    ],
+    [
+     0.5232,
+     0.6738
+    ]
+   ]
+  },
+  "d_hat": {
+   "mean": [
+    0.7646,
+    0.788,
+    0.7887,
+    0.7966,
+    0.7851,
+    0.776,
+    0.7718,
+    0.783,
+    0.7733,
+    0.7744,
+    0.7669
+   ],
+   "ci95": [
+    [
+     0.6941,
+     0.8313
+    ],
+    [
+     0.7079,
+     0.859
+    ],
+    [
+     0.713,
+     0.858
+    ],
+    [
+     0.7245,
+     0.8609
+    ],
+    [
+     0.7007,
+     0.8569
+    ],
+    [
+     0.6987,
+     0.84
+    ],
+    [
+     0.705,
+     0.832
+    ],
+    [
+     0.7242,
+     0.8374
+    ],
+    [
+     0.7183,
+     0.8231
+    ],
+    [
+     0.7066,
+     0.8351
+    ],
+    [
+     0.7182,
+     0.819
+    ]
+   ]
+  },
+  "d_clock": {
+   "mean": [
+    0.8477,
+    0.8623,
+    0.8571,
+    0.8587,
+    0.8485,
+    0.8423,
+    0.8365,
+    0.8409,
+    0.8326,
+    0.8242,
+    0.8074
+   ],
+   "ci95": [
+    [
+     0.8163,
+     0.88
+    ],
+    [
+     0.8256,
+     0.8995
+    ],
+    [
+     0.8148,
+     0.8986
+    ],
+    [
+     0.8191,
+     0.8977
+    ],
+    [
+     0.7978,
+     0.897
+    ],
+    [
+     0.7917,
+     0.8895
+    ],
+    [
+     0.7953,
+     0.8806
+    ],
+    [
+     0.8028,
+     0.8823
+    ],
+    [
+     0.7923,
+     0.8733
+    ],
+    [
+     0.7727,
+     0.8749
+    ],
+    [
+     0.7494,
+     0.8662
+    ]
+   ]
+  },
+  "d_human_chair": {
+   "mean": [
+    0.6066,
+    0.6418,
+    0.6438,
+    0.663,
+    0.6577,
+    0.6429,
+    0.6323,
+    0.6469,
+    0.632,
+    0.6428,
+    0.6402
+   ],
+   "ci95": [
+    [
+     0.54,
+     0.6697
+    ],
+    [
+     0.564,
+     0.7147
+    ],
+    [
+     0.5699,
+     0.72
+    ],
+    [
+     0.5934,
+     0.7274
+    ],
+    [
+     0.592,
+     0.7247
+    ],
+    [
+     0.59,
+     0.6973
+    ],
+    [
+     0.5808,
+     0.6851
+    ],
+    [
+     0.5968,
+     0.6972
+    ],
+    [
+     0.5801,
+     0.6851
+    ],
+    [
+     0.5824,
+     0.6998
+    ],
+    [
+     0.5842,
+     0.6944
+    ]
+   ]
+  },
+  "between": {
+   "mean": [
+    0.6055,
+    0.6487,
+    0.6811,
+    0.7053,
+    0.7206,
+    0.6955,
+    0.6706,
+    0.6881,
+    0.6709,
+    0.7205,
+    0.7293
+   ],
+   "ci95": [
+    [
+     0.4256,
+     0.7536
+    ],
+    [
+     0.5004,
+     0.7799
+    ],
+    [
+     0.5429,
+     0.7987
+    ],
+    [
+     0.5634,
+     0.8203
+    ],
+    [
+     0.5899,
+     0.8172
+    ],
+    [
+     0.5597,
+     0.7925
+    ],
+    [
+     0.5276,
+     0.7775
+    ],
+    [
+     0.5622,
+     0.7905
+    ],
+    [
+     0.5247,
+     0.7814
+    ],
+    [
+     0.6088,
+     0.8097
+    ],
+    [
+     0.6185,
+     0.813
+    ]
+   ]
+  },
+  "within": {
+   "mean": [
+    0.0,
+    0.1381,
+    0.1974,
+    0.2059,
+    0.2257,
+    0.2704,
+    0.2837,
+    0.2981,
+    0.3076,
+    0.3515,
+    0.3675
+   ],
+   "ci95": [
+    [
+     -0.0,
+     0.0
+    ],
+    [
+     0.0727,
+     0.2252
+    ],
+    [
+     0.0936,
+     0.3335
+    ],
+    [
+     0.0879,
+     0.3996
+    ],
+    [
+     0.0894,
+     0.4312
+    ],
+    [
+     0.1363,
+     0.4638
+    ],
+    [
+     0.1489,
+     0.4832
+    ],
+    [
+     0.1469,
+     0.5252
+    ],
+    [
+     0.1562,
+     0.5823
+    ],
+    [
+     0.1586,
+     0.5895
+    ],
+    [
+     0.1608,
+     0.6536
+    ]
+   ]
+  }
+ },
+ "tests": {
+  "P1_drift_to_form": {
+   "prediction": "distance to the default chair falls from g00 to g10",
+   "g0": 0.5131,
+   "g10": 0.5788,
+   "change": {
+    "mean": 0.0657,
+    "ci95": [
+     -0.0261,
+     0.18
+    ],
+    "excludes_zero": false
+   },
+   "slope_per_generation": {
+    "mean": 0.0042,
+    "ci95": [
+     -0.0042,
+     0.0143
+    ],
+    "excludes_zero": false
+   },
+   "gap_closed": {
+    "mean": -0.1495,
+    "ci95": [
+     -0.4786,
+     0.0632
+    ],
+    "excludes_zero": false
+   },
+   "supported": false
+  },
+  "P1_specificity": {
+   "prediction": "the drop toward the chair prototype is larger than toward the mean of all 35 prototypes",
+   "change_chair": {
+    "mean": 0.0657,
+    "ci95": [
+     -0.0261,
+     0.18
+    ],
+    "excludes_zero": false
+   },
+   "change_grand": {
+    "mean": -0.0245,
+    "ci95": [
+     -0.0879,
+     0.0342
+    ],
+    "excludes_zero": false
+   },
+   "change_hat": {
+    "mean": 0.0023,
+    "ci95": [
+     -0.0379,
+     0.0458
+    ],
+    "excludes_zero": false
+   },
+   "change_clock": {
+    "mean": -0.0403,
+    "ci95": [
+     -0.0812,
+     -0.0049
+    ],
+    "excludes_zero": true
+   },
+   "change_human_chair": {
+    "mean": 0.0336,
+    "ci95": [
+     -0.0254,
+     0.0903
+    ],
+    "excludes_zero": false
+   },
+   "difference": {
+    "mean": 0.0902,
+    "ci95": [
+     -0.0283,
+     0.2252
+    ],
+    "excludes_zero": false
+   },
+   "supported": false
+  },
+  "P2_convergence": {
+   "prediction": "between-seed spread falls from g00 to g10",
+   "g0": 0.6055,
+   "g10": 0.7293,
+   "change": {
+    "mean": 0.1238,
+    "ci95": [
+     0.0295,
+     0.2416
+    ],
+    "excludes_zero": true
+   },
+   "slope_per_generation": {
+    "mean": 0.0072,
+    "ci95": [
+     -0.0005,
+     0.0162
+    ],
+    "excludes_zero": false
+   },
+   "within_g10": {
+    "mean": 0.3675,
+    "ci95": [
+     0.1608,
+     0.6536
+    ],
+    "excludes_zero": true
+   },
+   "between_minus_within_g10": {
+    "mean": 0.3618,
+    "ci95": [
+     0.1264,
+     0.5614
+    ],
+    "excludes_zero": true
+   },
+   "supported": false
+  },
+  "P3_kind_first": {
+   "prediction": "the kind word is lost before the category word",
+   "first_loss_kind": {
+    "mean": 6.625,
+    "ci95": [
+     3.6667,
+     9.4594
+    ],
+    "excludes_zero": true
+   },
+   "first_loss_category": {
+    "mean": 9.9583,
+    "ci95": [
+     8.4583,
+     11.0
+    ],
+    "excludes_zero": true
+   },
+   "difference": {
+    "mean": -3.3333,
+    "ci95": [
+     -6.0417,
+     -0.7917
+    ],
+    "excludes_zero": true
+   },
+   "share_with_kind_word": {
+    "mean": 0.6364,
+    "ci95": [
+     0.3902,
+     0.875
+    ],
+    "excludes_zero": true
+   },
+   "share_with_category_word": {
+    "mean": 0.9053,
+    "ci95": [
+     0.7689,
+     1.0
+    ],
+    "excludes_zero": true
+   },
+   "label_kind_g10": {
+    "mean": 0.7917,
+    "ci95": [
+     0.5,
+     1.0
+    ],
+    "excludes_zero": true
+   },
+   "label_category_g10": {
+    "mean": 0.9583,
+    "ci95": [
+     0.8333,
+     1.0
+    ],
+    "excludes_zero": true
+   },
+   "supported": true
+  }
+ },
+ "per_seed": {
+  "rocking_chair": {
+   "label": "rocking chair",
+   "concept": "chair",
+   "kind": "a rocking chair",
+   "control": false,
+   "d_proto": [
+    0.4867,
+    0.5114,
+    0.4202,
+    0.4444,
+    0.4595,
+    0.4606,
+    0.4584,
+    0.4876,
+    0.4453,
+    0.4497,
+    0.4294
+   ],
+   "d_proto_chains_g10": [
+    0.4146,
+    0.4124,
+    0.4612
+   ],
+   "d_start_g10": 0.1787,
+   "kind_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "throne": {
+   "label": "throne",
+   "concept": "chair",
+   "kind": "a throne",
+   "control": false,
+   "d_proto": [
+    0.2591,
+    0.2935,
+    0.3513,
+    0.4829,
+    0.5759,
+    0.5763,
+    0.4904,
+    0.5872,
+    0.4871,
+    0.5997,
+    0.6764
+   ],
+   "d_proto_chains_g10": [
+    0.5734,
+    0.724,
+    0.732
+   ],
+   "d_start_g10": 0.5907,
+   "kind_word_share": [
+    0.0,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.0,
+    0.0,
+    0.3333,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.3333,
+    0.3333
+   ],
+   "first_loss_kind": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "first_loss_category": [
+    11.0,
+    4.0,
+    9.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "beanbag": {
+   "label": "beanbag",
+   "concept": "chair",
+   "kind": "a beanbag chair",
+   "control": false,
+   "d_proto": [
+    0.6999,
+    0.7517,
+    0.7796,
+    0.7963,
+    0.7677,
+    0.7549,
+    0.7792,
+    0.7494,
+    0.7875,
+    0.8221,
+    0.8609
+   ],
+   "d_proto_chains_g10": [
+    0.8948,
+    0.8348,
+    0.8531
+   ],
+   "d_start_g10": 0.694,
+   "kind_word_share": [
+    1.0,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.3333,
+    0.0
+   ],
+   "category_word_share": [
+    1.0,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.3333,
+    0.0
+   ],
+   "first_loss_kind": [
+    1.0,
+    10.0,
+    9.0
+   ],
+   "first_loss_category": [
+    1.0,
+    10.0,
+    9.0
+   ],
+   "label_kind_g10": 2,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 2
+  },
+  "wheelchair": {
+   "label": "wheelchair",
+   "concept": "chair",
+   "kind": "a wheelchair",
+   "control": false,
+   "d_proto": [
+    0.673,
+    0.7094,
+    0.6974,
+    0.719,
+    0.7481,
+    0.7155,
+    0.7342,
+    0.7426,
+    0.7524,
+    0.7335,
+    0.7603
+   ],
+   "d_proto_chains_g10": [
+    0.7726,
+    0.7879,
+    0.7205
+   ],
+   "d_start_g10": 0.2874,
+   "kind_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "office_chair": {
+   "label": "office chair",
+   "concept": "chair",
+   "kind": "an office chair",
+   "control": false,
+   "d_proto": [
+    0.5638,
+    0.5867,
+    0.6333,
+    0.6266,
+    0.6444,
+    0.5828,
+    0.5431,
+    0.5671,
+    0.5499,
+    0.6287,
+    0.601
+   ],
+   "d_proto_chains_g10": [
+    0.53,
+    0.5778,
+    0.6952
+   ],
+   "d_start_g10": 0.5062,
+   "kind_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "folding_chair": {
+   "label": "folding chair",
+   "concept": "chair",
+   "kind": "a folding chair",
+   "control": false,
+   "d_proto": [
+    0.5934,
+    0.5112,
+    0.4801,
+    0.5222,
+    0.4699,
+    0.4817,
+    0.4863,
+    0.4485,
+    0.4227,
+    0.5833,
+    0.6005
+   ],
+   "d_proto_chains_g10": [
+    0.5534,
+    0.7478,
+    0.5002
+   ],
+   "d_start_g10": 0.3182,
+   "kind_word_share": [
+    1.0,
+    0.6667,
+    1.0,
+    0.6667,
+    0.6667,
+    0.6667,
+    0.3333,
+    0.6667,
+    0.6667,
+    0.3333,
+    0.3333
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.6667,
+    0.6667,
+    0.6667
+   ],
+   "first_loss_kind": [
+    9.0,
+    1.0,
+    6.0
+   ],
+   "first_loss_category": [
+    11.0,
+    8.0,
+    11.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "high_chair": {
+   "label": "high chair",
+   "concept": "chair",
+   "kind": "a highchair",
+   "control": false,
+   "d_proto": [
+    0.2494,
+    0.1748,
+    0.2484,
+    0.1835,
+    0.156,
+    0.1529,
+    0.1548,
+    0.1769,
+    0.1888,
+    0.1902,
+    0.1703
+   ],
+   "d_proto_chains_g10": [
+    0.0688,
+    0.3521,
+    0.09
+   ],
+   "d_start_g10": 0.3604,
+   "kind_word_share": [
+    1.0,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    1.0,
+    6.0,
+    1.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 0,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "adirondack": {
+   "label": "Adirondack chair",
+   "concept": "chair",
+   "kind": "an Adirondack chair",
+   "control": false,
+   "d_proto": [
+    0.5796,
+    0.5972,
+    0.635,
+    0.6206,
+    0.6142,
+    0.5021,
+    0.5518,
+    0.567,
+    0.5372,
+    0.5493,
+    0.5313
+   ],
+   "d_proto_chains_g10": [
+    0.4984,
+    0.4677,
+    0.6279
+   ],
+   "d_start_g10": 0.11,
+   "kind_word_share": [
+    1.0,
+    1.0,
+    0.6667,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333,
+    0.3333
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    3.0,
+    2.0,
+    11.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 2,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3
+  },
+  "top_hat": {
+   "label": "top hat",
+   "concept": "hat",
+   "kind": "a top hat",
+   "control": true,
+   "d_proto": [
+    0.6196,
+    0.6707,
+    0.6634,
+    0.6631,
+    0.6612,
+    0.6742,
+    0.6415,
+    0.6869,
+    0.6395,
+    0.6444,
+    0.5924
+   ],
+   "d_proto_chains_g10": [
+    0.5995,
+    0.5983,
+    0.5793
+   ],
+   "d_start_g10": 0.2318,
+   "kind_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3,
+   "floor": 0.1655,
+   "d_proto_change": -0.0272
+  },
+  "cuckoo_clock": {
+   "label": "cuckoo clock",
+   "concept": "clock",
+   "kind": "a cuckoo clock",
+   "control": true,
+   "d_proto": [
+    0.572,
+    0.5665,
+    0.6175,
+    0.5544,
+    0.5468,
+    0.5788,
+    0.6021,
+    0.5699,
+    0.5784,
+    0.5754,
+    0.6355
+   ],
+   "d_proto_chains_g10": [
+    0.6552,
+    0.646,
+    0.6053
+   ],
+   "d_start_g10": 0.1846,
+   "kind_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "category_word_share": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "first_loss_kind": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "first_loss_category": [
+    11.0,
+    11.0,
+    11.0
+   ],
+   "label_kind_g10": 3,
+   "label_kind_g0": 1,
+   "label_plain_g10": 0,
+   "label_category_g10": 3,
+   "floor": 0.1091,
+   "d_proto_change": 0.0634
+  }
+ },
+ "words": {
+  "n_chains": 24,
+  "common_start_words_survival": {
+   "view": 1.125,
+   "cushioned": 1.3333,
+   "seen": 1.8571,
+   "horizontal": 2.0,
+   "angle": 2.2,
+   "sketchy": 2.25,
+   "straight": 2.625,
+   "wooden": 3.0,
+   "backrest": 3.6,
+   "slat": 3.6667,
+   "back": 3.6842,
+   "front": 3.8462,
+   "quarter": 4.25,
+   "scribbly": 4.7273,
+   "low": 4.8333,
+   "curved": 5.2727,
+   "square": 6.5455,
+   "small": 6.7778,
+   "wheel": 6.8333,
+   "tall": 7.8125,
+   "chair": 8.5,
+   "seat": 9.0,
+   "armrest": 9.2667,
+   "leg": 9.8571
+  },
+  "rising": [
+   {
+    "word": "vertical",
+    "start": 0.1667,
+    "end": 0.4583
+   },
+   {
+    "word": "viewed",
+    "start": 0.0417,
+    "end": 0.25
+   },
+   {
+    "word": "oval",
+    "start": 0.0,
+    "end": 0.2083
+   },
+   {
+    "word": "heavily",
+    "start": 0.0,
+    "end": 0.2083
+   },
+   {
+    "word": "hatching",
+    "start": 0.0,
+    "end": 0.2083
+   },
+   {
+    "word": "spiral",
+    "start": 0.0,
+    "end": 0.1667
+   },
+   {
+    "word": "shaped",
+    "start": 0.0833,
+    "end": 0.25
+   },
+   {
+    "word": "rectangular",
+    "start": 0.125,
+    "end": 0.2917
+   },
+   {
+    "word": "filled",
+    "start": 0.0,
+    "end": 0.1667
+   },
+   {
+    "word": "cross",
+    "start": 0.0,
+    "end": 0.1667
+   },
+   {
+    "word": "bottom",
+    "start": 0.0,
+    "end": 0.1667
+   },
+   {
+    "word": "tip",
+    "start": 0.0,
+    "end": 0.125
+   },
+   {
+    "word": "supported",
+    "start": 0.0,
+    "end": 0.125
+   },
+   {
+    "word": "pointed",
+    "start": 0.0,
+    "end": 0.125
+   },
+   {
+    "word": "narrow",
+    "start": 0.0,
+    "end": 0.125
+   }
+  ],
+  "falling": [
+   {
+    "word": "back",
+    "start": 0.7917,
+    "end": 0.4167
+   },
+   {
+    "word": "curved",
+    "start": 0.4583,
+    "end": 0.1667
+   },
+   {
+    "word": "chair",
+    "start": 0.75,
+    "end": 0.5
+   },
+   {
+    "word": "cushioned",
+    "start": 0.25,
+    "end": 0.0
+   },
+   {
+    "word": "seen",
+    "start": 0.2917,
+    "end": 0.0417
+   },
+   {
+    "word": "sketchy",
+    "start": 0.3333,
+    "end": 0.0833
+   },
+   {
+    "word": "view",
+    "start": 0.3333,
+    "end": 0.0833
+   },
+   {
+    "word": "armrest",
+    "start": 0.625,
+    "end": 0.4167
+   },
+   {
+    "word": "front",
+    "start": 0.5417,
+    "end": 0.3333
+   },
+   {
+    "word": "quarter",
+    "start": 0.5,
+    "end": 0.2917
+   },
+   {
+    "word": "seat",
+    "start": 0.8333,
+    "end": 0.6667
+   },
+   {
+    "word": "wooden",
+    "start": 0.3333,
+    "end": 0.1667
+   },
+   {
+    "word": "fold",
+    "start": 0.125,
+    "end": 0.0
+   },
+   {
+    "word": "peak",
+    "start": 0.125,
+    "end": 0.0
+   },
+   {
+    "word": "reclined",
+    "start": 0.1667,
+    "end": 0.0417
+   }
+  ],
+  "mean_words_start": 19.125,
+  "mean_words_end": 20.2917,
+  "mean_chars": [
+   220.0417,
+   214.7917,
+   214.375,
+   223.4583,
+   219.6667,
+   236.4167,
+   223.6667,
+   236.7083,
+   226.9583,
+   224.125,
+   226.9583
+  ]
+ },
+ "striking": {
+  "most_drift_to_form": {
+   "seed": "high_chair",
+   "chain": 0
+  },
+  "farthest_from_start": {
+   "seed": "beanbag",
+   "chain": 0
+  },
+  "most_faithful": {
+   "seed": "adirondack",
+   "chain": 0
+  }
+ },
+ "chains": [
+  {
+   "seed": "rocking_chair",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.4867,
+    0.5421,
+    0.4526,
+    0.4438,
+    0.4619,
+    0.4021,
+    0.4336,
+    0.5041,
+    0.4238,
+    0.4401,
+    0.4146
+   ],
+   "d_start": [
+    0.0,
+    0.1269,
+    0.1733,
+    0.1318,
+    0.1495,
+    0.1181,
+    0.1394,
+    0.1383,
+    0.1123,
+    0.1496,
+    0.1611
+   ],
+   "d_grand": [
+    0.671,
+    0.7553,
+    0.7098,
+    0.6535,
+    0.7141,
+    0.6539,
+    0.683,
+    0.6956,
+    0.6497,
+    0.6664,
+    0.6661
+   ],
+   "descriptions": [
+    "A loose, sketchy black-line drawing of a wooden slat-back rocking chair seen from a three-quarter side view, with a tall vertical back, curved armrests, four legs mounted on two long curved rockers.",
+    "A loose black-line sketch of a wooden rocking chair seen from a front three-quarter angle, with a tall high back made of vertical slats, curved armrests, a square seat on four straight legs, and long curved rockers underneath.",
+    "A loose black-ink sketch of a rocking chair with a tall, slightly tapered rectangular back filled with vertical slats, curved armrests, a square flat seat, and straight front and back legs resting on two curved rockers.",
+    "A loose, sketchy black-line drawing on white shows a wooden rocking chair in three-quarter view, with a tall high back made of vertical slats, curved armrests, a square empty seat, straight front legs, and long curved rockers on the bottom.",
+    "A loose, scribbly black-line sketch on a white background shows a wooden rocking chair in three-quarter view. It has a tall, slightly reclined slatted back, curved armrests, a square seat, and four straight legs mounted on two long curved rockers.",
+    "A loose, scribbly black ink sketch of a wooden rocking chair seen from a three-quarter angle, with a tall slatted backrest, curved armrests, a square seat on four straight legs, and two curved runners on the bottom.",
+    "A loose, scribbly black-line sketch shows a wooden rocking chair in three-quarter view with a tall, slightly reclined back made of vertical slats, curved armrests, a square seat, and four straight legs mounted on two long curved rockers.",
+    "A loose, scribbly black-line sketch on a white background of a wooden rocking chair seen at a three-quarter angle, with a tall slatted back, curved armrests, a square seat, and four straight legs mounted on two long curved rockers.",
+    "A loose, scribbly black-line sketch on a white background shows a wooden rocking chair in three-quarter view, with a tall, slightly reclined slatted backrest, curved armrests, a square seat, and four straight legs attached to two long curved rockers.",
+    "A loose, scribbly black ink sketch on white shows a wooden rocking chair with a tall high back made of vertical slats, curved armrests, a square flat seat, and four straight legs mounted on two long curved rockers.",
+    "A loose, scribbly black-line sketch of a tall-backed rocking chair with a high vertical-slatted backrest, curved armrests, a square seat, and four straight legs mounted on long curved rockers."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair"
+   ]
+  },
+  {
+   "seed": "rocking_chair",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.4867,
+    0.535,
+    0.4788,
+    0.4872,
+    0.5138,
+    0.4419,
+    0.4273,
+    0.4647,
+    0.4281,
+    0.439,
+    0.4124
+   ],
+   "d_start": [
+    0.0,
+    0.1902,
+    0.1711,
+    0.1557,
+    0.175,
+    0.1902,
+    0.2031,
+    0.16,
+    0.1312,
+    0.1393,
+    0.2093
+   ],
+   "d_grand": [
+    0.671,
+    0.7489,
+    0.681,
+    0.7173,
+    0.7248,
+    0.7141,
+    0.6922,
+    0.689,
+    0.6521,
+    0.6731,
+    0.6916
+   ],
+   "descriptions": [
+    "A loose black-ink sketch of a wooden slat-back rocking chair seen from a three-quarter front view, with a tall slightly-reclined back, curved armrests, a square seat, four straight legs joined to two long curved rockers.",
+    "A loose black-line sketch of a high-backed rocking chair with vertical slats on the backrest, curved armrests, a square flat seat, straight front legs, and long curved rockers underneath.",
+    "A loose black-ink sketch on white shows a wooden rocking chair in three-quarter view, with a tall vertical slat back, curved armrests, a square seat, straight legs, and two long curved rockers underneath.",
+    "A loose black-ink sketch of a wooden rocking chair with a tall, straight back made of vertical slats, curved armrests, a square seat on four straight legs, all mounted on two long curved rockers.",
+    "A loose black-ink sketch of a wooden rocking chair with a tall, straight back made of vertical slats, curved armrests, a square flat seat, and long curved rockers connecting the front and back legs.",
+    "A loose, scribbly black-ink sketch on white of a wooden rocking chair with a tall, vertical-slat back, curved armrests, a square seat, and two long curved rockers connecting the legs.",
+    "A loose, scribbled black-ink sketch of a wooden rocking chair with a tall high back made of vertical slats, curved armrests, a square flat seat, and two long curved rockers on the bottom.",
+    "A loose, scribbly black-line sketch shows a tall-backed wooden rocking chair in three-quarter view. It has a curved top rail with vertical back slats, rounded armrests, a square seat, and four straight legs mounted on two long curved rockers.",
+    "A loose, sketchy black ink line drawing of a wooden rocking chair with a tall slightly arched back made of vertical slats, curved armrests, a square seat on four straight legs, and long curved rockers on the bottom.",
+    "A loose, scribbly black-line sketch of a high-backed rocking chair with a tall rounded spindle back, curved armrests, a square seat, and four straight legs attached to curved rockers.",
+    "A loose, scribbly black-ink sketch of a wooden rocking chair with a tall arched back with vertical slats, curved armrests, a square seat, and two curved rockers on the bottom."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair"
+   ]
+  },
+  {
+   "seed": "rocking_chair",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.4867,
+    0.4571,
+    0.3293,
+    0.4021,
+    0.4027,
+    0.5379,
+    0.5143,
+    0.4941,
+    0.4841,
+    0.4699,
+    0.4612
+   ],
+   "d_start": [
+    0.0,
+    0.1338,
+    0.2094,
+    0.2322,
+    0.1685,
+    0.1313,
+    0.1387,
+    0.1705,
+    0.2022,
+    0.2267,
+    0.1657
+   ],
+   "d_grand": [
+    0.671,
+    0.7079,
+    0.6412,
+    0.7007,
+    0.6794,
+    0.7478,
+    0.7192,
+    0.7325,
+    0.723,
+    0.6912,
+    0.6747
+   ],
+   "descriptions": [
+    "A rough black-ink sketch on white of a wooden rocking chair with a tall, slightly reclined slatted back, curved armrests, a square seat, four straight legs, and long curved rockers underneath, all drawn with loose overlapping scribbly lines.",
+    "A loose, scribbly black ink sketch of a wooden rocking chair with a tall slatted back, scrolled armrests, a square seat, and four straight legs sitting on two long curved rockers.",
+    "A loose black-ink sketch of a tall-backed rocking chair with vertical slats, a square seat, curled scroll armrests, and straight legs sitting on two curved rockers.",
+    "A loose, sketchy black-line drawing of a tall-backed rocking chair with vertical back slats, a square seat, scrolled spiral armrests, and four straight legs set on two curved rockers.",
+    "A rough black ink sketch of a wooden rocking chair with a tall, slightly reclined back made of vertical slats, a flat square seat, curved armrests that spiral into scrolls at the front, and four straight legs attached to two long curved rockers.",
+    "A rough black ink sketch of a wooden rocking chair with a tall, slightly reclined back made of vertical slats, armrests that curve down and spiral into scrolls at the front, a square seat, and four straight legs mounted on two long curved rockers.",
+    "A loose black-ink sketch of a high-backed rocking chair viewed from a three-quarter angle, with a tall vertical slatted back, scrolled armrests ending in spirals, a square seat on four straight legs, and two long curved rockers underneath.",
+    "A loose black-ink sketch of a rocking chair seen from a front three-quarter angle, with a tall slatted back, a flat square seat, scrolled armrests ending in spiral curls at the front, and straight legs mounted on two long curved rockers. The lines are rough and overlapping, giving an unfinished hand-drawn study look on a plain white background.",
+    "A loose, scribbly black-ink sketch of a wooden rocking chair with a tall, vertical-slatted backrest, curved scrollwork armrests, a square seat, and two long curved rockers on the bottom.",
+    "A loose black-ink sketch of a rocking chair with a tall, slightly reclined back made of vertical slats, a flat square seat, curved armrests ending in spiral scrolls at the front, and four straight legs mounted on two long curved rockers.",
+    "A rough black-ink sketch of a rocking chair seen at a three-quarter angle, with a tall, slightly reclined slatted backrest, a square seat, scrolled spiral armrests, and straight legs sitting on two long curved rockers."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair",
+    "a rocking chair"
+   ]
+  },
+  {
+   "seed": "throne",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.2591,
+    0.2658,
+    0.2999,
+    0.519,
+    0.6101,
+    0.6096,
+    0.2939,
+    0.5028,
+    0.4665,
+    0.5269,
+    0.5734
+   ],
+   "d_start": [
+    0.0,
+    0.1628,
+    0.2456,
+    0.429,
+    0.6085,
+    0.6251,
+    0.2755,
+    0.4246,
+    0.3647,
+    0.4947,
+    0.5193
+   ],
+   "d_grand": [
+    0.4619,
+    0.5241,
+    0.3995,
+    0.4054,
+    0.506,
+    0.5332,
+    0.4428,
+    0.4788,
+    0.5284,
+    0.4192,
+    0.4408
+   ],
+   "descriptions": [
+    "A loose, scribbly black-line sketch on white shows an armchair with a very tall back topped with three sharp crown-like points. The chair has small curved armrests, a rounded cushioned seat, and four thin spindly legs.",
+    "A rough black-line sketch of a chair with an oval seat, four thin wobbly legs, and small curled armrests, topped by an extremely tall, narrow backrest that ends in three sharp zig-zag points like a crown.",
+    "A rough black line sketch of a chair with a scribbled oval seat, four thin wobbly legs, and small spiral armrests, with an extremely tall, narrow rectangular back topped by a jagged crown-like zigzag.",
+    "A scribbly, childlike sketch of a chair with four thin spindly legs, a round heavily-scribbled seat, small spiral curls for armrests, and an extremely tall narrow rectangular back topped with a zigzag crown shape.",
+    "A spindly chair with four thin sketchy legs, a heavily scribbled oval seat with small spiral scrolls curling out from both sides like armrests, and an extremely tall, narrow rectangular back topped with a jagged zigzag edge, all drawn in loose black ink scribbles.",
+    "A spindly chair with a heavily scribbled oval seat, four thin tapered legs, small spiral curls on each side, and an extremely tall, narrow open back formed by two vertical lines topped with a jagged zig-zag edge.",
+    "A crude black-ink sketch of a chair with four thin, spiky legs, a flat round seat filled with heavy scribble and small spiral curls on either side, and a very tall, narrow, straight back topped with a jagged zigzag like a crown.",
+    "A rough black-ink scribble of a chair with a heavily shaded oval seat, four thin spindly legs, and small spiral curls on either side of the seat, topped by an extremely tall, narrow back made of loose vertical lines ending in a jagged, crown-like zigzag.",
+    "A rough black-ink scribble of a chair with a heavily shaded oval seat, tiny spiral side curls, four thin spindly legs, and an extremely tall, narrow, straight back topped with a jagged crown-like zigzag.",
+    "A roughly scribbled black-pen chair with a heavily cross-hatched oval seat on four thin, spindly, uneven legs, small spiral curls on the left and right edges of the seat, and an extremely tall, narrow, straight back topped with a jagged zig-zag crown shape.",
+    "A loose black-ink sketch of a whimsical chair with a heavily cross-hatched oval seat, four thin uneven spindly legs, small spiral scrolls on either side of the seat, and an extremely tall, narrow, straight back topped with a jagged crown-like zigzag."
+   ],
+   "kind_word": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne"
+   ]
+  },
+  {
+   "seed": "throne",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.2591,
+    0.3299,
+    0.4278,
+    0.6215,
+    0.7869,
+    0.7581,
+    0.7253,
+    0.8232,
+    0.6765,
+    0.6849,
+    0.724
+   ],
+   "d_start": [
+    0.0,
+    0.1189,
+    0.3861,
+    0.5791,
+    0.6928,
+    0.678,
+    0.6308,
+    0.7085,
+    0.625,
+    0.6102,
+    0.6488
+   ],
+   "d_grand": [
+    0.4619,
+    0.4871,
+    0.4643,
+    0.4536,
+    0.4228,
+    0.4253,
+    0.4165,
+    0.5127,
+    0.4614,
+    0.4222,
+    0.3931
+   ],
+   "descriptions": [
+    "A rough, scribbly black ink sketch on a white background shows a simple armchair with a cushioned seat, thin legs, low curved armrests, and an exaggeratedly tall, straight back topped with three sharp crown-like points.",
+    "A rough, scribbly black-ink sketch on white shows a simple throne-like chair with a round shaded seat, thin spindly legs, small curved armrests, and an extremely tall, narrow straight back topped with a three-pointed zigzag crown shape.",
+    "A rough, scribbly black-ink sketch of a chair with a small round heavily-shaded seat, four thin splayed legs and tiny looped side handles, topped by an extremely tall, narrow, straight back that ends in a jagged crown-like zigzag.",
+    "A rough black-ink scribble of a chair with a heavily shaded oval seat, two small looped knobs on the sides, three splayed stick legs, and an extremely tall, narrow back topped with a jagged crown-like zigzag.",
+    "A heavily scribbled black horizontal oval has small empty loops sticking out on its left and right sides and three splayed, sketchy legs underneath like a tripod. From the top center of the oval, a tall, thin, densely scribbled column rises vertically ending in a jagged zigzag crown shape.",
+    "A heavily scribbled horizontal oval sits in the middle with a small empty loop sticking out from each side, three scribbled straight legs splaying down from its bottom, and a tall thick scribbled vertical pole rising from its top center ending in a jagged zig-zag crown like a W.",
+    "A heavily scribbled horizontal oval with small looped handles on its left and right sides, supported underneath by three splayed, scribbled legs, with a thick vertical post rising from its top center capped by a jagged W-shaped crown.",
+    "A thick, scribbled black line forms a vertical pole topped with a jagged three-pointed crown, crossing through the middle of a heavily scribbled horizontal oval with small looped handles on the left and right sides, with three straight scribbled legs extending down from beneath the oval.",
+    "A thickly scribbled horizontal oval sits on three thin sketchy legs with small scribbled loops on its left and right sides, and a tall, thick vertical line rises from its center topped by a jagged, three-pointed crown shape.",
+    "A heavily scribbled black oval with three thin stick legs underneath and small spiral curls on its left and right edges, with a tall, straight scribbled pole rising from its center topped by a jagged three-pointed crown.",
+    "A heavily scribbled black oval sits on three thin spindly legs, with a small tight spiral curling out from each side, and a long straight scribbled stalk rises from its top center ending in a jagged crown-like shape."
+   ],
+   "kind_word": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "labels": [
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne"
+   ]
+  },
+  {
+   "seed": "throne",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.2591,
+    0.2847,
+    0.3263,
+    0.3083,
+    0.3307,
+    0.3612,
+    0.452,
+    0.4356,
+    0.3183,
+    0.5872,
+    0.732
+   ],
+   "d_start": [
+    0.0,
+    0.1344,
+    0.1618,
+    0.1802,
+    0.2035,
+    0.2668,
+    0.2446,
+    0.2683,
+    0.2164,
+    0.4593,
+    0.6039
+   ],
+   "d_grand": [
+    0.4619,
+    0.4563,
+    0.5069,
+    0.5736,
+    0.4521,
+    0.4381,
+    0.5366,
+    0.4676,
+    0.451,
+    0.3905,
+    0.3716
+   ],
+   "descriptions": [
+    "A rough black line sketch centered on a white background depicts a cushioned armchair with four thin legs, small curved armrests, and an exaggeratedly tall backrest. The top of the backrest forms three sharp, jagged, crown-like peaks, and the seat and back are shaded with quick scribbled lines.",
+    "A rough, scribbly black line sketch of an armchair with a very tall back shaped like a three-pointed crown. The chair has small curved armrests, a thick shaded seat cushion, and four thin straight legs, with loose hatching filling in the backrest and seat.",
+    "A loose, scribbly black-ink sketch of a throne-like chair with a very tall, crown-shaped backrest with three peaks, diagonal hatching filling the back and thick seat cushion, small curved armrests, and four thin spindly legs.",
+    "A rough black-ink sketch of a throne-like chair with four thin, spindly legs, a round shaded seat with small curled armrests, and an exaggerated tall back shaped like a three-pointed crown filled with loose diagonal hatching.",
+    "A loose black-ink sketch of a simple chair with a round seat, four thin spindly legs and small curled armrests, topped with an exaggerated tall back shaped like a three-pointed crown shaded with diagonal hatching.",
+    "A rough black ink sketch of a chair with a plain oval seat, four thin spindly legs, and small curled armrests. Its backrest is oversized and shaped like a three-pointed crown with tall sharp spikes, filled in with loose diagonal hatching.",
+    "A rough black-ink sketch of a small throne chair with an oval seat, thin wispy legs, little spiral armrests, and a tall backrest shaped like a three-pointed crown filled with diagonal hatching.",
+    "A rough black ink sketch of a chair with a very tall back shaped like a three-pointed crown filled with diagonal hatching, a plain oval seat, small spiral scrolls on both sides where arms would be, and four thin, slightly uneven legs.",
+    "A loose pen sketch of a chair with a very tall, crown-shaped backrest with three points filled with diagonal hatching, an oval seat with small spiral scrolls on each side, and four thin, slightly splayed legs.",
+    "A rough black ink sketch shows a small oval stool with two spiral details on the seat and four thin, splayed legs, topped by an oversized, tall three-pointed crown-like backrest filled with diagonal scribble shading.",
+    "A roughly scribbled oval stool top with two small spirals on it and four thin splayed legs, topped by a large three-pointed crown shape filled with diagonal hatching."
+   ],
+   "kind_word": [
+    false,
+    false,
+    true,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false
+   ],
+   "labels": [
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne",
+    "a throne"
+   ]
+  },
+  {
+   "seed": "beanbag",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.6999,
+    0.7333,
+    0.8321,
+    0.812,
+    0.7551,
+    0.7679,
+    0.7865,
+    0.74,
+    0.8293,
+    0.8465,
+    0.8948
+   ],
+   "d_start": [
+    0.0,
+    0.2666,
+    0.3867,
+    0.521,
+    0.6142,
+    0.6296,
+    0.707,
+    0.7237,
+    0.8189,
+    0.8464,
+    0.9041
+   ],
+   "d_grand": [
+    0.4901,
+    0.5222,
+    0.5321,
+    0.5728,
+    0.5263,
+    0.5259,
+    0.569,
+    0.6663,
+    0.7326,
+    0.7268,
+    0.7597
+   ],
+   "descriptions": [
+    "A loose, rough black-ink sketch of a lumpy, overstuffed bean bag chair seen from a three-quarter front view, with quick curved seam lines and scribbled shading to show its soft folds and slumped shape.",
+    "A loose, scribbly black-ink sketch of a plump croissant in three-quarter view, showing its curved crescent shape with segmented, layered ridges shaded with rough cross-hatching.",
+    "A loose black-ink sketch of a crescent-shaped croissant, curved like a \"C\" with segmented, flaky layers tapering to pointed ends, shaded with rough scribbled cross-hatching.",
+    "A rough, scribbly black-pen sketch of a crescent-shaped croissant curving down to the right with pointed ends, divided into seven tapered segments, with loose overlapping outlines and diagonal cross-hatching shading along its inner curve.",
+    "A loose, scribbly black-ink sketch of a crescent-shaped croissant divided into six tapered segments, with rough cross-hatching shading along a curved band on its inner side.",
+    "A loose, scribbly black-ink sketch of a crescent-shaped croissant tapering to points at the upper-left and lower-right, divided into about seven segments by straight radiating lines with messy crosshatching along its inner curved edge.",
+    "A rough, scribbly black-ink sketch of a crescent-shaped canopy, like a paraglider or curved fan, formed by two concentric arcs. Straight radial lines divide it into 8-9 tapered segments, with loose overlapping strokes and heavy cross-hatching along the inner concave edge.",
+    "A rough black ink sketch on white paper shows a fan-shaped half-ring, with a thick outer arc and a smaller thick inner arc forming a band divided into nine wedge-shaped segments by straight radial lines. The inner curved band is heavily filled in with messy crosshatch scribbling, and all lines have a loose, overlapping hand-drawn quality.",
+    "A rough black ink sketch of a semicircular fan/arch window, with a thick outer rim and a wide middle band heavily filled with scribbly cross-hatching. From a central point on the flat bottom baseline, eight straight radial spokes fan out to the inner arch, dividing the half-circle into wedge segments.",
+    "A rough black ink sketch shows a flat horizontal base topped by a half-circle fan window with seven plain wedge-shaped panes radiating from the bottom center, rimmed by an outer band of smaller cross-hatched panes and a thick double-line arch border.",
+    "A rough black-ink sketch of a semicircular fanlight window, with nine wedge-shaped panes radiating from the bottom-center point, surrounded by a double-lined arch band divided into small rectangular panes with cross-hatching, all resting on a thick horizontal base."
+   ],
+   "kind_word": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "labels": [
+    "a beanbag chair",
+    "a beanbag chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair",
+    "can't tell, or not a chair"
+   ]
+  },
+  {
+   "seed": "beanbag",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.6999,
+    0.769,
+    0.7589,
+    0.8318,
+    0.792,
+    0.7476,
+    0.7939,
+    0.7455,
+    0.7538,
+    0.7708,
+    0.8348
+   ],
+   "d_start": [
+    0.0,
+    0.216,
+    0.2683,
+    0.4299,
+    0.3199,
+    0.4978,
+    0.3538,
+    0.2832,
+    0.507,
+    0.4337,
+    0.4571
+   ],
+   "d_grand": [
+    0.4901,
+    0.4903,
+    0.4681,
+    0.5159,
+    0.4148,
+    0.4224,
+    0.4983,
+    0.4413,
+    0.3617,
+    0.4012,
+    0.4581
+   ],
+   "descriptions": [
+    "A loose, sketchy black-line drawing of a slouchy beanbag chair, wider and rounded at the front left and rising to a crumpled peak at the back right, with a few short curved and straight marks to suggest fabric folds and seams.",
+    "Loose sketchy black lines depict a bean bag chair with a wide, low rounded base that sweeps up on the right into a tall, pinched pointed backrest. Short curved lines across the seat and sides suggest fabric wrinkles and seams, with heavier scribbling at the tip of the back.",
+    "A loose black-ink sketch on white shows a low, slouchy beanbag chair with a round, bulbous seat covered in short wrinkle marks, tapering up on the right side into a tall, sharp, slightly shaded peak.",
+    "A rough black-ink sketch of a deflated-looking bean bag chair in three-quarter view, with a round bulging seat on the left and a tall, pointed back rising sharply on the right. Use loose, overlapping scribbly outlines and short hatching strokes to suggest wrinkles and soft volume on a plain white background.",
+    "A loose black-ink sketch of a beanbag chair in side view, with a low rounded bunched front and a tall pointed triangular back, rendered with messy scribbly outlines and diagonal hatching for shadow.",
+    "A loose, scribbly black-ink sketch of a bean bag chair with a tall, pointed back and a low, lumpy rounded seat, viewed from the side. Quick hatching underneath suggests a shadow on the ground.",
+    "A loose, scribbly black-ink sketch shows a low, lumpy beanbag chair with a tall, pointed back rising on the left, sitting on rough diagonal hatching to suggest a shadow.",
+    "A loose, scribbly black-ink sketch shows a low, rounded beanbag chair with one tall, pointed peak rising from the back left, with diagonal hatching extending to the lower right for its shadow.",
+    "A loose, scribbly ink sketch of a low, rounded beanbag chair with a tall pointed peak rising from the back left, with dense diagonal hatching for a shadow extending to the lower right.",
+    "A loose, scribbly black-ink sketch of a low, lumpy beanbag chair with a pointed peak sticking up from the back left, with heavy hatched shading for a shadow extending diagonally down to the right.",
+    "A loose black-ink sketch of a plump, lumpy, rounded bulb with a sharp pointed tip sticking up at the upper left, rendered with scribbly contour shading and casting a heavily hatched shadow diagonally to the lower right."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false
+   ],
+   "labels": [
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair"
+   ]
+  },
+  {
+   "seed": "beanbag",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.6999,
+    0.7529,
+    0.7479,
+    0.7451,
+    0.756,
+    0.7492,
+    0.7572,
+    0.7627,
+    0.7793,
+    0.8489,
+    0.8531
+   ],
+   "d_start": [
+    0.0,
+    0.2168,
+    0.2185,
+    0.1938,
+    0.3015,
+    0.3086,
+    0.1077,
+    0.1751,
+    0.2256,
+    0.5934,
+    0.7208
+   ],
+   "d_grand": [
+    0.4901,
+    0.4597,
+    0.451,
+    0.4134,
+    0.3875,
+    0.4366,
+    0.508,
+    0.6159,
+    0.6218,
+    0.5289,
+    0.5482
+   ],
+   "descriptions": [
+    "A loose, sketchy black-ink outline of a bean bag chair, low and rounded in front and bunched up into a tall peak at the back right. A few short, rough curved lines across its lumpy form suggest folds and seams.",
+    "A loose, sketchy black line drawing on a white background shows a slouchy, overstuffed beanbag chair viewed from a three-quarter side angle, with a low rounded seat and a tall crumpled back peak leaning to the right.",
+    "A loose, sketchy black-ink line drawing on a white background shows a low, round, overstuffed beanbag chair with a wrinkled, tall back corner pinched and flopping over to the right.",
+    "A loose, sketchy black line drawing of a slouchy bean bag chair in three-quarter view, with a plump rounded seat and a tall, wrinkled, pointed back that flops slightly to the right.",
+    "A rough, sketchy black line drawing on white depicts a lumpy bean bag chair with a wide, round puffy seat and a tall, pointed backrest flopping over to the right, with loose interior lines indicating wrinkles and folds.",
+    "A loose, sketchy black-line drawing on a white background depicts a sagging, overstuffed bean bag chair with a puckered tip sticking up at the back. The round, lumpy base is rendered with overlapping scribbled strokes to suggest wrinkles, folds, and a soft, deflated volume.",
+    "A loose, scribbly black ink sketch of a slouchy, pear-shaped bean bag chair with a small gathered handle on top and deep wrinkles folding into its sunken center seat, shaded with dense cross-hatching along the left side and bottom.",
+    "A loose black ink sketch of a pear-shaped bean bag chair with a small knotted gather at the top peak, heavy cross-hatching and shading on the left side and bottom, and quick sketchy lines showing wrinkles and folds converging toward the sunken seat in the center.",
+    "A loose black-ink sketch of a pear-shaped, teardrop bean bag chair with a small tied knot at the top peak and heavy cross-hatch shading along its lower-left side and base.",
+    "A loose black-ink sketch of a teardrop-shaped tied sac, with a small scribbled knot at the narrow top and a wide rounded bottom, shaded with dense crosshatching along the lower-left and bottom curve to give volume.",
+    "A loose black-ink sketch of a teardrop-shaped sack with its narrow top cinched and tied in a scribbly knot. The outline is thin and sketchy, with dense cross-hatching shading the darkened bottom and lower-left curve."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false
+   ],
+   "labels": [
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair",
+    "a beanbag chair"
+   ]
+  },
+  {
+   "seed": "wheelchair",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.673,
+    0.6952,
+    0.6846,
+    0.7036,
+    0.7027,
+    0.7123,
+    0.742,
+    0.8055,
+    0.8092,
+    0.8013,
+    0.7726
+   ],
+   "d_start": [
+    0.0,
+    0.1314,
+    0.1666,
+    0.1799,
+    0.1745,
+    0.2412,
+    0.2652,
+    0.2659,
+    0.2707,
+    0.3603,
+    0.2987
+   ],
+   "d_grand": [
+    0.6482,
+    0.6756,
+    0.7869,
+    0.7257,
+    0.6282,
+    0.5723,
+    0.57,
+    0.6063,
+    0.6285,
+    0.5803,
+    0.5621
+   ],
+   "descriptions": [
+    "A rough, scribbly black-line sketch shows a manual wheelchair in left-facing side profile, with a large spoked rear wheel, a small front caster wheel, a footrest, an armrest, a seat, an upright backrest, and two push handles.",
+    "A loose, scribbly black-line sketch shows a manual wheelchair in side profile facing left, with a large spoked rear wheel, a small front caster wheel, a seat, armrest, tall backrest with push handles, and angled leg rests ending in footplates.",
+    "A loose, scribbly black-ink sketch shows a manual wheelchair in side profile facing right, with a large spoked rear wheel, a small front caster, a tall backrest, armrest, fabric seat, and an extended footrest.",
+    "A rough black-ink scribble sketch shows a manual wheelchair in side profile, with a tall upright backrest, a flat seat and armrest, one large spoked rear wheel, a small front caster wheel, and a forward-extended footrest.",
+    "A loose, scribbly black-ink side-view sketch of a wheelchair with a large spoked rear wheel on the left, a small caster wheel under the front of the seat, a tall upright backrest, a horizontal armrest, and an angled legrest ending in a foot platform on the right.",
+    "A rough, scribbly black ink sketch shows a wheelchair in side profile facing right, with a large spoked rear wheel on the left, a tall upright backrest, a horizontal seat, a small front caster wheel underneath, and an angled footrest leg extending forward and down.",
+    "A loose, scribbly black-line sketch on a white background shows a wheelchair in side view with a large spoked rear wheel on the left, a tall vertical backrest, a horizontal seat, a small caster wheel underneath near the middle, and an angled leg-rest with footrest extending to the right.",
+    "A rough black scribble sketch in profile of a wheelchair facing right, with a large spoked wheel on the left, a thick vertical backrest above it, a horizontal seat bar with a small caster wheel hanging below, and a bent leg that angles down to a flat footrest.",
+    "A rough black scribbled side-view of a wheelchair on white, with a large spoked rear wheel on the left topped by a tall vertical backrest, a horizontal seat extending right that bends sharply down into a leg with a flat footrest, and a small caster wheel hanging under the middle of the seat.",
+    "A rough, scribbly black-line side view of a wheelchair with a large spoked wheel on the left, a tall narrow vertical backrest above the wheel, a long horizontal seat extending to the right, a small dangling loop underneath the middle of the seat, and a sharp downward bend at the far right ending in a short horizontal footrest.",
+    "A crude black-line side-view sketch of a wheelchair with a large spoked wheel on the left, a tall vertical backrest rising above the wheel, and a long horizontal seat extending to the right supported by a slanted front leg, with a small teardrop-shaped loop hanging beneath the middle of the seat."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair"
+   ]
+  },
+  {
+   "seed": "wheelchair",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.673,
+    0.7504,
+    0.7988,
+    0.7538,
+    0.8187,
+    0.7316,
+    0.8161,
+    0.7424,
+    0.782,
+    0.701,
+    0.7879
+   ],
+   "d_start": [
+    0.0,
+    0.1484,
+    0.2235,
+    0.183,
+    0.2384,
+    0.1725,
+    0.2883,
+    0.1791,
+    0.1945,
+    0.1436,
+    0.3207
+   ],
+   "d_grand": [
+    0.6482,
+    0.6678,
+    0.655,
+    0.7008,
+    0.6347,
+    0.6443,
+    0.6235,
+    0.6393,
+    0.6209,
+    0.7017,
+    0.5642
+   ],
+   "descriptions": [
+    "A loose, scribbly black-line sketch shows the side view of a manual wheelchair with a large spoked rear wheel, a small front caster wheel, a footrest, armrest, seat back, and push handles.",
+    "A loose, scribbly black-line sketch of a manual wheelchair seen in side profile facing left, showing a large spoked rear wheel, a small front caster wheel, a footrest, a flat armrest, and a tall backrest with push handles.",
+    "A loose, scribbly black-ink side-view sketch of a manual wheelchair with a large spoked rear wheel, a small front caster wheel, an extended footrest pedal, seat, armrest, and tall backrest with push handle.",
+    "A rough, scribbly black-line sketch shows the side profile of a manual wheelchair, with a large spoked rear wheel on the left, a small caster wheel under the front, a tall push handle and backrest rising behind, a horizontal armrest, a slanted seat, and an angled leg rest with a footplate extending to the right.",
+    "A loose, scribbly black-ink side-view sketch of a wheelchair facing right, with a large spoked rear wheel on the left, a small front caster wheel, upright backrest with push handle, armrest, and extended footrest.",
+    "A loose, scribbly black-ink sketch on a white background shows a wheelchair in side-profile facing right, with a large spoked rear wheel, a small front caster wheel, a tall backrest with a curved push handle, a horizontal armrest, and an angled leg support ending in a small footrest.",
+    "A loose, scribbly black-ink sketch on white shows a wheelchair in left-facing side profile. It has a large spoked rear wheel under a tall backrest with a curved push handle, a horizontal armrest, and an angular leg extending forward to a footrest with a tiny front caster wheel beneath the knee.",
+    "A rough black sketch on white shows a wheelchair in side profile facing left, with a large spoked rear wheel, a small front caster wheel beneath an angled footrest, a flat seat and armrest, and a tall backrest topped with a curved push handle.",
+    "A rough, scribbly black-line sketch on a white background shows a wheelchair in left-facing side profile, with a large spoked rear wheel, a small front caster wheel, a footrest, a seat, an armrest, and a tall backrest with a curved push handle on top.",
+    "A loose, scribbly black ink sketch shows a wheelchair in left-facing side profile with a large spoked rear wheel, a small front caster wheel, a footrest, armrest, seat, and a tall curved push handle.",
+    "A loose, scribbly black-ink sketch shows a manual wheelchair in side view, facing left. It has one large spoked rear wheel, a small front caster wheel, a tall push-handle and backrest, a horizontal armrest, and an extended leg rest with a footplate."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair"
+   ]
+  },
+  {
+   "seed": "wheelchair",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.673,
+    0.6825,
+    0.6087,
+    0.6996,
+    0.7228,
+    0.7027,
+    0.6445,
+    0.6799,
+    0.6658,
+    0.6981,
+    0.7205
+   ],
+   "d_start": [
+    0.0,
+    0.2186,
+    0.1246,
+    0.1305,
+    0.1457,
+    0.12,
+    0.1409,
+    0.1396,
+    0.188,
+    0.2473,
+    0.2428
+   ],
+   "d_grand": [
+    0.6482,
+    0.7921,
+    0.6819,
+    0.7108,
+    0.6894,
+    0.724,
+    0.6594,
+    0.686,
+    0.5945,
+    0.6133,
+    0.6186
+   ],
+   "descriptions": [
+    "A loose, scribbly black-ink sketch shows a manual wheelchair in side profile with a large spoked rear wheel, a small front caster, footrest, seat, armrest, and upright back with push handles.",
+    "A loose, scribbly black-ink sketch of a standard manual wheelchair in side view, showing the large spoked rear wheel, small front caster, seat, armrests, tall backrest with push handles, and footrest with footplate.",
+    "A rough, scribbly black ink sketch of a manual wheelchair in side profile, with a large spoked rear wheel on the left, a small front caster wheel, seat, armrest, footrest extending to the right, and two push handles on the backrest.",
+    "A loose, scribbly black-line sketch shows a manual wheelchair in right-facing side profile with a large spoked rear wheel, a small front caster wheel, a footrest extended forward, a seat, an armrest, and a tall backrest with push handles.",
+    "A loose, scribbly black-ink side-view sketch of a manual wheelchair with a tall upright backrest, armrest, one large spoked rear wheel, a small front caster wheel, and an extended footrest.",
+    "A loose, scribbly black-ink sketch shows a manual wheelchair in side profile with a tall upright backrest, armrest, large spoked rear wheel, small front caster wheel, and an extended footrest.",
+    "A rough, scribbly black-line sketch shows a manual wheelchair in side profile with a tall straight backrest, double armrests, a large spoked rear wheel, a small front caster wheel, and an angled leg rest ending in a footplate.",
+    "A loose, scribbly black-ink sketch of a manual wheelchair in side profile, with a large spoked rear wheel on the left, a small caster wheel underneath, a tall backrest, armrest, and a footrest extending to the right.",
+    "A loose, scribbled black-line sketch shows a wheelchair in side profile with a tall narrow cross-hatched backrest, a large spoked rear wheel, a small front caster wheel, a simple armrest, and a straight extended leg rest ending in a foot plate.",
+    "A loose, scribbly black-ink side-view sketch of a wheelchair with a tall cross-hatched backrest, a large spoked rear wheel on the left, a small armrest, an X-crossed frame, a tiny front caster wheel underneath, and a long footrest extending to the right.",
+    "A rough, scribbly black-ink side-profile sketch of a high-backed wheelchair with one large spoked rear wheel on the left and a long low footrest extending to the right. The tall rectangular backrest is filled with cross-hatching, there's a short T-shaped armrest, the seat side has an X-brace, and a tiny caster wheel hangs under the tip of the footrest."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair",
+    "a wheelchair"
+   ]
+  },
+  {
+   "seed": "office_chair",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.5638,
+    0.6164,
+    0.6406,
+    0.6445,
+    0.6431,
+    0.6562,
+    0.6465,
+    0.592,
+    0.6084,
+    0.6573,
+    0.53
+   ],
+   "d_start": [
+    0.0,
+    0.0974,
+    0.1107,
+    0.1032,
+    0.0978,
+    0.1047,
+    0.1044,
+    0.1386,
+    0.2563,
+    0.5252,
+    0.4462
+   ],
+   "d_grand": [
+    0.6803,
+    0.7512,
+    0.7659,
+    0.7719,
+    0.7392,
+    0.7399,
+    0.7442,
+    0.6587,
+    0.5904,
+    0.6058,
+    0.528
+   ],
+   "descriptions": [
+    "A loose, scribbly black-line sketch on a white background shows a three-quarter view of an office chair with a tall padded back, curved armrests, a square cushioned seat, and a five-legged base with wheels.",
+    "A loose, scribbly black ink sketch shows a high-back office chair with padded back and seat, curved armrests, and a five-star swivel base with wheels, viewed from a three-quarter angle.",
+    "A loose, scribbly black-ink sketch on a white background of a high-back office chair seen from a three-quarter angle, with a cushioned seat, tall backrest with a headrest pillow, curved armrests, and a central pedestal on a five-star base with caster wheels.",
+    "A loose black-ink sketch of a high-back office chair seen from a three-quarter angle, with a tall padded back topped by a small headrest, curved armrests, a thick round seat cushion, and a central post on a five-legged star base with caster wheels.",
+    "A loose black-ink sketch of a high-back executive office chair with a small headrest, curved armrests, and a round cushioned seat, supported by a central post on a five-spoke wheeled base.",
+    "A loose black-ink sketch on a white background shows a high-backed office swivel chair in three-quarter front view, with a tall padded back and small headrest, curved loop armrests, a round cushioned seat, and a central post on a five-star base with caster wheels.A loose black-ink sketch on a white background shows a high-backed office swivel chair in three-quarter front view, with a tall padded back and small headrest, curved loop armrests, a round cushioned seat, and a central post on a five-star base with caster wheels.",
+    "A loose black-ink sketch of a tall office chair with a small headrest on top of a long padded backrest, curved loop armrests, a round cushioned seat, and a central pedestal on a five-star base with caster wheels.",
+    "A loose, scribbly black ink sketch depicts a tall high-back swivel office chair with a small headrest on top, a long narrow backrest, looped circular armrests, a round seat, and a five-star base with wheels.",
+    "A loose, scribbled black-pen sketch of a high-back office chair with a round seat, two circular armrest loops, an extremely tall narrow rectangular backrest topped with a small oval headrest, and a five-star rolling base with caster wheels.",
+    "A rough black-line sketch of a strange office chair with a round seat, two small looped armrests, an extremely tall narrow rectangular backrest topped with a small oval knob, and a five-star base with caster wheels.",
+    "A rough black-line sketch of an office chair with a round seat, two small looped armrests, and a five-legged rolling base, but with an absurdly tall, narrow rectangular backrest topped by a small oval loop."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair"
+   ]
+  },
+  {
+   "seed": "office_chair",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.5638,
+    0.5512,
+    0.6044,
+    0.6638,
+    0.686,
+    0.6381,
+    0.5683,
+    0.5884,
+    0.5333,
+    0.5702,
+    0.5778
+   ],
+   "d_start": [
+    0.0,
+    0.1469,
+    0.1523,
+    0.1613,
+    0.1575,
+    0.1279,
+    0.1412,
+    0.1973,
+    0.2112,
+    0.3572,
+    0.4474
+   ],
+   "d_grand": [
+    0.6803,
+    0.7015,
+    0.7411,
+    0.761,
+    0.8063,
+    0.7864,
+    0.6987,
+    0.7443,
+    0.7003,
+    0.6414,
+    0.6377
+   ],
+   "descriptions": [
+    "A loose, rough black-line sketch on white depicts a high-back office chair with armrests, a square cushioned seat, and a five-star base with small caster wheels, drawn with overlapping scribbly strokes.",
+    "A loose, scribbly black-ink sketch on white of a tall high-back office chair with armrests, a rounded cushioned seat, and a five-star base with caster wheels.",
+    "A loose, scribbly black ink sketch of a high-back office swivel chair with a rounded seat, padded headrest, two short armrests, and a five-legged base on caster wheels, shown in three-quarter view facing right.",
+    "A loose black-ink scribble sketch of a high-back office chair seen in three-quarter view. It has a tall backrest topped with a headrest cushion, two short armrests, a round padded seat, and a five-legged swivel base with casters, all shaded with rough cross-hatching.",
+    "A loose hand-sketched ink drawing of a high-back office chair with a small rectangular headrest, tall backrest, round padded seat, T-shaped armrests, and a five-star base with caster wheels, all shaded with rough cross-hatching.",
+    "A loose black-ink sketch depicts a high-back swivel office chair with a small rectangular headrest, a tall backrest and round seat with scribbled shading, T-shaped armrests, and a five-legged star base on casters.",
+    "A rough, loose black-line sketch of a tall office chair with a high rectangular back topped by a small headrest, T-shaped armrests, a round seat, and a five-star swivel base with small wheels.",
+    "A loose, scribbly black-line sketch of a tall office chair with a rectangular high back topped by a small headrest, T-shaped armrests on both sides, a round seat, and a five-star base with a caster wheel on each leg.",
+    "A loose, scribbled black line drawing on white background shows a tall office chair viewed straight from the front, with a small oval headrest on top of a very tall narrow rectangular backrest, a round heavily-scribbled seat with straight T-shaped armrests on both sides, and a five-spoke star base with small caster wheels. The lines are rough, overlapping, and sketchy throughout.",
+    "A loose black ballpoint scribble on white depicts a tall office chair with a narrow rectangular high back topped by a small oval headrest, T-shaped armrests, a round heavily scribbled seat, and a five-star base with small caster wheels.",
+    "A loose, scribbly black-line sketch of a tall office chair with a very high rectangular back topped by a small oval headrest, low T-shaped armrests, a heavily scribbled round seat, and a five-star rolling base with small wheels."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair"
+   ]
+  },
+  {
+   "seed": "office_chair",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.5638,
+    0.5926,
+    0.6548,
+    0.5715,
+    0.6041,
+    0.4542,
+    0.4145,
+    0.521,
+    0.508,
+    0.6587,
+    0.6952
+   ],
+   "d_start": [
+    0.0,
+    0.0693,
+    0.1119,
+    0.0957,
+    0.0753,
+    0.1446,
+    0.1891,
+    0.3652,
+    0.2229,
+    0.4767,
+    0.625
+   ],
+   "d_grand": [
+    0.6803,
+    0.7547,
+    0.7856,
+    0.7288,
+    0.7377,
+    0.5903,
+    0.5893,
+    0.5154,
+    0.5839,
+    0.5389,
+    0.4512
+   ],
+   "descriptions": [
+    "A loose, sketchy black-line drawing on white of an office swivel chair with a tall vertical back, curved armrests, a cushioned square seat, and a five-legged base with wheels.",
+    "A loose, scribbly black ink sketch of a high-back office chair with curved armrests, a square cushioned seat, and a five-star rolling base with casters, shown in three-quarter view.",
+    "A loose black-ink sketch of a high-back office chair viewed from a three-quarter angle, with curved armrests, a thick square seat cushion, and a five-star swivel base on caster wheels.",
+    "A rough, scribbly black-ink sketch on white shows a high-back office chair in three-quarter view with curved armrests, a thick square seat cushion, and a five-star base with small caster wheels.",
+    "A loose, scribbly black-ink sketch of a high-back office chair with curved armrests, a thick square seat, and a five-star swivel base with caster wheels, viewed from a slight three-quarter angle.",
+    "A loose, scribbly black-line sketch of a high-back office chair with a tall rectangular backrest, looped curved armrests, a thick square seat, and a five-star rolling base with small caster wheels.",
+    "A loose, scribbly black-line sketch on a white background shows a front-facing office chair with a tall rectangular backrest, a rectangular seat, and loopy scribbles for armrests. It sits on a central post with four splayed legs ending in small caster wheels.",
+    "A loose black-ink sketch shows a front view of an office chair with a tall rectangular backrest filled with zigzag scribbles, a flat rectangular seat, round scribbled loop armrests on both sides, and a central stem on a five-legged base with small caster wheels.",
+    "A loose, scribbled black-ink sketch of a high-back office chair seen head-on, with a tall rectangular backrest filled with diagonal shading, circular coiled armrests on both sides, a thin flat seat, and a central post on a five-star base with small wheels.",
+    "A rough black-ink sketch of a high-back office chair seen straight-on, with a tall rectangular backrest split into two diagonally-shaded sections, a thin seat with large scribbled circular shapes for armrests on both sides, supported by a central post on a five-pointed star base with small wheels.",
+    "A rough black-ink sketch of a front-facing office chair with a tall rectangular backrest filled with diagonal hatching, two heavily scribbled circular armrests on either side of the seat, and a thin central post leading down to a five-pointed star base with small wheels on each tip."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair",
+    "an office chair"
+   ]
+  },
+  {
+   "seed": "folding_chair",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.5934,
+    0.5496,
+    0.5425,
+    0.5944,
+    0.572,
+    0.5633,
+    0.4347,
+    0.5304,
+    0.3463,
+    0.5343,
+    0.5534
+   ],
+   "d_start": [
+    0.0,
+    0.0919,
+    0.1365,
+    0.1848,
+    0.1766,
+    0.1832,
+    0.2231,
+    0.1603,
+    0.2722,
+    0.1459,
+    0.1565
+   ],
+   "d_grand": [
+    0.6831,
+    0.7066,
+    0.7049,
+    0.7396,
+    0.7207,
+    0.7127,
+    0.6411,
+    0.6936,
+    0.6075,
+    0.7056,
+    0.6704
+   ],
+   "descriptions": [
+    "A rough, loose black-ink sketch of a simple folding chair seen at a three-quarter angle, with a two-rung ladder back, a square open seat, and X-shaped crossed legs braced by a lower bar.",
+    "A loose, sketchy black ink drawing on white of a simple folding chair seen from a three-quarter front angle, with a tall slatted back, a square open seat frame, and X-crossed folding legs.",
+    "A loose, scribbly black-line sketch shows a wooden slat-back folding chair viewed from a three-quarter angle. The tall back has vertical slats, the square seat is an empty open frame, and the legs cross in an X-shape on the sides with a rung between the front legs.",
+    "A loose, scribbly black-ink sketch on a white background shows a tall, slatted-back wooden folding chair with an empty seat frame, viewed from a three-quarter front angle with its X-shaped crossed legs visible.",
+    "A loose, sketchy black-line drawing of a wooden folding chair seen at a three-quarter angle, with a tall slatted backrest, an empty open seat frame, and X-crossed folding legs.",
+    "A loose, scribbly black-line sketch on a white background shows a wooden slat-back folding chair in three-quarter view, facing slightly right, with a tall vertical-slatted backrest, an empty open square seat frame with no seat, and X-crossed folding legs.",
+    "A rough black ink sketch of a tall, straight-backed folding chair with vertical slats, an empty square seat frame, and X-crossed folding legs with a lower stretcher bar.",
+    "A loose, sketchy black line drawing of a tall folding chair with a high slatted back, an empty square seat frame, and X-crossed folding legs.",
+    "A loose black-line sketch of a tall, narrow folding chair viewed at a three-quarter angle, with a very high rectangular slatted back, an open square seat frame, and thin X-crossed folding legs.",
+    "A loose, sketchy black-line drawing of a chair seen from a three-quarter angle, with a tall rectangular back made of about thirteen horizontal slats. The seat is just an empty square frame, and the legs cross in an X-shape on each side.",
+    "A rough black-line sketch shows a tall, straight-backed chair with horizontal slats viewed at a three-quarter angle. The seat is just an empty square frame supported by thin, X-crossed legs in front and back."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair"
+   ]
+  },
+  {
+   "seed": "folding_chair",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.5934,
+    0.4281,
+    0.3307,
+    0.4151,
+    0.2887,
+    0.3969,
+    0.5838,
+    0.4848,
+    0.4591,
+    0.7455,
+    0.7478
+   ],
+   "d_start": [
+    0.0,
+    0.1415,
+    0.2032,
+    0.1835,
+    0.2616,
+    0.3869,
+    0.2682,
+    0.2522,
+    0.3454,
+    0.659,
+    0.6454
+   ],
+   "d_grand": [
+    0.6831,
+    0.5814,
+    0.5522,
+    0.6056,
+    0.5706,
+    0.4258,
+    0.5957,
+    0.5676,
+    0.45,
+    0.401,
+    0.4096
+   ],
+   "descriptions": [
+    "A loose, sketchy black-line drawing on white shows a simple folding chair in three-quarter view, with a tall rectangular back with one horizontal slat, a square empty seat frame, and thin X-crossed folding legs.",
+    "A loose, sketchy black-ink drawing of a simple chair viewed at a three-quarter angle on a white background. The chair has a tall rectangular back with a horizontal slat, a square seat, and thin legs that cross in an X shape underneath.",
+    "A loose, sketchy line drawing in black on white of a simple side chair with a tall rectangular backrest divided by a horizontal slat, a square seat, and X-crossed folding legs, all rendered with rough, overlapping scribble-like strokes.",
+    "A loose, rough black-ink sketch on white of a simple side chair with a tall rectangular back with one horizontal slat, a square seat, and crossed X-shaped legs, all drawn with messy overlapping scribble lines.",
+    "A loose, scribbly black pen sketch on a white background of a simple side chair with a tall rectangular backrest, a square diamond-perspective seat, and X-shaped crossed legs.",
+    "A rough, scribbly black-line sketch on white of a simple side-view chair with a tall rectangular backrest, a diamond-shaped seat, and legs crossed in an X shape underneath.",
+    "A loose sketch in messy overlapping black lines on a white background shows a minimal chair in three-quarter view, with a diamond-shaped seat, an X-shaped base made of two long crossed legs below it, and a tall narrow rectangular backrest rising vertically from the back corner.",
+    "A rough, loose sketch in overlapping black scribbled lines on a white background depicts a minimal chair with a diamond-shaped seat, an X formed by two crossing lines underneath for legs, and two uneven vertical lines rising from the back right corner as a tall backrest.",
+    "A rough scribble in thick black lines forming a loose central diamond, with two messy vertical bars sticking up from the top-right edge and two thick scribbled lines crossing in an X beneath the diamond.",
+    "A roughly sketched hollow diamond made of thick, scribbly black lines, with a scribbled X touching its bottom point and two short vertical scribbled bars floating just above its top-right corner.",
+    "A roughly scribbled diamond made of many overlapping black lines, tilted with points up and down, with the lines extending and crossing over each other at the bottom point. In the upper right above the diamond are two small, separate clusters of short vertical scribbles."
+   ],
+   "kind_word": [
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false
+   ],
+   "labels": [
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "an office chair",
+    "a folding chair"
+   ]
+  },
+  {
+   "seed": "folding_chair",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.5934,
+    0.556,
+    0.5671,
+    0.557,
+    0.549,
+    0.4848,
+    0.4403,
+    0.3304,
+    0.4627,
+    0.47,
+    0.5002
+   ],
+   "d_start": [
+    0.0,
+    0.1222,
+    0.1256,
+    0.1791,
+    0.1479,
+    0.1741,
+    0.1908,
+    0.2736,
+    0.1671,
+    0.1575,
+    0.1527
+   ],
+   "d_grand": [
+    0.6831,
+    0.696,
+    0.6984,
+    0.6986,
+    0.6658,
+    0.673,
+    0.6126,
+    0.5278,
+    0.6488,
+    0.6408,
+    0.6552
+   ],
+   "descriptions": [
+    "A loose, sketchy black ink line drawing of a simple folding chair seen from a three-quarter side angle, made of overlapping rough strokes. It has a straight ladder back with two horizontal slats, a square seat, and X-shaped crossed folding legs with a lower stretcher bar.",
+    "A loose, scribbly black-ink sketch of a simple folding chair seen from a slightly elevated three-quarter angle, with a square seat, a tall backrest with three horizontal slats, and X-shaped crossed legs joined by a low stretcher bar.",
+    "A loose, scribbly black-ink sketch on a white background shows a simple wooden folding chair in three-quarter view, with a tall slatted backrest, a square seat, and X-crossed folding legs connected by a low stretcher bar.",
+    "A loose, sketchy black-ink drawing on white of a tall slat-backed folding chair seen in three-quarter view, with vertical spindles on the backrest, a square seat, and X-crossed folding legs.",
+    "A loose, scribbly black-ink sketch of a simple folding chair with a tall, slightly reclined back made of vertical slats, a square flat seat, and legs crossed in an X-shape.",
+    "A loose, scribbly black-line sketch of a simple folding side chair seen in three-quarter view, with a tall vertical slatted backrest, a flat square seat, and legs that cross in an X-shape on the sides.",
+    "A rough, loose black ink sketch on a white background of a simple chair seen at a three-quarter angle, with a tall rectangular back made of vertical slats, a flat square seat, and legs formed by two X-shaped crossed supports.",
+    "A loose, scribbly black-line sketch shows a high-backed chair with vertical slats, a square seat, and X-crossed folding legs, viewed from a three-quarter angle slightly above.",
+    "A rough, scribbly black-ink sketch shows a simple wooden folding chair in three-quarter view, with a tall vertical-slat backrest, a square flat seat, and crossed X-shaped folding legs joined by a low stretcher.",
+    "A loose, scribbly black-ink sketch of a simple slat-back chair with a tall vertical back, an empty square seat, and X-crossed folding legs, viewed from a three-quarter angle.",
+    "A loose, scribbly black-line sketch on a white background shows a simple folding chair with a tall, vertical slatted back and X-shaped folding legs, viewed from a three-quarter front-side angle."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair",
+    "a folding chair"
+   ]
+  },
+  {
+   "seed": "high_chair",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.2494,
+    0.0906,
+    0.0721,
+    0.0863,
+    0.044,
+    0.0805,
+    0.061,
+    0.0646,
+    0.0658,
+    0.0446,
+    0.0688
+   ],
+   "d_start": [
+    -0.0,
+    0.2227,
+    0.27,
+    0.3871,
+    0.3509,
+    0.3932,
+    0.3342,
+    0.3369,
+    0.3613,
+    0.3669,
+    0.3792
+   ],
+   "d_grand": [
+    0.5584,
+    0.6098,
+    0.5854,
+    0.6004,
+    0.573,
+    0.6137,
+    0.5732,
+    0.6007,
+    0.5912,
+    0.5853,
+    0.6005
+   ],
+   "descriptions": [
+    "A loose, sketchy black-ink drawing on a white background shows a tall wooden high chair in three-quarter view, with four long straight legs, a square seat, a tall slatted backrest, and a small tray table attached across the front.",
+    "A loose, sketchy black-ink drawing on white paper shows a simple four-legged chair with a tall vertical-slat back, viewed from a three-quarter angle facing right. The lines are rough and overlapping, with a square seat and four long, slightly tapered legs.",
+    "A loose, sketchy black ink drawing of a simple wooden dining chair with a tall vertical-slat back, viewed from a three-quarter front angle, rendered with rough overlapping scribbled lines for the seat, back, and four slightly tapered legs.",
+    "A loose, scribbly black ink sketch on white of a simple wooden dining chair with a tall slatted back and square seat, viewed from a three-quarter front angle with four straight legs.",
+    "A loose, rough black-ink sketch of a simple wooden dining chair viewed at a three-quarter angle, with a tall rectangular back made of vertical slats, a square seat, and four straight legs. The style is scribbly and overlapping, like quick multiple pen strokes outlining the form.",
+    "A loose, scribbly black line sketch of a simple wooden chair with a slatted backrest and four straight legs, viewed from a three-quarter front angle.",
+    "A rough, scribbly black-line sketch on white shows a simple four-legged chair with a tall slatted back and a square seat, viewed from a front three-quarter angle. The lines are loose, overlapping, and unfinished, like a quick hand-drawn study.",
+    "A loose, scribbly black-ink sketch on white of a simple four-legged dining chair with a tall, vertical-slatted back and a square seat, viewed from a front three-quarter angle.",
+    "A loose, scribbly black-ink sketch on white of a simple dining chair with a tall, straight back made of vertical slats, a flat square seat, and four straight legs.",
+    "A rough, scribbly black-line sketch of a simple wooden dining chair with a tall back with vertical slats, a square seat, and four straight legs, seen from a three-quarter angle.",
+    "A loose, scribbly black-line sketch on a white background shows a simple four-legged dining chair with a square seat and a tall rectangular backrest filled with vertical slats, viewed from a slight three-quarter front angle."
+   ],
+   "kind_word": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a highchair",
+    "a highchair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair"
+   ]
+  },
+  {
+   "seed": "high_chair",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.2494,
+    0.1692,
+    0.4244,
+    0.3022,
+    0.3298,
+    0.2845,
+    0.3135,
+    0.3957,
+    0.4125,
+    0.4417,
+    0.3521
+   ],
+   "d_start": [
+    -0.0,
+    0.1351,
+    0.2727,
+    0.2107,
+    0.2475,
+    0.2024,
+    0.2626,
+    0.2651,
+    0.3468,
+    0.4128,
+    0.3824
+   ],
+   "d_grand": [
+    0.5584,
+    0.5708,
+    0.6933,
+    0.6355,
+    0.6607,
+    0.661,
+    0.6288,
+    0.6789,
+    0.6878,
+    0.6892,
+    0.656
+   ],
+   "descriptions": [
+    "A loose, scribbly black-ink sketch on white shows a tall wooden baby high chair in three-quarter view, with four straight splayed legs joined by a low front rung, a square seat, a small square tray attached at arm-height, and a tall rectangular backrest marked with horizontal shading strokes.",
+    "A rough black ink sketch of a tall wooden highchair with a high rectangular slatted back, a small square seat with a tray attached to one armrest, and four long splayed legs joined by low stretchers.",
+    "A loose black-ink sketch of a tall wooden highchair with four long splayed legs joined by a low square stretcher, a square seat, a high straight back made of vertical slats, and short arms with a small flat tray on one side.",
+    "A loose black-ink sketch of a tall wooden high chair with four long splayed legs joined by a low square stretcher, a square seat, a tall straight slatted back, and short armrests holding a small tray table across the front.",
+    "A loose black-and-white ink sketch of a tall wooden baby highchair with four long, slightly splayed legs joined by a rectangular stretcher near the bottom. It has a square seat, a tall vertical slatted backrest, and a small tray with side arms across the front.",
+    "A loose black-ink sketch of a tall highchair with a high, straight back made of vertical slats, curved armrests with a small tray across the front, a square seat, and four long, slightly splayed legs joined by a low rung in front.",
+    "A loose black line sketch of a tall, high-backed chair with vertical slats, curved armrests, a square seat, and four long, splayed, tapered legs with a low stretcher bar between the front legs, with a small rectangular tray sitting across the armrests.",
+    "A loose, sketchy black-line drawing of a wooden armchair with a very tall, vertical slatted back, curved armrests, a square seat, and four long, tapered splayed legs with a small stretcher bar between the front two.",
+    "A loose black ink sketch of an armchair with a square seat, four tapered splayed legs with a small rung between the front two, curved armrests, and a very tall back made of seven thin vertical spindles.",
+    "A loose, scribbly black-line sketch of a high-backed armchair seen from slightly above and in front. It has a square seat, curved armrests, four splayed legs, and a tall back made of six thin vertical spindles.",
+    "A loose, scribbly black-line sketch of a sturdy armchair with a tall, straight back made of five vertical slats, a square seat, curved looped arms, and four long legs splayed outward."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a highchair",
+    "a highchair",
+    "a highchair",
+    "a highchair",
+    "a highchair",
+    "a highchair",
+    "a highchair",
+    "an armchair",
+    "an armchair",
+    "an Adirondack chair",
+    "an Adirondack chair"
+   ]
+  },
+  {
+   "seed": "high_chair",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.2494,
+    0.2645,
+    0.2488,
+    0.1618,
+    0.0942,
+    0.0937,
+    0.0899,
+    0.0704,
+    0.0882,
+    0.0844,
+    0.09
+   ],
+   "d_start": [
+    -0.0,
+    0.3,
+    0.3038,
+    0.2739,
+    0.2687,
+    0.39,
+    0.3047,
+    0.2721,
+    0.3137,
+    0.3584,
+    0.3195
+   ],
+   "d_grand": [
+    0.5584,
+    0.5267,
+    0.5422,
+    0.5733,
+    0.5786,
+    0.6441,
+    0.6276,
+    0.6316,
+    0.6306,
+    0.6228,
+    0.6149
+   ],
+   "descriptions": [
+    "A rough, loose black-line sketch of a tall wooden baby highchair with four straight splayed legs, a square seat, a tall rectangular backrest with scribbled shading, and a small flat tray sticking out over the front.",
+    "A loose, scribbly black ink sketch of a simple upright chair with a tall rectangular backrest filled with crosshatching, a flat square seat with a small lower step at the front, supported by four long, splayed, tapered legs.",
+    "A rough, scribbly black-ink sketch of a simple chair with a tall rectangular back filled with crosshatching, a square seat, four long tapered legs splayed outward, and a small rectangular footrest connecting the front legs.",
+    "A loose, scribbly black-ink sketch of a simple four-legged chair with a tall rectangular backrest, a square seat, and slightly splayed tapered legs joined by a small rung, all shaded with rough cross-hatching.",
+    "A loose black ink sketch of a simple wooden dining chair viewed from a three-quarter front angle. It has a tall rectangular back with four horizontal slats, a square seat, four slightly tapered legs, and low stretchers between the legs, all rendered with rough, scribbly cross-hatching for shading.",
+    "A loose, sketchy black-ink drawing shows a simple wooden ladder-back chair in three-quarter front view. It has a tall straight back with about seven horizontal slats, a square seat, and four straight tapered legs connected by low side stretchers.",
+    "A loose, sketchy black-ink drawing of a simple wooden dining chair with a tall rectangular back filled with horizontal slats, a square seat, and four straight tapered legs joined by low stretchers.",
+    "A loose, sketchy black-line drawing of a simple wooden dining chair viewed at a three-quarter angle, with a tall rectangular ladder-back made of about seven horizontal slats, a square seat, and four straight tapered legs connected by low side stretchers.",
+    "A loose, scribbly black-line sketch of a simple wooden dining chair seen from a front three-quarter angle, with a tall rectangular back made of horizontal slats, a square seat, and four straight tapered legs joined by low stretchers.",
+    "A loose, scribbly black-line sketch of a simple wooden chair seen in three-quarter view, with a tall slatted ladder back, a square seat, and four straight tapered legs joined by low stretchers.",
+    "A quick, loose pen sketch of a simple wooden side chair viewed at a three-quarter angle. It has a tall rectangular back with vertical slats, a square seat, four tapered legs, and low stretchers connecting the legs."
+   ],
+   "kind_word": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a highchair",
+    "a dining chair",
+    "a highchair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair",
+    "a dining chair"
+   ]
+  },
+  {
+   "seed": "adirondack",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.5796,
+    0.6041,
+    0.5935,
+    0.6138,
+    0.6437,
+    0.5536,
+    0.6123,
+    0.6491,
+    0.603,
+    0.5114,
+    0.4984
+   ],
+   "d_start": [
+    0.0,
+    0.05,
+    0.0452,
+    0.0465,
+    0.0645,
+    0.0626,
+    0.0463,
+    0.0704,
+    0.0627,
+    0.0839,
+    0.0891
+   ],
+   "d_grand": [
+    0.783,
+    0.8031,
+    0.8099,
+    0.8366,
+    0.8621,
+    0.8093,
+    0.8317,
+    0.8612,
+    0.8298,
+    0.7982,
+    0.803
+   ],
+   "descriptions": [
+    "A rough, scribbly black-ink sketch shows a wooden Adirondack chair viewed from a front three-quarter angle, with a tall slightly-reclined back made of vertical slats, wide flat armrests, a low horizontal-slat seat, and thick blocky legs.",
+    "A rough, scribbly black pen sketch on a white background depicts a wooden Adirondack chair viewed from a front three-quarter angle, with a tall slatted back, wide flat armrests, and a low slatted seat supported by thick legs.",
+    "A loose, scribbly black-ink sketch on white shows a chunky wooden Adirondack-style armchair in three-quarter view, with a tall slightly-reclined back of vertical slats, wide flat armrests, a low deep slatted seat, and thick square legs.",
+    "A loose, scribbly black-ink sketch on white of a chunky wooden armchair seen from the front-left three-quarter view. It has a tall, slightly reclined slatted back, wide flat armrests on thick square legs, and a low slatted seat.",
+    "A rough, scribbly black-ink sketch of a chunky wooden armchair with a tall, slightly reclined back made of vertical slats, wide flat armrests, a low horizontal slatted seat, and thick block-like legs.",
+    "A loose, scribbly black-ink sketch of a sturdy wooden slat armchair with a tall slightly-reclined back of vertical boards, a low seat of horizontal boards, wide flat armrests, and thick blocky legs, viewed from a front three-quarter angle.",
+    "A loose, scribbly black-ink sketch of a sturdy wooden armchair seen in three-quarter view, with thick blocky legs, wide flat armrests, a slatted seat, and a tall, slightly reclined slatted backrest.",
+    "A loose, scribbly black ink sketch of a chunky wooden slat armchair seen from a three-quarter front view, with a tall slightly-reclined back made of vertical slats, wide flat armrests supported by thick square legs, and a low seat made of horizontal slats.",
+    "A rough, scribbly black-ink sketch on a white background shows a chunky wooden armchair with a tall slatted back, wide flat armrests, a slatted seat, and four thick square legs, viewed from a three-quarter front angle.",
+    "A loose, scribbly black-ink sketch on white of a sturdy wooden armchair seen from a front three-quarter angle, with a tall high back made of vertical slats, wide flat armrests, a horizontal slatted seat, and thick, blocky legs.",
+    "A rough, scribbly black ink sketch of a chunky wooden armchair with a tall, vertical-slatted back, wide flat armrests, a slatted seat, and four thick block-like legs."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair"
+   ]
+  },
+  {
+   "seed": "adirondack",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.5796,
+    0.6171,
+    0.6704,
+    0.6142,
+    0.5653,
+    0.3689,
+    0.4359,
+    0.4042,
+    0.4779,
+    0.4592,
+    0.4677
+   ],
+   "d_start": [
+    0.0,
+    0.0457,
+    0.0602,
+    0.0801,
+    0.0781,
+    0.1758,
+    0.1536,
+    0.2005,
+    0.1429,
+    0.1456,
+    0.1386
+   ],
+   "d_grand": [
+    0.783,
+    0.8165,
+    0.8552,
+    0.8131,
+    0.8195,
+    0.7103,
+    0.7402,
+    0.7031,
+    0.7432,
+    0.7549,
+    0.7669
+   ],
+   "descriptions": [
+    "A loose, scribbly black-ink sketch of an Adirondack chair seen from a front three-quarter angle, with a tall slightly-reclined back of vertical slats, wide flat armrests, a low horizontal-slatted seat, and short thick legs.",
+    "A loose, scribbly black ink sketch on white of a chunky wooden Adirondack armchair in three-quarter front view, with a tall slanted back of vertical slats, wide flat armrests, a low horizontal-slatted seat, and thick square legs.",
+    "A loose, scribbly black-pen sketch of a chunky wooden armchair with thick square legs, wide flat armrests, a low slatted seat, and a tall slightly-reclined slatted back, viewed from a three-quarter front angle.",
+    "A rough, scribbly black-ink sketch shows a sturdy, low wooden armchair in three-quarter view, with thick blocky legs, wide flat armrests, a low square seat, and a tall slightly reclined back made of vertical slats.",
+    "A loose, scribbly black ink sketch of a chunky wooden armchair seen from a front three-quarter angle, with a tall slatted backrest, thick square legs, wide flat armrests, and a boxy seat frame.",
+    "A rough, scribbly black ink sketch of a sturdy wooden armchair seen from a slight front three-quarter angle, with a tall high back made of vertical slats, wide flat armrests, a low square seat, and four thick blocky legs.",
+    "A rough, scribbly black ink sketch of a chunky wooden armchair with a tall, high vertical backrest, wide flat armrests, and four thick block-like legs.",
+    "A rough, scribbly black-ink sketch of a chunky wooden armchair seen head-on, with a tall back made of five vertical slats, wide flat rectangular armrests, and four thick block legs supporting a flat seat.",
+    "A loose, scribbly black-ink sketch of a sturdy wooden armchair seen head-on, with a tall straight back made of five vertical slats, wide flat rectangular armrests, and a flat seat on four thick blocky legs.",
+    "A rough, scribbly black-ink sketch of a sturdy wooden armchair with a tall high back made of vertical slats, wide flat rectangular armrests, a thick square seat, and four thick blocky legs.",
+    "A loose, sketchy black-ink drawing of a sturdy, blocky wooden armchair with a tall vertical-slat back, thick square arms and legs, and a low seat cushion, viewed from a slightly angled front three-quarter perspective."
+   ],
+   "kind_word": [
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "a throne",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an armchair"
+   ]
+  },
+  {
+   "seed": "adirondack",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.5796,
+    0.5705,
+    0.641,
+    0.6339,
+    0.6334,
+    0.5839,
+    0.6071,
+    0.6476,
+    0.5306,
+    0.6773,
+    0.6279
+   ],
+   "d_start": [
+    0.0,
+    0.0745,
+    0.0663,
+    0.124,
+    0.0956,
+    0.0774,
+    0.1753,
+    0.1007,
+    0.2391,
+    0.0581,
+    0.1025
+   ],
+   "d_grand": [
+    0.783,
+    0.7756,
+    0.8027,
+    0.8124,
+    0.8049,
+    0.7981,
+    0.7757,
+    0.8101,
+    0.683,
+    0.8327,
+    0.7974
+   ],
+   "descriptions": [
+    "A loose, rough black-ink sketch of a wooden Adirondack chair seen from a front three-quarter angle, with a tall slatted back, wide flat armrests, low slatted seat, and thick sketchy lines throughout.",
+    "A loose, rough black-ink scribble sketch of a low Adirondack chair seen from a three-quarter front view, with wide flat armrests, a tall slightly-fanned slatted back, a slatted seat, and thick straight legs.",
+    "A loose, scribbly black-ink sketch of an Adirondack chair seen from a front three-quarter angle, with a tall fanned slat back, wide flat armrests, a low horizontal slat seat, and thick blocky legs.",
+    "A loose, scribbly black-line sketch of a wooden Adirondack chair seen from a front three-quarter angle, with a tall fanned back of vertical slats, wide flat armrests, and a low horizontal slatted seat supported by thick legs.",
+    "A loose, scribbly black-ink sketch of an Adirondack chair in three-quarter front view, with a tall fanned back of vertical slats, wide flat armrests, and a low slatted seat on four straight legs.",
+    "A loose, scribbly black-ink sketch of an Adirondack chair seen from a front three-quarter angle, with a tall fanned back made of vertical slats, wide flat armrests, and a low slatted seat on four thick legs.",
+    "A loose, scribbly black-ink sketch of a wooden Adirondack chair seen from a front three-quarter view, with a tall fanned slat back, wide flat armrests, a low slatted seat, and thick short legs.",
+    "A loose, scribbly black ink sketch of an Adirondack chair seen from a front three-quarter angle, with a tall fanned slatted backrest, wide flat armrests, a low slatted seat, and short chunky legs.",
+    "A loose, scribbly black-ink sketch of a low Adirondack chair seen from a front three-quarter view, with a tall fanned back of five vertical slats, wide flat armrests, a deep slatted seat, and short chunky legs.",
+    "A loose, scribbly black-ink sketch of an Adirondack chair seen from a front three-quarter angle, with a tall fan-shaped slatted back, wide flat armrests, and a low slatted seat. The lines are rough and overlapping, giving it an unfinished hand-drawn study look.",
+    "A loose, scribbly black-ink sketch of an Adirondack chair viewed from a slightly angled front-three-quarter perspective, with a tall fanned slatted back, wide flat armrests supported by vertical posts, and a low horizontal slatted seat."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair",
+    "an Adirondack chair"
+   ]
+  },
+  {
+   "seed": "top_hat",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.6196,
+    0.6683,
+    0.6314,
+    0.626,
+    0.6714,
+    0.6816,
+    0.6017,
+    0.6697,
+    0.592,
+    0.5955,
+    0.5995
+   ],
+   "d_start": [
+    0.0,
+    0.3547,
+    0.1269,
+    0.1223,
+    0.1878,
+    0.3232,
+    0.2624,
+    0.1871,
+    0.2082,
+    0.1623,
+    0.2205
+   ],
+   "d_grand": [
+    0.3856,
+    0.5007,
+    0.3734,
+    0.3832,
+    0.4088,
+    0.4515,
+    0.3882,
+    0.3928,
+    0.3524,
+    0.3793,
+    0.4021
+   ],
+   "descriptions": [
+    "A rough, scribbly black ink sketch of a plain tall top hat with a cylindrical crown and a wide flat oval brim, drawn with loose overlapping lines.",
+    "A loose, messy scribble in black lines depicts a tall top hat with a cylindrical crown and flat oval top, sitting centered on a wide flat circular brim.",
+    "A loose, scribbly black ink sketch on white shows a tall cylindrical top hat seen slightly from above, with rough overlapping strokes outlining the oval open top, the straight tall sides, and a wide flat oval brim around the base.",
+    "A loose, scribbly black-line sketch on white of a tall top hat with a cylindrical crown, an open oval top, and a wide flat oval brim, all drawn with overlapping rough strokes.",
+    "A loose, scribbly black line sketch of a tall top hat with a straight cylindrical crown and a wide, flat oval brim, made from many overlapping rough strokes.",
+    "A rough sketch of a classic top hat with a tall, slightly tapered cylindrical crown and a wide, flat oval brim, drawn entirely in loose, overlapping black scribble lines.",
+    "A rough, scribbly black-ink sketch of a tall top hat with a slightly tapered cylindrical crown and a wide, flat oval brim.",
+    "A rough, scribbly black ink sketch on white of a tall top hat with a slightly tapered crown and a wide, flat, loose oval brim.",
+    "A loose, scribbled black line sketch on a white background of a tall top hat with a slightly tapered cylindrical crown and flat oval top, sitting on a wide, flat, oval brim.",
+    "A rough, scribbly black-line sketch of a tall top hat with a slightly tapered cylindrical crown, an open oval top, and a wide flat oval brim.",
+    "A rough, scribbled line drawing in black of a tall top hat with an open oval at the top and a wide flat oval brim at the bottom, made of loose overlapping sketchy strokes forming the two vertical sides and the two ellipses."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat"
+   ]
+  },
+  {
+   "seed": "top_hat",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.6196,
+    0.6302,
+    0.6787,
+    0.6188,
+    0.6296,
+    0.6844,
+    0.646,
+    0.6495,
+    0.6545,
+    0.6802,
+    0.5983
+   ],
+   "d_start": [
+    0.0,
+    0.193,
+    0.1528,
+    0.1559,
+    0.1929,
+    0.2395,
+    0.2609,
+    0.1839,
+    0.2022,
+    0.3085,
+    0.1229
+   ],
+   "d_grand": [
+    0.3856,
+    0.3989,
+    0.4312,
+    0.4257,
+    0.3801,
+    0.431,
+    0.4303,
+    0.4326,
+    0.4587,
+    0.4751,
+    0.3618
+   ],
+   "descriptions": [
+    "A rough, scribbly black-ink sketch of a tall cylindrical top hat with an open oval top and a wide, flat oval brim.",
+    "A loose, scribbly black line sketch of a tall top hat with a straight-sided cylindrical crown, an oval opening at the top, and a wide flat oval brim around the base.",
+    "A loose, scribbly black-line sketch of a tall, cylindrical top hat with a slightly elliptical open top and a wide, flat oval brim.",
+    "A loose, scribbly black ink sketch of a tall top hat with a slightly tapered cylindrical crown, an open oval top, and a wide flat oval brim.",
+    "A rough, scribbly black ink sketch of a tall top hat with a slightly tapered cylindrical crown, an oval opening on top, and a wide flat oval brim around the base.",
+    "A loose, scribbly black-ink sketch on white of a tall top hat with a slightly tapered cylindrical crown, an open elliptical top, and a flat oval brim, all drawn with rough overlapping strokes.",
+    "A loose, scribbly black-ink sketch of a tall top hat with a slightly tapered cylindrical crown, an oval opening at the top, and a flat oval brim at the base, all made of overlapping sketchy lines.",
+    "A loose, scribbly black-line sketch on white of a tall top hat — a slightly tapered cylinder with an oval open top and a flat, wide oval brim at the base — drawn entirely with rough, overlapping strokes.",
+    "A loose, scribbly black-line sketch on white of a tall top hat, with a slightly tapered cylindrical crown open at the top as a rough ellipse and a wide flat oval brim at the bottom.",
+    "A loose, scribbly black-ink sketch of a tall top hat with a slightly tapered crown, an elliptical open top, and a flat oval brim, shaded with rough diagonal hatching along the left and right sides of the crown.",
+    "A loose, scribbly black line sketch of a tall top hat with a slightly tapered cylindrical crown and a flat, wide oval brim, with quick diagonal hatching shading the left and right sides of the crown."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat"
+   ]
+  },
+  {
+   "seed": "top_hat",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.6196,
+    0.7136,
+    0.68,
+    0.7446,
+    0.6826,
+    0.6567,
+    0.6768,
+    0.7415,
+    0.6719,
+    0.6574,
+    0.5793
+   ],
+   "d_start": [
+    0.0,
+    0.3214,
+    0.3316,
+    0.3949,
+    0.4045,
+    0.332,
+    0.3977,
+    0.4061,
+    0.3861,
+    0.3376,
+    0.3521
+   ],
+   "d_grand": [
+    0.3856,
+    0.4974,
+    0.5158,
+    0.5427,
+    0.511,
+    0.508,
+    0.4951,
+    0.5456,
+    0.5828,
+    0.4256,
+    0.5678
+   ],
+   "descriptions": [
+    "A loose, scribbly black-line sketch of a tall top hat with a slightly tapered cylindrical crown and a wide flat oval brim, made with messy overlapping strokes.",
+    "A tall top hat rendered in loose, overlapping black scribble lines, with a slightly tapered cylindrical crown capped by a roughly scribbled oval top, sitting centered on a wide, flat, heavily scribbled elliptical brim.",
+    "Draw a tall top hat using dense, messy overlapping black scribble lines, with a flat oval top, a slightly tapered cylindrical crown, and a wide flat circular brim.",
+    "A tall top hat drawn entirely with loose, overlapping black ink scribbles, with a cylindrical crown that flares slightly at the top and a wide, flat oval brim.",
+    "A loose, scribbly black ink sketch of a tall top hat with a slightly tapered cylindrical crown and a flat, wide oval brim, filled with chaotic overlapping hatching lines.",
+    "A loose, scribbly black-ink sketch on white of a tall top hat with a slightly tapered cylindrical crown and a wide flat oval brim, filled in with messy overlapping cross-hatch strokes.",
+    "A loose, scribbly black ink sketch of a tall top hat with a slightly tapered crown and a wide, flat oval brim, filled in with messy cross-hatching.",
+    "A loose, messy black-ink scribble on a white background depicts a tall top hat with a slightly tapered cylindrical crown and a wide, flat oval brim, all filled in with overlapping sketchy cross-hatching.",
+    "A loose, scribbly black-ink sketch of a tall, slightly tapered top hat with a wide, flat oval brim, the crown and brim both filled with messy cross-hatch shading.",
+    "A loose black-ink sketch of a tall top hat seen from slightly above, with heavy scribbly cross-hatching shading the crown and the wide flat brim, leaving a plain white band around the base of the crown.",
+    "A loose black-ink sketch shows a top hat viewed from slightly above, with a tall cylindrical crown and a wide flat circular brim. Heavy scribbled cross-hatching shades the top of the crown, the sides of the crown, and the brim, leaving a blank white band around the base of the crown."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat",
+    "a top hat"
+   ]
+  },
+  {
+   "seed": "cuckoo_clock",
+   "chain": 0,
+   "complete": true,
+   "d_proto": [
+    0.572,
+    0.6085,
+    0.6339,
+    0.5249,
+    0.5826,
+    0.6004,
+    0.6241,
+    0.549,
+    0.5442,
+    0.5615,
+    0.6552
+   ],
+   "d_start": [
+    0.0,
+    0.1588,
+    0.104,
+    0.167,
+    0.1678,
+    0.1802,
+    0.1428,
+    0.1602,
+    0.1309,
+    0.1484,
+    0.2164
+   ],
+   "d_grand": [
+    0.4139,
+    0.6152,
+    0.4681,
+    0.5838,
+    0.6311,
+    0.5272,
+    0.5749,
+    0.5515,
+    0.5504,
+    0.5301,
+    0.6325
+   ],
+   "descriptions": [
+    "A loose, sketchy black-ink drawing of a tall house-shaped cuckoo clock with a triangular roof, a small bird peeking from an arched window on top, and a round clock face below showing about 11:10. Hanging from the bottom are three pendants: two textured pinecone-shaped weights on the left and right, and a long thin rod with a plain circular bob in the center.",
+    "A loose ink sketch of a traditional cuckoo clock shaped like a tall little house with a steep, shingled A-frame roof, a small arched opening near the top with a bird peeking out, a round clock face in the center showing about 4 o'clock, and hanging below two pinecone-shaped weights on either side of a long central pendulum ending in a circular bob.",
+    "A rough black-ink sketch of a cuckoo clock shaped like a house with a cross-hatched peaked roof, a small bird peeking out above the square body, a round clock face showing 3 o'clock in the center, and two scribbled pinecone weights and a long thin pendulum hanging below.",
+    "A rough black-ink sketch of a cuckoo clock shaped like a little house with a cross-hatched A-frame roof, a small bird peeking out above a round face showing 3 o'clock, with two scribbled pinecone weights and a long pendulum hanging below.",
+    "A rough ink sketch of a cuckoo clock with a steep triangular roof and a small bird peeking from an arched opening above a square face showing 12:15. Below hang two pinecone weights on chains on the left and right, with a pendulum on a wavy rod and an oval bob hanging in the center between them.",
+    "A loose, sketchy black-ink drawing of a house-shaped cuckoo clock with a tall triangular roof, a small bird peeking from an arched doorway above a square face marked 12, 3, 6, 9 with hands pointing near 1 and at 3. Three pendants hang below: pinecone-shaped weights on chains on the left and right, and a wavy cord with an oval loop in the center.",
+    "A rough black ink sketch of a cuckoo clock shaped like a house with a tall, steep triangular roof, a small arched doorway near the top containing a simple bird, and a square clock face below showing only 12, 3, 6, and 9 with the time at about 3:05. Hanging from the bottom are two pinecone weights on chains on the left and right and a central pendulum made of a squiggly wire ending in an oval loop.",
+    "A rough, scribbly black-ink sketch of a cuckoo clock with a tall triangular A-frame roof, a square face marked only with 12, 3, 6, and 9 and hands pointing near 1 and 4, and a tiny bird perched in a small arched doorway on top. Hanging below are two pinecone weights on short chains on the left and right with a thin wavy pendulum with an oval tip dangling in the center.",
+    "A rough black-ink sketch of a house-shaped cuckoo clock with a scribbled A-frame roof and a small arched window at the top containing a simple bird. The square clock face shows only 12, 3, 6, and 9 with hands pointing to about 2 and 4:20, and hanging from the bottom are two pinecone weights on chains with a wavy pull-cord with a looped end between them.",
+    "A rough, scribbly black-ink sketch of a cuckoo clock shaped like a house with a peaked roof, a small bird in an arched opening above a square clock face marked only with 12, 3, 6, and 9 and hands pointing to about 2 and 5, with two pinecone weights hanging from chains on the left and right and a wavy pendulum with an oval bob hanging in the center.",
+    "A loose, scribbly black-ink sketch of a cuckoo clock shaped like a house with a peaked roof, a small bird perched in an arched opening above a square clock face marked with 12, 3, 6, and 9 with hands pointing to about 1 and 5. Three chains hang from the bottom, the outer two ending in scribbled pinecone weights and the middle wavy one ending in a plain oval pendulum."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock"
+   ]
+  },
+  {
+   "seed": "cuckoo_clock",
+   "chain": 1,
+   "complete": true,
+   "d_proto": [
+    0.572,
+    0.5561,
+    0.5345,
+    0.5669,
+    0.4882,
+    0.5419,
+    0.5862,
+    0.5882,
+    0.6134,
+    0.5725,
+    0.646
+   ],
+   "d_start": [
+    0.0,
+    0.1642,
+    0.1405,
+    0.2116,
+    0.1159,
+    0.1683,
+    0.1666,
+    0.2065,
+    0.18,
+    0.1941,
+    0.1768
+   ],
+   "d_grand": [
+    0.4139,
+    0.551,
+    0.5135,
+    0.5673,
+    0.455,
+    0.4249,
+    0.482,
+    0.6059,
+    0.5962,
+    0.5878,
+    0.5964
+   ],
+   "descriptions": [
+    "A loose, sketchy black-line drawing of a house-shaped cuckoo clock with a triangular roof, a small bird in an arched window above a round clock face showing about 11:10, with three strings hanging below ending in two patterned pinecone weights on the sides and a round pendulum bob in the middle.",
+    "A rough, sketchy black-ink drawing of a house-shaped cuckoo clock with a peaked roof and small chimney, with a little bird in an arched window above a round clock face showing about 11:10, and three weights hanging below — pinecone-shaped on the left and right with a round ring in the middle.",
+    "A rough scribbly sketch of a house-shaped cuckoo clock with a steep pitched roof and small chimney, a little bird in an arched window above a round clock face with hands near 11 and 2, and three pendants hanging below — a pinecone weight on each side and a circular ring in the middle.",
+    "A loose black-ink sketch of a house-shaped cuckoo clock with a smoking chimney, a small bird in an arched opening above a round clock face showing about 11:10, and three hanging pendants below — a pinecone on each side and a ring in the middle.",
+    "A loose black-ink sketch of a house-shaped cuckoo clock with a peaked roof, a small chimney with curling smoke on top, an arched window holding a small bird, a round clock face below showing about 11:10, and three pendants hanging underneath — pinecone weights on the left and right with a circular ring in the middle.",
+    "A sketchy black-ink cuckoo clock shaped like a house with a steep peaked roof and a small chimney puffing curly smoke, a little bird perched in an arched window above a round clock face, with three pendants hanging below: a central ring flanked by two pinecones.",
+    "A loose, scribbly black-ink sketch of a house-shaped cuckoo clock with a steep A-frame roof and a small chimney puffing curly smoke, featuring an arched opening with a tiny bird above a round clock face showing about 11:10, with two pinecone weights and a circular ring hanging from chains below.",
+    "A rough, scribbly ink sketch of a traditional cuckoo-clock shaped like a little house with a steep A-frame roof and a small chimney with curls of smoke. On the front is a tiny bird in an arched opening above a round clock face reading about ten-ten, with three chains hanging below ending in two pinecone weights on the sides and a plain ring pendulum in the center.",
+    "A rough, scribbly ink sketch of a house-shaped cuckoo clock with a steep pitched roof and a small smoking chimney, a tiny bird perched in an arch above a round clock face showing about 10:10. Three chains hang from the bottom, with two pinecone-shaped weights on the sides and a circular ring weight in the middle.",
+    "A rough, scribbly black-ink sketch of a house-shaped cuckoo clock with a steep pitched roof, a small smoking chimney on the left, a tiny bird in an arched opening above a round clock face showing about 10:10, and three chains hanging from the bottom — the two outer chains ending in pinecone weights and the middle chain ending in a ring.",
+    "A rough black ink sketch of a house-shaped cuckoo clock with a steep cross-hatched roof and a smoking chimney on the left side. On the front is a small arched window with a bird above a round clock face reading about 10 o'clock, with three chains hanging below ending in two scribbled pinecone weights on the sides and a ring in the center."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock"
+   ]
+  },
+  {
+   "seed": "cuckoo_clock",
+   "chain": 2,
+   "complete": true,
+   "d_proto": [
+    0.572,
+    0.535,
+    0.684,
+    0.5713,
+    0.5696,
+    0.5942,
+    0.5961,
+    0.5725,
+    0.5774,
+    0.5923,
+    0.6053
+   ],
+   "d_start": [
+    0.0,
+    0.0888,
+    0.1349,
+    0.1735,
+    0.1669,
+    0.1648,
+    0.201,
+    0.1763,
+    0.1802,
+    0.1776,
+    0.1607
+   ],
+   "d_grand": [
+    0.4139,
+    0.5139,
+    0.5223,
+    0.5524,
+    0.5828,
+    0.5886,
+    0.6338,
+    0.573,
+    0.5922,
+    0.5692,
+    0.5708
+   ],
+   "descriptions": [
+    "A loose, sketchy drawing of a tall house-shaped cuckoo clock with a peaked roof, a small arched window near the top with a bird facing right inside, a round clock face below it with hands near 11 and 2, and three lines hanging from the bottom — a pinecone weight with zig-zag markings on the left and right and a longer central pendulum with a plain circular bob.",
+    "A rough black-ink sketch of a house-shaped cuckoo clock with a peaked shingled roof, a small arched window at the top containing a simple bird, and a round clock face below showing about eleven o'clock. Hanging from the bottom are three pendants: a pinecone-shaped weight on the left and right, and a thin rod with a circular bob in the center.",
+    "A loose black-ink sketch of a house-shaped cuckoo clock with a steep cross-hatched gabled roof, a small arched window at the top with a bird inside, a round clock face in the middle showing about 10 o'clock, and three pendants hanging from the bottom — a pinecone weight on each side and a thin string with a ring pull in the center.",
+    "A rough ink sketch of a house-shaped cuckoo clock with a crosshatched peaked roof, a small bird in an arched window above a round clock face showing 10 o'clock, and three hanging pendulums below — two pinecones on the sides and a small ring in the center.",
+    "A loose, scribbly black-ink sketch of a traditional cuckoo clock shaped like a little house with a heavily cross-hatched A-frame roof. The house has a small arched doorway near the top with a tiny bird inside, a round clock face below it showing the hands at 10 and 12, and three chains hanging from the bottom holding two pinecone-shaped weights on the sides and a small ring pendulum in the middle.",
+    "A rough, scribbly sketch of a house-shaped cuckoo clock with a heavily cross-hatched gabled roof, a small bird in an arched opening above a round clock face showing about ten o'clock, and three chains hanging from the bottom ending in two pinecone-shaped weights on the sides and a ring in the middle.",
+    "A rough, scribbly ink sketch of a house-shaped cuckoo clock with a cross-hatched gabled roof, a small arched opening at the top containing a simple bird, a large round clock face in the middle showing about 11 o'clock, and three chains hanging from the bottom ending in two pinecone weights on the sides and a ring in the center.",
+    "A rough black-ink sketch of a house-shaped cuckoo clock with a peaked, cross-hatched roof, a small arched opening at the top containing a bird, a round clock face below showing about eleven o'clock, and three hanging chains underneath ending in two pinecone weights on the sides and a circular ring in the middle.",
+    "A rough black-ink sketch of a cuckoo clock shaped like a house with a cross-hatched gabled roof, a small bird in an arched opening above a round clock face showing 11 o'clock, with three chains hanging below holding two pinecone weights on the sides and a ring weight in the middle.",
+    "A rough sketch of a cuckoo clock shaped like a house with a steep, cross-hatched gabled roof, a small bird in an arched opening above a round clock face marked with only 12, 3, 6, and 9 and showing about 11 o'clock, with three chains hanging below ending in pinecone weights on the left and right and a circular ring in the middle.",
+    "A rough black-ink sketch of a house-shaped cuckoo clock with a cross-hatched pitched roof, a small arched window at the top containing a bird, and a round clock face below marked 12, 3, 6, 9 with hands pointing near 11 and 1. Three chains hang from the bottom, the outer two ending in pinecone weights and the middle one ending in a circular ring."
+   ],
+   "kind_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "category_word": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "labels": [
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock",
+    "a cuckoo clock"
+   ]
+  }
+ ],
+ "cost": {
+  "total_usd": 3.6561,
+  "images": 300,
+  "images_usd": 3.0,
+  "descriptions": 330,
+  "descriptions_usd": 0.3764,
+  "labels": 310,
+  "labels_usd": 0.2798
+ },
+ "credits": {
+  "models": "Meta Muse Spark (muse-spark-1.3) and Muse Image (muse-image-1.0); similarity: Meta DINOv2 (facebook/dinov2-base, Apache 2.0)",
+  "human_prototype": "Human drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0, https://github.com/googlecreativelab/quickdraw-dataset"
+ },
+ "sprites": {
+  "rocking_chair_c0": "/static/img/plato_telephone/rocking_chair_c0.webp",
+  "rocking_chair_c1": "/static/img/plato_telephone/rocking_chair_c1.webp",
+  "rocking_chair_c2": "/static/img/plato_telephone/rocking_chair_c2.webp",
+  "throne_c0": "/static/img/plato_telephone/throne_c0.webp",
+  "throne_c1": "/static/img/plato_telephone/throne_c1.webp",
+  "throne_c2": "/static/img/plato_telephone/throne_c2.webp",
+  "beanbag_c0": "/static/img/plato_telephone/beanbag_c0.webp",
+  "beanbag_c1": "/static/img/plato_telephone/beanbag_c1.webp",
+  "beanbag_c2": "/static/img/plato_telephone/beanbag_c2.webp",
+  "wheelchair_c0": "/static/img/plato_telephone/wheelchair_c0.webp",
+  "wheelchair_c1": "/static/img/plato_telephone/wheelchair_c1.webp",
+  "wheelchair_c2": "/static/img/plato_telephone/wheelchair_c2.webp",
+  "office_chair_c0": "/static/img/plato_telephone/office_chair_c0.webp",
+  "office_chair_c1": "/static/img/plato_telephone/office_chair_c1.webp",
+  "office_chair_c2": "/static/img/plato_telephone/office_chair_c2.webp",
+  "folding_chair_c0": "/static/img/plato_telephone/folding_chair_c0.webp",
+  "folding_chair_c1": "/static/img/plato_telephone/folding_chair_c1.webp",
+  "folding_chair_c2": "/static/img/plato_telephone/folding_chair_c2.webp",
+  "high_chair_c0": "/static/img/plato_telephone/high_chair_c0.webp",
+  "high_chair_c1": "/static/img/plato_telephone/high_chair_c1.webp",
+  "high_chair_c2": "/static/img/plato_telephone/high_chair_c2.webp",
+  "adirondack_c0": "/static/img/plato_telephone/adirondack_c0.webp",
+  "adirondack_c1": "/static/img/plato_telephone/adirondack_c1.webp",
+  "adirondack_c2": "/static/img/plato_telephone/adirondack_c2.webp",
+  "top_hat_c0": "/static/img/plato_telephone/top_hat_c0.webp",
+  "top_hat_c1": "/static/img/plato_telephone/top_hat_c1.webp",
+  "top_hat_c2": "/static/img/plato_telephone/top_hat_c2.webp",
+  "cuckoo_clock_c0": "/static/img/plato_telephone/cuckoo_clock_c0.webp",
+  "cuckoo_clock_c1": "/static/img/plato_telephone/cuckoo_clock_c1.webp",
+  "cuckoo_clock_c2": "/static/img/plato_telephone/cuckoo_clock_c2.webp"
+ },
+ "about": "Derived statistics from Plato's Telephone (docs/plato_telephone.md): DINOv2 distances of Muse Image pictures along 30 describe-and-draw chains, Muse Spark's descriptions (model-generated text) and its kind labels. No pictures or embeddings."
+}

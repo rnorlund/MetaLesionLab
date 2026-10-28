@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plato’s Telephone · {{BRAND}}</title>
+<meta name="description" content="An AI passes a picture down a chain: Muse Spark describes it, Muse Image draws the description, ten times over. Does every chair end as the same textbook chair? Watch 30 chains drift.">
+<meta property="og:title" content="Plato’s Telephone · {{BRAND}}">
+<meta property="og:description" content="Describe it, draw it, describe the drawing, ten times. What survives when an AI copies its own copies?">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_telephone.css">
+</head>
+<body class="tp">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><a class="brand" href="/"><b>{{BRAND}}</b></a></header>
+
+<main id="main" tabindex="-1">
+
+<section class="tp-hero" aria-labelledby="hero-h">
+  <div class="tp-hero-text">
+    <span class="tp-kicker"><a href="/plato">Plato series</a> · What would Plato ask an AI? · <i>Republic</i> X</span>
+    <h1 id="hero-h">Plato’s Telephone</h1>
+    <p class="tp-lede">Muse Spark looks at a drawing and describes it in a sentence or two. Muse Image draws that description. Spark describes the new drawing, and so on, ten times. Each row below is one chain. Slide or press play to watch what survives.</p>
+  </div>
+
+  <div class="tp-player" id="player">
+    <button type="button" class="tp-play" id="play" aria-pressed="false"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg><span>Play</span></button>
+    <div class="tp-slider">
+      <input type="range" id="gen" min="0" max="10" step="1" value="10" aria-label="Generation, from the starting picture (0) to 10 copies later" aria-describedby="gen-label">
+      <div class="tp-ticks" id="ticks" aria-hidden="true"></div>
+    </div>
+    <p class="tp-gen-label" id="gen-label" aria-live="polite">Generation 10</p>
+    <div class="tp-chains" role="radiogroup" aria-label="Which of the three chains per start" id="chains"></div>
+  </div>
+
+  <div class="tp-rows" id="rows"><p class="tp-note">Loading the chains…</p></div>
+
+  <div class="tp-answer" id="answer">
+    <h2>Short answer</h2>
+    <ul id="answer-list"><li>Loading the results…</li></ul>
+  </div>
+</section>
+
+<nav class="tp-jump" aria-label="On this page">
+  <a href="#form">Do the chains end at the textbook chair?</a>
+  <a href="#converge">Do different chairs end up alike?</a>
+  <a href="#words">Last words</a>
+  <a href="#plato">Copies of copies</a>
+  <a href="#method">Method and caveats</a>
+</nav>
+
+<section class="tp-sec" id="form" aria-labelledby="form-h">
+  <h2 id="form-h">Do the chains end at the textbook chair?</h2>
+  <div class="tp-form-intro">
+    <figure class="tp-default">
+      <img src="/static/img/plato_telephone/default_chair.webp" width="176" height="176" loading="lazy"
+           alt="Muse Image’s textbook chair: a slat-back dining chair in three-quarter view, drawn as a quick marker doodle.">
+      <figcaption>Muse’s textbook chair: its most typical drawing for plain “a chair”</figcaption>
+    </figure>
+    <p class="tp-sub" id="form-sub">How far each picture sits from Muse Image’s default chair (the average of the 16 chairs it draws when asked just for “a chair”), measured by Meta’s DINOv2 image model. Lower is closer. The dark line is how close Muse’s own default chairs sit to their average: a chain that fell into the textbook chair would end there, as two high-chair chains did.</p>
+  </div>
+  <div class="tp-legend" id="form-legend"></div>
+  <div class="tp-chart" id="form-chart"></div>
+  <p class="tp-note" id="form-note"></p>
+  <details class="tp-numbers"><summary>The numbers as a table</summary><div id="form-table"></div></details>
+</section>
+
+<section class="tp-sec" id="converge" aria-labelledby="converge-h">
+  <h2 id="converge-h">Do different chairs end up alike?</h2>
+  <p class="tp-sub" id="converge-sub">If every chain fell toward one Form, chains from different starting chairs would end up close together. Blue: how far apart chains from different starting chairs are. Orange: how far apart the three chains from the same chair are (they start as the same picture).</p>
+  <div class="tp-legend" id="converge-legend"></div>
+  <div class="tp-chart" id="converge-chart"></div>
+  <p class="tp-note" id="converge-note"></p>
+  <details class="tp-numbers"><summary>The numbers as a table</summary><div id="converge-table"></div></details>
+</section>
+
+<section class="tp-sec" id="words" aria-labelledby="words-h">
+  <h2 id="words-h">Last words: what the descriptions keep</h2>
+  <p class="tp-sub" id="words-sub">Anything Spark doesn’t say can’t survive. For each generation: does the description still say “chair”, does it still name the kind (rocking, throne, beanbag …), and does Spark, shown the picture, still pick that kind from a list of 16 kinds of chair?</p>
+  <div class="tp-legend" id="words-legend"></div>
+  <div class="tp-chart" id="words-chart"></div>
+  <p class="tp-note" id="words-note"></p>
+  <div class="tp-two">
+    <div><h3>When each chair lost its name</h3><div id="loss-table"></div></div>
+    <div><h3>Words the chains picked up and dropped</h3><div id="word-shift"></div></div>
+  </div>
+  <details class="tp-numbers"><summary>The numbers as a table</summary><div id="words-table"></div></details>
+</section>
+
+<section class="tp-sec" id="plato" aria-labelledby="plato-h">
+  <h2 id="plato-h">Copies of copies</h2>
+  <div class="tp-prose">
+    <p>In <i>Republic</i> X, Socrates ranks three beds: the Form, the carpenter’s bed, and the painter’s picture of the carpenter’s bed, a copy of a copy.</p>
+    <div id="passages"></div>
+    <p>In the <i>Parmenides</i>, Plato turns the worry on the Forms themselves: if a thing is a likeness of its Form, the likeness seems to need yet another Form, and so on without end. A telephone chain is the practical version: every picture here is a copy of a description of a copy.</p>
+    <p><b>People have played this game.</b> Frederic Bartlett (<i>Remembering</i>, 1932) passed drawings from person to person, each redrawing the last. In his best-known chain an ambiguous drawing turned into a conventional face. That chain is famous, but Carbon and Albrecht (2012) ran five experiments and did not find a systematic drift toward the face. In iterated learning, each learner learns from the previous learner’s output. Made-up languages passed along such chains became easier to learn and more structured (Kirby, Cornish &amp; Smith, 2008), and theory and experiments suggest that chains settle on what the learners already expect, their prior (Griffiths &amp; Kalish, 2007; Xu &amp; Griffiths, 2010). On that view, where a chain ends up shows the copier’s own expectations.</p>
+    <p><b>Why it matters for AI.</b> Models trained on earlier models’ output can lose the rare parts of the data, the tails of the distribution: “model collapse” (Shumailov et al., 2024, <i>Nature</i>). Our chains involve no training, only two models copying each other at inference time, so this asks a smaller question: are unusual chairs the tails that get lost?</p>
+  </div>
+</section>
+
+<section class="tp-sec tp-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">Method and caveats</h2>
+  <ul id="method-list">
+    <li><b>Starts.</b> Eight of Muse Image’s own named-kind doodles from <a href="/plato">Plato’s Chair</a> (rocking chair, throne, beanbag, wheelchair, office chair, folding chair, high chair, Adirondack chair) and two controls that aren’t chairs (a top hat and a cuckoo clock). Three independent chains per start, ten generations each: 300 new pictures.</li>
+    <li><b>Each step.</b> Muse Spark (<code>muse-spark-1.3</code>, minimal reasoning) gets the current picture and: <i>“Describe this drawing so someone could redraw it. One or two sentences. Don’t name an artist.”</i> Muse Image (<code>muse-image-1.0</code>) gets Plato’s Chair’s doodle prompt with the description in place of the object: <i>“A quick simple doodle sketch of {description}, black marker on plain white, like a 20-second drawing, no text, no shading.”</i></li>
+    <li><b>Measures.</b> Meta’s DINOv2 image model compares pictures (cosine distance between their embeddings, after cropping each to its ink). Muse’s default chair is the average of the 16 doodles it drew for plain “a chair”. Spark also labeled each picture’s kind of chair from a list of 16 (or 12 kinds of hat and clock). CIs come from resampling the 8 starting chairs and then the chains within each.</li>
+    <li><b>Planned first.</b> The design and predictions were committed before any chain was run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_telephone_plan.md">the plan</a>). Results are reported whichever way they came out (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_telephone.md">the write-up</a>).</li>
+    <li><b>Caveats.</b>
+      <ul>
+        <li>Spark’s sentence is the bottleneck: what it doesn’t say can’t survive, and what it stresses gets drawn bigger. This measures the pair, describer and drawer, not Muse Image alone.</li>
+        <li>One describing prompt, one drawing prompt, one reasoning setting. A shorter description, or a different drawer, could behave differently.</li>
+        <li>Turning a picture into words always loses things, so no chain is expected to stay identical.</li>
+        <li>Eight starting chairs and two controls are few. The controls are one picture each.</li>
+        <li>This is how Muse behaves by default under one protocol, not a general property of Meta’s models.</li>
+      </ul></li>
+  </ul>
+  <p class="tp-credit" id="credits"></p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_telephone.js"></script>
+</body>
+</html>
