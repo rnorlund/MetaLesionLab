@@ -7,7 +7,7 @@ answer, done), so a page can show the trace as it happens.
 
 What an agent supplies, by subclassing: its tools and system prompt, a screen for questions it must
 decline before any model call, a one-line summary of each tool result, and the check its answers must
-pass. The engine supplies the loop, the caps (tool calls, model calls, tokens and dollars per question;
+pass; optionally, tool calls to make before the first model call (prefetch). The engine supplies the loop, the caps (tool calls, model calls, tokens and dollars per question;
 past any of them a final answer is forced from the results so far), one repair call when the check
 fails, and the number check below.
 
@@ -253,6 +253,11 @@ class ToolAgent:
         """Last fixes after the repair (for example, drop sentences that still break a rule)."""
         return answer, check
 
+    def prefetch(self, question: str) -> list[tuple[str, dict]]:
+        """Tool calls to run before the first model call, as (name, args): shown in the trace like any other call
+        and handed to the model as if it had made them. They count towards the tool-call cap."""
+        return []
+
     def opening(self, question: str) -> list[dict]:
         """The first request's messages."""
         return [{"role": "system", "content": self.system_prompt}, {"role": "user", "content": question}]
@@ -334,6 +339,23 @@ class ToolAgent:
 
         messages = self.opening(q)
         calls: list[dict] = []
+        pre = self.prefetch(q)[:self.max_tool_calls]
+        if pre:
+            ids = [f"prefetch_{i}" for i in range(len(pre))]
+            messages.append({"role": "assistant", "content": "", "tool_calls": [
+                {"id": i, "type": "function", "function": {"name": name, "arguments": json.dumps(args)}}
+                for i, (name, args) in zip(ids, pre)]})
+            for i, (name, args) in zip(ids, pre):
+                step = len(calls) + 1
+                yield ev("tool_call", step=step, name=name, args=args)
+                result = self.run_tool(name, args)
+                calls.append({"name": name, "args": args, "result": result})
+                yield ev("tool_result", step=step, name=name, summary=self.summarize(name, result),
+                         link=result.get("link"), result=result)
+                content = json.dumps(result, ensure_ascii=False, separators=(",", ":"))
+                if len(content) > self.tool_result_chars:
+                    content = content[:self.tool_result_chars] + " …(cut to fit)"
+                messages.append({"role": "tool", "tool_call_id": i, "content": content})
         answer = None
         forced = None
         while answer is None:

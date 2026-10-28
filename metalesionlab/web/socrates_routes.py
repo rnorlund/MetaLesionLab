@@ -11,7 +11,12 @@ Request body:
                  ...],                                    at most 2 x MAX_TURNS items, each text up to 4,000 characters
      "context": {"concept": "chair", "originality": 73.4,  optional, from /draw's result: originality percentile,
                  "people_closer_to_muse": 40.5, "muse_closer": 12.0, "d_nearest_ai": 0.31, "d_nearest_human": 0.27,
-                 "looks_like": ["chair", "bench"], "n_people": 200}}
+                 "looks_like": ["chair", "bench"], "n_people": 200},
+     "mode": "ask" | "examine",                            optional, default "ask"
+     "concept": "chair" | "clock" | "bird" | "game"}       with mode "examine": what Socrates asks you to define
+In "examine" mode ("Let him examine you") the history starts with the visitor's first definition: Socrates'
+opening question is the page's own (from /api/socrates/status) and costs nothing. An examination has at most
+socrates_agent.EXAMINE_MAX exchanges.
 "tools" are the names and arguments the answer event returned in tools_used; they are re-run here for the
 checks, never trusted as results. A dialogue has at most socrates_agent.MAX_TURNS visitor messages.
 
@@ -84,7 +89,8 @@ def socrates_status(request: Request):
             "max_turns": socrates_agent.MAX_TURNS, "history_tokens": socrates_agent.HISTORY_TOKENS,
             "daily_cap_usd": daily_usd(), "spent_today_usd": round(spent, 4), "budget_left": spend.left(),
             "model": socrates_agent.MODEL, "reasoning_effort": socrates_agent.REASONING_EFFORT,
-            "max_tool_calls": socrates_agent.MAX_TOOL_CALLS, "tools": socrates_agent.TOOL_NAMES}
+            "max_tool_calls": socrates_agent.MAX_TOOL_CALLS, "tools": socrates_agent.TOOL_NAMES,
+            "examine": examine_info()}
     resp = JSONResponse(body)
     if new:
         agent_routes._set_cookie(resp, sid, COOKIE)
@@ -106,6 +112,8 @@ class Dialogue(BaseModel):
     question: str = Field(..., min_length=1, max_length=socrates_agent.MAX_QUESTION_CHARS)
     history: list[Turn] = Field(default_factory=list, max_length=2 * socrates_agent.MAX_TURNS)
     context: dict | None = None
+    mode: Literal["ask", "examine"] = "ask"
+    concept: str | None = Field(None, max_length=30)
 
     @field_validator("context")
     @classmethod
@@ -115,8 +123,15 @@ class Dialogue(BaseModel):
         return v
 
 
-def make_agent(history, context) -> socrates_agent.SocratesAgent:
-    return socrates_agent.SocratesAgent(web.get_api(), history=history, context=context)
+def make_agent(history, context, mode: str = "ask", concept: str | None = None) -> socrates_agent.SocratesAgent:
+    return socrates_agent.SocratesAgent(web.get_api(), history=history, context=context, mode=mode, concept=concept)
+
+
+def examine_info() -> dict:
+    """The examine mode's concepts and opening questions, written in advance (no model call)."""
+    return {"concepts": [{"key": k, "label": e["label"], "question": e["question"], "opening": e["opening"],
+                          "link": {"href": e["link"], "label": e["page"]}} for k, e in socrates_agent.EXAMINE.items()],
+            "min_exchanges": socrates_agent.EXAMINE_MIN, "max_exchanges": socrates_agent.EXAMINE_MAX}
 
 
 @router.post("/api/socrates")
@@ -126,7 +141,15 @@ def socrates(body: Dialogue, request: Request):
     if not question:
         raise HTTPException(422, "Say something first.")
     turn = socrates_agent.prepare_history(body.history)["turn"]
-    if turn > socrates_agent.MAX_TURNS:
+    concept = None
+    if body.mode == "examine":
+        concept = socrates_agent.examine_concept(body.concept or "chair")
+        if concept is None:
+            raise HTTPException(422, "Socrates examines a chair, a clock, a bird or a game.")
+        if turn > socrates_agent.EXAMINE_MAX:
+            raise HTTPException(422, f"This examination has had its {socrates_agent.EXAMINE_MAX} exchanges. Start "
+                                     "another: Socrates never minded beginning again.")
+    elif turn > socrates_agent.MAX_TURNS:
         raise HTTPException(422, f"This dialogue has had its {socrates_agent.MAX_TURNS} turns. Start a new one: "
                                  "Socrates never minded beginning again.")
     sid, new = agent_routes._session(request, COOKIE)
@@ -138,7 +161,8 @@ def socrates(body: Dialogue, request: Request):
         raise HTTPException(503, "Ask Socrates needs the Meta Model API, which isn't set up on this server.")
     if meta_api.spent() + RESERVE_USD > meta_api.BUDGET_USD:
         raise HTTPException(503, web.BUDGET_MSG)
-    agent = make_agent(body.history, body.context)
+    agent = (make_agent(body.history, body.context, mode="examine", concept=concept) if concept
+             else make_agent(body.history, body.context))
     if not spend.reserve():
         raise HTTPException(503, "Socrates has used today's budget for dialogues. Every page of the lab still works, "
                                  "and he'll be back tomorrow.")

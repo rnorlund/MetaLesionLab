@@ -1,14 +1,31 @@
 /* Ask Socrates: a short dialogue with an AI playing Socrates. The browser keeps the dialogue and sends it
    with each turn; the server streams the agent's steps as JSON lines (start, guard, thinking, tool_call,
-   tool_result, checking, answer, done or error). Optional context from /draw arrives in the URL. */
+   tool_result, checking, answer, done or error). Optional context from /draw arrives in the URL.
+
+   Two modes. "Ask him": the visitor asks, Socrates answers from the results and asks one question back.
+   "Let him examine you": Socrates opens with a question written in advance ("What is a chair?"), tests each
+   definition with one counterexample from the experiments, and after three to five exchanges ends in aporia
+   with what held and what broke. Each mode keeps its own thread; ?mode=examine&concept=clock opens one. */
 (function () {
   'use strict';
   var T = window.TOT, h = T.h;
-  var MAX_TURNS = 8;
+  var MAX_TURNS = 8, EXAMINE_MAX = 5;
   var GUTENBERG = { republic: 1497, cratylus: 1616, phaedrus: 1636, meno: 1643 };
-  var EXPERIMENTS = { forms: 'Forms', damage: 'damage', bird: 'name-a-bird', cave: 'Cave', cratylus: 'bouba/kiki' };
-  var S = { history: [], busy: false, status: null, context: null, lastTurn: null };
+  var EXPERIMENTS = { forms: 'Forms', damage: 'damage', bird: 'name-a-bird', cave: 'Cave', cratylus: 'bouba/kiki', lifespan: 'life-of-a-chair' };
+  var CASES = { chair: '/plato#variety', clock: '/plato/forms', bird: '/plato/bird', game: '/plato/bird' };
+  var FACE = '/static/img/socrates/socrates-';
+  var S = {
+    mode: 'ask', busy: false, status: null, context: null,
+    ask: { history: [], lastTurn: null },
+    examine: { concept: 'chair', history: [], lastTurn: null, over: false }
+  };
   function $(id) { return document.getElementById(id); }
+  function D() { return S[S.mode]; }
+  function thread() { return $(S.mode === 'examine' ? 'thread-examine' : 'thread'); }
+  function examineInfo() { return (S.status && S.status.examine) || { concepts: [], max_exchanges: EXAMINE_MAX }; }
+  function conceptInfo(key) {
+    return examineInfo().concepts.filter(function (c) { return c.key === key; })[0] || null;
+  }
 
   // --- links and labels --------------------------------------------------------------------
   function passageHref(id) {
@@ -33,6 +50,9 @@
         var k = experimentKey(arg);
         return { href: k ? '/plato/' + k : '/plato', label: k ? 'The ' + EXPERIMENTS[k] + ' experiment' : 'Plato experiments' };
       case 'plato_passage': return { href: passageHref(arg), label: passageLabel(arg), external: true };
+      case 'counterexamples':
+        var c = String(arg || '').toLowerCase().replace(/s$/, '');
+        return { href: CASES[c] || '/plato#variety', label: 'Hard cases' + (CASES[c] ? ' · ' + c : '') };
       case 'your_drawing': return { href: '/draw', label: 'Your drawing' };
     }
     return { href: null, label: tool };
@@ -45,7 +65,7 @@
   }
 
   // --- answer text: a small, safe subset of Markdown, with citation chips ---------------------
-  var CITE = /\[(?:source:\s*)?(plato_stats|plato_variety|glimmer_inside|plato_experiment|plato_passage|your_drawing)(?:\s*[:,]\s*([^\]]*))?\]([.,;:!?)]*)/g;
+  var CITE = /\[(?:source:\s*)?(plato_stats|plato_variety|glimmer_inside|plato_experiment|plato_passage|counterexamples|your_drawing)(?:\s*[:,]\s*([^\]]*))?\]([.,;:!?)]*)/g;
   function inline(text) {
     var out = T.esc(text);
     out = out.replace(CITE, function (_, tool, arg, punct) {
@@ -95,22 +115,39 @@
         var k = experimentKey(args.name);
         return 'Socrates checks the ' + (k ? EXPERIMENTS[k] + ' ' : '') + 'experiment' + (args.focus ? ' (' + args.focus + ')' : '');
       case 'plato_passage': return 'Socrates looks up Plato on “' + String(args.topic || '') + '”';
+      case 'counterexamples': return 'Socrates gathers hard cases for a ' + (c || 'chair') + ' from the experiments';
     }
     return 'Socrates runs ' + name;
   }
 
   // --- turns ------------------------------------------------------------------------------
-  function speaker(who, extra) {
-    return h('div', { class: 'so-speaker' }, [h('span', { class: 'so-name', text: who }), extra || null]);
+  function face(kind) {
+    return h('img', { class: 'so-face', src: FACE + kind + '.webp', width: 40, height: 40, alt: '', loading: 'lazy' });
   }
+  function speaker(who, extra, faceKind) {
+    return h('div', { class: 'so-speaker' }, [faceKind ? face(faceKind) : null, h('span', { class: 'so-name', text: who }), extra || null]);
+  }
+  function aiBadge() { return h('span', { class: 'so-ai', text: 'AI', title: 'An AI (Muse Spark) playing Socrates' }); }
   function visitorTurn(text) {
     var li = h('li', { class: 'so-turn so-you' }, [speaker('You'), h('p', { class: 'so-said', text: text })]);
-    $('thread').appendChild(li);
+    thread().appendChild(li);
+    return li;
+  }
+  // Socrates' opening question in the examination: written in advance, no model call.
+  function openingTurn(info) {
+    var li = h('li', { class: 'so-turn so-socrates so-opening' }, [
+      speaker('Socrates', aiBadge(), 'questioning'),
+      h('div', { class: 'so-body' }, [
+        h('div', { class: 'so-ask' }, [h('span', { class: 'so-ask-label', text: 'Socrates asks you' }), h('p', { text: info.opening })])
+      ]),
+      h('div', { class: 'so-foot' }, [h('span', { class: 'so-cost', text: 'Written in advance · $0' })])
+    ]);
+    $('thread-examine').appendChild(li);
     return li;
   }
 
   function Reply() {
-    this.state = h('span', { class: 'so-state' }, [h('span', { class: 'spinner', 'aria-hidden': 'true' }), ' thinking']);
+    this.state = h('span', { class: 'so-state' }, [h('span', { class: 'spinner', 'aria-hidden': 'true' }), S.mode === 'examine' ? ' weighing your definition' : ' thinking']);
     this.count = h('span', { text: 'Socrates is looking things up' });
     this.steps = h('ol', { class: 'so-steps' });
     this.trace = h('details', { class: 'so-trace', open: true }, [h('summary', null, [this.count]), this.steps]);
@@ -119,11 +156,10 @@
     this.foot = h('div', { class: 'so-foot' });
     this.calls = {};
     this.n = 0;
-    this.el = h('li', { class: 'so-turn so-socrates' }, [
-      speaker('Socrates', h('span', { class: 'so-ai', text: 'AI', title: 'An AI (Muse Spark) playing Socrates' })),
-      this.state, this.trace, this.body, this.foot
-    ]);
-    $('thread').appendChild(this.el);
+    this.mode = S.mode;
+    this.who = speaker('Socrates', aiBadge(), S.mode === 'examine' ? 'pointing' : 'neutral');
+    this.el = h('li', { class: 'so-turn so-socrates' }, [this.who, this.state, this.trace, this.body, this.foot]);
+    thread().appendChild(this.el);
   }
   Reply.prototype.add = function (li) {
     this.trace.hidden = false;
@@ -172,6 +208,8 @@
     this.done = ev;
     this.finish('');
     if (this.n) { this.trace.open = false; this.count.textContent = 'Socrates checked ' + this.n + ' step' + (this.n === 1 ? '' : 's'); }
+    var ex = ev.examine || null, final = !!(ex && ex.final);
+    if (final) { var img = this.who.querySelector('.so-face'); if (img) img.src = FACE + 'questioning.webp'; }
     var body = ev.body != null ? ev.body : ev.text;
     var question = ev.question_back || '';
     if (!body && !question) body = ev.text;
@@ -182,6 +220,7 @@
       this.body.appendChild(h('div', { class: 'so-ask' }, [h('span', { class: 'so-ask-label', text: 'Socrates asks you' }),
         h('p', { html: inline(question) })]));
     }
+    if (final && !ev.refused) this.body.appendChild(summaryCard(ex));
     var c = ev.check || {};
     var foot = this.foot;
     foot.innerHTML = '';
@@ -198,7 +237,7 @@
         [passage ? 'Plato’s text (Gutenberg)' : c2.label.split(' · ')[0], ext ? ' ↗' : ' →']));
     });
     if (S.context && /\[your_drawing\]/.test(ev.text || '') && !seen['/draw']) src.appendChild(h('a', { href: '/draw' }, ['Your drawing →']));
-    if (src.childNodes.length) foot.appendChild(src);
+    if (src.childNodes.length && !final) foot.appendChild(src);
     if (!ev.refused) {
       var nums = c.numbers || 0, quotes = c.quotes || 0;
       var good = !(c.unverified || []).length && !(c.banned_words || []).length && !(c.bad_quotes || []).length;
@@ -223,44 +262,84 @@
     foot.appendChild(h('span', { class: 'so-cost', text: stats }));
   };
 
+  // The end of an examination: what held, what broke, where to look, and what next.
+  function summaryCard(ex) {
+    var rows = h('dl', { class: 'so-verdict' });
+    if (ex.held) { rows.appendChild(h('dt', { text: 'What held' })); rows.appendChild(h('dd', { html: inline(ex.held) })); }
+    if (ex.broke) { rows.appendChild(h('dt', { class: 'broke', text: 'What broke' })); rows.appendChild(h('dd', { html: inline(ex.broke) })); }
+    var link = ex.link && safeHref(ex.link.href);
+    var next = h('div', { class: 'so-next' });
+    if (link) next.appendChild(h('a', { class: 'btn btn-primary', href: link }, ['See the experiment: ' + ex.link.label + ' →']));
+    examineInfo().concepts.forEach(function (c) {
+      if (c.key === ex.concept) return;
+      next.appendChild(h('button', { type: 'button', class: 'btn btn-ghost', onclick: function () { pickConcept(c.key, true); } }, ['Examine me on a ' + c.label]));
+    });
+    next.appendChild(h('button', { type: 'button', class: 'btn btn-ghost', onclick: function () { setMode('ask', true); } }, ['Ask him instead']));
+    return h('section', { class: 'so-aporia', 'aria-label': 'Where the examination got to' }, [
+      h('span', { class: 'so-ask-label', text: 'Aporia: where we got to' }),
+      rows.childNodes.length ? rows : h('p', { text: 'We stopped without a summary; the dialogue above is what we found.' }),
+      next
+    ]);
+  }
+
   // --- the dialogue ---------------------------------------------------------------------------
-  function turnsUsed() { return S.history.filter(function (x) { return x.role === 'visitor'; }).length; }
+  function turnsUsed(d) { return (d || D()).history.filter(function (x) { return x.role === 'visitor'; }).length; }
+  function maxTurns() {
+    return S.mode === 'examine' ? (examineInfo().max_exchanges || EXAMINE_MAX) : ((S.status && S.status.max_turns) || MAX_TURNS);
+  }
   function updateMeta() {
-    var used = turnsUsed(), max = (S.status && S.status.max_turns) || MAX_TURNS;
-    $('turns').textContent = used ? 'Turn ' + Math.min(used + (S.busy ? 0 : 1), max) + ' of ' + max : 'Up to ' + max + ' turns';
+    var d = D(), used = turnsUsed(d), max = maxTurns(), ex = S.mode === 'examine';
+    var info = ex ? conceptInfo(S.examine.concept) : null;
+    if (ex) {
+      $('turns').textContent = d.over ? 'Examination over after ' + used + ' exchange' + (used === 1 ? '' : 's')
+        : 'Exchange ' + Math.min(used + (S.busy ? 0 : 1), max) + ' of up to ' + max;
+    } else {
+      $('turns').textContent = used ? 'Turn ' + Math.min(used + (S.busy ? 0 : 1), max) + ' of ' + max : 'Up to ' + max + ' turns';
+    }
     var s = S.status;
     $('meta').textContent = s ? 'Muse Spark 1.3 · up to ' + s.max_tool_calls + ' tool calls a turn · ' + s.turns_left + ' turns left today' : '';
-    var full = used >= max;
-    $('msg').disabled = S.busy || full || !!(s && (!s.enabled || !s.budget_left || !s.turns_left));
+    var full = used >= max || (ex && d.over);
+    $('msg').disabled = S.busy || full || !!(s && (!s.enabled || !s.budget_left || !s.turns_left)) || (ex && !info);
     $('send').disabled = $('msg').disabled;
     $('send').textContent = S.busy ? 'Thinking…' : 'Send';
-    $('msg').placeholder = full ? 'This dialogue has had its ' + max + ' turns. Start a new one.' :
-      used ? 'Answer Socrates, or ask something else…' : 'Ask Socrates, or answer his question…';
+    if (ex) {
+      $('msg').placeholder = d.over ? 'The examination is over. Pick another thing above, or ask him instead.'
+        : used ? 'Mend your definition, or defend it…' : 'In a sentence: what is a ' + S.examine.concept + '?';
+    } else {
+      $('msg').placeholder = full ? 'This dialogue has had its ' + max + ' turns. Start a new one.' :
+        used ? 'Answer Socrates, or ask something else…' : 'Ask Socrates, or answer his question…';
+    }
+    $('msg').setAttribute('aria-label', ex ? 'Your definition, for Socrates to examine' : 'Your message to Socrates');
+    $('restart').textContent = ex ? 'New examination' : 'New dialogue';
     $('restart').disabled = S.busy || !used;
-    $('share').disabled = S.busy || !S.lastTurn;
-    $('empty').hidden = !!used || S.busy;
-    Array.prototype.forEach.call(document.querySelectorAll('.so-starter'), function (b) { b.disabled = S.busy; });
+    $('share').disabled = S.busy || !d.lastTurn;
+    $('empty').hidden = ex || !!used || S.busy;
+    $('examine-intro').hidden = !ex;
+    $('thread').hidden = ex;
+    $('thread-examine').hidden = !ex;
+    Array.prototype.forEach.call(document.querySelectorAll('.so-starter, .so-concepts input, .so-modes input'), function (b) { b.disabled = S.busy; });
   }
 
   function send(text) {
     text = String(text || '').trim();
-    var max = (S.status && S.status.max_turns) || MAX_TURNS;
-    if (!text || S.busy || turnsUsed() >= max) return;
+    var d = D(), mode = S.mode;
+    if (!text || S.busy || turnsUsed(d) >= maxTurns() || (mode === 'examine' && d.over)) return;
     S.busy = true;
     $('msg').value = '';
     $('empty').hidden = true;
     var you = visitorTurn(text);
     var reply = new Reply();
     updateMeta();
-    reply.el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    var body = { question: text, history: S.history.slice() };
+    reply.el.scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'nearest' });
+    var body = { question: text, history: d.history.slice() };
     if (S.context) body.context = S.context;
+    if (mode === 'examine') { body.mode = 'examine'; body.concept = d.concept; }
     fetch('/api/socrates', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       .then(function (res) {
         if (!res.ok) {
-          return res.json().catch(function () { return {}; }).then(function (d) {
-            var msg = d && d.detail;
-            if (Array.isArray(msg)) msg = msg.map(function (x) { return x.msg; }).join('; ');
+          return res.json().catch(function () { return {}; }).then(function (x) {
+            var msg = x && x.detail;
+            if (Array.isArray(msg)) msg = msg.map(function (y) { return y.msg; }).join('; ');
             reply.handle({ type: 'error', message: msg || ('Request failed (' + res.status + ')') });
           });
         }
@@ -285,9 +364,10 @@
         S.busy = false;
         var ev = reply.done;
         if (ev) {
-          S.history.push({ role: 'visitor', text: text });
-          S.history.push({ role: 'socrates', text: ev.text, tools: ev.tools_used || [] });
-          S.lastTurn = { you: text, ev: ev };
+          d.history.push({ role: 'visitor', text: text });
+          d.history.push({ role: 'socrates', text: ev.text, tools: ev.tools_used || [] });
+          d.lastTurn = { you: text, ev: ev };
+          if (mode === 'examine' && ev.examine && ev.examine.final) d.over = true;
         } else {
           you.remove();  // the message didn't go through; keep it in the box to try again
           if (!reply.failed) reply.el.remove();
@@ -296,17 +376,76 @@
         }
         updateMeta();
         refreshStatus();
-        if (!$('msg').disabled) $('msg').focus({ preventScroll: true });
+        if (S.mode === mode && !$('msg').disabled) $('msg').focus({ preventScroll: true });
+        else if (d.over) { var first = reply.el.querySelector('.so-next a, .so-next button'); if (first) first.focus({ preventScroll: true }); }
       });
   }
 
   function restart() {
     if (S.busy) return;
-    S.history = [];
-    S.lastTurn = null;
-    $('thread').innerHTML = '';
+    var d = D();
+    d.history = [];
+    d.lastTurn = null;
+    if (S.mode === 'examine') { d.over = false; $('thread-examine').innerHTML = ''; startExamination(); }
+    else $('thread').innerHTML = '';
     updateMeta();
     $('msg').focus();
+  }
+
+  // --- modes ------------------------------------------------------------------------------------
+  function still() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  function startExamination() {
+    var info = conceptInfo(S.examine.concept);
+    if (info && !$('thread-examine').childNodes.length) openingTurn(info);
+  }
+  function setMode(mode, focus) {
+    if (S.busy) return;
+    S.mode = mode === 'examine' ? 'examine' : 'ask';
+    var radio = document.querySelector('.so-modes input[value="' + S.mode + '"]');
+    if (radio) radio.checked = true;
+    if (S.mode === 'examine') startExamination();
+    updateMeta();
+    syncUrl();
+    if (focus) $('msg').focus({ preventScroll: false });
+  }
+  function pickConcept(key, focus) {
+    if (S.busy || !conceptInfo(key)) return;
+    var d = S.examine;
+    var changed = key !== d.concept;
+    d.concept = key;
+    var radio = document.querySelector('.so-concepts input[value="' + key + '"]');
+    if (radio) radio.checked = true;
+    if (changed || d.over || S.mode !== 'examine') {
+      if (changed || d.over) { d.history = []; d.lastTurn = null; d.over = false; $('thread-examine').innerHTML = ''; }
+      S.mode = 'examine';
+      var m = document.querySelector('.so-modes input[value="examine"]');
+      if (m) m.checked = true;
+    }
+    startExamination();
+    updateMeta();
+    syncUrl();
+    if (focus) {
+      $('examine-intro').scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'start' });
+      $('msg').focus({ preventScroll: true });
+    }
+  }
+  function syncUrl() {
+    try {
+      var u = new URL(location.href);
+      if (S.mode === 'examine') { u.searchParams.set('mode', 'examine'); u.searchParams.set('concept', S.examine.concept); }
+      else { u.searchParams.delete('mode'); u.searchParams.delete('concept'); }
+      history.replaceState(null, '', u.pathname + (u.search || '') + u.hash);
+    } catch (e) { /* an old browser keeps its URL */ }
+  }
+  function buildConcepts() {
+    var box = $('concepts');
+    examineInfo().concepts.forEach(function (c) {
+      box.appendChild(h('label', { class: 'so-concept' }, [
+        h('input', { type: 'radio', name: 'concept', value: c.key, checked: c.key === S.examine.concept ? true : null,
+          onchange: function () { pickConcept(c.key, false); } }),
+        h('span', { text: 'a ' + c.label })
+      ]));
+    });
   }
 
   // --- share: a short excerpt with a link --------------------------------------------------------
@@ -320,9 +459,18 @@
     return (at > n * 0.5 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, '') + '…');
   }
   function excerpt() {
-    var t = S.lastTurn;
+    var d = D(), t = d.lastTurn;
     if (!t) return '';
-    var ev = t.ev, lines = ['I asked an AI playing Socrates: “' + clip(t.you, 140) + '”'];
+    var ev = t.ev, ex = S.mode === 'examine', lines;
+    if (ex) {
+      var info = conceptInfo(d.concept);
+      lines = ['An AI playing Socrates examined me: “' + (info ? info.question : 'What is a chair?') + '”', 'I said: “' + clip(t.you, 140) + '”'];
+      if (ev.body) lines.push('Socrates: ' + clip(ev.body, 260));
+      if (ev.examine && ev.examine.broke) lines.push('What broke: ' + clip(ev.examine.broke, 160));
+      lines.push(location.origin + '/socrates?mode=examine&concept=' + d.concept);
+      return lines.join('\n');
+    }
+    lines = ['I asked an AI playing Socrates: “' + clip(t.you, 140) + '”'];
     if (ev.body) lines.push('Socrates: ' + clip(ev.body, 260));
     if (ev.question_back) lines.push('And he asked me: “' + clip(ev.question_back, 200) + '”');
     lines.push(location.origin + '/socrates');
@@ -414,6 +562,10 @@
       var first = document.querySelector('.so-starter.mine');
       if (first) first.remove();
     });
+    Array.prototype.forEach.call(document.querySelectorAll('.so-modes input'), function (r) {
+      r.addEventListener('change', function () { if (r.checked) setMode(r.value, false); });
+    });
+    var wanted = T.param('mode') === 'examine' ? 'examine' : 'ask', wantedConcept = String(T.param('concept') || '').toLowerCase();
     refreshStatus().then(function (s) {
       var box = $('starters');
       var list = ((s && s.starters) || []).slice();
@@ -423,9 +575,11 @@
         box.appendChild(h('button', { type: 'button', class: 'so-starter' + (q.mine ? ' mine' : ''), text: text,
           onclick: function () { send(text); } }));
       });
+      if (conceptInfo(wantedConcept)) S.examine.concept = wantedConcept;
+      buildConcepts();
       var pre = T.param('q');
       if (pre) $('msg').value = pre.slice(0, 500);
-      updateMeta();
+      setMode(wanted, false);
     });
     updateMeta();
   }

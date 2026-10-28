@@ -2,7 +2,17 @@
 
 Plato thought there is one ideal chair. If you ask an AI to draw 16 chairs and 16 boats, are its chairs all alike while its boats vary? How spread out is each concept in the AI's imagination, and does that match how varied people's drawings of the same thing are?
 
-**Short answer:** Muse Image draws almost every concept far more uniformly than people do. Its spread is about half of people's (median ratio 0.49), and 34 of 35 concepts fall below the human level. The concepts that people draw most variably are only somewhat more likely to be the ones the AI varies (rank correlation 0.38). Its chair is close to a Platonic one: the same slat-back dining chair, in the same three-quarter view, 16 times. **This is specific to Muse, not to image models in general.** Given the same prompt, Stable Diffusion XL varies far more than Muse: more for 34 of 35 concepts, at about 2.4 times the spread. On the same measure it is no more uniform than people, though much of its extra variety is drawing style, not different objects (see "Is it just Muse?"). **Muse knows the variety:** "any kind of chair" still gives the textbook chair, but asked for named kinds it draws as varied as people. And people mostly draw the textbook chair too: their extra spread is in how they draw it, not which chair (see "Can you prompt it out of the Platonic chair?").
+**Short answer:** Muse Image draws almost every concept far more uniformly than people do. Its spread is about half of people's (median ratio 0.49), and 34 of 35 concepts fall below the human level. Whether the concepts people draw most variably are the ones the AI varies is unclear: the rank correlation is 0.38 with DINOv2, but 0.07–0.27 with three other vision models, every CI including zero (see "Does it depend on DINOv2?"). Its chair is close to a Platonic one: the same slat-back dining chair, in the same three-quarter view, 16 times. **This is specific to Muse, not to image models in general.** Given the same prompt, Stable Diffusion XL varies far more than Muse: more for 34 of 35 concepts, at about 2.4 times the spread. On the same measure it is no more uniform than people, though much of its extra variety is drawing style, not different objects (see "Is it just Muse?"). **Muse knows the variety:** "any kind of chair" still gives the textbook chair, but asked for named kinds it draws as varied as people. And people mostly draw the textbook chair too: their extra spread is in how they draw it, not which chair (see "Can you prompt it out of the Platonic chair?").
+
+> **Does it depend on DINOv2?** Not for the main result. We re-measured everything with Meta's DINOv2-large and Perception Encoder (PE-Core), and with Google's SigLIP 2 as a non-Meta control, under rules fixed in advance.
+> - **What holds in all four models:**
+>   - Muse is more uniform than people (median ratio 0.29–0.49; 34 or 35 of 35 concepts) and more uniform than SDXL.
+>   - Its chair is flattened.
+>   - "Any kind" changes nothing, and named kinds lift it above people.
+> - **What depends on the model:** which concepts are flattened most. Umbrella first is a DINOv2 finding; book last holds in all four.
+> - **What doesn't hold:** the weak link between people's spread and Muse's (0.38).
+>
+> Details: [plato_robustness.md](plato_robustness.md).
 
 ## Method
 
@@ -206,7 +216,7 @@ Per-concept values are in `results.json` under `naming`.
   - Tier 2 concepts have only 12 AI pictures, so some CIs are wide: clock [0.09, 0.28] and harp [0.08, 0.28], each driven by one or two unusual drawings.
   - The cross-concept correlation rests on 35 concepts, and the naming link on 15.
 - **Category substitutes.** Boat is sailboat, lamp is floor lamp, and person is yoga. Humans saw only the word "yoga"; the AI got "a person doing yoga".
-- **One embedding model.** DINOv2 is a vision model. "Spread" is visual spread, not conceptual spread. The kind labels in "Can you prompt it out of the Platonic chair?" are a first measure of conceptual variety.
+- **One embedding model.** DINOv2 is a vision model. "Spread" is visual spread, not conceptual spread. The kind labels in "Can you prompt it out of the Platonic chair?" are a first measure of conceptual variety. Three other vision models give the same direction, but they rank the concepts differently (see `docs/plato_robustness.md`).
 - **Human sample.** We used the first 200 recognized drawings in file order, not a random sample of all drawings.
 
 ## Next steps
@@ -218,3 +228,5 @@ Per-concept values are in `results.json` under `naming`.
 5. **Web panel and video moment** (see the final report).
 
 Human drawings: Google Quick, Draw! dataset, Google Creative Lab, CC BY 4.0 (https://github.com/googlecreativelab/quickdraw-dataset). The drawings are never committed to this repository.
+
+**Robustness:** the core and variety results hold with DINOv2-large, Meta PE-Core and Google SigLIP 2 (Muse/people 0.29–0.49, 34 or 35 of 35 concepts below people; Muse below SDXL; named kinds above people); only the per-concept ranking and the 0.38 link to people's spread depend on DINOv2 (`docs/plato_robustness.md`).
