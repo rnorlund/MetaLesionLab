@@ -56,6 +56,20 @@ body.plato { background: #F7F6F1; }
 .pc-fact b { font-size: clamp(26px, calc(16px + 0.8vw), 38px); letter-spacing: -0.01em; line-height: 1.15; }
 .pc-fact span { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
 .pc-numbers { font-size: 14px; }
+/* "Does it depend on DINOv2?": the main result measured again with three other vision models */
+.pc-ev-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.pc-robust { border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 12px; padding: clamp(14px, 1vw, 22px) clamp(16px, 1.1vw, 24px); display: flex; flex-direction: column; gap: 8px; background: var(--soft); }
+.pc-robust h3 { margin: 0; font-size: clamp(17px, calc(12px + 0.4vw), 23px); line-height: 1.25; }
+.pc-robust > p { margin: 0; font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: var(--measure); }
+.pc-robust > p.pc-note { font-size: var(--fs-sm); color: var(--muted); }
+.pc-robust-table { font-size: var(--fs-sm); }
+.pc-robust-table th, .pc-robust-table td { padding: 6px 8px; }
+.pc-robust-table thead th { white-space: normal; vertical-align: bottom; }
+.pc-robust-table th[scope="row"] { font-size: inherit; font-weight: 600; color: var(--ink); white-space: normal; border-top: 1px solid var(--line); }
+.pc-robust-table .who { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+.pc-robust-table .num { font-family: var(--mono); text-align: right; white-space: nowrap; }
+.pc-robust-table .ci { display: block; font-size: 11px; color: var(--muted); }
+.pc-robust-table tr.ref > * { background: #FFFFFF; }
 .pc-numbers table { margin-top: 8px; }
 .pc-numbers td.num, .pc-numbers th.num { font-family: var(--mono); text-align: right; }
 
@@ -135,6 +149,9 @@ body.plato { background: #F7F6F1; }
   .pc-sdxl-fig img { max-width: 1500px; }
   .pc-method ul { display: block; columns: 28em 3; column-gap: clamp(40px, 4vw, 112px); }
   .pc-method li { break-inside: avoid; margin-bottom: 10px; }
+  .pc-var-kinds { max-width: none; columns: 34em 2; column-gap: clamp(40px, 4vw, 112px); }
+  .pc-var-kinds h3 { column-span: all; }
+  .pc-var-kinds p { break-inside: avoid; }
 }
 @media (min-width: 2000px) {
   .pc-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }

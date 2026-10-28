@@ -131,7 +131,7 @@
     var H = top + rows.length * rowH + bottom, xMax = 1.25;
     var x = function (v) { return left + (Math.min(v, xMax) / xMax) * (W - left - right); };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
-      'aria-label': 'Dot chart of the ratio of the AI’s spread to people’s spread for 35 things, sorted from umbrella (0.14, most uniform) to book (1.04, the only one at or above 1). The table below lists every value.' });
+      'aria-label': 'Dot chart of the ratio of the AI’s spread to people’s spread for 35 things, as DINOv2 measures it, sorted from umbrella (0.14, most uniform) to book (1.04, the only one at or above 1). The table below lists every value.' });
     [0, 0.25, 0.5, 0.75, 1, 1.25].forEach(function (t) {
       svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: top - 6, y2: H - bottom + 4, stroke: t === 1 ? '#6B7280' : GRID, 'stroke-width': 1 }));
       svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 12, fill: '#4B5563' }, String(t)));
@@ -167,7 +167,8 @@
     var facts = $('ev-facts');
     facts.innerHTML = '';
     [[core.below_1 + ' of ' + core.n_concepts, 'things Muse Image drew more alike than people did. For ' + core.ci_below_1 + ', even the 95% interval stays below people’s level.'],
-     [lo.label.charAt(0).toUpperCase() + lo.label.slice(1), 'is the most uniform: Muse Image’s ' + lo.label + 's are ' + pct(1 - lo.index) + '% less varied than people’s.'],
+     [lo.label.charAt(0).toUpperCase() + lo.label.slice(1), 'is the most uniform, as DINOv2 sees it: Muse Image’s ' + lo.label + 's are ' + pct(1 - lo.index) + '% less varied than people’s. ' +
+       'Which things are flattened most shifts with the vision model; the overall result holds.'],
      [hi.label.charAt(0).toUpperCase() + hi.label.slice(1), 'is the only exception (ratio ' + f2(hi.index) + '). Muse Image drew books open, closed, stacked and at an angle, as varied as people’s.'],
      [f2(core.median_index), 'is the typical ratio: overall, Muse Image’s drawings are about half as varied as people’s.']
     ].forEach(function (f) { facts.appendChild(h('div', { class: 'pc-fact' }, [h('b', { text: f[0] }), h('span', { text: f[1] })])); });
@@ -183,7 +184,37 @@
     });
     t.appendChild(tb);
     renderRank();
+    renderRobust();
   }
+  /* "Does it depend on DINOv2?": the main result, measured again with three other vision models
+     (public_data/plato_robustness.json, via /api/plato). */
+  function renderRobust() {
+    var R = S.data.robustness, box = $('ev-robust');
+    if (!box) return;
+    if (!R || !R.rows || !R.rows.length) { box.hidden = true; return; }
+    var t = $('robust-table');
+    t.innerHTML = '';
+    t.appendChild(h('caption', { class: 'sr-only', text: 'Muse Image’s spread ÷ people’s, median over the 35 things, by vision model' }));
+    t.appendChild(h('thead', null, h('tr', null, [h('th', { scope: 'col', text: 'Vision model' }),
+      h('th', { scope: 'col', class: 'num', text: 'Muse ÷ people' }), h('th', { scope: 'col', class: 'num', text: 'Below people' })])));
+    var tb = h('tbody');
+    R.rows.forEach(function (r, i) {
+      tb.appendChild(h('tr', i ? null : { class: 'ref' }, [
+        h('th', { scope: 'row', title: r.name }, [r.short || r.name, h('span', { class: 'who', text: [r.maker, i ? '' : 'used on this page'].filter(Boolean).join(' · ') })]),
+        h('td', { class: 'num' }, [f2(r.median), h('span', { class: 'ci', text: f2(r.ci95[0]) + '–' + f2(r.ci95[1]) })]),
+        h('td', { class: 'num', text: r.below_1 + ' of ' + r.n })]));
+    });
+    t.appendChild(tb);
+    var lo = Math.min.apply(null, R.rows.map(function (r) { return r.median; })), hi = Math.max.apply(null, R.rows.map(function (r) { return r.median; }));
+    var ranks = R.rows.filter(function (r) { return r.rank_first; }).map(function (r) { return ordinal(r.rank_first) + ' with ' + (r.short || r.name); });
+    var note = 'With every model Muse Image draws almost everything more alike than people do (median ' + f2(lo) + '–' + f2(hi) + '). ' +
+      'Which things it flattens most depends on the model: ' + R.first + ' is ' +
+      (ranks.length > 1 ? ranks.slice(0, -1).join(', ') + ' and ' + ranks[ranks.length - 1] : ranks.join('')) + '. ' + R.last.charAt(0).toUpperCase() + R.last.slice(1) + ' is the least flattened in all ' + R.rows.length + '.';
+    $('robust-note').textContent = note;
+    if (R.doc) $('robust-doc').href = R.doc;
+    box.hidden = false;
+  }
+  function ordinal(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 
   // --- ask for variety ------------------------------------------------------------------------
   var VAR_ROWS = [['Usual prompt', 'default'], ['“Any kind”', 'any'], ['“An unusual kind”', 'unusual'], ['Named kinds, one each', 'listed']];
