@@ -8,6 +8,10 @@ shopt -s nocasematch
 blocked='\.(csv|tsv|xlsx?|sav|nii(\.gz)?|mat|dcm|wav|mp3|m4a|flac|aiff?|h5|hdf5|npz|npy|pt|pth|safetensors|parquet|pkl|pickle)$'
 max_bytes=$((5 * 1024 * 1024))
 patterns=.githooks/private_patterns.txt
+if [[ ! -s "$patterns" ]]; then  # a linked worktree has no copy of the ignored file: use the main checkout's
+  common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)
+  [[ -n "$common" && -s "${common%/.git}/$patterns" ]] && patterns="${common%/.git}/$patterns"
+fi
 fail=0
 
 while IFS= read -r -d '' f; do
