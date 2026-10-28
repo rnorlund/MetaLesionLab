@@ -114,4 +114,6 @@ def fill(page: str) -> str:
         head = page.find("</head>")
         if head >= 0:
             page = page[:head] + FONT + STYLESHEET + page[head:]
+    if 'class="epigraph-face"' in page:  # the faces' styles (and their colours) live with the other portraits
+        page = portraits.link_css(page)
     return page
