@@ -344,15 +344,82 @@ def test_static_and_api_responses_are_untouched(client):
     assert sites()["lingua"].get("/api/status").json()["features"]
 
 
+TOUR = web.HERE / "static" / "js" / "tour.js"
+FACES = ("neutral", "questioning", "pointing")
+
+
+def _tour_steps() -> list[str]:
+    tour = TOUR.read_text()
+    block = tour[tour.index("var STEPS = ["):tour.index("\n  ];", tour.index("var STEPS = ["))]
+    return ["{ page:" + s for s in block.split("{ page:")[1:]]
+
+
 def test_tour_is_plato_first_short_and_ends_at_draw():
-    tour = (web.HERE / "static" / "js" / "tour.js").read_text()
+    tour = TOUR.read_text()
     steps = tour.count("{ page:")
     assert 6 <= steps <= 10
     pages = re.findall(r"\{ page: '([^']*)'", tour)
-    assert pages[0] == "/" and pages[1] == "/plato"
+    assert pages[:3] == ["/", "/", "/plato"]  # the blind draw, the chairs, then the experiment
     assert "'/scorer" not in tour and "'/studio" not in tour and "'/lab'" not in tour  # the sister site's pages
     last = tour[tour.rindex("{ page:"):]
     assert "'/draw'" in last and "finish: true" in last
+
+
+def test_tour_is_guided_by_socrates_in_his_own_words():
+    steps = _tour_steps()
+    assert len(steps) == TOUR.read_text().count("{ page:")
+    for s in steps:
+        assert re.search(r"face: '(neutral|questioning|pointing)'", s), s[:60]
+        assert re.search(r"\bq: ", s) and re.search(r"\bp: ", s), s[:60]
+    # a question first: each step's question ends in a question mark (or is one, for the blind draw)
+    questions = [m for s in steps for m in re.findall(r"\bq: '([^']+)'", s)]
+    assert questions and all("?" in x for x in questions)
+    assert questions[0] == "Before I tell you anything: what is a chair? Draw one, and we’ll see."
+    assert "The machine drew the same chair sixteen times. Is that wisdom, or habit?" in questions
+    for face in FACES:  # the portraits: Muse Image doodles, small
+        f = web.HERE / "static" / "img" / "socrates" / f"socrates-{face}.webp"
+        assert f.exists() and f.stat().st_size < 40 * 1024, f
+        assert Image.open(f).size == (256, 256)
+    tour = TOUR.read_text()
+    assert "drawn by Meta’s Muse Image" in tour
+    # the last step offers "Ask me yourself" (and the examination)
+    last = steps[-1]
+    assert "['Ask me yourself', '/socrates']" in last and "/socrates?mode=examine" in last
+
+
+def test_tour_lines_are_written_in_advance_and_every_number_is_in_the_docs():
+    tour = TOUR.read_text()
+    assert "fetch(" not in tour and "T.api(" not in tour and "/api/" not in tour  # no AI (or any) calls
+    docs = " ".join(p.read_text() for p in (REPO / "docs").glob("plato*.md"))
+    lines = [x for s in _tour_steps() for x in re.findall(r"'((?:[^'\\]|\\.)*)'", s)
+             if not re.match(r"^[#/.]|^(?:neutral|questioning|pointing)$", x)]
+    numbers = {n for line in lines for n in re.findall(r"(?<![\w.])\d+(?:\.\d+)?", line)}
+    assert {"0.13", "0.36", "16", "35", "84"} <= numbers
+    for n in numbers:
+        assert re.search(rf"(?<![\d.]){re.escape(n)}(?![\d])", docs), f"{n} is not in docs/plato*.md"
+
+
+def test_tour_keeps_the_blind_draw():
+    steps = _tour_steps()
+    first = steps[0]
+    assert "target: '#hero-draw'" in first and "blind: true" in first  # Socrates asks for a chair first
+    assert "revealChairs()" in steps[1] and "target: '#chairs'" in steps[1]  # the chairs only after that
+    landing = "\n".join(line for line in (web.HERE / "static" / "js" / "landing.js").read_text().splitlines()
+                        if not line.strip().startswith("//"))
+    assert "reveal('tour')" not in landing  # starting the tour no longer shows the chairs by itself
+    tour = TOUR.read_text()
+    assert "tot-draw-seen" in tour and "if (!step.blind) markSeen()" in tour  # later drawings aren't blind
+
+
+def test_tour_is_keyboard_and_motion_friendly():
+    tour = TOUR.read_text()
+    for key in ("'Escape'", "'ArrowRight'", "'ArrowLeft'"):
+        assert key in tour
+    assert "ui.card.focus(" in tour and "lastFocus.focus()" in tour and "role: 'dialog'" in tour
+    css = (web.HERE / "static" / "css" / "tour.css").read_text()
+    reduced = css[css.index("prefers-reduced-motion"):]
+    assert ".tour-face.pop { animation: none; }" in reduced[:reduced.index("}\n") + 60]
+    assert "@media (max-width: 640px)" in css and ".tour-face { width: 48px" in css
 
 
 # --- the splash on Plato's landing page ------------------------------------------------------------

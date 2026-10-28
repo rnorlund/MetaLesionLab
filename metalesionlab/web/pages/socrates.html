@@ -22,9 +22,17 @@
 
 <main id="main" class="so" tabindex="-1">
   <section class="panel so-hero" aria-labelledby="so-h">
-    <span class="so-kicker">What would Plato ask an AI?</span>
-    <h1 id="so-h">Ask Socrates</h1>
-    <p class="so-lede">Talk with an AI playing Socrates about what the experiments found. He answers from the real results, quotes Plato only from verified passages, and always asks you one question back.</p>
+    <div class="so-hero-row">
+      <div class="so-hero-text">
+        <span class="so-kicker">What would Plato ask an AI?</span>
+        <h1 id="so-h">Ask Socrates</h1>
+        <p class="so-lede">Talk with an AI playing Socrates about what the experiments found. He answers from the real results, quotes Plato only from verified passages, and always asks you one question back. Or let him examine you: he asks what a chair is, and tests your answer.</p>
+      </div>
+      <figure class="so-portrait">
+        <img src="/static/img/socrates/socrates-neutral.webp" width="128" height="128" alt="A marker doodle of Socrates: bald, with a curly beard and a toga.">
+        <figcaption>Drawn by Meta’s Muse Image</figcaption>
+      </figure>
+    </div>
     <div class="so-key" aria-hidden="true"></div>
   </section>
 
@@ -42,11 +50,23 @@
       <h2 id="dialogue-h">The dialogue</h2>
       <span class="so-turns" id="turns" aria-live="polite"></span>
     </div>
+    <fieldset class="so-modes">
+      <legend class="sr-only">How to talk with Socrates</legend>
+      <label class="so-mode"><input type="radio" name="mode" value="ask" checked><span>Ask him</span></label>
+      <label class="so-mode"><input type="radio" name="mode" value="examine"><span>Let him examine you</span></label>
+    </fieldset>
+    <div class="so-examine-intro" id="examine-intro" hidden>
+      <p>He asks what a thing is. You answer in a sentence. He tests your answer against a case from the experiments, and you mend it. After three to five exchanges he admits that neither of you knows, and shows what held and what broke.</p>
+      <fieldset class="so-concepts" id="concepts">
+        <legend>What should he ask you?</legend>
+      </fieldset>
+    </div>
     <div class="so-empty" id="empty">
       <p class="so-empty-lede">Start with one of these, or ask your own.</p>
       <div class="so-starters" id="starters" role="group" aria-label="Starter questions"></div>
     </div>
     <ol class="so-thread" id="thread" aria-label="Dialogue"></ol>
+    <ol class="so-thread" id="thread-examine" aria-label="Examination" hidden></ol>
     <form class="so-form" id="form">
       <label class="sr-only" for="msg">Your message to Socrates</label>
       <textarea id="msg" rows="2" maxlength="500" placeholder="Ask Socrates, or answer his question…" autocomplete="off"></textarea>
@@ -63,18 +83,32 @@
     <p class="so-toast" id="toast" role="status" aria-live="polite"></p>
   </section>
 
+  <div class="so-side">
   <section class="panel so-how" aria-labelledby="how-h">
     <h2 id="how-h">How it works</h2>
     <ol class="so-how-list">
       <li><b>Look it up.</b> Muse Spark, playing Socrates, calls read-only tools over results already measured: Plato’s Chair, asking for variety, inside Muse Glimmer, the newer Plato experiments as they’re published, and a small set of Plato passages. At most five per turn.</li>
       <li><b>Answer, then ask.</b> A short answer that cites where each number comes from, then one question back to you.</li>
       <li><b>Check.</b> Every number must appear in a tool result, and every quotation of Plato must match a verified passage word for word. What fails is fixed once or left out.</li>
-      <li><b>Remember nothing.</b> Your browser keeps the dialogue (up to eight turns) and sends it with each message. This site stores none of it.</li>
+      <li><b>Or let him examine you.</b> His first question is written in advance. Each definition you give is tested against one hard case from the experiments: a kind Muse Spark named, the AI’s textbook example against people’s, Plato’s painter, a shadow in the Cave. Two to four sentences a turn, one question each.</li>
+      <li><b>Remember nothing.</b> Your browser keeps the dialogue (up to eight turns; an examination, up to five) and sends it with each message. This site stores none of it.</li>
     </ol>
     <p class="xsmall muted" id="tool-list"></p>
   </section>
+
+  <section class="panel so-method" aria-labelledby="method-h">
+    <h2 id="method-h">What is the Socratic method?</h2>
+    <ol class="so-method-list">
+      <li><b>Profess ignorance.</b> Socrates says he doesn’t know, and asks you what a thing is. In the <i>Meno</i> (71a–b) he admits he doesn’t know what virtue is, and asks Meno to tell him.</li>
+      <li><b>Test the definition.</b> This is the elenchus: a case your definition lets in that doesn’t belong, or leaves out that does, sends you back to mend it.</li>
+      <li><b>End in puzzlement.</b> Often nobody wins. Meno compares Socrates to a torpedo fish that numbs whoever touches it (<i>Meno</i> 80a–b); this aporia is where looking starts.</li>
+      <li><b>Be a midwife.</b> In the <i>Theaetetus</i> (150b–151d) Socrates calls himself a midwife: he helps others bring out their ideas and tests whether they are sound, but delivers none of his own.</li>
+    </ol>
+    <p class="xsmall muted">These are paraphrases, not quotations. The site quotes Plato only from its verified passages of Jowett’s translation.</p>
+  </section>
+  </div>
 </main>
-<p class="footnote">Ask Socrates is an AI (Muse Spark, by Meta) playing Socrates, not the historical one, and his answers can be wrong; the sources are linked so you can check. It doesn’t give medical advice. Messages are sent to the Meta Model API to be answered and aren’t stored by this site. People’s drawings: Google Quick, Draw! (CC BY 4.0). Plato: Benjamin Jowett’s translation (1892), public domain, via Project Gutenberg.</p>
+<p class="footnote">Ask Socrates is an AI (Muse Spark, by Meta) playing Socrates, not the historical one, and his answers can be wrong; the sources are linked so you can check. It doesn’t give medical advice. Messages are sent to the Meta Model API to be answered and aren’t stored by this site. Socrates’ portrait: drawn by Meta’s Muse Image. People’s drawings: Google Quick, Draw! (CC BY 4.0). Plato: Benjamin Jowett’s translation (1892), public domain, via Project Gutenberg.</p>
 </div>
 
 <script src="/static/js/common.js"></script>

@@ -380,8 +380,8 @@ def client(monkeypatch):
                         else _reply("Spread 0.13 [plato_stats: chair].\n\nWhat is a chair for?"))
     made = []
 
-    def make(history, context):
-        agent = S.SocratesAgent(FakeAPI(script), history=history, context=context)
+    def make(history, context, mode="ask", concept=None):
+        agent = S.SocratesAgent(FakeAPI(script), history=history, context=context, mode=mode, concept=concept)
         made.append(agent)
         return agent
     monkeypatch.setattr(socrates_routes, "make_agent", make)
@@ -534,3 +534,168 @@ def test_glimmer_inside_file_schema():
 def test_engine_is_shared_with_ask_the_lab():
     assert issubclass(lab_agent.LabAgent, agent_engine.ToolAgent) and issubclass(S.SocratesAgent, agent_engine.ToolAgent)
     assert S.SocratesAgent.run is lab_agent.LabAgent.run is agent_engine.ToolAgent.run
+
+
+# --- "Let him examine you": the elenchus ----------------------------------------------------------------------
+
+def _examine(api, n_before=0, concept="chair"):
+    """An examining agent at exchange n_before + 1."""
+    history = []
+    for i in range(n_before):
+        history += [{"role": "visitor", "text": f"A {concept} is thing {i}."},
+                    {"role": "socrates", "text": f"Yet case {i} breaks it. How would you mend it?"}]
+    return S.SocratesAgent(api, history=history, mode="examine", concept=concept)
+
+
+def test_counterexamples_come_from_the_data_and_the_passages():
+    chair = S.dispatch("counterexamples", {"concept": "chairs"})
+    cases = {c["id"]: c for c in chair["cases"]}
+    assert chair["concept"] == "chair" and chair["link"] == "/plato#variety"
+    kinds = cases["named_kinds"]["kinds"]
+    assert len(kinds) == 16 and {"a beanbag chair", "a wheelchair", "a throne"} <= set(kinds)
+    assert {"beanbag chair", "wheelchair", "throne"} <= set(cases["named_kinds"]["hard_cases"])
+    tb = cases["textbook_chair"]
+    assert (tb["muse_spread"], tb["people_spread"], tb["people_plain_chair_pct"]) == (0.13, 0.36, 84)
+    assert cases["unusual_chairs"]["glimmer_cant_tell_or_not_a_chair_pct"] == 50
+    assert "Can you sit on a painting of a chair?" in cases["painter"]["fact"]
+    texts = {p["text"] for p in PASSAGES["passages"]}
+    for concept in S.EXAMINE:
+        r = S.counterexamples(concept)
+        assert {"painter", "shadow", "names", "near_misses"} <= {c["id"] for c in r["cases"]}, concept
+        for c in r["cases"]:
+            for p in c.get("passages", []):
+                assert p["text"] in texts and p["id"] in P, (concept, p["id"])  # verbatim, from the verified file
+        assert len(json.dumps(r, ensure_ascii=False)) < S.SocratesAgent.tool_result_chars  # sent whole
+    clock = {c["id"]: c for c in S.counterexamples("clock")["cases"]}
+    assert clock["textbook_clock"]["muse_ten_ten_by_eye"] == "13 of 16" and clock["textbook_clock"]["people_ten_ten"] == "4 of 200"
+    assert clock["textbook_clock"]["people_no_hands_pct"] == 17 and "an hourglass" in clock["named_kinds"]["kinds"]
+    bird = {c["id"]: c for c in S.counterexamples("bird")["cases"]}
+    assert bird["textbook_bird"]["spark_sparrow"] == "49 of 50" and "penguin" in bird["named_kinds"]["hard_cases"]
+    game = {c["id"]: c for c in S.counterexamples("game")["cases"]}
+    assert game["textbook_game"]["spark_chess"] == "49 of 50"
+    assert game["textbook_game"]["muse_image_platformer_doodles"] == "9 of 12"
+    assert "error" in S.dispatch("counterexamples", {"concept": "unicorn"})
+
+
+def test_named_kinds_file():
+    d = json.loads((meta_api.REPO_ROOT / "public_data" / "plato_named_kinds.json").read_text())
+    things = {t["key"]: t for t in d["things"]}
+    assert len(things) == 35 and things["chair"]["n"] == 16 == len(things["chair"]["kinds"])
+    assert all(t["n"] == len(t["kinds"]) and t["n"] in (12, 16) for t in things.values())
+
+
+EXAMINE_TURN = ("So a chair is four legs and a back. Yet a beanbag chair has no legs at all, and we sit in it "
+                "[counterexamples: chair]. How would you mend your definition to let it in?")
+
+
+def test_an_examining_turn_fetches_the_cases_first_and_asks_one_question():
+    api = FakeAPI([_reply(EXAMINE_TURN)])
+    evs = _events(_examine(api), "A chair has four legs and a back.")
+    assert [e["type"] for e in evs] == ["start", "tool_call", "tool_result", "answer", "done"]
+    assert evs[0]["mode"] == "examine" and evs[0]["concept"] == "chair" and evs[0]["max_turns"] == S.EXAMINE_MAX
+    assert evs[1]["name"] == "counterexamples" and evs[1]["args"] == {"concept": "chair"}
+    ans = _answer(evs)
+    assert ans["check"]["ok"] and ans["check"]["shape_problems"] == [] and ans["check"]["questions"] == 1
+    assert ans["question_back"] == "How would you mend your definition to let it in?"
+    assert ans["examine"]["final"] is False and ans["examine"]["exchange"] == 1 and ans["model_calls"] == 1
+    msgs = api.requests[0]["messages"]
+    assert "elenchus" in msgs[0]["content"] and "midwife" in msgs[0]["content"]
+    assert "exchange 1 of at most 5" in msgs[0]["content"]
+    assert msgs[1] == {"role": "assistant", "content": S.EXAMINE["chair"]["opening"]}  # the page's own opening
+    assert msgs[2]["role"] == "user" and msgs[3]["tool_calls"][0]["function"]["name"] == "counterexamples"
+    assert msgs[4]["role"] == "tool" and "beanbag" in msgs[4]["content"]
+    assert api.requests[0]["tools"] is S.TOOLS and api.requests[0]["reasoning_effort"] == S.EXAMINE_REASONING_EFFORT
+
+
+def test_examining_turns_keep_their_shape():
+    two = "A beanbag has no legs [counterexamples: chair]. Is it a chair? And what of a stool?"
+    api = FakeAPI([_reply(two), _reply(two)])  # the repair doesn't fix it: only the last question is kept
+    ans = _answer(_events(_examine(api), "Four legs."))
+    assert ans["check"]["repaired"] and ans["text"].count("?") == 1 and ans["text"].endswith("And what of a stool?")
+    assert "Ask exactly one question" in api.requests[-1]["messages"][1]["content"]
+    lost = "A beanbag has no legs [counterexamples: chair]. How would you mend your definition"
+    api2 = FakeAPI([_reply(lost)])  # a question that lost its "?": mended without a repair call
+    ans2 = _answer(_events(_examine(api2), "Four legs."))
+    assert ans2["text"].endswith("mend your definition?") and len(api2.requests) == 1 and ans2["check"]["ok"]
+    statement = "A beanbag has no legs [counterexamples: chair]. That settles it."
+    ans3 = _answer(_events(_examine(FakeAPI([_reply(statement), _reply(statement)])), "Four legs."))
+    assert ans3["text"].endswith("So how would you mend your definition of a chair?") and ans3["check"]["questions"] == 1
+
+
+ENDING = ("Neither of us has found what a chair is, and I still don't know. That puzzlement is better than false "
+          "certainty.\n\nHeld: A seat made for one person survived every case.\nBroke: The beanbag chair broke four "
+          "legs [counterexamples: chair].")
+
+
+def test_the_examination_ends_in_aporia_with_a_summary_and_a_link():
+    early = FakeAPI([_reply(ENDING), _reply(ENDING)])  # exchange 1: too early, even after the repair
+    ans = _answer(_events(_examine(early), "Four legs."))
+    assert ans["examine"]["final"] is False and "Held:" not in ans["text"] and ans["text"].endswith("?")
+    assert "too early" in early.requests[-1]["messages"][1]["content"]
+
+    ans3 = _answer(_events(_examine(FakeAPI([_reply(ENDING)]), n_before=2), "I don't know any more."))
+    ex = ans3["examine"]
+    assert ex["final"] and ex["exchange"] == 3 and ex["held"] == "A seat made for one person survived every case."
+    assert ex["broke"].startswith("The beanbag chair broke")
+    assert ex["link"] == {"href": "/plato#variety", "label": "Plato’s Chair"}
+    assert ans3["body"].startswith("Neither of us") and "Held:" not in ans3["body"] and ans3["question_back"] == ""
+
+    late = FakeAPI([_reply(EXAMINE_TURN), _reply(EXAMINE_TURN)])  # the last exchange must end
+    ans5 = _answer(_events(_examine(late, n_before=4), "Four legs and a back."))
+    assert ans5["examine"]["final"] and ans5["examine"]["exchange"] == S.EXAMINE_MAX and ans5["question_back"] == ""
+    assert "where looking begins" in ans5["text"] and "last exchange" in late.requests[-1]["messages"][1]["content"]
+    assert S.examine_prompt("clock", 5).count("This is the last exchange") == 1
+
+
+@pytest.mark.parametrize("bad", [
+    'As Plato wrote in the Republic, "a chair is the seat of the soul" [plato_passage: republic-597c]. Is it?',
+    'Socrates says: "no chair is ever only a chair". What would you sit on, then?',
+    'Plato put it plainly: “every game has a winner and a loser” [plato_passage: republic-596a]. Does yours?',
+    "Remember Plato's words, \"the painter makes chairs for the gods\". Can you sit on a painting?",
+])
+def test_examine_mode_never_quotes_outside_the_passages(bad):
+    api = FakeAPI([_reply(bad), _reply(bad)])  # the repair keeps the invented quotation: it is dropped
+    ans = _answer(_events(_examine(api), "A chair is something to sit on."))
+    texts = [p["text"] for p in PASSAGES["passages"]]
+    assert ans["check"]["bad_quotes"] == [] and S.check_quotes(ans["text"], texts)["bad_quotes"] == []
+    for q in S.find_quotes(ans["text"]):
+        if q["attributed"]:
+            assert any(S.norm_quote(q["text"]) in S.norm_quote(t) for t in texts)
+    assert "Never put words in Plato's mouth" in api.requests[-1]["messages"][1]["content"]
+    assert ans["text"].count("?") == 1  # still one question to the visitor
+
+
+def test_examine_mode_quotes_real_passages():
+    good = ("Plato's painter is “a creator of appearances” [plato_passage: republic-596e]. Can you sit on a painting of "
+            "a chair?")
+    ans = _answer(_events(_examine(FakeAPI([_reply(good)])), "A chair is anything that looks like a chair."))
+    assert ans["check"]["ok"] and ans["check"]["quotes"] == 1 and ans["text"] == good
+
+
+def test_examine_mode_keeps_the_guardrails():
+    api = FakeAPI([])
+    ans = _answer(_events(_examine(api, concept="game"), "My therapist says games help my depression."))
+    assert ans["refused"] and api.requests == [] and ans["text"].endswith("In a sentence: what is a game?")
+    nums = FakeAPI([_reply("Spark said chess 97 times in 100 [counterexamples: game]. Is that a game?"),
+                    _reply("Spark said chess 49 of 50 times [counterexamples: game]. Is that all a game is?")])
+    ans2 = _answer(_events(_examine(nums, concept="game"), "A game is chess."))
+    assert ans2["check"]["ok"] and ans2["check"]["repaired"] and "49 of 50" in ans2["text"]
+    agent = _examine(FakeAPI([]))
+    assert agent.max_tool_calls == S.EXAMINE_MAX_TOOL_CALLS and agent.max_usd == S.MAX_USD
+    assert S.screen_question("but then I can't say what it IS, only where it came from") is None  # philosophy
+    assert S.screen_question("I can't find the words any more") and S.screen_question("I have trouble naming things")
+
+
+def test_examine_route_and_status(client):
+    s = client.get("/api/socrates/status").json()["examine"]
+    assert [c["key"] for c in s["concepts"]] == ["chair", "clock", "bird", "game"]
+    assert s["concepts"][0]["question"] == "What is a chair?" and s["max_exchanges"] == S.EXAMINE_MAX
+    r = client.post("/api/socrates", json={"question": "A clock has two hands.", "mode": "examine", "concept": "clock"})
+    evs = _lines(r)
+    assert r.status_code == 200 and evs[0]["mode"] == "examine" and evs[1]["name"] == "counterexamples"
+    assert client.made[-1].concept == "clock" and evs[-2]["examine"]["link"]["href"] == "/plato/forms"
+    assert client.post("/api/socrates", json={"question": "x", "mode": "examine", "concept": "unicorn"}).status_code == 422
+    over = client.post("/api/socrates", json={"question": "x", "mode": "examine", "concept": "bird",
+                                              "history": _history(5)})
+    assert over.status_code == 422 and "exchanges" in over.json()["detail"]
+    assert client.post("/api/socrates", json={"question": "x", "mode": "examine", "history": _history(4)}).status_code == 200
