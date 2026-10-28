@@ -68,11 +68,12 @@ def test_plato_site_is_dark_by_default(plato, path):
 def test_plato_header_has_a_labelled_theme_switch(plato, path):
     page = plato.get(path).text
     head = re.search(r'<header class="topbar site-head">.*?</header>', page, re.S).group(0)
-    button = re.search(r"<button[^>]*data-theme-toggle[^>]*>", head)
-    assert button, path
-    assert 'type="button"' in button.group(0)
-    assert re.search(r'aria-label="Switch to (light|dark) theme"', button.group(0))
-    assert head.count("data-theme-toggle") == 1
+    buttons = re.findall(r"<button[^>]*data-theme-toggle[^>]*>", head)
+    # one in the bar, and the same switch as a row of the phone menu (shown where the bar has no room)
+    assert [re.search(r'class="([^"]+)"', b).group(1) for b in buttons] == ["nav-theme", "theme-toggle"], path
+    for button in buttons:
+        assert 'type="button"' in button
+        assert re.search(r'aria-label="Switch to (light|dark) theme"', button)
 
 
 def test_theme_script_survives_without_storage():

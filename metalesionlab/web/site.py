@@ -135,15 +135,21 @@ THEME_SCRIPT = (
     "try{document.dispatchEvent(new CustomEvent('themechange',{detail:{theme:t}}));}catch(x){}});"
     "if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync);else sync();})();</script>"
 )
-THEME_TOGGLE = (
-    '<button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light theme" '
-    'title="Switch to light theme">'
+_THEME_ICONS = (
     '<svg class="tt-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" '
     'stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2'
     'M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>'
     '<svg class="tt-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" '
     'stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>'
-    '</button>'
+)
+THEME_TOGGLE = (
+    '<button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light theme" '
+    f'title="Switch to light theme">{_THEME_ICONS}</button>'
+)
+# The same switch as a row of the phone menu: a phone with the Tour button has no room for it in the bar.
+THEME_MENU_ITEM = (
+    '<button type="button" class="nav-theme" data-theme-toggle aria-label="Switch to light theme">'
+    f'{_THEME_ICONS}<span class="tt-to-light">Light theme</span><span class="tt-to-dark">Dark theme</span></button>'
 )
 _HTML_TAG = re.compile(r"<html\b([^>]*)>", re.I)
 _HEAD_OPEN = re.compile(r"<head\b[^>]*>(\s*<meta charset=[^>]*>)?", re.I)
@@ -424,13 +430,14 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
                 ) if tour else ""
     logo = LOGO.get(site, "")
     toggle = THEME_TOGGLE if site == "plato" else ""  # the sun/moon switch: Plato's Chair only
+    menu_toggle = THEME_MENU_ITEM if site == "plato" else ""
     return (
         '<header class="topbar site-head">'
         f'<a class="brand{" has-logo" if logo else ""}" href="/">{logo}'
         f'<span class="brand-name"><b>{_esc(b.name)}</b><span class="brand-tag">{_esc(b.tagline)}</span></span></a>'
         f'<nav class="topnav" aria-label="Main">{inline}{more_menu}</nav>'
         '<details class="nav-menu"><summary><span class="nav-burger" aria-hidden="true"></span>Menu</summary>'
-        f'<div class="nav-panel">{"".join(_link(n, path) for n in main)}{extra}</div></details>'
+        f'<div class="nav-panel">{"".join(_link(n, path) for n in main)}{menu_toggle}{extra}</div></details>'
         f'{tour_btn}{toggle}{chips}</header>'
     )
 

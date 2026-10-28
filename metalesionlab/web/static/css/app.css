@@ -352,14 +352,25 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border: 1px solid var(--bar-line); border-radius: 999px; background: transparent; color: var(--bar-ink); cursor: pointer; }
 .theme-toggle:hover { background: var(--bar-hover); }
 .theme-toggle svg { width: 18px; height: 18px; display: block; }
-.theme-toggle .tt-moon, :root[data-theme="dark"] .theme-toggle .tt-sun { display: block; }
-.theme-toggle .tt-sun, :root[data-theme="dark"] .theme-toggle .tt-moon { display: none; }
+[data-theme-toggle] .tt-moon, :root[data-theme="dark"] [data-theme-toggle] .tt-sun { display: block; }
+[data-theme-toggle] .tt-sun, :root[data-theme="dark"] [data-theme-toggle] .tt-moon { display: none; }
+/* the phone menu's row (THEME_MENU_ITEM): shown only where the bar has no room for the switch */
+.nav-theme { display: none; align-items: center; gap: 10px; width: 100%; margin: 4px 0; padding: 11px 12px; border: 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 14px; text-align: left; cursor: pointer; }
+.nav-theme:hover { background: var(--ground); }
+.nav-theme svg { width: 16px; height: 16px; flex: none; }
+.nav-theme .tt-to-dark, :root[data-theme="dark"] .nav-theme .tt-to-light { display: inline; }
+.nav-theme .tt-to-light, :root[data-theme="dark"] .nav-theme .tt-to-dark { display: none; }
 @media (max-width: 860px) {
   .topbar .theme-toggle { order: 2; }
   .topbar:not(:has(.demo-btn)) .theme-toggle { margin-left: auto; }
   .topbar:not(:has(.demo-btn)):has(.theme-toggle) .nav-menu { margin-left: 0; }
 }
-@media (max-width: 430px) { .theme-toggle { width: 34px; height: 34px; } }
+@media (max-width: 430px) {
+  .theme-toggle { width: 34px; height: 34px; }
+  .topbar:has(.demo-btn) > .theme-toggle { display: none; }  /* logo, name, Tour and Menu keep one line */
+  .topbar:has(.demo-btn) .nav-theme { display: flex; }
+}
 
 .layout { display: flex; flex-wrap: wrap; gap: clamp(20px, 1.4vw, 36px); margin-top: 20px; align-items: flex-start; }
 .layout > aside { flex: 1 1 300px; max-width: clamp(380px, 19vw, 480px); display: flex; flex-direction: column; gap: 16px; min-width: 0; }
