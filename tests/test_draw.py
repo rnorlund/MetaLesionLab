@@ -249,6 +249,18 @@ def test_model_loads_on_the_first_drawing_only(client):
     assert st["model_loaded"] is True and st["backend"] == "fake"
 
 
+def test_preload_warms_the_model_before_the_first_drawing(client):
+    draw_routes.preload().join(5)
+    assert client.built == [1] and client.fake.calls == 1
+    assert client.get("/api/draw/status").json()["model_loaded"] is True
+    assert post(client).status_code == 200 and client.built == [1]
+
+
+def test_the_image_preloads_the_model():
+    with open(draw.REPO / "Dockerfile") as f:
+        assert "DRAW_PRELOAD=1" in f.read()
+
+
 def test_bad_requests(client):
     assert post(client, concept="dragon").status_code == 422
     assert post(client, strokes=[]).status_code == 422

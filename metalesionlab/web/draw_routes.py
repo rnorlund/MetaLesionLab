@@ -216,3 +216,21 @@ async def draw_upload(request: Request):
     opts = {"donate": flag(q.get("donate")), "adult": flag(q.get("adult")),
             "blind": flag(q.get("blind")) if "blind" in q else None, "draw_seconds": seconds(q.get("draw_ms"))}
     return await run_in_threadpool(score_upload, ref, key, data, opts)
+
+
+def preload() -> threading.Thread:
+    """Load the model and run it once in the background, so the first visitor's drawing doesn't wait for it
+    (on a 2-CPU Space that load is the slow part). If it fails, the first drawing loads it as before."""
+    def warm():
+        try:
+            embedder.get()([draw.render([[[0, 40], [0, 40]]])])
+        except Exception:  # noqa: BLE001
+            pass
+
+    t = threading.Thread(target=warm, name="draw-preload", daemon=True)
+    t.start()
+    return t
+
+
+if flag(os.environ.get("DRAW_PRELOAD")):  # set in the Dockerfile
+    preload()

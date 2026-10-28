@@ -62,7 +62,8 @@ ENV MLL_SITE=${MLL_SITE} \
     PORT=7860 \
     DRAW_MODEL=/app/models/dinov2-base.onnx \
     DRAW_THREADS=2 \
-    DRAW_SLOTS=1
+    DRAW_SLOTS=1 \
+    DRAW_PRELOAD=1
 
 EXPOSE 7860
 HEALTHCHECK --interval=60s --timeout=5s --start-period=60s \
