@@ -144,7 +144,7 @@ Temperature 1, mean of 8 runs, 200 drawings per run and step (95% CIs across run
 - **Stable Diffusion's checkpoints** differ in training data (LAION-2B-en, then high-resolution, then aesthetics-filtered subsets) and in text-dropout, not only in steps. v1.3, v1.4 and v1.5 are siblings from v1.2, not a chain. The earliest public checkpoint is already far into training. One prompt; guidance 7.5, with 4 as a check.
 - **DINOv2** measures how drawings look. "Recognizable" is nearest-prototype classification among 21 things, not human recognition.
 - **The sketch model** learns only adults' drawings. It is 8 runs (and 5 on cats) of one small architecture, so it shows what learning from people's drawings can look like, not what children do.
-- **The decline end of the lifespan** is an analogy, through the damaged-AI experiment (`/plato/damage`), not a claim about people. No medical claim is made.
+- **The end of the lifespan** (losing the chair) is an analogy, through the damaged-AI experiment (`/plato/damage`), not a claim about people or about ageing. No medical claim is made.
 
 **Deviations from the plan.**
 - The strokes are clipped to the visible canvas. The released PNGs revealed that strokes can leave it, and we matched what the children saw.

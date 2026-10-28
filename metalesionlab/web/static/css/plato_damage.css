@@ -1,8 +1,6 @@
 /* Plato's Chair, damaged. Paper like the Plato page; blue = language part, orange = drawing part. */
 body.plato-damage { background: #F7F6F1; }
 .plato-damage main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.pd-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
-.pd-back { font-size: 14px; text-decoration: none; }
 
 /* hero */
 .pd-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px);

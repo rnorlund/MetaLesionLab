@@ -430,7 +430,7 @@
   function renderInside() {
     var I = S.data.inside, L = I.layer_spread || {}, last = L.L52, r = I.naming;
     if (last) {
-      $('collapse-text').textContent = 'How spread out a thing’s doodles are inside Glimmer, layer by layer (blue: Muse Image’s, orange: people’s). From about layer 30, ' +
+      $('collapse-text').textContent = 'How spread out a thing’s doodles are inside Glimmer, layer by layer (blue: Muse Image’s, orange: people’s). By about layer 36 (the median over the things), ' +
         'Glimmer files all of Muse Image’s doodles of a thing in essentially one place, while people’s stay spread out: at the last layer, ' + f2(last.ai) +
         ' against ' + f2(last.human) + ', wider for people in ' + last.human_wider + ' of ' + last.n + ' things.';
     }
@@ -550,7 +550,7 @@
       text.appendChild(h('p', { class: 'pc-verdict', text: 'No. It’s Meta’s Muse Image, not AI image models in general.' }));
       text.appendChild(h('p', { text: 'With the same prompt, Stable Diffusion XL, an open model from Stability AI, drew far more varied pictures' +
         (times ? ': about ' + times + ' times Muse Image’s spread' : '') + ', and more varied for ' + sx.muse_more_uniform + ' of ' + n + ' things.' }));
-      text.appendChild(h('p', { text: 'Muse Image draws the textbook version of each object. That’s useful for standardized test pictures, which need clear, typical drawings that everyone names the same way, and it’s why ' + (T.hasPage('/studio') ? 'Test Studio uses it' : 'our sister project’s picture-naming tests use it') + '. But it underrepresents how differently people picture things.' }));
+      text.appendChild(h('p', { text: 'By default, Muse Image draws the textbook version of each object (asked for named kinds, it varies as much as people or more). That’s useful for standardized test pictures, which need clear, typical drawings that everyone names the same way, and it’s why ' + (T.hasPage('/studio') ? 'Test Studio uses it' : 'our sister project’s picture-naming tests use it') + '. But its default underrepresents how differently people picture things.' }));
     } else {
       text.appendChild(h('p', { text: 'We gave Stable Diffusion XL, an open model from Stability AI, the same prompt. ' +
         (mi < 1 ? 'Its drawings were also more alike than people’s (median ratio ' + f2(mi) + ').' : 'Its drawings were not more alike than people’s (median ratio ' + f2(mi) + ', people = 1).') +

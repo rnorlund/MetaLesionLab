@@ -114,8 +114,10 @@ SERIES = [
      "source": "the Forms · Wittgenstein · Rosch", "title": "Name a bird", "finding": None},
     {"path": "/plato/damage", "slug": "damage", "question": "What happens to the Form when the mind is damaged?",
      "source": "Our own question", "title": "Damage the painter", "finding": None},
+    # its picture shows Muse Image's chair, so on the landing page it waits for the blind draw ("blind_art")
     {"path": "/plato/lifespan", "slug": "lifespan", "question": "Is learning remembering the Forms?",
-     "source": "Meno · children, adults and a model in training", "title": "The life of a chair", "finding": None},
+     "source": "Meno · children, adults and a model in training", "title": "The life of a chair", "finding": None,
+     "blind_art": True},
     {"path": "/plato/atlas", "slug": "atlas", "question": "Is every thing one Form, or only some?",
      "source": "Republic X", "title": "The Atlas of Forms", "finding": None},
     {"path": "/plato/telephone", "slug": "telephone", "question": "What survives a copy of a copy?",
@@ -296,16 +298,20 @@ def render_sister(app) -> str:
 def render_series(items: list[dict]) -> str:
     cards = []
     for s in items:
+        icon = (f'<svg viewBox="0 0 120 90" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" '
+                f'stroke-linecap="round" stroke-linejoin="round">{_ART.get(s["slug"], _ART["chair"])}</svg>')
+        art_class = "series-art"
         if s.get("image"):
             art = f'<img src="{_esc(s["image"])}" alt="" loading="lazy">'
+            if s.get("blind_art"):  # a picture with Muse Image's chairs: the landing page shows the icon until the reveal
+                art, art_class = icon + art, "series-art series-art-blind"
         else:
-            art = (f'<svg viewBox="0 0 120 90" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" '
-                   f'stroke-linecap="round" stroke-linejoin="round">{_ART.get(s["slug"], _ART["chair"])}</svg>')
+            art = icon
         finding = s.get("finding")
         status = (f'<span class="series-finding">{_esc(finding)}</span>' if finding
                   else '<span class="series-finding series-new">New: see what we found</span>')
         cards.append(
-            f'<a class="series-card" href="{_esc(s["path"])}"><span class="series-art">{art}</span>'
+            f'<a class="series-card" href="{_esc(s["path"])}"><span class="{art_class}">{art}</span>'
             f'<span class="series-body"><span class="series-q">{_esc(s["question"])}</span>'
             f'<span class="series-src">{_esc(s["source"])} · {_esc(s["title"])}</span>{status}'
             '<span class="series-go" aria-hidden="true">→</span></span></a>')
