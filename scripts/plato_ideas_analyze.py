@@ -5,6 +5,8 @@
   sheets   numbered 4 x 4 contact sheets per idea (sheets/<key>.png), for the label check by eye
   stats    the plan's tests (docs/plato_ideas_plan.md): emblem concentration (H1, H2), ideas against things in
            spread (H3), the label check, and the exploratory E1-E5. Writes $PLATO_IDEAS_DIR/results.json.
+  words    the four words beyond nouns (docs/plato_ideas_damage_plan.md, W1-W4): the same measures, set beside the
+           ideas and the things. Writes $PLATO_IDEAS_DIR/words_results.json. (embed and sheets take --words.)
 
 Concrete things: Muse Image's first-run doodles of the Atlas's 135 things (metalesionlab/plato_atlas.py; their
 embeddings were made with the same PREP and model) and the draw pad's 10 (scripts/draw_export.py KEYS).
@@ -35,10 +37,14 @@ def emb_path(key: str) -> Path:
     return EMB / f"{key}.npz"
 
 
+def which(args) -> list:
+    return I.WORDS if getattr(args, "words", False) else I.IDEAS
+
+
 def cmd_embed(args):
     embed = None
     t0 = time.time()
-    for idea in I.IDEAS:
+    for idea in which(args):
         files = plato.load_dir(I.folder(idea))
         if not files:
             print(f"{idea.key}: no pictures")
@@ -60,7 +66,7 @@ def cmd_sheets(args):
     out = I.IDEAS_DIR / "sheets"
     out.mkdir(parents=True, exist_ok=True)
     cell, cols = 300, 4
-    for idea in I.IDEAS:
+    for idea in which(args):
         files = plato.load_dir(I.folder(idea))
         rows = -(-len(files) // cols)
         sheet = Image.new("RGB", (cols * cell, rows * cell), "white")
@@ -72,7 +78,7 @@ def cmd_sheets(args):
             g.rectangle((x, y, x + cell - 1, y + cell - 1), outline=(200, 200, 200))
             g.text((x + 8, y + 6), f"{i + 1} {f.stem}", fill=(200, 0, 0))
         sheet.save(out / f"{idea.key}.png")
-    print(f"wrote {len(I.IDEAS)} sheets to {out}")
+    print(f"wrote {len(which(args))} sheets to {out}")
 
 
 # ---------- statistics ----------
@@ -251,6 +257,96 @@ def cmd_stats(args):
     print(f"wrote {path}")
 
 
+def cmd_words(args):
+    """Beyond nouns (docs/plato_ideas_damage_plan.md): the four words with the ideas' measures, and W1-W4."""
+    rng = np.random.default_rng(I.SEED + 1)
+    ideas_res = json.loads((I.IDEAS_DIR / "results.json").read_text())
+    idea_spreads = {r["key"]: r["spread"]["spread"] for r in ideas_res["ideas"]}
+    idea_median = float(np.median(list(idea_spreads.values())))
+    eye_path = I.IDEAS_DIR / "labels_by_eye_words.json"
+    eye = json.loads(eye_path.read_text()) if eye_path.exists() else None
+    calls = [json.loads(x) for x in (I.IDEAS_DIR / "calls.jsonl").read_text().splitlines() if x.strip()]
+    calls = [c for c in calls if c.get("run") == "words"]
+    words = []
+    for w in I.WORDS:
+        files = [f.name for f in plato.load_dir(I.folder(w))]
+        mine = [c for c in calls if c["key"] == w.key]
+        row = {"key": w.key, "label": w.label, "phrase": w.phrase, "group": w.group, "prompt": I.prompt_for(w),
+               "predicted": w.predicted, "n": len(files), "files": files,
+               "refusals": {"attempts": len(mine), "refused": sum(c["outcome"] == "refused" for c in mine),
+                            "short": sum(c["outcome"] == "short" for c in mine)}}
+        x = load_cls(emb_path(w.key))
+        if x is not None:
+            if len(x) != len(files):
+                raise SystemExit(f"{w.key}: embeddings and pictures differ; run embed --words")
+            row["spread"] = spread_with_boot(x, rng)
+            row["pixel_spread"] = A.pixel_spread([A.ink_gray(I.folder(w) / f) for f in files])
+        g = I.IDEAS_DIR / "labels" / f"{w.key}.json"
+        if g.exists():
+            items = {it["file"]: it for it in json.loads(g.read_text())["items"]}
+            labels = [items[f]["emblem"] for f in files]
+            row["glimmer"] = {**summarize_labels(w, labels, rng), "labels": labels,
+                              "names": [items[f]["name"] for f in files],
+                              "orders_agree": float(np.mean([items[f]["label_fwd"] == items[f]["label_rev"] for f in files])),
+                              "letter_mass": float(np.mean([items[f]["letter_mass"] for f in files]))}
+        if eye and w.key in eye["labels"]:
+            by_eye = [eye["labels"][w.key][f] for f in files]
+            row["by_eye"] = {**summarize_labels(w, by_eye, rng), "labels": by_eye}
+            row["text_in_picture"] = len(eye.get("text", {}).get(w.key, []))
+            if "glimmer" in row:
+                row["agreement"] = float(np.mean([a == b for a, b in zip(row["glimmer"]["labels"], by_eye)]))
+        words.append(row)
+
+    done = {r["key"]: r for r in words if "spread" in r and "glimmer" in r}
+    tests = {}
+    if len(done) == len(I.WORDS):
+        sp = {k: r["spread"]["spread"] for k, r in done.items()}
+        top_ok = [k for k, r in done.items() if r["glimmer"]["top"] == r["predicted"]]
+        tests["W1"] = {"predicted_on_top": len(top_ok), "of": 4, "words": top_ok, "passes": len(top_ok) >= 3}
+        tests["W2"] = {"concentration": {k: done[k]["glimmer"]["share"] for k in ("running", "thinking")},
+                       "passes": all(done[k]["glimmer"]["share"] >= 0.5 for k in ("running", "thinking"))}
+        adj, verbs = ("something_fast", "something_heavy"), ("running", "thinking")
+        tests["W3"] = {"spread": sp, "passes": min(sp[a] for a in adj) > max(sp[v] for v in verbs)}
+        tests["W4"] = {"ideas_median": idea_median, "passes": all(sp[a] > idea_median for a in adj)}
+        if eye:
+            top_eye = [k for k, r in done.items() if r.get("by_eye", {}).get("top") == r["predicted"]]
+            tests["W1_by_eye"] = {"predicted_on_top": len(top_eye), "words": top_eye}
+            tests["W2_by_eye"] = {k: done[k]["by_eye"]["share"] for k in ("running", "thinking")}
+        # exploratory: where the words sit among the ideas and the Atlas's things
+        things = concrete_sets(rng)
+        tv = np.array([v["spread"] for v in things.values()])
+        tests["context"] = {"things_median": float(np.median(tv)), "ideas_median": idea_median,
+                            "words_median": float(np.median(list(sp.values()))),
+                            "above_every_thing": [k for k, v in sp.items() if v > tv.max()],
+                            "things_percentile": {k: float((tv < v).mean()) for k, v in sp.items()},
+                            "ideas_below": {k: int(sum(s < v for s in idea_spreads.values())) for k, v in sp.items()}}
+        if eye:
+            a = [x for r in done.values() for x in r["glimmer"]["labels"]]
+            b = [x for r in done.values() for x in r["by_eye"]["labels"]]
+            tests["label_check"] = {"pictures": len(a), "agreement": float(np.mean([x == y for x, y in zip(a, b)])),
+                                    "kappa": I.cohen_kappa(a, b),
+                                    "labels_by_eye_sha256": hashlib.sha256(eye_path.read_bytes()).hexdigest()}
+
+    def clean(o):
+        if isinstance(o, dict):
+            return {k: clean(v) for k, v in o.items() if not k.startswith("_")}
+        if isinstance(o, list):
+            return [clean(v) for v in o]
+        return o
+
+    out = {"experiment": "Beyond nouns", "plan": "docs/plato_ideas_damage_plan.md", "model": "muse-image-1.0",
+           "embedding": f"{plato.DINO_MODEL} CLS, {PREP}", "tests": tests, "words": words}
+    path = I.IDEAS_DIR / "words_results.json"
+    path.write_text(json.dumps(plato.to_jsonable(clean(out)), indent=1))
+    print(json.dumps(plato.to_jsonable(clean(tests)), indent=1))
+    for r in words:
+        g, e = r.get("glimmer", {}), r.get("by_eye", {})
+        print(f"{r['key']:16s} n={r['n']:2d} spread={r.get('spread', {}).get('spread', float('nan')):.3f} "
+              f"glimmer top={g.get('top')!s:16s} {g.get('share', float('nan')):.2f} eye top={e.get('top')!s:16s} "
+              f"{e.get('share', float('nan')):.2f} agree={r.get('agreement', float('nan')):.2f}")
+    print(f"wrote {path}")
+
+
 def json_atlas_pixels() -> list[float]:
     r = json.loads((A.ATLAS_DIR / "results.json").read_text())
     return [c["pixel"]["muse_spread"] for c in r["concepts"]]
@@ -261,9 +357,13 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("embed")
     p.add_argument("--device")
+    p.add_argument("--words", action="store_true", help="the four words beyond nouns instead of the ideas")
     p.set_defaults(fn=cmd_embed)
-    sub.add_parser("sheets").set_defaults(fn=cmd_sheets)
+    p = sub.add_parser("sheets")
+    p.add_argument("--words", action="store_true")
+    p.set_defaults(fn=cmd_sheets)
     sub.add_parser("stats").set_defaults(fn=cmd_stats)
+    sub.add_parser("words").set_defaults(fn=cmd_words)
     args = ap.parse_args()
     args.fn(args)
 

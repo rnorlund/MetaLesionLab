@@ -145,3 +145,9 @@ That is 1,552 pictures: 128 keyed seeds × 11 noise conditions, plus God's 16 se
 ## Not people
 
 Nothing here is a test of a person, and nothing is compared with a visitor's drawing. The damage pictures are about the model only, as on the pad. The link to semantic dementia stays an analogy.
+
+## Addendum 1, before Glimmer saw the words (Oct 28)
+
+- **The words' Muse Image run is in.** 64 pictures in 16 calls, none refused, none short. Counted at $0.026 a picture this is $1.66; the shared ledger went from $63.24 to $63.88.
+- **The label check by eye is done**, before Glimmer saw any word's picture: `PlatosChair/ideas/labels_by_eye_words.json`, SHA-256 `46114f0e43ab2ff1e0b58806a671078d19e21ace4d6757c1b49e5d31982f041b`. No picture contains written words.
+- **Seen so far, before any Glimmer label or damage picture of the other ideas:** God's 16 intact SDXL pictures (the run's first condition), looked at once to check the run works. Nothing in the plan was changed after seeing them.
