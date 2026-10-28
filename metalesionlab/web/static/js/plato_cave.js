@@ -214,7 +214,7 @@
     var parts = ['outline', 'silhouette', 'shadow'].filter(function (v) { return D.errors[v].rated; }).map(function (v) {
       return D.errors[v].visual + ' of ' + D.errors[v].rated + ' for ' + LABEL[v].toLowerCase() + 's';
     });
-    ef.appendChild(fact('Shape errors', 'Many of its other mistakes name something with the same outline: “leaf” for a feather, “submarine” for a whistle, “pumpkin” for a watermelon. A second rater (Muse Spark, looking at the same picture) called these “visual” errors: ' + listAnd(parts) + ' wrong real-word answers. The original drawings had no errors at all.'));
+    ef.appendChild(fact('Shape errors', 'Many of its other mistakes name something with the same outline: “leaf” for a feather, “submarine” for a whistle, “pumpkin” for a watermelon. A second rater (Muse Spark, looking at the same picture) called these “visual” errors, counting wrong real-word answers: ' + listAnd(parts) + '. The original drawings had no errors at all.'));
   }
 
   // --- people ------------------------------------------------------------------------------
@@ -284,7 +284,7 @@
     f.innerHTML = '';
     f.appendChild(fact('+' + sh.first_layer_diff.toFixed(1) + ' layers', 'Later first appearance of the right name for shadows than for the same drawings (95% CI ' + sh.first_layer_diff_ci95[0].toFixed(1) + ' to ' + sh.first_layer_diff_ci95[1].toFixed(1) + ', ' + sh.first_layer_pairs + ' objects named in both).'));
     var sd = Math.abs(si.first_layer_diff) < 0.05 ? '0.0' : (si.first_layer_diff > 0 ? '+' : '−') + Math.abs(si.first_layer_diff).toFixed(1);
-    f.appendChild(fact(sd + ' layers', 'For sharp silhouettes: no delay (95% CI ' + si.first_layer_diff_ci95[0].toFixed(1).replace('-', '−') + ' to ' + si.first_layer_diff_ci95[1].toFixed(1) + '). The shape alone is enough; the blur is what slows it.'));
+    f.appendChild(fact(sd + ' layers', 'For sharp silhouettes: no delay (95% CI ' + si.first_layer_diff_ci95[0].toFixed(1).replace('-', '−') + ' to ' + si.first_layer_diff_ci95[1].toFixed(1) + '). The shape alone is enough; the soft, slanted cast shadow is what slows it.'));
   }
 
   function credits() {

@@ -116,6 +116,16 @@ def test_experiment_tool_reads_results_as_they_are_published(tmp_path, monkeypat
     assert "experiments" in S.dispatch("plato_experiment", {"name": "atlantis"})
 
 
+def test_every_experiment_carries_its_short_answer():
+    assert set(S.SHORT_ANSWERS) == set(S.EXPERIMENTS)
+    r = S.dispatch("plato_experiment", {"name": "life of a chair"})  # an alias; the shipped public_data file
+    assert r["experiment"] == "lifespan" and r["link"] == "/plato/lifespan"
+    assert r["available"] and r["short_answer"] == S.SHORT_ANSWERS["lifespan"]
+    damage = S.SHORT_ANSWERS["damage"]  # the final results, not the pilot
+    assert "only partly supported" in damage and "not a sign of language damage" in damage
+    assert "never sends a rocking chair back to the plain chair" in damage
+
+
 def test_dispatch_turns_bad_calls_into_errors():
     assert "Unknown tool" in S.dispatch("get_condition", {"id": "intact"})["error"]  # Ask the Lab's tool isn't here
     assert "Missing" in S.dispatch("plato_passage", {})["error"]

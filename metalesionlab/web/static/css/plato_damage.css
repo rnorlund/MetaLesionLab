@@ -92,6 +92,7 @@ body.plato-damage { background: #F7F6F1; }
 .pd-clockgrid .r { font-size: 12px; font-weight: 600; }
 .pd-clockgrid .r.lang { color: var(--blue); }
 .pd-clockgrid .r.draw { color: var(--orange); }
+.pd-tablewrap { overflow-x: auto; max-width: 100%; }
 .pd-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .pd-table th, .pd-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
 .pd-table td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
@@ -121,4 +122,6 @@ body.plato-damage { background: #F7F6F1; }
   .pd-pair { gap: 8px; }
   .pd-panel h2 { font-size: 14px; }
   .pd-answer { font-size: 17px; }
+  .pd-table { font-size: 12px; }
+  .pd-table th, .pd-table td { padding: 5px 4px; }
 }

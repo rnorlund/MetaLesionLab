@@ -287,8 +287,12 @@
     box.appendChild(h('p', { text: 'Spread measures how different pictures look, and people’s quick drawings differ a lot just in how they are drawn. ' +
       'So we also asked which kind of thing each picture shows. Muse Glimmer picked one option per picture from Muse Spark’s list of kinds, plus “a plain, ordinary one” and “can’t tell”.' }));
     var same = pv.n_concepts ? pv.same_prototype + ' of ' + pv.n_concepts : null;
-    box.appendChild(h('p', { text: 'People mostly draw the textbook version too. ' + pct(P.mean_share_plain) + '% of their recognizable drawings are the plain, ordinary kind, the same as for Muse Image’s usual prompt (' +
+    // ALL_35: the same share over all 35 things, labels of every quality (public_data/plato_variety.json,
+    // kinds_summary.all: people 0.829, usual prompt 0.828). The landing page and README quote that one.
+    box.appendChild(h('p', { text: 'People mostly draw the textbook version too. On the ' + k.reliable + ' things Glimmer labels reliably, ' + pct(P.mean_share_plain) +
+      '% of people’s recognizable drawings are the plain, ordinary kind, the same as for Muse Image’s usual prompt (' +
       pct(D.mean_share_plain) + '%)' + (same ? ', and for ' + same + ' things the most common kind is the same for both' : '') + '. ' +
+      'Over all ' + k.n_concepts + ' things it is 83% for both. ' +
       'Pick two drawings of the same thing at random: they show different kinds ' + pct(P.mean_simpson) + '% of the time for people, ' + pct(D.mean_simpson) +
       '% for Muse Image’s usual prompt' + (L ? ', and ' + pct(L.mean_simpson) + '% when it draws the named kinds.' : '.') +
       ' So people draw a few more kinds than Muse Image does by default, and far fewer than it can.' }));

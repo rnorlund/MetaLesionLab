@@ -117,7 +117,7 @@
       skip: function () { return document.querySelectorAll('#series .series-card').length < 2; },
       body: function () {
         var qs = [].slice.call(document.querySelectorAll('#series .series-q')).map(function (el) { return '“' + el.textContent + '”'; });
-        return 'Each experiment puts one of Plato’s questions to an AI and to people: ' + qs.join(', ') + '. New ones appear here as they’re finished.';
+        return 'Each experiment puts one of Plato’s questions to an AI and to people: ' + qs.join(', ') + '. Each card opens its results, including the predictions that failed.';
       } },
 
     { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw', id: 'draw', finish: true,
@@ -361,6 +361,13 @@
     ]);
     document.body.appendChild(box);
   }
+  // Once a drawing is submitted or skipped (draw.js and landing.js send 'tot:revealed'), the results card is
+  // what matters: the offer leaves this page view so it never covers the results. The header's Tour button
+  // stays, and the offer comes back on the next page until the visitor closes it.
+  document.addEventListener('tot:revealed', function () {
+    var box = q('.tour-offer');
+    if (box) box.remove();
+  });
 
   T.tour = { start: start, end: end, go: go, steps: STEPS, current: function () { return current; } };
 

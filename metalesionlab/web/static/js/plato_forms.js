@@ -174,9 +174,9 @@
     if (x) out.push('<div class="pf-fact sdxl"><b>' + pct(x.accuracy) + '%</b><span>of SDXL’s doodles show the time asked for' + ci(x.accuracy_ci95_cluster) +
       '. ' + pct(x.ten_ten.share) + '% show 10:10 instead' + (xp ? ', and ' + pct(xp.ten_ten.share) + '% of its photos' : '') + '.</span></div>');
     html($('asked-facts'), out.join(''));
-    html($('asked-lede'), 'So for Muse Image, 10:10 is a default, not a limit. Asked for 1:20 or 7:50, it drew 1:20 or 7:50, and never 10:10. ' +
-      (mp ? 'Its realistic photos were the same: ' + pct(mp.accuracy) + '% exactly right, ' + mp.ten_ten.k + ' of ' + mp.n + ' at 10:10. ' : '') +
-      (x ? 'The open model SDXL is different: it mostly ignored the time asked for and fell back on 10:10, the classic finding.' : ''));
+    html($('asked-lede'), 'So for Muse Image, 10:10 is a default, not a limit. Asked for 3:00 or 7:50, it drew 3:00 or 7:50, and it never drew 10:10. ' +
+      (mp ? 'Its realistic photos were the same: ' + pct(mp.accuracy) + '% right to within 5 minutes, ' + mp.ten_ten.k + ' of ' + mp.n + ' at 10:10. ' : '') +
+      (x ? 'The open model SDXL is different: it mostly ignored the time asked for and often fell back on 10:10, the classic finding.' : ''));
   }
 
   // ---- dials: every read time as a pair of hands ----

@@ -19,6 +19,7 @@
     var invite = document.getElementById('reveal-invite');
     if (invite) invite.hidden = how !== 'drawn';
     document.body.classList.add('revealed');
+    document.dispatchEvent(new CustomEvent('tot:revealed'));  // drawn or skipped: the tour offer steps aside
   }
   if (padEl && window.TOTDraw) {
     drawApp = window.TOTDraw.mount(padEl, {
