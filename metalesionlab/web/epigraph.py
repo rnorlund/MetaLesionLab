@@ -14,7 +14,9 @@ unknown id renders nothing: the site never shows a quotation that isn't in the f
 The words are the passage's, exactly. The renderer only adds quotation marks, and an ellipsis where the
 passage starts or ends mid-sentence. The citation names the speaker when it is Socrates ("Socrates, in
 Plato's Theaetetus 155d"), otherwise the author ("Plato, Timaeus 28a"; "Aristotle, Metaphysics I.1,
-980a21–24"), and links the translator's credit to the source text.
+980a21–24"), and links the translator's credit to the source text. Beside the words is the face of whoever the
+citation names (speaker()): Plato, Socrates or Aristotle, a marker doodle drawn by Meta's Muse Image
+(portraits.py); a passage by anyone else gets no face.
 """
 from __future__ import annotations
 
@@ -23,6 +25,7 @@ import json
 import re
 
 from metalesionlab import meta_api
+from metalesionlab.web import portraits
 
 PASSAGES = meta_api.REPO_ROOT / "public_data" / "plato_passages.json"
 VARIANTS = ("inline", "band")
@@ -63,6 +66,14 @@ def words(p: dict) -> str:
     return f"“{text}”"
 
 
+def speaker(p: dict) -> str:
+    """Whom the citation names: Socrates when he speaks in Plato's dialogue, otherwise the author."""
+    author = p.get("author", "Plato")
+    if author == "Plato" and str(p.get("speaker", "")).startswith("Socrates"):
+        return "Socrates"
+    return author
+
+
 def citation(p: dict) -> str:
     """'Socrates, in Plato's Theaetetus 155d', 'Plato, Republic VII, 518b–c', 'Aristotle, Metaphysics I.1, 980a21–24'."""
     author = p.get("author", "Plato")
@@ -73,9 +84,7 @@ def citation(p: dict) -> str:
     else:
         where = f"{work} {_e(p['book'])}," if p.get("book") else work
         ref = p["stephanus"]
-    lead = _e(author) + ","
-    if author == "Plato" and str(p.get("speaker", "")).startswith("Socrates"):
-        lead = "Socrates, in Plato’s"
+    lead = "Socrates, in Plato’s" if speaker(p) == "Socrates" else _e(author) + ","
     # The dot keeps to the reference (a no-break space), so a long citation wraps after it, never before it.
     return (f'<span class="epigraph-who">{lead}</span> {where} <span class="epigraph-ref">{_e(ref)}</span>'
             f' · <span class="epigraph-tr"><a href="{_e(p["source_url"])}" rel="noopener" '
@@ -88,7 +97,10 @@ def render(pid: str, variant: str | None = None) -> str:
     if not p:
         return ""
     cls = "epigraph" + (f" epigraph--{variant}" if variant in VARIANTS else "")
-    return (f'<figure class="{cls}" data-passage="{_e(pid)}">'
+    who = speaker(p)
+    face = portraits.face(who)
+    speaks = f' data-speaker="{_e(who.lower())}"' if face else ""
+    return (f'<figure class="{cls}" data-passage="{_e(pid)}"{speaks}>{face}'
             f'<blockquote cite="{_e(p["source_url"])}"><p>{_e(words(p))}</p></blockquote>'
             f'<figcaption>{citation(p)}</figcaption></figure>')
 

@@ -67,6 +67,33 @@ figure.epigraph--inline { --ep-size: clamp(17px, calc(11px + 0.55vw), 26px); mar
   gap: clamp(24px, 3vw, 72px); align-items: start; }
 figure.epigraph--band { --ep-size: clamp(18px, calc(11px + 0.6vw), 30px); margin: 0; max-width: none; }
 
+/* The speaker's face (epigraph.py, portraits.py): Plato, Socrates or Aristotle, a Muse Image marker doodle on
+   white paper in a round frame, so the black lines read on any background (the cave's dark wall included).
+   Beside the words, the size of a few lines of the quote; above them in a band, where the columns are narrow.
+   A passage by anyone else has no data-speaker and keeps the plain layout above. */
+figure.epigraph[data-speaker] {
+  --ep-face: clamp(60px, calc(28px + 3.2vw), 150px);
+  display: grid;
+  grid-template-columns: var(--ep-face) minmax(0, 1fr);
+  column-gap: clamp(16px, 1.4vw, 36px);
+  align-items: start;
+  max-width: calc(var(--measure, 75ch) + var(--ep-face) + clamp(16px, 1.4vw, 36px));
+}
+figure.epigraph[data-speaker] > blockquote, figure.epigraph[data-speaker] > figcaption { grid-column: 2; min-width: 0; }
+figure.epigraph .epigraph-face {  /* named in full, so a hero's own figure-image rules (the cave's) don't reshape it */
+  grid-column: 1; grid-row: 1 / span 2;
+  display: block; width: 100%; height: auto; aspect-ratio: 1; margin-top: 0.15em;
+  border-radius: 50%; background: #FFFFFF; border: 2px solid var(--ep-face-ring, #E4D3B4);
+  box-sizing: border-box; object-fit: cover;
+}
+figure.epigraph--inline[data-speaker] { --ep-face: clamp(50px, calc(26px + 2.6vw), 100px); max-width: none; }
+figure.epigraph--band[data-speaker] { --ep-face: clamp(64px, calc(34px + 3vw), 128px);
+  grid-template-columns: minmax(0, 1fr); row-gap: clamp(12px, 1vw, 22px); max-width: none; }
+figure.epigraph--band[data-speaker] > blockquote, figure.epigraph--band[data-speaker] > figcaption { grid-column: 1; }
+figure.epigraph--band .epigraph-face { grid-row: auto; width: var(--ep-face); margin: 0; }
+
 @media (max-width: 520px) {
   .epigraph blockquote p { text-indent: 0; }
+  figure.epigraph[data-speaker] { --ep-face: 56px; column-gap: 14px; }
+  figure.epigraph--band[data-speaker] { --ep-face: 64px; }
 }

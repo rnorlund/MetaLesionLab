@@ -11,7 +11,9 @@ it) passes through it, and it:
   from the site's NAV and MORE below, so the nav is the same on every page of a site (model chips such
   as #sample-chip are kept). The Plato site's brand slot holds its logo, the Form chair (FORM_CHAIR);
 - fills <!--#series--> (every Plato series card) and <!--#series:sub--> (the series without /plato);
-- fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py);
+- fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py), with its speaker's face;
+- on the Plato site, adds the portraits (portraits.py): Plato beside "What would Plato ask an AI?" and Socrates
+  as a floating guide on the series pages, and the "drawn by Meta's Muse Image" credit wherever one is shown;
 - keeps <!--#if /path-->…<!--#else-->…<!--#endif--> blocks by whether the app serves /path
   (<!--#if series--> asks whether any experiment of the series besides /plato is served);
 - fills <!--#sister--> with the "Sister project" link (MLL_SISTER_URL), or adds that link at the foot
@@ -285,8 +287,11 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
     more_current = any(path == m["href"] for m in more) or any(path == s["path"] for s in subs)
     more_menu = (f'<details class="nav-more{" is-current" if more_current else ""}"><summary>More</summary>'
                  f'<div class="nav-panel">{extra}</div></details>') if extra else ""
-    tour_btn = ('<button type="button" class="demo-btn" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true">'
-                '<path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Tour</button>') if tour else ""
+    # Socrates guides the tour (tour.js): his face on its button, a Muse Image doodle (credited in the footnote)
+    tour_btn = ('<button type="button" class="demo-btn" data-tour-start title="A 90-second tour with Socrates">'
+                '<img class="demo-face" src="/static/img/socrates/socrates-neutral.webp" width="24" height="24" alt="">'
+                '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Tour</button>'
+                ) if tour else ""
     logo = LOGO.get(site, "")
     return (
         '<header class="topbar site-head">'
@@ -401,6 +406,9 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     if site == "plato" and path != "/plato/gallery" and has_page(app, "/plato/gallery"):
         from metalesionlab.web.plato_gallery_routes import add_strip  # "From the lab", above the footer
         page = add_strip(page)
+    if site == "plato":
+        from metalesionlab.web import portraits  # Plato, Socrates and Aristotle, drawn by Muse Image
+        page = portraits.decorate(page, path, socrates=has_page(app, "/socrates"))
     link = render_sister(app)
     if "<!--#sister-->" in page:
         page = page.replace("<!--#sister-->", link)
