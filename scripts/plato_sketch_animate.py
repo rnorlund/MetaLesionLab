@@ -4,10 +4,14 @@ Chosen in the plan, before any run: seed 1, temperature 1.0, the first 16 of its
 every checkpoint), all 20 checkpoints. Stroke by stroke: at the last step, the first of those 16 that DINOv2
 calls a chair.
 
-Usage: python -I scripts/plato_sketch_animate.py [--web]
-Writes $PLATO_LIFESPAN_DIR/figures/sketch_seeds_curves.png (the learning path over runs),
-$PLATO_LIFESPAN_DIR/sketch/watch_it_learn.{mp4,gif} and stroke_by_stroke.{mp4,gif}; with --web also
-static/img/plato_lifespan/sketch/learn_sprite.webp (the 20 frames of the grid, 5 x 4) and stroke_order.json.
+The larger model (--model big; the plan's addendum) is animated the same way: seed 1 at the temperature fixed in
+the addendum (plato_sketch.MODELS), all 24 checkpoints.
+
+Usage: python -I scripts/plato_sketch_animate.py [--model small|big] [--web]
+Writes $PLATO_LIFESPAN_DIR/figures/sketch_<dir>_curves.png (the learning path over runs),
+$PLATO_LIFESPAN_DIR/sketch[/big]/watch_it_learn.{mp4,gif} and stroke_by_stroke.{mp4,gif}; with --web also
+static/img/plato_lifespan/sketch/learn_sprite.webp (the frames of the grid in 4 rows: 5 x 4 for the small model,
+6 x 4 for the larger) and stroke_order.json. The page shows whichever model was exported last.
 Needs ffmpeg (FFMPEG env var, default: ffmpeg on PATH, then /usr/local/fsl/bin/ffmpeg).
 Drawings are the model's own; it learned from Google Quick, Draw! (CC BY 4.0).
 """
@@ -28,10 +32,17 @@ from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 from metalesionlab.plato import render_strokes  # noqa: E402
 from metalesionlab.plato_lifespan import LIFESPAN_DIR  # noqa: E402
-from metalesionlab.plato_sketch import ANIM, STEPS, log_x, pen_frames, run_name, sample_name  # noqa: E402
+from metalesionlab.plato_sketch import MODELS, log_x, model_run_name, pen_frames, sample_name  # noqa: E402
 
+# Set by main() from --model (plato_sketch.MODELS): "small" is the original plan's model, "big" the addendum's.
+MODEL = "small"
+ANIM, STEPS = MODELS[MODEL]["anim"], MODELS[MODEL]["steps"]
 SEEDS_DIR = LIFESPAN_DIR / "sketch" / "seeds"
 OUT = LIFESPAN_DIR / "sketch"
+TEXT = {"small": {"sub": ("A small sketch model, trained from scratch on", "20,000 people’s chairs from Quick, Draw!"),
+                  "cols": 5, "cell": 200},
+        "big": {"sub": ("A sketch model, trained from scratch on", "203,324 people’s chairs from Quick, Draw!"),
+                "cols": 6, "cell": 180}}
 WEB = ROOT / "metalesionlab" / "web" / "static" / "img" / "plato_lifespan" / "sketch"
 PAPER, WHITE, INK, INK2, MUTED, LINE = "#F7F6F1", "#FFFFFF", "#111827", "#374151", "#6B7280", "#E1E0D9"
 PEOPLE = "#C2410C"
@@ -58,7 +69,7 @@ def ffmpeg() -> str:
 
 
 def drawings_at(step: int) -> list:
-    f = SEEDS_DIR / "runs" / run_name("chair", ANIM["seed"]) / "samples" / f"{sample_name(step, ANIM['temp'])}.json"
+    f = SEEDS_DIR / "runs" / model_run_name(MODEL, "chair", ANIM["seed"]) / "samples" / f"{sample_name(step, ANIM['temp'])}.json"
     return json.loads(f.read_text())[: ANIM["n"]]
 
 
@@ -98,15 +109,15 @@ def overlay(im: Image.Image, step: int, xstep: float, recog: float | None, sprea
     f = lambda px, **k: font(int(px * s), **k)  # noqa: E731
     dr.text((x0, int(56 * s)), "Watch an AI learn", font=f(40, bold=True), fill=INK)
     dr.text((x0, int(102 * s)), "what a chair is", font=f(40, bold=True), fill=INK)
-    dr.text((x0, int(160 * s)), "A small sketch model, trained from scratch on", font=f(19), fill=INK2)
-    dr.text((x0, int(186 * s)), "20,000 people’s chairs from Quick, Draw!", font=f(19), fill=INK2)
+    for k, line in enumerate(TEXT[MODEL]["sub"]):
+        dr.text((x0, int((160 + 26 * k) * s)), line, font=f(19), fill=INK2)
     dr.text((x0, int(250 * s)), "TRAINING STEP", font=f(15, mono=True), fill=MUTED)
     dr.text((x0, int(270 * s)), f"{step:,}", font=f(64, mono=True), fill=INK)
-    # log training axis 0 .. 25,600
+    # log training axis 0 .. the last step
     ax0, ax1, ay = x0, int(1220 * s), int(372 * s)
     lx = lambda v: ax0 + (ax1 - ax0) * (log_x(v) - log_x(0)) / (log_x(STEPS[-1]) - log_x(0))  # noqa: E731
     dr.line([(ax0, ay), (ax1, ay)], fill=LINE, width=max(1, int(3 * s)))
-    for t, lab in ((0, "0"), (100, "100"), (1000, "1k"), (10000, "10k"), (25600, "25.6k")):
+    for t, lab in ((0, "0"), (100, "100"), (1000, "1k"), (10000, "10k"), (STEPS[-1], f"{STEPS[-1] / 1000:g}k")):
         dr.line([(lx(t), ay - int(5 * s)), (lx(t), ay + int(5 * s))], fill=MUTED, width=max(1, int(1.5 * s)))
         dr.text((lx(t), ay + int(10 * s)), lab, font=f(13, mono=True), fill=MUTED, anchor="ma")
     cx, r = lx(xstep), int(8 * s)
@@ -127,7 +138,8 @@ def overlay(im: Image.Image, step: int, xstep: float, recog: float | None, sprea
     dr.line([(rx, by), (rx, by + int(16 * s) + bh)], fill=PEOPLE, width=max(2, int(4 * s)))
     dr.text((rx, by + int(22 * s) + bh), f"people’s chairs it learned from: {ref:.2f}", font=f(15), fill=PEOPLE, anchor="ma")
     dr.text((x0, int(626 * s)), "The same 16 random starts at every step: only the weights change.", font=f(15), fill=MUTED)
-    dr.text((x0, int(648 * s)), "Seed 1, temperature 1. Drawings: Google Quick, Draw! (CC BY 4.0).", font=f(15), fill=MUTED)
+    dr.text((x0, int(648 * s)), f"Seed {ANIM['seed']}, temperature {ANIM['temp']:g}. Drawings: Google Quick, Draw! (CC BY 4.0).",
+            font=f(15), fill=MUTED)
     dr.text((x0, int(670 * s)), "How varied: Meta DINOv2, 200 drawings per step.", font=f(15), fill=MUTED)
 
 
@@ -201,7 +213,7 @@ def first_recognized(step: int) -> int:
     from metalesionlab.plato import PLATO_DIR
     from metalesionlab.plato_lifespan import CANDIDATES, prototype, recognized
 
-    run = SEEDS_DIR / "runs" / run_name("chair", ANIM["seed"])
+    run = SEEDS_DIR / "runs" / model_run_name(MODEL, "chair", ANIM["seed"])
     alld = json.loads((run / "samples" / f"{sample_name(step, ANIM['temp'])}.json").read_text())
     x = np.load(run / "emb" / f"{sample_name(step, ANIM['temp'])}.npz")["cls"].astype(np.float64)
     protos = np.stack([prototype(np.load(PLATO_DIR / "embeddings" / "human" / f"{k}.npz")["cls"].astype(np.float64))
@@ -212,7 +224,7 @@ def first_recognized(step: int) -> int:
 
 
 def sprite(cell: int = 200, gap: int = 8, cols: int = 5) -> Image.Image:
-    """The 20 checkpoints' grids in one image, 5 across and 4 down, for the page's player."""
+    """The checkpoints' grids in one image (small model: 20, 5 across and 4 down; larger: 24, 6 x 4), for the page."""
     frames = [grid(drawings_at(st), cell, gap, bg=PAPER) for st in STEPS]
     fw = frames[0].width
     rows = -(-len(frames) // cols)
@@ -238,7 +250,9 @@ def curves_figure(res: dict, out: Path):
         b = res["concepts"][c]
         for j, m in enumerate(names):
             ax = axes[r, j]
-            for temp, col, lw in (("t1.0", INK, 2.2), ("t0.8", "#6B7280", 1.4), ("t0.6", "#9CA3AF", 1.4)):
+            greys = ["#6B7280", "#9CA3AF", "#B8BCC4", "#D1D5DB"]
+            for k, temp in enumerate(f"t{t:.1f}" for t in res["temps"]):
+                col, lw = (INK, 2.2) if temp == "t1.0" else (greys[(k - 1) % len(greys)], 1.4)
                 cv = b["curves"][temp][m]
                 mean = np.array([np.nan if v is None else v for v in cv["mean"]], float)
                 lo = np.array([np.nan if q[0] is None else q[0] for q in cv["ci95"]], float)
@@ -253,7 +267,8 @@ def curves_figure(res: dict, out: Path):
                 if b.get("children") and age in b["children"]:
                     ax.axhline(b["children"][age][m], color=PEOPLE, lw=1, alpha=0.8)
                     ax.text(x[-1] + 0.05, b["children"][age][m], f"age {age}", color=PEOPLE, fontsize=8, va="center")
-            ax.set_xticks(np.log10(np.array([0, 100, 1000, 10000]) + 25), ["0", "100", "1k", "10k"])
+            ticks = [t for t in (0, 100, 1000, 10000, 100000) if t <= STEPS[-1]]
+            ax.set_xticks(np.log10(np.array(ticks) + 25), [f"{t // 1000}k" if t >= 1000 else str(t) for t in ticks])
             ax.set_title(f"{c}: {names[m]}", fontsize=10, loc="left")
             ax.set_xlabel("training step", fontsize=9)
             ax.spines[["top", "right"]].set_visible(False)
@@ -268,14 +283,20 @@ def curves_figure(res: dict, out: Path):
 
 
 def main():
+    global MODEL, ANIM, STEPS, SEEDS_DIR, OUT
     ap = argparse.ArgumentParser()
-    ap.add_argument("--web", action="store_true")
-    ap.add_argument("--results", type=Path, default=SEEDS_DIR / "results.json")
+    ap.add_argument("--model", choices=sorted(MODELS), default="small")
+    ap.add_argument("--web", action="store_true", help="also write the page's sprite and stroke-order drawing")
+    ap.add_argument("--results", type=Path, help="default: sketch/<model dir>/results.json")
     args = ap.parse_args()
-    res = json.loads(args.results.read_text())
+    MODEL = args.model
+    ANIM, STEPS = MODELS[MODEL]["anim"], MODELS[MODEL]["steps"]
+    SEEDS_DIR = LIFESPAN_DIR / "sketch" / MODELS[MODEL]["dir"]
+    OUT = LIFESPAN_DIR / "sketch" / ("" if MODEL == "small" else MODELS[MODEL]["dir"])
+    res = json.loads((args.results or SEEDS_DIR / "results.json").read_text())
     figs = LIFESPAN_DIR / "figures"
     figs.mkdir(parents=True, exist_ok=True)
-    print("figure:", curves_figure(res, figs / "sketch_seeds_curves.png"))
+    print("figure:", curves_figure(res, figs / f"sketch_{MODELS[MODEL]['dir']}_curves.png"))
     anim = res["animation"]
     OUT.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
@@ -291,11 +312,12 @@ def main():
         print(f"stroke by stroke: drawing {idx}, {n} frames")
     if args.web:
         WEB.mkdir(parents=True, exist_ok=True)
-        sprite().save(WEB / "learn_sprite.webp", "WEBP", quality=70, method=6)
+        sprite(cell=TEXT[MODEL]["cell"], cols=TEXT[MODEL]["cols"]).save(WEB / "learn_sprite.webp", "WEBP", quality=70, method=6)
         (WEB / "stroke_order.json").write_text(json.dumps({
-            "about": "One chair drawn by the sketch model (seed 1, temperature 1, training step 25,600), in the order "
-                     "it emitted its points; Quick, Draw! coordinates (0-255). The model learned from Google Quick, "
-                     "Draw! (CC BY 4.0).", "seed": ANIM["seed"], "temp": ANIM["temp"], "step": STEPS[-1], "index": idx,
+            "about": f"One chair drawn by the sketch model ({MODELS[MODEL]['model']}; seed {ANIM['seed']}, temperature "
+                     f"{ANIM['temp']:g}, training step {STEPS[-1]:,}), in the order it emitted its points; Quick, Draw! "
+                     "coordinates (0-255). The model learned from Google Quick, Draw! (CC BY 4.0).",
+            "model": MODEL, "seed": ANIM["seed"], "temp": ANIM["temp"], "step": STEPS[-1], "index": idx,
             "strokes": last[idx]}, separators=(",", ":")))
         for p in sorted(WEB.iterdir()):
             print(f"{p.name}: {p.stat().st_size / 1024:.0f} KB")

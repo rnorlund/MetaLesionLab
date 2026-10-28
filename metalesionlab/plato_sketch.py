@@ -6,6 +6,13 @@ Quick, Draw! chairs (Google, CC BY 4.0) with 8 seeds, and on cats with 5. At 20 
 weights differ. This module holds the pure parts: the design, the noise, inverse-CDF sampling, the statistics
 across seeds, and helpers for the animation. Training is scripts/plato_sketch_seeds.py; the analysis is
 scripts/plato_sketch_analyze.py.
+
+Its chairs were recognizable to DINOv2 but rough to the eye, so the plan's addendum adds a stronger learner, the
+one chosen for the animation: the same decoder with 2,048 units, trained on all 203,324 recognized chairs for
+102,400 steps (BIG; scripts/plato_sketch_big.py), 4 seeds, the narrowing test on the 3 seeds trained after the
+addendum (MODELS["big"]). Pilots it was chosen over: a pixel diffusion model (DIFF; scripts/plato_sketch_diffusion.py)
+and, as a ceiling, Magenta's pretrained Sketch-RNN chair (scripts/plato_sketch_magenta.py); compared in
+scripts/plato_sketch_compare.py.
 """
 from __future__ import annotations
 
@@ -25,6 +32,34 @@ BOOT_SEED = 20261027
 LAST3 = [12800, 19200, 25600]
 ANIM = {"seed": 1, "temp": 1.0, "n": 16}  # the animation: seed 1, temperature 1, noise indices 0-15
 QUICKDRAW_CREDIT = "Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0"
+
+# The stronger learner (scripts/plato_sketch_big.py): the small model's architecture with 2,048 units, trained on
+# every recognized Quick, Draw! chair except the 200 reference chairs. Its checkpoints extend the small model's.
+BIG = {"hidden": 2048, "random_scale": 0.15, "lr_decay": 0.9999, "min_lr": 1e-5,
+       "n_samples": 200, "temps": [1.0, 0.8, 0.6, 0.4, 0.2],
+       "steps": STEPS + [38400, 51200, 76800, 102400]}
+# Pilot (b), scripts/plato_sketch_diffusion.py: a small pixel diffusion model on the same chairs, rendered as the
+# site renders people's drawings and shrunk to side x side.
+DIFF = {"side": 64, "base": 64, "batch": 128, "lr": 2e-4, "warmup": 200, "ema": 0.9995, "ddim_steps": 50,
+        "n_samples": 200, "steps": STEPS + [38400, 51200]}
+
+# What the pre-registered analysis (scripts/plato_sketch_analyze.py --model ...) reads for each model. The small
+# model is the original plan; the larger one is the plan's addendum: seed 1 is the pilot, whose drawings and
+# measures were seen before the addendum was written, so the test uses the fresh seeds 2-4 ("test_seeds").
+MODELS = {
+    "small": {"dir": "seeds", "run": "{concept}_s{seed}", "seeds": SEEDS, "test_seeds": SEEDS, "steps": STEPS,
+              "temps": TEMPS, "primary_temp": PRIMARY_TEMP, "last3": LAST3, "anim": ANIM, "public_key": "sketch_seeds",
+              "plan": "docs/plato_sketch_plan.md", "model": "LSTM 512, 20,000 chairs, 25,600 steps"},
+    "big": {"dir": "big", "run": "big_s{seed}", "seeds": {"chair": [1, 2, 3, 4]}, "test_seeds": {"chair": [2, 3, 4]},
+            "steps": BIG["steps"], "temps": BIG["temps"], "primary_temp": PRIMARY_TEMP, "last3": BIG["steps"][-3:],
+            "anim": {"seed": 1, "temp": 0.4, "n": 16}, "public_key": "sketch_big",
+            "plan": "docs/plato_sketch_plan.md (addendum: a stronger model)",
+            "model": "LSTM 2,048, 203,324 chairs, 102,400 steps"},
+}
+
+
+def model_run_name(model: str, concept: str, seed: int) -> str:
+    return MODELS[model]["run"].format(concept=concept, seed=seed)
 
 
 def run_name(concept: str, seed: int) -> str:

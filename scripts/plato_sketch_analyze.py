@@ -1,14 +1,15 @@
 """Watch an AI learn what a chair is: the pre-registered analysis (docs/plato_sketch_plan.md).
 
-Usage: python -I scripts/plato_sketch_analyze.py [--reps 2000] [--public public_data/plato_lifespan.json]
+Usage: python -I scripts/plato_sketch_analyze.py [--model small|big] [--reps 2000] [--public public_data/plato_lifespan.json]
 
-Reads the GPU runs copied to $PLATO_LIFESPAN_DIR/sketch/seeds/ (runs/<concept>_s<seed>/{emb,meta.json} and
-ref/), and the adult (Quick, Draw!) prototypes of the 21 candidates in $PLATO_DIR/embeddings/human/. Per seed x
+--model small (default) is the original plan: the GPU runs copied to $PLATO_LIFESPAN_DIR/sketch/seeds/
+(runs/<concept>_s<seed>/{emb,meta.json} and ref/). --model big is the plan's addendum, the larger Sketch-RNN in
+sketch/big/ (runs/big_s<seed>/, ref/); its test uses the fresh seeds only (plato_sketch.MODELS). Also reads the adult (Quick, Draw!) prototypes of the 21 candidates in $PLATO_DIR/embeddings/human/. Per seed x
 checkpoint x temperature: recognizable, distance to the adult prototype, spread (matched n = 16), spread minus
 the 1,000 training drawings'. Across seeds: mean and 95% t-interval. The primary test (P1) and its relatives use
 the two-level bootstrap as well (seeds, then drawings, plus the reference's drawings; 2,000 replicates).
-Writes sketch/seeds/results.json and, with --public, the "sketch_seeds" block of the page's statistics file
-(group-level numbers only: no drawings, no embeddings).
+Writes sketch/<dir>/results.json and, with --public, the model's block ("sketch_seeds" or "sketch_big") of the
+page's statistics file (group-level numbers only: no drawings, no embeddings).
 """
 import argparse
 import json
@@ -21,11 +22,11 @@ import numpy as np  # noqa: E402
 
 from metalesionlab.plato import DINO_MODEL, PLATO_DIR, ci, cosine_distances, to_jsonable  # noqa: E402
 from metalesionlab.plato_lifespan import CANDIDATES, LIFESPAN_DIR, matched_spread, proto_distances, prototype, recognized  # noqa: E402
-from metalesionlab.plato_sketch import (ANIM, BOOT_SEED, LAST3, N_REF, PRIMARY_TEMP, QUICKDRAW_CREDIT, SEEDS, STEPS,  # noqa: E402
-                                        TEMPS, boot_counts, boot_spread, run_name, sample_name, t_interval,
-                                        two_level_delta, verdict)
+from metalesionlab.plato_sketch import (BOOT_SEED, MODELS, N_REF, QUICKDRAW_CREDIT, boot_counts, boot_spread,  # noqa: E402
+                                        model_run_name, sample_name, t_interval, two_level_delta, verdict)
 
-SEEDS_DIR = LIFESPAN_DIR / "sketch" / "seeds"
+SEEDS_DIR = LIFESPAN_DIR / "sketch" / "seeds"  # the small model's runs; main() sets the model
+CFG_NAME, CFG = "small", MODELS["small"]
 MEASURES = ["recog", "d_adult", "spread", "delta"]
 MIN_N = 16  # a set needs 16 drawings for the matched spread, as in the lifespan analysis
 
@@ -70,7 +71,8 @@ def test_block(seed_vals: dict, seed_boots: dict, ref_spread: float, ref_boot: n
 
 
 def analyze_concept(concept: str, M: Measurer, Mp: Measurer, refs_public: dict) -> dict | None:
-    runs = {s: SEEDS_DIR / "runs" / run_name(concept, s) for s in SEEDS[concept]}
+    STEPS, TEMPS, LAST3, PRIMARY_TEMP = CFG["steps"], CFG["temps"], CFG["last3"], CFG["primary_temp"]
+    runs = {s: SEEDS_DIR / "runs" / model_run_name(CFG_NAME, concept, s) for s in CFG["seeds"][concept]}
     runs = {s: p for s, p in runs.items() if (p / "emb").exists()}
     ref_path = SEEDS_DIR / "ref" / f"{concept}_train{N_REF}.npz"
     if not runs or not ref_path.exists():
@@ -149,6 +151,21 @@ def analyze_concept(concept: str, M: Measurer, Mp: Measurer, refs_public: dict) 
             {s: float(np.mean([per[s][temp][st]["spread"] for st in LAST3])) for s in ok3},
             {s: np.mean([boots[(s, temp, st)] for st in LAST3], axis=0) for s in ok3}, ref_row["spread"], ref_boot, rng)
     okp = [s for s in runs if (s, PRIMARY_TEMP, last) in boots]
+    fresh = [s for s in CFG["test_seeds"][concept] if s in runs]
+    tests_all = None
+    if fresh != list(runs) and len(fresh) >= 2:  # the addendum: the tests use the fresh seeds; all seeds alongside
+        # (with fewer than 2 fresh runs, e.g. while they train, the tests stay over all runs: provisional only)
+        tests_all, tests = tests, {}
+        for temp in TEMPS:
+            ok = [s for s in fresh if (s, temp, last) in boots]
+            tests[f"t{temp}"] = {"last": test_block({s: per[s][temp][last]["spread"] for s in ok},
+                                                    {s: boots[(s, temp, last)] for s in ok}, ref_row["spread"], ref_boot, rng)}
+            ok3 = [s for s in fresh if all((s, temp, st) in boots for st in LAST3)]
+            tests[f"t{temp}"]["last3"] = test_block(
+                {s: float(np.mean([per[s][temp][st]["spread"] for st in LAST3])) for s in ok3},
+                {s: np.mean([boots[(s, temp, st)] for st in LAST3], axis=0) for s in ok3}, ref_row["spread"], ref_boot, rng)
+        okp = [s for s in okp if s in fresh]
+        boots_p = {s: b for s, b in boots_p.items() if s in fresh}
     robust = {
         "roundtrip_reference": test_block({s: per[s][PRIMARY_TEMP][last]["spread"] for s in okp},
                                           {s: boots[(s, PRIMARY_TEMP, last)] for s in okp}, rt_row["spread"], rt_boot, rng),
@@ -169,7 +186,9 @@ def analyze_concept(concept: str, M: Measurer, Mp: Measurer, refs_public: dict) 
             narrower_from = st
             break
 
-    return {"concept": concept, "seeds": sorted(runs), "n_train": {str(s): meta[s].get("n_train") for s in runs},
+    return {"concept": concept, "seeds": sorted(runs), "test_seeds": fresh,
+            **({"tests_all_seeds": tests_all} if tests_all else {}),
+            "n_train": {str(s): meta[s].get("n_train") for s in runs},
             "train_seconds": {str(s): meta[s].get("seconds") for s in runs},
             "reference": {**ref_row, "n_drawings": N_REF, "roundtrip": {**rt_row, "spread_ci95": ci(rt_boot)},
                           "patch_mean_spread": rp_row["spread"]},
@@ -208,23 +227,30 @@ def public_refs(pub: dict, concept: str) -> dict:
 
 
 def main():
+    global SEEDS_DIR, CFG, CFG_NAME
     ap = argparse.ArgumentParser()
+    ap.add_argument("--model", choices=sorted(MODELS), default="small")
     ap.add_argument("--reps", type=int, default=2000)
-    ap.add_argument("--out", type=Path, default=SEEDS_DIR / "results.json")
-    ap.add_argument("--public", type=Path, help="update the sketch_seeds block of this statistics file")
+    ap.add_argument("--out", type=Path, help="default: sketch/<model dir>/results.json")
+    ap.add_argument("--public", type=Path, help="update this model's block of this statistics file")
     args = ap.parse_args()
+    CFG_NAME, CFG = args.model, MODELS[args.model]
+    SEEDS_DIR = LIFESPAN_DIR / "sketch" / CFG["dir"]
+    args.out = args.out or SEEDS_DIR / "results.json"
+    STEPS, TEMPS, ANIM = CFG["steps"], CFG["temps"], CFG["anim"]
     rng = np.random.default_rng(BOOT_SEED)
     M = Measurer("cls", rng, args.reps)
     Mp = Measurer("patch_mean", rng, args.reps)
     pub_path = args.public or Path(__file__).resolve().parents[1] / "public_data" / "plato_lifespan.json"
     pub = json.loads(pub_path.read_text()) if pub_path.exists() else {}
     res = {"experiment": "Watch an AI learn what a chair is: the sketch model across seeds and temperatures",
-           "plan": "docs/plato_sketch_plan.md", "embedding_model": DINO_MODEL, "reps": args.reps, "steps": STEPS,
-           "temps": TEMPS, "primary_temp": PRIMARY_TEMP, "n_samples": 200, "n_reference": N_REF,
+           "plan": CFG["plan"], "model": CFG["model"], "embedding_model": DINO_MODEL, "reps": args.reps,
+           "steps": STEPS, "temps": TEMPS, "primary_temp": CFG["primary_temp"], "n_samples": 200, "n_reference": N_REF,
+           "batch": 100,  # drawings per training step, for both models (so step x 100 = chairs seen)
            "credits": {"drawings": QUICKDRAW_CREDIT, "model": "Sketch-RNN design: Ha & Eck (2017)",
                        "embedding": "Meta DINOv2, Apache-2.0"},
-           "embedding_check": embedding_check(), "concepts": {}}
-    for concept in SEEDS:
+           "embedding_check": embedding_check() if args.model == "small" else None, "concepts": {}}
+    for concept in CFG["seeds"]:
         block = analyze_concept(concept, M, Mp, public_refs(pub, concept))
         if block:
             res["concepts"][concept] = block
@@ -241,7 +267,7 @@ def main():
     print(f"wrote {args.out}")
     report(res)
     if args.public:
-        pub["sketch_seeds"] = no_nan(to_jsonable(public_block(res)))
+        pub[CFG["public_key"]] = no_nan(to_jsonable(public_block(res)))
         args.public.write_text(json.dumps(to_jsonable(pub), indent=1))
         print(f"updated {args.public}")
 
@@ -276,17 +302,21 @@ def report(res: dict):
         print(f"\n{concept.upper()} ({len(b['seeds'])} seeds). Training drawings: spread {r['spread']:.3f} "
               f"{[round(v, 3) for v in r['spread_ci95']]} recog {r['recog']:.2f} d_adult {r['d_adult']:.3f}; "
               f"round trip spread {r['roundtrip']['spread']:.3f}; strokes {r['strokes']:.1f} points {r['points']:.1f}")
-        for temp in TEMPS:
+        for temp in res["temps"]:
             c = b["curves"][f"t{temp}"]
-            print(f"  T={temp}: step " + " ".join(f"{s:>6}" for s in STEPS))
+            print(f"  T={temp}: step " + " ".join(f"{s:>6}" for s in res["steps"]))
             for m in ("recog", "d_adult", "spread", "delta", "n"):
                 print(f"    {m:8s}" + " ".join(f"{v:6.3f}" if v == v else "   nan" for v in c[m]["mean"]))
-        for temp in TEMPS:
-            for which in ("last", "last3"):
-                t = b["tests"][f"t{temp}"][which]
-                print(f"  T={temp} {which:5s}: spread {t['model_spread']:.3f} vs {t['ref_spread']:.3f}; delta "
-                      f"{t['mean_delta']:+.4f} t {[round(v, 4) for v in t['t_ci95']]} boot "
-                      f"{[round(v, 4) for v in t['boot_ci95']]}; {t['n_below_0']}/{t['n_seeds']} below 0 -> {t['verdict']}")
+        for key in ("tests", "tests_all_seeds"):
+            if key not in b:
+                continue
+            print(f"  {key}:")
+            for temp in res["temps"]:
+                for which in ("last", "last3"):
+                    t = b[key][f"t{temp}"][which]
+                    print(f"  T={temp} {which:5s}: spread {t['model_spread']:.3f} vs {t['ref_spread']:.3f}; delta "
+                          f"{t['mean_delta']:+.4f} t {[round(v, 4) for v in t['t_ci95']]} boot "
+                          f"{[round(v, 4) for v in t['boot_ci95']]}; {t['n_below_0']}/{t['n_seeds']} below 0 -> {t['verdict']}")
         for name, t in b["robustness"].items():
             print(f"  robust {name}: delta {t['mean_delta']:+.4f} t {[round(v, 4) for v in t['t_ci95']]} boot "
                   f"{[round(v, 4) for v in t['boot_ci95']]} {t['n_below_0']}/{t['n_seeds']} -> {t['verdict']}")

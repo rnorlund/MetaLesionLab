@@ -219,3 +219,26 @@ def test_sketch_seeds_block_is_group_level_and_complete():
     assert a["seed"] == 1 and a["temp"] == 1.0 and len(a["spread"]) == len(STEPS)
     text = json.dumps(d)
     assert "NaN" not in text and '"drawing"' not in text and '"strokes": [' not in text
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_lifespan.json not written yet")
+def test_sketch_big_block_is_group_level_and_follows_the_addendum():
+    d = json.loads(PUBLIC.read_text()).get("sketch_big")
+    if d is None:
+        pytest.skip("no larger-model results yet")
+    from metalesionlab.plato_sketch import MODELS
+
+    cfg = MODELS["big"]
+    assert d["steps"] == cfg["steps"] and d["temps"] == cfg["temps"] and "addendum" in d["plan"] and d["batch"] == 100
+    ch = d["concepts"]["chair"]
+    assert ch["seeds"] == cfg["seeds"]["chair"] and ch["test_seeds"] == cfg["test_seeds"]["chair"]  # all runs in
+    for t in cfg["temps"]:
+        assert all(len(ch["curves"][f"t{t}"][m]["mean"]) == len(cfg["steps"]) for m in ("recog", "d_adult", "spread", "delta"))
+        last = ch["tests"][f"t{t}"]["last"]
+        assert last["n_seeds"] == len(cfg["test_seeds"]["chair"]) and last["verdict"] in ("narrower", "null", "wider")
+        assert ch["tests_all_seeds"][f"t{t}"]["last"]["n_seeds"] == len(cfg["seeds"]["chair"])
+    assert "runs" not in ch
+    a = d["animation"]
+    assert a["seed"] == cfg["anim"]["seed"] and a["temp"] == cfg["anim"]["temp"] and len(a["recog"]) == len(cfg["steps"])
+    text = json.dumps(d)
+    assert "NaN" not in text and '"drawing"' not in text and '"strokes": [' not in text
