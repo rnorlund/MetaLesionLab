@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Damage the painter · {{BRAND}}</title>
-<meta name="description" content="Damage the language part of an AI that draws and it loses what it is drawing: a rocking chair wanders into a room, a car or a person, never back to the plain chair. Damage its drawing part and the lines dissolve while the kind survives more often. An experiment on Stable Diffusion XL, Meta’s Muse Glimmer and Janus-Pro.">
+<meta name="description" content="Damage the language part of an AI that draws and it loses what it is drawing: a rocking chair wanders into a room, a car or a person, never back to the plain chair. Damage its drawing part and the kind survives more often; the planned split held only in part. An experiment on Stable Diffusion XL, Meta’s Muse Glimmer and Janus-Pro.">
 <meta property="og:title" content="Damage the painter: what happens to the Form when the mind is damaged? · {{BRAND}}">
-<meta property="og:description" content="Damage an AI’s language part and a rocking chair turns into a car, never back into the plain chair. Damage its drawing part and the lines dissolve instead.">
+<meta property="og:description" content="Damage an AI’s language part and a rocking chair turns into a car, never back into the plain chair. Damage its drawing part and the kind survives more often.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,10 +25,11 @@
 
 <section class="pd-hero" aria-labelledby="hero-h">
   <div class="pd-hero-text">
-    <a class="pd-back" href="/plato">← Plato’s Chair</a>
-    <span class="pd-kicker">An experiment on three AI models</span>
-    <h1 id="hero-h">Plato’s Chair, damaged</h1>
-    <p class="pd-lede">Plato said every real chair copies one ideal Form. An AI that draws has a part that reads the words and a part that draws. We damaged each part, step by step, and asked it for a rocking chair.</p>
+    <div class="title-pair">
+      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to the Form when the mind is damaged? · our own question · <a href="/plato">Plato series</a></span></p>
+      <h1 id="hero-h">Plato’s Chair, damaged</h1>
+    </div>
+    <p class="pd-lede">Plato said every real chair copies one ideal Form. An AI that draws (here Stable Diffusion XL) has a part that reads the words and a part that draws. We damaged each part, step by step, and asked it for a rocking chair.</p>
     <p class="pd-answer" id="hero-answer">Damage the language part and it loses <b>what</b> it is drawing: the rocking chair becomes a room, a car, a person, never the plain chair. Damage the drawing part and it loses <b>how</b>: the lines dissolve, and the rocking chair survives more often. The planned split held only in part (see “The Form or the hand”).</p>
   </div>
 
@@ -75,7 +76,7 @@
 
 <section class="pd-sec" aria-labelledby="proto-h">
   <h2 id="proto-h">Does it go back to Plato’s chair?</h2>
-  <p class="pd-intro">In semantic dementia, people’s drawings lose the details that make a thing special and drift toward the typical member of its category: a duck gets four legs (Bozeat and colleagues, 2003). We predicted the same here: a damaged language part should turn the rocking chair back into the plain chair.</p>
+  <p class="pd-intro">In semantic dementia, people’s drawings lose the details that make a thing special and drift toward the typical member of its category: a duck gets four legs (Bozeat and colleagues, 2003). Taking that as an analogy, not a claim about people, we predicted the same here: a damaged language part should turn the rocking chair back into the plain chair.</p>
   <div class="pd-proto" id="proto"></div>
   <div class="pd-names" id="names"></div>
 </section>
@@ -94,7 +95,7 @@
 
 <section class="pd-sec" aria-labelledby="clock-h">
   <h2 id="clock-h">Clocks</h2>
-  <p class="pd-intro">Drawing a clock is an old drawing task in neurology. We asked SDXL for “a simple clock face showing” six different times, intact and damaged, and had Muse Spark read each clock with a checklist we wrote (outline, the 12 numbers in order, two hands, the time shown).</p>
+  <p class="pd-intro">Drawing a clock is an old drawing task in neurology; here it is only an analogy. We asked SDXL for “a simple clock face showing” six different times, intact and damaged, and had Muse Spark read each clock with a checklist we wrote (outline, the 12 numbers in order, two hands, the time shown).</p>
   <div class="pd-clocks" id="clocks"></div>
 </section>
 
@@ -102,7 +103,7 @@
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
     <li><b>The drawer.</b> Stable Diffusion XL base 1.0, on a lab GPU. Its language part is its two text encoders (CLIP ViT-L and OpenCLIP bigG); its drawing part is the UNet. Damage is reversible: hooks change the neurons’ signals on the way through, never the weights.</li>
-    <li><b>Damage.</b> Either a share of the neurons switched off (cumulative: a higher level keeps every neuron a lower one switched off), or Gaussian noise added to every neuron, scaled to each neuron’s normal range. The same seed at every level makes the pictures pairs.</li>
+    <li><b>Damage.</b> Either a share of the neurons switched off (cumulative: a higher level keeps every neuron a lower one switched off), or Gaussian noise added to every neuron, scaled to each neuron’s usual range. The same seed at every level makes the pictures pairs.</li>
     <li><b>Matched severity.</b> The two parts break at different doses, so they are compared at equal amounts of picture change (DINOv2 distance to the intact twin), not at equal doses.</li>
     <li><b>Readers are models.</b> Muse Glimmer judges the kind and the drawing style; Muse Spark reads the clocks; DINOv2 measures similarity. Each can be wrong, and a picture of “a throne” can be a fine drawing of a chair that Glimmer calls plain.</li>
     <li><b>An analogy, not a claim about people.</b> This is a model of how damage to parts of an AI changes its drawings. The link to semantic dementia and to clock drawing is an analogy; nothing here says anything about any person.</li>

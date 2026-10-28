@@ -144,6 +144,7 @@
         h('span', { class: 'lab-card-cat', text: item.category }),
         h('a', { class: 'lab-card-title', href: href, tabindex: tab, draggable: 'false' }, item.title),
         h('span', { class: 'lab-card-cap', title: item.caption, text: item.caption }),
+        item.credit ? h('span', { class: 'lab-card-credit', title: item.credit, text: item.credit }) : null,  // e.g. Quick, Draw! (CC BY 4.0)
         h('a', { class: 'lab-card-go', href: item.link, tabindex: tab, draggable: 'false' }, ['See the experiment', h('span', { 'aria-hidden': 'true', text: ' →' })])
       ])
     ]);

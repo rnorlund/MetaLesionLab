@@ -9,7 +9,6 @@
 /* the page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its header
    lines up with every other page */
 .tp main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.tp-hero .kicker-q a { color: inherit; }
 .tp-note { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; max-width: 90ch; }
 .tp-sub { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 

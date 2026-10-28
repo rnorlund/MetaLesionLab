@@ -62,7 +62,9 @@
 
   // --- the steps: Socrates asks (q), then points (p) -----------------------------------------------
   var STEPS = [
-    { page: '/', url: '/', id: 'ask', target: '#hero-draw', face: 'questioning', kicker: 'Is there one ideal chair?', blind: true,
+    { page: '/', url: '/', id: 'ask', target: '#hero-draw', face: 'questioning',
+      // on a phone the caption sheet covers the bottom of the screen: light up the pad and its buttons, not the whole hero
+      phoneTarget: ['#canvas-wrap', '#hero-draw .dw-actions'], kicker: 'Is there one ideal chair?', blind: true,
       skip: function () { return !landingPad(); },
       q: 'Before I tell you anything: what is a chair? Draw one, and we’ll see.',
       p: function () {
@@ -93,7 +95,7 @@
 
     { page: '/plato', url: '/plato#everything', face: 'questioning', kicker: 'Not just chairs', target: '#rank-chart', before: platoReady, skip: noPlato,
       q: 'Was it only the chair, or does the machine do this with everything?',
-      p: 'We tried 35 things. Each dot is one; left of the line, Muse Image drew it more alike than people did. That’s 34 of 35, typically about half as varied (0.49). Umbrellas are the most uniform; books, the one exception.' },
+      p: 'We tried 35 things. Each dot is one; left of the line, Muse Image drew it more alike than people did. That’s 34 of 35, typically about half as varied (0.49). Umbrellas are the most uniform as DINOv2 sees it (other vision models rank them differently); books, the one exception.' },
 
     { page: '/plato', url: '/plato#variety', face: 'pointing', kicker: 'Can you talk it out of the chair?', target: '#var-fig', before: platoReady,
       skip: function () { var d = P(); return !d || !d.variety || !d.variety.conditions || !d.variety.conditions.listed; },
@@ -193,7 +195,7 @@
   }
 
   function targetsFor(step) {
-    var t = val(step.target);
+    var t = phone() && step.phoneTarget ? val(step.phoneTarget) : val(step.target);
     if (!t) return [];
     return [].concat(t).map(function (sel) { return q(sel); }).filter(visible);
   }

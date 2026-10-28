@@ -1,8 +1,6 @@
 /* Inside the model (/plato/inside). Paper like the other Plato pages; blue = Muse Image's doodles, orange = people's. */
 body.plato-inside { background: #F7F6F1; }
 .plato-inside main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.pi-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
-.pi-back { font-size: 14px; text-decoration: none; }
 
 /* hero */
 .pi-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px);

@@ -397,7 +397,7 @@
   {
    "id": "damage-janus-wheelchair",
    "title": "Janus’s wheelchair becomes a tricycle, then a car",
-   "caption": "Janus-Pro-7B reads and draws with one language model. Switch off 20%, 35% and 50% of its neurons and the wheelchair becomes a tricycle, a trike, then a car.",
+   "caption": "Janus-Pro-7B reads and draws with one language model. Switch off 20%, 35% and 50% of its language model’s neurons and the wheelchair becomes a tricycle, a trike, then a car.",
    "category": "Watch it degrade",
    "link": "/plato/damage#janus-sec",
    "thumb": "/static/img/gallery/damage-janus-wheelchair.webp",

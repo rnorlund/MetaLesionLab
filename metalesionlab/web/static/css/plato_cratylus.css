@@ -6,8 +6,6 @@ body.cratylus { background: #F7F6F1; }
 .ck-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px); display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr); gap: 24px clamp(36px, 4vw, 112px); align-items: start; }
 .ck-hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.ck-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
-.ck-kicker a { color: var(--orange-dark); }
 .ck-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
 .ck-lede { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .ck-hero figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
@@ -67,6 +65,7 @@ body.cratylus { background: #F7F6F1; }
 .ck-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px;
   font-size: 12px; line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 280px; }
 .ck-tip b { font-size: 14px; }
+.ck-numbers { max-width: 100%; overflow-x: auto; }  /* the words table scrolls inside its column on a phone */
 .ck-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 6px 0; font-size: 14px; }
 .ck-numbers table { margin-top: 8px; font-size: 14px; border-collapse: collapse; }
 .ck-numbers th, .ck-numbers td { padding: 4px 10px; border-bottom: 1px solid var(--line); text-align: left; }
@@ -84,6 +83,6 @@ body.cratylus { background: #F7F6F1; }
   .ck-method li { break-inside: avoid; margin-bottom: 10px; }
 }
 @media (max-width: 900px) {
-  .ck-hero, .ck-two, .ck-try { grid-template-columns: 1fr; }
+  .ck-hero, .ck-two, .ck-try { grid-template-columns: minmax(0, 1fr); }
   .ck-hero, .ck-sec { padding: 22px 16px; }
 }

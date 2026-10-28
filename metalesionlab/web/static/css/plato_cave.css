@@ -8,8 +8,9 @@ body.cave { background: #F7F6F1; }
 .cv-hero { background: #17110c; color: #f3e9da; border-radius: 16px; padding: clamp(32px, 2.5vw, 64px); display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); gap: 28px clamp(36px, 4vw, 112px); align-items: center; }
 .cv-hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.cv-kicker { font-family: var(--mono); font-size: 12px; color: #f0a35e; letter-spacing: 0.02em; }
-.cv-kicker a { color: #f0a35e; }
+/* the shared title kicker (app.css), lit by the fire on the dark wall */
+.cv-hero .title-kicker { color: #f0a35e; }
+.cv-hero .title-kicker .kicker-q { color: #d9cbb6; }
 .cv-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; color: #fff7ec; }
 .cv-lede { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.55; color: #e8dccb; max-width: var(--measure); }
 .cv-hero figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }

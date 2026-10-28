@@ -6,10 +6,10 @@
 
 Plato held that each kind of thing has one ideal Form, and every real one is a copy. We put his questions to Meta's AI and to people. The first one: *is there one ideal chair?* We asked Meta's image model, Muse Image, for 16 quick doodles of a chair and of 34 other things, took 200 people's 20-second drawings of the same words from Google's Quick, Draw!, and measured how varied each set is with Meta's DINOv2 vision model.
 
-The series follows the life of a chair, as an analogy: children's drawings move toward the adult chair from age 2 to 10, a small model trained on people's chairs grows from scribbles to adult-like chairs, and damage to an image model's language part makes its chair wander off into other things, much as drawings lose their distinctive features in some brain diseases (Bozeat et al. 2003; published neurology, not our data).
+The series follows the life of a chair, as an analogy: children's drawings move toward the adult chair from age 2 to 10, a small model trained on people's chairs grows from scribbles to adult-like chairs, and damage to an image model's language part makes its chair wander off into other things. In semantic dementia, people's drawings instead lose their distinctive features and drift toward the typical member of the kind (Bozeat et al. 2003; published neurology, not our data); the damaged model did not do that.
 
-- **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/plato/inside` (Muse Glimmer's 52 layers, one by one), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
-- **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md).
+- **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/plato/inside` (Muse Glimmer's 52 layers, one by one), `/plato/gallery` (the pictures the experiments made), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
+- **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), [docs/plato_robustness.md](docs/plato_robustness.md) (three other vision models), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md) (with [the sketch model's 8 runs](docs/plato_sketch.md)), [atlas](docs/plato_atlas.md), [telephone](docs/plato_telephone.md).
 
 ## What we found
 
@@ -20,6 +20,7 @@ The series follows the life of a chair, as an analogy: children's drawings move 
 | **Naming the kinds works** | When Muse Spark lists 16 kinds and Muse Image draws one of each, the drawings are **1.30 times** as varied as people's. Muse knows the variety: its narrow chair is a default, and it varies when asked. |
 | **People draw the plain chair too** | **83%** of people's recognizable drawings show the plain, ordinary kind (Muse Glimmer's labels, all 35 things), the same share as Muse Image's usual prompt. People's extra variety is mostly *how* they draw a thing, not *which* one. |
 | **It's Muse, not all AI** | From the same prompt, Stable Diffusion XL's drawings vary about **2.4 times** as much as Muse Image's, more for 34 of 35 things. Much of that is drawing style (frames, shading, scenes), not different objects. |
+| **Not just DINOv2** | Measured again with DINOv2-large, Meta's Perception Encoder and Google's SigLIP 2, Muse Image is still more uniform than people (median ratio 0.29–0.49; 34 or 35 of 35 things) and than SDXL. Which things are flattened most (umbrella first) is DINOv2's view, and the weak link between how varied people's drawings and Muse's are (rho 0.38) does not hold up in the other models ([docs/plato_robustness.md](docs/plato_robustness.md)). |
 | **Inside the model** | Shown both sets of doodles, Muse Glimmer files Muse Image's doodles of a thing in essentially one place by its last layers (average spread 0.09), while people's stay spread out (0.54); people's are more spread out for 35 of 35 things. Things people draw in more ways are harder for it to name (rank correlation −0.50). |
 
 Caveats, in short: one prompt style, 12–16 AI pictures per thing, and a style gap (clean marker sketches against quick mouse drawings), which is why the ranking across things matters more than the exact ratio. The kind labels are a model's reading, checked on pictures whose kind we knew. Everything is in [docs/plato.md](docs/plato.md).
@@ -36,7 +37,7 @@ Quotations are from Benjamin Jowett's public-domain translation, as published by
 
 Each experiment puts one of Plato's questions to an AI and to people. The site shows a card for each page once it is served (`metalesionlab/web/site.py`).
 
-All seven are done; each write-up gives its pre-registered predictions, including the ones that failed.
+All nine are done; each write-up gives its pre-registered predictions, including the ones that failed.
 
 | Plato's question | Where he asks it | Page | What we found |
 |---|---|---|---|
@@ -46,7 +47,9 @@ All seven are done; each write-up gives its pre-registered predictions, includin
 | Do names fit things by nature? | *Cratylus* (bouba and kiki) | `/plato/cratylus` | Muse Image drew every "kiki" spiky and every "bouba" round, but new words with kiki's sounds ("keti", "tepi") came out round: it knows the famous answer, not the rule. Muse Spark follows the consonants as people do; Glimmer barely separates bouba from kiki. ([doc](docs/plato_cratylus.md)) |
 | Is there one best example of a kind? | The Forms, with Wittgenstein and Rosch | `/plato/bird` | Muse Spark's favourite answer takes 90% of its answers across 117 categories, people's 48% ("name a bird": sparrow 49 of 50; 20 people gave 11 birds). Glimmer's own probabilities are as varied as people's. The predicted larger gap for abstract categories was absent. ([doc](docs/plato_bird.md)) |
 | What happens to the Form when the mind is damaged? | Our own question | `/plato/damage` | Damage to Stable Diffusion XL's language part loses the asked kind faster than damage to its drawing part (−12 points [−20, −4]); the "how" half held for noise but reversed for neurons switched off, so the double dissociation is only partly supported. Chairs move away from the plain chair, never back to it. Damaged Glimmer's fallback to "a plain, ordinary" kind is generic: random neurons do the same. ([doc](docs/plato_damage.md)) |
-| Is learning remembering the Forms? | *Meno* | `/plato/lifespan` | Children's drawings move toward adults' from age 2 to 10 (recognizable 39% → 72%). Stable Diffusion's training stages don't follow that path robustly; a small model trained on people's chairs does, and ends narrower than its data (spread 0.32 vs 0.37). ([doc](docs/plato_lifespan.md)) |
+| Is learning remembering the Forms? | *Meno* | `/plato/lifespan` | Children's drawings move toward adults' from age 2 to 10 (recognizable 39% → 72%). Stable Diffusion's training stages don't follow that path robustly; a small model trained on people's chairs does, and ends narrower than the chairs it learned from in all 8 runs (spread 0.32 vs 0.37); trained on cats, it doesn't. ([doc](docs/plato_lifespan.md), [8 runs](docs/plato_sketch.md)) |
+| Is every thing one Form, or only some? | *Republic* X | `/plato/atlas` | Muse Image drew 131 of 135 everyday things more alike than people (median ratio 0.53). On the 98 things drawn at random for the Atlas, both pre-registered tests passed: median 0.57, 95 of 98 below people. Stable Diffusion XL is not (median 1.17). The Atlas is also a benchmark: one script measures any image model the same way. ([doc](docs/plato_atlas.md)) |
+| What survives a copy of a copy? | *Republic* X, the painter's copy | `/plato/telephone` | Muse Spark describes a chair, Muse Image draws the description, ten times over. The chains drift apart (spread between starting chairs 0.61 → 0.73), not toward Muse's textbook chair; kinds' names go before "chair". Only the high chair fell into the textbook chair, when its tray was lost at the first redraw. ([doc](docs/plato_telephone.md)) |
 
 Also: **Draw a chair** (`/draw`, and the pad on the landing page). Visitors draw blind, in 20 seconds, like the Quick, Draw! players; then Muse Image's 16 chairs are revealed, and the drawing is measured the same way, on the server's CPU, against 200 people's. Drawings are processed in memory and never stored (an opt-in donation exists but is off by default: [docs/draw_donations.md](docs/draw_donations.md)). **Ask Socrates** (`/socrates`) is a Muse Spark agent that plays Socrates: it answers questions about the experiments from the real results, quotes Plato only from verified passages, and asks you one question back.
 
@@ -63,7 +66,7 @@ Also: **Draw a chair** (`/draw`, and the pad on the landing page). Visitors draw
 
 Code: `metalesionlab/plato.py`, `scripts/plato_*.py`, `metalesionlab/draw.py`; the `/plato` page reads statistics in `metalesionlab/web/data/plato.json` and small figures in `static/img/plato/` (written by `python scripts/plato_web_export.py`); figures with people's drawings keep their Quick, Draw! credit. `public_data/plato_*.json` hold derived statistics only. The full data folder (pictures, embeddings, raw results) lives outside the repository.
 
-> Research and teaching use only. Nothing here diagnoses anyone or gives medical or treatment advice.
+> Research and teaching use only. Nothing here is medical or treatment advice.
 
 ## Built during the Meta Global AI Developer Hackathon (Oct 26 – Nov 4, 2026)
 
@@ -97,6 +100,12 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 27 | Consistency pass: every number on the pages and in the docs checked against its source |
 | Oct 27 | Inside the model (`/plato/inside`): drag through Muse Glimmer's 52 layers and watch Muse Image's doodles of a thing collapse while people's stay spread out |
 | Oct 27 | Two sites from one codebase (`MLL_SITE`): Plato's Chair, and its sister project Tippa Lingua on its own landing page, each with only its own pages, nav and paid routes, and a per-site data bundle. The opening animation on Plato's landing page (the cave, ending on the Form chair, now the logo) |
+| Oct 27 | Socrates guides the tour and examines you (`/socrates?mode=examine`): his doodle portrait, a Socratic tour, the elenchus over hard cases from the experiments. On `/draw`, an SDXL strip after the reveal shows what damage does |
+| Oct 27 | Robustness of Plato's Chair (pre-registered): every picture re-measured with DINOv2-large, Meta's Perception Encoder and Google's SigLIP 2; the "Does it depend on DINOv2?" box on `/plato` |
+| Oct 27 | Plato's Telephone (`/plato/telephone`): describe-then-draw chains between Muse Spark and Muse Image, pre-registered |
+| Oct 27 | Watch an AI learn: the sketch model trained 8 times on chairs and 5 times on cats, at 3 temperatures, pre-registered ([docs/plato_sketch.md](docs/plato_sketch.md)) |
+| Oct 27 | The Atlas of Forms (`/plato/atlas`): 135 things, pre-registered, and `scripts/plato_benchmark.py`, which measures any image model the same way |
+| Oct 27 | The gallery (`/plato/gallery`) and the "From the lab" band on every Plato page; every page scales with the window; NOTICE file |
 
 ### Prior research context (not part of this submission)
 
@@ -104,7 +113,7 @@ The research question comes from the author's earlier work on simulating aphasia
 
 Built new during the hackathon:
 - everything on Meta's models (Muse Glimmer, Muse Spark, Muse Image, SAM 3.1, Muse Voice Transcribe, DINOv2),
-- Plato's Chair, the six other experiments of the series, Draw a chair and Ask Socrates,
+- Plato's Chair, the eight other experiments of the series, Inside the model, the gallery, Draw a chair and Ask Socrates,
 - the test-building and scoring tools for people (Tippa Lingua),
 - the word lens,
 - the Ask the Lab agent,
