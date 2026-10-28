@@ -5,6 +5,8 @@ Usage:
   python scripts/plato_phaedrus_run.py transcribe          every clip in $PLATO_PHAEDRUS_DIR/stimuli (resumable)
   python scripts/plato_phaedrus_run.py spark               Spark on every stressed clip's transcript, and the control
   python scripts/plato_phaedrus_run.py pilot               2 clips and 2 Spark calls into pilot/ (not analysed)
+  python scripts/plato_phaedrus_run.py retest              every clip transcribed again (added after the main run,
+                                                           to see whether the transcripts' stray words recur)
 
 Each clip gets 0.5 s of silence before and after (the synthetic voices start at once, and Voice Transcribe
 sometimes returns nothing for clips without a lead-in) and the language hint English. Spark gets the fixed
@@ -92,7 +94,8 @@ def transcribe_one(api: MetaAPI, budget: Budget, path: Path) -> dict:
 def spark_one(api: MetaAPI, budget: Budget, text: str, order: list[int]) -> dict:
     budget.check(0.003)
     prompt = P.build_prompt(text, order)
-    resp = api.chat([{"role": "user", "content": prompt}], reasoning_effort="minimal", ledger_tag="phaedrus")
+    resp = api.chat([{"role": "user", "content": prompt}], reasoning_effort="minimal", ledger_tag="phaedrus",
+                    timeout=90)  # one call hung for 10 minutes; the client retries a timeout
     usd = meta_api.token_cost(meta_api.CHAT_MODEL, resp.usage)
     budget.book("chat", usd)
     answer = (resp.choices[0].message.content or "").strip()
@@ -100,8 +103,8 @@ def spark_one(api: MetaAPI, budget: Budget, text: str, order: list[int]) -> dict
             "model": meta_api.CHAT_MODEL}
 
 
-def run_transcribe(root: Path, api: MetaAPI, budget: Budget) -> None:
-    out = root / "transcripts.jsonl"
+def run_transcribe(root: Path, api: MetaAPI, budget: Budget, name: str = "transcripts.jsonl") -> None:
+    out = root / name
     done = {(e["family"], e["voice"], e["clip"]) for e in jsonl(out)}
     for family, voice, name, path in tested_clips(root):
         if (family, voice, name) in done:
@@ -152,12 +155,15 @@ def run_pilot(root: Path, api: MetaAPI, budget: Budget) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("step", choices=["transcribe", "spark", "pilot"])
+    ap.add_argument("step", choices=["transcribe", "spark", "pilot", "retest"])
     ap.add_argument("--root", type=Path, default=P.PHAEDRUS_DIR)
     args = ap.parse_args()
     print(f"ledger {meta_api.LEDGER}: ${meta_api.spent():.4f}")
     api, budget = MetaAPI(), Budget(args.root)
-    {"transcribe": run_transcribe, "spark": run_spark, "pilot": run_pilot}[args.step](args.root, api, budget)
+    if args.step == "retest":  # added after the main run (a deviation): every clip transcribed a second time
+        run_transcribe(args.root, api, budget, "transcripts_retest.jsonl")
+    else:
+        {"transcribe": run_transcribe, "spark": run_spark, "pilot": run_pilot}[args.step](args.root, api, budget)
     print(f"this task: ${budget.mine():.4f}; ledger: ${meta_api.spent():.4f}")
 
 

@@ -1,0 +1,7241 @@
+{
+ "about": "Seven meanings (/plato/phaedrus): \"I never said she stole my money.\" spoken with each word stressed in 13 synthetic voices, written down by Meta's Voice Transcribe, read by Muse Spark from the transcript and from CAPITALS or italics, and read from the sound by a plain prosody reader. Pre-registered in docs/plato_phaedrus_plan.md; results in docs/plato_phaedrus.md. Written by scripts/plato_phaedrus_analyze.py.",
+ "license": "Our statistics, transcripts and model answers: Apache 2.0. The audio in plato_phaedrus_audio/ is Kokoro-82M's voice (hexgrad, Apache-2.0) with stress added by the WORLD vocoder (pyworld, MIT). The macOS and eSpeak NG clips are not included.",
+ "sentence": "I never said she stole my money.",
+ "words": [
+  "I",
+  "never",
+  "said",
+  "she",
+  "stole",
+  "my",
+  "money"
+ ],
+ "meanings": [
+  {
+   "word": "I",
+   "gloss": "Someone else said it, not me.",
+   "option": "Someone else said she stole the money; the speaker didn't."
+  },
+  {
+   "word": "never",
+   "gloss": "I didn't say it at all.",
+   "option": "The speaker flatly denies ever having said it."
+  },
+  {
+   "word": "said",
+   "gloss": "I implied it, but I didn't say it.",
+   "option": "The speaker may have hinted it, but didn't say it in words."
+  },
+  {
+   "word": "she",
+   "gloss": "Someone else stole it, not her.",
+   "option": "Someone stole the money, but it wasn't her."
+  },
+  {
+   "word": "stole",
+   "gloss": "She took it, but she didn't steal it; she borrowed it.",
+   "option": "She took the money, but didn't steal it (she borrowed it, say)."
+  },
+  {
+   "word": "my",
+   "gloss": "She stole someone else's money, not mine.",
+   "option": "She stole money, but someone else's, not the speaker's."
+  },
+  {
+   "word": "money",
+   "gloss": "She stole something of mine, but not money.",
+   "option": "She stole something of the speaker's, but not money."
+  }
+ ],
+ "prompt": "Someone said one sentence out loud and stressed one word to give it a particular meaning. Here is the sentence, written down:\n\n{text}\n\nWhich meaning did the speaker intend?\n{options}\n\nAnswer with the letter only.",
+ "models": {
+  "transcribe": "muse-voice-transcribe-1.0",
+  "spark": "muse-spark-1.3",
+  "spark_reasoning_effort": "minimal"
+ },
+ "families": {
+  "kokoro": {
+   "label": "Kokoro + WORLD focus",
+   "voices": [
+    "af_heart",
+    "am_michael",
+    "bf_emma",
+    "bm_george"
+   ]
+  },
+  "say": {
+   "label": "macOS say commands",
+   "voices": [
+    "Samantha",
+    "Daniel",
+    "Karen",
+    "Moira",
+    "Tessa",
+    "Rishi"
+   ]
+  },
+  "espeak": {
+   "label": "eSpeak NG emphasis",
+   "voices": [
+    "en-us",
+    "en-gb",
+    "en-us+f3"
+   ]
+  }
+ },
+ "focus": {
+  "accent_st": 5.0,
+  "gain_db": 4.0,
+  "stretch": 1.3,
+  "post_st": -2.0,
+  "post_range": 0.5,
+  "post_db": -2.0
+ },
+ "chance": 0.14285714285714285,
+ "cost_usd": {
+  "transcription": 0.0344,
+  "spark": 0.368
+ },
+ "h1": {
+  "voices_same_words": 1,
+  "voices": 13,
+  "passes": false,
+  "clips": 104,
+  "exact_canonical": 66,
+  "same_words_as_sentence": 81,
+  "kinds": {
+   "lower-case i": 18,
+   "no full stop": 7,
+   "words": 23,
+   "ends ','": 1,
+   "ends '..'": 1,
+   "ends '.!'": 1
+  },
+  "lower_case_i_by_clip": {
+   "neutral": 0,
+   "0_i": 0,
+   "1_never": 3,
+   "2_said": 3,
+   "3_she": 2,
+   "4_stole": 2,
+   "5_my": 3,
+   "6_money": 5
+  },
+  "word_changes_by_clip": {
+   "neutral": 2,
+   "0_i": 1,
+   "1_never": 4,
+   "2_said": 3,
+   "3_she": 3,
+   "4_stole": 1,
+   "5_my": 3,
+   "6_money": 6
+  },
+  "distinct_transcripts": [
+   [
+    "I never said she stole my money.",
+    66
+   ],
+   [
+    "I never never said she stole my money.",
+    10
+   ],
+   [
+    "i never said she stole my money.",
+    9
+   ],
+   [
+    "i never said she stole my money",
+    4
+   ],
+   [
+    "II never said she stole my money.",
+    3
+   ],
+   [
+    "iI never said she stole my money.",
+    1
+   ],
+   [
+    "i never never said she stole my money.",
+    1
+   ],
+   [
+    "II never said she stole my money,",
+    1
+   ],
+   [
+    "i never never said she stole my money",
+    1
+   ],
+   [
+    "I never said she stole my money..",
+    1
+   ],
+   [
+    "I never never said she stole my money.!",
+    1
+   ],
+   [
+    "I neverI never said she stole my money.",
+    1
+   ],
+   [
+    "I never said she stole my money",
+    1
+   ],
+   [
+    "i never said never said she stole my money.",
+    1
+   ],
+   [
+    "I never said said she stole my money.",
+    1
+   ],
+   [
+    "i never said said she stole my money.",
+    1
+   ],
+   [
+    "I never said she stole my money dot",
+    1
+   ]
+  ],
+  "lower_case_i_test": {
+   "neutral_or_I_stressed": [
+    0,
+    26
+   ],
+   "other_word_stressed": [
+    18,
+    78
+   ],
+   "fisher_p_two_sided": 0.0054
+  },
+  "retest": {
+   "clips": 104,
+   "identical_to_first": 37,
+   "same_words_as_first": 71,
+   "word_changes": [
+    23,
+    22,
+    7
+   ],
+   "lower_case_i": [
+    18,
+    33,
+    7
+   ],
+   "lower_case_i_retest_by_clip": {
+    "neutral": 4,
+    "0_i": 2,
+    "1_never": 4,
+    "2_said": 3,
+    "3_she": 5,
+    "4_stole": 6,
+    "5_my": 4,
+    "6_money": 5
+   },
+   "lower_case_i_test": {
+    "neutral_or_I_stressed": [
+     6,
+     26
+    ],
+    "other_word_stressed": [
+     27,
+     78
+    ],
+    "fisher_p_two_sided": 0.3359
+   },
+   "changed_words_retest_by_clip": {
+    "neutral": 2,
+    "0_i": 3,
+    "1_never": 3,
+    "2_said": 2,
+    "3_she": 3,
+    "4_stole": 3,
+    "5_my": 2,
+    "6_money": 4
+   }
+  }
+ },
+ "h2": {
+  "k": 9,
+  "n": 91,
+  "acc": 0.0989,
+  "ci": [
+   0.0462,
+   0.1795
+  ],
+  "p_above_chance": 0.9171,
+  "p_two_sided": 0.2933,
+  "ci_voices": [
+   0.0659,
+   0.1319
+  ],
+  "passes": true,
+  "choices": {
+   "I": 21,
+   "never": 59,
+   "said": 3,
+   "she": 7,
+   "money": 1
+  },
+  "no_answer": 0,
+  "confusion": [
+   [
+    2,
+    10,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    5,
+    7,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    4,
+    8,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    4,
+    8,
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   [
+    3,
+    8,
+    1,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    1,
+    10,
+    0,
+    2,
+    0,
+    0,
+    0
+   ],
+   [
+    2,
+    8,
+    2,
+    1,
+    0,
+    0,
+    0
+   ]
+  ],
+  "by_family": {
+   "kokoro": {
+    "k": 4,
+    "n": 28,
+    "acc": 0.1429,
+    "ci": [
+     0.0403,
+     0.3267
+    ],
+    "p_above_chance": 0.5817,
+    "p_two_sided": 1.0
+   },
+   "say": {
+    "k": 3,
+    "n": 42,
+    "acc": 0.0714,
+    "ci": [
+     0.015,
+     0.1948
+    ],
+    "p_above_chance": 0.9508,
+    "p_two_sided": 0.2675
+   },
+   "espeak": {
+    "k": 2,
+    "n": 21,
+    "acc": 0.0952,
+    "ci": [
+     0.0117,
+     0.3038
+    ],
+    "p_above_chance": 0.8233,
+    "p_two_sided": 0.7582
+   }
+  },
+  "canonical_words_only": {
+   "k": 6,
+   "n": 70,
+   "acc": 0.0857,
+   "ci": [
+    0.0321,
+    0.1773
+   ],
+   "p_above_chance": 0.9465,
+   "p_two_sided": 0.2298
+  },
+  "changed_words": {
+   "k": 3,
+   "n": 21,
+   "acc": 0.1429,
+   "ci": [
+    0.0305,
+    0.3634
+   ],
+   "p_above_chance": 0.5942,
+   "p_two_sided": 1.0,
+   "choices": {
+    "I": 5,
+    "never": 12,
+    "she": 1,
+    "said": 3
+   }
+  }
+ },
+ "h3": {
+  "caps": {
+   "k": 30,
+   "n": 35,
+   "acc": 0.8571,
+   "ci": [
+    0.6974,
+    0.9519
+   ],
+   "p_above_chance": 6.85e-21,
+   "p_two_sided": 6.85e-21,
+   "passes": true,
+   "confusion": [
+    [
+     0,
+     3,
+     0,
+     2,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     5,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     5,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     5,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     5,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5
+    ]
+   ],
+   "by_word": {
+    "I": 0,
+    "never": 5,
+    "said": 5,
+    "she": 5,
+    "stole": 5,
+    "my": 5,
+    "money": 5
+   }
+  },
+  "italics": {
+   "k": 35,
+   "n": 35,
+   "acc": 1.0,
+   "ci": [
+    0.9,
+    1.0
+   ],
+   "p_above_chance": 2.64e-30,
+   "p_two_sided": 2.64e-30,
+   "passes": true,
+   "confusion": [
+    [
+     5,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     5,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     5,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     5,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     5,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     5
+    ]
+   ],
+   "by_word": {
+    "I": 5,
+    "never": 5,
+    "said": 5,
+    "she": 5,
+    "stole": 5,
+    "my": 5,
+    "money": 5
+   }
+  },
+  "passes": true
+ },
+ "h4": {
+  "k": 80,
+  "n": 91,
+  "acc": 0.8791,
+  "ci": [
+   0.794,
+   0.9381
+  ],
+  "p_above_chance": 2.19e-55,
+  "p_two_sided": 2.19e-55,
+  "ci_voices": [
+   0.8242,
+   0.9341
+  ],
+  "by_family": {
+   "kokoro": {
+    "k": 26,
+    "n": 28,
+    "acc": 0.9286,
+    "ci": [
+     0.765,
+     0.9912
+    ],
+    "p_above_chance": 3e-20,
+    "p_two_sided": 3e-20,
+    "ci_voices": [
+     0.8571,
+     1.0
+    ]
+   },
+   "say": {
+    "k": 37,
+    "n": 42,
+    "acc": 0.881,
+    "ci": [
+     0.7437,
+     0.9602
+    ],
+    "p_above_chance": 2.17e-26,
+    "p_two_sided": 2.17e-26,
+    "ci_voices": [
+     0.8095,
+     0.9524
+    ]
+   },
+   "espeak": {
+    "k": 17,
+    "n": 21,
+    "acc": 0.8095,
+    "ci": [
+     0.5809,
+     0.9455
+    ],
+    "p_above_chance": 1.44e-11,
+    "p_two_sided": 1.44e-11,
+    "ci_voices": [
+     0.7143,
+     0.8571
+    ]
+   }
+  },
+  "passes": true,
+  "confusion": [
+   [
+    13,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    4,
+    5,
+    2,
+    1,
+    0,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    12,
+    0,
+    0,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    13,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    11,
+    2,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    13,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    13
+   ]
+  ],
+  "by_word": {
+   "I": {
+    "k": 13,
+    "n": 13,
+    "acc": 1.0,
+    "ci": [
+     0.7529,
+     1.0
+    ],
+    "p_above_chance": 1.03e-11,
+    "p_two_sided": 1.03e-11
+   },
+   "never": {
+    "k": 5,
+    "n": 13,
+    "acc": 0.3846,
+    "ci": [
+     0.1386,
+     0.6842
+    ],
+    "p_above_chance": 0.0282,
+    "p_two_sided": 0.0282
+   },
+   "said": {
+    "k": 12,
+    "n": 13,
+    "acc": 0.9231,
+    "ci": [
+     0.6397,
+     0.9981
+    ],
+    "p_above_chance": 8.15e-10,
+    "p_two_sided": 8.15e-10
+   },
+   "she": {
+    "k": 13,
+    "n": 13,
+    "acc": 1.0,
+    "ci": [
+     0.7529,
+     1.0
+    ],
+    "p_above_chance": 1.03e-11,
+    "p_two_sided": 1.03e-11
+   },
+   "stole": {
+    "k": 11,
+    "n": 13,
+    "acc": 0.8462,
+    "ci": [
+     0.5455,
+     0.9808
+    ],
+    "p_above_chance": 2.98e-08,
+    "p_two_sided": 2.98e-08
+   },
+   "my": {
+    "k": 13,
+    "n": 13,
+    "acc": 1.0,
+    "ci": [
+     0.7529,
+     1.0
+    ],
+    "p_above_chance": 1.03e-11,
+    "p_two_sided": 1.03e-11
+   },
+   "money": {
+    "k": 13,
+    "n": 13,
+    "acc": 1.0,
+    "ci": [
+     0.7529,
+     1.0
+    ],
+    "p_above_chance": 1.03e-11,
+    "p_two_sided": 1.03e-11
+   }
+  },
+  "oracle_kokoro": {
+   "k": 24,
+   "n": 28,
+   "acc": 0.8571,
+   "ci": [
+    0.6733,
+    0.9597
+   ],
+   "p_above_chance": 5.93e-17,
+   "p_two_sided": 5.93e-17
+  },
+  "kokoro_boundary_error_ms": 5.0,
+  "no_baseline": {
+   "k": 81,
+   "n": 91,
+   "acc": 0.8901,
+   "ci": [
+    0.8072,
+    0.946
+   ],
+   "p_above_chance": 4.95e-57,
+   "p_two_sided": 4.95e-57
+  },
+  "single_cue": {
+   "pitch": {
+    "k": 59,
+    "n": 91,
+    "acc": 0.6484,
+    "ci": [
+     0.5412,
+     0.7456
+    ],
+    "p_above_chance": 4.04e-28,
+    "p_two_sided": 4.04e-28
+   },
+   "loud": {
+    "k": 79,
+    "n": 91,
+    "acc": 0.8681,
+    "ci": [
+     0.781,
+     0.93
+    ],
+    "p_above_chance": 8.79e-54,
+    "p_two_sided": 8.79e-54
+   },
+   "dur": {
+    "k": 50,
+    "n": 91,
+    "acc": 0.5495,
+    "ci": [
+     0.4416,
+     0.654
+    ],
+    "p_above_chance": 1.53e-19,
+    "p_two_sided": 1.53e-19
+   }
+  },
+  "single_cue_by_family": {
+   "pitch": {
+    "kokoro": {
+     "k": 24,
+     "n": 28,
+     "acc": 0.8571,
+     "ci": [
+      0.6733,
+      0.9597
+     ],
+     "p_above_chance": 5.93e-17,
+     "p_two_sided": 5.93e-17
+    },
+    "say": {
+     "k": 32,
+     "n": 42,
+     "acc": 0.7619,
+     "ci": [
+      0.6055,
+      0.8795
+     ],
+     "p_above_chance": 3e-19,
+     "p_two_sided": 3e-19
+    },
+    "espeak": {
+     "k": 3,
+     "n": 21,
+     "acc": 0.1429,
+     "ci": [
+      0.0305,
+      0.3634
+     ],
+     "p_above_chance": 0.5942,
+     "p_two_sided": 1.0
+    }
+   },
+   "loud": {
+    "kokoro": {
+     "k": 21,
+     "n": 28,
+     "acc": 0.75,
+     "ci": [
+      0.5513,
+      0.8931
+     ],
+     "p_above_chance": 7.61e-13,
+     "p_two_sided": 7.61e-13
+    },
+    "say": {
+     "k": 39,
+     "n": 42,
+     "acc": 0.9286,
+     "ci": [
+      0.8052,
+      0.985
+     ],
+     "p_above_chance": 8.05e-30,
+     "p_two_sided": 8.05e-30
+    },
+    "espeak": {
+     "k": 19,
+     "n": 21,
+     "acc": 0.9048,
+     "ci": [
+      0.6962,
+      0.9883
+     ],
+     "p_above_chance": 1.38e-14,
+     "p_two_sided": 1.38e-14
+    }
+   },
+   "dur": {
+    "kokoro": {
+     "k": 21,
+     "n": 28,
+     "acc": 0.75,
+     "ci": [
+      0.5513,
+      0.8931
+     ],
+     "p_above_chance": 7.61e-13,
+     "p_two_sided": 7.61e-13
+    },
+    "say": {
+     "k": 12,
+     "n": 42,
+     "acc": 0.2857,
+     "ci": [
+      0.1572,
+      0.4458
+     ],
+     "p_above_chance": 0.0123,
+     "p_two_sided": 0.0139
+    },
+    "espeak": {
+     "k": 17,
+     "n": 21,
+     "acc": 0.8095,
+     "ci": [
+      0.5809,
+      0.9455
+     ],
+     "p_above_chance": 1.44e-11,
+     "p_two_sided": 1.44e-11
+    }
+   }
+  }
+ },
+ "transcripts": [
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "1_never",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "2_said",
+   "transcript": "i never said she stole my money"
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "3_she",
+   "transcript": "i never said she stole my money"
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "4_stole",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "6_money",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "1_never",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "2_said",
+   "transcript": "II never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "3_she",
+   "transcript": "iI never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "6_money",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "neutral",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "1_never",
+   "transcript": "i never said she stole my money"
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "2_said",
+   "transcript": "II never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "3_she",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "5_my",
+   "transcript": "i never never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "6_money",
+   "transcript": "II never said she stole my money,"
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "1_never",
+   "transcript": "II never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "2_said",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "6_money",
+   "transcript": "i never never said she stole my money"
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "1_never",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "2_said",
+   "transcript": "i never said she stole my money"
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "6_money",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "1_never",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "6_money",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "0_i",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "1_never",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money.."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "5_my",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "6_money",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "neutral",
+   "transcript": "I never never said she stole my money.!"
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "1_never",
+   "transcript": "I neverI never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "2_said",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "5_my",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "6_money",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "1_never",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "6_money",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "1_never",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "3_she",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "4_stole",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "6_money",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "1_never",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money"
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "5_my",
+   "transcript": "i never said never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "6_money",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "1_never",
+   "transcript": "i never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "4_stole",
+   "transcript": "I never said said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "6_money",
+   "transcript": "i never said said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "neutral",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "0_i",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "1_never",
+   "transcript": "I never never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "2_said",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "3_she",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "4_stole",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "5_my",
+   "transcript": "I never said she stole my money."
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "6_money",
+   "transcript": "I never said she stole my money dot"
+  }
+ ],
+ "spark_trials": [
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    3,
+    2,
+    0,
+    5,
+    6,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/1_never",
+   "text": "I never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    2,
+    6,
+    5,
+    1,
+    4,
+    3,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/2_said",
+   "text": "i never said she stole my money",
+   "truth": 2,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    6,
+    0,
+    2,
+    5,
+    4,
+    1,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/3_she",
+   "text": "i never said she stole my money",
+   "truth": 3,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    5,
+    2,
+    6,
+    3,
+    1,
+    0,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/4_stole",
+   "text": "i never said she stole my money.",
+   "truth": 4,
+   "choice": 0,
+   "answer": "B",
+   "order": [
+    2,
+    0,
+    3,
+    4,
+    1,
+    6,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    2,
+    5,
+    3,
+    6,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/af_heart/6_money",
+   "text": "I never said she stole my money.",
+   "truth": 6,
+   "choice": 3,
+   "answer": "B",
+   "order": [
+    1,
+    3,
+    6,
+    2,
+    4,
+    5,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 3,
+   "answer": "E",
+   "order": [
+    2,
+    4,
+    0,
+    5,
+    3,
+    1,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/1_never",
+   "text": "I never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    0,
+    5,
+    4,
+    3,
+    2,
+    6,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/2_said",
+   "text": "II never said she stole my money.",
+   "truth": 2,
+   "choice": 0,
+   "answer": "C",
+   "order": [
+    4,
+    3,
+    0,
+    1,
+    6,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/3_she",
+   "text": "iI never said she stole my money.",
+   "truth": 3,
+   "choice": 0,
+   "answer": "G",
+   "order": [
+    1,
+    6,
+    5,
+    4,
+    3,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    6,
+    5,
+    2,
+    4,
+    3,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 3,
+   "answer": "A",
+   "order": [
+    3,
+    1,
+    4,
+    2,
+    6,
+    5,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/am_michael/6_money",
+   "text": "I never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    3,
+    5,
+    6,
+    4,
+    0,
+    2,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "A",
+   "order": [
+    0,
+    1,
+    4,
+    6,
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/1_never",
+   "text": "i never said she stole my money",
+   "truth": 1,
+   "choice": 0,
+   "answer": "B",
+   "order": [
+    5,
+    0,
+    3,
+    2,
+    1,
+    4,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/2_said",
+   "text": "II never said she stole my money.",
+   "truth": 2,
+   "choice": 0,
+   "answer": "G",
+   "order": [
+    6,
+    4,
+    5,
+    3,
+    1,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/3_she",
+   "text": "I never never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    5,
+    3,
+    6,
+    4,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 3,
+   "answer": "D",
+   "order": [
+    2,
+    6,
+    5,
+    3,
+    1,
+    0,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/5_my",
+   "text": "i never never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    0,
+    4,
+    1,
+    3,
+    2,
+    6,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bf_emma/6_money",
+   "text": "II never said she stole my money,",
+   "truth": 6,
+   "choice": 0,
+   "answer": "C",
+   "order": [
+    6,
+    5,
+    0,
+    3,
+    1,
+    2,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "F",
+   "order": [
+    4,
+    3,
+    5,
+    2,
+    1,
+    0,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/1_never",
+   "text": "II never said she stole my money.",
+   "truth": 1,
+   "choice": 0,
+   "answer": "E",
+   "order": [
+    1,
+    6,
+    4,
+    2,
+    0,
+    3,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/2_said",
+   "text": "I never never said she stole my money.",
+   "truth": 2,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    4,
+    5,
+    6,
+    1,
+    3,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    5,
+    3,
+    4,
+    1,
+    2,
+    6,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    0,
+    5,
+    2,
+    4,
+    3,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    4,
+    3,
+    2,
+    6,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "kokoro/bm_george/6_money",
+   "text": "i never never said she stole my money",
+   "truth": 6,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    2,
+    0,
+    1,
+    3,
+    4,
+    6,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    3,
+    2,
+    4,
+    6,
+    1,
+    5,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/1_never",
+   "text": "I never never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    2,
+    4,
+    0,
+    6,
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/2_said",
+   "text": "i never said she stole my money",
+   "truth": 2,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    4,
+    3,
+    1,
+    0,
+    2,
+    5,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 6,
+   "answer": "C",
+   "order": [
+    3,
+    2,
+    6,
+    0,
+    4,
+    1,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    4,
+    5,
+    1,
+    0,
+    3,
+    2,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    6,
+    1,
+    0,
+    3,
+    5,
+    2,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Samantha/6_money",
+   "text": "i never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    4,
+    3,
+    5,
+    2,
+    0,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    5,
+    2,
+    6,
+    4,
+    3,
+    0,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/1_never",
+   "text": "i never said she stole my money.",
+   "truth": 1,
+   "choice": 0,
+   "answer": "E",
+   "order": [
+    2,
+    1,
+    6,
+    5,
+    0,
+    4,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/2_said",
+   "text": "I never said she stole my money.",
+   "truth": 2,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    0,
+    3,
+    6,
+    2,
+    5,
+    1,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    6,
+    2,
+    1,
+    0,
+    4,
+    5,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    0,
+    5,
+    2,
+    4,
+    3,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    0,
+    2,
+    3,
+    1,
+    5,
+    4,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Daniel/6_money",
+   "text": "I never never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    6,
+    1,
+    0,
+    5,
+    2,
+    4,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/0_i",
+   "text": "I never never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    0,
+    3,
+    6,
+    5,
+    4,
+    1,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/1_never",
+   "text": "I never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    5,
+    6,
+    1,
+    4,
+    2,
+    3,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/2_said",
+   "text": "I never said she stole my money..",
+   "truth": 2,
+   "choice": 0,
+   "answer": "D",
+   "order": [
+    2,
+    5,
+    6,
+    0,
+    4,
+    3,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 0,
+   "answer": "A",
+   "order": [
+    0,
+    2,
+    6,
+    3,
+    4,
+    1,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    4,
+    1,
+    3,
+    2,
+    0,
+    5,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/5_my",
+   "text": "I never never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    3,
+    6,
+    4,
+    2,
+    0,
+    1,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Karen/6_money",
+   "text": "I never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    5,
+    2,
+    6,
+    1,
+    3,
+    0,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    5,
+    1,
+    6,
+    0,
+    3,
+    4,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/1_never",
+   "text": "I neverI never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    3,
+    6,
+    0,
+    2,
+    1,
+    4,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/2_said",
+   "text": "i never said she stole my money.",
+   "truth": 2,
+   "choice": 0,
+   "answer": "F",
+   "order": [
+    4,
+    1,
+    5,
+    6,
+    3,
+    0,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    0,
+    2,
+    3,
+    1,
+    6,
+    4,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    5,
+    6,
+    3,
+    4,
+    1,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/5_my",
+   "text": "i never said she stole my money.",
+   "truth": 5,
+   "choice": 0,
+   "answer": "C",
+   "order": [
+    5,
+    2,
+    0,
+    1,
+    6,
+    4,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Moira/6_money",
+   "text": "I never said she stole my money.",
+   "truth": 6,
+   "choice": 0,
+   "answer": "B",
+   "order": [
+    4,
+    0,
+    5,
+    1,
+    2,
+    6,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    0,
+    2,
+    3,
+    6,
+    1,
+    5,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/1_never",
+   "text": "I never said she stole my money.",
+   "truth": 1,
+   "choice": 0,
+   "answer": "B",
+   "order": [
+    4,
+    0,
+    6,
+    5,
+    3,
+    1,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/2_said",
+   "text": "I never said she stole my money.",
+   "truth": 2,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    5,
+    6,
+    4,
+    1,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 0,
+   "answer": "A",
+   "order": [
+    0,
+    2,
+    5,
+    4,
+    3,
+    1,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 0,
+   "answer": "B",
+   "order": [
+    1,
+    0,
+    4,
+    5,
+    2,
+    3,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    3,
+    2,
+    4,
+    1,
+    5,
+    6,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Tessa/6_money",
+   "text": "I never never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    4,
+    5,
+    0,
+    2,
+    3,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    5,
+    2,
+    0,
+    3,
+    6,
+    4,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/1_never",
+   "text": "I never said she stole my money.",
+   "truth": 1,
+   "choice": 3,
+   "answer": "G",
+   "order": [
+    5,
+    1,
+    6,
+    0,
+    4,
+    2,
+    3
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/2_said",
+   "text": "I never said she stole my money.",
+   "truth": 2,
+   "choice": 3,
+   "answer": "E",
+   "order": [
+    6,
+    0,
+    1,
+    4,
+    3,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/3_she",
+   "text": "I never never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    4,
+    1,
+    0,
+    6,
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/4_stole",
+   "text": "i never said she stole my money.",
+   "truth": 4,
+   "choice": 0,
+   "answer": "E",
+   "order": [
+    1,
+    6,
+    4,
+    3,
+    0,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    2,
+    6,
+    0,
+    5,
+    1,
+    3,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "say/Rishi/6_money",
+   "text": "i never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    0,
+    2,
+    5,
+    1,
+    3,
+    4,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    0,
+    3,
+    6,
+    4,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/1_never",
+   "text": "I never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    5,
+    1,
+    3,
+    0,
+    4,
+    2,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/2_said",
+   "text": "I never said she stole my money.",
+   "truth": 2,
+   "choice": 1,
+   "answer": "C",
+   "order": [
+    0,
+    4,
+    1,
+    6,
+    3,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    5,
+    1,
+    3,
+    6,
+    4,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/4_stole",
+   "text": "I never said she stole my money",
+   "truth": 4,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    5,
+    2,
+    4,
+    3,
+    1,
+    0,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/5_my",
+   "text": "i never said never said she stole my money.",
+   "truth": 5,
+   "choice": 3,
+   "answer": "E",
+   "order": [
+    6,
+    4,
+    1,
+    5,
+    3,
+    0,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us/6_money",
+   "text": "i never said she stole my money.",
+   "truth": 6,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    6,
+    3,
+    0,
+    1,
+    4,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    5,
+    0,
+    3,
+    6,
+    4,
+    1,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/1_never",
+   "text": "i never said she stole my money.",
+   "truth": 1,
+   "choice": 0,
+   "answer": "E",
+   "order": [
+    1,
+    4,
+    3,
+    2,
+    0,
+    6,
+    5
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/2_said",
+   "text": "I never said she stole my money.",
+   "truth": 2,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    0,
+    3,
+    5,
+    2,
+    4,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    0,
+    5,
+    6,
+    3,
+    4,
+    1,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/4_stole",
+   "text": "I never said said she stole my money.",
+   "truth": 4,
+   "choice": 2,
+   "answer": "A",
+   "order": [
+    2,
+    5,
+    3,
+    0,
+    4,
+    1,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    3,
+    6,
+    4,
+    0,
+    5,
+    1,
+    2
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-gb/6_money",
+   "text": "i never said said she stole my money.",
+   "truth": 6,
+   "choice": 2,
+   "answer": "F",
+   "order": [
+    5,
+    6,
+    3,
+    0,
+    4,
+    2,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/0_i",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    3,
+    1,
+    6,
+    2,
+    5,
+    4,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/1_never",
+   "text": "I never never said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    5,
+    4,
+    0,
+    3,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/2_said",
+   "text": "I never said she stole my money.",
+   "truth": 2,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    2,
+    4,
+    3,
+    5,
+    6,
+    0,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/3_she",
+   "text": "I never said she stole my money.",
+   "truth": 3,
+   "choice": 0,
+   "answer": "G",
+   "order": [
+    3,
+    4,
+    5,
+    1,
+    2,
+    6,
+    0
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/4_stole",
+   "text": "I never said she stole my money.",
+   "truth": 4,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    0,
+    3,
+    6,
+    1,
+    5,
+    2,
+    4
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/5_my",
+   "text": "I never said she stole my money.",
+   "truth": 5,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    3,
+    2,
+    6,
+    5,
+    4,
+    0,
+    1
+   ]
+  },
+  {
+   "condition": "transcript",
+   "item": "espeak/en-us+f3/6_money",
+   "text": "I never said she stole my money dot",
+   "truth": 6,
+   "choice": 2,
+   "answer": "B",
+   "order": [
+    5,
+    2,
+    0,
+    3,
+    6,
+    1,
+    4
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/0/0",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 3,
+   "answer": "C",
+   "order": [
+    1,
+    6,
+    3,
+    2,
+    4,
+    0,
+    5
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/0/1",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    4,
+    5,
+    0,
+    2,
+    3,
+    1,
+    6
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/0/2",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "D",
+   "order": [
+    6,
+    3,
+    5,
+    1,
+    4,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/0/3",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 3,
+   "answer": "A",
+   "order": [
+    3,
+    2,
+    4,
+    6,
+    1,
+    5,
+    0
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/0/4",
+   "text": "I never said she stole my money.",
+   "truth": 0,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    2,
+    1,
+    5,
+    0,
+    3,
+    6,
+    4
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/1/0",
+   "text": "I NEVER said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    4,
+    6,
+    5,
+    0,
+    2,
+    3,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/1/1",
+   "text": "I NEVER said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    4,
+    5,
+    0,
+    2,
+    6,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/1/2",
+   "text": "I NEVER said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    2,
+    4,
+    6,
+    3,
+    5,
+    0,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/1/3",
+   "text": "I NEVER said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "G",
+   "order": [
+    5,
+    0,
+    3,
+    2,
+    6,
+    4,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/1/4",
+   "text": "I NEVER said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "F",
+   "order": [
+    4,
+    2,
+    5,
+    3,
+    0,
+    1,
+    6
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/2/0",
+   "text": "I never SAID she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "F",
+   "order": [
+    4,
+    3,
+    0,
+    5,
+    1,
+    2,
+    6
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/2/1",
+   "text": "I never SAID she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "F",
+   "order": [
+    1,
+    6,
+    0,
+    3,
+    4,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/2/2",
+   "text": "I never SAID she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "C",
+   "order": [
+    1,
+    4,
+    2,
+    6,
+    5,
+    0,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/2/3",
+   "text": "I never SAID she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "C",
+   "order": [
+    6,
+    0,
+    2,
+    4,
+    3,
+    5,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/2/4",
+   "text": "I never SAID she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "B",
+   "order": [
+    0,
+    2,
+    6,
+    1,
+    4,
+    5,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/3/0",
+   "text": "I never said SHE stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "G",
+   "order": [
+    6,
+    4,
+    2,
+    0,
+    1,
+    5,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/3/1",
+   "text": "I never said SHE stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "F",
+   "order": [
+    2,
+    4,
+    1,
+    5,
+    0,
+    3,
+    6
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/3/2",
+   "text": "I never said SHE stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "C",
+   "order": [
+    1,
+    5,
+    3,
+    2,
+    6,
+    4,
+    0
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/3/3",
+   "text": "I never said SHE stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "G",
+   "order": [
+    0,
+    2,
+    1,
+    4,
+    6,
+    5,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/3/4",
+   "text": "I never said SHE stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "E",
+   "order": [
+    6,
+    2,
+    0,
+    4,
+    3,
+    5,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/4/0",
+   "text": "I never said she STOLE my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "B",
+   "order": [
+    1,
+    4,
+    3,
+    0,
+    6,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/4/1",
+   "text": "I never said she STOLE my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "B",
+   "order": [
+    2,
+    4,
+    1,
+    0,
+    6,
+    3,
+    5
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/4/2",
+   "text": "I never said she STOLE my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "F",
+   "order": [
+    1,
+    2,
+    0,
+    6,
+    5,
+    4,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/4/3",
+   "text": "I never said she STOLE my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "E",
+   "order": [
+    3,
+    1,
+    2,
+    6,
+    4,
+    0,
+    5
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/4/4",
+   "text": "I never said she STOLE my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "C",
+   "order": [
+    5,
+    3,
+    4,
+    1,
+    0,
+    2,
+    6
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/5/0",
+   "text": "I never said she stole MY money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "F",
+   "order": [
+    0,
+    6,
+    1,
+    4,
+    3,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/5/1",
+   "text": "I never said she stole MY money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "B",
+   "order": [
+    4,
+    5,
+    3,
+    6,
+    1,
+    2,
+    0
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/5/2",
+   "text": "I never said she stole MY money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "D",
+   "order": [
+    2,
+    4,
+    0,
+    5,
+    6,
+    1,
+    3
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/5/3",
+   "text": "I never said she stole MY money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "B",
+   "order": [
+    2,
+    5,
+    4,
+    3,
+    6,
+    0,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/5/4",
+   "text": "I never said she stole MY money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "G",
+   "order": [
+    4,
+    6,
+    1,
+    3,
+    2,
+    0,
+    5
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/6/0",
+   "text": "I never said she stole my MONEY.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "C",
+   "order": [
+    0,
+    3,
+    6,
+    4,
+    1,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/6/1",
+   "text": "I never said she stole my MONEY.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "F",
+   "order": [
+    1,
+    0,
+    5,
+    3,
+    4,
+    6,
+    2
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/6/2",
+   "text": "I never said she stole my MONEY.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "B",
+   "order": [
+    5,
+    6,
+    4,
+    1,
+    2,
+    3,
+    0
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/6/3",
+   "text": "I never said she stole my MONEY.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "B",
+   "order": [
+    5,
+    6,
+    0,
+    3,
+    4,
+    2,
+    1
+   ]
+  },
+  {
+   "condition": "caps",
+   "item": "caps/6/4",
+   "text": "I never said she stole my MONEY.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "G",
+   "order": [
+    4,
+    5,
+    0,
+    1,
+    3,
+    2,
+    6
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/0/0",
+   "text": "*I* never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "B",
+   "order": [
+    2,
+    0,
+    3,
+    6,
+    4,
+    5,
+    1
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/0/1",
+   "text": "*I* never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "F",
+   "order": [
+    4,
+    1,
+    5,
+    2,
+    3,
+    0,
+    6
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/0/2",
+   "text": "*I* never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "A",
+   "order": [
+    0,
+    3,
+    6,
+    4,
+    1,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/0/3",
+   "text": "*I* never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "A",
+   "order": [
+    0,
+    2,
+    5,
+    6,
+    4,
+    3,
+    1
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/0/4",
+   "text": "*I* never said she stole my money.",
+   "truth": 0,
+   "choice": 0,
+   "answer": "C",
+   "order": [
+    5,
+    3,
+    0,
+    4,
+    1,
+    6,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/1/0",
+   "text": "I *never* said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    3,
+    6,
+    4,
+    2,
+    1,
+    0,
+    5
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/1/1",
+   "text": "I *never* said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "E",
+   "order": [
+    6,
+    4,
+    3,
+    0,
+    1,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/1/2",
+   "text": "I *never* said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    6,
+    1,
+    5,
+    3,
+    4,
+    0,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/1/3",
+   "text": "I *never* said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "A",
+   "order": [
+    1,
+    0,
+    6,
+    4,
+    3,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/1/4",
+   "text": "I *never* said she stole my money.",
+   "truth": 1,
+   "choice": 1,
+   "answer": "B",
+   "order": [
+    4,
+    1,
+    3,
+    2,
+    0,
+    6,
+    5
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/2/0",
+   "text": "I never *said* she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "F",
+   "order": [
+    0,
+    1,
+    4,
+    3,
+    6,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/2/1",
+   "text": "I never *said* she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "B",
+   "order": [
+    3,
+    2,
+    4,
+    1,
+    5,
+    6,
+    0
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/2/2",
+   "text": "I never *said* she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "A",
+   "order": [
+    2,
+    4,
+    0,
+    1,
+    3,
+    5,
+    6
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/2/3",
+   "text": "I never *said* she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "G",
+   "order": [
+    1,
+    5,
+    0,
+    6,
+    3,
+    4,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/2/4",
+   "text": "I never *said* she stole my money.",
+   "truth": 2,
+   "choice": 2,
+   "answer": "B",
+   "order": [
+    6,
+    2,
+    5,
+    1,
+    0,
+    3,
+    4
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/3/0",
+   "text": "I never said *she* stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "B",
+   "order": [
+    0,
+    3,
+    4,
+    1,
+    2,
+    5,
+    6
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/3/1",
+   "text": "I never said *she* stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "B",
+   "order": [
+    2,
+    3,
+    5,
+    0,
+    6,
+    4,
+    1
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/3/2",
+   "text": "I never said *she* stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "E",
+   "order": [
+    1,
+    6,
+    0,
+    5,
+    3,
+    4,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/3/3",
+   "text": "I never said *she* stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "F",
+   "order": [
+    2,
+    1,
+    0,
+    5,
+    6,
+    3,
+    4
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/3/4",
+   "text": "I never said *she* stole my money.",
+   "truth": 3,
+   "choice": 3,
+   "answer": "B",
+   "order": [
+    0,
+    3,
+    6,
+    4,
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/4/0",
+   "text": "I never said she *stole* my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "A",
+   "order": [
+    4,
+    6,
+    1,
+    5,
+    0,
+    2,
+    3
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/4/1",
+   "text": "I never said she *stole* my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "C",
+   "order": [
+    3,
+    5,
+    4,
+    2,
+    6,
+    1,
+    0
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/4/2",
+   "text": "I never said she *stole* my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "A",
+   "order": [
+    4,
+    5,
+    0,
+    1,
+    6,
+    3,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/4/3",
+   "text": "I never said she *stole* my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "A",
+   "order": [
+    4,
+    0,
+    1,
+    2,
+    6,
+    5,
+    3
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/4/4",
+   "text": "I never said she *stole* my money.",
+   "truth": 4,
+   "choice": 4,
+   "answer": "A",
+   "order": [
+    4,
+    2,
+    3,
+    1,
+    0,
+    6,
+    5
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/5/0",
+   "text": "I never said she stole *my* money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "D",
+   "order": [
+    4,
+    1,
+    2,
+    5,
+    6,
+    0,
+    3
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/5/1",
+   "text": "I never said she stole *my* money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "E",
+   "order": [
+    6,
+    1,
+    2,
+    4,
+    5,
+    0,
+    3
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/5/2",
+   "text": "I never said she stole *my* money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "C",
+   "order": [
+    4,
+    2,
+    5,
+    3,
+    1,
+    6,
+    0
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/5/3",
+   "text": "I never said she stole *my* money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "E",
+   "order": [
+    0,
+    6,
+    3,
+    1,
+    5,
+    4,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/5/4",
+   "text": "I never said she stole *my* money.",
+   "truth": 5,
+   "choice": 5,
+   "answer": "F",
+   "order": [
+    2,
+    0,
+    3,
+    4,
+    6,
+    5,
+    1
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/6/0",
+   "text": "I never said she stole my *money*.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "C",
+   "order": [
+    1,
+    5,
+    6,
+    3,
+    2,
+    0,
+    4
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/6/1",
+   "text": "I never said she stole my *money*.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "F",
+   "order": [
+    2,
+    5,
+    1,
+    0,
+    4,
+    6,
+    3
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/6/2",
+   "text": "I never said she stole my *money*.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "E",
+   "order": [
+    4,
+    3,
+    1,
+    0,
+    6,
+    5,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/6/3",
+   "text": "I never said she stole my *money*.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "E",
+   "order": [
+    4,
+    5,
+    1,
+    0,
+    6,
+    3,
+    2
+   ]
+  },
+  {
+   "condition": "italics",
+   "item": "italics/6/4",
+   "text": "I never said she stole my *money*.",
+   "truth": 6,
+   "choice": 6,
+   "answer": "A",
+   "order": [
+    6,
+    3,
+    0,
+    4,
+    1,
+    2,
+    5
+   ]
+  }
+ ],
+ "reader": [
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.32,
+    0.47,
+    0.77,
+    1.025,
+    1.17,
+    1.42,
+    1.57,
+    1.94
+   ],
+   "prominence": [
+    5.533,
+    -0.748,
+    -1.487,
+    -0.522,
+    -2.708,
+    -0.579,
+    0.511
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 1,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 0,
+    "dur": 1
+   },
+   "bounds": [
+    0.3,
+    0.43,
+    0.82,
+    1.07,
+    1.22,
+    1.46,
+    1.61,
+    1.98
+   ],
+   "prominence": [
+    2.278,
+    3.085,
+    -1.771,
+    -0.372,
+    -2.891,
+    -0.497,
+    0.168
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 2
+   },
+   "bounds": [
+    0.3,
+    0.42,
+    0.73,
+    1.055,
+    1.2,
+    1.45,
+    1.6,
+    1.97
+   ],
+   "prominence": [
+    1.364,
+    0.877,
+    3.634,
+    -1.21,
+    -3.376,
+    -1.187,
+    -0.101
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.3,
+    0.42,
+    0.73,
+    0.98,
+    1.17,
+    1.42,
+    1.57,
+    1.95
+   ],
+   "prominence": [
+    1.591,
+    1.321,
+    -1.13,
+    4.173,
+    -3.685,
+    -1.883,
+    -0.388
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 4,
+    "dur": 1
+   },
+   "bounds": [
+    0.3,
+    0.42,
+    0.73,
+    0.98,
+    1.13,
+    1.45,
+    1.6,
+    1.97
+   ],
+   "prominence": [
+    1.612,
+    1.483,
+    -1.921,
+    -0.034,
+    2.287,
+    -2.725,
+    -0.703
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.3,
+    0.42,
+    0.73,
+    0.98,
+    1.13,
+    1.38,
+    1.57,
+    1.95
+   ],
+   "prominence": [
+    1.434,
+    1.534,
+    -1.933,
+    -0.964,
+    -2.94,
+    3.837,
+    -0.967
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "af_heart",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 6,
+    "dur": 6
+   },
+   "bounds": [
+    0.3,
+    0.42,
+    0.73,
+    0.98,
+    1.13,
+    1.38,
+    1.53,
+    2.035
+   ],
+   "prominence": [
+    0.842,
+    0.554,
+    -1.874,
+    -0.998,
+    -2.783,
+    -0.911,
+    5.169
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.42,
+    0.57,
+    0.91,
+    1.175,
+    1.32,
+    1.63,
+    1.82,
+    2.21
+   ],
+   "prominence": [
+    3.588,
+    -1.211,
+    -1.685,
+    0.958,
+    -1.121,
+    0.069,
+    -0.598
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 1,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 1,
+    "dur": 1
+   },
+   "bounds": [
+    0.41,
+    0.53,
+    0.958,
+    1.22,
+    1.37,
+    1.68,
+    1.87,
+    2.22
+   ],
+   "prominence": [
+    -0.216,
+    3.658,
+    -1.089,
+    -1.069,
+    -0.831,
+    0.485,
+    -0.938
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 2
+   },
+   "bounds": [
+    0.41,
+    0.53,
+    0.87,
+    1.205,
+    1.35,
+    1.66,
+    1.85,
+    2.24
+   ],
+   "prominence": [
+    -0.755,
+    0.497,
+    4.489,
+    -2.326,
+    -1.671,
+    0.17,
+    -0.403
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.41,
+    0.53,
+    0.86,
+    1.13,
+    1.315,
+    1.625,
+    1.812,
+    2.2
+   ],
+   "prominence": [
+    -0.692,
+    0.859,
+    -0.6,
+    4.507,
+    -2.077,
+    -0.654,
+    -1.342
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 4,
+    "dur": 4
+   },
+   "bounds": [
+    0.41,
+    0.53,
+    0.86,
+    1.125,
+    1.28,
+    1.67,
+    1.853,
+    2.25
+   ],
+   "prominence": [
+    -1.189,
+    -0.611,
+    -1.051,
+    0.138,
+    4.695,
+    -0.884,
+    -1.098
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.41,
+    0.53,
+    0.86,
+    1.125,
+    1.27,
+    1.595,
+    1.825,
+    2.21
+   ],
+   "prominence": [
+    -1.3,
+    -0.38,
+    -0.882,
+    -0.55,
+    1.078,
+    3.858,
+    -1.825
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "am_michael",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 6,
+    "dur": 6
+   },
+   "bounds": [
+    0.41,
+    0.53,
+    0.86,
+    1.125,
+    1.27,
+    1.58,
+    1.775,
+    2.28
+   ],
+   "prominence": [
+    -1.807,
+    -0.682,
+    -1.073,
+    -0.258,
+    0.118,
+    -0.181,
+    3.884
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.268,
+    0.44,
+    0.72,
+    0.965,
+    1.12,
+    1.46,
+    1.64,
+    2.04
+   ],
+   "prominence": [
+    5.741,
+    -2.744,
+    -0.976,
+    -0.266,
+    -0.473,
+    -0.48,
+    -0.802
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 0,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.255,
+    0.405,
+    0.76,
+    1.01,
+    1.16,
+    1.505,
+    1.68,
+    2.09
+   ],
+   "prominence": [
+    2.73,
+    1.892,
+    -1.457,
+    -0.82,
+    -0.521,
+    -0.97,
+    -0.854
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.255,
+    0.4,
+    0.69,
+    0.998,
+    1.15,
+    1.49,
+    1.67,
+    2.08
+   ],
+   "prominence": [
+    2.359,
+    -2.276,
+    3.917,
+    -1.323,
+    -0.699,
+    -1.028,
+    -0.95
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 0
+   },
+   "bounds": [
+    0.255,
+    0.4,
+    0.68,
+    0.932,
+    1.12,
+    1.465,
+    1.64,
+    2.06
+   ],
+   "prominence": [
+    1.966,
+    -2.167,
+    0.447,
+    4.331,
+    -1.159,
+    -1.93,
+    -1.487
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 2,
+    "dur": 4
+   },
+   "bounds": [
+    0.255,
+    0.4,
+    0.68,
+    0.925,
+    1.08,
+    1.52,
+    1.71,
+    2.12
+   ],
+   "prominence": [
+    1.128,
+    -2.254,
+    0.163,
+    -0.067,
+    4.241,
+    -0.931,
+    -2.281
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.255,
+    0.4,
+    0.68,
+    0.925,
+    1.08,
+    1.43,
+    1.647,
+    2.06
+   ],
+   "prominence": [
+    1.509,
+    -2.136,
+    0.155,
+    -0.804,
+    0.627,
+    3.796,
+    -3.148
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bf_emma",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 2,
+    "dur": 6
+   },
+   "bounds": [
+    0.255,
+    0.4,
+    0.68,
+    0.925,
+    1.08,
+    1.42,
+    1.61,
+    2.158
+   ],
+   "prominence": [
+    1.149,
+    -1.844,
+    0.415,
+    -1.324,
+    0.044,
+    -1.85,
+    3.41
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 3
+   },
+   "bounds": [
+    0.26,
+    0.39,
+    0.677,
+    1.02,
+    1.23,
+    1.635,
+    1.84,
+    2.26
+   ],
+   "prominence": [
+    2.957,
+    -3.536,
+    -0.233,
+    2.351,
+    -0.472,
+    0.222,
+    -1.29
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 3,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 0,
+    "dur": 3
+   },
+   "bounds": [
+    0.25,
+    0.36,
+    0.725,
+    1.075,
+    1.28,
+    1.685,
+    1.893,
+    2.32
+   ],
+   "prominence": [
+    -0.854,
+    1.305,
+    -0.222,
+    1.752,
+    -0.712,
+    0.137,
+    -1.407
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 2
+   },
+   "bounds": [
+    0.25,
+    0.35,
+    0.647,
+    1.093,
+    1.3,
+    1.705,
+    1.91,
+    2.33
+   ],
+   "prominence": [
+    -1.177,
+    -1.054,
+    4.406,
+    1.31,
+    -1.454,
+    -0.334,
+    -1.697
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.25,
+    0.35,
+    0.64,
+    0.985,
+    1.255,
+    1.66,
+    1.873,
+    2.29
+   ],
+   "prominence": [
+    -1.568,
+    -1.486,
+    0.622,
+    6.586,
+    -1.341,
+    -0.682,
+    -2.131
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 3,
+    "dur": 4
+   },
+   "bounds": [
+    0.25,
+    0.35,
+    0.64,
+    0.98,
+    1.19,
+    1.72,
+    1.92,
+    2.34
+   ],
+   "prominence": [
+    -1.711,
+    -1.583,
+    0.197,
+    2.342,
+    4.224,
+    -0.628,
+    -2.841
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.25,
+    0.35,
+    0.64,
+    0.98,
+    1.19,
+    1.595,
+    1.857,
+    2.29
+   ],
+   "prominence": [
+    -2.008,
+    -1.453,
+    0.028,
+    2.139,
+    -0.182,
+    5.024,
+    -3.548
+   ]
+  },
+  {
+   "family": "kokoro",
+   "voice": "bm_george",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 6,
+    "dur": 6
+   },
+   "bounds": [
+    0.25,
+    0.35,
+    0.64,
+    0.98,
+    1.188,
+    1.595,
+    1.812,
+    2.368
+   ],
+   "prominence": [
+    -2.554,
+    -1.264,
+    -0.414,
+    1.287,
+    -1.406,
+    1.126,
+    3.224
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.12,
+    0.43,
+    0.69,
+    0.88,
+    1.21,
+    1.4,
+    1.74
+   ],
+   "prominence": [
+    3.504,
+    -3.01,
+    -1.76,
+    2.905,
+    -0.595,
+    1.613,
+    -2.658
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 1,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 1,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.1,
+    0.45,
+    0.71,
+    0.9,
+    1.22,
+    1.42,
+    1.76
+   ],
+   "prominence": [
+    -1.225,
+    2.672,
+    -1.745,
+    2.231,
+    -1.242,
+    1.595,
+    -2.288
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.1,
+    0.42,
+    0.7,
+    0.9,
+    1.22,
+    1.42,
+    1.75
+   ],
+   "prominence": [
+    -2.914,
+    -1.984,
+    4.275,
+    2.586,
+    -1.252,
+    1.624,
+    -2.334
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.1,
+    0.41,
+    0.68,
+    0.89,
+    1.21,
+    1.41,
+    1.74
+   ],
+   "prominence": [
+    -2.801,
+    -2.405,
+    -0.448,
+    7.758,
+    -1.28,
+    1.491,
+    -2.315
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 4,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.1,
+    0.42,
+    0.68,
+    0.87,
+    1.23,
+    1.42,
+    1.76
+   ],
+   "prominence": [
+    -3.271,
+    -2.353,
+    -1.124,
+    3.414,
+    4.796,
+    1.024,
+    -2.485
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.1,
+    0.42,
+    0.68,
+    0.87,
+    1.2,
+    1.4,
+    1.74
+   ],
+   "prominence": [
+    -3.273,
+    -2.282,
+    -1.013,
+    2.978,
+    -0.089,
+    6.473,
+    -2.793
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Samantha",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 6,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.1,
+    0.41,
+    0.68,
+    0.87,
+    1.2,
+    1.39,
+    1.79
+   ],
+   "prominence": [
+    -4.97,
+    -2.688,
+    -1.001,
+    3.09,
+    -0.077,
+    0.871,
+    4.776
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.46,
+    0.74,
+    0.92,
+    1.27,
+    1.45,
+    1.83
+   ],
+   "prominence": [
+    5.034,
+    -4.053,
+    -1.336,
+    1.325,
+    1.478,
+    -0.266,
+    -2.182
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 1,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 1,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.15,
+    0.47,
+    0.75,
+    0.93,
+    1.28,
+    1.47,
+    1.73
+   ],
+   "prominence": [
+    1.008,
+    1.659,
+    -0.449,
+    1.453,
+    -0.367,
+    0.458,
+    -3.763
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.45,
+    0.75,
+    0.93,
+    1.28,
+    1.47,
+    1.69
+   ],
+   "prominence": [
+    -0.247,
+    -2.3,
+    3.771,
+    1.296,
+    0.937,
+    0.424,
+    -3.881
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.44,
+    0.72,
+    0.92,
+    1.27,
+    1.45,
+    1.72
+   ],
+   "prominence": [
+    0.13,
+    -2.617,
+    -0.056,
+    6.494,
+    -0.389,
+    0.159,
+    -3.721
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 4,
+    "dur": 4
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.44,
+    0.72,
+    0.9,
+    1.28,
+    1.47,
+    1.69
+   ],
+   "prominence": [
+    -0.107,
+    -2.608,
+    -0.087,
+    2.376,
+    4.064,
+    0.357,
+    -3.995
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.44,
+    0.72,
+    0.9,
+    1.25,
+    1.46,
+    1.77
+   ],
+   "prominence": [
+    0.015,
+    -3.149,
+    -0.602,
+    2.064,
+    0.444,
+    5.643,
+    -4.416
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Daniel",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 6,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.44,
+    0.72,
+    0.9,
+    1.25,
+    1.44,
+    1.87
+   ],
+   "prominence": [
+    1.315,
+    -3.91,
+    -1.72,
+    2.124,
+    -0.354,
+    -0.357,
+    2.901
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.15,
+    0.44,
+    0.69,
+    0.88,
+    1.22,
+    1.39,
+    1.76
+   ],
+   "prominence": [
+    5.48,
+    -3.574,
+    -1.838,
+    1.733,
+    -0.668,
+    0.129,
+    -1.261
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 1,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.45,
+    0.71,
+    0.89,
+    1.23,
+    1.4,
+    1.76
+   ],
+   "prominence": [
+    3.35,
+    0.733,
+    -2.284,
+    1.448,
+    -0.806,
+    -0.432,
+    -2.009
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.42,
+    0.71,
+    0.89,
+    1.23,
+    1.4,
+    1.76
+   ],
+   "prominence": [
+    0.722,
+    -3.385,
+    4.253,
+    1.409,
+    -0.7,
+    -0.336,
+    -1.963
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.42,
+    0.68,
+    0.88,
+    1.22,
+    1.39,
+    1.76
+   ],
+   "prominence": [
+    0.208,
+    -3.427,
+    -0.998,
+    7.393,
+    -1.075,
+    -0.37,
+    -1.731
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 4,
+    "dur": 4
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.42,
+    0.68,
+    0.86,
+    1.23,
+    1.41,
+    1.77
+   ],
+   "prominence": [
+    0.033,
+    -3.849,
+    -1.488,
+    3.043,
+    4.81,
+    -0.162,
+    -2.387
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.42,
+    0.68,
+    0.86,
+    1.21,
+    1.39,
+    1.75
+   ],
+   "prominence": [
+    0.336,
+    -3.866,
+    -1.532,
+    1.881,
+    1.113,
+    5.022,
+    -2.955
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Karen",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 6,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.42,
+    0.68,
+    0.86,
+    1.21,
+    1.38,
+    1.8
+   ],
+   "prominence": [
+    0.55,
+    -4.082,
+    -2.152,
+    1.018,
+    -0.772,
+    0.088,
+    5.35
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.18,
+    0.49,
+    0.77,
+    0.96,
+    1.33,
+    1.54,
+    1.89
+   ],
+   "prominence": [
+    5.779,
+    -4.013,
+    -1.393,
+    1.471,
+    -0.432,
+    0.864,
+    -2.276
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 1,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 1,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.5,
+    0.79,
+    0.975,
+    1.34,
+    1.55,
+    1.9
+   ],
+   "prominence": [
+    1.5,
+    1.705,
+    -1.604,
+    1.092,
+    -0.554,
+    0.818,
+    -2.956
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.47,
+    0.78,
+    0.97,
+    1.34,
+    1.55,
+    1.9
+   ],
+   "prominence": [
+    0.61,
+    -3.44,
+    4.178,
+    1.298,
+    -0.608,
+    0.8,
+    -2.839
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.47,
+    0.75,
+    0.96,
+    1.33,
+    1.54,
+    1.89
+   ],
+   "prominence": [
+    0.418,
+    -3.515,
+    -0.808,
+    6.875,
+    -0.627,
+    0.544,
+    -2.886
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 5,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.47,
+    0.75,
+    0.94,
+    1.34,
+    1.56,
+    1.92
+   ],
+   "prominence": [
+    -0.29,
+    -4.334,
+    -1.65,
+    1.241,
+    3.814,
+    4.65,
+    -3.431
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.47,
+    0.75,
+    0.94,
+    1.32,
+    1.53,
+    1.89
+   ],
+   "prominence": [
+    0.401,
+    -3.868,
+    -1.133,
+    1.736,
+    0.368,
+    5.943,
+    -3.447
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Moira",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 6,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.47,
+    0.75,
+    0.94,
+    1.31,
+    1.52,
+    1.93
+   ],
+   "prominence": [
+    0.753,
+    -4.833,
+    -1.521,
+    0.849,
+    0.215,
+    0.801,
+    3.736
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.47,
+    0.77,
+    0.99,
+    1.4,
+    1.685,
+    2.08
+   ],
+   "prominence": [
+    4.147,
+    -3.736,
+    -1.67,
+    1.863,
+    -0.811,
+    2.099,
+    -1.892
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 5,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 3,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.15,
+    0.49,
+    0.78,
+    1.005,
+    1.41,
+    1.7,
+    2.1
+   ],
+   "prominence": [
+    1.36,
+    0.503,
+    -2.254,
+    1.572,
+    -1.188,
+    2.049,
+    -2.043
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.46,
+    0.79,
+    1.0,
+    1.41,
+    1.7,
+    2.1
+   ],
+   "prominence": [
+    -1.589,
+    -3.114,
+    4.02,
+    1.437,
+    -1.043,
+    2.323,
+    -2.033
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.46,
+    0.75,
+    0.99,
+    1.4,
+    1.69,
+    2.09
+   ],
+   "prominence": [
+    -1.538,
+    -3.049,
+    -1.25,
+    6.914,
+    -0.981,
+    1.865,
+    -1.962
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 4,
+    "loud": 4,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.46,
+    0.75,
+    0.97,
+    1.41,
+    1.71,
+    2.11
+   ],
+   "prominence": [
+    -1.759,
+    -3.189,
+    -1.51,
+    2.198,
+    4.429,
+    1.917,
+    -2.085
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.46,
+    0.75,
+    0.97,
+    1.38,
+    1.7,
+    2.09
+   ],
+   "prominence": [
+    -1.741,
+    -3.036,
+    -1.213,
+    2.141,
+    -0.351,
+    7.173,
+    -2.973
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Tessa",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 6,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.14,
+    0.46,
+    0.75,
+    0.97,
+    1.38,
+    1.68,
+    2.13
+   ],
+   "prominence": [
+    -2.443,
+    -3.242,
+    -1.463,
+    1.93,
+    -0.754,
+    1.722,
+    4.249
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.185,
+    0.51,
+    0.78,
+    0.99,
+    1.335,
+    1.6,
+    1.96
+   ],
+   "prominence": [
+    5.26,
+    -4.28,
+    -1.663,
+    1.791,
+    -0.655,
+    1.737,
+    -2.189
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 0,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 1,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.17,
+    0.52,
+    0.8,
+    1.0,
+    1.355,
+    1.62,
+    1.97
+   ],
+   "prominence": [
+    2.139,
+    1.153,
+    -1.836,
+    0.977,
+    -0.989,
+    1.426,
+    -2.871
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.5,
+    0.79,
+    1.0,
+    1.34,
+    1.61,
+    1.96
+   ],
+   "prominence": [
+    -0.157,
+    -3.112,
+    3.6,
+    1.658,
+    -1.123,
+    1.797,
+    -2.663
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 3,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.49,
+    0.76,
+    0.99,
+    1.345,
+    1.61,
+    1.96
+   ],
+   "prominence": [
+    -0.435,
+    -3.581,
+    -0.992,
+    7.113,
+    -0.912,
+    1.409,
+    -2.603
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.49,
+    0.77,
+    0.97,
+    1.345,
+    1.62,
+    1.97
+   ],
+   "prominence": [
+    -0.936,
+    -4.257,
+    -1.61,
+    1.579,
+    3.317,
+    5.359,
+    -3.452
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.16,
+    0.49,
+    0.77,
+    0.97,
+    1.315,
+    1.61,
+    1.96
+   ],
+   "prominence": [
+    -0.615,
+    -3.941,
+    -1.018,
+    2.078,
+    -0.2,
+    7.219,
+    -3.523
+   ]
+  },
+  {
+   "family": "say",
+   "voice": "Rishi",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 6,
+    "loud": 6,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.17,
+    0.49,
+    0.77,
+    0.97,
+    1.31,
+    1.59,
+    2.0
+   ],
+   "prominence": [
+    -0.493,
+    -5.099,
+    -1.619,
+    1.857,
+    -0.578,
+    1.853,
+    4.078
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.01,
+    0.215,
+    0.55,
+    0.825,
+    1.01,
+    1.37,
+    1.52,
+    1.83
+   ],
+   "prominence": [
+    2.685,
+    -0.786,
+    0.954,
+    0.35,
+    -0.586,
+    -1.351,
+    -1.266
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 0,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 0,
+    "loud": 2,
+    "dur": 1
+   },
+   "bounds": [
+    0.0,
+    0.13,
+    0.53,
+    0.83,
+    1.0,
+    1.35,
+    1.51,
+    1.82
+   ],
+   "prominence": [
+    1.778,
+    0.523,
+    1.094,
+    0.19,
+    -0.794,
+    -0.892,
+    -1.899
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 2,
+    "dur": 2
+   },
+   "bounds": [
+    0.0,
+    0.09,
+    0.42,
+    0.76,
+    0.93,
+    1.28,
+    1.44,
+    1.76
+   ],
+   "prominence": [
+    -3.038,
+    -2.955,
+    3.364,
+    -1.293,
+    1.92,
+    1.97,
+    0.032
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.09,
+    0.4,
+    0.7,
+    0.95,
+    1.3,
+    1.46,
+    1.78
+   ],
+   "prominence": [
+    -4.044,
+    -1.648,
+    0.936,
+    4.493,
+    0.564,
+    0.853,
+    -1.155
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 4,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.09,
+    0.4,
+    0.66,
+    0.87,
+    1.27,
+    1.43,
+    1.75
+   ],
+   "prominence": [
+    -2.65,
+    -0.99,
+    0.904,
+    2.709,
+    3.226,
+    -1.24,
+    -1.96
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.09,
+    0.4,
+    0.69,
+    0.86,
+    1.2,
+    1.45,
+    1.8
+   ],
+   "prominence": [
+    -3.032,
+    -0.702,
+    0.481,
+    0.004,
+    -0.546,
+    6.126,
+    -2.33
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 6,
+    "dur": 6
+   },
+   "bounds": [
+    0.0,
+    0.09,
+    0.4,
+    0.69,
+    0.86,
+    1.17,
+    1.365,
+    2.04
+   ],
+   "prominence": [
+    -3.202,
+    -0.92,
+    0.048,
+    -1.225,
+    -1.82,
+    3.054,
+    4.065
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.01,
+    0.2,
+    0.51,
+    0.77,
+    0.96,
+    1.31,
+    1.48,
+    1.79
+   ],
+   "prominence": [
+    2.576,
+    -1.078,
+    0.295,
+    0.583,
+    -0.404,
+    -0.39,
+    -1.583
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 2,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 2,
+    "dur": 0
+   },
+   "bounds": [
+    0.0,
+    0.15,
+    0.51,
+    0.78,
+    0.95,
+    1.31,
+    1.48,
+    1.79
+   ],
+   "prominence": [
+    -0.033,
+    -0.124,
+    1.773,
+    0.82,
+    0.066,
+    -0.45,
+    -2.052
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 5,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 2,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.11,
+    0.44,
+    0.74,
+    0.92,
+    1.27,
+    1.44,
+    1.75
+   ],
+   "prominence": [
+    -1.943,
+    -2.714,
+    2.259,
+    -1.277,
+    2.184,
+    2.402,
+    -0.911
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.11,
+    0.4,
+    0.68,
+    0.92,
+    1.27,
+    1.45,
+    1.75
+   ],
+   "prominence": [
+    -2.965,
+    -2.67,
+    0.133,
+    4.732,
+    1.143,
+    1.635,
+    -2.008
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 4,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.11,
+    0.39,
+    0.64,
+    0.87,
+    1.27,
+    1.44,
+    1.76
+   ],
+   "prominence": [
+    -1.358,
+    -1.957,
+    0.513,
+    2.541,
+    2.953,
+    -0.466,
+    -2.226
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.11,
+    0.4,
+    0.64,
+    0.83,
+    1.21,
+    1.46,
+    1.8
+   ],
+   "prominence": [
+    -1.769,
+    -1.436,
+    -0.734,
+    0.357,
+    0.196,
+    6.037,
+    -2.651
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-gb",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 6,
+    "dur": 6
+   },
+   "bounds": [
+    0.0,
+    0.11,
+    0.4,
+    0.63,
+    0.83,
+    1.18,
+    1.4,
+    1.99
+   ],
+   "prominence": [
+    -1.958,
+    -1.102,
+    -0.898,
+    -0.779,
+    -0.809,
+    1.656,
+    3.889
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "0_i",
+   "truth": 0,
+   "guess": 0,
+   "raw_guess": 0,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 0,
+    "dur": 0
+   },
+   "bounds": [
+    0.01,
+    0.21,
+    0.54,
+    0.83,
+    1.0,
+    1.34,
+    1.49,
+    1.81
+   ],
+   "prominence": [
+    2.903,
+    -0.868,
+    0.786,
+    0.08,
+    -0.819,
+    -1.268,
+    -0.814
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "1_never",
+   "truth": 1,
+   "guess": 2,
+   "raw_guess": 1,
+   "cue_guess": {
+    "pitch": 2,
+    "loud": 1,
+    "dur": 1
+   },
+   "bounds": [
+    0.0,
+    0.13,
+    0.52,
+    0.82,
+    0.97,
+    1.32,
+    1.48,
+    1.79
+   ],
+   "prominence": [
+    -1.475,
+    1.233,
+    2.247,
+    0.968,
+    -0.368,
+    -1.133,
+    -1.473
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "2_said",
+   "truth": 2,
+   "guess": 2,
+   "raw_guess": 2,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 2,
+    "dur": 2
+   },
+   "bounds": [
+    0.0,
+    0.09,
+    0.42,
+    0.76,
+    0.92,
+    1.26,
+    1.42,
+    1.74
+   ],
+   "prominence": [
+    -3.16,
+    -3.046,
+    3.545,
+    -1.489,
+    1.81,
+    2.11,
+    0.229
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "3_she",
+   "truth": 3,
+   "guess": 3,
+   "raw_guess": 3,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 3,
+    "dur": 3
+   },
+   "bounds": [
+    0.0,
+    0.08,
+    0.39,
+    0.68,
+    0.94,
+    1.27,
+    1.43,
+    1.75
+   ],
+   "prominence": [
+    -4.295,
+    -2.477,
+    0.789,
+    4.535,
+    0.868,
+    1.276,
+    -0.695
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "4_stole",
+   "truth": 4,
+   "guess": 4,
+   "raw_guess": 4,
+   "cue_guess": {
+    "pitch": 3,
+    "loud": 4,
+    "dur": 4
+   },
+   "bounds": [
+    0.0,
+    0.08,
+    0.39,
+    0.64,
+    0.83,
+    1.24,
+    1.4,
+    1.72
+   ],
+   "prominence": [
+    -2.988,
+    -1.61,
+    0.761,
+    2.634,
+    3.759,
+    -0.92,
+    -1.636
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "5_my",
+   "truth": 5,
+   "guess": 5,
+   "raw_guess": 5,
+   "cue_guess": {
+    "pitch": 5,
+    "loud": 5,
+    "dur": 5
+   },
+   "bounds": [
+    0.0,
+    0.08,
+    0.39,
+    0.68,
+    0.84,
+    1.17,
+    1.42,
+    1.77
+   ],
+   "prominence": [
+    -3.171,
+    -1.01,
+    0.329,
+    -0.111,
+    -0.269,
+    6.101,
+    -1.869
+   ]
+  },
+  {
+   "family": "espeak",
+   "voice": "en-us+f3",
+   "clip": "6_money",
+   "truth": 6,
+   "guess": 6,
+   "raw_guess": 6,
+   "cue_guess": {
+    "pitch": 1,
+    "loud": 6,
+    "dur": 6
+   },
+   "bounds": [
+    0.0,
+    0.08,
+    0.39,
+    0.68,
+    0.84,
+    1.15,
+    1.34,
+    2.0
+   ],
+   "prominence": [
+    -3.005,
+    -0.683,
+    0.233,
+    -1.052,
+    -0.774,
+    0.794,
+    4.487
+   ]
+  }
+ ]
+}

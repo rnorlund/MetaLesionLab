@@ -45,7 +45,7 @@ CHANCE = 1 / N
 class Meaning:
     word: str      # the stressed word
     gloss: str     # what the stress adds, as the page says it
-    option: str    # the same meaning as a multiple-choice option for Spark (never names the stressed word)
+    option: str    # the same meaning as a multiple-choice option for Spark (doesn't say which word is stressed)
 
 
 # Written before any model saw them. Each option says what the speaker means without naming which word carries
@@ -130,7 +130,9 @@ def leaks(transcripts: list[str]) -> dict:
     exact = set(transcripts)
     by_words = {" ".join(words_of(t)) for t in transcripts}
     marks = {t: "".join(c for c in t if c in string.punctuation or c in "…—–“”‘’") for t in transcripts}
-    caps = {t: [w for w in re.findall(r"[A-Za-z']+", t) if len(w) > 1 and w.isupper()] for t in transcripts}
+    # a word of the sentence written in capitals (SHE, NEVER); "I" is always a capital, and "II" is a doubled "I"
+    stressable = {w.lower() for w in WORDS if w != "I"}
+    caps = {t: [w for w in re.findall(r"[A-Za-z']+", t) if w.isupper() and w.lower() in stressable] for t in transcripts}
     return {"identical": len(exact) == 1, "same_words": len(by_words) == 1, "n_distinct": len(exact),
             "n_distinct_words": len(by_words), "punctuation": sorted(set(marks.values())),
             "capitalised_words": sorted({w for v in caps.values() for w in v})}
@@ -192,7 +194,13 @@ def pitch_track(x: np.ndarray, sr: int = SR, hop_s: float = HOP_S, win_s: float 
     ac = ac / (ac[:, :1] + 1e-12) / (wac / wac[0] + 1e-12)
     lo, hi = int(sr / F0_MAX), min(int(sr / F0_MIN), win // 2)
     seg = ac[:, lo:hi]
-    k = np.argmax(seg, axis=1)
+    # the shortest lag whose peak is within 10% of the best: a periodic sound peaks at every multiple of its period,
+    # and with the window divided out the peak at twice the period can edge out the true one (an octave too low)
+    best = seg.max(axis=1, keepdims=True)
+    peaks = np.zeros_like(seg, dtype=bool)
+    peaks[:, 1:-1] = (seg[:, 1:-1] > seg[:, :-2]) & (seg[:, 1:-1] >= seg[:, 2:])
+    ok = peaks & (seg >= 0.9 * best)
+    k = np.where(ok.any(axis=1), np.argmax(ok, axis=1), np.argmax(seg, axis=1))
     peak = seg[np.arange(len(seg)), k]
     # parabolic interpolation around the peak
     kk = np.clip(k, 1, seg.shape[1] - 2)

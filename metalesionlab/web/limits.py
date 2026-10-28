@@ -15,9 +15,13 @@ from fastapi import HTTPException, Request
 DAY_S = 24 * 3600
 # Calls per IP per day. Override with TOT_LIMIT_BUILD, TOT_LIMIT_SCENE, TOT_LIMIT_SCORE.
 # "draw" (Draw your chair) spends CPU, not API credit; "draw_burst" is its per-minute limit (draw_routes.py).
-DEFAULT_LIMITS = {"build": 3, "scene": 3, "score": 60, "draw": 300, "draw_burst": 20}
+# "phaedrus" is Seven meanings' voice test (transcription and Muse Spark, about $0.003 a try); "phaedrus_listen" its
+# free prosody reading (CPU), and "phaedrus_burst" the per-minute limit on both (plato_phaedrus_routes.py).
+DEFAULT_LIMITS = {"build": 3, "scene": 3, "score": 60, "draw": 300, "draw_burst": 20, "phaedrus": 30,
+                  "phaedrus_listen": 200, "phaedrus_burst": 8}
 WHAT = {"build": "picture sets", "scene": "scenes", "score": "scored responses", "draw": "drawings",
-        "draw_burst": "drawings"}
+        "draw_burst": "drawings", "phaedrus": "voice tries", "phaedrus_listen": "recordings",
+        "phaedrus_burst": "recordings"}
 TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # Behind TOT_PROXY_HOPS trusted proxies the visitor is that many entries from the right of
 # X-Forwarded-For; entries further left are whatever the visitor sent, so they can't be trusted.

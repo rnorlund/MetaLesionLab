@@ -507,7 +507,7 @@ ARISTOTLE_WORKS = {"Metaphysics": "metaphysics", "Nicomachean Ethics": "ethics"}
 
 def test_passages_file_schema():
     ps = PASSAGES["passages"]
-    assert 10 <= len(ps) <= 32 and len(P) == len(ps)  # unique ids
+    assert 10 <= len(ps) <= 36 and len(P) == len(ps)  # unique ids
     assert "Jowett" in PASSAGES["translations"]["Plato"] and "public domain" in PASSAGES["license"].lower()
     assert "Ross" in PASSAGES["translations"]["Aristotle, Metaphysics"] and "Aristotle" in PASSAGES["attribution"]
     for p in ps:
