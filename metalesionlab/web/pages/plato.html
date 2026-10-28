@@ -102,6 +102,7 @@
   <a href="#everything">Almost everything</a>
   <a href="#aristotle">Aristotle’s reply</a>
   <a href="#variety" id="var-jump" hidden>Ask for variety</a>
+  <a href="#crowd">Ask it to be a crowd</a>
   <a href="#languages">In six languages</a>
   <a href="#inside">Inside the AI</a>
   <a href="#second-model">Is it just Meta’s model?</a>
@@ -214,6 +215,45 @@
     <div class="pc-facts" id="var-facts"></div>
   </div>
   <div class="pc-var-kinds" id="var-kinds" aria-live="polite"></div>
+</section>
+
+<!-- Ask it to be a crowd (docs/plato_crowd.md): the same prompt with a different stated age per call. Static: the numbers
+     come from web/data/plato_crowd.json (scripts/plato_crowd_web_export.py) and the tests check they match. The
+     sprites are the draw pad's format; the landing page and /draw never show the persona drawings. -->
+<section class="pc-sec pc-crowd" id="crowd" aria-labelledby="crowd-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">Ask it to be a crowd</span>
+    <h2 id="crowd-h">What if 16 different people were drawing?</h2>
+    <p class="pc-sec-lede">Each call to Muse Image starts fresh, so its 16 chairs are like 16 strangers who share one mind. Real people differ. So we told it who was drawing: a different age for each call, from 20 to 80, and nothing else.</p>
+  </div>
+  <p class="pc-crowd-answer">A stated age changes nothing, like “any kind of chair”.</p>
+  <figure class="pc-crowd-fig" aria-labelledby="crowd-cap">
+    <div class="pc-crowd-card">
+      <div class="pc-crowd-row">
+        <p class="pc-crowd-label"><b>The same prompt, 16 times</b><q>a quick simple doodle sketch of a chair, …</q><span>spread 0.13</span></p>
+        <ol class="pc-crowd-strip" data-row="default" role="img" aria-label="16 chairs by Meta’s Muse Image from the same prompt: the same slat-back chair in three-quarter view every time.">
+          <li style="--c:0;--r:0"><i></i></li><li style="--c:1;--r:0"><i></i></li><li style="--c:2;--r:0"><i></i></li><li style="--c:3;--r:0"><i></i></li><li style="--c:4;--r:0"><i></i></li><li style="--c:5;--r:0"><i></i></li><li style="--c:6;--r:0"><i></i></li><li style="--c:7;--r:0"><i></i></li><li style="--c:0;--r:1"><i></i></li><li style="--c:1;--r:1"><i></i></li><li style="--c:2;--r:1"><i></i></li><li style="--c:3;--r:1"><i></i></li><li style="--c:4;--r:1"><i></i></li><li style="--c:5;--r:1"><i></i></li><li style="--c:6;--r:1"><i></i></li><li style="--c:7;--r:1"><i></i></li>
+        </ol>
+      </div>
+      <div class="pc-crowd-row">
+        <p class="pc-crowd-label"><b>A different age each time</b><q>Drawn by a 20-year-old: a quick simple doodle sketch of a chair, …</q><span>spread 0.09</span></p>
+        <ol class="pc-crowd-strip" data-row="persona" role="img" aria-label="16 chairs by Meta’s Muse Image, each prompt starting with a different age from 20 to 80: the same slat-back chair in three-quarter view every time.">
+          <li style="--c:0;--r:0"><i></i><small>20</small></li><li style="--c:1;--r:0"><i></i><small>24</small></li><li style="--c:2;--r:0"><i></i><small>28</small></li><li style="--c:3;--r:0"><i></i><small>32</small></li><li style="--c:4;--r:0"><i></i><small>36</small></li><li style="--c:5;--r:0"><i></i><small>40</small></li><li style="--c:6;--r:0"><i></i><small>44</small></li><li style="--c:7;--r:0"><i></i><small>48</small></li><li style="--c:0;--r:1"><i></i><small>52</small></li><li style="--c:1;--r:1"><i></i><small>56</small></li><li style="--c:2;--r:1"><i></i><small>60</small></li><li style="--c:3;--r:1"><i></i><small>64</small></li><li style="--c:4;--r:1"><i></i><small>68</small></li><li style="--c:5;--r:1"><i></i><small>72</small></li><li style="--c:6;--r:1"><i></i><small>76</small></li><li style="--c:7;--r:1"><i></i><small>80</small></li>
+        </ol>
+      </div>
+    </div>
+    <figcaption id="crowd-cap" class="pc-cap">Meta’s Muse Image, one call per chair. The stated age is the only change to the prompt. <b>Spread</b>: how different two drawings look on average, measured with Meta’s DINOv2.</figcaption>
+  </figure>
+  <div class="pc-crowd-stats">
+    <div data-sv="bars" data-size="s" data-values="0.13,0.09,0.37" data-labels="Same prompt,With ages,People" data-tones="muted,blue,orange" data-digits="2" data-max="0.4" data-value="×0.7"
+         data-label="the chair: spread with ages ÷ without (95% CI 0.46 to 1.11, so no clear change)"></div>
+    <div data-sv="bars" data-size="s" data-values="0.16,0.16,0.34" data-labels="Same prompt,With ages,People" data-tones="muted,blue,orange" data-digits="2" data-max="0.4" data-value="×1.0"
+         data-label="spread with ages ÷ without, over the 10 things on the drawing pad (bars: their mean spread)"></div>
+    <div data-sv="dots" data-size="s" data-k="1" data-n="10" data-cols="10"
+         data-label="things reach people’s spread with ages: the book, which already did without"></div>
+  </div>
+  <p class="pc-crowd-more">Over the 10 things, the spread changed by +0.00 on average (95% CI −0.02 to +0.03), and younger or older ages did not move the drawings away from the usual one. The chairs stayed the textbook slat-back chair, and God stayed a bearded man with a halo, 16 times of 16. So asking 16 times is fair to Muse Image: telling it that 16 different people are drawing gives the same drawing. What does bring out its variety is naming the kinds (above).</p>
+  <p class="pc-note">Pre-registered before any picture was made: 176 new doodles of the pad’s 10 things and God, one call each. <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_crowd_plan.md">Plan</a> · <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_crowd.md">Results</a></p>
 </section>
 
 <section class="pc-sec" id="languages" aria-labelledby="lang-h">

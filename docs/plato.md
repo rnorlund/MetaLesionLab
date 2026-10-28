@@ -230,3 +230,5 @@ Per-concept values are in `results.json` under `naming`.
 Human drawings: Google Quick, Draw! dataset, Google Creative Lab, CC BY 4.0 (https://github.com/googlecreativelab/quickdraw-dataset). The drawings are never committed to this repository.
 
 **Robustness:** the core and variety results hold with DINOv2-large, Meta PE-Core and Google SigLIP 2 (Muse/people 0.29–0.49, 34 or 35 of 35 concepts below people; Muse below SDXL; named kinds above people); only the per-concept ranking and the 0.38 link to people's spread depend on DINOv2 (`docs/plato_robustness.md`).
+
+**Ask it to be a crowd:** told a different age for each of its 16 calls (20 to 80), Muse Image draws the same things as with no age: spread +0.001 on average over the 10 pad things (95% CI −0.024 to +0.027), 1 of 10 at people's spread, and God a bearded man with a halo 16 times of 16 (pre-registered; `docs/plato_crowd.md`).
