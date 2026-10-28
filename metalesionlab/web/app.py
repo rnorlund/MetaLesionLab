@@ -962,6 +962,7 @@ SITE_ROUTERS = {
         "plato_lifespan_routes",  # The life of a chair (/plato/lifespan)
         "plato_inside_routes",  # Inside the model (/plato/inside)
         "plato_telephone_routes",  # Plato's Telephone (/plato/telephone)
+        "plato_atlas_routes",  # The Atlas of Forms (/plato/atlas)
         "draw_routes",  # Draw a chair (/draw)
         "socrates_routes",  # Ask Socrates (/socrates): the site's only paid route
     ],
