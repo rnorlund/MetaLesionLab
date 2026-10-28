@@ -107,6 +107,49 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-how-list { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
 .so-how-list b { color: var(--ink); }
 
+/* the portrait: a Muse Image doodle, kept on white paper in both themes */
+.so-hero-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.so-hero-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.so-portrait { margin: 0; flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.so-portrait img { width: 128px; height: 128px; border-radius: 50%; background: #fff; border: 2px solid var(--bronze-line); display: block; }
+.so-portrait figcaption { font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center; }
+.so-face { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 1.5px solid var(--bronze-line); display: block; }
+
+/* modes: a two-way switch built from radio buttons (arrow keys move between them) */
+.so-modes { display: inline-flex; flex-wrap: wrap; gap: 0; margin: 0; padding: 3px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--soft); width: fit-content; max-width: 100%; }
+.so-mode { position: relative; display: inline-flex; }
+.so-mode input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.so-mode span { display: inline-flex; align-items: center; min-height: 38px; padding: 6px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-2); cursor: pointer; }
+.so-mode input:checked + span { background: var(--bronze); color: #fff; }
+.so-mode input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
+.so-mode input:disabled + span { opacity: 0.6; cursor: not-allowed; }
+.so-examine-intro { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
+.so-examine-intro p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.so-concepts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; border: 0; }
+.so-concepts legend { float: left; margin-right: 6px; padding: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
+.so-concept { position: relative; display: inline-flex; }
+.so-concept input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.so-concept span { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); font-size: 14px; color: var(--ink-2); cursor: pointer; }
+.so-concept input:checked + span { border-color: var(--bronze); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--bronze); }
+.so-concept input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
+.so-concept input:disabled + span { opacity: 0.6; cursor: not-allowed; }
+.so-opening .so-ask p { font-size: 20px; }
+
+/* the end of an examination */
+.so-aporia { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
+.so-verdict { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 15px; line-height: 1.5; }
+.so-verdict dt { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); padding-top: 3px; }
+.so-verdict dt.broke { color: var(--red); }
+.so-verdict dd { margin: 0; color: var(--ink); }
+.so-next { display: flex; flex-wrap: wrap; gap: 8px; }
+.so-next .btn { min-height: 38px; padding: 8px 12px; text-decoration: none; }
+
+/* What is the Socratic method? */
+.so-method h2 { margin-bottom: 10px; }
+.so-method-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.so-method-list b { color: var(--ink); }
+.so-method-list i { font-family: var(--serif); }
+
 @media (max-width: 720px) {
   .page { padding-left: 16px; padding-right: 16px; }
   .so-hero { padding: 20px 18px 16px; }
@@ -115,6 +158,15 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
   .so-turn { grid-template-columns: minmax(0, 1fr); }
   .so-turn > :not(.so-speaker) { grid-column: 1; }
   .so-speaker { grid-column: 1; grid-row: auto; flex-direction: row; align-items: center; gap: 8px; }
+  .so-face { width: 32px; height: 32px; }
+  .so-hero-row { align-items: flex-start; }
+  .so-portrait img { width: 72px; height: 72px; }
+  .so-portrait figcaption { max-width: 80px; font-size: 9.5px; }
+  .so-modes { display: flex; width: 100%; }
+  .so-mode { flex: 1 1 0; }
+  .so-mode span { justify-content: center; width: 100%; padding: 6px 10px; text-align: center; }
+  .so-verdict { grid-template-columns: minmax(0, 1fr); }
+  .so-next .btn { flex: 1 1 100%; justify-content: center; text-align: center; }
   .so-form { flex-direction: column; }
   .so-form .btn { width: 100%; }
   .so-ask p { font-size: 17.5px; }
@@ -142,5 +194,6 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
   .btn-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
   .btn-ghost { border-color: #4B5563; }
   .note-warn { border-color: #78350F; color: var(--ink); }
+  .so-mode input:checked + span { color: #0B0F17; }
   :focus-visible { outline-color: #93C5FD; }
 }

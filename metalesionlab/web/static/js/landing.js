@@ -38,10 +38,8 @@
       revealEl.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
     });
   }
-  // The guided tour starts at the chairs: show them first (capture phase, before the tour finds its target).
-  document.addEventListener('click', function (e) {
-    if (e.target.closest && e.target.closest('[data-tour-start]')) reveal('tour');
-  }, true);
+  // The guided tour keeps the blind draw: Socrates asks for a chair first, and tour.js calls
+  // T.landing.reveal('tour') when it moves on to the chairs.
 
   // --- stack the drawings: Muse Image's 16 make one chair, people's 16 make a cloud ----------------
   function stack(on) {
@@ -56,7 +54,6 @@
   // Once per visit, when the grids are on screen: stack, hold, and spread out again. Not with reduced
   // motion, and not while the guided tour is running (its first step does this itself).
   function touring() { try { return window.sessionStorage.getItem('tot-tour-step') != null; } catch (e) { return false; } }
-  if (touring()) reveal('tour');
   function autoplay() {
     if (autoDone || still || touring()) return;
     autoDone = true;

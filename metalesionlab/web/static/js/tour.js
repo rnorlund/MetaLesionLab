@@ -1,12 +1,17 @@
-/* Guided tour: about 90 seconds of Plato's Chair, from the stacked chairs to "draw your own".
-   Every number comes from the page's own data (/api/plato); no AI calls. The current step lives in
-   sessionStorage, so the tour carries on across page loads. At most 10 steps; it ends at /draw when the
-   server has that page (TOT.hasPage), and otherwise with the same closing card wherever it is. */
+/* Guided tour: about 90 seconds of Plato's Chair, with Socrates as the guide. Each step shows his portrait
+   (a doodle by Meta's Muse Image) and a speech bubble: a question first, then a short pointer. The lines are
+   written in advance and every number in them comes from the write-ups (docs/plato*.md; tests/test_site.py
+   checks them), so the tour makes no AI calls. Blind draw first: on the landing page Socrates asks for a
+   chair before anything of Muse Image's is shown; the chairs appear when the visitor draws or presses Next.
+   The current step lives in sessionStorage, so the tour carries on across page loads. At most 10 steps; it
+   ends at /draw when the server has that page (TOT.hasPage), with "Ask me yourself" (/socrates). */
 (function () {
   'use strict';
   var T = window.TOT, h = T.h;
-  var STEP_KEY = 'tot-tour-step', OFFER_KEY = 'tot-tour-offer-done';
+  var STEP_KEY = 'tot-tour-step', OFFER_KEY = 'tot-tour-offer-done', SEEN_KEY = 'tot-draw-seen';
   var PHONE = 640;
+  var FACE = '/static/img/socrates/socrates-';
+  var CREDIT = 'Socrates drawn by Meta’s Muse Image. His lines are written in advance: this tour makes no AI calls.';
 
   function q(sel) { return document.querySelector(sel); }
   function store(kind, key, value) {
@@ -19,7 +24,7 @@
   }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function phone() { return window.innerWidth < PHONE; }
-  function pct(x) { return Math.round(x * 100); }
+  function still() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
   function visible(el) { return el && (el.offsetWidth || el.offsetHeight || el.getClientRects().length); }
   function waitFor(sel, ms) {
     var t0 = Date.now();
@@ -35,107 +40,107 @@
   function hasDraw() { return T.hasPage ? T.hasPage('/draw') : false; }
   function hasSocrates() { return T.hasPage ? T.hasPage('/socrates') : false; }
 
+  // --- the blind draw on the landing page ----------------------------------------------------------
+  function landingPad() { return T.landing && T.landing.draw && q('#hero-draw'); }
+  function revealed() { return document.body.classList.contains('revealed') || !q('#reveal') || !q('#reveal').hidden; }
+  function revealChairs() { if (T.landing && T.landing.reveal) T.landing.reveal('tour'); }
+  // From the chairs on, a drawing in this tab isn't blind any more (draw.js reads the same flag).
+  function markSeen() {
+    store('session', SEEN_KEY, '1');
+    if (window.TOTDraw && window.TOTDraw.markSeen) window.TOTDraw.markSeen();
+  }
+
   // --- Plato page data ----------------------------------------------------------------------------
   function platoReady() { return T.plato ? T.plato.ready : Promise.resolve(); }
   function P() { return T.plato && T.plato.state().data; }
   function noPlato() { return !P(); }
-  function chair() { var d = P(); return ((d && d.hero) || []).filter(function (c) { return c.key === 'chair'; })[0] || {}; }
   function chairOnPlato() {
     return platoReady().then(function () { if (T.plato) { T.plato.setConcept('chair'); T.plato.setWho('ai'); } });
   }
 
-  // --- the steps ----------------------------------------------------------------------------------
+  // --- the steps: Socrates asks (q), then points (p) -----------------------------------------------
   var STEPS = [
-    { page: '/', url: '/', id: 'home', target: '#chairs', title: 'What would Plato ask an AI?',
+    { page: '/', url: '/', id: 'ask', target: '#hero-draw', face: 'questioning', kicker: 'Is there one ideal chair?', blind: true,
+      skip: function () { return !landingPad(); },
+      q: 'Before I tell you anything: what is a chair? Draw one, and we’ll see.',
+      p: function () {
+        return revealed()
+          ? 'You’ve seen the machine’s chairs now, so your drawing won’t be a blind one. Draw one anyway, or go on.'
+          : 'You have 20 seconds, as the people who played Google’s Quick, Draw! had. Or press Next, and I’ll show you the machine’s chairs first.';
+      },
+      next: function () { return revealed() ? 'Next' : 'Show me the machine’s chairs'; } },
+
+    { page: '/', url: '/', id: 'home', target: '#chairs', face: 'pointing', kicker: 'Sixteen chairs',
+      before: function () { revealChairs(); },
       onShow: function () {
         var at = current;
         return wait(700).then(function () { if (current === at && T.landing) { T.landing.cancelAuto(); T.landing.stack(true); } });
       },
-      body: 'Plato asked whether there is one ideal chair. We asked Meta’s image model, Muse Image, for a chair 16 times, and set its drawings beside 16 people’s from Google’s Quick, Draw!. Watch: stacked on top of each other, Muse Image’s 16 chairs make one chair. People’s make a cloud.' },
+      q: 'The machine drew the same chair sixteen times. Is that wisdom, or habit?',
+      p: 'We asked Meta’s Muse Image for a chair 16 times and set its drawings beside 16 people’s. Watch: stacked on top of each other, its 16 make one chair. People’s make a cloud.' },
 
-    { page: '/plato', url: '/plato', id: 'plato', title: 'Measuring “varied”',
+    { page: '/plato', url: '/plato', id: 'plato', face: 'neutral', kicker: 'Measuring “varied”',
       target: function () { return phone() ? '.pc-frame' : '#hero-fig'; },
       before: chairOnPlato, skip: noPlato,
       onShow: function () {
         var at = current;
         return wait(2400).then(function () { if (current === at && T.plato) T.plato.setWho('people'); });
       },
-      body: function () {
-        var c = chair();
-        return 'Meta’s DINOv2 vision model turns each drawing into numbers, and the spread is how different two drawings look on average. Muse Image’s chairs: ' +
-          (c.ai_spread != null ? c.ai_spread.toFixed(2) : '0.13') + '. People’s: ' + (c.human_spread != null ? c.human_spread.toFixed(2) : '0.36') +
-          '. So its chairs are ' + (c.index != null ? pct(1 - c.index) : 63) + '% less varied. In a moment the picture switches to people’s chairs.';
-      } },
+      q: 'How would you measure how varied sixteen drawings are?',
+      p: 'We let Meta’s DINOv2 vision model turn each drawing into numbers; the spread is how different two drawings look on average. Muse Image’s chairs: 0.13. People’s: 0.36. In a moment, the picture switches to people’s chairs.' },
 
-    { page: '/plato', url: '/plato#everything', title: 'Not just chairs', target: '#rank-chart', before: platoReady, skip: noPlato,
-      body: function () {
-        var core = P().core;
-        return 'We did the same for ' + core.n_concepts + ' things. Each dot is one thing; left of the line means Muse Image drew it more alike than people do. That’s ' +
-          core.below_1 + ' of ' + core.n_concepts + ', with a typical ratio of ' + core.median_index.toFixed(2) +
-          ': about half as varied. Umbrellas are the most uniform. Books are the one exception.';
-      } },
+    { page: '/plato', url: '/plato#everything', face: 'questioning', kicker: 'Not just chairs', target: '#rank-chart', before: platoReady, skip: noPlato,
+      q: 'Was it only the chair, or does the machine do this with everything?',
+      p: 'We tried 35 things. Each dot is one; left of the line, Muse Image drew it more alike than people did. That’s 34 of 35, typically about half as varied (0.49). Umbrellas are the most uniform; books, the one exception.' },
 
-    { page: '/plato', url: '/plato#variety', title: 'Can you prompt it out of the Platonic chair?', target: '#var-fig', before: platoReady,
+    { page: '/plato', url: '/plato#variety', face: 'pointing', kicker: 'Can you talk it out of the chair?', target: '#var-fig', before: platoReady,
       skip: function () { var d = P(); return !d || !d.variety || !d.variety.conditions || !d.variety.conditions.listed; },
-      body: function () {
-        var C = P().variety.conditions;
-        return 'Asking for “any kind of chair” gives the same slat-back chair again (typical ratio ' + C.any.median_ratio.toFixed(2) +
-          '). But when Meta’s Muse Spark lists 16 kinds and Muse Image draws one of each, the drawings are ' + C.listed.median_ratio.toFixed(2) +
-          ' times as varied as people’s. Muse knows the variety; the narrow chair is its default.';
-      } },
+      q: 'If you ask it for “any kind of chair”, will it draw you a different one?',
+      p: 'No: the same slat-back chair again. But when Meta’s Muse Spark named kinds (a rocking chair, a beanbag, a wheelchair, a throne) and Muse Image drew one of each, its drawings were typically 1.30 times as varied as people’s, across 35 things. It knows the variety; the one chair is a habit.' },
 
-    { page: '/plato', url: '/plato#variety', title: 'People draw the plain chair too', target: '#var-kinds', before: platoReady,
+    { page: '/plato', url: '/plato#variety', face: 'questioning', kicker: 'People draw the plain chair too', target: '#var-kinds', before: platoReady,
       skip: function () { var d = P(); return !d || !d.variety || !d.variety.kinds || !d.variety.kinds.summary; },
-      body: function () {
-        var k = P().variety.kinds, S = k.summary;
-        return 'Muse Glimmer labeled which kind of thing every drawing shows. On the ' + k.reliable + ' things it labels reliably, ' + pct(S.people.mean_share_plain) +
-          '% of people’s recognizable drawings are the plain, ordinary kind, about the same as Muse Image’s usual prompt (' + pct(S.default.mean_share_plain) +
-          '%). People vary in how they draw a thing far more than in which one they draw.';
-      } },
+      q: 'Most people draw a chair from the side. Did you? And who taught you that?',
+      p: 'Muse Glimmer labeled which kind of chair each drawing shows: 84% of people’s recognizable chairs are the plain, ordinary kind. People vary in how they draw a chair far more than in which chair they draw.' },
 
-    { page: '/plato', url: '/plato#second-model', title: 'Is it just Meta’s model?', target: '#sdxl-card', before: platoReady,
+    { page: '/plato', url: '/plato#second-model', face: 'neutral', kicker: 'Is it just Meta’s model?', target: '#sdxl-card', before: platoReady,
       skip: function () { var d = P(); return !d || !d.sdxl || !d.sdxl.n_concepts; },
-      body: function () {
-        var s = P().sdxl, times = s.median_muse_over_sdxl ? (1 / s.median_muse_over_sdxl).toFixed(1) : null;
-        return 'Mostly, it’s Meta’s model. From the same prompt, Stable Diffusion XL drew more varied pictures for ' + s.muse_more_uniform + ' of ' + s.n_concepts + ' things' +
-          (times ? ', about ' + times + ' times Muse Image’s spread' : '') + ', though much of that is drawing style. So Plato’s Chair measures a model, not all AI.';
-      } },
+      q: 'Is this a law of all machines, or the habit of one?',
+      p: 'Mostly of one. From the same prompt, Stable Diffusion XL drew more varied pictures for 34 of 35 things, about 2.4 times Muse Image’s spread, though much of that is drawing style. Plato’s Chair measures a model, not all AI.' },
 
-    { page: '/plato', url: '/plato#inside', title: 'Inside Meta’s open model', target: '#inside .pc-card', before: platoReady, skip: noPlato,
-      body: function () {
-        var L = (P().inside.layer_spread || {}).L52;
-        return 'We showed both sets of doodles to Muse Glimmer, Meta’s open-weight model, and measured their spread after each of its 52 layers. By the last layers, Glimmer files all of Muse Image’s doodles of a thing in one place' +
-          (L ? ' (spread ' + L.ai.toFixed(2) + ', against ' + L.human.toFixed(2) + ' for people’s, in ' + L.human_wider + ' of ' + L.n + ' things)' : '') + '.';
-      } },
+    { page: '/plato', url: '/plato#inside', face: 'pointing', kicker: 'Inside Meta’s open model', target: '#inside .pc-card', before: platoReady, skip: noPlato,
+      q: 'And inside a machine’s mind, do sixteen chairs stay sixteen?',
+      p: 'We showed both sets of doodles to Muse Glimmer, Meta’s open model, and measured their spread after each of its 52 layers. By the last one, Muse Image’s doodles of a thing sit almost in one place (spread 0.09), while people’s stay spread out (0.54).' },
 
-    { page: '/', url: '/#series', title: 'The Plato series', target: '#series .series-grid', id: 'series',
+    { page: '/', url: '/#series', face: 'questioning', kicker: 'The Plato series', target: '#series .series-grid', id: 'series',
       // Only once another experiment of the series is on this server (decided before changing page).
       skipEarly: function () {
         var pages = (T.site && T.site.pages) || {};
         return !Object.keys(pages).some(function (p) { return p.indexOf('/plato/') === 0 && pages[p]; });
       },
       skip: function () { return document.querySelectorAll('#series .series-card').length < 2; },
-      body: function () {
-        var qs = [].slice.call(document.querySelectorAll('#series .series-q')).map(function (el) { return '“' + el.textContent + '”'; });
-        return 'Each experiment puts one of Plato’s questions to an AI and to people: ' + qs.join(', ') + '. Each card opens its results, including the predictions that failed.';
-      } },
+      q: 'Plato had more questions than chairs. Which would you put to a machine?',
+      p: 'Each card puts one of his questions to an AI and to people, and opens its results, the predictions that failed included.' },
 
-    { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw', id: 'draw', finish: true,
+    { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw', id: 'draw', finish: true, face: 'neutral', kicker: 'Your turn',
       target: function () {  // the drawing pad if the page has one; otherwise a centered card
         if (!hasDraw() || location.pathname !== '/draw') return null;
         return q('#canvas-wrap') ? '#canvas-wrap' : q('canvas') ? 'canvas' : null;
       },
-      title: function () { return hasDraw() ? 'Your turn: draw a chair' : 'Now try it yourself'; },
-      body: function () {
+      q: function () {
+        return hasDraw() ? 'Now that you’ve seen the machine’s chairs, will your next one be any different?'
+          : 'What would you ask a machine?';
+      },
+      p: function () {
         return hasDraw()
-          ? 'Draw a chair in 20 seconds, with a mouse or a finger, like the Quick, Draw! players did. Then see what Meta’s AI drew, and where your chair lands among 200 people’s, measured the same way. Nothing you draw is stored.'
-          : 'Everything you saw comes from Meta’s models: Muse Image drew, DINOv2 measured, Muse Spark listed kinds and Muse Glimmer labeled them. Pick a starting point:';
+          ? 'Draw a chair, or anything else, in 20 seconds, and see where it lands among 200 people’s, measured the same way. Nothing you draw is stored. Then come and talk: I have more questions.'
+          : 'Everything you saw comes from Meta’s models: Muse Image drew, DINOv2 measured, Muse Spark listed kinds and Muse Glimmer labeled them.';
       },
       links: function () {
         var out = [];
         if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw']);
-        if (hasSocrates()) out.push(['Ask Socrates', '/socrates']);
-        out.push(['See the whole experiment', '/plato'], ['Look inside the Model Lab', '/lab']);
+        if (hasSocrates()) out.push(['Ask me yourself', '/socrates'], ['Let me examine you', '/socrates?mode=examine']);
+        out.push(['See the whole experiment', '/plato']);
         return out;
       } }
   ];
@@ -157,15 +162,23 @@
     ui.spot = h('div', { class: 'tour-spot', 'aria-hidden': 'true' });
     ui.progress = h('span', { class: 'tour-progress' });
     ui.bar = h('div', { class: 'tour-bar' }, h('div'));
-    ui.title = h('h2', { id: 'tour-title' });
-    ui.body = h('p', { id: 'tour-body' });
+    ui.face = h('img', { class: 'tour-face', alt: '', width: 72, height: 72, src: FACE + 'neutral.webp' });
+    ui.kicker = h('span', { class: 'tour-kicker' });
+    ui.title = h('h2', { id: 'tour-title', class: 'tour-q' });
+    ui.body = h('p', { id: 'tour-body', class: 'tour-p' });
     ui.extra = h('div', { class: 'tour-extra' });
+    ui.credit = h('p', { class: 'tour-credit', text: CREDIT });
     ui.back = h('button', { type: 'button', class: 'btn btn-small', onclick: function () { go(current - 1, -1); } }, 'Back');
     ui.next = h('button', { type: 'button', class: 'btn btn-primary btn-small', onclick: function () { go(current + 1, 1); } }, 'Next');
     ui.skip = h('button', { type: 'button', class: 'tour-skip', onclick: end }, 'Skip tour');
-    ui.card = h('div', { class: 'tour-card', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'tour-title', 'aria-describedby': 'tour-body', tabindex: '-1' }, [
+    ui.card = h('div', { class: 'tour-card tour-socrates', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'tour-title', 'aria-describedby': 'tour-body', tabindex: '-1' }, [
       h('div', { class: 'tour-top' }, [ui.progress, h('button', { type: 'button', class: 'tour-x', 'aria-label': 'Close the tour', onclick: end }, '×')]),
-      ui.bar, ui.title, ui.body, ui.extra,
+      ui.bar,
+      h('div', { class: 'tour-say' }, [
+        ui.face,
+        h('div', { class: 'tour-bubble' }, [h('p', { class: 'tour-who' }, [h('b', { text: 'Socrates' }), ui.kicker]), ui.title, ui.body])
+      ]),
+      ui.extra, ui.credit,
       h('div', { class: 'tour-actions' }, [ui.skip, h('span', { class: 'tour-gap' }), ui.back, ui.next])
     ]);
     document.body.appendChild(ui.shade);
@@ -255,11 +268,18 @@
     buildUI();
     ui.progress.textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
     ui.bar.firstChild.style.width = (100 * (current + 1) / STEPS.length) + '%';
-    ui.title.textContent = val(step.title);
-    ui.body.textContent = val(step.body);
+    var src = FACE + (step.face || 'neutral') + '.webp';
+    if (ui.face.getAttribute('src') !== src) ui.face.setAttribute('src', src);
+    ui.face.classList.remove('pop');
+    if (!still()) { void ui.face.offsetWidth; ui.face.classList.add('pop'); }  // he pops up again at every step
+    ui.kicker.textContent = step.kicker ? ' · ' + val(step.kicker) : '';
+    ui.title.textContent = val(step.q);
+    ui.body.textContent = val(step.p);
     ui.extra.innerHTML = '';
+    ui.credit.hidden = !(current === 0 || step.finish || step.blind);
     ui.back.disabled = current === 0;
     ui.next.hidden = !!step.finish;
+    ui.next.textContent = step.next ? val(step.next) : 'Next';
     ui.skip.textContent = step.finish ? 'Close' : 'Skip tour';
     if (step.finish && step.links) {
       step.links().forEach(function (b, k) {
@@ -279,6 +299,7 @@
     }
     current = i;
     store('session', STEP_KEY, String(i));
+    if (!step.blind) markSeen();
     if (page && location.pathname !== page) {
       location.href = step.url || page;
       return Promise.resolve();
@@ -355,7 +376,8 @@
     if (/^\/(take|assess|challenge)\b/.test(location.pathname)) return;  // don't cover a test in progress
     var close = function () { store('local', OFFER_KEY, '1'); box.remove(); };
     var box = h('aside', { class: 'tour-offer', 'aria-label': 'Guided tour' }, [
-      h('p', null, [h('b', { text: 'New here?' }), ' Take the 90-second tour.']),
+      h('img', { class: 'tour-offer-face', src: FACE + 'questioning.webp', alt: '', width: 40, height: 40 }),
+      h('p', null, [h('b', { text: 'New here?' }), ' Let Socrates show you around: 90 seconds.']),
       h('button', { type: 'button', class: 'btn btn-primary btn-small', 'data-tour-start': '' }, 'Take the tour'),
       h('button', { type: 'button', class: 'tour-x', 'aria-label': 'No thanks', onclick: close }, '×')
     ]);
@@ -363,10 +385,15 @@
   }
   // Once a drawing is submitted or skipped (draw.js and landing.js send 'tot:revealed'), the results card is
   // what matters: the offer leaves this page view so it never covers the results. The header's Tour button
-  // stays, and the offer comes back on the next page until the visitor closes it.
+  // stays, and the offer comes back on the next page until the visitor closes it. If the tour is waiting at
+  // the blind-draw step, Socrates moves on to the machine's chairs.
   document.addEventListener('tot:revealed', function () {
     var box = q('.tour-offer');
     if (box) box.remove();
+    if (ui && current >= 0 && STEPS[current].blind) {
+      var at = current;
+      wait(900).then(function () { if (current === at) go(at + 1, 1); });
+    }
   });
 
   T.tour = { start: start, end: end, go: go, steps: STEPS, current: function () { return current; } };
@@ -375,6 +402,7 @@
   var saved = store('session', STEP_KEY), step = saved != null ? STEPS[+saved] : null;
   if (step && (!pageOf(step) || pageOf(step) === location.pathname)) {
     lastFocus = document.body;
+    if (!step.blind && location.pathname === '/') revealChairs();  // past the blind draw: the chairs stay shown
     go(+saved, 1);
   } else {
     if (saved != null) store('session', STEP_KEY, null);
