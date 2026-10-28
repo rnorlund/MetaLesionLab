@@ -18,10 +18,12 @@ Plan, committed before any data were measured: `docs/plato_lifespan_plan.md`. Pa
 - It never comes any closer to people's drawings (0.62 at v1.1 and at v1.5).
 - For the pre-registered primary set of 10 things nothing changes clearly, and none of it survives at a lower guidance setting.
 
-**An AI that learns only from people's chairs does grow up like a child.** We trained a small sketch model from scratch on 20,000 Quick, Draw! chairs.
-- It starts with scribbles (13% recognizable, distance 0.52) and passes through the range of children's chairs.
-- It ends about as close to the adult prototype as adults (0.21) and 80–89% recognizable.
-- It ends **less varied than the chairs it learned from** (spread 0.32 vs 0.37, difference −0.048 [−0.076, −0.022]).
+**An AI that learns only from people's chairs does grow up like a child.** We trained a small sketch model from scratch on 20,000 Quick, Draw! chairs, 8 times with different seeds (`docs/plato_sketch.md`, pre-registered in `docs/plato_sketch_plan.md`).
+- It starts with scribbles (18% recognizable, distance 0.51) and passes through the range of children's chairs.
+- It ends as close to the adult prototype as adults (0.20) and 87% recognizable (mean of 8 runs, temperature 1).
+- It ends **less varied than the chairs it learned from**, in all 8 runs: spread 0.315 vs 0.375, difference −0.059 [−0.067, −0.052] across runs. The narrowing holds at sampling temperatures 0.8 and 0.6 too (−0.051, −0.049; 8 of 8 runs each).
+- **The narrowing is not general.** The same model trained on cats (5 runs) learns them much less well (39% recognizable, against 84% for its training cats). It ends *more* varied than its training cats: +0.024 [+0.019, +0.029], 0 of 5 runs narrower.
+- The first run, on this Mac, had found −0.048 [−0.076, −0.022] with one seed.
 
 ## Data and licenses
 
@@ -48,7 +50,7 @@ Plan, committed before any data were measured: `docs/plato_lifespan_plan.md`. Pa
 |---|---|
 | Children's pictures | The stroke data of the stringent set, clipped to the visible 810 px canvas. That scale was fitted against the released 150 px PNGs, a factor of 5.40 in every run; without it, strokes that left the screen would appear. Then exactly Quick, Draw!'s simplification: align to the top-left, scale to 255, resample at 1 px, Ramer–Douglas–Peucker with ε = 2. Rendered by the same code as the adult drawings (`plato.render_strokes`, 3 px lines), so line width cannot vary with age. Robustness: the released PNGs. |
 | SD pictures | The core doodle prompt (*"A quick simple doodle sketch of a chair, black marker on plain white, like a 20-second drawing, no text, no shading."*) and the SDXL run's negative prompt, for 21 things: the 20 and umbrella. 512 px, fp16, Euler, 30 steps, guidance 7.5, safety checker off. 16 seeds per thing, **the same at every checkpoint**, so each picture starts from the same noise and only the weights differ. 1,680 pictures in 37 min, and 800 more at guidance 4 in 18 min, on an L40S shared with Glimmer (peak 2.6 GiB). |
-| Sketch model | A Sketch-RNN-style decoder (LSTM 512, 20-component Gaussian mixture, unconditional), trained from random weights. Data: 20,000 recognized Quick, Draw! chairs, the ones after the 200 used as the adult reference. 25,600 steps of batch 100 on this Mac (MPS, 20 min). At 11 log-spaced steps it drew 64 chairs, at temperature 1 and at 0.5. Drawings that are a single point are not drawings and are dropped; none of the children's drawings is a single point. |
+| Sketch model | A Sketch-RNN-style decoder (LSTM 512, 20-component Gaussian mixture, unconditional), trained from random weights. Data: 20,000 recognized Quick, Draw! chairs, the ones after the 200 used as the adult reference. 25,600 steps of batch 100. First run: this Mac (MPS, 20 min), 64 chairs at 11 log-spaced steps, at temperature 1 and 0.5. **Main runs** (`docs/plato_sketch.md`): the same model and data, **8 seeds** on an L40S, 200 drawings at each of 20 log-spaced steps and temperatures 1.0, 0.8 and 0.6, from noise fixed per seed. They are compared with 1,000 of the training chairs. Cats (5 seeds) are the generality check. Drawings that are a single point are not drawings and are dropped; none of the children's drawings is a single point. |
 | Measures | Every set was rendered or cropped to its ink and embedded with DINOv2. **Recognizable**: share of drawings whose most similar adult prototype, among 21, is their own thing (chance 4.8%). **Distance to the adult Form**: mean cosine distance of each drawing to its thing's adult prototype. **Distance to Muse's Form**: the same, to Muse Image's prototype. **Spread**: mean pairwise distance at matched n = 16. Adults and Muse are compared with their own prototype leave-one-out. |
 | Statistics | Children: per thing, an OLS slope on age (9 points); the group effect is the mean slope. 95% CIs from a two-level bootstrap (2,000 replicates; things, then drawings within each cell). AI: the slope on cumulative training steps and v1.5 − v1.1, with the same bootstrap over things and pictures. Seed 20261027. |
 
@@ -106,23 +108,34 @@ Muse Image (0.43) and SDXL (0.66) are far from people's drawings too. The AI's d
 
 ### Stretch: an AI that grows up on people's chairs
 
-Temperature 1, 64 drawings per step. Single points are not counted, so early steps have fewer drawings.
+The full write-up is `docs/plato_sketch.md`. It covers 8 seeds, 3 temperatures, robustness checks, the cat check and the animation.
 
-| Training step | Drawings | Recognizable | Distance to the adult Form | Spread | Spread − training drawings |
+Temperature 1, mean of 8 runs, 200 drawings per run and step (95% CIs across runs). Drawings that are a single point are not counted, so early steps have fewer drawings.
+
+| Training step | Drawings (of 200) | Recognizable | Distance to the adult Form | Spread | Spread − training drawings |
 |---|---|---|---|---|---|
-| 0 (random weights) | 24 | 13% | 0.520 | 0.419 | +0.054 [0.005, 0.098] |
-| 100 | 39 | 46% | 0.325 | 0.364 | −0.002 |
-| 200 | 40 | 63% | 0.295 | 0.364 | −0.001 |
-| 800 | 51 | 75% | 0.250 | 0.330 | −0.035 [−0.074, −0.001] |
-| 3,200 | 59 | 81% | 0.235 | 0.328 | −0.037 [−0.069, −0.011] |
-| 12,800 | 64 | 89% | 0.192 | 0.311 | −0.054 [−0.082, −0.031] |
-| 25,600 (last) | 64 | 80% | 0.205 | 0.318 | **−0.048 [−0.076, −0.022]** |
-| its training drawings (200 of 20,000) | 200 | 95% | 0.207 | 0.365 | |
+| 0 (random weights) | 89 | 18% | 0.511 | 0.434 | +0.059 [+0.048, +0.070] |
+| 100 | 110 | 52% | 0.363 | 0.420 | +0.045 [+0.034, +0.056] |
+| 200 | 132 | 64% | 0.299 | 0.374 | −0.001 [−0.014, +0.013] |
+| 800 | 160 | 68% | 0.265 | 0.344 | −0.031 [−0.042, −0.019] |
+| 3,200 | 191 | 75% | 0.234 | 0.319 | −0.056 [−0.065, −0.046] |
+| 12,800 | 200 | 83% | 0.208 | 0.319 | −0.056 [−0.064, −0.048] |
+| 25,600 (last) | 200 | 87% | 0.201 | 0.315 | **−0.059 [−0.067, −0.052]** |
+| its training drawings (1,000 of 20,000) | 1,000 | 94% | 0.211 | 0.375 | |
 
 - Its path looks like the children's chair path: recognizability up, distance to the Form down, spread down.
-- Roughly, it reaches a 3–4-year-old's recognizability by step 200, a 5–6-year-old's by step 800, and a 10-year-old's by 12,800. The CIs are about ±10 points at n = 64.
-- **Mode-seeking:** at its natural temperature it ends about 13% narrower than the drawings it learned from.
-- At temperature 0.5 the last step is not narrower (+0.001 [−0.035, 0.029]); intermediate steps are. One training run with one seed.
+  - It reaches a 2-year-old's recognizability at step 150 and a 6-year-old's at step 6,400.
+  - It ends just under a 10-year-old's at temperature 1 (87% vs 89%) and above it at 0.8 and 0.6 (90%, 92%).
+- **Narrower than what it learned from, in every run.** At its own temperature it ends 16% narrower.
+  - The two-level bootstrap over runs and drawings gives [−0.070, −0.048]; all 8 runs are below 0.
+  - It holds at temperature 0.8 (−0.051 [−0.056, −0.046]) and 0.6 (−0.049 [−0.056, −0.041]).
+  - It holds for the last three checkpoints, for a reference passed through the model's stroke conversion, and for patch-mean embeddings.
+- It is also pulled toward the typical chair: its final chairs sit closer to the adult prototype than its training chairs do (0.201 [0.196, 0.205] vs 0.211).
+- **Cats go the other way.** The same model, trained the same way on 20,000 cats (5 runs), learns them much less well: 39% recognizable at temperature 1, against 84% for its training cats. Quick, Draw! cats have about twice the strokes and points of chairs.
+  - It ends *more* varied than its training cats (+0.024 [+0.019, +0.029]; 0 of 5 runs narrower), and also at 0.8.
+  - At 0.6, where its cats are 76% recognizable, there is no clear difference.
+  - The narrowing seems to come with competence, not with learning from people as such.
+- **The first run** (this Mac, one seed, 64 drawings, against 200 training chairs) found −0.048 [−0.076, −0.022] at temperature 1, and no narrowing at 0.5 (+0.001 [−0.035, 0.029]). The narrowing replicates. The null at 0.5 does not carry over to 0.6 (we did not test 0.5).
 
 ## Caveats
 
@@ -130,7 +143,7 @@ Temperature 1, 64 drawings per step. Single points are not counted, so early ste
 - **Ages** are whole years entered by a parent. The paper reports that parents sometimes interfered, which may inflate the youngest children's recognizability. Children at a science museum are not a sample of all children. The kiosk asked for six different sets of eight categories over time, so different things come from partly different children.
 - **Stable Diffusion's checkpoints** differ in training data (LAION-2B-en, then high-resolution, then aesthetics-filtered subsets) and in text-dropout, not only in steps. v1.3, v1.4 and v1.5 are siblings from v1.2, not a chain. The earliest public checkpoint is already far into training. One prompt; guidance 7.5, with 4 as a check.
 - **DINOv2** measures how drawings look. "Recognizable" is nearest-prototype classification among 21 things, not human recognition.
-- **The sketch model** learns only adults' chairs, and only chairs. It is one run of one architecture, so it shows what learning from people's drawings can look like, not what children do.
+- **The sketch model** learns only adults' drawings. It is 8 runs (and 5 on cats) of one small architecture, so it shows what learning from people's drawings can look like, not what children do.
 - **The decline end of the lifespan** is an analogy, through the damaged-AI experiment (`/plato/damage`), not a claim about people. No medical claim is made.
 
 **Deviations from the plan.**
@@ -140,7 +153,9 @@ Temperature 1, 64 drawings per step. Single points are not counted, so early ste
 
 ## Cost
 
-**$0.** No paid API calls (no Muse Spark screening was needed, because no drawing is shown). GPU: 55 min of SD on axon-server01 next to Glimmer. Embeddings and the sketch model ran on this Mac.
+**$0.** No paid API calls (no Muse Spark screening was needed, because no drawing is shown).
+- GPU: 55 min of SD on axon-server01 next to Glimmer, and 54 min (0.9 GPU-hours) for the sketch model's 13 runs (training, drawing and DINOv2) on the same L40S.
+- Embeddings for the children and SD, the first sketch run, and all analyses ran on this Mac.
 
 ## Files
 
@@ -148,17 +163,20 @@ Temperature 1, 64 drawings per step. Single points are not counted, so early ste
   - `metalesionlab/plato_lifespan.py`
   - `scripts/plato_lifespan_{sd_generate,embed,analyze,figures,qd_pool,sketch}.py`
   - tests in `tests/test_plato_lifespan.py`
+  - the multi-seed sketch model: `metalesionlab/plato_sketch.py` and `scripts/plato_sketch_{seeds,analyze,animate}.py`, tests in `tests/test_plato_sketch.py` (see `docs/plato_sketch.md`)
 - Page:
   - `metalesionlab/web/pages/plato_lifespan.html`
   - `static/js/plato_lifespan.js`, `static/css/plato_lifespan.css`
-  - pictures in `static/img/plato_lifespan/`
+  - pictures in `static/img/plato_lifespan/`; the time-lapse sprite and the stroke-by-stroke chair in `static/img/plato_lifespan/sketch/`
   - `metalesionlab/web/plato_lifespan_routes.py`
-- Data, all outside the repo (`PlatosChair/lifespan/`): `kiddraw_raw/` (downloads), `ai/sd`, `ai/sd_g4`, `sketch/`, `embeddings/`, `results.json`, and `results_robust_{png,noboat,patch,g4}.json`.
+- Data, all outside the repo (`PlatosChair/lifespan/`): `kiddraw_raw/` (downloads), `ai/sd`, `ai/sd_g4`, `sketch/` (the first run; `sketch/seeds/` the 13 GPU runs and their `results.json`), `embeddings/`, `results.json`, and `results_robust_{png,noboat,patch,g4}.json`.
+- Animations: `sketch/watch_it_learn.{mp4,gif}` and `sketch/stroke_by_stroke.{mp4,gif}`.
 - Figures (`PlatosChair/lifespan/figures/`):
   - `life_of_a_chair.png`: the timeline strip. Children as icon arrays, then adults, Muse, SD v1.1–v1.5 from one seed, and a slot for the damaged AI.
   - `life_curves.{png,svg}` and `life_curves_tier1.{png,svg}`: the four measures against age and against training steps.
   - `life_paths.{png,svg}`: recognizability against distance to the adult Form.
-  - `life_sketch.png`: the sketch model's chairs at six training steps.
+  - `life_sketch.png`: the first sketch run's chairs at six training steps.
+  - `sketch_seeds_curves.png`: the multi-seed learning path (chair and cat).
 - Public statistics: `public_data/plato_lifespan.json`.
 
 **Re-running** (all steps are cached or resumable):
@@ -170,6 +188,8 @@ python -I scripts/plato_lifespan_embed.py --sources sd sd_g4
 python -I scripts/plato_lifespan_sketch.py fetch && python -I scripts/plato_lifespan_sketch.py train --data .../train_chair.ndjson --out PlatosChair/lifespan/sketch --device mps && python -I scripts/plato_lifespan_sketch.py embed
 python -I scripts/plato_lifespan_analyze.py --public public_data/plato_lifespan.json
 python -I scripts/plato_lifespan_figures.py --web
+# the 13 sketch runs on the GPU, then: see docs/plato_sketch.md
+python -I scripts/plato_sketch_analyze.py --public public_data/plato_lifespan.json && python -I scripts/plato_sketch_animate.py --web
 ```
 
 Credits: children's drawings, Long, B., Fan, J. E., Huey, H., Chai, Z., & Frank, M. C. (2024), doi:10.1038/s41467-023-44529-9, data CC BY-NC-SA 4.0 (statistics only). Quick, Draw!, Google Creative Lab, CC BY 4.0. Stable Diffusion v1.x, CompVis / Stability AI / RunwayML, CreativeML OpenRAIL-M. DINOv2, Meta, Apache-2.0. Sketch-RNN design, Ha & Eck (2017).
