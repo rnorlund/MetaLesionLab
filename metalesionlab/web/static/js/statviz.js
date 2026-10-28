@@ -10,7 +10,7 @@
    dots is k of n as a dot grid (data-cols sets the columns); spread is two clusters of data-points dots (16) whose
    radii follow a and b, and its number is b ÷ a ("6×"); layers is an n-segment bar with a marker at layer at
    (data-mode="one" marks that layer only, the default fills it and everything after); bars are horizontal bars on
-   one scale (data-max, data-digits). The big number is worked out from the data; data-value and data-unit replace
+   one scale (data-max, data-digits, data-suffix such as "%"). The big number is worked out from the data; data-value and data-unit replace
    it ("34" and " of 35"), and data-value="" hides it. data-label is the caption under the graphic, data-alt the
    screen-reader sentence (one is built from the data otherwise). Colours are data-tone / data-a-tone / data-b-tone /
    data-tones: blue (Muse Image), orange (people), ink, green or muted. data-size="s" or "l" scales it, and
@@ -131,9 +131,9 @@
       var pct = Math.max(0, Math.min(100, 100 * v / max));
       rows.push('<div class="sv-bar"><span class="sv-bar-l">' + esc(labels[i] || '') + '</span>' +
         '<span class="sv-track"><i class="sv-fill sv-' + tone(tones[i], dflt[i % dflt.length]) + '" style="width:' + r1(pct) +
-        '%;--d:' + i * 120 + 'ms"></i></span><span class="sv-bar-v">' + esc(fmt(v, digits)) + '</span></div>');
+        '%;--d:' + i * 120 + 'ms"></i></span><span class="sv-bar-v">' + esc(fmt(v, digits) + (o.suffix || '')) + '</span></div>');
     });
-    var alt = o.alt || (values.map(function (v, i) { return (labels[i] || 'Bar ' + (i + 1)) + ' ' + fmt(v, digits); }).join(', ') +
+    var alt = o.alt || (values.map(function (v, i) { return (labels[i] || 'Bar ' + (i + 1)) + ' ' + fmt(v, digits) + (o.suffix || ''); }).join(', ') +
       (o.label ? ': ' + o.label : ''));
     var value = '';
     if (values.length === 2 && values[0] > 0) value = times(values[1] / values[0]);
@@ -160,7 +160,7 @@
   function optsFrom(el) {
     var d = el.dataset || {}, o = {};
     ['n', 'k', 'cols', 'tone', 'a', 'b', 'aLabel', 'bLabel', 'aTone', 'bTone', 'points', 'at', 'mode', 'values', 'labels',
-      'tones', 'max', 'digits', 'value', 'unit', 'label', 'alt'].forEach(function (key) {
+      'tones', 'max', 'digits', 'suffix', 'value', 'unit', 'label', 'alt'].forEach(function (key) {
       if (d[key] != null) o[key] = d[key];
     });
     return o;

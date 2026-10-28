@@ -247,16 +247,21 @@ def test_more_menu_holds_the_series(client):
     assert "More from the lab" not in more
 
 
+def current_labels(nav: str) -> list[str]:
+    """The text of every link marked as the current page (a nav button's icon left out)."""
+    return [re.sub(r"<[^>]+>", "", a).strip() for a in re.findall(r'<a [^>]*aria-current="page"[^>]*>(.*?)</a>', nav, re.S)]
+
+
 def test_current_page_is_marked_once(client):
     for path, label in (("/", "Home"), ("/plato", "Experiments"), ("/draw", "Draw"), ("/socrates", "Ask Socrates")):
         nav = re.search(r'<nav class="topnav".*?</nav>', client.get(path).text, re.S).group(0)
-        assert re.findall(r'<a [^>]*aria-current="page"[^>]*>([^<]+)', nav) == [label], path
+        assert current_labels(nav) == [label], path
     nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/plato/cave").text, re.S).group(0)
-    assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Experiments", "Name the shadow"]
+    assert current_labels(nav) == ["Experiments", "Name the shadow"]
     # "Inside the model" is its own page once /plato/inside is served: the nav item, not Experiments, nor More
     html = client.get("/plato/inside").text
     nav = re.search(r'<nav class="topnav".*?</nav>', html, re.S).group(0)
-    assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Inside the model"]
+    assert current_labels(nav) == ["Inside the model"]
     assert nav.count('href="/plato/inside"') == 1 and 'href="/plato#inside"' not in nav
 
 
@@ -317,7 +322,7 @@ def test_calls_to_action_follow_the_routes(client):
     assert re.search(r'id="reveal"[^>]*hidden', landing) and landing.index('id="hero-draw"') < landing.index('id="chairs"')
     # Ask Socrates is served: hero button, its own band, and the nav (as an accent item).
     assert site.has_page(web.app, "/socrates") and landing.count('href="/socrates"') >= 3
-    assert 'class="nav-accent"' in header(client.get("/plato").text)
+    assert re.search(r'<a href="/socrates" class="nav-accent nav-btn"', header(client.get("/plato").text))
     assert "<!--#" not in landing and "{{" not in landing  # every template mark is filled in
     for path in ("/lab", "/take", "/ask", "/challenge", "/studio", "/scorer", "/assess"):  # nothing of the sister site's
         assert f'href="{path}' not in landing, path

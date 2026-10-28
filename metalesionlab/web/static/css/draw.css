@@ -7,21 +7,14 @@ body.draw { background: #F7F6F1; }
 
 body.draw .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation off the drawing pad */
 
-/* the standalone page: one column, the pad in the middle */
+/* the standalone page (/draw): see "Draw anything" at the end of this file */
 .dw-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.4vw, 64px) clamp(32px, 3vw, 80px); }
-.dw-solo { display: flex; justify-content: center; }
-.dw-solo .dw-panel { width: 100%; max-width: 560px; }
 
 /* the component */
 .dw-panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .dw-ask { display: flex; flex-direction: column; gap: 8px; }
 .dw-title { margin: 0; font-size: clamp(30px, calc(14px + 2.4vw), 72px); line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; }
 .dw-instr { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 24px); line-height: 1.45; color: var(--ink-2); }
-.dw-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.dw-chips-label { font-size: 13px; color: var(--muted); margin-right: 2px; }
-.dw-chips button { font-size: clamp(14px, calc(9px + 0.35vw), 18px); padding: 6px 12px; min-height: 36px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); cursor: pointer; }
-.dw-chips button:hover { border-color: var(--ink); }
-.dw-chips button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; font-weight: 600; }
 
 .dw-canvas-wrap { position: relative; width: 100%; aspect-ratio: 1; background: #FFFFFF; border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; }
 .dw-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; display: block; }
@@ -153,16 +146,8 @@ body.draw .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation 
   .dw-dmg-axis { margin-left: 0; gap: 5px; font-size: 11px; }
 }
 
-/* Wide windows. /draw puts the question and the notes beside the pad, which grows to 640px; the strip of Muse
-   Image's doodles goes on one row; the four result cards share one row; the damage strip sits beside its text. */
-@media (min-width: 1200px) {
-  .dw-solo .dw-panel { max-width: 1600px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, clamp(480px, 34vw, 640px));
-    grid-template-rows: repeat(5, auto) 1fr; column-gap: clamp(40px, 5vw, 128px); row-gap: 14px; align-items: start; }
-  .dw-solo .dw-panel > * { grid-column: 1; }
-  .dw-solo .dw-canvas-wrap { grid-column: 2; grid-row: 1 / span 6; }
-  .dw-solo .dw-actions { grid-column: 2; grid-row: 7; }
-  .dw-solo .dw-ask { gap: 14px; padding-top: 8px; }
-}
+/* Wide windows: the strip of Muse Image's doodles goes on one row; the four result cards share one row; the damage
+   strip sits beside its text. (/draw's own layout, "Draw anything", is at the end of this file.) */
 @media (min-width: 1500px) {  /* "How it works": the steps and the caveats side by side */
   .dw-sec:not([hidden]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(40px, 4vw, 112px); align-items: start; }
   .dw-sec > h2, .dw-sec > .dw-credit { grid-column: 1 / -1; }
@@ -199,12 +184,7 @@ body.draw .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation 
 }
 @media (prefers-reduced-motion: reduce) { .dw-results { scroll-behavior: auto; } .dw-muse-strip .dw-cell { animation: none !important; } }
 
-/* Draw the invisible: the picker's second row (abstract ideas, AI only) and the AI-only results. */
-.dw-chips { flex-direction: column; align-items: flex-start; gap: 8px; }
-.dw-chip-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.dw-chip-ideas .dw-chips-label { color: var(--blue-dark); font-weight: 600; }
-.dw-chip-ideas button { border-style: dashed; border-color: #93C5FD; }
-.dw-chip-ideas button[aria-pressed="true"] { border-style: solid; }
+/* Draw the invisible: the AI-only results. */
 .dw-near-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: clamp(480px, 34vw, 900px); }
 .dw-emblems { display: flex; flex-direction: column; gap: 6px; }
 .dw-emblems-h { margin: 4px 0 2px; font-size: 14px; font-weight: 600; color: var(--ink); }
@@ -220,4 +200,63 @@ body.draw .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation 
 }
 @media (max-width: 720px) {
   .dw-emblem { grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) auto; font-size: 13px; }
+}
+
+/* Draw anything (/draw): the picker as large buttons in two even groups, things on one side of the pad and the
+   invisible (with any AI-only group added later) on the other; words only, never a picture. The pad and the
+   picker share the first screen. Under 1100px: the pad first, then the picker. */
+.dw-loading .dw-title, .dw-loading .dw-instr { visibility: hidden; }
+.dw-pick { display: flex; flex-direction: column; gap: clamp(16px, 1.3vw, 28px); min-width: 0; }
+.dw-group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.dw-group-h { margin: 0; font-size: clamp(17px, calc(11px + 0.45vw), 26px); font-weight: 700; letter-spacing: -0.01em; }
+.dw-group-note { margin: 0 0 6px; font-size: var(--fs-sm); line-height: 1.35; color: var(--muted); }
+.dw-group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(84px, 6.2vw, 150px), 1fr)); gap: clamp(6px, 0.5vw, 10px); }
+.dw-pick-btn { min-height: clamp(44px, calc(30px + 1vw), 60px); padding: 6px 8px; font: inherit; font-size: clamp(15px, calc(10px + 0.36vw), 20px); font-weight: 600;
+  line-height: 1.15; text-align: center; color: var(--ink); background: var(--panel); border: 1.5px solid var(--line-2); border-radius: 10px; cursor: pointer; }
+.dw-pick-btn:hover { border-color: var(--ink); }
+.dw-group-ai .dw-pick-btn { border-style: dashed; border-color: color-mix(in srgb, var(--blue) 55%, var(--line-2)); }
+.dw-pick-btn[aria-pressed="true"] { background: var(--ink); border: 1.5px solid var(--ink); color: var(--panel); }
+.dw-pick-jump { font-size: var(--fs-sm); font-weight: 600; }
+.dw-stakes { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px dashed var(--line-2); min-width: 0; }
+.dw-stakes-h { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.dw-stake { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; }
+.dw-stake[hidden] { display: none; }
+.dw-stake p { margin: 0; font-size: var(--fs-sm); line-height: 1.35; color: var(--ink-2); }
+.dw-stake b { font-size: 1.3em; color: var(--ink); }
+.dw-cards { display: grid; grid-template-columns: repeat(8, 11px); gap: 3px; }
+.dw-cards i { display: block; width: 11px; height: 15px; border-radius: 2px; border: 1px solid var(--blue);
+  background: var(--blue-soft) repeating-linear-gradient(45deg, var(--blue) 0 1px, transparent 1px 3.5px); }
+.dw-crowd { display: grid; grid-template-columns: repeat(20, 4px); gap: 2px; }
+.dw-crowd i { display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--orange); }
+
+@media (min-width: 1100px) {
+  .dw-solo .dw-panel { --pad: clamp(320px, min(38vw, 100svh - 340px), 900px); display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--pad) minmax(0, 1fr); grid-template-rows: auto auto 1fr;
+    grid-template-areas: "ask ask ask" "pa pad pb" "st pad pb" ". act ." ". stat ." ". up ." ". don ." ". priv .";
+    column-gap: clamp(24px, 3vw, 88px); row-gap: 12px; align-items: start; }
+  .dw-solo .dw-ask { grid-area: ask; align-items: center; text-align: center; gap: 6px; }
+  .dw-solo .dw-pick-a { grid-area: pa; }
+  .dw-solo .dw-pick-b { grid-area: pb; }
+  .dw-solo .dw-canvas-wrap { grid-area: pad; }
+  .dw-solo .dw-actions { grid-area: act; }
+  .dw-solo .dw-status { grid-area: stat; }
+  .dw-solo .dw-upload { grid-area: up; }
+  .dw-solo .dw-donate { grid-area: don; }
+  .dw-solo .dw-privacy { grid-area: priv; }
+  .dw-solo .dw-stakes { grid-area: st; align-self: end; }
+  .dw-solo .dw-pick-jump { display: none; }
+  .dw-solo .dw-title { font-size: clamp(34px, calc(10px + 2.6vw), 80px); }
+}
+@media (max-width: 1099px) {
+  .dw-solo .dw-panel { max-width: 720px; margin: 0 auto; }
+  .dw-solo .dw-ask { order: 1; }
+  .dw-solo .dw-canvas-wrap { order: 2; width: min(100%, 600px, calc(100svh - 200px)); min-width: min(100%, 300px); align-self: center; }
+  .dw-solo .dw-actions { order: 3; }
+  .dw-solo .dw-status { order: 4; }
+  .dw-solo .dw-upload { order: 5; }
+  .dw-solo .dw-donate { order: 6; }
+  .dw-solo .dw-privacy { order: 7; }
+  .dw-solo .dw-pick-a { order: 8; margin-top: 12px; scroll-margin-top: 12px; }
+  .dw-solo .dw-pick-b { order: 9; }
+  .dw-solo .dw-stakes { order: 10; }
 }

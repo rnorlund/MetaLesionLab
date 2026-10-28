@@ -173,8 +173,9 @@ def test_the_band_is_never_on_the_lingua_site():
 def test_gallery_is_in_the_plato_nav():
     html = plato().get("/plato/gallery").text
     nav = re.search(r'<nav class="topnav" aria-label="Main">(.*?)</nav>', html, re.S).group(1)
-    assert re.search(r'<a href="/plato/gallery" aria-current="page">Gallery</a>', nav)
-    assert '<a href="/plato" aria-current="page">' not in nav  # Experiments is not current on the gallery
+    assert re.search(r'<a href="/plato/gallery" class="nav-btn" aria-current="page">'
+                     r'<svg class="nav-ico"[^>]*>.*?</svg><span class="nav-label">Gallery</span></a>', nav)
+    assert not re.search(r'<a href="/plato"[^>]*aria-current="page"', nav)  # Experiments is not current on the gallery
 
 
 def test_band_and_gallery_scripts_respect_motion_keys_and_the_blind_draw():
