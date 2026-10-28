@@ -187,3 +187,19 @@ def test_variety_block_needs_a_default_and_one_more_prompt():
     assert chair["people_spread"] == 0.36 and chair["spread"]["any"] is None  # NaN is cleaned for browsers
     assert chair["kinds"]["people"]["prototype"] == "a plain, ordinary chair"
     assert v["kinds"] is None  # no labeler validation yet
+
+
+def test_plato_says_the_result_does_not_hang_on_dinov2(client, monkeypatch, tmp_path):
+    """The "Does it depend on DINOv2?" box: the core result with four vision models (public_data/plato_robustness.json),
+    and which-thing-is-most-uniform as DINOv2's view only."""
+    c, _ = client
+    r = c.get("/api/plato").json()["robustness"]
+    assert [x["key"] for x in r["rows"]] == ["dinov2_base", "dinov2_large", "pe_core_l14", "siglip2_so400m"]
+    assert all(x["median"] < 1 and x["ci95"][1] < 1 and x["below_1"] >= 34 and x["n"] == 35 for x in r["rows"])
+    assert r["first"] == "umbrella" and r["last"] == "book" and all(x["rank_last"] == 35 for x in r["rows"])
+    assert [x["rank_first"] for x in r["rows"]][2:] == [8, 24] and r["doc"].endswith("docs/plato_robustness.md")
+    html = c.get("/plato").text
+    assert 'id="ev-robust"' in html and "Does it depend on DINOv2?" in html
+    assert "as DINOv2 sees it" in (web.HERE / "static" / "js" / "plato.js").read_text()
+    monkeypatch.setattr(plato_routes, "ROBUST", tmp_path / "missing.json")
+    assert c.get("/api/plato").json()["robustness"] is None  # the page hides the box

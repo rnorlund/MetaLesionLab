@@ -35,8 +35,10 @@
 
 <section class="pc-hero" id="hero" aria-labelledby="hero-h">
   <div class="pc-hero-text">
-    <span class="pc-kicker">What would Plato ask an AI? · Is there one ideal chair?</span>
-    <h1 id="hero-h">Plato’s Chair</h1>
+    <div class="title-pair">
+      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Question 1: Is there one ideal chair?</span></p>
+      <h1 id="hero-h">Plato’s Chair</h1>
+    </div>
     <p class="pc-lede">Plato held that each kind of thing has one ideal Form, and every real one is a copy (his own example was a bed). Is there one ideal chair? We asked Meta’s image model, Muse Image, to draw 16 chairs, and asked 16 people.</p>
   </div>
 
@@ -97,7 +99,16 @@
       <div class="pc-chart" id="rank-chart"></div>
       <p class="pc-note">Each dot is one thing. Left of the line: Muse Image draws it more alike than people do. Bars: 95% confidence intervals.</p>
     </div>
-    <div class="pc-facts" id="ev-facts"></div>
+    <div class="pc-ev-side">
+      <div class="pc-facts" id="ev-facts"></div>
+      <aside class="pc-robust" id="ev-robust" aria-labelledby="robust-h" hidden>
+        <h3 id="robust-h">Does it depend on DINOv2?</h3>
+        <p id="robust-lede">Not the main result. We measured every picture again with three other vision models.</p>
+        <div class="table-wrap"><table class="data pc-robust-table" id="robust-table"></table></div>
+        <p class="pc-note" id="robust-note"></p>
+        <p class="pc-note"><a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_robustness.md" id="robust-doc">How we checked it</a> (rules fixed before any result)</p>
+      </aside>
+    </div>
   </div>
   <details class="pc-numbers">
     <summary>See the numbers</summary>

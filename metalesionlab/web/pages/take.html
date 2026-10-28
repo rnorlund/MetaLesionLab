@@ -20,7 +20,8 @@
 <main class="take" id="main" tabindex="-1">
   <h1 class="sr-only">Take the naming test</h1>
 
-  <section class="panel stack" id="step-intro" aria-labelledby="intro-h">
+  <section class="panel stack take-intro" id="step-intro" aria-labelledby="intro-h">
+    <div class="take-col">
     <h2 id="intro-h">Take the naming test</h2>
     <p class="lead">Name about 20 pictures out loud, as quickly as you can. It takes about 3 minutes. Afterwards you'll see how many you named and how fast.</p>
     <fieldset>
@@ -32,10 +33,13 @@
       <li>Your voice is sent to the Meta Model API to be written down. This site keeps no recording and none of your words.</li>
       <li>Your results stay on this page and are gone when you close it, unless you choose to add a summary to the reference range.</li>
     </ul>
+    </div>
+    <div class="take-col">
     <p class="note"><b>Not a medical test.</b> Many things affect naming: the language, the pictures, being tired. If you're worried about your memory or language, talk to a doctor.</p>
     <label class="check"><input type="checkbox" id="agree"> <span>I understand, and I'm happy for my voice to be written down by the Meta Model API.</span></label>
     <div id="feature-note" class="note note-warn" hidden></div>
     <button type="button" class="btn btn-dark btn-big" id="go-mic" disabled>Continue</button>
+    </div>
   </section>
 
   <section class="panel stack" id="step-mic" aria-labelledby="mic-h" hidden>

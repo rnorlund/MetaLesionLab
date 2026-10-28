@@ -259,7 +259,8 @@
     var c = it.conditions || {}, facts = [];
     facts.push('<div class="pf-fact muse"><b>' + ordinal(rk.rank) + ' of ' + rk.of + '</b><span>Added to the 35 everyday things of Plato’s Chair, the ' + S.k +
       ' ranks ' + ordinal(rk.rank) + ' (1st = drawn most alike, compared with people). The chair is ' +
-      ordinal(S.d.concepts.core_reference.chair_index_rank) + '; the umbrella is 1st.</span></div>');
+      ordinal(S.d.concepts.core_reference.chair_index_rank) + '; the umbrella is 1st. That ranking is DINOv2’s: with other vision models ' +
+      'the order shifts, while the overall result holds.</span></div>');
     if (c.any) facts.push('<div class="pf-fact muse"><b>×' + f2(c.any.ratio_vs_default) + '</b><span>“Any kind of ' + S.k + '” adds no clear variety: ' +
       f2(c.any.ratio_vs_default) + ' times the usual spread (95% CI ' + f2(c.any.ratio_vs_default_ci95[0]) + '–' + f2(c.any.ratio_vs_default_ci95[1]) + ').</span></div>');
     if (c.listed) facts.push('<div class="pf-fact muse"><b>' + f2(c.listed.ratio_vs_people) + '×</b><span>people’s spread when Muse Spark names 16 kinds and Muse Image draws one of each.</span></div>');
