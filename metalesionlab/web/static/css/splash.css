@@ -6,6 +6,7 @@
 .sp-wall { background: radial-gradient(120% 90% at 50% 110%, #2a1d12 0%, #17110c 60%); }
 .sp-paper { background: #F7F6F1; opacity: 0; }  /* the landing page's paper */
 .splash.lit .sp-paper { opacity: 1; }
+.splash.lit .sp-wall { opacity: 0; transition: opacity 0s linear 950ms; }  /* gone once the paper covers it, so the hand-off fades paper only */
 .sp-fire { position: absolute; inset: -10%; background: radial-gradient(45% 55% at 50% 100%, rgba(242, 163, 58, 0.38), rgba(242, 163, 58, 0) 70%);
   mix-blend-mode: screen; animation: sp-flicker 2.2s infinite steps(1, end); transition: opacity 700ms ease; }
 .sp-fire.b { animation-duration: 1.7s; animation-delay: -0.6s; background: radial-gradient(35% 45% at 42% 100%, rgba(255, 190, 90, 0.30), rgba(255, 190, 90, 0) 70%); }

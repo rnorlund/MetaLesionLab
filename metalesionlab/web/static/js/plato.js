@@ -519,7 +519,7 @@
       text.appendChild(h('p', { class: 'pc-verdict', text: 'No. It’s Meta’s Muse Image, not AI image models in general.' }));
       text.appendChild(h('p', { text: 'With the same prompt, Stable Diffusion XL, an open model from Stability AI, drew far more varied pictures' +
         (times ? ': about ' + times + ' times Muse Image’s spread' : '') + ', and more varied for ' + sx.muse_more_uniform + ' of ' + n + ' things.' }));
-      text.appendChild(h('p', { text: 'Muse Image draws the textbook version of each object. That’s useful for standardized test pictures, which need clear, typical drawings that everyone names the same way, and it’s why Test Studio uses it. But it underrepresents how differently people picture things.' }));
+      text.appendChild(h('p', { text: 'Muse Image draws the textbook version of each object. That’s useful for standardized test pictures, which need clear, typical drawings that everyone names the same way, and it’s why ' + (T.hasPage('/studio') ? 'Test Studio uses it' : 'our sister project’s picture-naming tests use it') + '. But it underrepresents how differently people picture things.' }));
     } else {
       text.appendChild(h('p', { text: 'We gave Stable Diffusion XL, an open model from Stability AI, the same prompt. ' +
         (mi < 1 ? 'Its drawings were also more alike than people’s (median ratio ' + f2(mi) + ').' : 'Its drawings were not more alike than people’s (median ratio ' + f2(mi) + ', people = 1).') +
