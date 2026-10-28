@@ -180,3 +180,94 @@ body.plato { background: #F7F6F1; }
   .pc-lens-word { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .pc-frame img { transition: none; } }
+
+/* The result first (.pc-top): the headline, three numbers drawn as graphics (statviz.css) and Muse Image's 16
+   chairs beside people's 16, with the stack button. Line art sits on light paper whatever the theme. */
+.pc-top { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 2.2vw, 60px) clamp(24px, 2.5vw, 64px);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, clamp(460px, 42vw, 1080px)); gap: 24px clamp(32px, 3.6vw, 104px); align-items: center; }
+.pc-top-text { display: flex; flex-direction: column; gap: clamp(12px, 1vw, 22px); min-width: 0; }
+.pc-top h1 { margin: 0; font-size: clamp(30px, calc(12px + 2.1vw), 76px); line-height: 1.06; letter-spacing: -0.022em; text-wrap: balance; }
+.pc-top-lede { font-size: clamp(17px, calc(11px + 0.45vw), 24px); max-width: 46ch; }
+.pc-stats { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); gap: clamp(14px, 1.4vw, 36px); padding: clamp(12px, 1vw, 20px) 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); align-items: start; }
+.pc-cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.pc-cta .btn { font-size: clamp(15px, calc(11px + 0.3vw), 19px); padding: 12px 20px; }
+.pc-chairs { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.pc-chairs-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 28px); }
+.pc-chairs-side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pc-chairs-label { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: var(--fs-body); font-weight: 600; }
+.pc-chairs-label span { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--muted); }
+.pc-sw { display: inline-block; flex: none; width: 10px; height: 18px; border-radius: 2px; }
+[data-side="ai"] .pc-sw { background: var(--blue); }
+[data-side="people"] .pc-sw { background: var(--orange); }
+.pc-chairs-grid { --gap: clamp(3px, 0.35vw, 8px); position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap);
+  isolation: isolate; padding: var(--gap); background: var(--paper, #fbfaf5); border: 1px solid var(--line); border-radius: 12px; }
+.pc-chairs-grid span { aspect-ratio: 1; display: block; background-color: var(--paper, #fbfaf5); background-size: 400% 400%; background-repeat: no-repeat;
+  background-position: calc(var(--c) * 100% / 3) calc(var(--r) * 100% / 3); border-radius: 5px; box-shadow: 0 0 0 1px var(--line);
+  transform-origin: 50% 50%; transition: transform 0.9s cubic-bezier(0.2, 0.75, 0.2, 1), opacity 0.7s ease, box-shadow 0.3s ease;
+  transition-delay: calc((var(--c) + var(--r) * 4) * 24ms); }
+[data-side="ai"] .pc-chairs-grid span { background-image: url(/static/img/plato/hero_chairs_ai.webp); }
+[data-side="people"] .pc-chairs-grid span { background-image: url(/static/img/plato/hero_chairs_people.webp); }
+.pc-chairs.stacked .pc-chairs-grid span { transform: translate(calc((1.5 - var(--c)) * (100% + var(--gap))), calc((1.5 - var(--r)) * (100% + var(--gap)))) scale(2.5);
+  opacity: 0.32; mix-blend-mode: multiply; box-shadow: none; border-radius: 0; }
+.pc-chairs-stat { margin: 0; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.pc-chairs-stat b { font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--ink); }
+.pc-chairs .when-stacked { display: none; }
+.pc-chairs.stacked .when-grid { display: none; }
+.pc-chairs.stacked .when-stacked { display: inline; }
+.pc-chairs-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.pc-chairs-foot .pc-cap { flex: 1 1 26em; }
+.pc-stack-btn { font: inherit; font-size: clamp(14px, calc(10px + 0.25vw), 17px); font-weight: 600; color: var(--ink); background: var(--soft); border: 1px solid var(--line-2);
+  border-radius: 999px; padding: 9px 18px; min-height: 44px; cursor: pointer; }
+.pc-stack-btn:hover { border-color: var(--ink); }
+.pc-stack-btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
+.pc-hero-text h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.015em; }
+@media (prefers-reduced-motion: reduce) { .pc-chairs-grid span { transition: none; } }
+
+/* The Experiments hub: one even grid, every card a real picture, the question and a one-line answer. */
+.pc-hub { scroll-margin-top: 12px; }
+.hub-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(230px, 17vw, 420px)), 1fr));
+  gap: clamp(14px, 1.2vw, 30px); }
+.hub-grid li { display: flex; min-width: 0; }
+.hub-card { flex: 1; display: flex; flex-direction: column; min-width: 0; color: var(--ink); text-decoration: none; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: border-color 0.15s ease, transform 0.15s ease; }
+.hub-card:hover { color: var(--ink); border-color: var(--ink); }
+.hub-art { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; background: var(--paper, #fbfaf5); border-bottom: 1px solid var(--line); }
+.hub-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hub-art:has(> svg) { background: var(--soft); color: var(--muted); }
+.hub-art svg { width: 44%; height: auto; }
+.hub-body { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: clamp(12px, 1vw, 22px) clamp(14px, 1.1vw, 24px) clamp(14px, 1.1vw, 22px); }
+.hub-q { font-size: clamp(17px, calc(12px + 0.42vw), 24px); font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; }
+.hub-a { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); }
+.hub-new { color: var(--blue); font-weight: 600; }
+.hub-go { margin-top: auto; padding-top: 4px; font-family: var(--mono); font-size: 12px; color: var(--orange-dark); }
+@media (prefers-reduced-motion: no-preference) { .hub-card:hover { transform: translateY(-2px); } }
+
+@media (max-width: 1100px) {
+  .pc-top { grid-template-columns: minmax(0, 1fr); }
+  .pc-chairs { max-width: 760px; }
+}
+@media (max-width: 720px) {
+  .pc-top { padding: 18px; gap: 18px; }
+  .pc-stats { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .pc-stats .sv { display: grid; grid-template-columns: minmax(4.5em, auto) minmax(0, 1fr); align-items: center; column-gap: 14px; row-gap: 4px; }
+  .pc-stats .sv > .sv-cap { grid-column: 1 / -1; max-width: none; }
+  .pc-cta .btn { flex: 1 1 auto; }
+}
+@media (max-width: 1100px) {  /* one column: the chairs right after the headline, then the numbers */
+  .pc-top-text { display: contents; }
+  .pc-top .title-pair { order: 1; }
+  .pc-top-lede { order: 2; }
+  .pc-chairs { order: 3; }
+  .pc-stats { order: 4; }
+  .pc-cta { order: 5; }
+}
+@media (max-width: 600px) {  /* the hub as a list: picture beside the question */
+  .hub-grid { gap: 10px; }
+  .hub-card { flex-direction: row; }
+  .hub-art { flex: 0 0 36%; aspect-ratio: auto; border-bottom: 0; border-right: 1px solid var(--line); }
+  .hub-art img { object-fit: cover; }
+  .hub-body { padding: 10px 12px; gap: 4px; }
+  .hub-q { font-size: 16px; }
+  .hub-a { font-size: 13px; }
+}

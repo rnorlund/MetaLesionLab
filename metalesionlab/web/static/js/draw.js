@@ -8,7 +8,12 @@
    the thing with its words part or its drawing part damaged. That strip is about the model only: it is never
    placed, compared or matched against the visitor's drawing.
 
-   Draw the invisible: the picker's second row holds abstract ideas (God, love, time…), marked mode "ai_only".
+   The picker is built from the data, one group of large buttons per group in /api/draw/concepts: the things people
+   drew for Quick, Draw! in one, and every AI-only group (the invisible ideas, and any group added later) in the
+   other; a concept whose group isn't listed gets a group of its own. Labels only, never a picture, so the draw stays
+   blind. /draw starts on God (options.concept); ?thing=key (or a label) picks another.
+
+   Draw the invisible: the abstract ideas (God, love, time…) are marked mode "ai_only".
    No one drew these for Quick, Draw!, so their results are AI only: the drawing's place among Muse Image's 16
    (leave-one-out distances), its closest Muse drawing and that drawing's emblem (labeled in advance by Muse
    Glimmer). The people's cards, the map and the Socrates link stay hidden for them; no people's number is shown.
@@ -37,8 +42,11 @@
     '  <p class="dw-kicker" data-dw="kicker" hidden></p>' +
     '  <h1 class="dw-title" data-dw="title"></h1>' +
     '  <p class="dw-instr" data-dw="instr"></p>' +
-    '  <div class="dw-chips" data-dw="chips" role="group" aria-label="What to draw" hidden></div>' +
+    '  <a class="dw-pick-jump" data-dw="pick-jump" href="#dw-pick" hidden>Or pick something else to draw</a>' +
     '</div>' +
+    // the picker, filled from the data: things in the first box, the AI-only groups in the second
+    '<div class="dw-pick dw-pick-a" data-dw="pick-a" id="dw-pick" hidden></div>' +
+    '<div class="dw-pick dw-pick-b" data-dw="pick-b" hidden></div>' +
     '<div class="dw-canvas-wrap" data-dw="wrap">' +
     '  <canvas data-dw="pad" role="img" aria-label="Drawing area: draw with a mouse, a finger or a pen"></canvas>' +
     '  <p class="dw-placeholder" data-dw="placeholder" aria-hidden="true"><span>Draw <span data-article>a chair</span> here</span></p>' +
@@ -204,6 +212,29 @@
     if (k >= 0.75 * n) return 'Far from Muse’s picture';
     if (k >= 0.25 * n) return 'Close to Muse’s picture';
     return 'Right on Muse’s picture';
+  }
+
+  // ---------- the picker's groups, from the data ----------
+
+  // Every group the concepts data lists, in its order, plus a group for any concept whose group isn't listed (a
+  // concept with no group is a thing, or an idea when it is AI only); empty groups are dropped. A group is AI only
+  // when all its concepts are. Nothing here names a concept, so new ones (verbs, adjectives…) join on their own.
+  var GROUP_TITLES = { things: 'Things', ideas: 'The invisible' };
+  function pickerGroups(data) {
+    var groups = [], byId = {};
+    function add(id, g) {
+      if (byId[id]) return byId[id];
+      var label = String((g && g.label) || id).replace(/:\s*$/, '').replace(/[_-]+/g, ' ');
+      byId[id] = { id: id, title: GROUP_TITLES[id] || cap1(label), items: [] };
+      groups.push(byId[id]);
+      return byId[id];
+    }
+    (data.groups || []).forEach(function (g) { if (g && g.id) add(g.id, g); });
+    (data.concepts || []).forEach(function (c) { add(c.group || (isIdea(c) ? 'ideas' : 'things')).items.push(c); });
+    return groups.filter(function (g) { return g.items.length; }).map(function (g) {
+      g.aiOnly = g.items.every(isIdea);
+      return g;
+    });
   }
 
   // ---------- sprites: thumbnails of Muse's doodles and people's drawings ----------
@@ -561,10 +592,17 @@
       q('pad').id = 'pad';
     }
     function concept() { return S.data.concepts.filter(function (c) { return c.key === S.key; })[0]; }
+    // Until the data arrives: the starting thing as the page names it (options.conceptLabel / conceptMode), or the
+    // chair. A deep link to something else hides the words until the data says what it is.
+    var first = { label: o.conceptLabel || 'chair', phrase: o.conceptLabel || null, mode: o.conceptMode || null };
+    if (o.deepLink && (new URL(location.href).searchParams.get('thing') || '').toLowerCase() !== String(o.concept || '').toLowerCase() &&
+        new URL(location.href).searchParams.get('thing')) {
+      el.classList.add('dw-loading');
+    }
 
     // --- text ---
-    function label() { return S.data ? concept().label : 'chair'; }
-    function current() { return S.data ? concept() : { label: 'chair' }; }
+    function label() { return S.data ? concept().label : first.label; }
+    function current() { return S.data ? concept() : first; }
     function fill(text) { return text.replace('{a thing}', nounPhrase(current())).replace('{thing}', label()); }
     function renderText() {
       var c = current();
@@ -577,37 +615,48 @@
       q('instr').textContent = fill(isIdea(c) ? (o.ideaInstruction || 'You have 20 seconds. There’s no wrong answer.') : o.instruction);
       if (o.kicker) { q('kicker').textContent = isIdea(c) ? (o.ideaKicker || 'Draw the invisible') : o.kicker; q('kicker').hidden = false; }
       if (o.picker && S.data) {
-        el.querySelectorAll('[data-dw="chips"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.key === S.key)); });
+        el.querySelectorAll('.dw-pick button[data-key]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.key === S.key)); });
       }
       if (o.onConcept) o.onConcept(label(), c);
     }
-    // Two rows of chips: the things people drew for Quick, Draw!, then the ideas no one has seen (AI only).
+    // The picker (pickerGroups, above): things in the first box, every AI-only group in the second.
     function renderChips() {
-      var box = q('chips'), groups = S.data.groups || [{ id: 'things', label: 'Or draw:' }];
-      box.hidden = false;
-      groups.forEach(function (g) {
-        var items = S.data.concepts.filter(function (c) { return (c.group || 'things') === g.id; });
-        if (!items.length) return;
-        var row = h('div', { class: 'dw-chip-row' + (g.id === 'ideas' ? ' dw-chip-ideas' : ''), role: 'group', 'aria-label': g.label.replace(/:$/, '') });
-        row.appendChild(h('span', { class: 'dw-chips-label', text: g.label }));
-        items.forEach(function (c) {
-          row.appendChild(h('button', { type: 'button', 'data-key': c.key, 'aria-pressed': 'false', text: c.label,
-            onclick: function () { choose(c.key); } }));
+      var boxA = q('pick-a'), boxB = q('pick-b');
+      boxA.textContent = '';
+      boxB.textContent = '';
+      pickerGroups(S.data).forEach(function (g) {
+        var box = g.aiOnly ? boxB : boxA, hid = 'dw-pick-' + g.id.replace(/\W+/g, '-');
+        var sec = h('div', { class: 'dw-group' + (g.aiOnly ? ' dw-group-ai' : ''), role: 'group', 'aria-labelledby': hid,
+          'data-group': g.id });
+        sec.appendChild(h('p', { class: 'dw-group-h', id: hid, text: g.title }));
+        sec.appendChild(h('p', { class: 'dw-group-note', text: g.aiOnly ? 'Next to the AI’s drawings only'
+          : 'Next to ' + (g.items[0].n_human || 200) + ' people’s and the AI’s' }));
+        var grid = h('div', { class: 'dw-group-grid' });
+        g.items.forEach(function (c) {
+          grid.appendChild(h('button', { type: 'button', class: 'dw-pick-btn', 'data-key': c.key, 'aria-pressed': String(c.key === S.key),
+            text: cap1(c.label), onclick: function () { choose(c.key); } }));
         });
-        box.appendChild(row);
+        sec.appendChild(grid);
+        box.appendChild(sec);
       });
+      boxA.hidden = !boxA.childNodes.length;
+      boxB.hidden = !boxB.childNodes.length;
+      q('pick-jump').hidden = false;
     }
     function choose(key) {
       if (key === S.key || S.busy) return;
       S.key = key;
       if (o.deepLink) {
         var url = new URL(location.href);
-        url.searchParams.set('thing', concept().label);
+        url.searchParams.set('thing', key);
         history.replaceState(null, '', url);
       }
       clearPad();
       hideResults();
       renderText();
+      // On a phone the picker sits below the pad: bring the question and the pad back into view.
+      var at = q('wrap').getBoundingClientRect();
+      if (at.top < 0 || at.bottom > window.innerHeight) el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' });
     }
 
     // --- the pad ---
@@ -1223,9 +1272,11 @@
         S.key = match ? match.key : (S.data.concepts.filter(function (c) { return c.key === S.key; })[0] || S.data.concepts[0]).key;
         if (o.picker) renderChips();
         renderText();
+        el.classList.remove('dw-loading');
         image(concept().sprites.muse.src);
         loadDamage().catch(function () {});  // the list of pictures only (no picture loads), so the strip opens with the reveal
       }).catch(function (e) {
+        el.classList.remove('dw-loading');
         status('Couldn’t load the drawing game: ' + e.message, 'error');
       });
 
@@ -1233,10 +1284,11 @@
       state: S, submit: submit, ready: ready,
       markSeen: function () { markSeen(); if (!S.started) S.blind = false; },
       concept: function () { return S.data ? concept() : null; },
+      choose: function (key) { ready.then(function () { choose(key); }); },
       takeFile: takeFile, clear: clearPad, showDamage: showDamage
     };
     return api;
   }
 
-  window.TOTDraw = { mount: mount, seen: seen, markSeen: markSeen };
+  window.TOTDraw = { mount: mount, seen: seen, markSeen: markSeen, pickerGroups: pickerGroups };
 })();

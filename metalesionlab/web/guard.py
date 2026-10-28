@@ -71,7 +71,7 @@ EXAMPLES = {
     ],
     "plato": [
         {"label": "See the experiments", "href": "/plato"},
-        {"label": "Draw a chair (runs on our server, no AI calls)", "href": "/draw"},
+        {"label": "Draw anything (runs on our server, no AI calls)", "href": "/draw"},
         {"label": "Name the shadow", "href": "/plato/cave"},
     ],
 }

@@ -52,6 +52,7 @@ def test_every_kind_renders_from_its_data():
         "one": ["layers", {"at": "3", "n": "11", "mode": "one", "tone": "orange"}],
         "bars": ["bars", {"values": "0.13,0.36", "labels": "Muse Image,People", "digits": "2"}],
         "custom": ["dots", {"k": 83, "n": 100, "value": "83%"}],
+        "pct": ["bars", {"values": "33,4", "labels": "Intact,Damaged", "max": "100", "suffix": "%"}],
         "hidden": ["dots", {"k": 2, "n": 4, "value": ""}],
         "bad": ["pie", {}],
     })
@@ -80,6 +81,9 @@ def test_every_kind_renders_from_its_data():
     assert '<span class="sv-num">2.8×</span>' in bars and bars.count('class="sv-bar"') == 2
 
     assert '<span class="sv-num">83%</span>' in out["custom"] and "sv-unit" not in out["custom"]
+    pct = out["pct"]  # a fixed scale (data-max) and a suffix on each value
+    assert re.findall(r'style="width:([\d.]+)%', pct) == ["33", "4"] and '<span class="sv-bar-v">33%</span>' in pct
+    assert 'aria-label="Intact 33%, Damaged 4%"' in pct
     assert "sv-val" not in out["hidden"]
     assert out["bad"].startswith("ERROR: statviz: unknown kind")
 
