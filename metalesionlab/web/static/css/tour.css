@@ -49,6 +49,13 @@
 .demo-btn { border: 0; border-radius: 999px; background: #FDE68A; color: var(--ink); font-weight: 600; font-size: 13px; padding: 8px 14px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .demo-btn:hover { background: #FCD34D; }
 .demo-btn svg { width: 10px; height: 10px; }
+/* Socrates' face on the Tour button: he is the guide (a Muse Image doodle, on white in a bronze ring) */
+.demo-btn:has(.demo-face) { padding: 5px 14px 5px 5px; }
+.demo-face { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 1.5px solid #E4D3B4; box-sizing: border-box; display: block; flex: none; }
+@media (min-width: 861px) and (max-width: 1199px) {  /* the inline nav is tight here: no face, so the header keeps one row */
+  .demo-face { display: none; }
+  .demo-btn:has(.demo-face) { padding: 8px 14px; }
+}
 .page-intro { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: 10px; padding: 10px 14px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); }
 .page-intro p { margin: 0; color: var(--ink-2); }
 .link-btn { background: none; border: 0; padding: 0; color: var(--blue); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }

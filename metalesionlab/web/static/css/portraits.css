@@ -1,0 +1,92 @@
+/* Plato, Socrates and Aristotle on the pages (metalesionlab/web/portraits.py): marker doodles drawn by Meta's
+   Muse Image. Faces sit on white paper in a round frame with the bronze ring Socrates already wears on /socrates
+   and in the tour, so black lines read on any background, the dark cave included. The whole figures (Plato
+   pointing up, Aristotle's palm, the two in conversation) are ink on transparent paper and sit on the page's own
+   paper. Linked by SiteMiddleware on every page that shows one. The epigraph faces are in epigraph.css. */
+:root { --pt-ring: #E4D3B4; }
+
+/* --- the landing hero: Plato pointing up, beside "What would Plato ask an AI?" ------------------------------
+   The figure is the first child of .hero-ask and stands at its right edge, out of the flow, so the question's
+   own blocks (and anything added to them) keep their order and flow in the column beside him. The column is at
+   least as tall as he is, and the text is centred on him. Narrow (a phone, or the two-column hero between 981
+   and 1199 px): he stands beside the title only, and the rest runs full width under him. The hero stays shorter
+   than the drawing pad beside it, so the pad never moves down on a laptop (1280 x 800). */
+.hero-ask:has(> .hero-plato) {
+  --plato-w: clamp(104px, 29vw, 170px);
+  --plato-gap: clamp(14px, 2vw, 56px);
+  --plato-h: calc(var(--plato-w) * 1.593 + 44px);  /* the drawing (420 x 669) and its two-line caption */
+  position: relative;
+}
+.hero-plato { position: absolute; top: 0; right: 0; width: var(--plato-w); margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.hero-plato img { display: block; width: 100%; height: auto; }
+.hero-plato figcaption { font-family: var(--mono); font-size: clamp(10.5px, calc(7px + 0.3vw), 13px); line-height: 1.4; color: var(--muted); }
+.hero-plato figcaption span { display: block; }
+.hero-ask:has(> .hero-plato) > .title-pair { box-sizing: border-box; width: 100%; min-height: var(--plato-h);
+  padding-right: calc(var(--plato-w) + var(--plato-gap)); justify-content: center; }
+.hero-ask:has(> .hero-plato) .title-kicker { text-wrap: balance; }
+@media (max-width: 599px), (min-width: 981px) and (max-width: 1199px) {
+  .hero-ask:has(> .hero-plato) .title-kicker::before { display: none; }  /* a short line, alone on its row */
+  .hero-plato-what { display: none !important; }
+}
+@media (min-width: 600px) and (max-width: 980px), (min-width: 1200px) {
+  .hero-ask:has(> .hero-plato) { --plato-w: clamp(160px, 24vw, 240px);
+    min-height: var(--plato-h); padding-right: calc(var(--plato-w) + var(--plato-gap)); justify-content: center; }
+  .hero-ask:has(> .hero-plato) > .title-pair { min-height: 0; padding-right: 0; }
+  .hero-plato { top: 50%; transform: translateY(-50%); }
+}
+@media (min-width: 1200px) {
+  .hero-ask:has(> .hero-plato) { --plato-w: clamp(180px, 19vw, 440px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-plato img { animation: pt-rise 0.9s cubic-bezier(0.2, 0.75, 0.2, 1) both 0.15s; }
+  @keyframes pt-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+}
+
+/* --- "What would Plato ask an AI?" on the series pages: Plato himself, thinking, in place of the short rule --- */
+.title-kicker.has-face::before { display: none; }
+.kicker-face { flex: none; width: 1.9em; height: 1.9em; margin: -0.2em 0.05em -0.2em 0; border-radius: 50%;
+  background: #FFFFFF; border: 1.5px solid var(--pt-ring); box-sizing: border-box; object-fit: cover; }
+
+/* --- Socrates, the guide: floating at the foot of the window on the series pages --------------------------
+   His face and "Ask Socrates" (a link to /socrates). Out of the way while the tour's offer or the tour itself
+   is on screen (they have Socrates already), and on a phone just his face. */
+.pt-guide {
+  position: fixed; z-index: 90; right: clamp(12px, 1.4vw, 32px); bottom: clamp(12px, 1.4vw, 32px);
+  display: inline-flex; align-items: center; gap: clamp(8px, 0.6vw, 14px);
+  padding: 6px clamp(14px, 1vw, 22px) 6px 6px; border-radius: 999px;
+  background: #FFFFFF; color: var(--ink); text-decoration: none;
+  border: 1px solid var(--pt-ring); box-shadow: 0 10px 28px rgba(17, 24, 39, 0.16);
+}
+.pt-guide:hover { color: var(--ink); border-color: #C9A86A; box-shadow: 0 12px 32px rgba(17, 24, 39, 0.22); }
+.pt-guide:focus-visible { outline: 3px solid #2563EB; outline-offset: 3px; }
+.pt-guide img { width: clamp(46px, calc(30px + 1.4vw), 68px); height: auto; aspect-ratio: 1; border-radius: 50%;
+  background: #FFFFFF; border: 2px solid var(--pt-ring); box-sizing: border-box; display: block; }
+.pt-guide-text { display: flex; flex-direction: column; line-height: 1.2; }
+.pt-guide-text b { font-size: clamp(14px, calc(10px + 0.3vw), 17px); font-weight: 700; color: #6B4510; }
+.pt-guide-text small { font-size: clamp(12px, calc(9px + 0.2vw), 14px); color: var(--muted); }
+html.tour-on .pt-guide, body:has(> .tour-offer) .pt-guide { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .pt-guide { animation: pt-guide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both 1.2s; }
+  @keyframes pt-guide-in { from { opacity: 0; transform: translateY(16px) scale(0.9); } to { opacity: 1; transform: none; } }
+}
+@media (max-width: 640px) {
+  .pt-guide { padding: 4px; gap: 0; }
+  .pt-guide img { width: 52px; }
+  .pt-guide-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media print { .pt-guide { display: none; } }
+
+/* --- the credit line, in the page's footnote ------------------------------------------------------------ */
+.pt-credit-row { max-width: var(--page-max, 100%); margin: 0 auto; padding: 8px var(--gutter, 16px) 0; font-size: 12px; color: var(--muted); }
+
+/* --- /plato, Aristotle's reply: the two gestures of Raphael's School of Athens, Plato up and Aristotle down ---- */
+.pt-athens { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: end; gap: 8px clamp(10px, 1.2vw, 28px);
+  margin-top: clamp(10px, 1vw, 22px); }
+.pt-athens img { display: block; width: auto; height: clamp(140px, 11vw, 280px); }
+.pt-athens .pt-athens-aristotle { transform: scaleX(-1); }  /* turned to face Plato, as they walk together in the fresco */
+.pt-athens .pt-athens-cap { margin: 0; align-self: center; max-width: 42ch; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
+@media (max-width: 640px) {
+  .pt-athens { grid-template-columns: auto auto; justify-content: start; }
+  .pt-athens img { height: clamp(120px, 34vw, 170px); }
+  .pt-athens .pt-athens-cap { grid-column: 1 / -1; }
+}

@@ -15,3 +15,10 @@ Third-party material keeps its own license and credit:
   Long, Fan, Huey, Chai & Frank (2024), whose data are CC BY-NC-SA 4.0; no child's drawing is included.
 - Images and text made with Meta's Muse models, and Muse Glimmer and DINOv2: under Meta's terms and licenses.
 - Plato passages: Benjamin Jowett's translations (public domain), via Project Gutenberg.
+- Portraits of Plato, Socrates and Aristotle (metalesionlab/web/static/img/portraits/, .../img/socrates/):
+  marker doodles drawn by Meta's Muse Image, under Meta's terms.
+- Jacques-Louis David, The Death of Socrates (1787), The Metropolitan Museum of Art, Catharine Lorillard
+  Wolfe Collection, Wolfe Fund, 1931 (object 436105): Open Access image, CC0
+  (static/img/portraits/art/david-death-of-socrates.webp).
+- Raphael, The School of Athens (1509-11), detail of Plato and Aristotle: public domain (PD-Art), via
+  Wikimedia Commons, File:Sanzio_01_Plato_Aristotle.jpg (static/img/portraits/art/raphael-plato-aristotle.webp).
