@@ -1,10 +1,12 @@
 /* The Atlas of Forms (/plato/atlas). Same paper and colors as Plato's Chair: blue = Muse Image, teal = SDXL,
    orange = people; green and violet mark natural things and artifacts in the predictor charts only. */
-body.atlas { background: #F7F6F1; }
+body.atlas { background: var(--ground-warm); }
 /* fluid: the page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its
    header lines up with every other page; prose keeps a readable measure */
 .atlas main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.atlas { --muse: #1D4ED8; --sdxl: #0D9488; --people: #C2410C; --natural: #15803D; --artifact: #7C3AED; }
+.atlas { --muse: var(--blue); --sdxl: var(--teal); --people: var(--orange); --natural: var(--green); --artifact: var(--violet);
+  --at-track: #EEF2FF; --at-code-bg: #0F172A; --at-code-ink: #E2E8F0; }
+:root[data-theme="dark"] .atlas { --at-track: var(--chart-track); --at-code-bg: #0B0E13; --at-code-ink: #E2E8F0; }
 .k-muse { box-shadow: inset 0 -3px 0 var(--muse); }
 .k-people { box-shadow: inset 0 -3px 0 var(--people); }
 .at-cap { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
@@ -23,7 +25,7 @@ body.atlas { background: #F7F6F1; }
 @media (min-width: 1700px) { .at-hero-forms { grid-template-columns: repeat(6, minmax(0, 1fr)); } .at-hf:nth-child(-n+6) { display: flex; } }
 @media (min-width: 2300px) { .at-hero-forms { grid-template-columns: repeat(8, minmax(0, 1fr)); } .at-hf:nth-child(-n+8) { display: flex; } }
 .at-hf { display: flex; flex-direction: column; gap: 6px; min-width: 0; margin: 0; }
-.at-hf img { width: 100%; height: auto; aspect-ratio: 1; display: block; border-radius: 8px; background: #fff;
+.at-hf img { width: 100%; height: auto; aspect-ratio: 1; display: block; border-radius: 8px; background: var(--paper);
   border: 1px solid var(--line); }
 .at-hf img.m { border-color: var(--muse); }
 .at-hf img.p { border-color: var(--people); }
@@ -53,7 +55,7 @@ body.atlas { background: #F7F6F1; }
 .at-search { flex: 1 1 260px; max-width: 640px; }
 .at-search input, .at-domain select { font: inherit; font-size: 15px; width: 100%; min-height: 44px; padding: 8px 12px;
   border: 1px solid var(--line-2); border-radius: 10px; background: var(--panel); color: var(--ink); box-sizing: border-box; }
-.at-search input:focus, .at-domain select:focus { outline: 3px solid #93C5FD; outline-offset: 0; border-color: var(--muse); }
+.at-search input:focus, .at-domain select:focus { outline: 3px solid var(--blue-mid); outline-offset: 0; border-color: var(--muse); }
 .at-sort { flex: 0 1 auto; }
 .at-sort button { padding: 9px 12px; white-space: nowrap; }
 .at-domain { flex: 0 1 220px; }
@@ -65,15 +67,15 @@ body.atlas { background: #F7F6F1; }
 .at-card { font: inherit; text-align: left; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
   padding: 10px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; min-width: 0;
   transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-.at-card:hover { border-color: var(--ink-2); box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08); }
-.at-card:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; }
+.at-card:hover { border-color: var(--ink-2); box-shadow: 0 4px 14px var(--shadow); }
+.at-card:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .at-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .at-pair figure { margin: 0; position: relative; }
-.at-pair img { width: 100%; height: auto; aspect-ratio: 1; display: block; border-radius: 6px; background: #fff;
+.at-pair img { width: 100%; height: auto; aspect-ratio: 1; display: block; border-radius: 6px; background: var(--paper);
   border: 1px solid var(--line); box-sizing: border-box; }
 .at-pair figure:first-child img { border-bottom: 3px solid var(--muse); }
 .at-pair figure:last-child img { border-bottom: 3px solid var(--people); }
-.at-pair figcaption { position: absolute; left: 4px; top: 3px; font-family: var(--mono); font-size: 10px; color: var(--muted);
+.at-pair figcaption { position: absolute; left: 4px; top: 3px; font-family: var(--mono); font-size: 10px; color: var(--paper-muted);
   background: rgba(255, 255, 255, 0.85); padding: 0 3px; border-radius: 3px; }
 .at-card-name { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
 .at-card-name b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -81,13 +83,13 @@ body.atlas { background: #F7F6F1; }
 .at-card-ratio { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
 .at-card-ratio .v { font-weight: 700; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .at-card-ratio .ci { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.at-bar { position: relative; height: 6px; border-radius: 3px; background: #EEF2FF; flex: 1; min-width: 40px; }
+.at-bar { position: relative; height: 6px; border-radius: 3px; background: var(--at-track); flex: 1; min-width: 40px; }
 .at-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 3px 3px 0; background: var(--muse); }
 .at-bar s { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-2); border-radius: 1px; }
-.at-card.over .at-bar i { background: #93C5FD; }
+.at-card.over .at-bar i { background: var(--blue-mid); }
 .at-more { align-self: center; font: inherit; font-size: 15px; font-weight: 600; padding: 10px 22px; border-radius: 999px;
   border: 1px solid var(--ink); background: var(--panel); color: var(--ink); cursor: pointer; }
-.at-more:hover { background: var(--ink); color: #fff; }
+.at-more:hover { background: var(--ink); color: var(--on-ink); }
 .at-more[hidden] { display: none; }
 .at-empty { margin: 0; padding: 24px; text-align: center; color: var(--muted); border: 1px dashed var(--line-2); border-radius: 12px; }
 
@@ -100,7 +102,7 @@ body.atlas { background: #F7F6F1; }
 .at-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
 .at-legend i.dot { border-radius: 50%; width: 10px; height: 10px; }
 .at-legend i.line { height: 2px; width: 16px; border-radius: 1px; }
-.at-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: #F9FAFB; padding: 8px 10px; border-radius: 8px;
+.at-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--tip); color: var(--tip-ink); padding: 8px 10px; border-radius: 8px;
   font-size: 12.5px; line-height: 1.45; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); max-width: 260px; }
 .at-tip b { font-size: 14px; display: block; }
 .at-tip .k { display: inline-block; width: 12px; height: 2px; vertical-align: middle; margin-right: 6px; }
@@ -120,7 +122,7 @@ body.atlas { background: #F7F6F1; }
 /* run it */
 .at-run { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 2vw, 56px); }
 .at-run-label { margin: 0 0 6px; font-weight: 600; font-size: 14px; }
-.at-code { margin: 0 0 14px; background: #0F172A; color: #E2E8F0; font-family: var(--mono); font-size: 13px; line-height: 1.55;
+.at-code { margin: 0 0 14px; background: var(--at-code-bg); color: var(--at-code-ink); font-family: var(--mono); font-size: 13px; line-height: 1.55;
   padding: 12px 14px; border-radius: 10px; overflow-x: auto; white-space: pre; }
 .at-code.wrap { white-space: pre-wrap; }
 .at-run-note { margin: 0; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
@@ -135,8 +137,8 @@ body.atlas { background: #F7F6F1; }
 
 /* the card detail */
 .at-dialog { width: min(880px, calc(100vw - 24px)); max-height: calc(100vh - 32px); border: 0; border-radius: 16px; padding: 22px 24px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3); color: var(--ink); box-sizing: border-box; }
-.at-dialog::backdrop { background: rgba(17, 24, 39, 0.55); }
+  box-shadow: 0 0 0 1px var(--panel-edge), 0 24px 60px rgba(0, 0, 0, 0.3); color: var(--ink); box-sizing: border-box; }
+.at-dialog::backdrop { background: var(--scrim); }
 .at-d-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
 .at-d-head h2 { margin: 2px 0 0; font-size: 28px; letter-spacing: -0.01em; }
 .at-d-rank { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
@@ -152,7 +154,7 @@ body.atlas { background: #F7F6F1; }
 .at-d-set.muse figcaption b { box-shadow: inset 0 -3px 0 var(--muse); }
 .at-d-set.people figcaption b { box-shadow: inset 0 -3px 0 var(--people); }
 .at-d-row { display: grid; grid-template-columns: minmax(0, 130px) minmax(0, 1fr); gap: 10px; align-items: center; }
-.at-d-row img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+.at-d-row img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); }
 .at-d-row img.tiles { border: 0; border-radius: 4px; }
 .at-d-stats { margin: 16px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
 .at-d-stats div { background: var(--soft); border-radius: 10px; padding: 8px 10px; }

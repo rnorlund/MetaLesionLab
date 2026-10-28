@@ -97,6 +97,56 @@ FORM_CHAIR = ('<svg class="brand-logo" viewBox="0 0 64 64" width="38" height="38
               '<path d="M21 33L21 51"/><path d="M43 33L43 51"/></g></svg>')
 LOGO = {"plato": FORM_CHAIR, "lingua": ""}
 
+# --- the colour theme (static/css/app.css: :root[data-theme="dark"] and the light tokens) --------------------
+# Each site's theme on <html data-theme>: Plato's Chair starts dark and has a sun/moon switch in its header; the
+# Lingua site is light and has none. A visitor's choice is kept in localStorage "plato-theme". THEME_SCRIPT goes
+# first in <head>, so the stored theme is on <html> before the first paint (no flash of the other theme); it also
+# runs the switch (one delegated click listener), keeps its label in step and fires "themechange" on document.
+# Without storage or script the page simply stays in the site's theme.
+THEME = {"plato": "dark", "lingua": "light"}
+THEME_KEY = "plato-theme"
+THEME_SCRIPT = (
+    "<script>(function(){var d=document.documentElement,k='" + THEME_KEY + "';"
+    "try{var t=localStorage.getItem(k);if(t==='light'||t==='dark')d.setAttribute('data-theme',t);}catch(e){}"
+    "function sync(){var l=d.getAttribute('data-theme')==='light'?'Switch to dark theme':'Switch to light theme',"
+    "b=document.querySelectorAll('[data-theme-toggle]');for(var i=0;i<b.length;i++){b[i].setAttribute('aria-label',l);"
+    "b[i].setAttribute('title',l);}}"
+    "document.addEventListener('click',function(e){var b=e.target&&e.target.closest&&e.target.closest('[data-theme-toggle]');"
+    "if(!b)return;var t=d.getAttribute('data-theme')==='light'?'dark':'light';d.setAttribute('data-theme',t);"
+    "try{localStorage.setItem(k,t);}catch(x){}sync();"
+    "try{document.dispatchEvent(new CustomEvent('themechange',{detail:{theme:t}}));}catch(x){}});"
+    "if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync);else sync();})();</script>"
+)
+THEME_TOGGLE = (
+    '<button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light theme" '
+    'title="Switch to light theme">'
+    '<svg class="tt-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" '
+    'stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2'
+    'M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>'
+    '<svg class="tt-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" '
+    'stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>'
+    '</button>'
+)
+_HTML_TAG = re.compile(r"<html\b([^>]*)>", re.I)
+_HEAD_OPEN = re.compile(r"<head\b[^>]*>(\s*<meta charset=[^>]*>)?", re.I)
+
+
+def theme_of(app) -> str:
+    return THEME.get(site_of(app), "light")
+
+
+def _set_theme(page: str, site: str) -> str:
+    """data-theme on <html>, and on the Plato site the theme script first in <head>."""
+    theme = THEME.get(site, "light")
+
+    def tag(m: re.Match) -> str:
+        attrs = re.sub(r'\sdata-theme="[^"]*"', "", m.group(1))
+        return f'<html{attrs} data-theme="{theme}">'
+    page = _HTML_TAG.sub(tag, page, count=1)
+    if site == "plato" and THEME_SCRIPT not in page:
+        page = _HEAD_OPEN.sub(lambda m: m.group(0) + THEME_SCRIPT, page, count=1)
+    return page
+
 # --- the Plato series: "What would Plato ask an AI?" ------------------------------------------
 # Question first, then where Plato asks it, then what we found (or a link while results are new).
 SERIES = [
@@ -293,6 +343,7 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
                 '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Tour</button>'
                 ) if tour else ""
     logo = LOGO.get(site, "")
+    toggle = THEME_TOGGLE if site == "plato" else ""  # the sun/moon switch: Plato's Chair only
     return (
         '<header class="topbar site-head">'
         f'<a class="brand{" has-logo" if logo else ""}" href="/">{logo}'
@@ -300,7 +351,7 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
         f'<nav class="topnav" aria-label="Main">{inline}{more_menu}</nav>'
         '<details class="nav-menu"><summary><span class="nav-burger" aria-hidden="true"></span>Menu</summary>'
         f'<div class="nav-panel">{"".join(_link(n, path) for n in main)}{extra}</div></details>'
-        f'{tour_btn}{chips}</header>'
+        f'{tour_btn}{toggle}{chips}</header>'
     )
 
 
@@ -422,6 +473,7 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     if "og:image" not in page:
         head += share_tags(page, origin_url, path, site)
     page = _ASSET.sub(_versioned, page)
+    page = _set_theme(page, site)
     at = page.find("</head>")
     return page[:at] + head + page[at:] if at >= 0 else head + page
 

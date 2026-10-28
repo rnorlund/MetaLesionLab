@@ -1,11 +1,7 @@
-/* Ask Socrates (/socrates). Shared tokens are in app.css; this page adds a bronze accent, IBM Plex Serif for
-   Socrates' questions and quotations, a faint Greek-key rule, and a dark theme. */
+/* Ask Socrates (/socrates). Shared tokens are in app.css, the bronze accent (--bronze*) and both themes
+   included; this page adds IBM Plex Serif for Socrates' questions and quotations and a faint Greek-key rule. */
 :root {
   --serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
-  --bronze: #8A5A12;
-  --bronze-dark: #6B4510;
-  --bronze-soft: #F6EEDF;
-  --bronze-line: #E4D3B4;
 }
 
 /* Fluid: the page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its
@@ -127,16 +123,16 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-hero-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
 .so-hero-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .so-portrait { margin: 0; flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.so-portrait img { width: clamp(112px, 9vw, 220px); height: auto; aspect-ratio: 1; border-radius: 50%; background: #fff; border: 2px solid var(--bronze-line); display: block; }
+.so-portrait img { width: clamp(112px, 9vw, 220px); height: auto; aspect-ratio: 1; border-radius: 50%; background: var(--portrait-paper, var(--paper)); border: 2px solid var(--portrait-ring, var(--bronze-line)); display: block; }
 .so-portrait figcaption { font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center; }
-.so-face { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 1.5px solid var(--bronze-line); display: block; }
+.so-face { width: 40px; height: 40px; border-radius: 50%; background: var(--portrait-paper, var(--paper)); border: 1.5px solid var(--portrait-ring, var(--bronze-line)); display: block; }
 
 /* modes: a two-way switch built from radio buttons (arrow keys move between them) */
 .so-modes { display: inline-flex; flex-wrap: wrap; gap: 0; margin: 0; padding: 3px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--soft); width: fit-content; max-width: 100%; }
 .so-mode { position: relative; display: inline-flex; }
 .so-mode input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
 .so-mode span { display: inline-flex; align-items: center; min-height: 38px; padding: 6px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-2); cursor: pointer; }
-.so-mode input:checked + span { background: var(--bronze); color: #fff; }
+.so-mode input:checked + span { background: var(--bronze); color: var(--on-ink); }
 .so-mode input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
 .so-mode input:disabled + span { opacity: 0.6; cursor: not-allowed; }
 .so-examine-intro { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
@@ -190,25 +186,4 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 }
 @media (prefers-reduced-motion: reduce) { .so-toast { transition: none; } }
 
-/* Dark theme: the shared tokens, then the few places app.css uses fixed colors. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #E5E7EB; --ink-2: #CBD5E1; --muted: #9CA3AF; --faint: #9CA3AF;
-    --line: #1F2937; --line-2: #374151; --ground: #0B0F17; --panel: #111827; --soft: #0F172A;
-    --blue: #60A5FA; --blue-dark: #93C5FD; --blue-soft: #172554;
-    --orange: #FB923C; --orange-dark: #FDBA74; --orange-soft: #431407;
-    --green: #4ADE80; --green-soft: #052E16; --amber: #FCD34D; --amber-soft: #3B2A06;
-    --red: #F87171; --red-soft: #450A0A;
-    --bronze: #E0B16A; --bronze-dark: #F0CD93; --bronze-soft: #1E1A12; --bronze-line: #4A3B22;
-    color-scheme: dark;
-  }
-  .topbar { background: #020617; border: 1px solid #1F2937; }
-  .topnav a[aria-current="page"] { color: #0B0F17; background: #E5E7EB; }
-  .btn { border-color: var(--line-2); }
-  .btn-primary, .btn-primary:hover { color: #0B0F17; }
-  .btn-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
-  .btn-ghost { border-color: #4B5563; }
-  .note-warn { border-color: #78350F; color: var(--ink); }
-  .so-mode input:checked + span { color: #0B0F17; }
-  :focus-visible { outline-color: #93C5FD; }
-}
+/* The dark theme comes from the site (app.css :root[data-theme="dark"]), like every Plato page. */

@@ -5,8 +5,11 @@
   'use strict';
   var h = TOT.h;
   var SVGNS = 'http://www.w3.org/2000/svg';
-  var C = { people: '#C2410C', sd: '#0D9488', muse: '#1D4ED8', ink: '#111827', ink2: '#374151', muted: '#6B7280',
-            grid: '#E1E0D9', axis: '#C3C2B7', track: '#E5E3DC', chart: '#FCFCFB', sketch: '#374151' };
+  // the site's colour tokens (app.css, plato_lifespan.css), so a theme switch recolours the charts; the
+  // stroke-by-stroke chair is drawn on paper, in paper ink, in every theme
+  var C = { people: 'var(--orange)', sd: 'var(--teal)', muse: 'var(--blue)', ink: 'var(--ink)', ink2: 'var(--ink-2)', muted: 'var(--faint)',
+            grid: 'var(--chart-grid)', axis: 'var(--chart-axis)', track: 'var(--ls-off)', chart: 'var(--chart-bg)', sketch: 'var(--ink-2)',
+            halo: 'var(--chart-halo)', paperInk: 'var(--paper-ink)', paperHot: 'var(--ls-paper-hot)' };
   var CK = ['v1.1', 'v1.2', 'v1.3', 'v1.4', 'v1.5'];
   var KSTEPS = { 'v1.1': 0.431, 'v1.2': 0.946, 'v1.3': 1.141, 'v1.4': 1.171, 'v1.5': 1.541 };
   var AGES = [2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -158,7 +161,7 @@
       if (isNaN(ov)) return;
       svg('circle', { cx: x(Math.max(m.lo, Math.min(m.hi, ov))), cy: 17, r: 3.5, fill: color(o), opacity: 0.28 }, g);
     });
-    if (!isNaN(v)) svg('circle', { cx: x(Math.max(m.lo, Math.min(m.hi, v))), cy: 17, r: 8, fill: color(s), stroke: '#FFFFFF', 'stroke-width': 2.5 }, g);
+    if (!isNaN(v)) svg('circle', { cx: x(Math.max(m.lo, Math.min(m.hi, v))), cy: 17, r: 8, fill: color(s), stroke: C.halo, 'stroke-width': 2.5 }, g);
     box.appendChild(g);
     box.appendChild(h('p', { class: 'hint ends' }, [h('span', null, m.fmt(m.lo)), h('span', null, m.fmt(m.hi))]));
     return box;
@@ -279,9 +282,9 @@
       var x = xs(value(st, 'recog')), y = ys(value(st, 'd_adult'));
       if (isNaN(x) || isNaN(y)) return;
       var col = color(st);
-      if (shape === 'sq') svg('rect', { x: x - 6, y: y - 6, width: 12, height: 12, rx: 2, fill: col, stroke: '#FFFFFF', 'stroke-width': 2 }, s);
-      else if (shape === 'dia') svg('path', { d: 'M' + x + ' ' + (y - 8) + 'L' + (x + 8) + ' ' + y + 'L' + x + ' ' + (y + 8) + 'L' + (x - 8) + ' ' + y + 'Z', fill: col, stroke: '#FFFFFF', 'stroke-width': 2 }, s);
-      else svg('circle', { cx: x, cy: y, r: 5, fill: col, stroke: '#FFFFFF', 'stroke-width': 2 }, s);
+      if (shape === 'sq') svg('rect', { x: x - 6, y: y - 6, width: 12, height: 12, rx: 2, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
+      else if (shape === 'dia') svg('path', { d: 'M' + x + ' ' + (y - 8) + 'L' + (x + 8) + ' ' + y + 'L' + x + ' ' + (y + 8) + 'L' + (x - 8) + ' ' + y + 'Z', fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
+      else svg('circle', { cx: x, cy: y, r: 5, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
       if (labelText) text(s, x + (dx || 8), y + (dy || 4), labelText, { class: 'lbl', 'text-anchor': anchor || 'start' });
       var hit = svg('circle', { cx: x, cy: y, r: 12, fill: 'transparent' }, s);
       hit.addEventListener('mousemove', function (e) {
@@ -354,7 +357,7 @@
       b(0, 1); b(1, 2); b(1, 3); b(1, 4);
     }
     series.forEach(function (p, i) {
-      svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 4.5, fill: col, stroke: '#FFFFFF', 'stroke-width': 2 }, s);
+      svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 4.5, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
       if (isAI && (i === 0 || i === 4)) text(s, xs(p.x), ys(p.v) - 10, p.ck, { 'text-anchor': 'middle', class: 'lbl' });
       var hit = svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 12, fill: 'transparent' }, s);
       hit.addEventListener('mousemove', function (e) {
@@ -499,7 +502,7 @@
         if (pts.length === 1) pts.push(pts[0]);
         var len = 0;
         for (var k = 1; k < pts.length; k++) len += Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
-        var p = svg('path', { d: pts.map(function (q, k) { return (k ? 'L' : 'M') + q[0] + ' ' + q[1]; }).join(''), fill: 'none', stroke: C.ink,
+        var p = svg('path', { d: pts.map(function (q, k) { return (k ? 'L' : 'M') + q[0] + ' ' + q[1]; }).join(''), fill: 'none', stroke: C.paperInk,
           'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': 1 }, box);
         return { el: p, len: len };
       });
@@ -509,8 +512,8 @@
           if (!p.el.animate) return;
           p.el.getAnimations().forEach(function (an) { an.cancel(); });
           var dur = Math.max(250, p.len / 120 * 1000);
-          p.el.animate([{ strokeDashoffset: 1, stroke: C.people }, { strokeDashoffset: 0, stroke: C.people }], { duration: dur, delay: t, fill: 'both' });
-          p.el.animate([{ stroke: C.people }, { stroke: C.ink }], { duration: 250, delay: t + dur, fill: 'forwards' });
+          p.el.animate([{ strokeDashoffset: 1, stroke: C.paperHot }, { strokeDashoffset: 0, stroke: C.paperHot }], { duration: dur, delay: t, fill: 'both' });
+          p.el.animate([{ stroke: C.paperHot }, { stroke: C.paperInk }], { duration: 250, delay: t + dur, fill: 'forwards' });
           t += dur + 300;
         });
       }

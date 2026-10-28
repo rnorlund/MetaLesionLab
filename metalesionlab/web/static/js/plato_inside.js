@@ -5,8 +5,8 @@
   'use strict';
   var T = window.TOT, h = T.h;
   var NS = 'http://www.w3.org/2000/svg';
-  var C = { muse: '#1D4ED8', people: '#C2410C', ink: '#111827', ink2: '#374151', muted: '#4B5563', grid: '#E5E7EB',
-            axis: '#9CA3AF', surface: '#FFFFFF', paper: '#FCFCFB' };
+  var C = { muse: 'var(--blue)', people: 'var(--orange)', ink: 'var(--ink)', ink2: 'var(--ink-2)', muted: 'var(--muted)', grid: 'var(--line)',
+            axis: 'var(--line-3)', surface: 'var(--chart-halo)', paper: 'var(--paper-mat)' };
   var SPRITES = '/static/img/plato_inside/';
   var GRID = 1000;
   var N_LAYERS = 52;

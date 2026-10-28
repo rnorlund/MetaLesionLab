@@ -81,17 +81,17 @@
   <p class="sc-note">The other two families agree with Qwen2.5: failures fall (supported), recognizability and spread don’t clearly change. One check differs: Qwen3 narrows at temperature 0.7. Stopped early, at its best held-out step, the sketch model supports all three predictions: with 100 chairs it is still mostly scribbles (25% recognizable, a third only dots).</p>
   <h3>By model size (language models drawing SVG, 12 per model, temperature 1)</h3>
   <div class="sc-legend" aria-hidden="true">
-    <span><i style="background:#2a78d6"></i>Qwen2.5</span><span><i style="background:#eb6834"></i>OLMo 2</span>
-    <span><i style="background:#1baf7a"></i>Qwen3</span><span><i class="dot" style="background:#171a22;transform:rotate(45deg);border-radius:1px"></i>Muse Glimmer 30B</span>
-    <span><i class="sq" style="background:#171a22"></i>Muse Spark, Muse Wonder (API)</span>
+    <span><i style="background:var(--s-blue)"></i>Qwen2.5</span><span><i style="background:var(--s-orange)"></i>OLMo 2</span>
+    <span><i style="background:var(--s-green)"></i>Qwen3</span><span><i class="dot" style="background:var(--s-meta);transform:rotate(45deg);border-radius:1px"></i>Muse Glimmer 30B</span>
+    <span><i class="sq" style="background:var(--s-meta)"></i>Muse Spark, Muse Wonder (API)</span>
   </div>
   <div class="sc-charts" id="charts-b"></div>
   <details class="sc-numbers"><summary>The numbers as a table (temperature 1)</summary><div id="table-b-10"></div></details>
   <details class="sc-numbers"><summary>The check at temperature 0.7</summary><div id="table-b-07"></div></details>
   <h3>By data size (the sketch model, 3 seeds × 200 drawings, temperature 1)</h3>
   <div class="sc-legend" aria-hidden="true">
-    <span><i style="background:#2a78d6"></i>last step (same compute)</span><span><i class="dash"></i>best held-out step</span>
-    <span><i style="background:repeating-linear-gradient(90deg,#6B7280 0 2px,transparent 2px 5px)"></i>the chairs it learned from</span>
+    <span><i style="background:var(--s-blue)"></i>last step (same compute)</span><span><i class="dash"></i>best held-out step</span>
+    <span><i style="background:repeating-linear-gradient(90deg,var(--faint) 0 2px,transparent 2px 5px)"></i>the chairs it learned from</span>
   </div>
   <div class="sc-charts" id="charts-a"></div>
   <details class="sc-numbers"><summary>The numbers as a table</summary><div id="table-a"></div></details>

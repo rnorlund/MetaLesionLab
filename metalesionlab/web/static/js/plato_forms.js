@@ -4,7 +4,9 @@
   'use strict';
   var T = window.TOT;
   var IMG = '/static/img/plato_forms/';
-  var BLUE = '#1D4ED8', ORANGE = '#C2410C', TEAL = '#0D9488', GRID = '#E5E7EB', AXIS = '#9CA3AF', INK = '#111827', MUTED = '#4B5563';
+  // colours are the site's tokens (app.css), so a theme switch recolours the charts
+  var BLUE = 'var(--blue)', ORANGE = 'var(--orange)', TEAL = 'var(--teal)', GRID = 'var(--line)', AXIS = 'var(--line-3)', INK = 'var(--ink)', MUTED = 'var(--muted)';
+  var HALO = 'var(--chart-halo)';
   var NS = 'http://www.w3.org/2000/svg';
   var S = { d: null, ai: 'muse', asked: 'doodle', dial: 'doodle', k: 'bed', who: 'ai' };
   var NAME = { muse: 'Muse Image', sdxl: 'SDXL', people: 'People' };
@@ -116,8 +118,8 @@
     var x = function (v) { return m.l + (v + 0.5) / 13 * (W - m.l - m.r); };
     var y = function (v) { return H - m.b - (v + 1.2) / 13.5 * (H - m.t - m.b); };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Time asked for against the time drawn, for Muse Image and SDXL' });
-    svg.appendChild(s('rect', { x: m.l, y: y(10 + 1 / 3), width: W - m.l - m.r, height: y(10) - y(10 + 1 / 3), fill: '#FDE68A', opacity: 0.7 }));
-    svg.appendChild(s('text', { x: W - m.r - 4, y: y(10 + 1 / 3) - 4, 'text-anchor': 'end', 'font-size': 11, fill: '#92400E' }, 'about 10:10'));
+    svg.appendChild(s('rect', { x: m.l, y: y(10 + 1 / 3), width: W - m.l - m.r, height: y(10) - y(10 + 1 / 3), fill: 'var(--pf-ten)', opacity: 0.7 }));
+    svg.appendChild(s('text', { x: W - m.r - 4, y: y(10 + 1 / 3) - 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--amber-ink)' }, 'about 10:10'));
     [0, 3, 6, 9, 12].forEach(function (v) {
       var lab = String(v === 0 ? 12 : v);
       svg.appendChild(s('line', { x1: x(v), x2: x(v), y1: m.t, y2: H - m.b, stroke: GRID }));
@@ -141,7 +143,7 @@
         var ok = dist(parseT(row[1]), parseT(row[0])) <= S.d.clock.correct_within_min;
         for (var i = 0; i < n; i++) {
           var c = s('circle', { cx: x(xv + off + (rnd() - 0.5) * 0.22), cy: y(yv) + (rnd() - 0.5) * 6, r: 5, fill: COLOR[gen],
-            'fill-opacity': 0.8, stroke: '#FFFFFF', 'stroke-width': 1.2 });
+            'fill-opacity': 0.8, stroke: HALO, 'stroke-width': 1.2 });
           hoverable(c, '<b>' + NAME[gen] + '</b><br>asked ' + row[0] + ', drew ' + row[1] + '<br>' + n + ' of ' +
             grp.per_time[row[0]].n + ' pictures' + (ok ? ' · right time' : '') + (isTenTen(row[1]) ? ' · about 10:10' : ''));
           svg.appendChild(c);
@@ -187,7 +189,7 @@
     if (!grp) { fig.classList.add('empty'); html(fig, '<h3>' + label + '</h3><p>Not drawn in this style.</p>'); return fig; }
     var R = 100, C = 120;
     var svg = s('svg', { viewBox: '0 0 240 240', role: 'img', 'aria-label': label + ': every clock’s hands on one dial' });
-    svg.appendChild(s('circle', { cx: C, cy: C, r: R, fill: '#FFFFFF', stroke: AXIS, 'stroke-width': 1.5 }));
+    svg.appendChild(s('circle', { cx: C, cy: C, r: R, fill: HALO, stroke: AXIS, 'stroke-width': 1.5 }));
     for (var k = 0; k < 60; k++) {
       var a = 2 * Math.PI * k / 60, r0 = k % 5 ? 0.95 : 0.89;
       svg.appendChild(s('line', { x1: C + r0 * R * Math.sin(a), y1: C - r0 * R * Math.cos(a), x2: C + R * Math.sin(a), y2: C - R * Math.cos(a),
@@ -288,7 +290,7 @@
     var x = function (v) { return m.l + v / hi * (W - m.l - m.r); };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'The bed and the table among the 35 things, ranked by how alike Muse Image draws them compared with people' });
     [0, 0.5, 1].forEach(function (t) {
-      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: m.t - 6, y2: H - m.b + 4, stroke: t === 1 ? '#6B7280' : GRID }));
+      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: m.t - 6, y2: H - m.b + 4, stroke: t === 1 ? 'var(--faint)' : GRID }));
       svg.appendChild(s('text', { x: x(t), y: H - m.b + 18, 'text-anchor': 'middle', 'font-size': 12, fill: MUTED }, String(t)));
     });
     svg.appendChild(s('text', { x: x(1) + 5, y: m.t - 6, 'font-size': 11, fill: MUTED }, 'as varied as people'));
@@ -296,9 +298,9 @@
     rows.forEach(function (r, i) {
       var y = m.t + i * rowH + rowH / 2, em = r.isNew || r.label === 'chair';
       var gEl = s('g', {});
-      gEl.appendChild(s('rect', { x: 0, y: y - rowH / 2, width: W, height: rowH, fill: r.isNew ? '#FEF3C7' : 'transparent' }));
-      gEl.appendChild(s('line', { x1: x(r.ci[0]), x2: x(Math.min(r.ci[1], hi)), y1: y, y2: y, stroke: r.isNew ? INK : '#93C5FD', 'stroke-width': r.isNew ? 2 : 1.5 }));
-      gEl.appendChild(s('circle', { cx: x(r.v), cy: y, r: r.isNew ? 5.5 : 4, fill: r.isNew ? INK : BLUE, stroke: '#FFFFFF', 'stroke-width': 1.5 }));
+      gEl.appendChild(s('rect', { x: 0, y: y - rowH / 2, width: W, height: rowH, fill: r.isNew ? 'var(--amber-soft)' : 'transparent' }));
+      gEl.appendChild(s('line', { x1: x(r.ci[0]), x2: x(Math.min(r.ci[1], hi)), y1: y, y2: y, stroke: r.isNew ? INK : 'var(--blue-mid)', 'stroke-width': r.isNew ? 2 : 1.5 }));
+      gEl.appendChild(s('circle', { cx: x(r.v), cy: y, r: r.isNew ? 5.5 : 4, fill: r.isNew ? INK : BLUE, stroke: HALO, 'stroke-width': 1.5 }));
       gEl.appendChild(s('text', { x: m.l - 8, y: y + 4, 'text-anchor': 'end', 'font-size': em ? 12 : 11, 'font-weight': em ? 700 : 400, fill: em ? INK : MUTED }, r.label));
       hoverable(gEl, '<b>' + r.label + '</b>' + (r.isNew ? ' (Plato’s example)' : '') + '<br>ratio ' + f2(r.v) + ' (95% CI ' + f2(r.ci[0]) + '–' + f2(r.ci[1]) + ')<br>' + (i + 1) + ' of ' + rows.length + ', most alike first');
       svg.appendChild(gEl);

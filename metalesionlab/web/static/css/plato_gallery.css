@@ -1,7 +1,8 @@
 /* The gallery (/plato/gallery). Paper like the other Plato pages; fluid: the page fills wide windows, the grid
    adds columns as the window grows (auto-fill), cards grow with it, and prose keeps a readable measure.
    Card pictures (.lab-pic, .lab-cell, .lab-flip) are styled in gallery-strip.css. */
-.gx { background: #F7F6F1; }
+.gx { background: var(--ground-warm); --gx-on-ink-muted: #D1D5DB; --gx-scrim: rgba(10, 12, 16, 0.78); }
+:root[data-theme="dark"] .gx { --gx-on-ink-muted: #4B5563; }
 .gx .page { max-width: var(--page-max, none); padding-inline: var(--gutter, clamp(16px, 4vw, 96px)); }
 .gx main { margin-top: 20px; display: flex; flex-direction: column; gap: 18px; outline: none; }
 
@@ -17,8 +18,8 @@
   border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); font: inherit;
   font-size: 14px; font-weight: 500; cursor: pointer; }
 .gx-chip-n { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.gx-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; }
-.gx-chip[aria-pressed="true"] .gx-chip-n { color: #D1D5DB; }
+.gx-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+.gx-chip[aria-pressed="true"] .gx-chip-n { color: var(--gx-on-ink-muted); }
 .gx-shuffle svg { width: 16px; height: 16px; }
 .gx-chip:hover, .gx-shuffle:hover { border-color: var(--ink); }
 .gx-count { margin: -6px 0 0; font-size: 13px; color: var(--muted); }
@@ -27,11 +28,11 @@
 .gx-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(14px, 1.4vw, 24px);
   grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(280px, 16vw, 420px)), 1fr)); }  /* 5 across at 2560, so the 200px frames are drawn at no more than about 1.4 times */
 .gx-loading { color: var(--muted); }
-.gx-card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid #E7E5DF;
+.gx-card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line-warm);
   border-radius: 16px; overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-.gx-card:hover { border-color: #CFCBC0; box-shadow: 0 6px 20px rgba(17, 24, 39, 0.08); }
+.gx-card:hover { border-color: var(--line-warm-2); box-shadow: 0 6px 20px var(--shadow); }
 .gx-card:focus-within { outline: 3px solid var(--blue); outline-offset: 2px; }
-.gx-card .lab-pic { border-bottom: 1px solid #EEECE6; }
+.gx-card .lab-pic { border-bottom: 1px solid var(--line-warm); }
 .gx-card-body { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 16px; }
 .gx-card-cat { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .gx-card.is-degrade .gx-card-cat { color: var(--orange-dark); }
@@ -51,8 +52,9 @@
 /* ---------- the large view ---------- */
 html.gx-locked { overflow: hidden; }
 .gx-view { width: min(1680px, calc(100vw - 2 * clamp(8px, 2vw, 40px))); max-width: none; max-height: calc(100dvh - 2 * clamp(8px, 2vw, 32px));
-  padding: 0; border: 0; border-radius: 18px; background: #FFFFFF; color: var(--ink); overflow: auto; }
-.gx-view::backdrop { background: rgba(10, 12, 16, 0.78); }
+  padding: 0; border: 0; border-radius: 18px; background: var(--panel); color: var(--ink); overflow: auto;
+  box-shadow: 0 0 0 1px var(--panel-edge); }
+.gx-view::backdrop { background: var(--gx-scrim); }
 .gx-view-inner { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
   gap: clamp(16px, 2vw, 32px); padding: clamp(52px, 4vw, 64px) clamp(16px, 3vw, 48px) clamp(18px, 2.4vw, 36px); }
 .gx-stage-wrap { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -71,18 +73,18 @@ html.gx-locked { overflow: hidden; }
 .gx-player { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .gx-player[hidden] { display: none; }
 .gx-play { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px;
-  border: 1px solid var(--ink); background: var(--ink); color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; }
+  border: 1px solid var(--ink); background: var(--ink); color: var(--on-ink); font: inherit; font-weight: 600; cursor: pointer; }
 .gx-play svg { width: 12px; height: 12px; }
 .gx-play[aria-pressed="true"] .gx-icon-play, .gx-play[aria-pressed="false"] .gx-icon-pause { display: none; }
 .gx-play[aria-pressed="false"] { background: var(--panel); color: var(--ink); }
 .gx-frames { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.gx-frame-btn { display: block; padding: 2px; border: 2px solid transparent; border-radius: 8px; background: #FFFFFF; cursor: pointer;
+.gx-frame-btn { display: block; padding: 2px; border: 2px solid transparent; border-radius: 8px; background: var(--paper); cursor: pointer;
   width: clamp(44px, 4.4vw, 76px); container-type: inline-size; }
 .gx-frame-btn.is-pair { width: clamp(72px, 7vw, 132px); }
 .gx-frame-btn .lab-cell { width: 100%; border-radius: 4px; }
-.gx-frame-btn[aria-current] { border-color: #C2410C; }
+.gx-frame-btn[aria-current] { border-color: var(--orange); }
 .gx-frame-btn:hover { border-color: var(--line-2); }
-.gx-frame-btn[aria-current]:hover { border-color: #C2410C; }
+.gx-frame-btn[aria-current]:hover { border-color: var(--orange); }
 
 .gx-side { display: flex; flex-direction: column; gap: 10px; align-self: start; }
 .gx-view-cat { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--orange-dark); }
@@ -93,11 +95,11 @@ html.gx-locked { overflow: hidden; }
 .gx-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .gx-go, .gx-share { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px;
   font-weight: 600; font-size: 15px; text-decoration: none; }
-.gx-go { background: var(--ink); color: #FFFFFF; }
+.gx-go { background: var(--ink); color: var(--on-ink); }
 .gx-share { border: 1px solid var(--ink); color: var(--ink); background: var(--panel); }
 .gx-share svg { width: 15px; height: 15px; }
 .gx-nav, .gx-close { position: absolute; top: 10px; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
-  border-radius: 999px; border: 1px solid var(--line-2); background: #FFFFFF; color: var(--ink); cursor: pointer; }
+  border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); cursor: pointer; }
 .gx-nav svg, .gx-close svg { width: 16px; height: 16px; }
 .gx-close { right: 10px; }
 .gx-next { right: 62px; }

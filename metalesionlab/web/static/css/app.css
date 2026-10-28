@@ -1,29 +1,111 @@
-/* Shared styles for every page. Ink #111827, ground #F3F4F6, intact blue, lesion orange. */
-:root {
+/* Shared styles for every page. Ink #111827, ground #F3F4F6, intact blue, lesion orange.
+   Colours are tokens, one set per theme: light (:root, and :root[data-theme="light"]) and dark
+   (:root[data-theme="dark"]). site.py sets data-theme on <html>: the Plato site starts dark, and a visitor's
+   choice (the header's sun/moon button) is kept in localStorage "plato-theme"; the Lingua site is always light.
+   Page stylesheets use these tokens, not hex colours. Line art (people's drawings and the AI's) sits on light
+   paper (--paper, --paper-mat) in every theme and is never inverted; charts use the --chart-* tokens. */
+:root, :root[data-theme="light"] {
+  color-scheme: light;
+  /* surfaces */
+  --ground: #F3F4F6;
+  --ground-warm: #F7F6F1;      /* the Plato pages' warm ground */
+  --panel: #FFFFFF;
+  --panel-edge: transparent;   /* an outline on floating panels (menus, dialogs): the dark theme needs one */
+  --soft: #F9FAFB;
+  --line: #E5E7EB;
+  --line-2: #D1D5DB;
+  --line-3: #9CA3AF;
+  --line-warm: #E7E5DF;        /* the Plato pages' warm hairlines */
+  --line-warm-2: #D6D3CA;
+  /* text */
   --ink: #111827;
   --ink-2: #374151;
   --muted: #4B5563;
   --faint: #6B7280;
-  --line: #E5E7EB;
-  --line-2: #D1D5DB;
-  --ground: #F3F4F6;
-  --panel: #FFFFFF;
-  --soft: #F9FAFB;
+  --on-ink: #FFFFFF;           /* text on an --ink fill (a selected chip, a dark button) */
+  --ink-hover: #1F2937;        /* an --ink fill, hovered */
+  /* accents: blue is the AI (Muse), orange is people (and lesions); text and chart marks */
   --blue: #1D4ED8;
   --blue-dark: #1E3A8A;
   --blue-soft: #DBEAFE;
+  --blue-mid: #93C5FD;
   --orange: #C2410C;
   --orange-dark: #9A3412;
   --orange-soft: #FFEDD5;
+  --orange-mid: #FDBA74;
+  --blue-fill: #1D4ED8;        /* solid fills under --on-accent text (buttons) */
+  --blue-fill-hover: #1E3A8A;
+  --orange-fill: #C2410C;
+  --orange-fill-hover: #9A3412;
+  --on-accent: #FFFFFF;
   --green: #15803D;
   --green-soft: #DCFCE7;
+  --green-line: #86EFAC;
+  --green-ink: #14532D;
+  --teal: #0D9488;             /* you, and SDXL */
+  --violet: #7C3AED;
   --amber: #FDE68A;
+  --amber-hover: #FCD34D;
   --amber-soft: #FEF3C7;
+  --amber-line: #FCD34D;
+  --amber-ink: #92400E;
+  --on-amber: #111827;
   --red: #B91C1C;
   --red-soft: #FEE2E2;
-  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --radius: 12px;
+  --red-line: #FCA5A5;
+  --red-ink: #7F1D1D;
+  --red-fill: #B91C1C;
+  --red-fill-hover: #991B1B;
+  --red-deep: #7F1D1D;
+  --bronze: #8A5A12;           /* Socrates */
+  --bronze-dark: #6B4510;
+  --bronze-soft: #F6EEDF;
+  --bronze-line: #E4D3B4;
+  --focus: #2563EB;
+  /* the header bar, and the dark bands and footer: dark in both themes */
+  --bar: #111827;
+  --bar-hover: #1F2937;
+  --bar-ink: #F9FAFB;
+  --bar-ink-2: #E5E7EB;
+  --bar-muted: #D1D5DB;
+  --bar-faint: #9CA3AF;
+  --bar-line: #4B5563;
+  --bar-current: #F9FAFB;
+  --bar-current-ink: #111827;
+  --bar-accent: #FDBA74;
+  --band-ink: #111827;
+  /* tooltips and toasts */
+  --tip: #111827;
+  --tip-ink: #F9FAFB;
+  --tip-muted: #D1D5DB;
+  /* overlays and shadows */
+  --scrim: rgba(17, 24, 39, 0.55);
+  --tint: rgba(17, 24, 39, 0.05);    /* a hovered row, a highlighted band */
+  --tint-2: rgba(17, 24, 39, 0.08);
+  --shadow: rgba(17, 24, 39, 0.08);
+  --shadow-strong: rgba(17, 24, 39, 0.16);
+  /* paper: drawings sit on it in every theme */
+  --paper: #FFFFFF;            /* under a drawing */
+  --paper-mat: #FCFCFB;        /* the frame or strip round drawings */
+  --paper-line: #E7E5DF;
+  --paper-ink: #111827;        /* text on paper */
+  --paper-ink-2: #374151;
+  --paper-muted: #4B5563;
+  --paper-shadow: 0 0 0 transparent;
+  /* charts */
+  --chart-bg: #FCFCFB;
+  --chart-track: #EEEDE8;
+  --chart-grid: #E1E0D9;
+  --chart-axis: #C3C2B7;
+  --chart-halo: #FFFFFF;       /* the ring round a mark, the halo behind a label */
+  /* more series: the validated palette of /plato/cratylus, /plato/cave and /plato/scale */
+  --s-blue: #2A78D6;
+  --s-orange: #EB6834;
+  --s-green: #1BAF7A;
+  --s-violet: #6250D6;
+  --s-neutral: #8A8984;
+  --s-glimmer: #0E9F6E;
+  --s-meta: #171A22;
   /* Error codes */
   --c-correct: #111827;
   --c-semantic: #2563EB;
@@ -35,6 +117,121 @@
   --c-description: #A21CAF;
   --c-visual: #15803D;
   --c-noresponse: #6B7280;
+}
+/* Dark: a deep slate ground, raised panels, crisp ink; blue and orange lifted for a dark ground (AA on --panel). */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0B0E13;
+  --ground-warm: #0E1116;
+  --panel: #161B23;
+  --panel-edge: #2A3240;
+  --soft: #12161D;
+  --line: #262D38;
+  --line-2: #36404E;
+  --line-3: #566070;
+  --line-warm: #262D38;
+  --line-warm-2: #3A4351;
+  --ink: #ECEEF2;
+  --ink-2: #C7CDD6;
+  --muted: #9EA7B5;
+  --faint: #8B95A4;
+  --on-ink: #0B0E13;
+  --ink-hover: #FFFFFF;
+  --blue: #7EA8FF;
+  --blue-dark: #AFC8FF;
+  --blue-soft: #18294A;
+  --blue-mid: #3F66B3;
+  --orange: #FB923C;
+  --orange-dark: #FDB57A;
+  --orange-soft: #3A2213;
+  --orange-mid: #9A4A1C;
+  --blue-fill: #2F5FE0;
+  --blue-fill-hover: #3B68E6;
+  --orange-fill: #C2410C;
+  --orange-fill-hover: #B53D0B;
+  --on-accent: #FFFFFF;
+  --green: #4ADE80;
+  --green-soft: #0F2E1C;
+  --green-line: #1E5E36;
+  --green-ink: #86EFAC;
+  --teal: #2DD4BF;
+  --violet: #B49CFA;
+  --amber: #FCD34D;
+  --amber-hover: #FDE68A;
+  --amber-soft: #2E2408;
+  --amber-line: #6B5310;
+  --amber-ink: #FCD34D;
+  --on-amber: #111827;
+  --red: #F87171;
+  --red-soft: #3A1212;
+  --red-line: #7F1D1D;
+  --red-ink: #FCA5A5;
+  --red-fill: #B91C1C;
+  --red-fill-hover: #991B1B;
+  --red-deep: #7F1D1D;
+  --bronze: #E0B16A;
+  --bronze-dark: #F0CD93;
+  --bronze-soft: #241D12;
+  --bronze-line: #5A4728;
+  --focus: #7EA8FF;
+  --bar: #1A2029;
+  --bar-hover: #262E3A;
+  --bar-ink: #F3F5F8;
+  --bar-ink-2: #DDE1E7;
+  --bar-muted: #B9C0CB;
+  --bar-faint: #8F98A6;
+  --bar-line: #3A4352;
+  --bar-current: #ECEEF2;
+  --bar-current-ink: #0B0E13;
+  --bar-accent: #FDBA74;
+  --band-ink: #07090C;
+  --tip: #2A3240;
+  --tip-ink: #F3F5F8;
+  --tip-muted: #B9C0CB;
+  --scrim: rgba(0, 0, 0, 0.66);
+  --tint: rgba(255, 255, 255, 0.06);
+  --tint-2: rgba(255, 255, 255, 0.09);
+  --shadow: rgba(0, 0, 0, 0.45);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+  --paper: #F7F5EF;
+  --paper-mat: #ECE8DF;
+  --paper-line: #D5CEBF;
+  --paper-ink: #111827;
+  --paper-ink-2: #374151;
+  --paper-muted: #4B5563;
+  --paper-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px rgba(0, 0, 0, 0.35);
+  --chart-bg: #12161D;
+  --chart-track: #252C37;
+  --chart-grid: #2A3240;
+  --chart-axis: #4D5768;
+  --chart-halo: #12161D;
+  --s-blue: #5E9DF0;
+  --s-orange: #F38A5E;
+  --s-green: #3CCB94;
+  --s-violet: #A193F5;
+  --s-neutral: #A09F99;
+  --s-glimmer: #34D399;
+  --s-meta: #ECEEF2;
+  --c-correct: #ECEEF2;
+  --c-semantic: #7EA8FF;
+  --c-formal: #FB923C;
+  --c-mixed: #B49CFA;
+  --c-nonword: #2DD4BF;
+  --c-neologism: #F472B6;
+  --c-unrelated: #D6A15A;
+  --c-description: #E879F9;
+  --c-visual: #4ADE80;
+  --c-noresponse: #9EA7B5;
+  /* portraits.css: Plato, Socrates and Aristotle stay on light paper */
+  --portrait-paper: var(--paper);
+  --portrait-edge: var(--paper-line);
+  --portrait-shadow: rgba(0, 0, 0, 0.5);
+  --portrait-sheet-shadow: var(--paper-shadow);
+}
+:root {
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --radius: 12px;
   /* Layout: pages scale with the window. Side padding grows with it, the page may use up to 2400px, and
      prose keeps a readable measure inside the wider layouts. */
   --gutter: clamp(16px, 4vw, 96px);
@@ -58,7 +255,7 @@ a:hover { color: var(--blue-dark); }
 img { max-width: 100%; }
 h1, h2, h3 { line-height: 1.2; }
 button, input, select, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 3px solid #2563EB; outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .mono { font-family: var(--mono); }
 .muted { color: var(--muted); }
@@ -72,35 +269,35 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .page { max-width: var(--page-max); margin: 0 auto; padding: 20px var(--gutter) 40px; }
 .prose, .measure { max-width: var(--measure); }
 /* The site header: built once in web/site.py and put on every page (same items, same order). */
-.topbar { position: relative; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; gap: 10px clamp(20px, 1.6vw, 40px); padding: clamp(10px, 0.5vw, 14px) 14px clamp(10px, 0.5vw, 14px) 20px; background: var(--ink); color: #F9FAFB; border-radius: var(--radius); }
-.brand { display: flex; align-items: center; gap: 10px; color: #F9FAFB; text-decoration: none; white-space: nowrap; margin-right: 6px; }
-.brand:hover { color: #F9FAFB; }
+.topbar { position: relative; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; gap: 10px clamp(20px, 1.6vw, 40px); padding: clamp(10px, 0.5vw, 14px) 14px clamp(10px, 0.5vw, 14px) 20px; background: var(--bar); color: var(--bar-ink); border-radius: var(--radius); }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--bar-ink); text-decoration: none; white-space: nowrap; margin-right: 6px; }
+.brand:hover { color: var(--bar-ink); }
 .brand-name { display: flex; flex-direction: column; gap: 1px; }
 .brand-name b { font-weight: 700; font-size: clamp(19px, calc(14px + 0.3vw), 23px); letter-spacing: -0.01em; line-height: 1.15; }
-.brand-tag { font-family: var(--mono); font-size: 11px; color: #D1D5DB; }
+.brand-tag { font-family: var(--mono); font-size: 11px; color: var(--bar-muted); }
 /* The Plato site's logo, the Form chair (site.py FORM_CHAIR; the landing page's splash flies into it) */
-.brand-logo { flex: none; width: 38px; height: 38px; margin: -4px 0 -4px -4px; color: #F9FAFB; }
+.brand-logo { flex: none; width: 38px; height: 38px; margin: -4px 0 -4px -4px; color: var(--bar-ink); }
 .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; flex: 1 1 auto; }
-.topnav > a, .nav-more > summary { color: #F9FAFB; padding: 10px clamp(12px, 0.7vw, 18px); border-radius: 8px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); text-decoration: none; cursor: pointer; white-space: nowrap; }
-.topnav > a:hover, .nav-more > summary:hover { background: #1F2937; color: #F9FAFB; }
-.topnav > a[aria-current="page"] { color: var(--ink); background: #F9FAFB; font-weight: 600; }
-.topnav > a.nav-accent { background: var(--orange); color: #FFFFFF; font-weight: 600; }
-.topnav > a.nav-accent:hover { background: var(--orange-dark); }
-.topnav .ext { font-size: 11px; color: #9CA3AF; }
+.topnav > a, .nav-more > summary { color: var(--bar-ink); padding: 10px clamp(12px, 0.7vw, 18px); border-radius: 8px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); text-decoration: none; cursor: pointer; white-space: nowrap; }
+.topnav > a:hover, .nav-more > summary:hover { background: var(--bar-hover); color: var(--bar-ink); }
+.topnav > a[aria-current="page"] { color: var(--bar-current-ink); background: var(--bar-current); font-weight: 600; }
+.topnav > a.nav-accent { background: var(--orange-fill); color: var(--on-accent); font-weight: 600; }
+.topnav > a.nav-accent:hover { background: var(--orange-fill-hover); }
+.topnav .ext { font-size: 11px; color: var(--bar-faint); }
 .nav-more { position: relative; }
 .nav-more > summary, .nav-menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; }
 .nav-more > summary::-webkit-details-marker, .nav-menu > summary::-webkit-details-marker { display: none; }
 .nav-more > summary::after { content: ''; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); }
 .nav-more[open] > summary::after { transform: translateY(1px) rotate(-135deg); }
 .nav-more.is-current > summary { box-shadow: inset 0 -2px 0 var(--orange); }
-.nav-panel { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; min-width: 250px; max-height: min(70vh, 560px); overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: 12px; padding: 8px; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; }
+.nav-panel { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; min-width: 250px; max-height: min(70vh, 560px); overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: 12px; padding: 8px; box-shadow: 0 0 0 1px var(--panel-edge), 0 18px 40px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; }
 .nav-more .nav-panel { left: 0; right: auto; }
 .nav-panel a { color: var(--ink); text-decoration: none; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
 .nav-panel a:hover { background: var(--ground); color: var(--ink); }
 .nav-panel a[aria-current="page"] { background: var(--ground); font-weight: 600; box-shadow: inset 3px 0 0 var(--orange); }
 .nav-group { margin: 8px 12px 2px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
 .nav-menu { display: none; margin-left: auto; }
-.nav-menu > summary { color: #F9FAFB; padding: 9px 12px; border: 1px solid #4B5563; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.nav-menu > summary { color: var(--bar-ink); padding: 9px 12px; border: 1px solid var(--bar-line); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .nav-burger, .nav-burger::before, .nav-burger::after { display: block; width: 14px; height: 2px; background: currentColor; border-radius: 2px; position: relative; }
 .nav-burger::before, .nav-burger::after { content: ''; position: absolute; left: 0; }
 .nav-burger::before { top: -5px; }
@@ -132,8 +329,22 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .site-foot p { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
 .sister-link { font-weight: 600; }
 .sister-tag { color: var(--muted); }
-.chip { border: 1px solid #4B5563; border-radius: 999px; padding: 4px 10px; color: #E5E7EB; }
-.chip-sample { background: var(--amber); color: var(--ink); border-color: var(--amber); font-weight: 500; }
+.chip { border: 1px solid var(--bar-line); border-radius: 999px; padding: 4px 10px; color: var(--bar-ink-2); }
+.chip-sample { background: var(--amber); color: var(--on-amber); border-color: var(--amber); font-weight: 500; }
+/* The theme switch (site.py THEME_TOGGLE, the Plato site only): a sun in the dark theme, a moon in the light one.
+   Its label says what a press does; the head script keeps it in step. */
+.theme-toggle { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 0;
+  border: 1px solid var(--bar-line); border-radius: 999px; background: transparent; color: var(--bar-ink); cursor: pointer; }
+.theme-toggle:hover { background: var(--bar-hover); }
+.theme-toggle svg { width: 18px; height: 18px; display: block; }
+.theme-toggle .tt-moon, :root[data-theme="dark"] .theme-toggle .tt-sun { display: block; }
+.theme-toggle .tt-sun, :root[data-theme="dark"] .theme-toggle .tt-moon { display: none; }
+@media (max-width: 860px) {
+  .topbar .theme-toggle { order: 2; }
+  .topbar:not(:has(.demo-btn)) .theme-toggle { margin-left: auto; }
+  .topbar:not(:has(.demo-btn)):has(.theme-toggle) .nav-menu { margin-left: 0; }
+}
+@media (max-width: 430px) { .theme-toggle { width: 34px; height: 34px; } }
 
 .layout { display: flex; flex-wrap: wrap; gap: clamp(20px, 1.4vw, 36px); margin-top: 20px; align-items: flex-start; }
 .layout > aside { flex: 1 1 300px; max-width: clamp(380px, 19vw, 480px); display: flex; flex-direction: column; gap: 16px; min-width: 0; }
@@ -178,44 +389,44 @@ legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
 .seg label { padding: 0; display: flex; }
 .seg label span { flex: 1; padding: 10px 6px; border-radius: 7px; }
 .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.seg input:focus-visible + span { outline: 3px solid #2563EB; outline-offset: 1px; }
+.seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 1px; }
 .seg button:disabled, .seg input:disabled + span { color: var(--faint); cursor: not-allowed; }
 
 /* --- buttons -------------------------------------------------------------------------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--ink); background: var(--panel); color: var(--ink); text-decoration: none; cursor: pointer; min-height: 44px; }
 .btn:hover { background: var(--soft); color: var(--ink); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
-.btn-primary { background: var(--blue); border-color: var(--blue); color: #FFFFFF; }
-.btn-primary:hover { background: var(--blue-dark); color: #FFFFFF; }
-.btn-accent { background: var(--orange); border-color: var(--orange); color: #FFFFFF; }
-.btn-accent:hover { background: var(--orange-dark); color: #FFFFFF; }
-.btn-dark { background: var(--ink); color: #FFFFFF; }
-.btn-dark:hover { background: #1F2937; color: #FFFFFF; }
-.btn-record { background: var(--red); border-color: var(--red); color: #FFFFFF; }
-.btn-record:hover { background: #991B1B; color: #FFFFFF; }
-.btn-ghost { border: 1px dashed #9CA3AF; font-weight: 400; color: var(--ink-2); font-size: 13px; }
+.btn-primary { background: var(--blue-fill); border-color: var(--blue-fill); color: var(--on-accent); }
+.btn-primary:hover { background: var(--blue-fill-hover); color: var(--on-accent); }
+.btn-accent { background: var(--orange-fill); border-color: var(--orange-fill); color: var(--on-accent); }
+.btn-accent:hover { background: var(--orange-fill-hover); color: var(--on-accent); }
+.btn-dark { background: var(--ink); color: var(--on-ink); }
+.btn-dark:hover { background: var(--ink-hover); color: var(--on-ink); }
+.btn-record { background: var(--red-fill); border-color: var(--red-fill); color: var(--on-accent); }
+.btn-record:hover { background: var(--red-fill-hover); color: var(--on-accent); }
+.btn-ghost { border: 1px dashed var(--line-3); font-weight: 400; color: var(--ink-2); font-size: 13px; }
 .btn-small { padding: 7px 11px; min-height: 36px; font-size: 13px; }
 .btn-block { width: 100%; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* --- pills, notes ----------------------------------------------------------------------- */
-.pill { display: inline-block; font-size: 11px; font-weight: 600; color: #FFFFFF; border-radius: 999px; padding: 3px 9px; background: var(--ink); white-space: nowrap; }
+.pill { display: inline-block; font-size: 11px; font-weight: 600; color: var(--on-ink); border-radius: 999px; padding: 3px 9px; background: var(--ink); white-space: nowrap; }
 .pill-kept { background: var(--green); }
-.pill-review { background: var(--amber); color: var(--ink); }
+.pill-review { background: var(--amber); color: var(--on-amber); }
 .pill-excluded { background: var(--line); color: var(--ink-2); }
-.pill-sample { background: var(--amber); color: var(--ink); }
+.pill-sample { background: var(--amber); color: var(--on-amber); }
 .pill-soft { background: var(--ground); color: var(--ink-2); font-weight: 500; }
 .note { border-radius: 10px; padding: 12px 14px; font-size: 13px; background: var(--soft); border: 1px solid var(--line); }
-.note-warn { background: var(--amber-soft); border-color: #FCD34D; }
-.note-error { background: var(--red-soft); border-color: #FCA5A5; color: #7F1D1D; }
-.note-ok { background: var(--green-soft); border-color: #86EFAC; color: #14532D; }
-.note-sample { background: var(--amber-soft); border-color: #FCD34D; color: var(--ink); }
+.note-warn { background: var(--amber-soft); border-color: var(--amber-line); }
+.note-error { background: var(--red-soft); border-color: var(--red-line); color: var(--red-ink); }
+.note-ok { background: var(--green-soft); border-color: var(--green-line); color: var(--green-ink); }
+.note-sample { background: var(--amber-soft); border-color: var(--amber-line); color: var(--ink); }
 .note p { margin: 0; }
 .empty { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 14px; border: 1px dashed var(--line-2); border-radius: 10px; }
 
 .toast-zone { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; width: min(560px, calc(100% - 32px)); }
-.toast { background: var(--ink); color: #F9FAFB; border-radius: 10px; padding: 12px 16px; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
-.toast.error { background: #7F1D1D; }
+.toast { background: var(--tip); color: var(--tip-ink); border-radius: 10px; padding: 12px 16px; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
+.toast.error { background: var(--red-deep); }
 
 .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .progress > div { height: 100%; background: var(--blue); border-radius: 999px; transition: width 0.4s ease; }
@@ -227,10 +438,10 @@ legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 11vw, 240px), 1fr)); gap: 12px; }
 .card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; background: var(--panel); text-align: left; padding: 0; font-size: 12px; color: var(--ink); }
 button.card { cursor: pointer; }
-button.card:hover { border-color: #9CA3AF; }
+button.card:hover { border-color: var(--line-3); }
 .card[aria-pressed="true"], .card.selected { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
 .card .pic { aspect-ratio: 1 / 0.75; background: var(--soft); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--faint); overflow: hidden; }
-.card .pic img { width: 100%; height: 100%; object-fit: contain; background: #FFFFFF; }
+.card .pic img { width: 100%; height: 100%; object-fit: contain; background: var(--paper); }
 .card .body { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 .kv { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 8px; }
 .kv > span:first-child { color: var(--muted); }
@@ -253,8 +464,8 @@ table.data select { min-height: 36px; padding: 6px 8px; font-size: 12px; width: 
 .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
 
 /* --- dialog --------------------------------------------------------------------------- */
-dialog { border: 0; border-radius: 14px; padding: 0; width: min(920px, calc(100% - 24px)); max-height: calc(100% - 24px); box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3); color: var(--ink); }
-dialog::backdrop { background: rgba(17, 24, 39, 0.55); }
+dialog { border: 0; border-radius: 14px; padding: 0; width: min(920px, calc(100% - 24px)); max-height: calc(100% - 24px); box-shadow: 0 0 0 1px var(--panel-edge), 0 24px 64px rgba(0, 0, 0, 0.3); color: var(--ink); background: var(--panel); }
+dialog::backdrop { background: var(--scrim); }
 .dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); z-index: 1; }
 .dialog-head h2 { margin: 0; font-size: 17px; }
 .dialog-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 16px; }
@@ -269,9 +480,9 @@ dialog::backdrop { background: rgba(17, 24, 39, 0.55); }
 }
 /* the Plato series cards (rendered by web/site.py, also used on /plato) */
 .series-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(260px, 16vw, 360px)), 1fr)); gap: clamp(16px, 1vw, 24px); }
-.series-card { position: relative; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E7E5DF; border-radius: 16px; overflow: hidden; color: var(--ink); text-decoration: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-.series-card:hover { color: var(--ink); border-color: var(--ink); box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08); }
-.series-art { display: flex; align-items: center; justify-content: center; height: clamp(132px, 7.5vw, 190px); background: #FCFCFB; border-bottom: 1px solid #ECEAE4; color: var(--ink); }
+.series-card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line-warm); border-radius: 16px; overflow: hidden; color: var(--ink); text-decoration: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.series-card:hover { color: var(--ink); border-color: var(--ink); box-shadow: 0 10px 24px var(--shadow); }
+.series-art { display: flex; align-items: center; justify-content: center; height: clamp(132px, 7.5vw, 190px); background: var(--paper-mat); border-bottom: 1px solid var(--paper-line); color: var(--paper-ink); }
 .series-art svg { width: 120px; height: 90px; }
 .series-art img { width: 100%; height: 100%; object-fit: cover; }
 .series-art-blind > svg { display: none; }  /* its icon stands in on the landing page until the reveal (landing.css) */

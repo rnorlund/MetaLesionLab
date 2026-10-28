@@ -26,8 +26,10 @@
   var HASHTAGS = 'Muse,MetaAI,Hackathon';
   var SEEN_KEY = 'tot-draw-seen';  // this tab has already shown Muse Image's chairs (so drawings aren't blind)
 
-  var BLUE = '#1D4ED8', ORANGE = '#C2410C', TEAL = '#0D9488', INK = '#111827', INK2 = '#374151', MUTED = '#4B5563',
-    GRID = '#E5E7EB', PAPER = '#F7F6F1';
+  // The charts take the theme's colours (app.css tokens, live on a theme switch); the pad and the share card are
+  // canvases drawn on paper, so INK, INK2, MUTED and PAPER stay fixed.
+  var BLUE = 'var(--blue)', ORANGE = 'var(--orange)', TEAL = 'var(--teal)', INK = '#111827', INK2 = '#374151', MUTED = '#4B5563',
+    GRID = 'var(--line)', PAPER = '#F7F6F1', HALO = 'var(--chart-halo)', CHART_INK = 'var(--ink)';
   var NS = 'http://www.w3.org/2000/svg';
   var TIME_S = 20;  // Quick, Draw! players had 20 seconds
   var MAX_SIDE = 1024;  // uploads are shrunk to this before they leave the device
@@ -275,7 +277,7 @@
       });
       return { best: best, k: k };
     }
-    var ring = svg('circle', { r: 9, fill: 'none', stroke: INK, 'stroke-width': 2, visibility: 'hidden', 'pointer-events': 'none' });
+    var ring = svg('circle', { r: 9, fill: 'none', stroke: CHART_INK, 'stroke-width': 2, visibility: 'hidden', 'pointer-events': 'none' });
     svgEl.appendChild(ring);
     function move(e) {
       var hit = at(e);
@@ -316,17 +318,17 @@
         var jitter = dense ? ((i * 37) % 13 - 6) * 1.1 : 0;
         var cx = x(v), cy = y0 + 28 + jitter;
         root.appendChild(svg('circle', { cx: cx, cy: cy, r: dense ? 3.5 : 4.5, fill: row.color, 'fill-opacity': dense ? 0.5 : 0.9,
-          stroke: '#FFFFFF', 'stroke-width': dense ? 0.75 : 1.5 }));
+          stroke: HALO, 'stroke-width': dense ? 0.75 : 1.5 }));
         items.push({ x: cx, y: cy, i: i, sprite: row.sprite, color: row.color, value: v,
           label: row.who === 'muse' ? 'Muse Image doodle' : 'A person’s drawing' });
       });
     });
     var yx = x(o.you), yTop = top - 8, yBot = top + band * o.rows.length - 4;
     root.appendChild(svg('line', { x1: yx, x2: yx, y1: yTop, y2: yBot, stroke: TEAL, 'stroke-width': 2 }));
-    root.appendChild(svg('circle', { cx: yx, cy: yTop, r: 6, fill: TEAL, stroke: '#FFFFFF', 'stroke-width': 2 }));
+    root.appendChild(svg('circle', { cx: yx, cy: yTop, r: 6, fill: TEAL, stroke: HALO, 'stroke-width': 2 }));
     var right = yx > W - 70;
     root.appendChild(svg('text', { class: 'lbl-you', x: yx + (right ? -10 : 10), y: yTop + 4, 'text-anchor': right ? 'end' : 'start',
-      stroke: '#FFFFFF', 'stroke-width': 4, 'paint-order': 'stroke' }, 'You ' + f2(o.you)));
+      stroke: HALO, 'stroke-width': 4, 'paint-order': 'stroke' }, 'You ' + f2(o.you)));
     items.push({ x: yx, y: yTop, color: TEAL, label: 'Your drawing', value: o.you });
     el.appendChild(root);
     nearestHover(root, el, items);
@@ -343,21 +345,21 @@
     var X = function (v) { return ox + (v - x0) * k; }, Y = function (v) { return H - (oy + (v - y0) * k); };
     var root = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
       'aria-label': 'Map of Muse Image’s ' + c.n_ai + ' doodles, ' + c.n_human + ' people’s drawings and yours' });
-    root.appendChild(svg('rect', { x: 0.5, y: 0.5, width: W - 1, height: H - 1, rx: 10, fill: '#FCFCFB', stroke: GRID }));
+    root.appendChild(svg('rect', { x: 0.5, y: 0.5, width: W - 1, height: H - 1, rx: 10, fill: 'var(--chart-bg)', stroke: GRID }));
     var items = [];
     c.map.human.forEach(function (p, i) {
-      root.appendChild(svg('circle', { cx: X(p[0]), cy: Y(p[1]), r: 4, fill: ORANGE, 'fill-opacity': 0.55, stroke: '#FFFFFF', 'stroke-width': 1 }));
+      root.appendChild(svg('circle', { cx: X(p[0]), cy: Y(p[1]), r: 4, fill: ORANGE, 'fill-opacity': 0.55, stroke: HALO, 'stroke-width': 1 }));
       items.push({ x: X(p[0]), y: Y(p[1]), i: i, sprite: c.sprites.people, color: ORANGE, label: 'A person’s drawing' });
     });
     c.map.ai.forEach(function (p, i) {
-      root.appendChild(svg('circle', { cx: X(p[0]), cy: Y(p[1]), r: 5, fill: BLUE, stroke: '#FFFFFF', 'stroke-width': 2 }));
+      root.appendChild(svg('circle', { cx: X(p[0]), cy: Y(p[1]), r: 5, fill: BLUE, stroke: HALO, 'stroke-width': 2 }));
       items.push({ x: X(p[0]), y: Y(p[1]), i: i, sprite: c.sprites.muse, color: BLUE, label: 'Muse Image doodle' });
     });
     var yx = X(r.xy[0]), yy = Y(r.xy[1]);
-    root.appendChild(svg('circle', { cx: yx, cy: yy, r: 9, fill: TEAL, stroke: '#FFFFFF', 'stroke-width': 2.5 }));
+    root.appendChild(svg('circle', { cx: yx, cy: yy, r: 9, fill: TEAL, stroke: HALO, 'stroke-width': 2.5 }));
     var right = yx > W - 60;
     root.appendChild(svg('text', { class: 'lbl-you', x: yx + (right ? -14 : 14), y: yy + 4, 'text-anchor': right ? 'end' : 'start',
-      stroke: '#FFFFFF', 'stroke-width': 4, 'paint-order': 'stroke' }, 'You'));
+      stroke: HALO, 'stroke-width': 4, 'paint-order': 'stroke' }, 'You'));
     items.push({ x: yx, y: yy, color: TEAL, label: 'Your drawing' });
     el.appendChild(root);
     nearestHover(root, el, items);

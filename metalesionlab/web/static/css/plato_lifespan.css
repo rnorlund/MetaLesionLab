@@ -1,10 +1,13 @@
 /* The life of a chair (/plato/lifespan). Paper like Plato's Chair; orange is people (children and adults), teal is
    Stable Diffusion, blue is Muse Image (validated together, all pairs, for colour-vision deficiency on white). */
 .ls {
-  --people: #C2410C; --sd: #0D9488; --muse: #1D4ED8; --chart: #FCFCFB; --track: #EEEDE8;
-  --gridline: #E1E0D9; --axis: #C3C2B7;
-  background: #F7F6F1;
+  --people: var(--orange); --sd: var(--teal); --muse: var(--blue); --chart: var(--chart-bg); --track: var(--chart-track);
+  --gridline: var(--chart-grid); --axis: var(--chart-axis);
+  --ls-off: #E5E3DC;        /* an icon not filled in (plato_lifespan.js) */
+  --ls-paper-hot: #C2410C;  /* the stroke being drawn, on paper in every theme */
+  background: var(--ground-warm);
 }
+:root[data-theme="dark"] .ls { --ls-off: #2C3442; }
 /* The page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its header
    lines up with every other page; prose keeps a 75ch measure. */
 .ls main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
@@ -28,7 +31,7 @@
 .ls-stage { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 2vw, 56px); align-items: stretch; }
 .ls-pic { background: var(--chart); border: 1px solid var(--line); border-radius: 12px; padding: 16px;
   display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 260px; justify-content: center; }
-.ls-pic img { width: 100%; max-width: 1218px; height: auto; display: block; margin: 0 auto; border-radius: 6px; background: #FFFFFF; }
+.ls-pic img { width: 100%; max-width: 1218px; height: auto; display: block; margin: 0 auto; border-radius: 6px; background: var(--paper); }
 .ls-pic .ls-icons { width: 100%; max-width: clamp(320px, 30vw, 640px); height: auto; display: block; margin: 0 auto; }
 .ls-pic .ls-pic-cap { margin: 0; max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
 .ls-pic .ls-pic-cap b { color: var(--ink); }
@@ -85,7 +88,7 @@
 .ls-legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; }
 .ls-legend i.dot { width: 10px; height: 10px; border-radius: 50%; }
 .ls-legend i.sq { width: 10px; height: 10px; border-radius: 2px; }
-.ls-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px;
+.ls-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px;
   font-size: 12px; line-height: 1.45; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 240px; }
 .ls-tip b { font-size: 13px; }
 
@@ -93,7 +96,7 @@
 .ls-tabs button { font-size: 14px; padding: 8px 14px; min-height: 40px; border-radius: 999px; border: 1px solid var(--line-2);
   background: var(--panel); color: var(--ink); cursor: pointer; }
 .ls-tabs button:hover { border-color: var(--ink); }
-.ls-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; font-weight: 600; }
+.ls-tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); font-weight: 600; }
 .ls-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(16px, 1.4vw, 32px); }
 .ls-pair.ls-three { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
 .ls-panel { margin: 0; background: var(--chart); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; min-width: 0; }
@@ -107,7 +110,7 @@
 /* watch an AI learn: the time-lapse player (a 5 x 4 sprite of 20 checkpoints), the stroke-by-stroke chair, the verdict */
 .ls-h3 { margin: 8px 0 0; font-size: var(--fs-h3); }
 .ls-learn { display: grid; grid-template-columns: minmax(0, 3fr) minmax(min(100%, 300px), 2fr); gap: clamp(16px, 2vw, 40px); align-items: center; }
-.ls-learn-pic { background: var(--chart); border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-width: 0; }
+.ls-learn-pic { background: var(--paper-mat); border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-width: 0; }
 .ls-learn-frames { position: relative; width: min(100%, 80vh); aspect-ratio: 1 / 1; margin: 0 auto; }
 .ls-learn-frame { position: absolute; inset: 0; background-image: url("/static/img/plato_lifespan/sketch/learn_sprite.webp");
   background-size: 500% 400%; background-repeat: no-repeat; border-radius: 4px; }
@@ -126,17 +129,17 @@
 .ls-learn-ends { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--muted);
   margin: -8px 0 0 calc(5.5em + 12px); }
 .ls-play { font: inherit; font-size: 14px; font-weight: 600; padding: 8px 16px; min-height: 40px; min-width: 5.5em; border-radius: 999px;
-  border: 1px solid var(--ink); background: var(--ink); color: #FFFFFF; cursor: pointer; }
+  border: 1px solid var(--ink); background: var(--ink); color: var(--on-ink); cursor: pointer; }
 .ls-play:hover { background: var(--ink-2); }
 .ls-play[aria-pressed="true"] { background: var(--panel); color: var(--ink); }
 
 .ls-stroke { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px; align-items: center;
   border-top: 1px solid var(--line); padding-top: 18px; }
-.ls-stroke-fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; background: #FFFFFF;
+.ls-stroke-fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; background: var(--paper);
   border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
 .ls-stroke-fig svg { width: 100%; max-width: min(100%, 52vh); height: auto; display: block; }
-.ls-stroke-fig .ls-play { background: var(--panel); color: var(--ink); }
-.ls-stroke-fig .ls-play:hover { border-color: var(--ink); background: var(--soft); }
+.ls-stroke-fig .ls-play { background: var(--paper); color: var(--paper-ink); border-color: var(--paper-ink); }
+.ls-stroke-fig .ls-play:hover { border-color: var(--paper-ink); background: var(--paper-mat); }
 .ls-stroke-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .ls-stroke-text h3 { margin: 0; font-size: var(--fs-h3); }
 

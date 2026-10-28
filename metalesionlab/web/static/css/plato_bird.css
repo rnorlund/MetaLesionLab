@@ -1,9 +1,9 @@
 /* Plato's Bird. Paper like Plato's Chair; orange is people, blue is Muse Spark, green is Muse Glimmer
    (the three validated together for colour-vision deficiency on the #FCFCFB chart surface). */
 .pb {
-  --people: #C2410C; --spark: #1D4ED8; --glimmer: #0E9F6E; --chart: #FCFCFB; --track: #EEEDE8;
-  --gridline: #E1E0D9; --axis: #C3C2B7;
-  background: #F7F6F1;
+  --people: var(--orange); --spark: var(--blue); --glimmer: var(--s-glimmer); --chart: var(--chart-bg); --track: var(--chart-track);
+  --gridline: var(--chart-grid); --axis: var(--chart-axis);
+  background: var(--ground-warm);
 }
 .pb main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .pb-cap, .pb-note { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
@@ -23,7 +23,7 @@
 .pb-stat-sub { margin: 0; max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
 .pb-hero-fig { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .pb-drawn { display: flex; flex-direction: column; gap: 6px; }
-.pb-drawn img { width: 100%; max-width: 900px; height: auto; background: var(--chart); border: 1px solid var(--line); border-radius: 12px; display: block; }
+.pb-drawn img { width: 100%; max-width: 900px; height: auto; background: var(--paper-mat); border: 1px solid var(--line); border-radius: 12px; display: block; }
 
 /* three answer panels */
 .pb-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1vw, 24px); }
@@ -59,8 +59,8 @@
 .pb-select { flex: 0 1 320px; }
 .pb-quick { display: flex; flex-wrap: wrap; gap: 6px; }
 .pb-quick button, .pb-btn { font-size: 13px; padding: 9px 13px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); cursor: pointer; min-height: 40px; }
-.pb-quick button[aria-pressed="true"] { background: var(--ink); color: #F9FAFB; border-color: var(--ink); }
-.pb-btn { background: var(--ink); color: #F9FAFB; border-color: var(--ink); font-weight: 600; padding: 9px 18px; }
+.pb-quick button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.pb-btn { background: var(--ink); color: var(--on-ink); border-color: var(--ink); font-weight: 600; padding: 9px 18px; }
 .pb-btn-ghost { background: var(--panel); color: var(--ink); }
 .pb-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 0; }
 .pb-facts div { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
@@ -77,7 +77,7 @@
 .pb-scatter .hit { fill: transparent; cursor: pointer; }
 .pb-scatter .hit:focus-visible { outline: none; }
 .pb-scatter g.pt:hover .dot, .pb-scatter g.pt:focus .dot, .pb-scatter g.pt.sel .dot { stroke: var(--ink); stroke-width: 2; }
-.pb-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.45; max-width: 260px; z-index: 5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); }
+.pb-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.45; max-width: 260px; z-index: 5; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); }
 .pb-tip b { font-size: 13px; }
 .pb-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
 .pb-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -100,7 +100,7 @@
 .pb-draw img { width: 100%; height: auto; display: block; border-bottom: 1px solid var(--line); }
 .pb-draw .body { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-sm); }
 .pb-draw h3 { margin: 0 0 2px; font-size: 15px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-.pb-draw .verdict { font-size: 11px; font-family: var(--mono); padding: 2px 8px; border-radius: 999px; background: var(--green-soft); color: #14532D; white-space: nowrap; }
+.pb-draw .verdict { font-size: 11px; font-family: var(--mono); padding: 2px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green-ink); white-space: nowrap; }
 .pb-draw .verdict.no { background: var(--orange-soft); color: var(--orange-dark); }
 .pb-draw .who { display: grid; grid-template-columns: 4.6em 1fr; gap: 6px; color: var(--ink-2); }
 .pb-draw .who b { color: var(--ink); font-weight: 600; }
