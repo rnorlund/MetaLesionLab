@@ -114,8 +114,38 @@ def scale() -> Image.Image:
     return out
 
 
+def phaedrus() -> Image.Image:
+    """Seven meanings: the sentence with each word stressed in turn (left) and the one transcript a text-only AI
+    gets for all seven (right)."""
+    from matplotlib import get_data_path
+    from PIL import ImageDraw, ImageFont
+
+    fonts = Path(get_data_path()) / "fonts" / "ttf"
+    sans, bold = (ImageFont.truetype(str(fonts / f), 25) for f in ("DejaVuSans.ttf", "DejaVuSans-Bold.ttf"))
+    mono = ImageFont.truetype(str(fonts / "DejaVuSansMono.ttf"), 19)
+    ink, blue, grey = (17, 24, 39), (29, 78, 216), (107, 114, 128)
+    words = "I never said she stole my money.".split()
+    out = canvas()
+    d = ImageDraw.Draw(out)
+    y0, step = 64, 60
+    for k in range(len(words)):
+        x, y = 40, y0 + k * step
+        for j, w in enumerate(words):
+            stressed = j == k
+            word = w.upper() if stressed else w
+            font = bold if stressed else sans
+            d.text((x, y), word, font=font, fill=blue if stressed else ink)
+            width = d.textlength(word, font=font)
+            if stressed:
+                d.line((x, y + 32, x + width - (8 if w.endswith(".") else 0), y + 34), fill=blue, width=3)
+            x += width + d.textlength(" ", font=sans)
+        d.text((548, y + 5), "I never said she stole my money.", font=mono, fill=grey)
+    d.line((526, 50, 526, H - 50), fill=(209, 213, 219), width=2)
+    return out
+
+
 MAKERS = {"inside": inside, "ideas": ideas, "bird": bird, "atlas": atlas, "telephone": telephone,
-          "scale": scale}
+          "scale": scale, "phaedrus": phaedrus}
 
 
 def main() -> None:
