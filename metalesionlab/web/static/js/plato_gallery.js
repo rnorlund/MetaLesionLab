@@ -106,7 +106,7 @@
     $('view-cat').textContent = it.category;
     $('view-title').textContent = it.title;
     $('view-cap').textContent = it.caption;
-    $('view-credit').textContent = it.credit ? 'Pictures: ' + it.credit : '';
+    $('view-credit').textContent = it.credit ? 'Credits: ' + it.credit : '';
     $('view-link').href = it.link;
     $('view-share').href = 'https://x.com/intent/post?text=' + encodeURIComponent(it.title + ' · ' + (T.BRAND || 'Plato’s Chair')) +
       '&url=' + encodeURIComponent(itemUrl(it));

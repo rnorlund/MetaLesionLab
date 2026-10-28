@@ -912,7 +912,7 @@
    "link": "/plato/cave#medium",
    "thumb": "/static/img/gallery/cave-rabbit.webp",
    "alt": "Four versions of a rabbit: the line drawing, its outline, a black silhouette, and a soft gray shadow on a wall.",
-   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "credit": "Muse Image line drawings; outlines, silhouettes and shadows made by code; names by Muse Glimmer (Meta)",
    "sequence": {
     "frames": [
      {
@@ -942,7 +942,7 @@
    "link": "/plato/cave#medium",
    "thumb": "/static/img/gallery/cave-hat.webp",
    "alt": "Four versions of a hat: the line drawing, its outline, a black silhouette, and a soft gray oval shadow on a wall.",
-   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "credit": "Muse Image line drawings; outlines, silhouettes and shadows made by code; names by Muse Glimmer (Meta)",
    "sequence": {
     "frames": [
      {
@@ -972,7 +972,7 @@
    "link": "/plato/cave#game",
    "thumb": "/static/img/gallery/cave-wall.webp",
    "alt": "Twelve dark shadows on a firelit cave wall, each with Muse Glimmer’s answer: rabbit “Shadow”, scissors correct, hat “UFO”, anchor correct, guitar “Shadow”, bicycle correct, glove “hand”, cat correct, igloo “Umbrella”, helicopter correct, bread “UFO”, umbrella correct.",
-   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "credit": "Muse Image line drawings; outlines, silhouettes and shadows made by code; names by Muse Glimmer (Meta)",
    "image": "/static/img/gallery/cave-wall-full.webp"
   },
   {
@@ -983,7 +983,7 @@
    "link": "/plato/cave#survive",
    "thumb": "/static/img/gallery/cave-versions.webp",
    "alt": "A grid of four objects (cat, scissors, bicycle, clock), each as a line drawing, an outline, a black silhouette and a gray cast shadow. The clock’s outline, silhouette and shadow are plain circles.",
-   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "credit": "Muse Image line drawings; outlines, silhouettes and shadows made by code; names by Muse Glimmer (Meta)",
    "image": "/static/img/gallery/cave-versions-full.webp"
   },
   {
@@ -1235,7 +1235,7 @@
    "link": "/plato/lifespan#timeline",
    "thumb": "/static/img/gallery/lifespan-life.webp",
    "alt": "Icon arrays of 10 chairs, coloured for how many drawings are recognized as chairs: 5 at age 2, 8 at age 6, 9 at age 10 and 9 for adults; then Muse Image’s chair.",
-   "credit": "Children: group statistics only (Long et al. 2024), no drawings shown; Muse Image (Meta)",
+   "credit": "children’s group statistics only (Long et al. 2024), no drawings shown; Muse Image (Meta)",
    "sequence": {
     "frames": [
      {
