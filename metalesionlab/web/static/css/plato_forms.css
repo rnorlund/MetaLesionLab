@@ -2,7 +2,6 @@
 body.pf { background: #F7F6F1; }
 .pf main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .pf-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
-.pf-kicker a { color: inherit; }
 .pf-cap { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
 .pf-note { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 6px 0 0; }
 

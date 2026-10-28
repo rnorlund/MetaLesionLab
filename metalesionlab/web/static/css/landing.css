@@ -203,3 +203,8 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
   .plato-bed { padding-left: 18px; }
   .lfoot a { margin-left: 0; }
 }
+
+/* The blind draw: a series card whose picture shows Muse Image's chairs (site.py "blind_art") shows its line
+   icon until the visitor has drawn or skipped (landing.js adds body.revealed). */
+body.landing:not(.revealed) .series-art-blind > img { display: none; }
+body.landing:not(.revealed) .series-art-blind > svg { display: block; }

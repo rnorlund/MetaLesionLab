@@ -47,6 +47,7 @@
 .lab-card-title { color: var(--lab-ink); font-weight: 600; font-size: clamp(15px, 1vw, 17px); line-height: 1.3; text-decoration: none; }
 .lab-card-title::after { content: ""; position: absolute; inset: 0; z-index: 1; }  /* the whole card opens the gallery */
 .lab-card-cap { font-size: 13px; color: var(--lab-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-card-credit { font-size: 11px; color: var(--lab-muted); opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lab-card-go { position: relative; z-index: 2; align-self: flex-start; margin-top: 2px; font-size: 13px; color: var(--lab-gold); }
 .lab-card:hover .lab-card-title { text-decoration: underline; text-underline-offset: 3px; }
 .lab-card-all { justify-content: center; align-items: center; padding: 24px; text-align: center; background: transparent;

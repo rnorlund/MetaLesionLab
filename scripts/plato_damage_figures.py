@@ -193,7 +193,9 @@ def fig_card(run: Path, out: Path, key: str = "chair__rocking_chair", seed: int 
             card.paste(im, (x, top))
         d.rectangle((x, top + side, x + side, top + side + 6), fill=colour)
         d.text((x, top + side + 18), label, fill=colour, font=font(28))
-    d.text((40, H - 60), "Language damage changes what it draws. Drawing damage changes how.", fill=INK, font=font(26))
+    # the planned split held only in part (docs/plato_damage.md, H1): the caption says so
+    d.text((40, H - 60), "Language damage changes what it draws; drawing damage, mostly how. The split held only in part.",
+           fill=INK, font=font(26))
     out.parent.mkdir(parents=True, exist_ok=True)
     card.save(out, "WEBP", quality=70, method=6)
     print(out, f"{out.stat().st_size / 1e3:.0f} kB")
