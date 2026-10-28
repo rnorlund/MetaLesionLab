@@ -153,7 +153,8 @@ def analyze_concept(concept: str, M: Measurer, Mp: Measurer, refs_public: dict) 
     okp = [s for s in runs if (s, PRIMARY_TEMP, last) in boots]
     fresh = [s for s in CFG["test_seeds"][concept] if s in runs]
     tests_all = None
-    if fresh != list(runs):  # the addendum: the tests use the fresh seeds; all seeds (with the pilot) alongside
+    if fresh != list(runs) and len(fresh) >= 2:  # the addendum: the tests use the fresh seeds; all seeds alongside
+        # (with fewer than 2 fresh runs, e.g. while they train, the tests stay over all runs: provisional only)
         tests_all, tests = tests, {}
         for temp in TEMPS:
             ok = [s for s in fresh if (s, temp, last) in boots]

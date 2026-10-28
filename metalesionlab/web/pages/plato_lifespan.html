@@ -84,7 +84,7 @@
 
 <section class="ls-sec" id="learn" aria-labelledby="learn-h">
   <h2 id="learn-h">Watch an AI learn what a chair is</h2>
-  <p class="ls-sub">Stable Diffusion’s first public checkpoint is already grown up. So we trained a small sketch model from scratch on 20,000 people’s chairs from Quick, Draw!, eight separate times. Here one of those runs draws the same 16 chairs at every stage of training. Their random starting points never change; only what the model has learned does.</p>
+  <p class="ls-sub">Stable Diffusion’s first public checkpoint is already grown up. So we trained a sketch model from scratch on 203,324 people’s chairs from Quick, Draw!, four separate times. Here its first run draws the same 16 chairs at every stage of training. Their random starting points never change; only what the model has learned does. Its chairs can only be as detailed as the drawings it learned from: people’s 20-second sketches in an online game.</p>
 
   <div class="ls-learn" id="learn-player">
     <div class="ls-learn-pic">
@@ -94,7 +94,7 @@
       </div>
     </div>
     <div class="ls-learn-read">
-      <div class="ls-learn-step"><span>Training step</span><b id="learn-step">0</b></div>
+      <div class="ls-learn-step"><span>Training step</span><b id="learn-step">0</b><small id="learn-seen"></small></div>
       <div class="ls-learn-row"><span>Recognizable as a chair</span><b id="learn-recog">–</b></div>
       <div class="ls-learn-row"><span>How varied its chairs are</span><b id="learn-spread">–</b></div>
       <div class="ls-learn-bar" id="learn-bar"></div>
@@ -102,7 +102,7 @@
         <button type="button" class="ls-play" id="learn-play" aria-pressed="false">Play</button>
         <input type="range" id="learn-range" min="0" max="19" step="1" value="0" aria-label="Training stage">
       </div>
-      <div class="ls-learn-ends" aria-hidden="true"><span>untrained</span><span>step 25,600</span></div>
+      <div class="ls-learn-ends" aria-hidden="true"><span>untrained</span><span id="learn-end"></span></div>
       <p class="ls-note" id="learn-cap"></p>
     </div>
   </div>
@@ -121,7 +121,7 @@
 
   <div class="ls-verdict" id="learn-verdict"></div>
 
-  <h3 class="ls-h3">Eight runs, step by step</h3>
+  <h3 class="ls-h3">Every run, step by step</h3>
   <div class="ls-learn-tabs">
     <div class="ls-tabs" role="tablist" id="learn-thing" aria-label="Thing"></div>
     <div class="ls-tabs" role="tablist" id="learn-temp" aria-label="Sampling temperature"></div>
@@ -138,7 +138,12 @@
     <li><b>Children.</b> 15,820 drawings of 20 things by children aged 2 to 10, drawn with a fingertip on a tablet at a museum kiosk in 30 seconds each (Long, Fan, Huey, Chai &amp; Frank, 2024). Every age and thing has at least 23 drawings. We rendered their strokes exactly like the adults’ drawings. <b>We never show a child’s drawing.</b> The data are licensed non-commercially with share-alike, and they are children’s, so this page shows group-level numbers only.</li>
     <li><b>Adults.</b> 200 recognized drawings per thing from Google’s Quick, Draw! game (20 seconds, mouse or finger). Their average is the “adult Form”.</li>
     <li><b>AI.</b> Muse Image’s doodles from Plato’s Chair. Stable Diffusion at five public training stages, v1.1 to v1.5, given the same prompt and the same 16 starting seeds for 21 things (1,680 pictures, on our own GPU). v1.3, v1.4 and v1.5 all branch from v1.2, and each stage was trained on different data as well as for longer.</li>
-    <li><b>Sketch model.</b> A small Sketch-RNN-style model (Ha &amp; Eck, 2017) that draws with strokes, trained from random weights on 20,000 Quick, Draw! chairs, 8 times with different random seeds, on our own GPU. As a check, 5 more runs learned 20,000 cats. At 20 stages of training each run drew 200 drawings at each of three sampling temperatures (lower means more cautious), from random starts that never change. Its drawings are rendered exactly like people’s.</li>
+    <li><b>Sketch models.</b> Sketch-RNN-style models (Ha &amp; Eck, 2017) that draw with strokes, trained from random weights on our own GPUs. Their drawings are rendered exactly like people’s.
+      <ul>
+        <li>The one in the animation has 2,048 units. It learned from all 203,324 recognized Quick, Draw! chairs (not the 200 adult reference chairs) for 102,400 steps, 4 times with different random seeds.</li>
+        <li>A first, smaller one (512 units) learned from 20,000 of those chairs for 25,600 steps, 8 times. As a check, it also learned from 20,000 cats, 5 times. Its chairs were recognizable to the measure but rough to the eye, which is why we trained the larger one.</li>
+        <li>At every stage of training each run drew 200 drawings at each of several sampling temperatures, from random starts that never change. Lower temperature means more cautious.</li>
+      </ul></li>
     <li><b>Measures</b> (Meta’s DINOv2 image model):
       <ul>
         <li><b>Recognizable:</b> how often a drawing sits closest to its own thing’s adult average, out of 21 things.</li>
@@ -146,20 +151,20 @@
         <li><b>Variety:</b> how far apart drawings of the same thing are from each other, always compared in sets of 16.</li>
       </ul>
       CIs come from resampling drawings and things.</li>
-    <li><b>Planned first.</b> The plan and predictions were committed before any child’s drawing was measured or any AI picture was drawn (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_lifespan_plan.md">the plan</a>). The sketch model’s eight runs had their own plan, committed before training: the test, the seeds, the temperatures and which drawings the animation shows (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_sketch_plan.md">the sketch plan</a>).</li>
+    <li><b>Planned first.</b> The plan and predictions were committed before any child’s drawing was measured or any AI picture was drawn (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_lifespan_plan.md">the plan</a>). The small sketch model’s eight runs had their own plan, committed before training: the test, the seeds, the temperatures and which drawings the animation shows (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_sketch_plan.md">the sketch plan</a>). The larger model’s test was added to that plan after its first run and before the other three were trained. It uses only those three.</li>
     <li><b>Caveats.</b>
       <ul>
         <li>The conditions differ: a fingertip at a kiosk, a 20-second online game, and generated pictures that look like marker sketches. The AI’s distance to people’s drawings is largely drawing style.</li>
         <li>Ages are whole years entered by a parent, and parents sometimes helped.</li>
         <li>Children at a science museum are not a sample of all children.</li>
-        <li>Stable Diffusion’s public checkpoints start well into training. The sketch model shows the earliest stages, but it learns only from adults’ drawings, and it is one small architecture, so it shows what learning from people’s drawings can look like, not what children do.</li>
+        <li>Stable Diffusion’s public checkpoints start well into training. The sketch models show the earliest stages, but they learn only from adults’ drawings, and they are two sizes of one architecture, so they show what learning from people’s drawings can look like, not what children do.</li>
         <li>DINOv2 measures how drawings look, not what anyone knows.</li>
       </ul></li>
     <li><b>The end of the lifespan</b> is an analogy, not a claim about people: see what happens when we damage an image model in <a href="/plato/damage">Damage the painter</a>.</li>
   </ul>
   <p class="ls-credit">Children: Long, B., Fan, J. E., Huey, H., Chai, Z., &amp; Frank, M. C. (2024). Parallel developmental changes in children’s production and recognition of line drawings of visual concepts. <i>Nature Communications</i>, 15, 1191. <a href="https://doi.org/10.1038/s41467-023-44529-9">doi:10.1038/s41467-023-44529-9</a>. Data: <a href="https://osf.io/qymjr/">osf.io/qymjr</a> and <a href="https://github.com/brialorelle/drawing_production_and_recognition">GitHub</a>, <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>; group-level statistics only.
   Adults: Google Creative Lab, <a href="https://github.com/googlecreativelab/quickdraw-dataset">Quick, Draw! dataset</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
-  AI: Meta Muse Image 1.0; Stable Diffusion v1.1–v1.4 (CompVis) and v1.5, CreativeML OpenRAIL-M; a sketch model of our own after Sketch-RNN (Ha &amp; Eck, 2017), trained on Quick, Draw! drawings. Similarity: Meta DINOv2 (Apache 2.0).
+  AI: Meta Muse Image 1.0; Stable Diffusion v1.1–v1.4 (CompVis) and v1.5, CreativeML OpenRAIL-M; sketch models of our own after Sketch-RNN (Ha &amp; Eck, 2017), in two sizes, trained on Quick, Draw! drawings. Similarity: Meta DINOv2 (Apache 2.0).
   Write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_lifespan.md">docs/plato_lifespan.md</a>. Data: <a href="/api/plato/lifespan">the statistics behind this page</a>.</p>
 </section>
 
