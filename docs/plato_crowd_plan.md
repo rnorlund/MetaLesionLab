@@ -105,3 +105,10 @@ The house pipeline, unchanged.
 - **DINOv2 sees style.** Spread counts how a thing is drawn as well as which thing. E3 says which.
 - **Small n.** 16 pictures per concept and 10 things for the paired test.
 - **No people's God.** God's result is the AI against the AI.
+
+## Addendum: the pilot, before the main run (Oct 28)
+
+- **Two pictures, one call of n = 1 each, with the exact prompts above.** Neither was refused. Neither shows the drawer, a written age or any text.
+  - *Chair, 80:* the default's slat-back chair in three-quarter view, drawn with a shakier, sketchier line.
+  - *God, 20:* a smiling bearded man with long hair, a robe and a halo, the default's figure.
+- **Nothing changes.** The pilot pictures stay in `PlatosChair/crowd/pilot/` and are not analysed. Spend so far: $0.05 at the task's rate; the shared ledger went from $64.46 to $64.48.
