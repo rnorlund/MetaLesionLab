@@ -20,7 +20,7 @@ GALLERY_DIR = web.HERE / "static" / "img" / "gallery"
 DOCS = "\n".join(p.read_text() for p in sorted((REPO / "docs").glob("plato*.md")))
 FIELDS = {"id", "title", "caption", "category", "link", "thumb", "alt", "credit"}
 PLATO_PAGES = ["/", "/draw", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird",
-               "/plato/damage", "/plato/lifespan", "/plato/telephone", "/plato/atlas", "/socrates"]
+               "/plato/damage", "/plato/lifespan", "/plato/telephone", "/plato/atlas", "/plato/scale", "/socrates"]
 LINGUA_PAGES = ["/", "/take", "/assess", "/scorer", "/studio", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge"]
 
 

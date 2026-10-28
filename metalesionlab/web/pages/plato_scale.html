@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An AI growing up · {{BRAND}}</title>
+<meta name="description" content="Does an AI's idea of a chair change with a bigger model or more data? 15 open language models and three of Meta's models draw a chair as SVG code, and a small sketch model learns from 100 to 20,000 people's chairs.">
+<meta property="og:title" content="An AI growing up · {{BRAND}}">
+<meta property="og:description" content="Do bigger AIs converge on one chair, a Form emerging with scale? We asked 18 models to draw one, and trained a sketch model on more and more people's chairs.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_scale.css">
+</head>
+<body class="sc">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><a class="brand" href="/"><b>{{BRAND}}</b></a></header>
+
+<main id="main" tabindex="-1">
+
+<section class="sc-hero" aria-labelledby="hero-h">
+  <div class="sc-hero-text">
+    <div class="title-pair">
+      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Does an AI’s chair change as it grows? · Our own question · <a href="/plato">Plato series</a></span></p>
+      <h1 id="hero-h">An AI growing up</h1>
+    </div>
+    <p class="sc-lede">The <a href="https://arxiv.org/abs/2405.07987">Platonic Representation Hypothesis</a> (Huh, Cheung, Wang &amp; Isola, ICML 2024) proposes that AI models’ inner representations converge as they grow. If so, do bigger AIs also <i>draw</i> more alike, converging on one textbook chair, a Form emerging with scale? We asked language models from half a billion to 33 billion parameters, and three of Meta’s models, to draw a chair as SVG code. And we trained one small sketch model on 100 to 20,000 people’s chairs.</p>
+    <p class="sc-note">In short: bigger open models stop breaking but don’t converge on one chair; Meta’s Muse Wonder draws the same textbook chair every time. <a href="#answer">The short answer</a></p>
+  </div>
+</section>
+
+<nav class="sc-jump" aria-label="On this page">
+  <a href="#models">Chairs by model size</a>
+  <a href="#data">Chairs by data size</a>
+  <a href="#answer">Short answer</a>
+  <a href="#curves">What changes</a>
+  <a href="#platonic">Do different AIs converge?</a>
+  <a href="#method">Method and caveats</a>
+</nav>
+
+<section class="sc-sec" id="models" aria-labelledby="models-h">
+  <h2 id="models-h">Chairs by model size</h2>
+  <p class="sc-sub">Every model got the same request: <i>“Draw a simple chair as an SVG drawing: black strokes only on a white background, 256 by 256 pixels, no text, no colour fill. Output only the SVG code.”</i> Here are its first 12 answers at temperature 1, rendered and cropped to the ink. Within each family the models go from smallest to largest. A grey tile is a failure: no SVG, an SVG that doesn’t render, a blank canvas, or one covered in ink.</p>
+  <div class="sc-chips" id="wall-filter" role="group" aria-label="Show which models"></div>
+  <div class="sc-wall" id="wall-models"><p class="sc-note">Loading the chairs…</p></div>
+</section>
+
+<section class="sc-sec" id="data" aria-labelledby="data-h">
+  <h2 id="data-h">Chairs by data size</h2>
+  <p class="sc-sub">One small sketch model (a Sketch-RNN-style decoder, trained from scratch) learned only from people’s Quick, Draw! chairs: 100 of them, then 300, 1,000, 3,000, 10,000 or 20,000, each run for the same 25,600 training steps. Each row is the same 12 random starts (seed 1) at the end of training.</p>
+  <div class="sc-wall" id="wall-data"></div>
+</section>
+
+<section class="sc-sec" id="answer" aria-labelledby="answer-h">
+  <h2 id="answer-h">Short answer</h2>
+  <div class="sc-answer">
+    <div class="sc-card"><span class="tag">Bigger model</span><h3>Fewer failures, no convergence</h3>
+      <p>The smallest language models fail 4 to 8 times in 12: blank canvases, canvases covered in ink, broken SVG. From 4B parameters up they rarely fail. But even at 32B, none of the three open families draws a recognizable chair, and their drawings don’t get more alike: 0.93 to 1.6 times people’s spread.</p></div>
+    <div class="sc-card"><span class="tag">Meta’s models</span><h3>Muse Wonder draws one textbook chair</h3>
+      <p>Muse Wonder drew the same slat-back chair 12 times: 0.38 times people’s spread, as narrow as Muse Image’s chairs (0.37). Muse Spark drew plain side-view chairs, as varied as people’s (0.95). Meta doesn’t publish their sizes, so this says nothing about scale.</p></div>
+    <div class="sc-card"><span class="tag">More data</span><h3>More recognizable, not more alike</h3>
+      <p>With more people’s chairs to learn from, the sketch model’s chairs become easier to recognize (59% → 73%). But their spread stays about 0.31 from 100 to 20,000 chairs, always below the chairs it learned from (0.36 to 0.37).</p></div>
+    <div class="sc-card"><span class="tag">The Platonic test</span><h3>Different makers don’t converge</h3>
+      <p>Do models from different makers draw more alike as they grow? Not here. Their chairs are no closer together at 30 to 33B than at 2B and below. The hypothesis is about models’ inner representations, and a drawing written as code may not show it.</p></div>
+  </div>
+</section>
+
+<section class="sc-sec" id="curves" aria-labelledby="curves-h">
+  <h2 id="curves-h">What changes as it grows</h2>
+  <p class="sc-sub">We predicted, before any run, that as an AI grows its chairs would become more recognizable (P1) and more alike (P2), and that it would fail less (P3). Bars and bands are 95% bootstrap CIs; hover or focus a point for its numbers.</p>
+  <div class="sc-table-wrap"><table class="sc-pred">
+    <thead><tr><th scope="col">Prediction</th><th scope="col">Bigger model (Qwen2.5, 0.5B → 32B)</th><th scope="col">More data (100 → 20,000 chairs)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">P1 more recognizable</th><td>unclear: −2 of 12 [−5, 0]</td><td><b>supported</b>: +14 points [+6, +22]</td></tr>
+      <tr><th scope="row">P2 more alike (convergence)</th><td>unclear: −0.073 [−0.195, +0.087]</td><td>unclear: −0.011 [−0.030, +0.005]</td></tr>
+      <tr><th scope="row">P3 fewer failures</th><td><b>supported</b>: −8 of 12 [−11, −5]</td><td>no failures at any size</td></tr>
+    </tbody></table></div>
+  <p class="sc-note">The other two families agree with Qwen2.5: failures fall (supported), recognizability and spread don’t clearly change. One check differs: Qwen3 narrows at temperature 0.7. Stopped early, at its best held-out step, the sketch model supports all three predictions: with 100 chairs it is still mostly scribbles (25% recognizable, a third only dots).</p>
+  <h3>By model size (language models drawing SVG, 12 per model, temperature 1)</h3>
+  <div class="sc-legend" aria-hidden="true">
+    <span><i style="background:#2a78d6"></i>Qwen2.5</span><span><i style="background:#eb6834"></i>OLMo 2</span>
+    <span><i style="background:#1baf7a"></i>Qwen3</span><span><i class="dot" style="background:#171a22;transform:rotate(45deg);border-radius:1px"></i>Muse Glimmer 30B</span>
+    <span><i class="sq" style="background:#171a22"></i>Muse Spark, Muse Wonder (API)</span>
+  </div>
+  <div class="sc-charts" id="charts-b"></div>
+  <details class="sc-numbers"><summary>The numbers as a table (temperature 1)</summary><div id="table-b-10"></div></details>
+  <details class="sc-numbers"><summary>The check at temperature 0.7</summary><div id="table-b-07"></div></details>
+  <h3>By data size (the sketch model, 3 seeds × 200 drawings, temperature 1)</h3>
+  <div class="sc-legend" aria-hidden="true">
+    <span><i style="background:#2a78d6"></i>last step (same compute)</span><span><i class="dash"></i>best held-out step</span>
+    <span><i style="background:repeating-linear-gradient(90deg,#6B7280 0 2px,transparent 2px 5px)"></i>the chairs it learned from</span>
+  </div>
+  <div class="sc-charts" id="charts-a"></div>
+  <details class="sc-numbers"><summary>The numbers as a table</summary><div id="table-a"></div></details>
+</section>
+
+<section class="sc-sec" id="platonic" aria-labelledby="platonic-h">
+  <h2 id="platonic-h">Do different AIs converge?</h2>
+  <div class="sc-two">
+    <div class="sc-prose" id="platonic-text">
+      <p><b>The idea.</b> Huh, Cheung, Wang and Isola (ICML 2024) argue that as AI models grow, they come to measure how alike two things are in more and more similar ways, converging on a shared “Platonic” representation of the world. If drawings showed this, the chairs of big models from different makers would look more alike than those of small ones.</p>
+      <p><b>The test.</b> In each size band we measure how far apart two different families’ sets of chairs are: the energy distance between them in DINOv2, which is 0 when two models draw from the same distribution. Muse Glimmer joins the 30–33B band.</p>
+      <p><b>The result.</b> No convergence. The 30–33B band is no closer than the smallest band (change +0.047 [−0.029, +0.120]). The smallest models look alike only because they all scribble. Plain distance between makers’ chairs does shrink a little with size (0.55 to 0.49), but each model’s own chairs tighten about as much.</p>
+      <p><b>What it doesn’t show.</b> The hypothesis is about inner representations, not about drawing a chair in code, which few models were trained for. And the one model here that drew a single Form, Muse Wonder, doesn’t have a published size.</p>
+    </div>
+    <div><div id="table-e1"></div></div>
+  </div>
+</section>
+
+<section class="sc-sec sc-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">Method and caveats</h2>
+  <ul>
+    <li><b>Language models.</b> Three open families, all Apache-2.0 and ungated, pinned to their Hugging Face revisions: Qwen2.5-Instruct 0.5B, 1.5B, 7B, 14B and 32B (the primary family); OLMo 2 Instruct 1B, 7B, 13B and 32B (AI2); Qwen3 0.6B to 32B with thinking off. Plus Muse Glimmer 30B (Meta, open weights), and Muse Spark 1.3 and Muse Wonder 1.0 through the Meta Model API (reasoning effort “minimal”). Not used: Qwen2.5-3B and -72B (not Apache-2.0), Llama and Gemma 3 (gated; we never accept a licence on anyone’s behalf).</li>
+    <li><b>Sampling.</b> 12 answers per model at temperature 1, and 12 at 0.7 as a check. Open models used pure temperature sampling (no top-p or top-k) and at most 2,048 new tokens; models of 30B and more ran with FP8 weights on one 46 GB GPU.</li>
+    <li><b>Rendering.</b> The first complete SVG in each answer, drawn at 256 × 256 px with no access to files or the network. A failure is no SVG, an SVG the renderer rejects, a blank canvas, or one more than 95% ink.</li>
+    <li><b>The sketch model.</b> A Sketch-RNN-style model (about 1.1 million parameters) trained from scratch on nested random subsets of 100 to 20,000 Google Quick, Draw! chairs, 3 seeds each, for the same 25,600 steps. A second analysis takes each run at its lowest loss on 1,000 held-out chairs. 200 drawings per run.</li>
+    <li><b>Measures.</b> Every drawing is cropped to its ink and embedded with Meta’s DINOv2. Recognizable: its nearest of 35 concept centroids from people’s Quick, Draw! drawings is the chair’s. Spread: the mean distance between two drawings. Check: Google SigLIP 2 also read every drawing zero-shot (added after the plan, because DINOv2 calls a front-view slat-back chair a ladder).</li>
+    <li><b>Planned first.</b> The design, predictions and verdict rule were committed before any run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_scale_plan.md">the plan</a>). The results are reported whichever way they came out (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_scale.md">the write-up</a>).</li>
+    <li><b>Caveats.</b>
+      <ul>
+        <li>One prompt and default settings: this is how each model answers this request, not what it could draw with help.</li>
+        <li>Drawing in SVG code is a narrow skill. A model can know chairs well and still write poor SVG.</li>
+        <li>Spark and Wonder reasoned briefly even at “minimal” effort, about 420 and 125 tokens per answer. The open models answered directly.</li>
+        <li>12 samples per model and 4 to 6 sizes per family, so every trend is descriptive.</li>
+        <li>Spread is measured by one vision model, DINOv2, and it sees drawing style as well as shape.</li>
+      </ul></li>
+  </ul>
+  <p class="sc-credit" id="credits"></p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_scale.js"></script>
+</body>
+</html>
