@@ -1,0 +1,273 @@
+{
+ "about": "What damage does to an AI's drawing: Stable Diffusion XL, an open image model, asked for each thing with one fixed seed, intact and with noise added to its text encoders (the part that handles words) or its UNet (the part that draws) at five increasing doses. About the model only: never compared with a visitor's drawing.",
+ "model": "stabilityai/stable-diffusion-xl-base-1.0",
+ "credit": "Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M",
+ "license": "CreativeML OpenRAIL++-M",
+ "prompt_template": "A quick simple doodle sketch of {phrase}, black marker on plain white, like a 20-second drawing, no text, no shading.",
+ "settings": {
+  "size": 768,
+  "steps": 25,
+  "guidance_scale": 5.0,
+  "negative": "shading, photo, photorealistic, paper texture, 3d render, color, text",
+  "saved_side": 512,
+  "thumb_side": 176,
+  "webp_quality": 70
+ },
+ "lesions": "Gaussian noise on every neuron of the part, sd = dose x the neuron's sd over 16 reference doodle prompts (the damage experiment's unit statistics), the same noise for every thing; metalesionlab/sdxl_lesions.py, plato_damage.FAMILIES.",
+ "rows": {
+  "language": {
+   "family": "text-noise",
+   "site": "text",
+   "part": "the part that handles words",
+   "detail": "both text encoders (CLIP ViT-L and OpenCLIP bigG)",
+   "doses": [
+    0.25,
+    0.5,
+    0.625,
+    0.75,
+    1.0
+   ],
+   "conditions": [
+    "text-noise@0.25",
+    "text-noise@0.5",
+    "text-noise@0.625",
+    "text-noise@0.75",
+    "text-noise@1"
+   ]
+  },
+  "drawing": {
+   "family": "unet-noise",
+   "site": "unet",
+   "part": "the part that draws",
+   "detail": "the UNet's 70 transformer blocks",
+   "doses": [
+    0.75,
+    0.825,
+    0.9,
+    1.0,
+    1.1
+   ],
+   "conditions": [
+    "unet-noise@0.75",
+    "unet-noise@0.825",
+    "unet-noise@0.9",
+    "unet-noise@1",
+    "unet-noise@1.1"
+   ]
+  }
+ },
+ "more": "/plato/damage",
+ "total_bytes": 663464,
+ "things": [
+  {
+   "key": "chair",
+   "label": "chair",
+   "prompt": "A quick simple doodle sketch of a chair, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20261107,
+   "intact": "/static/img/draw_damage/chair_intact.webp",
+   "language": [
+    "/static/img/draw_damage/chair_language_1.webp",
+    "/static/img/draw_damage/chair_language_2.webp",
+    "/static/img/draw_damage/chair_language_3.webp",
+    "/static/img/draw_damage/chair_language_4.webp",
+    "/static/img/draw_damage/chair_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/chair_drawing_1.webp",
+    "/static/img/draw_damage/chair_drawing_2.webp",
+    "/static/img/draw_damage/chair_drawing_3.webp",
+    "/static/img/draw_damage/chair_drawing_4.webp",
+    "/static/img/draw_damage/chair_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "umbrella",
+   "label": "umbrella",
+   "prompt": "A quick simple doodle sketch of an umbrella, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20262101,
+   "intact": "/static/img/draw_damage/umbrella_intact.webp",
+   "language": [
+    "/static/img/draw_damage/umbrella_language_1.webp",
+    "/static/img/draw_damage/umbrella_language_2.webp",
+    "/static/img/draw_damage/umbrella_language_3.webp",
+    "/static/img/draw_damage/umbrella_language_4.webp",
+    "/static/img/draw_damage/umbrella_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/umbrella_drawing_1.webp",
+    "/static/img/draw_damage/umbrella_drawing_2.webp",
+    "/static/img/draw_damage/umbrella_drawing_3.webp",
+    "/static/img/draw_damage/umbrella_drawing_4.webp",
+    "/static/img/draw_damage/umbrella_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "bicycle",
+   "label": "bicycle",
+   "prompt": "A quick simple doodle sketch of a bicycle, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20263110,
+   "intact": "/static/img/draw_damage/bicycle_intact.webp",
+   "language": [
+    "/static/img/draw_damage/bicycle_language_1.webp",
+    "/static/img/draw_damage/bicycle_language_2.webp",
+    "/static/img/draw_damage/bicycle_language_3.webp",
+    "/static/img/draw_damage/bicycle_language_4.webp",
+    "/static/img/draw_damage/bicycle_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/bicycle_drawing_1.webp",
+    "/static/img/draw_damage/bicycle_drawing_2.webp",
+    "/static/img/draw_damage/bicycle_drawing_3.webp",
+    "/static/img/draw_damage/bicycle_drawing_4.webp",
+    "/static/img/draw_damage/bicycle_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "house",
+   "label": "house",
+   "prompt": "A quick simple doodle sketch of a house, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20264100,
+   "intact": "/static/img/draw_damage/house_intact.webp",
+   "language": [
+    "/static/img/draw_damage/house_language_1.webp",
+    "/static/img/draw_damage/house_language_2.webp",
+    "/static/img/draw_damage/house_language_3.webp",
+    "/static/img/draw_damage/house_language_4.webp",
+    "/static/img/draw_damage/house_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/house_drawing_1.webp",
+    "/static/img/draw_damage/house_drawing_2.webp",
+    "/static/img/draw_damage/house_drawing_3.webp",
+    "/static/img/draw_damage/house_drawing_4.webp",
+    "/static/img/draw_damage/house_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "cat",
+   "label": "cat",
+   "prompt": "A quick simple doodle sketch of a cat, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20265106,
+   "intact": "/static/img/draw_damage/cat_intact.webp",
+   "language": [
+    "/static/img/draw_damage/cat_language_1.webp",
+    "/static/img/draw_damage/cat_language_2.webp",
+    "/static/img/draw_damage/cat_language_3.webp",
+    "/static/img/draw_damage/cat_language_4.webp",
+    "/static/img/draw_damage/cat_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/cat_drawing_1.webp",
+    "/static/img/draw_damage/cat_drawing_2.webp",
+    "/static/img/draw_damage/cat_drawing_3.webp",
+    "/static/img/draw_damage/cat_drawing_4.webp",
+    "/static/img/draw_damage/cat_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "tree",
+   "label": "tree",
+   "prompt": "A quick simple doodle sketch of a tree, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20266103,
+   "intact": "/static/img/draw_damage/tree_intact.webp",
+   "language": [
+    "/static/img/draw_damage/tree_language_1.webp",
+    "/static/img/draw_damage/tree_language_2.webp",
+    "/static/img/draw_damage/tree_language_3.webp",
+    "/static/img/draw_damage/tree_language_4.webp",
+    "/static/img/draw_damage/tree_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/tree_drawing_1.webp",
+    "/static/img/draw_damage/tree_drawing_2.webp",
+    "/static/img/draw_damage/tree_drawing_3.webp",
+    "/static/img/draw_damage/tree_drawing_4.webp",
+    "/static/img/draw_damage/tree_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "face",
+   "label": "face",
+   "prompt": "A quick simple doodle sketch of a face, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20267102,
+   "intact": "/static/img/draw_damage/face_intact.webp",
+   "language": [
+    "/static/img/draw_damage/face_language_1.webp",
+    "/static/img/draw_damage/face_language_2.webp",
+    "/static/img/draw_damage/face_language_3.webp",
+    "/static/img/draw_damage/face_language_4.webp",
+    "/static/img/draw_damage/face_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/face_drawing_1.webp",
+    "/static/img/draw_damage/face_drawing_2.webp",
+    "/static/img/draw_damage/face_drawing_3.webp",
+    "/static/img/draw_damage/face_drawing_4.webp",
+    "/static/img/draw_damage/face_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "sailboat",
+   "label": "boat",
+   "prompt": "A quick simple doodle sketch of a sailboat, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20268108,
+   "intact": "/static/img/draw_damage/sailboat_intact.webp",
+   "language": [
+    "/static/img/draw_damage/sailboat_language_1.webp",
+    "/static/img/draw_damage/sailboat_language_2.webp",
+    "/static/img/draw_damage/sailboat_language_3.webp",
+    "/static/img/draw_damage/sailboat_language_4.webp",
+    "/static/img/draw_damage/sailboat_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/sailboat_drawing_1.webp",
+    "/static/img/draw_damage/sailboat_drawing_2.webp",
+    "/static/img/draw_damage/sailboat_drawing_3.webp",
+    "/static/img/draw_damage/sailboat_drawing_4.webp",
+    "/static/img/draw_damage/sailboat_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "cup",
+   "label": "cup",
+   "prompt": "A quick simple doodle sketch of a cup, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20269105,
+   "intact": "/static/img/draw_damage/cup_intact.webp",
+   "language": [
+    "/static/img/draw_damage/cup_language_1.webp",
+    "/static/img/draw_damage/cup_language_2.webp",
+    "/static/img/draw_damage/cup_language_3.webp",
+    "/static/img/draw_damage/cup_language_4.webp",
+    "/static/img/draw_damage/cup_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/cup_drawing_1.webp",
+    "/static/img/draw_damage/cup_drawing_2.webp",
+    "/static/img/draw_damage/cup_drawing_3.webp",
+    "/static/img/draw_damage/cup_drawing_4.webp",
+    "/static/img/draw_damage/cup_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "book",
+   "label": "book",
+   "prompt": "A quick simple doodle sketch of a book, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20270108,
+   "intact": "/static/img/draw_damage/book_intact.webp",
+   "language": [
+    "/static/img/draw_damage/book_language_1.webp",
+    "/static/img/draw_damage/book_language_2.webp",
+    "/static/img/draw_damage/book_language_3.webp",
+    "/static/img/draw_damage/book_language_4.webp",
+    "/static/img/draw_damage/book_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/book_drawing_1.webp",
+    "/static/img/draw_damage/book_drawing_2.webp",
+    "/static/img/draw_damage/book_drawing_3.webp",
+    "/static/img/draw_damage/book_drawing_4.webp",
+    "/static/img/draw_damage/book_drawing_5.webp"
+   ]
+  }
+ ]
+}

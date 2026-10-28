@@ -27,6 +27,7 @@
     '<cite>Plato, Republic 596a · Jowett</cite>';
   var NAVY = '#141a26', WHITE = '#F9FAFB', ORANGE = '#C2410C';
   var MAX_MS = 14000;  // whatever happens, the page is back by then
+  var TIME = 0.8;  // the whole sequence plays at 80% of its designed length (Roger, Oct 27)
 
   var run = 0, done = false, anims = [], timers = [];
   var stage, actor, shadowEl, caption, credit, skipBtn, form, frames = [], shadowPic, L = {};
@@ -38,7 +39,7 @@
     return e;
   }
   function img(src) { var i = new Image(); i.src = src; i.alt = ''; i.decoding = 'async'; return i; }
-  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+  function later(fn, ms) { timers.push(setTimeout(fn, ms * TIME)); }
   function wait(ms, id) {
     return new Promise(function (resolve, reject) {
       later(function () { if (id === run && !done) resolve(); else reject(new Error('stopped')); }, ms);
@@ -46,6 +47,8 @@
   }
   function anim(target, frames_, opts) {
     var o = Object.assign({ fill: 'forwards' }, opts);
+    if (o.duration) o.duration *= TIME;
+    if (o.delay) o.delay *= TIME;
     var a = target.animate(frames_, o);
     anims.push(a);
     return a;

@@ -426,7 +426,7 @@ def test_tour_is_keyboard_and_motion_friendly():
 
 def test_splash_is_on_the_plato_landing_only(client):
     landing = client.get("/").text
-    assert '<script src="/static/js/splash.js"></script>' in landing
+    assert re.search(r'<script src="/static/js/splash\.js(\?v=\d+)?"></script>', landing)
     head = landing[:landing.index("</head>")]
     assert "splash-on" in head and "nosplash=1" in head and "prefers-reduced-motion" in head
     assert "tot-tour-step" in head and "pc-splash-seen" in head and "sessionStorage" in head
@@ -453,3 +453,14 @@ def test_splash_assets_are_small_webp_and_never_muse_images_chairs():
     for quote in ("To them, I said, the truth would be literally nothing but the shadows of the images.",
                   "Whenever a number of individuals have a common name, we assume them to have also a corresponding idea or form"):
         assert quote in js and quote in passages
+
+
+def test_static_links_carry_a_version(client):
+    html = client.get("/").text
+    links = re.findall(r'(?:href|src)="(/static/[^"]+\.(?:css|js)[^"]*)"', html)
+    assert links and all("?v=" in l for l in links), links
+
+
+def test_logo_has_an_intrinsic_size(client):
+    html = client.get("/?nosplash=1").text
+    assert re.search(r'<svg class="brand-logo"[^>]*width="38" height="38"', html)

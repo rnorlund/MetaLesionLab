@@ -3,7 +3,10 @@
    Blind first: the visitor draws (or uploads a photo of a drawing on paper) before seeing anything of Muse
    Image's chairs, like the Quick, Draw! players they're compared with. After "See where it lands" come the
    reveal and the results: the originality percentile next to 200 people, the distance from Muse's prototype,
-   a map, the closest drawings, a share card and a link to discuss it with Socrates.
+   a map, the closest drawings, a share card and a link to discuss it with Socrates. Set apart below them (and
+   after a skip on the landing page): "What damage does to an AI's chair", an open image model's own picture of
+   the thing with its words part or its drawing part damaged. That strip is about the model only: it is never
+   placed, compared or matched against the visitor's drawing.
 
    Reference data comes from /api/draw/concepts; a drawing is sent once to be scored (/api/draw, or
    /api/draw/upload for a photo, shrunk and re-encoded here first, which drops EXIF and location) and is
@@ -401,6 +404,71 @@
       });
   }
 
+  // ---------- what damage does to an AI (an open image model, damaged on purpose) ----------
+  // About the model only. renderDamage gets a box and the thing's key, nothing else: it never sees, places,
+  // compares or matches anything the visitor drew. The pictures were made offline (scripts/draw_damage_sdxl.py,
+  // scripts/draw_damage_export.py) and are only shown, never measured.
+
+  var DAMAGE_URL = '/static/img/draw_damage/draw_damage.json';
+  var damageData = null;
+  var ROW_NAMES = { language: 'Words part damaged', drawing: 'Drawing part damaged' };
+  var ROW_PARTS = { language: 'the part that handles words', drawing: 'the part that draws' };
+  var ROW_WHAT = { language: 'its text encoders', drawing: 'its image-making UNet' };
+  var DAMAGE_LEDE = [
+    'Meta’s Muse Image can’t be opened up, so this uses an open image model (Stable Diffusion XL) that we damaged on purpose.',
+    'Top row: damage to the part that handles words, so the idea wanders off.',
+    'Bottom row: damage to the part that draws, so the lines dissolve.'
+  ];
+
+  function loadDamage() {
+    if (!damageData) {
+      damageData = fetch(DAMAGE_URL).then(function (r) {
+        if (!r.ok) throw new Error('No damage pictures here (' + r.status + ')');
+        return r.json();
+      });
+      damageData.catch(function () { damageData = null; });  // try again next time
+    }
+    return damageData;
+  }
+  function damageImg(src, alt, side) {
+    return h('img', { src: src, alt: alt, width: side, height: side, loading: 'lazy', decoding: 'async' });
+  }
+  function renderDamage(box, key) {
+    return loadDamage().then(function (d) {
+      var t = d.things.filter(function (x) { return x.key === key; })[0];
+      box.textContent = '';
+      if (!t) { box.hidden = true; return; }
+      var side = (d.settings && d.settings.thumb_side) || 176, who = 'Stable Diffusion XL’s ' + t.label;
+      var rows = h('div', { class: 'dw-dmg-rows' });
+      Object.keys(d.rows).forEach(function (row) {
+        var doses = d.rows[row].doses, cells = h('ol', { class: 'dw-dmg-cells' });
+        cells.appendChild(h('li', { class: 'dw-dmg-intact' }, [damageImg(t.intact, who + ', intact', side), h('span', { text: 'intact' })]));
+        t[row].forEach(function (src, i) {
+          cells.appendChild(h('li', null, damageImg(src, who + ', ' + ROW_PARTS[row] + ' damaged, step ' + (i + 1) + ' of ' +
+            t[row].length + ' (noise × ' + doses[i] + ')', side)));
+        });
+        rows.appendChild(h('div', { class: 'dw-dmg-row', role: 'group', 'aria-label': 'Damage to ' + ROW_PARTS[row] }, [
+          h('p', { class: 'dw-dmg-name' }, [h('b', { text: ROW_NAMES[row] }), h('span', { text: ROW_WHAT[row] })]), cells
+        ]));
+      });
+      rows.appendChild(h('p', { class: 'dw-dmg-axis', 'aria-hidden': 'true' }, [h('span', { text: 'intact' }), h('span', { text: 'more damage →' })]));
+      var more = h('p', { class: 'dw-dmg-more' });
+      if (!T.hasPage || T.hasPage('/plato/damage')) more.appendChild(h('a', { href: '/plato/damage', text: 'More: Damage the painter' }));
+      box.appendChild(h('div', { class: 'dw-dmg-in' }, [
+        h('p', { class: 'dw-dmg-kicker', text: 'About the AI only' }),
+        h('h2', { class: 'dw-dmg-h', id: 'dw-dmg-h', text: 'What damage does to an AI’s ' + t.label }),
+        h('p', { class: 'dw-dmg-lede', text: DAMAGE_LEDE.join(' ') }),
+        rows,
+        h('p', { class: 'dw-dmg-note', text: 'This shows what happens to an AI. It says nothing about the person drawing.' }),
+        more,
+        h('p', { class: 'dw-dmg-credit', text: 'Every picture has the same prompt (“' + t.prompt + '”) and the same starting noise (seed ' +
+          t.seed + '); only the damage changes: noise added to every neuron of one part, at the doses of the Damage the painter ' +
+          'experiment. Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M.' })
+      ]));
+      box.hidden = false;
+    }).catch(function () { box.hidden = true; });
+  }
+
   // ---------- the component ----------
 
   function mount(el, options) {
@@ -426,6 +494,20 @@
     res.hidden = true;
     res.innerHTML = RESULTS_HTML;
     if (!o.revealStrip) res.querySelector('[data-dw="reveal"]').remove();
+    // What damage does to an AI: a band of its own after the visitor's results, set apart from them. It shows
+    // after a drawing, and after a skip on the landing page (landing.js sends 'tot:revealed').
+    var dmg = h('section', { class: 'dw-damage' + (res.classList.contains('wrap') ? ' wrap' : ''), 'aria-labelledby': 'dw-dmg-h' });
+    dmg.hidden = true;
+    res.after(dmg);
+    var dmgKey = null;
+    function showDamage() {
+      var key = S.key;
+      if (dmgKey === key) return;
+      dmgKey = key;
+      renderDamage(dmg, key).then(function () { if (dmgKey !== key) dmg.hidden = true; });
+    }
+    function hideDamage() { dmgKey = null; dmg.hidden = true; }
+    document.addEventListener('tot:revealed', showDamage);
 
     function q(name) { return el.querySelector('[data-dw="' + name + '"]') || res.querySelector('[data-dw="' + name + '"]'); }
     if (!document.getElementById('canvas-wrap')) {  // the guided tour points at these
@@ -685,6 +767,7 @@
 
     function hideResults() {
       res.hidden = true;
+      hideDamage();
       S.result = null;
       if (o.onReset) o.onReset();
     }
@@ -699,6 +782,7 @@
         q('reveal-h').textContent = 'Here’s what Meta’s Muse Image drew when asked for ' + article(c.label) + ', ' + c.n_ai + ' times';
         strip.textContent = '';
         strip.classList.toggle('animate', !reduced());
+        strip.style.setProperty('--cols', c.n_ai > 8 ? Math.ceil(c.n_ai / 2) : c.n_ai);  // two full rows: 8 + 8, or 6 + 6
         for (var i = 0; i < c.n_ai; i++) {
           var cl = cell(c.sprites.muse, i);
           cl.style.animationDelay = (i * 70) + 'ms';
@@ -709,6 +793,7 @@
       }
       q('fair').textContent = fair(c);
       showResults(r, c);
+      showDamage();  // after the results, apart from them; it gets the thing's key only
       if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
       document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
       var target = o.scrollTo || res;
@@ -959,6 +1044,7 @@
         if (o.picker) renderChips();
         renderText();
         image(concept().sprites.muse.src);
+        loadDamage().catch(function () {});  // the list of pictures only (no picture loads), so the strip opens with the reveal
       }).catch(function (e) {
         status('Couldn’t load the drawing game: ' + e.message, 'error');
       });
@@ -967,7 +1053,7 @@
       state: S, submit: submit, ready: ready,
       markSeen: function () { markSeen(); if (!S.started) S.blind = false; },
       concept: function () { return S.data ? concept() : null; },
-      takeFile: takeFile, clear: clearPad
+      takeFile: takeFile, clear: clearPad, showDamage: showDamage
     };
     return api;
   }

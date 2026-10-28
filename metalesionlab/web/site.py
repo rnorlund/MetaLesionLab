@@ -86,7 +86,7 @@ SHARE_IMAGE = {"plato": "/static/img/og-plato-chair.png", "lingua": "/static/img
 # The Plato site's logo: the geometric "Form" chair, drawn in a 64-unit box. The header's brand slot
 # holds it; the landing page's opening animation (static/js/splash.js) clones it, draws it stroke by
 # stroke and flies it into this slot, so the path data lives only here.
-FORM_CHAIR = ('<svg class="brand-logo" viewBox="0 0 64 64" aria-hidden="true" focusable="false">'
+FORM_CHAIR = ('<svg class="brand-logo" viewBox="0 0 64 64" width="38" height="38" aria-hidden="true" focusable="false">'
               '<g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'
               '<path d="M21 33L21 7L43 7L43 33"/><path d="M21 15L43 15"/><path d="M29 7L29 15"/><path d="M35 7L35 15"/>'
               '<path class="seat" d="M21 33L16 40L48 40L43 33Z"/><path d="M16 40L16 58"/><path d="M48 40L48 58"/>'
@@ -387,8 +387,23 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
             f'<script type="application/json" id="site-data">{data}</script>')
     if "og:image" not in page:
         head += share_tags(page, origin_url, path, site)
+    page = _ASSET.sub(_versioned, page)
     at = page.find("</head>")
     return page[:at] + head + page[at:] if at >= 0 else head + page
+
+
+# Every stylesheet and script link carries the file's modification time (?v=…), so a browser that cached
+# an older copy fetches the new one after a change instead of pairing new pages with old styles.
+_ASSET = re.compile(r'((?:href|src)=")(/static/[^"?#]+\.(?:css|js))(")')
+_STATIC = Path(__file__).resolve().parent / "static"
+
+
+def _versioned(m: re.Match) -> str:
+    try:
+        v = int((_STATIC / m.group(2)[len("/static/"):]).stat().st_mtime)
+    except OSError:
+        return m.group(0)
+    return f"{m.group(1)}{m.group(2)}?v={v}{m.group(3)}"
 
 
 # --- middleware -----------------------------------------------------------------------------------
