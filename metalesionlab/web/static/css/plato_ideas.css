@@ -104,6 +104,63 @@ body.ideas { background: #F7F6F1; }
 .iv-chart .lbl { font-size: 12.5px; fill: var(--ink-2); }
 .iv-chart .lbl-b { font-size: 13px; font-weight: 600; fill: var(--ink); }
 
+/* God under damage: Stable Diffusion XL's pictures (not Muse's), so its frames get a neutral frame, not Muse blue.
+   The two parts keep /plato/damage's colours: blue words part, orange drawing part. Pictures sit on light cards. */
+.iv-kicker { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); }
+.iv-h3 { margin: 0; font-size: var(--fs-h3); letter-spacing: -0.01em; }
+.iv-dmg-top { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px clamp(28px, 3vw, 80px); align-items: start; }
+.iv-dmg-fig { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.iv-dmg-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1vw, 20px); }
+.iv-dmg-panel { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.iv-dmg-panel h3 { margin: 0; font-size: clamp(16px, calc(11px + 0.4vw), 21px); }
+.iv-dmg-panel.lang h3 { color: var(--blue); }
+.iv-dmg-panel.draw h3 { color: var(--orange); }
+.iv-dmg-sub { margin: 0 0 4px; font-size: 13px; color: var(--muted); }
+.iv-dmg-frame { aspect-ratio: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.iv-dmg-panel.lang .iv-dmg-frame { box-shadow: inset 0 -4px 0 var(--blue); }
+.iv-dmg-panel.draw .iv-dmg-frame { box-shadow: inset 0 -4px 0 var(--orange); }
+.iv-dmg-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.iv-dmg-read { margin: 2px 0 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); min-height: 2.9em; }
+.iv-dmg-range { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(110px, auto); gap: 12px; align-items: center; }
+.iv-dmg-range label { font-weight: 600; }
+.iv-dmg-range input { width: 100%; accent-color: var(--ink); height: 28px; }
+.iv-dmg-range output { font-family: var(--mono); font-size: 13px; text-align: right; }
+.iv-dmg-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.iv-dmg-answer { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 24px); line-height: 1.45; font-weight: 600; color: var(--ink);
+  border-left: 4px solid var(--line-2); padding-left: 14px; max-width: 52ch; }
+.iv-dmg-verdicts { display: flex; flex-direction: column; gap: 8px; }
+.iv-dmg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.iv-dmg-list li { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 2px 10px; font-size: var(--fs-sm); line-height: 1.4; color: var(--ink-2);
+  border-top: 1px solid var(--line); padding-top: 8px; }
+.iv-dmg-list li b { grid-row: 1 / span 2; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--ink-2); padding-top: 2px; }
+.iv-dmg-list li.ok b { color: var(--green); }
+.iv-dmg-list li small { grid-column: 2; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.iv-dmg-note { margin: 0; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
+.iv-dmg-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 12px clamp(20px, 2vw, 48px); }
+.iv-dmg-chart .grid { stroke: var(--line); stroke-width: 1; }
+.iv-dmg-chart .cross { stroke: var(--ink-2); stroke-width: 1; }
+.iv-dmg-chart .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.iv-dmg-chart .dt { stroke: var(--panel); stroke-width: 2; }
+.ideas .s-person { stroke: var(--teal); background: var(--teal); }
+.ideas .dt.s-person { fill: var(--teal); }
+.ideas .s-beard { stroke: var(--orange); background: var(--orange); }
+.ideas .dt.s-beard { fill: var(--orange); }
+.ideas .s-halo { stroke: var(--c-mixed); background: var(--c-mixed); }
+.ideas .dt.s-halo { fill: var(--c-mixed); }
+.ideas .s-generic { stroke: var(--ink); background: var(--ink); }
+.ideas .ln.s-generic { stroke-dasharray: 6 4; }
+.ideas .dt.s-generic { fill: var(--ink); }
+.iv-legend i.line.s-generic { width: 20px; background: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 10px); }
+.iv-dmg-others { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(280px, 19vw, 520px)), 1fr)); gap: clamp(12px, 1vw, 22px); }
+.iv-dmg-other { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.iv-dmg-other img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 1; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+.iv-dmg-other figcaption { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.35; }
+.iv-dmg-other figcaption b { color: var(--ink); }
+.iv-dmg-other figcaption span { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+
+/* beyond nouns: four cards, one row on wide screens */
+#words-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(300px, 19vw, 560px)), 1fr)); }
+
 /* try it */
 .iv-try-links { display: flex; flex-wrap: wrap; gap: 8px; }
 .iv-try-links a { font-size: clamp(15px, calc(10px + 0.35vw), 19px); padding: 8px 16px; min-height: 40px; display: inline-flex; align-items: center;
@@ -121,6 +178,13 @@ body.ideas { background: #F7F6F1; }
 @media (max-width: 1100px) {
   .iv-hero { grid-template-columns: minmax(0, 1fr); }
   .iv-people-grid { grid-template-columns: minmax(0, 1fr); }
+  .iv-dmg-top { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .iv-dmg-pair { gap: 8px; }
+  .iv-dmg-panel h3 { font-size: 14px; }
+  .iv-dmg-range { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .iv-dmg-range output { text-align: left; }
 }
 @media (max-width: 720px) {
   .ideas .page { padding: 12px 16px 32px; }

@@ -484,7 +484,8 @@
       var t = d.things.filter(function (x) { return x.key === key; })[0];
       box.textContent = '';
       if (!t) { box.hidden = true; return; }
-      var side = (d.settings && d.settings.thumb_side) || 176, who = 'Stable Diffusion XL’s ' + t.label;
+      // an idea or a word ("God", "running") is named as a drawing of it: "What damage does to an AI’s drawing of God"
+      var what = t.what || t.label, side = (d.settings && d.settings.thumb_side) || 176, who = 'Stable Diffusion XL’s ' + what;
       var rows = h('div', { class: 'dw-dmg-rows' });
       Object.keys(d.rows).forEach(function (row) {
         var doses = d.rows[row].doses, cells = h('ol', { class: 'dw-dmg-cells' });
@@ -500,10 +501,18 @@
       rows.appendChild(h('p', { class: 'dw-dmg-axis', 'aria-hidden': 'true' }, [h('span', { text: 'intact' }), h('span', { text: 'more damage →' })]));
       var more = h('p', { class: 'dw-dmg-more' });
       if (!T.hasPage || T.hasPage('/plato/damage')) more.appendChild(h('a', { href: '/plato/damage', text: 'More: Damage the painter' }));
+      if (t.group && (!T.hasPage || T.hasPage('/plato/ideas'))) {  // an idea or a word: its trio is on /plato/ideas
+        more.appendChild(document.createTextNode(' · '));
+        more.appendChild(h('a', { href: '/plato/ideas#damage', text: 'God and the other ideas under damage' }));
+      }
+      // For an idea, say plainly that these are SDXL's pictures, and what SDXL drew intact (not Muse Image's picture)
+      var own = t.what ? h('p', { class: 'dw-dmg-own' }, [h('b', { text: 'These are Stable Diffusion XL’s pictures, not Muse Image’s. ' }),
+        document.createTextNode(t.intact_note ? 'Intact, it drew ' + t.intact_note + '.' : 'Its intact picture is its own, not Muse’s.')]) : null;
       box.appendChild(h('div', { class: 'dw-dmg-in' }, [
         h('p', { class: 'dw-dmg-kicker', text: 'About the AI only' }),
-        h('h2', { class: 'dw-dmg-h', id: 'dw-dmg-h', text: 'What damage does to an AI’s ' + t.label }),
+        h('h2', { class: 'dw-dmg-h', id: 'dw-dmg-h', text: 'What damage does to an AI’s ' + what }),
         h('p', { class: 'dw-dmg-lede', text: DAMAGE_LEDE.join(' ') }),
+        own,
         rows,
         h('p', { class: 'dw-dmg-note', text: 'This shows what happens to an AI. It says nothing about the person drawing.' }),
         more,
@@ -575,7 +584,7 @@
       });
       q('title').textContent = fill(o.title);
       q('instr').textContent = fill(isIdea(c) ? (o.ideaInstruction || 'You have 20 seconds. There’s no wrong answer.') : o.instruction);
-      if (o.kicker) { q('kicker').textContent = isIdea(c) ? (o.ideaKicker || 'Draw the invisible') : o.kicker; q('kicker').hidden = false; }
+      if (o.kicker) { q('kicker').textContent = isIdea(c) ? (c.kicker || o.ideaKicker || 'Draw the invisible') : o.kicker; q('kicker').hidden = false; }
       if (o.picker && S.data) {
         el.querySelectorAll('[data-dw="chips"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.key === S.key)); });
       }
@@ -588,7 +597,7 @@
       groups.forEach(function (g) {
         var items = S.data.concepts.filter(function (c) { return (c.group || 'things') === g.id; });
         if (!items.length) return;
-        var row = h('div', { class: 'dw-chip-row' + (g.id === 'ideas' ? ' dw-chip-ideas' : ''), role: 'group', 'aria-label': g.label.replace(/:$/, '') });
+        var row = h('div', { class: 'dw-chip-row' + (g.id !== 'things' ? ' dw-chip-ideas' : ''), role: 'group', 'aria-label': g.label.replace(/:$/, '') });
         row.appendChild(h('span', { class: 'dw-chips-label', text: g.label }));
         items.forEach(function (c) {
           row.appendChild(h('button', { type: 'button', 'data-key': c.key, 'aria-pressed': 'false', text: c.label,

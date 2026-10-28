@@ -65,9 +65,29 @@ PICKS = {"chair": 7, "umbrella": 1, "bicycle": 10, "house": 0, "cat": 6, "tree":
 # (scripts/plato_ideas_damage.py pick -> PlatosChair/ideas/damage/picks.json).
 IDEA_ORDER = ["god", "love", "time", "death", "justice", "beauty", "the_good", "the_soul", "freedom", "happiness",
               "truth"] + ID.WORD_KEYS
-IDEA_PICKS: dict[str, int] = {}
-# What SDXL's intact picture shows, by eye. The pad says it, because SDXL's idea need not be Muse Image's.
-INTACT_NOTES: dict[str, str] = {}
+IDEA_PICKS = {"god": 13, "love": 5, "death": 4, "time": 4, "justice": 3, "beauty": 3, "the_good": 3, "the_soul": 3,
+              "freedom": 6, "happiness": 2, "truth": 4, "running": 4, "thinking": 0, "something_fast": 3,
+              "something_heavy": 2}
+# What SDXL drew intact over all its seeds, by eye (PlatosChair/ideas/damage/sheets/). The pad says it, because SDXL's
+# idea need not be Muse Image's.
+INTACT_NOTES = {
+    "god": "ornate, icon-like line art: mostly a bearded man’s face or bust, often crowned (a beard in 10 of its 16 "
+           "drawings, a halo in 6), where Muse drew a simple figure with a halo every time",
+    "love": "ornate hearts in most of its 8 drawings",
+    "time": "clocks and pocket watches in 7 of its 8 drawings",
+    "death": "skulls and skeletons in nearly all of its 8 drawings",
+    "justice": "robed figures, a woman holding scales, or scales alone",
+    "beauty": "a young woman, mostly her face, in all 8 drawings, as Muse did",
+    "the_good": "no one emblem: towns, streets, trees and faces",
+    "the_soul": "faces and figures, one seated in meditation; none of Muse’s ghostly figures",
+    "freedom": "the Statue of Liberty’s head, or winged figures",
+    "happiness": "mostly landscapes, trees and a village",
+    "truth": "mostly faces staring straight out",
+    "running": "a person running in all 8 drawings, as Muse did",
+    "thinking": "people’s heads and faces, with no thought bubble",
+    "something_fast": "no one object: streets, landscapes, buildings, a face",
+    "something_heavy": "no one object: buildings, a bridge, a face, a seed pod, a dragon’s head",
+}
 STRIP_KEYS = THINGS + IDEA_ORDER
 
 

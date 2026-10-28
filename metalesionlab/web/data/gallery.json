@@ -905,6 +905,54 @@
    }
   },
   {
+   "id": "draw-damage-god",
+   "title": "God becomes an ordinary man, then a crowd",
+   "caption": "Stable Diffusion XL, not Muse Image. Noise in its words part turns a bearded, crowned God into a robed figure, then a man in headphones. Drawing-part noise dissolves him.",
+   "category": "Watch it degrade",
+   "link": "/plato/ideas#damage",
+   "thumb": "/static/img/gallery/draw-damage-god.webp",
+   "alt": "Two rows of six pictures of God by Stable Diffusion XL, one seed. Words part damaged: a bearded, crowned face becomes a robed figure with a halo, a man with glasses and headphones, then a crowded comic scene. Drawing part damaged: the face dissolves into gray scribbles.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-god-0.webp",
+      "pair": "/static/img/gallery/draw-damage-god-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-god-1.webp",
+      "pair": "/static/img/gallery/draw-damage-god-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-god-2.webp",
+      "pair": "/static/img/gallery/draw-damage-god-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-god-3.webp",
+      "pair": "/static/img/gallery/draw-damage-god-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-god-4.webp",
+      "pair": "/static/img/gallery/draw-damage-god-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-god-5.webp",
+      "pair": "/static/img/gallery/draw-damage-god-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
    "id": "cave-rabbit",
    "title": "A rabbit’s shadow is just “Shadow”",
    "caption": "Meta’s open model Muse Glimmer named the rabbit from its drawing, outline and silhouette. For its cast shadow it said “Shadow”, its most common wrong answer (10 times).",

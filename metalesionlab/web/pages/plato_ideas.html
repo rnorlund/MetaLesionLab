@@ -39,13 +39,69 @@
 </section>
 
 <nav class="iv-jump" aria-label="On this page">
+  <a href="#damage">God under damage</a>
   <a href="#people">How people picture God</a>
   <a href="#ideas">Eleven ideas</a>
   <a href="#emblems">One emblem each?</a>
   <a href="#spread">Ideas against things</a>
+  <a href="#words">Beyond nouns</a>
   <a href="#try">Draw one yourself</a>
   <a href="#method">How we measured</a>
 </nav>
+
+<!-- God under damage: Stable Diffusion XL (open), not Muse Image (closed, can't be damaged). docs/plato_ideas_damage.md -->
+<section class="iv-sec iv-dmg" id="damage" aria-labelledby="damage-h" hidden>
+  <div class="iv-sec-head">
+    <p class="iv-kicker">Stable Diffusion XL, an open model · not Muse Image</p>
+    <h2 id="damage-h">God under damage</h2>
+    <p class="iv-sec-lede" id="damage-lede">Muse Image is closed, so it can’t be damaged. To see how an AI’s idea of God changes when the AI is damaged, we used an open image model, Stable Diffusion XL, gave it the same prompt, and damaged it step by step, as we did for the chair. These pictures are Stable Diffusion XL’s, not Muse Image’s.</p>
+  </div>
+  <div class="iv-dmg-top">
+    <figure class="iv-dmg-fig" aria-labelledby="dmg-cap">
+      <div class="seg" role="group" aria-label="Kind of damage" id="dmg-method">
+        <button type="button" data-method="noise" aria-pressed="true">Noise in the neurons</button>
+        <button type="button" data-method="zero" aria-pressed="false">Neurons switched off</button>
+      </div>
+      <div class="iv-dmg-pair">
+        <div class="iv-dmg-panel lang">
+          <h3>Words part damaged</h3>
+          <p class="iv-dmg-sub">its two text encoders</p>
+          <div class="iv-dmg-frame"><img id="dmg-img-lang" alt="" width="320" height="320"></div>
+          <p class="iv-dmg-read" id="dmg-read-lang"></p>
+        </div>
+        <div class="iv-dmg-panel draw">
+          <h3>Drawing part damaged</h3>
+          <p class="iv-dmg-sub">its image-making UNet</p>
+          <div class="iv-dmg-frame"><img id="dmg-img-draw" alt="" width="320" height="320"></div>
+          <p class="iv-dmg-read" id="dmg-read-draw"></p>
+        </div>
+      </div>
+      <div class="iv-dmg-range">
+        <label for="dmg-level">Damage</label>
+        <input type="range" id="dmg-level" min="0" max="5" step="1" value="0" aria-valuetext="intact">
+        <output id="dmg-level-out" for="dmg-level">intact</output>
+      </div>
+      <figcaption class="iv-cap" id="dmg-cap">Stable Diffusion XL (Stability AI), not Muse Image. The same prompt and the same starting noise at every level, so each step shows what the damage did to this one picture.</figcaption>
+    </figure>
+    <div class="iv-dmg-side">
+      <p class="iv-dmg-answer" id="dmg-answer"></p>
+      <div class="iv-dmg-verdicts" id="dmg-verdicts"></div>
+    </div>
+  </div>
+  <div class="iv-sec-head">
+    <h3 class="iv-h3">What survives, step by step, in all <span id="dmg-n">16</span> of its drawings of God</h3>
+  </div>
+  <div class="iv-legend" id="dmg-legend"></div>
+  <div class="iv-dmg-charts" id="dmg-charts"></div>
+  <p class="iv-cap" id="dmg-charts-cap"></p>
+  <details class="iv-numbers"><summary>The numbers</summary><div class="iv-table-wrap"><table id="dmg-table"></table></div></details>
+  <div class="iv-sec-head">
+    <h3 class="iv-h3">The other ideas, and the words</h3>
+    <p class="iv-dmg-note" id="dmg-others-lede"></p>
+  </div>
+  <div class="iv-dmg-others" id="dmg-others"></div>
+  <p class="iv-cap" id="dmg-others-cap"></p>
+</section>
 
 <section class="iv-sec iv-people" id="people" aria-labelledby="people-h">
   <div class="iv-sec-head">
@@ -90,6 +146,15 @@
   <div class="iv-legend" id="spread-legend"></div>
   <div class="iv-chart" id="spread-chart"></div>
   <p class="iv-cap" id="spread-cap"></p>
+</section>
+
+<section class="iv-sec" id="words" aria-labelledby="words-h" hidden>
+  <div class="iv-sec-head">
+    <h2 id="words-h">Beyond nouns</h2>
+    <p class="iv-sec-lede" id="words-lede">…</p>
+  </div>
+  <div class="iv-grid" id="words-grid"></div>
+  <p class="iv-cap" id="words-cap"></p>
 </section>
 
 <section class="iv-sec iv-try" id="try" aria-labelledby="try-h">
