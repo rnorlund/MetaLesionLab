@@ -1,0 +1,143 @@
+/* The first screen of six series pages (/plato/cave, cratylus, bird, damage, telephone, lifespan), in the same family
+   as /plato/inside, forms, atlas and scale: plato_firstlook.css lays out the card (.fl) and FirstLook.render draws the
+   numbers (statviz.js), so all ten read alike. The question, one picture of the experiment's own material, the answer
+   in one sentence, at most three numbers drawn as small graphics, each with its qualifier, and a note; then, in the
+   same card, the epigraph and the longer introduction.
+
+   These six pictures are taller than the first four's, so on a wide window the numbers and the note sit beside the
+   picture, under the answer (.fl-side), and everything fits a 1280 x 800 window. A planned prediction's verdict leads
+   its number's qualifier (.fl-verdict). Colours are the site's tokens only; line art sits on paper (--paper). Loaded
+   after plato_firstlook.css. */
+@media (min-width: 960px) {
+  .fl.fl-side {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+    grid-template-rows: auto auto auto auto 1fr auto;
+    grid-template-areas: "title visual" "answer visual" "stats visual" "note visual" ". visual" "quote ctx";
+    row-gap: clamp(14px, 1.2vw, 30px);
+  }
+  .fl.fl-side .fl-stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(14px, 1.3vw, 34px); }
+  .fl.fl-side .fl-note { max-width: 62ch; }
+}
+.fl-side .fl-stat .sv { --sv-cell: clamp(10px, calc(5px + 0.45vw), 18px); }  /* three numbers share the narrower column */
+.fl-side .fl-stat .sv-num { font-size: clamp(26px, calc(14px + 1.3vw), 56px); }
+.fl-side .fl-stat .sv-unit { font-size: clamp(13px, calc(8px + 0.45vw), 22px); }
+.fl-side .fl-stat .sv-cap { max-width: 32ch; }
+.fl-side .fl-answer b { font-weight: 750; }
+
+/* How a planned prediction came out, at the head of its number's qualifier. */
+.fl-verdict { display: inline-block; margin: 0 0.25em 0.25em 0; padding: 0 8px; border: 1px solid currentColor; border-radius: 999px;
+  font-weight: 600; line-height: 1.55; color: var(--ink-2); }
+.fl-verdict.yes { color: var(--green); }
+.fl-verdict.no { color: var(--orange); }
+
+@media (max-width: 600px) {
+  .fl.fl-side .fl-stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: 16px; }
+}
+
+/* --- /plato/damage: the slider stays the picture; three clocks in a column beside it ------------------------------ */
+.pd-visual { display: grid; grid-template-columns: minmax(0, 1fr) clamp(92px, 8.5vw, 220px); gap: clamp(12px, 1.2vw, 28px); align-items: start; }
+.pd-heroclocks { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.pd-heroclocks-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(6px, 0.6vw, 14px); }
+@media (max-width: 900px) {
+  .pd-visual { grid-template-columns: minmax(0, 1fr); }
+  .pd-heroclocks-row { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 420px; }
+}
+.pd-heroclock { margin: 0; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pd-heroclock img { width: 100%; height: auto; aspect-ratio: 1; display: block; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--paper, #fbfaf5); }
+.pd-heroclock figcaption { display: flex; flex-direction: column; font-size: 12px; line-height: 1.3; color: var(--muted); }
+.pd-heroclock figcaption b { font-weight: 600; color: var(--ink-2); }
+.pd-heroclock.lang img { box-shadow: inset 0 -3px 0 var(--blue); }
+.pd-heroclock.draw img { box-shadow: inset 0 -3px 0 var(--orange); }
+
+/* --- /plato/cave: shadows beside the drawings that cast them, on the dark, firelit wall -------------------------
+   The wall stays dark in either theme, so its words and numbers take the wall's own light text colour: the ink tokens
+   are re-pointed at currentColor here, and statviz draws in it. */
+/* The page links plato_firstlook.css before plato_cave.css, so the wall's own colours win over the card's; these
+   keep the card's layout. */
+.fl.cv-hero { align-items: start; gap: var(--fl-gap) clamp(24px, 3vw, 84px); padding: clamp(18px, 2.2vw, 56px); border-color: transparent; }
+@media (max-width: 959px) { .fl.cv-hero { grid-template-columns: minmax(0, 1fr); } }
+.cv-hero {
+  --ink: currentColor;
+  --ink-2: color-mix(in srgb, currentColor 90%, transparent);
+  --muted: color-mix(in srgb, currentColor 74%, transparent);
+  --line: color-mix(in srgb, currentColor 20%, transparent);
+  --line-2: color-mix(in srgb, currentColor 42%, transparent);
+}
+.cv-pairs-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.1vw, 28px); }
+.cv-pair { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cv-pair-pics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; border-radius: 10px; overflow: hidden; }
+.cv-pair-pics img { width: 100%; height: auto; aspect-ratio: 1; display: block; object-fit: cover; }
+.cv-pair-pics img.orig { background: var(--paper, #fbfaf5); }
+.cv-pair figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 10px;
+  font-size: var(--fs-sm); line-height: 1.35; }
+.cv-pair .said q { font-weight: 600; font-size: 1.12em; }
+.cv-pair .was { color: var(--muted); }
+.cv-pair.no .was { font-weight: 600; color: var(--ink-2); }
+.cv-wall { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cv-wall img { width: 100%; height: auto; display: block; border-radius: 12px; }
+@media (min-width: 1500px) {
+  .cv-pairs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* --- /plato/bird: everyone's answers as one bar each (a piece per bird, as wide as its share), then the sparrows -- */
+.pb-hero-fig { gap: clamp(10px, 0.9vw, 20px); }
+.pb-shares { display: flex; flex-direction: column; gap: clamp(10px, 0.8vw, 18px); }
+.pb-share { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.pb-share-h { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 0 6px; font-size: var(--fs-sm); color: var(--muted); }
+.pb-share-h b { color: var(--ink); font-weight: 600; }
+.pb-share-h .key { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+.pb-share-bar { display: flex; gap: 2px; height: clamp(26px, calc(14px + 1vw), 44px); border-radius: 6px; overflow: hidden;
+  container-type: inline-size; }
+.pb-share-bar .pb-piece { flex: 1 1 0; min-width: 3px; display: flex; align-items: center; padding: 0 6px; overflow: hidden; }
+.pb-share-bar .lab { font-size: clamp(11px, calc(8px + 0.3vw), 16px); font-weight: 600; white-space: nowrap; color: var(--panel); }
+.pb-share-bar .pb-piece.other .lab { color: var(--ink); }
+@container (max-width: 640px) { .pb-share-bar .lab.sm { display: none; } }
+@container (max-width: 480px) { .pb-share-bar .lab.mid { display: none; } }
+.pb-share.people .pb-piece, .pb-share.people .key { background: var(--people, var(--orange)); }
+.pb-share.spark .pb-piece, .pb-share.spark .key { background: var(--spark, var(--blue)); }
+.pb-share.glimmer .pb-piece, .pb-share.glimmer .key { background: var(--glimmer, var(--green)); }
+.pb-share .pb-share-bar .pb-piece.other { background: var(--axis, var(--line-2)); }
+.pb-hero .pb-drawn img { max-width: min(100%, 1000px); }
+
+/* --- /plato/cratylus: the wall of bouba, kiki and keti, kept within the window's height ------------------------- */
+.ck-wall { align-items: flex-start; }
+.ck-hero .ck-wall img { width: auto; max-width: 100%; max-height: max(440px, calc(100vh - 260px)); }
+
+/* --- /plato/telephone: two chains drifting, every second copy; the high chair beside Muse's textbook chair ------- */
+.tp-drift { gap: clamp(10px, 1vw, 22px); }
+.tp-drift-rows { display: flex; flex-direction: column; gap: clamp(14px, 1.3vw, 30px); }
+.tp-drift-row { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tp-drift-h { margin: 0; font-size: var(--fs-sm); line-height: 1.4; color: var(--muted); }
+.tp-drift-h b { color: var(--ink); font-size: 1.08em; }
+.tp-drift-frames { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(4px, 0.4vw, 10px); }
+.tp-drift-frames figure { margin: 0; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.tp-drift-frames .frame, .tp-drift-frames img { width: 100%; aspect-ratio: 1; display: block; border-radius: 8px;
+  border: 1px solid var(--line); background-color: var(--paper, #fbfaf5); background-size: 1100% 100%; background-repeat: no-repeat; }
+.tp-drift-frames figcaption { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; white-space: nowrap; }
+.tp-drift-frames figure.ref { position: relative; padding-left: clamp(4px, 0.4vw, 10px); border-left: 2px dotted var(--line-2); }
+.tp-drift-frames figure.ref img { height: auto; border-color: var(--ink-2); }
+.tp-drift-frames figure.ref figcaption { font-family: var(--sans); font-weight: 600; color: var(--ink-2); white-space: normal; line-height: 1.2; }
+.tp-drift-said { margin: 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); }
+.tp-drift-said span { color: var(--muted); }
+.tp-allchains .tp-lede { max-width: var(--measure); }
+@media (max-width: 560px) {
+  .tp-drift-frames { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 8px; }
+  .tp-drift-frames figure.ref { padding-left: 0; border-left: 0; }
+}
+
+/* --- /plato/telephone and /plato/lifespan: the short-answer list now sits in the section below the first screen -- */
+.tp-answer h3, .ls-answer h3 { margin: 0 0 8px; font-size: clamp(18px, calc(12px + 0.45vw), 24px); }
+.tp-allchains, .ls-grow { gap: 18px; }
+
+/* --- /plato/lifespan: who draws a chair, and how (people, Muse Image, Stable Diffusion's first and last stage) --- */
+.ls-who-rows { display: flex; flex-direction: column; gap: clamp(8px, 0.8vw, 18px); }
+.ls-who-row { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ls-who-row figcaption { display: flex; align-items: center; flex-wrap: wrap; gap: 0 6px; font-size: var(--fs-sm); color: var(--muted); }
+.ls-who-row figcaption b { color: var(--ink); font-weight: 600; }
+.ls-who-row .key { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.ls-who-row.people .key { background: var(--people, var(--orange)); }
+.ls-who-row.muse .key { background: var(--muse, var(--blue)); }
+.ls-who-row.sd .key { background: var(--sd, var(--green)); }
+.ls-who-row img { width: 100%; max-width: 1218px; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--paper, #fbfaf5); }

@@ -34,6 +34,67 @@
   function defaultName(s) { return s.concept === 'chair' ? 'default chair' : s.concept === 'hat' ? 'default hat' : 'default clock'; }
   function kindName(s) { return s.label.replace(/ chair$/, '').replace(/^Adirondack$/, 'Adirondack'); }
 
+  // ---------- the first screen: two chains drifting, and three numbers drawn (FirstLook, statviz.js) ----------
+  var HERO_GENS = [0, 2, 4, 6, 8, 10];
+  function firstClause(t) {  // "A rough black-ink sketch of a semicircular fanlight window" from Spark's whole description
+    var s = String(t || ''), cut = s.indexOf(',', 30);
+    return cut > 0 && cut < 110 ? s.slice(0, cut) + ' …' : s.length > 110 ? s.slice(0, 108) + ' …' : s;
+  }
+
+  function renderHero() {
+    var box = document.getElementById('hero-chains');
+    box.innerHTML = '';
+    var st = D.striking || {};
+    [['farthest_from_start', 'drifted farthest from where it started'], ['most_drift_to_form', 'fell into Muse’s textbook chair']].forEach(function (pick) {
+      var p = st[pick[0]], s = p && seedOf(p.seed), ch = p && chainOf(p.seed, p.chain);
+      if (!s || !ch) return;
+      var src = D.sprites[p.seed + '_c' + p.chain];
+      var frames = HERO_GENS.map(function (g) {
+        var f = h('div', { class: 'frame' });
+        f.style.backgroundImage = 'url(' + src + ')';
+        f.style.backgroundPosition = (g * 10) + '% 0';
+        return h('figure', null, [f, h('figcaption', null, g === 0 ? 'start' : 'copy ' + g)]);
+      });
+      var fell = pick[0] === 'most_drift_to_form' && ch.d_proto[N - 1] < 2 * D.reference.floor[s.concept];
+      if (s.concept === 'chair') {  // the yardstick at the end of each row: Muse's own default chair
+        frames.push(h('figure', { class: 'ref' }, [h('img', { src: '/static/img/plato_telephone/default_chair.webp', width: 176, height: 176,
+          alt: 'Muse Image’s textbook chair, for comparison' }), h('figcaption', null, 'textbook chair')]));
+      }
+      var last = ch.descriptions[N - 1];
+      box.appendChild(h('div', { class: 'tp-drift-row' + (fell ? ' fell' : '') }, [
+        h('p', { class: 'tp-drift-h' }, [h('b', null, s.label.charAt(0).toUpperCase() + s.label.slice(1)),
+          ' ' + (pick[0] === 'most_drift_to_form' && !fell ? 'moved closest to Muse’s textbook chair' : pick[1]) +
+          ' · distance to the textbook chair ' + f2(ch.d_proto[0]) + ' → ' + f2(ch.d_proto[N - 1])]),
+        h('div', { class: 'tp-drift-frames', role: 'img', 'aria-label': 'Chain ' + (p.chain + 1) + ' from ' + s.kind +
+          ': the start and every second copy, beside Muse Image’s textbook chair.  Spark’s last description: ' + (last || '') }, frames),
+        last ? h('p', { class: 'tp-drift-said' }, [h('span', null, 'Spark, copy 10: '), h('q', null, firstClause(last))]) : null
+      ]));
+    });
+    if (!window.FirstLook) return;
+    var t1 = D.tests.P1_drift_to_form, t2 = D.tests.P2_convergence, t3 = D.tests.P3_kind_first;
+    var cc = D.chains.filter(function (c) { return !seedOf(c.seed).control; });
+    var away = cc.filter(function (c) { return c.d_proto[N - 1] > c.d_proto[0]; }).length;
+    var apart = t2.change.ci95[0] > 0, k = t3.first_loss_kind.mean, c = t3.first_loss_category.mean;
+    window.FirstLook.render(document.getElementById('hero-stats'), { stats: [
+      { kind: 'dots', verdict: t1.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { k: away, n: cc.length, cols: 8, tone: 'blue', label: 'chair chains ended farther from the textbook chair than they started',
+          alt: away + ' of ' + cc.length + ' chains from the 8 starting chairs ended farther from Muse’s textbook chair than they started.' },
+        q: 'On average ' + f2(t1.g0) + ' → ' + f2(t1.g10) + ', change ' + signed(t1.change.mean, f2) + ' ' + ciTxt(t1.change.ci95, f2) + ': no clear pull.' },
+      { kind: 'bars', verdict: t2.supported ? { tone: 'yes', text: 'As predicted' } : apart ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not supported' },
+        o: { values: [t2.g0, t2.g10], labels: ['start', 'copy 10'], tones: ['muted', 'blue'], digits: 2, value: f2(t2.g10), unit: 'from ' + f2(t2.g0),
+          label: 'apart, chains from different chairs: they spread out, not together',
+          alt: 'The distance between chains from different starting chairs went from ' + f2(t2.g0) + ' at the start to ' + f2(t2.g10) + ' after ten copies.' },
+        q: 'Change ' + signed(t2.change.mean, f2) + ' ' + ciTxt(t2.change.ci95, f2) + '. Chains of one chair end ' + f2(t2.within_g10.mean) + ' apart.' },
+      { kind: 'bars', verdict: t3.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'part', text: 'Not supported' },
+        o: { values: [k, c], labels: ['the kind', '“chair”'], tones: ['blue', 'orange'], max: N, digits: 1, value: k.toFixed(1) + ' vs ' + c.toFixed(1), unit: '',
+          label: 'copies until Spark first dropped the name (11 = never)',
+          alt: 'Spark’s descriptions first dropped the kind’s name at copy ' + k.toFixed(1) + ' on average, and the word chair at ' + c.toFixed(1) + '.' },
+        q: 'Difference ' + signed(t3.difference.mean, f2) + ' copies ' + ciTxt(t3.difference.ci95, f2) + ', ' + cc.length + ' chains.' }
+    ] });
+    document.getElementById('hero-qual').textContent = 'Spark’s sentence is the bottleneck: what it doesn’t say can’t survive. Eight starting chairs and two controls, ' +
+      'three chains each, one describing and one drawing prompt.';
+  }
+
   // ---------- the chain rows ----------
   var rows = [];
 
@@ -408,6 +469,7 @@
     if (q) gen = Math.min(N - 1, +q[1]);
     var qc = /(?:^|[#&])chain=([123])/.exec(location.hash);
     if (qc) chain = +qc[1] - 1;
+    renderHero();  // the first screen first
     buildPlayer();
     buildRows();
     updateRows();

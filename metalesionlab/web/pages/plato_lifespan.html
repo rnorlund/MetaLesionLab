@@ -13,6 +13,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_lifespan.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
+<link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="ls">
 <a class="skip" href="#main">Skip to content</a>
@@ -21,15 +24,44 @@
 
 <main id="main" tabindex="-1">
 
-<section class="ls-hero" aria-labelledby="hero-h">
-  <div class="ls-hero-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is learning remembering the Forms? · <i>Meno</i> · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">The life of a chair</h1>
-    </div>
-    <!--#epigraph:meno-85c-->
-    <p class="ls-lede">In Plato’s <i>Meno</i>, Socrates argues that learning is remembering the Forms. If so, a child growing up and an AI being trained should both walk toward the same chair. Slide from age 2 to the AI and watch the chair grow up.</p>
+<section class="fl fl-side ls-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is learning remembering the Forms? · <i>Meno</i> · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">The life of a chair</h1>
   </div>
+  <!--#epigraph:meno-85c-->
+  <div class="fl-ctx">
+    <p>In Plato’s <i>Meno</i>, Socrates argues that learning is remembering the Forms. If so, a child growing up and an AI being trained should both walk toward the same chair.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Children’s chairs grow more like adults’ as they get older; Stable Diffusion starts out grown up and never gets closer to the chairs people draw.</p>
+  <figure class="fl-visual ls-who" aria-labelledby="who-cap">
+    <div class="ls-who-rows" id="hero-who">
+      <figure class="ls-who-row people"><figcaption><span class="key" aria-hidden="true"></span><b>People</b> <span>adults’ 20-second doodles (Quick, Draw!)</span></figcaption>
+        <img src="/static/img/plato_lifespan/chair_adults.webp" width="812" height="132" alt="Six adults’ chairs from Quick, Draw!: a few quick strokes each, a seat, a back and legs."></figure>
+      <figure class="ls-who-row muse"><figcaption><span class="key" aria-hidden="true"></span><b>Muse Image</b> <span>asked for a quick doodle</span></figcaption>
+        <img src="/static/img/plato_lifespan/chair_muse.webp" width="812" height="132" alt="Six of Muse Image’s chair doodles: the same slat-back chair every time."></figure>
+      <figure class="ls-who-row sd"><figcaption><span class="key" aria-hidden="true"></span><b>Stable Diffusion v1.1</b> <span>its first public stage</span></figcaption>
+        <img src="/static/img/plato_lifespan/chair_sd_v11.webp" width="812" height="132" alt="Six chairs drawn by Stable Diffusion v1.1: shaded, photo-like marker pictures of different chairs."></figure>
+      <figure class="ls-who-row sd"><figcaption><span class="key" aria-hidden="true"></span><b>Stable Diffusion v1.5</b> <span>after more training, the same six seeds</span></figcaption>
+        <img src="/static/img/plato_lifespan/chair_sd_v15.webp" width="812" height="132" alt="Six chairs drawn by Stable Diffusion v1.5 from the same six seeds: still shaded, photo-like pictures."></figure>
+    </div>
+    <figcaption class="fl-cap" id="who-cap">Who draws a chair, and how. Children’s drawings are never shown: they are licensed for non-commercial use, and they are children’s.</figcaption>
+  </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Two numbers from the experiment"></div>
+  <p class="fl-note" id="hero-qual">Means over 20 things. The conditions differ (a fingertip at a museum kiosk, a 20-second online game, generated pictures), so the AI’s distance to people’s drawings is largely drawing style.</p>
+</section>
+
+<nav class="ls-jump" aria-label="On this page">
+  <a href="#grow">Watch the chair grow up</a>
+  <a href="#paths">Two roads to the Form</a>
+  <a href="#curves">Curves with error bars</a>
+  <a href="#learn">Watch an AI learn what a chair is</a>
+  <a href="#method">Method and caveats</a>
+</nav>
+
+<section class="ls-sec ls-grow" id="grow" aria-labelledby="grow-h">
+  <h2 id="grow-h">Watch the chair grow up</h2>
+  <p class="ls-lede">Slide from age 2 to the AI and watch the chair grow up: how recognizable the drawings are, how far they sit from the adult chair, and how varied they are, at every stage of life.</p>
 
   <div class="ls-timeline" id="timeline">
     <div class="ls-controls">
@@ -50,17 +82,10 @@
   </div>
 
   <div class="ls-answer" id="answer">
-    <h2>Short answer</h2>
+    <h3>Short answer</h3>
     <ul id="answer-list"><li>Loading the results…</li></ul>
   </div>
 </section>
-
-<nav class="ls-jump" aria-label="On this page">
-  <a href="#paths">Two roads to the Form</a>
-  <a href="#curves">Curves with error bars</a>
-  <a href="#learn">Watch an AI learn what a chair is</a>
-  <a href="#method">Method and caveats</a>
-</nav>
 
 <section class="ls-sec" id="paths" aria-labelledby="paths-h">
   <h2 id="paths-h">Two roads to the Form</h2>
@@ -169,6 +194,9 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
+<script src="/static/js/plato_lifespan_lead.js"></script>
 <script src="/static/js/plato_lifespan.js"></script>
 </body>
 </html>

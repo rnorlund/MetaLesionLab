@@ -2,6 +2,9 @@
    lays them out). Each page's numbers are worked out here from the page's own data (the JSON its /api route
    returns), at most three, each drawn as a small graphic with its honest qualifier in a smaller line.
 
+   The other six series pages (cave, cratylus, bird, damage, telephone, lifespan) build their own {stats, note} in their
+   page scripts and draw them with FirstLook.render, so all ten first screens share one look (plato_firstscreen.css).
+
    FirstLook.inside(data), .forms(data), .atlas(data) and .scale(data) return {stats: [{kind, o, q}], note}: kind is a
    statviz kind (dots, spread, bars) or one drawn here, o its options, q the qualifier. FirstLook.html(spec) is one
    graphic's markup and FirstLook.render(box, page) puts a page's numbers in box. All of it but render is pure
@@ -118,9 +121,11 @@
     return frame(o.value != null ? o.value : (o.k != null ? o.k + ' of ' + o.n : ''), '', '', o.label);
   }
 
+  // spec.verdict (optional, {tone: 'yes' | 'no' | 'part', text}) leads the qualifier: how a planned prediction came out.
   function figure(spec) {
+    var v = spec.verdict ? '<span class="fl-verdict ' + esc(spec.verdict.tone) + '">' + esc(spec.verdict.text) + '</span> ' : '';
     return '<figure class="fl-stat"><div class="sv sv-' + spec.kind + '" data-sv-done="1">' + html(spec) + '</div>' +
-      '<figcaption class="fl-q">' + esc(spec.q) + '</figcaption></figure>';
+      '<figcaption class="fl-q">' + v + esc(spec.q) + '</figcaption></figure>';
   }
 
   function render(box, page) {

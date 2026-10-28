@@ -69,28 +69,75 @@
     el.appendChild(panel('glimmer', 'Muse Glimmer', '50 samples at temperature 1', t['glimmer_T1.0']));
   }
 
-  // ---------- hero ----------
+  // ---------- the first screen: everyone's answers as one bar each, and three numbers drawn (FirstLook) ----------
+  function shareBar(kind, title, meta, table) {
+    var rows = (table || []).slice().sort(function (a, b) {
+      var ao = a[0] === '(other)' ? 1 : 0, bo = b[0] === '(other)' ? 1 : 0;
+      return ao - bo || b[1] - a[1];
+    });
+    var total = rows.reduce(function (a, r) { return a + r[1]; }, 0) || 1;
+    var named = rows.filter(function (r) { return r[0] !== '(other)'; }).length;
+    var said = rows.map(function (r) { return (r[0] === '(other)' ? 'other answers' : r[0]) + ' ' + r[1]; }).join(', ');
+    var bar = h('div', { class: 'pb-share-bar', role: 'img', 'aria-label': title + ', ' + total + ' answers: ' + said });
+    rows.forEach(function (r) {
+      var share = r[1] / total, other = r[0] === '(other)';
+      var seg = h('span', { class: 'pb-piece' + (other ? ' other' : ''), title: (other ? 'Other answers' : cap(r[0])) + ': ' + r[1] + ' of ' + total });
+      seg.style.flexGrow = String(r[1]);
+      // a name only where it fits: the narrower the bar, the fewer pieces are named (plato_firstscreen.css); the title has every one
+      if (share >= 0.1) seg.appendChild(h('span', { class: 'lab' + (share < 0.15 ? ' sm' : share < 0.3 ? ' mid' : ''),
+        text: (other ? 'other' : r[0]) + (share >= 0.5 ? ' ×' + r[1] : '') }));
+      bar.appendChild(seg);
+    });
+    return h('div', { class: 'pb-share ' + kind }, [
+      h('p', { class: 'pb-share-h' }, [h('span', { class: 'key', 'aria-hidden': 'true' }), h('b', { text: title }),
+        h('span', { text: ' ' + meta + ' · ' + named + (named === 1 ? ' answer' : ' different') })]),
+      bar]);
+  }
   function hero() {
-    var bird = BY.bird, s = D.summary.spark.dominance;
-    trio(document.getElementById('hero-trio'), bird);
-    var people = bird.tables.human_first, spark = bird.tables.spark;
-    var nDistinct = bird.human.distinct;
-    var sTop = spark[0];
-    document.getElementById('hero-lede').textContent = 'Ask ' + bird.n_human + ' people to name a bird and you get ' +
-      nDistinct + ' different birds. Ask Meta’s Muse Spark 50 times and you get “' + sTop[0] + '” ' + sTop[1] + ' times.';
-    document.getElementById('stat-num').textContent = pct(s.ai_mean.mean);
-    document.getElementById('stat-text').textContent = 'Across ' + s.n + ' categories, Muse Spark’s favourite answer takes ' +
-      pct(s.ai_mean.mean) + ' of its answers. People’s favourite takes ' + pct(s.human_mean.mean) + '.';
-    var g = D.summary.glimmer_logits.dominance;
-    document.getElementById('stat-sub').textContent = 'Spark is more stuck than people in ' + s.n_ai_higher + ' of ' + s.n +
-      ' categories. Meta’s open model, Muse Glimmer, is not: its own probabilities are about as spread as people’s answers (' +
-      pct(g.ai_mean.mean) + ').';
+    var bird = BY.bird, s = D.summary.spark.dominance, g = D.summary.glimmer_logits.dominance;
+    var spark = bird.tables.spark, sTop = spark[0], nSpark = spark.reduce(function (a, r) { return a + r[1]; }, 0);
+    document.getElementById('hero-answer').textContent = 'Ask Meta’s Muse Spark to name a bird and it says “' + sTop[0] + '” ' + sTop[1] +
+      ' times out of ' + nSpark + '; ask ' + bird.n_human + ' people and you get ' + bird.human.distinct + ' different birds.';
+    var sh = document.getElementById('hero-shares');
+    sh.innerHTML = '';
+    sh.appendChild(shareBar('people', 'People', bird.n_human + ' UK adults', bird.tables.human_first));
+    sh.appendChild(shareBar('spark', 'Muse Spark', nSpark + ' calls', spark));
+    if (bird.tables['glimmer_T1.0']) sh.appendChild(shareBar('glimmer', 'Muse Glimmer', '50 samples', bird.tables['glimmer_T1.0']));
     var pic = (D.pictures || {}).bird;
     if (pic && pic.spark) {
       document.getElementById('hero-drawn-cap').textContent = 'And when Muse Image draws “a bird”, 12 times: the same little songbird (' +
         pic.spark.top_count + ' read as a ' + pic.spark.top[0] + ').';
     }
-    void people;
+    if (!window.FirstLook) return;
+    var ai = Math.round(100 * s.ai_mean.mean), hu = Math.round(100 * s.human_mean.mean);
+    var gt = (D.summary['glimmer_T1.0'] || {}).dominance, gl = gt ? Math.round(100 * gt.ai_mean.mean) : null;
+    // the planned prediction: the AI's favourite answer takes a larger share than people's, for Spark and for Glimmer at T = 1
+    var sparkYes = s.diff.ci95[0] > 0, glimYes = gt ? gt.diff.ci95[0] > 0 : null;
+    var stats = [
+      { kind: 'bars', verdict: sparkYes && glimYes === false ? { tone: 'part', text: 'Partly: Glimmer no' } :
+          sparkYes ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { values: gl == null ? [ai, hu] : [ai, hu, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['blue', 'orange', 'green'], max: 100,
+          value: ai + '%', unit: 'vs ' + hu + '%', label: 'of answers go to the favourite one, over ' + s.n + ' categories',
+          alt: 'Across ' + s.n + ' categories, Muse Spark’s favourite answer takes ' + ai + '% of its answers; people’s favourite takes ' + hu + '%' +
+            (gl == null ? '.' : '; Muse Glimmer’s, sampled at temperature 1, ' + gl + '%.') },
+        q: 'At people’s sample size.' + (gt ? ' Glimmer at temperature 1: ' +
+          (gt.diff.ci95[0] <= 0 && gt.diff.ci95[1] >= 0 ? 'as varied as people.' : gt.diff.mean > 0 ? 'more stuck than people.' : 'more varied than people.') : '') },
+      { kind: 'dots',
+        o: { k: s.n_ai_higher, n: s.n, tone: 'blue', cols: 18, label: 'categories where Muse Spark repeats itself more than people do',
+          alt: 'Muse Spark is more stuck on one answer than people in ' + s.n_ai_higher + ' of ' + s.n + ' categories.' },
+        q: 'People were the more stuck in ' + s.n_ai_lower + '.' + (s.abstract_minus_concrete && s.abstract_minus_concrete.ci95[0] <= 0 &&
+          s.abstract_minus_concrete.ci95[1] >= 0 ? ' Abstract or concrete: no difference, against our plan.' : '') }
+    ];
+    if (pic && pic.spark) {
+      var nPics = (pic.spark.labels || []).length || 12;
+      stats.push({ kind: 'dots',
+        o: { k: pic.spark.top_count, n: nPics, tone: 'ink', cols: 6, label: 'of Muse Image’s ' + nPics + ' birds read as a ' + pic.spark.top[0],
+          alt: pic.spark.top_count + ' of the ' + nPics + ' birds Muse Image drew read as a ' + pic.spark.top[0] + '.' },
+        q: 'Read by Muse Spark; the rest are the same small songbird.' });
+    }
+    window.FirstLook.render(document.getElementById('hero-stats'), { stats: stats });
+    document.getElementById('hero-qual').textContent = 'Muse Glimmer’s own probabilities are about as spread as people’s answers too (' + pct(g.ai_mean.mean) +
+      ' on the favourite). Spark answered once per call at its default settings; people named birds aloud for a minute and we kept their first.';
   }
 
   // ---------- pick a category ----------

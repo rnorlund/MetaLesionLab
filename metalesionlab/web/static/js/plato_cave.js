@@ -1,4 +1,4 @@
-/* Plato's Cave: tiles, the "Name the shadow" game (all in the browser, nothing stored), accuracy by version,
+/* Plato's Cave: the first screen (shadows beside their drawings, three numbers), the "Name the shadow" game (all in the browser, nothing stored), accuracy by version,
    what the AI says instead, the comparison with people and the word lens. Data: /api/plato/cave (statistics
    and the AI's own answers only); no API calls. */
 (function () {
@@ -44,21 +44,53 @@
   }
   function hideTip(wrap) { var t = wrap.querySelector('.cv-tip'); if (t) t.hidden = true; }
 
-  // --- hero tiles ----------------------------------------------------------------------------
-  function tiles() {
-    var box = $('tiles');
+  // --- the first screen: shadows beside the drawings that cast them, and three numbers drawn (FirstLook) ---------
+  var PAIRS = ['rabbit', 'anchor', 'hat', 'bicycle', 'guitar', 'glove'];  // four misses and two hits, as on the wall
+  function heroPairs() {
+    var box = $('hero-pairs');
     box.innerHTML = '';
-    VERSIONS.forEach(function (v) {
-      var a = D.accuracy[v];
-      box.appendChild(h('div', { class: 'cv-tile' + (v === 'shadow' ? ' em' : '') }, [
-        h('b', { text: pct(a.accuracy) + '%' }),
-        h('span', { text: LABEL[v] + (v === 'original' ? ': the drawing' : '') }),
-        h('small', { text: v === 'original' ? 'named correctly, 100 objects' : '95% CI ' + pctCi(a.ci95) })
+    PAIRS.map(function (w) { return D.game.filter(function (g) { return g.word === w; })[0]; }).filter(Boolean).forEach(function (item) {
+      var g = item.glimmer.shadow, ok = g.code === 'Correct';
+      box.appendChild(h('figure', { class: 'cv-pair ' + (ok ? 'ok' : 'no') }, [
+        h('div', { class: 'cv-pair-pics' }, [
+          h('img', { src: IMG + item.shadow_img, width: 320, height: 320, alt: 'The shadow of ' + article(item.word) }),
+          h('img', { class: 'orig', src: IMG + item.original_img, width: 320, height: 320, alt: 'The drawing that cast it: ' + article(item.word) })
+        ]),
+        h('figcaption', {}, [h('span', { class: 'said' }, ['Glimmer: ', h('q', { text: g.said })]),
+          h('span', { class: 'was', text: ok ? '✓ right' : '✗ it was ' + article(item.word) })])
       ]));
     });
-    var m = D.medium_answers.shadow;
-    $('hero-answer').textContent = 'It named ' + pct(D.accuracy.shadow.accuracy) + ' of 100 shadows. When it failed, its most common answer was simply “Shadow” (' +
-      m.just_shadow + ' times), then “UFO” (' + m.ufo + ').';
+  }
+  function hero() {
+    var a = D.accuracy, m = D.medium_answers.shadow, e = D.errors.shadow, hs = D.human.silhouette, sh = a.shadow;
+    var named = Math.round(sh.accuracy * sh.n);
+    $('hero-answer').textContent = 'It named ' + named + ' of ' + sh.n + ' shadows, and when it failed, its favorite answer was simply the word “Shadow”.';
+    heroPairs();
+    if (!window.FirstLook) return;
+    // planned: drawing > outline ≈ silhouette > shadow, the silhouette at least 15 points below the drawing
+    var order = a.original.accuracy >= Math.max(a.outline.accuracy, a.silhouette.accuracy) &&
+      Math.min(a.outline.accuracy, a.silhouette.accuracy) > sh.accuracy;
+    var gap = Math.round(-a.silhouette.diff_vs_original * 100), r = hs.rho_correct;
+    var ai = pct(hs.ai_accuracy_on_shared), pp = pct(hs.people_mean_on_shared);
+    window.FirstLook.render($('hero-stats'), { stats: [
+      { kind: 'dots', verdict: order && gap >= 15 ? { tone: 'yes', text: 'As predicted' } : order ? { tone: 'part', text: 'Partly as predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { k: named, n: sh.n, cols: 10, tone: 'ink', label: 'cast shadows named correctly',
+          alt: 'Muse Glimmer named ' + named + ' of ' + sh.n + ' cast shadows correctly, and ' + pct(a.original.accuracy) + '% of the drawings.' },
+        q: 'Drawings ' + pct(a.original.accuracy) + '%, silhouettes ' + pct(a.silhouette.accuracy) + '%: ' + (!order ? 'not the planned order.' :
+          gap >= 15 ? 'the planned order.' : 'the planned order, but ' + gap + ' points down, not 15.') },
+      { kind: 'dots',
+        o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'of its wrong answers were just “Shadow”',
+          alt: m.just_shadow + ' of its ' + e.n_errors + ' wrong answers to cast shadows were just the word Shadow, and ' + m.ufo + ' were UFO.' },
+        q: m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' Never “Shadow” for a sharp silhouette.' : '') },
+      { kind: 'bars', verdict: r.ci95[0] > 0 ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { values: [ai, pp], labels: ['Glimmer', 'people'], tones: ['ink', 'orange'], max: 100, value: ai + '%', unit: 'vs ' + pp + '%',
+          label: 'silhouettes named, the same ' + D.human.n_shared_concepts + ' objects',
+          alt: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects: Muse Glimmer named ' + ai + '%, people ' + pp + '% (published, other drawings).' },
+        q: 'Hard for people, harder for the AI: rank correlation ' + r.rho.toFixed(2) + ' [' + r.ci95[0].toFixed(2) + ', ' + r.ci95[1].toFixed(2) + '].' }
+    ] });
+    $('hero-qual').textContent = 'People saw different drawings (Wagemans et al., 2008), so that comparison is by concept. One drawing per object, one prompt, ' +
+      'one way of casting the shadow' + (D.spark && D.spark.accuracy ? '; Muse Spark, a second model, named ' + pct(D.spark.accuracy.shadow.accuracy) + '% of its ' +
+      D.spark.n_items + ' shadows.' : '.');
   }
 
   // --- the game ------------------------------------------------------------------------------
@@ -295,7 +327,7 @@
   function init() {
     T.api('/api/plato/cave').then(function (d) {
       D = d;
-      tiles(); buildGame(); accuracyChart(); medium(); people(); lensChart(); credits();
+      hero(); buildGame(); accuracyChart(); medium(); people(); lensChart(); credits();
     }).catch(function (e) {
       var el = $('load-error');
       el.hidden = false;
