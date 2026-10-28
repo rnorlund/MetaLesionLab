@@ -23,8 +23,8 @@
 .bl-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; padding: 26px; align-items: center; }
 .bl-hero-text { display: flex; flex-direction: column; gap: 10px; }
 .bl-hero h1 { margin: 0; font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; line-height: 1.08; }
-.bl-lede { margin: 0; font-size: 18px; line-height: 1.55; color: var(--ink); font-weight: 500; }
-.bl-sub { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.bl-lede { margin: 0; max-width: var(--measure); font-size: clamp(18px, calc(13px + 0.4vw), 24px); line-height: 1.55; color: var(--ink); font-weight: 500; }
+.bl-sub { margin: 0; max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
 .bl-tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 .bl-tile { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 14px; align-items: baseline; background: var(--soft); }
 .bl-tile b { font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; }
@@ -36,7 +36,7 @@
 .bl-seg button { padding: 9px 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .bl-key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
 
-.bl-lede-sm { margin: -6px 0 12px; max-width: 860px; font-size: 14px; line-height: 1.55; }
+.bl-lede-sm { margin: -6px 0 12px; max-width: var(--measure); font-size: 14px; line-height: 1.55; }
 .bl-fig { margin: 0; }
 .bl-chart { position: relative; }
 .bl-chart svg { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--sans); touch-action: pan-y; }
@@ -71,7 +71,7 @@
 .bl-legend i.dot { width: 10px; height: 10px; border-radius: 50%; }
 .bl-legend i.band { width: 14px; height: 10px; border-radius: 2px; background: var(--c); opacity: 0.25; }
 .bl-legend i.gray { background: var(--bl-track); border: 1px solid var(--line-2); width: 14px; height: 10px; }
-.bl-note { margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-2); max-width: 900px; }
+.bl-note { margin: 12px 0 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
 .bl-note b { color: var(--ink); }
 
 .bl-site { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
@@ -85,7 +85,7 @@
 .bl-switch-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; align-items: center; }
 .bl-big { display: flex; flex-direction: column; gap: 6px; }
 .bl-big .hero-num { font-size: clamp(56px, 8vw, 80px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
-.bl-big p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink-2); max-width: 460px; }
+.bl-big p { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .bl-big p b { color: var(--ink); }
 .bl-big .ci { font-size: 13px; color: var(--muted); }
 .bl-meters { display: flex; flex-direction: column; gap: 14px; }

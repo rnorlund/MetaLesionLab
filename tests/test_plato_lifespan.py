@@ -168,6 +168,10 @@ def test_page_and_api_render():
     for path in ("/static/js/plato_lifespan.js", "/static/css/plato_lifespan.css",
                  "/static/img/plato_lifespan/chair_sd_v15.webp", "/static/img/plato/series/lifespan.webp"):
         assert c.get(path).status_code == 200
+    assert 'id="learn"' in r.text and "Watch an AI learn what a chair is" in r.text
+    if "sketch_seeds" in d:
+        for path in ("/static/img/plato_lifespan/sketch/learn_sprite.webp", "/static/img/plato_lifespan/sketch/stroke_order.json"):
+            assert c.get(path).status_code == 200
 
 
 def test_api_reports_missing_data(tmp_path, monkeypatch):
@@ -184,9 +188,34 @@ def test_api_reports_missing_data(tmp_path, monkeypatch):
 def test_page_static_files_stay_small_and_hold_no_childrens_drawings():
     from metalesionlab.web import app as web
 
-    imgs = list((web.HERE / "static" / "img" / "plato_lifespan").glob("*"))
+    folder = web.HERE / "static" / "img" / "plato_lifespan"
+    imgs = [f for f in folder.glob("*") if f.is_file()]
+    sketch = [f for f in (folder / "sketch").glob("*") if f.is_file()]
     files = [web.HERE / "static" / "js" / "plato_lifespan.js", web.HERE / "static" / "css" / "plato_lifespan.css",
              web.HERE / "static" / "img" / "plato" / "series" / "lifespan.webp", *imgs]
     assert sum(f.stat().st_size for f in files if f.exists()) < 1.5 * 1024 * 1024
+    assert sum(f.stat().st_size for f in sketch) < 1024 * 1024  # the time-lapse sprite and the stroke-order drawing
+    assert {p.name for p in folder.glob("*") if p.is_dir()} <= {"sketch"}
     # only Quick, Draw! (adults), Muse Image, Stable Diffusion and sketch-model pictures; never kiddraw
     assert all(f.name.startswith(("chair_adults", "chair_muse", "chair_sd_", "sketch_step")) for f in imgs)
+    assert all(f.name in ("learn_sprite.webp", "stroke_order.json") for f in sketch)
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_lifespan.json not written yet")
+def test_sketch_seeds_block_is_group_level_and_complete():
+    d = json.loads(PUBLIC.read_text()).get("sketch_seeds")
+    if d is None:
+        pytest.skip("no multi-seed sketch results yet")
+    from metalesionlab.plato_sketch import STEPS, TEMPS
+
+    assert d["steps"] == STEPS and d["temps"] == TEMPS and d["plan"] == "docs/plato_sketch_plan.md"
+    ch = d["concepts"]["chair"]
+    for t in TEMPS:
+        c = ch["curves"][f"t{t}"]
+        assert all(len(c[m]["mean"]) == len(STEPS) for m in ("recog", "d_adult", "spread", "delta"))
+        assert ch["tests"][f"t{t}"]["last"]["verdict"] in ("narrower", "null", "wider")
+    assert "runs" not in ch  # per-run raw rows stay in the results file outside the repo
+    a = d["animation"]
+    assert a["seed"] == 1 and a["temp"] == 1.0 and len(a["spread"]) == len(STEPS)
+    text = json.dumps(d)
+    assert "NaN" not in text and '"drawing"' not in text and '"strokes": [' not in text

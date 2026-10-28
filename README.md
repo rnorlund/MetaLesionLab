@@ -357,3 +357,7 @@ Every page of a site has the same header (`metalesionlab/web/site.py`); experime
 ## License
 
 Apache 2.0
+
+---
+
+Copyright © 2026 Roger Newman-Norlund. Licensed under the Apache License 2.0 (see `LICENSE`). Reuse must keep the attribution in `NOTICE`.

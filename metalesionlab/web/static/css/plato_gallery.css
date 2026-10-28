@@ -2,15 +2,15 @@
    adds columns as the window grows (auto-fill), cards grow with it, and prose keeps a readable measure.
    Card pictures (.lab-pic, .lab-cell, .lab-flip) are styled in gallery-strip.css. */
 .gx { background: #F7F6F1; }
-.gx .page { max-width: none; padding-inline: clamp(16px, 4vw, 96px); }
+.gx .page { max-width: var(--page-max, none); padding-inline: var(--gutter, clamp(16px, 4vw, 96px)); }
 .gx main { margin-top: 20px; display: flex; flex-direction: column; gap: 18px; outline: none; }
 
 .gx-hero { display: flex; flex-direction: column; gap: 10px; padding: clamp(18px, 2.4vw, 36px); background: var(--panel);
   border: 1px solid var(--line); border-radius: 16px; }
 .gx-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
 .gx-kicker a { color: inherit; }
-.gx-hero h1 { margin: 0; font-size: clamp(34px, 4.6vw, 58px); letter-spacing: -0.02em; line-height: 1.02; }
-.gx-lede { margin: 0; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; color: var(--ink-2); max-width: 82ch; }
+.gx-hero h1 { margin: 0; font-size: var(--fs-h1, clamp(34px, 4.6vw, 58px)); letter-spacing: -0.02em; line-height: 1.02; }
+.gx-lede { margin: 0; font-size: var(--fs-lede, clamp(16px, 1.25vw, 19px)); line-height: 1.55; color: var(--ink-2); max-width: var(--measure, 82ch); }
 
 /* filter chips and Shuffle */
 .gx-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
@@ -42,7 +42,7 @@
 .gx-card-link::after { content: ""; position: absolute; inset: 0; }  /* the whole card opens the large view */
 .gx-card:hover .gx-card-link { text-decoration: underline; text-underline-offset: 3px; }
 .gx-card-link:focus-visible { outline: none; }
-.gx-card-cap { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.gx-card-cap { margin: 0; font-size: var(--fs-sm, 14px); line-height: 1.5; color: var(--ink-2); }
 
 .gx-credits { margin-top: 12px; padding: clamp(16px, 2vw, 28px); background: var(--panel); border: 1px solid var(--line);
   border-radius: 16px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
@@ -89,7 +89,7 @@ html.gx-locked { overflow: hidden; }
 .gx-side { display: flex; flex-direction: column; gap: 10px; align-self: start; }
 .gx-view-cat { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--orange-dark); }
 .gx-side h2 { margin: 0; font-size: clamp(22px, 1.8vw, 30px); line-height: 1.15; letter-spacing: -0.01em; }
-.gx-view-cap { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink-2); }
+.gx-view-cap { margin: 0; font-size: var(--fs-body, 16px); line-height: 1.55; color: var(--ink-2); }
 .gx-view-credit { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .gx-view-pos { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .gx-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }

@@ -1154,41 +1154,41 @@
   {
    "id": "lifespan-sketch",
    "title": "A tiny AI learns to draw a chair",
-   "caption": "Trained from random weights on 20,000 people’s chairs, a small sketch model goes from scribbles (13% recognizable) to chairs (80%), ending less varied than its data.",
+   "caption": "Trained from scratch on 20,000 people’s chairs, a small sketch model goes from scribbles (18% recognizable) to chairs (87%), ending less varied than its data in all 8 runs.",
    "category": "Growing up",
-   "link": "/plato/lifespan#grow",
+   "link": "/plato/lifespan#learn",
    "thumb": "/static/img/gallery/lifespan-sketch.webp",
-   "alt": "Seven training stages of a small sketch model, its first four drawings at each: dots and stray lines at step 0, then angular strokes, then simple side-view chairs by step 25,600.",
+   "alt": "Seven training stages of a small sketch model (one of its 8 runs), its first four drawings at each: dots and stray lines at step 0, then angular strokes, then simple side-view chairs by step 25,600.",
    "credit": "A small sketch model trained on Google Quick, Draw! chairs (CC BY 4.0)",
    "sequence": {
     "frames": [
      {
       "src": "/static/img/gallery/lifespan-sketch-0.webp",
-      "label": "step 0 · 13% recognizable"
+      "label": "step 0"
      },
      {
       "src": "/static/img/gallery/lifespan-sketch-1.webp",
-      "label": "step 100 · 46%"
+      "label": "step 100"
      },
      {
       "src": "/static/img/gallery/lifespan-sketch-2.webp",
-      "label": "step 200 · 63%"
+      "label": "step 200"
      },
      {
       "src": "/static/img/gallery/lifespan-sketch-3.webp",
-      "label": "step 800 · 75%"
+      "label": "step 800"
      },
      {
       "src": "/static/img/gallery/lifespan-sketch-4.webp",
-      "label": "step 3,200 · 81%"
+      "label": "step 3,200"
      },
      {
       "src": "/static/img/gallery/lifespan-sketch-5.webp",
-      "label": "step 12,800 · 89%"
+      "label": "step 12,800"
      },
      {
       "src": "/static/img/gallery/lifespan-sketch-6.webp",
-      "label": "step 25,600 · 80%"
+      "label": "step 25,600"
      }
     ]
    }

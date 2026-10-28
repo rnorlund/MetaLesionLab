@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Atlas of Forms · {{BRAND}}</title>
+<meta name="description" content="Plato thought every everyday thing has one ideal Form. We asked Meta's Muse Image to doodle 135 everyday things and set its drawings beside 200 people's drawings of each. Average the pixels and Muse's things come out crisp; people's blur into a cloud. A gallery, a ranking and a benchmark you can run on your own image model.">
+<meta property="og:title" content="The Atlas of Forms: 135 everyday things, as an AI and as people draw them · {{BRAND}}">
+<meta property="og:description" content="Average an AI's 12 drawings of a thing and you get one crisp Form. Average 12 people's and you get a cloud. 135 things, ranked from most Platonic to least.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_atlas.css">
+</head>
+<body class="atlas">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><a class="brand" href="/"><b>{{BRAND}}</b></a></header>
+
+<main id="main" tabindex="-1">
+
+<section class="at-hero" aria-labelledby="hero-h">
+  <div class="at-hero-text">
+    <span class="at-kicker"><a href="/plato">Plato series</a> · Republic X, the Forms · 135 everyday things</span>
+    <h1 id="hero-h">The Atlas of Forms</h1>
+    <p class="at-lede">Plato thought every everyday thing, a chair, a cup, a cat, has one ideal Form, and that the things we see are copies of it. We asked Meta’s image model, Muse Image, to doodle 135 everyday things, at least 12 times each. Then we set its drawings beside people’s.</p>
+    <p class="at-answer" id="answer">…</p>
+  </div>
+  <figure class="at-hero-fig">
+    <div class="at-hero-forms" id="hero-forms"></div>
+    <figcaption class="at-cap">Each square is 12 drawings averaged pixel by pixel. <b class="k-muse">Muse Image</b> above, <b class="k-people">12 people</b> below. Crisp means every drawing was nearly the same.</figcaption>
+  </figure>
+  <div class="at-tiles" id="tiles" aria-live="polite"></div>
+</section>
+
+<nav class="at-jump" aria-label="On this page">
+  <a href="#gallery">Gallery of Forms</a>
+  <a href="#ranking">The ranking</a>
+  <a href="#why">What makes a thing Platonic?</a>
+  <a href="#run">Run it on your model</a>
+  <a href="#method">How we measured</a>
+</nav>
+
+<section class="at-sec" id="gallery" aria-labelledby="gallery-h">
+  <div class="at-sec-head">
+    <h2 id="gallery-h">Gallery of Forms</h2>
+    <p class="at-sec-lede">Each card averages 12 drawings of one thing. When the drawings agree, the average is crisp: one Form. When they differ, it blurs into a cloud. Left, <b class="k-muse">Muse Image</b>; right, <b class="k-people">12 people</b>. The number is Muse’s spread divided by people’s. Below 1, Muse draws the thing more alike than people do. Open a card to see the drawings.</p>
+  </div>
+  <div class="at-controls" role="search">
+    <label class="at-search"><span class="sr-only">Find a thing</span>
+      <input type="search" id="q" placeholder="Find a thing: cat, clock, rain…" autocomplete="off" spellcheck="false"></label>
+    <div class="seg at-sort" id="sort" role="group" aria-label="Sort">
+      <button type="button" data-sort="platonic" aria-pressed="true">Most Platonic first</button>
+      <button type="button" data-sort="varied" aria-pressed="false">Least first</button>
+      <button type="button" data-sort="az" aria-pressed="false">A–Z</button>
+    </div>
+    <label class="at-domain"><span class="sr-only">Kind of thing</span><select id="domain"><option value="">All kinds of thing</option></select></label>
+  </div>
+  <p class="at-count" id="count" aria-live="polite"></p>
+  <div class="at-grid" id="grid"></div>
+  <button type="button" class="at-more" id="more" hidden>Show all things</button>
+</section>
+
+<section class="at-sec" id="ranking" aria-labelledby="ranking-h">
+  <div class="at-sec-head">
+    <h2 id="ranking-h">All 135, from most Platonic to least</h2>
+    <p class="at-sec-lede" id="ranking-lede">…</p>
+  </div>
+  <div class="at-legend" id="rank-legend"></div>
+  <div class="at-chart" id="rank-chart"></div>
+  <p class="at-cap" id="rank-cap"></p>
+  <details class="at-numbers"><summary>All the numbers</summary><div class="at-table-wrap"><table id="rank-table"></table></div></details>
+</section>
+
+<section class="at-sec" id="why" aria-labelledby="why-h">
+  <div class="at-sec-head">
+    <h2 id="why-h">What makes a thing Platonic?</h2>
+    <p class="at-sec-lede">We named three candidates before making any picture: how varied people’s drawings are, how common the word is, and whether the thing is natural (an animal, a fruit, a body part, the weather) or made by people. These are exploratory: each comes with a 95% confidence interval and no claim of significance.</p>
+  </div>
+  <div class="at-why">
+    <figure class="at-panel">
+      <figcaption><b>People’s variety</b><span id="p1-text"></span></figcaption>
+      <div class="at-legend" id="p1-legend"></div>
+      <div class="at-chart" id="p1-chart"></div>
+    </figure>
+    <figure class="at-panel">
+      <figcaption><b>How common the word is</b><span id="p2-text"></span></figcaption>
+      <div class="at-chart" id="p2-chart"></div>
+    </figure>
+    <figure class="at-panel">
+      <figcaption><b>Natural or made by people</b><span id="p3-text"></span></figcaption>
+      <div class="at-chart" id="p3-chart"></div>
+    </figure>
+  </div>
+  <p class="at-cap" id="why-cap"></p>
+</section>
+
+<section class="at-sec" id="run" aria-labelledby="run-h">
+  <div class="at-sec-head">
+    <h2 id="run-h">Run it on your model</h2>
+    <p class="at-sec-lede">The Atlas is a benchmark. Draw any of the 135 things with your own image model, at least 4 pictures each (12 is better), using the same prompt. Put them in one folder per thing and run one script. It measures your pictures exactly as we measured Muse’s, against the same 200 people per thing. It downloads and caches people’s drawings the first time.</p>
+  </div>
+  <div class="at-run">
+    <div>
+      <p class="at-run-label">The prompt</p>
+      <pre class="at-code wrap" id="prompt">A quick simple doodle sketch of {a chair}, black marker on plain white, like a 20-second drawing, no text, no shading.</pre>
+      <p class="at-run-label">The folder</p>
+      <pre class="at-code">my_model/
+  chair/      0.png 1.png … 11.png
+  teddy bear/ 0.png …
+  rain/       …</pre>
+    </div>
+    <div>
+      <p class="at-run-label">The command</p>
+      <pre class="at-code">git clone https://github.com/rnorlund/MetaLesionLab
+cd MetaLesionLab
+pip install -e ".[experiments]"
+python scripts/plato_benchmark.py my_model \
+  --name "My model" --out my_model_atlas.json</pre>
+      <p class="at-run-note">You get each thing’s ratio with a 95% CI, your median with its CI, and Muse Image’s and SDXL’s numbers for the same things. <code>--list</code> prints the 135 names. Details: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_atlas.md#run-it-on-your-model">docs/plato_atlas.md</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="at-sec at-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">How we measured, and what it doesn’t show</h2>
+  <ul id="method-list">
+    <li><b>Things.</b> The 35 things of <a href="/plato">Plato’s Chair</a>, Plato’s own bed and table, and 98 new ones. The new ones were drawn at random, within 12 kinds of thing, from Quick, Draw!’s 345 categories. Shapes, landmarks, imaginary things, weapons, ambiguous words and near-duplicates were left out. The list, the rule and the predictions were committed before any new picture was made (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_atlas_plan.md">pre-registration</a>).</li>
+    <li><b>Drawings.</b> Muse Image (<code>muse-image-1.0</code>) got one prompt: “A quick simple doodle sketch of {a chair}, black marker on plain white, like a 20-second drawing, no text, no shading.” It made 12 pictures per new thing (16 for some of the earlier ones), in separate calls of 4. Stable Diffusion XL, an open model, drew the same prompts on our own GPU. People: the first 200 drawings of each thing that Quick, Draw!’s game recognized.</li>
+    <li><b>Spread.</b> Every picture is cropped to its ink and embedded with Meta’s DINOv2. A set’s spread is the average distance between its pictures. People’s spread is taken at the same number of pictures as Muse’s. The ratio’s 95% CI comes from resampling both sets.</li>
+    <li><b>Forms.</b> The pixel average of 12 ink-cropped pictures, darkest pixel set to black. Muse’s first 12; a seeded random 12 of the 200 people. They are illustrations; the ranking uses the embedding measure. A model-free pixel spread agrees (<span id="pixel-agree">…</span>).</li>
+    <li><b>Defaults, not limits.</b> This is what Muse draws when asked plainly. Asked for named kinds (“a rocking chair”, “a beanbag chair”), Muse draws about as varied as people (<a href="/plato">Plato’s Chair</a>). People’s extra spread is partly how they draw, wobbly 20-second lines, not only which thing they picture.</li>
+    <li><b>Limits.</b> One prompt and one drawing style. DINOv2 sees style as well as content. Quick, Draw! players are not everyone, and the 20-second limit shapes their drawings. With 12 pictures per thing, single-thing ranks are noisy; look at the CIs.</li>
+  </ul>
+  <p class="at-credit" id="credits">Human drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw! dataset</a> (Google Creative Lab), CC BY 4.0. AI drawings: Muse Image (Meta) and Stable Diffusion XL base 1.0 (Stability AI, CreativeML OpenRAIL++-M). Embeddings: DINOv2 (Meta, Apache-2.0). Statistics: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/public_data/plato_atlas.json">public_data/plato_atlas.json</a>.</p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. {{BRAND}} doesn't diagnose and doesn't give medical or treatment advice.</p>
+</div>
+
+<dialog class="at-dialog" id="detail" aria-labelledby="d-title">
+  <div class="at-d-head">
+    <div>
+      <p class="at-d-rank" id="d-rank"></p>
+      <h2 id="d-title"></h2>
+    </div>
+    <div class="at-d-nav">
+      <button type="button" id="d-prev" aria-label="Previous thing">‹</button>
+      <button type="button" id="d-next" aria-label="Next thing">›</button>
+      <button type="button" id="d-close" aria-label="Close" autofocus>✕</button>
+    </div>
+  </div>
+  <p class="at-d-verdict" id="d-verdict"></p>
+  <div class="at-d-sets">
+    <figure class="at-d-set muse"><figcaption><b>Muse Image’s 12</b><span id="d-muse-n"></span></figcaption>
+      <div class="at-d-row"><img id="d-form-m" width="152" height="152" alt=""><img id="d-tiles-m" class="tiles" width="490" height="162" alt=""></div></figure>
+    <figure class="at-d-set people"><figcaption><b>People’s 12</b><span>a random 12 of 200 Quick, Draw! drawings</span></figcaption>
+      <div class="at-d-row"><img id="d-form-p" width="152" height="152" alt=""><img id="d-tiles-p" class="tiles" width="490" height="162" alt=""></div></figure>
+  </div>
+  <dl class="at-d-stats" id="d-stats"></dl>
+</dialog>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_atlas.js"></script>
+</body>
+</html>

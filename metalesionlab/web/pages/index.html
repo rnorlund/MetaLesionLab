@@ -56,12 +56,16 @@
   <div class="wrap draw-grid">
     <div class="hero-pad" id="hero-draw"></div>
     <div class="hero-ask">
-      <p class="kicker">What would Plato ask an AI?</p>
-      <h1 id="hero-h">Is there one ideal chair?</h1>
+      <div class="title-pair">
+        <p class="title-kicker">What would Plato ask an AI?</p>
+        <h1 id="hero-h">Is there one ideal chair?</h1>
+      </div>
       <p class="hero-sub">Plato thought every chair is a copy of one ideal chair. Draw yours, then see what Meta’s image model drew and where your chair lands among 200 people’s.</p>
+      <div class="hero-links">
       <a class="hero-skip" href="#reveal" id="skip-link">Skip, just show me what the AI drew</a>
       <button type="button" class="hero-tour" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Take the 90-second tour</button>
       <a class="hero-tour hero-replay" href="/?splash=1"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1a4 4 0 1 1-3.6 2.3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M0 1.2l2 2.6 2.4-1.9z" fill="currentColor"/></svg>Replay the intro</a>
+      </div>
     </div>
   </div>
 </section>
@@ -70,8 +74,10 @@
 <section class="hero reveal-band" id="reveal" aria-labelledby="reveal-h" <!--#if /draw-->hidden<!--#endif-->>
   <div class="wrap hero-grid">
     <div class="hero-text">
-      <p class="kicker">What would Plato ask an AI? <span class="kicker-q">Question 1: Is there one ideal chair?</span></p>
-      <!--#if /draw--><h2 class="reveal-h" id="reveal-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h2><!--#else--><h1 class="reveal-h" id="reveal-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h1><!--#endif-->
+      <div class="title-pair">
+        <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Question 1: Is there one ideal chair?</span></p>
+        <!--#if /draw--><h2 class="reveal-h" id="reveal-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h2><!--#else--><h1 class="reveal-h" id="reveal-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times.</h1><!--#endif-->
+      </div>
       <p class="hero-sub">People drew 16 different ones, mostly of the same plain chair.</p>
       <div class="hero-cta">
         <a class="lbtn lbtn-dark lbtn-lg" href="/plato">See the experiment</a>

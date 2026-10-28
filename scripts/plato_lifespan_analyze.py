@@ -465,6 +465,12 @@ def write_public(res, path: Path):
         "comparison": res.get("comparison"),
         "sketch": res.get("sketch"),
     }
+    try:  # the multi-seed sketch block is written by scripts/plato_sketch_analyze.py; keep it
+        old = json.loads(path.read_text())
+        if "sketch_seeds" in old:
+            pub["sketch_seeds"] = old["sketch_seeds"]
+    except (OSError, ValueError):
+        pass
     path.write_text(json.dumps(to_jsonable(pub), indent=1))
     print(f"wrote {path}")
 

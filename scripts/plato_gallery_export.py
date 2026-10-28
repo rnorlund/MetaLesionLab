@@ -251,9 +251,9 @@ def icon_array(filled: int, side: int = FRAME) -> Image.Image:
 
 
 def sketch(step: int) -> Image.Image:
-    """The sketch model's first 4 drawings at a training step, 2 x 2 (not picked). As in docs/plato_lifespan.md, a
-    drawing that is a single point is no drawing."""
-    drawings = json.loads(src(f"lifespan/sketch/samples/step{step}_t1.0.json").read_text())
+    """Seed 1 of the sketch model (docs/plato_sketch.md; the run its animation shows), temperature 1: its first 4
+    drawings at a training step, 2 x 2 (not picked). As in the docs, a drawing that is a single point is no drawing."""
+    drawings = json.loads(src(f"lifespan/sketch/seeds/runs/chair_s1/samples/step{step}_t1.0.json").read_text())
     first = [d for d in drawings if d and sum(len(s[0]) for s in d) > 1][:4]
     tiles = [ink_crop(render_strokes(d, side=384, width=6, pad=18), side=192, margin=0.1) for d in first]
     return grid(tiles, 2, (FRAME - 8) // 2, gap=8, bg=PAPER).resize((FRAME, FRAME), Image.LANCZOS)
