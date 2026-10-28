@@ -56,6 +56,14 @@ body.plato { background: #F7F6F1; }
 .pc-fact b { font-size: clamp(26px, calc(16px + 0.8vw), 38px); letter-spacing: -0.01em; line-height: 1.15; }
 .pc-fact span { font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
 .pc-numbers { font-size: 14px; }
+/* "Aristotle's reply": a philosophical framing between the results, not a finding. The text, then one
+   verified Aristotle passage (an inline epigraph, epigraph.css); side by side once there is room. */
+.pc-reply { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 2.4vw, 64px); align-items: center; background: #FCFBF7; }
+.pc-reply-text { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pc-reply h2 { font-size: clamp(24px, calc(14px + 1vw), 42px); }
+.pc-reply-text p { margin: 0; max-width: var(--measure); font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
+.pc-reply .epigraph { padding-left: clamp(16px, 1.6vw, 40px); border-left: 1px solid var(--line-2); }
+@media (min-width: 1000px) { .pc-reply { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } }
 /* "Does it depend on DINOv2?": the main result measured again with three other vision models */
 .pc-ev-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .pc-robust { border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 12px; padding: clamp(14px, 1vw, 22px) clamp(16px, 1.1vw, 24px); display: flex; flex-direction: column; gap: 8px; background: var(--soft); }

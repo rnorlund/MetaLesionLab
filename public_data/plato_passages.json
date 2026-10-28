@@ -1,15 +1,35 @@
 {
- "about": "Short passages from Plato in Benjamin Jowett's public-domain English translation, for Ask Socrates (/socrates). The agent may quote Plato only from this file, word for word. Each text was cut from the Project Gutenberg edition named in source_url and is checked against it by scripts/verify_plato_passages.py (whitespace collapsed, otherwise exact).",
- "translation": "Benjamin Jowett (1892), public domain",
- "license": "Public domain (Jowett's translation, 1892). Project Gutenberg texts are free of copyright in the United States; this file carries only short excerpts, without Gutenberg's header or trademark.",
- "stephanus_note": "Gutenberg's Jowett texts have no Stephanus numbers. Each reference gives the page and section of the standard Stephanus pagination, placed by matching the passage with editions that print it (Perseus Digital Library); spot-checked for Republic 598a and 515b, Cratylus 427b and Phaedrus 275d.",
+ "about": "Short passages the site may quote, word for word: Plato in Benjamin Jowett's public-domain English translation, and Aristotle, Plato's student, in W. D. Ross's. Ask Socrates (/socrates) may quote only from this file, and the pages' epigraphs are rendered from it. Each text was cut from the source named in source_text_url and is checked against it by scripts/verify_passages.py (whitespace collapsed and curly quotes counted as straight, otherwise exact); Ross's passages are also checked word for word against the scan of the printed Oxford edition (print_url). The file keeps its old name so that everything that reads it keeps working.",
+ "translations": {
+  "Plato": "Benjamin Jowett (1892), public domain",
+  "Aristotle, Metaphysics": "W. D. Ross, Metaphysica, 2nd edition (Oxford, 1928), public domain in the US",
+  "Aristotle, Nicomachean Ethics": "W. D. Ross, Ethica Nicomachea (Oxford, 1925), public domain in the US"
+ },
+ "license": "Public domain. Jowett's translation (1892): Project Gutenberg texts are free of copyright in the United States; this file carries only short excerpts, without Gutenberg's header or trademark. Ross's translations of the Metaphysics (2nd edition, Oxford, 1928) and the Nicomachean Ethics (Oxford, 1925) were published more than 95 years ago, so they are in the public domain in the United States (in the UK and the EU they stay in copyright until the end of 2041, 70 years after Ross's death). Short excerpts only. The digital text checked against is the MIT Internet Classics Archive's (classics.mit.edu); the printed editions are the Internet Archive's scans.",
+ "stephanus_note": "Gutenberg's Jowett texts have no Stephanus numbers. Each reference gives the page and section of the standard Stephanus pagination, placed by matching the passage with editions that print it (Perseus Digital Library); spot-checked for Republic 598a and 515b, Cratylus 427b and Phaedrus 275d. Aristotle's passages carry Bekker numbers (page, column and line), read from the margins of the printed Oxford editions, which number every fifth line.",
+ "attribution": "Aristotle was Plato's student, as Plato was Socrates'. Quote an Aristotle passage as Aristotle's (Socrates may call him his student's student), never as Plato's or Socrates' own words.",
  "verified": {
   "date": "2026-10-27",
-  "method": "exact substring of the Gutenberg plain text, whitespace collapsed"
+  "method": "exact substring of the source text (whitespace collapsed, curly quotes as straight); Aristotle also word for word in the printed edition's scan"
  },
+ "not_included": [
+  {
+   "what": "Aristotle, Physics II.3, 194b17-20, the four causes (R. P. Hardie and R. K. Gaye, Oxford, 1930)",
+   "why": "Public domain in the US only since 1 January 2026, and the only clean digital text (MIT) drops a word in this very passage ('the why of (which' where the 1930 printing has 'the why of it (which'), so it can't be checked verbatim against a clean text. Metaphysics V.2 (1013a24-33), which repeats the four causes almost word for word, is used instead."
+  },
+  {
+   "what": "Apology 38a as 'the life which is unexamined is not worth living'",
+   "why": "Not the wording of Jowett's text on Project Gutenberg, which reads 'the unexamined life is not worth living'; that wording is used."
+  },
+  {
+   "what": "Aristotle in Ross's 1908 first edition of the Metaphysics",
+   "why": "The only clean digital text (MIT) is Ross's revised 2nd edition of 1928 (it reads 'the several memories' and 'definition' where 1908 has 'many memories' and 'formula'), so the 1928 edition is the one quoted and checked. It is equally in the US public domain."
+  }
+ ],
  "passages": [
   {
    "id": "republic-596a",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "596a",
@@ -40,6 +60,7 @@
   },
   {
    "id": "republic-596b",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "596a–b",
@@ -71,6 +92,7 @@
   },
   {
    "id": "republic-596e",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "596e",
@@ -101,6 +123,7 @@
   },
   {
    "id": "republic-597b",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "597b",
@@ -130,6 +153,7 @@
   },
   {
    "id": "republic-597c",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "597c",
@@ -160,6 +184,7 @@
   },
   {
    "id": "republic-598a",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "598a",
@@ -190,6 +215,7 @@
   },
   {
    "id": "republic-598b",
+   "author": "Plato",
    "work": "Republic",
    "book": "X",
    "stephanus": "598b",
@@ -220,6 +246,7 @@
   },
   {
    "id": "republic-514a",
+   "author": "Plato",
    "work": "Republic",
    "book": "VII",
    "stephanus": "514a–b",
@@ -246,6 +273,7 @@
   },
   {
    "id": "republic-515b",
+   "author": "Plato",
    "work": "Republic",
    "book": "VII",
    "stephanus": "515b",
@@ -273,6 +301,7 @@
   },
   {
    "id": "republic-515c",
+   "author": "Plato",
    "work": "Republic",
    "book": "VII",
    "stephanus": "515c",
@@ -299,6 +328,7 @@
   },
   {
    "id": "cratylus-383a",
+   "author": "Plato",
    "work": "Cratylus",
    "stephanus": "383a–b",
    "speaker": "Hermogenes, reporting Cratylus",
@@ -327,6 +357,7 @@
   },
   {
    "id": "cratylus-384d",
+   "author": "Plato",
    "work": "Cratylus",
    "stephanus": "384c–d",
    "speaker": "Hermogenes",
@@ -353,6 +384,7 @@
   },
   {
    "id": "cratylus-427b",
+   "author": "Plato",
    "work": "Cratylus",
    "stephanus": "427b",
    "speaker": "Socrates",
@@ -382,6 +414,7 @@
   },
   {
    "id": "phaedrus-275a",
+   "author": "Plato",
    "work": "Phaedrus",
    "stephanus": "275a–b",
    "speaker": "King Thamus, in Socrates' story",
@@ -410,6 +443,7 @@
   },
   {
    "id": "phaedrus-275d",
+   "author": "Plato",
    "work": "Phaedrus",
    "stephanus": "275d",
    "speaker": "Socrates",
@@ -439,6 +473,7 @@
   },
   {
    "id": "meno-81d",
+   "author": "Plato",
    "work": "Meno",
    "stephanus": "81c–d",
    "speaker": "Socrates",
@@ -463,6 +498,491 @@
    "translation": "Benjamin Jowett (1892), public domain",
    "source_url": "https://www.gutenberg.org/ebooks/1643",
    "source_text_url": "https://www.gutenberg.org/cache/epub/1643/pg1643.txt"
+  },
+  {
+   "id": "theaetetus-155d",
+   "author": "Plato",
+   "work": "Theaetetus",
+   "stephanus": "155d",
+   "speaker": "Socrates, to Theaetetus",
+   "title": "Philosophy begins in wonder",
+   "topics": [
+    "wonder",
+    "philosophy",
+    "philosopher",
+    "curiosity",
+    "amazed",
+    "puzzle",
+    "question",
+    "questions",
+    "beginning",
+    "why"
+   ],
+   "related_pages": [
+    "/plato/bird",
+    "/socrates"
+   ],
+   "text": "I see, my dear Theaetetus, that Theodorus had a true insight into your nature when he said that you were a philosopher, for wonder is the feeling of a philosopher, and philosophy begins in wonder.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1726",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1726/pg1726.txt"
+  },
+  {
+   "id": "apology-38a",
+   "author": "Plato",
+   "work": "Apology",
+   "stephanus": "38a",
+   "speaker": "Socrates, at his trial",
+   "title": "The unexamined life is not worth living",
+   "topics": [
+    "unexamined life",
+    "examined life",
+    "examine",
+    "examining",
+    "examination",
+    "virtue",
+    "life",
+    "living",
+    "questioning",
+    "socratic method",
+    "trial"
+   ],
+   "related_pages": [
+    "/",
+    "/socrates"
+   ],
+   "text": "daily to discourse about virtue, and of those other things about which you hear me examining myself and others, is the greatest good of man, and that the unexamined life is not worth living",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1656",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1656/pg1656.txt"
+  },
+  {
+   "id": "timaeus-28a",
+   "author": "Plato",
+   "work": "Timaeus",
+   "stephanus": "28a",
+   "speaker": "Timaeus",
+   "title": "Everything that becomes has a cause",
+   "topics": [
+    "cause",
+    "causes",
+    "becoming",
+    "created",
+    "creation",
+    "origin",
+    "where things come from",
+    "why",
+    "explanation",
+    "damage"
+   ],
+   "related_pages": [
+    "/plato/damage"
+   ],
+   "text": "Now everything that becomes or is created must of necessity be created by some cause, for without a cause nothing can be created.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1572",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1572/pg1572.txt"
+  },
+  {
+   "id": "republic-518b",
+   "author": "Plato",
+   "work": "Republic",
+   "book": "VII",
+   "stephanus": "518b–c",
+   "speaker": "Socrates, to Glaucon",
+   "title": "Knowledge is not put in, like sight into blind eyes",
+   "topics": [
+    "education",
+    "teaching",
+    "learning",
+    "knowledge",
+    "soul",
+    "sight",
+    "blind",
+    "training",
+    "cave"
+   ],
+   "related_pages": [
+    "/plato/cave"
+   ],
+   "text": "But then, if I am right, certain professors of education must be wrong when they say that they can put a knowledge into the soul which was not there before, like sight into blind eyes.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-518d",
+   "author": "Plato",
+   "work": "Republic",
+   "book": "VII",
+   "stephanus": "518d",
+   "speaker": "Socrates, to Glaucon",
+   "title": "Education turns an eye that already sees",
+   "topics": [
+    "education",
+    "conversion",
+    "turning",
+    "sight",
+    "eye",
+    "art",
+    "direction",
+    "truth",
+    "learning",
+    "cave"
+   ],
+   "related_pages": [
+    "/plato/cave"
+   ],
+   "text": "And must there not be some art which will effect conversion in the easiest and quickest manner; not implanting the faculty of sight, for that exists already, but has been turned in the wrong direction, and is looking away from the truth?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "republic-597e",
+   "author": "Plato",
+   "work": "Republic",
+   "book": "X",
+   "stephanus": "597e",
+   "speaker": "Socrates, to Glaucon",
+   "title": "Third in descent from nature: the imitator",
+   "topics": [
+    "imitator",
+    "imitation",
+    "copy",
+    "copies",
+    "copy of a copy",
+    "third",
+    "descent",
+    "nature",
+    "telephone",
+    "generation",
+    "generations"
+   ],
+   "related_pages": [
+    "/plato/telephone"
+   ],
+   "text": "Good, I said; then you call him who is third in the descent from nature an imitator?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1497",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt"
+  },
+  {
+   "id": "meno-85c",
+   "author": "Plato",
+   "work": "Meno",
+   "stephanus": "85c–d",
+   "speaker": "Socrates, to Meno",
+   "title": "Asked the same questions in different forms",
+   "topics": [
+    "questions",
+    "asked",
+    "repetition",
+    "repeated",
+    "dream",
+    "notions",
+    "training",
+    "learning",
+    "practice",
+    "recollection",
+    "child",
+    "children"
+   ],
+   "related_pages": [
+    "/plato/lifespan"
+   ],
+   "text": "And at present these notions have just been stirred up in him, as in a dream; but if he were frequently asked the same questions, in different forms, he would know as well as any one at last?",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1643",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1643/pg1643.txt"
+  },
+  {
+   "id": "meno-86b",
+   "author": "Plato",
+   "work": "Meno",
+   "stephanus": "86b–c",
+   "speaker": "Socrates, to Meno",
+   "title": "We are better for enquiring",
+   "topics": [
+    "enquire",
+    "enquiry",
+    "inquiry",
+    "inquire",
+    "curiosity",
+    "seeking",
+    "knowing",
+    "braver",
+    "learning",
+    "not knowing",
+    "research"
+   ],
+   "related_pages": [
+    "/",
+    "/socrates"
+   ],
+   "text": "we shall be better and braver and less helpless if we think that we ought to enquire, than we should have been if we indulged in the idle fancy that there was no knowing and no use in seeking to know what we do not know",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1643",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1643/pg1643.txt"
+  },
+  {
+   "id": "cratylus-439b",
+   "author": "Plato",
+   "work": "Cratylus",
+   "stephanus": "439b",
+   "speaker": "Socrates, to Cratylus",
+   "title": "Learn from the things, not from their names",
+   "topics": [
+    "names",
+    "name",
+    "words",
+    "knowledge",
+    "things",
+    "learn from names",
+    "captions",
+    "labels",
+    "language",
+    "investigate",
+    "study",
+    "bouba",
+    "kiki"
+   ],
+   "related_pages": [
+    "/plato/cratylus"
+   ],
+   "text": "How real existence is to be studied or discovered is, I suspect, beyond you and me. But we may admit so much, that the knowledge of things is not to be derived from names. No; they must be studied and investigated in themselves.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1616",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1616/pg1616.txt"
+  },
+  {
+   "id": "metaphysics-980a21",
+   "author": "Aristotle",
+   "work": "Metaphysics",
+   "book": "I",
+   "chapter": "1",
+   "bekker": "980a21–24",
+   "speaker": "Aristotle",
+   "title": "All men by nature desire to know",
+   "topics": [
+    "desire to know",
+    "knowledge",
+    "curiosity",
+    "senses",
+    "sight",
+    "seeing",
+    "know",
+    "learning",
+    "wonder",
+    "aristotle"
+   ],
+   "related_pages": [
+    "/plato/atlas"
+   ],
+   "text": "All men by nature desire to know. An indication of this is the delight we take in our senses; for even apart from their usefulness they are loved for themselves; and above all others the sense of sight.",
+   "as_printed": "ALL men by nature desire to know. An indication of this is the delight we take in our senses; for even apart from their usefulness they are loved for themselves; and above all others the sense of sight.",
+   "translation": "W. D. Ross, Metaphysica, 2nd edition (Oxford, 1928), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/metaphysics.1.i.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/metaphysics.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo08arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo08arisuoft/theworksofaristo08arisuoft_djvu.txt"
+  },
+  {
+   "id": "metaphysics-981a5",
+   "author": "Aristotle",
+   "work": "Metaphysics",
+   "book": "I",
+   "chapter": "1",
+   "bekker": "981a5–7",
+   "speaker": "Aristotle",
+   "title": "From many experiences, one universal judgement",
+   "topics": [
+    "experience",
+    "universal",
+    "art",
+    "many",
+    "examples",
+    "generalize",
+    "generalise",
+    "class",
+    "training data",
+    "learning",
+    "abstraction",
+    "average",
+    "aristotle"
+   ],
+   "related_pages": [
+    "/plato"
+   ],
+   "text": "Now art arises when from many notions gained by experience one universal judgement about a class of objects is produced.",
+   "translation": "W. D. Ross, Metaphysica, 2nd edition (Oxford, 1928), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/metaphysics.1.i.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/metaphysics.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo08arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo08arisuoft/theworksofaristo08arisuoft_djvu.txt"
+  },
+  {
+   "id": "metaphysics-981a28",
+   "author": "Aristotle",
+   "work": "Metaphysics",
+   "book": "I",
+   "chapter": "1",
+   "bekker": "981a28–30",
+   "speaker": "Aristotle",
+   "title": "Knowing that, and knowing why",
+   "topics": [
+    "why",
+    "cause",
+    "causes",
+    "experience",
+    "know why",
+    "know that",
+    "understanding",
+    "explanation",
+    "inside",
+    "interpretability",
+    "aristotle"
+   ],
+   "related_pages": [
+    "/plato/inside"
+   ],
+   "text": "For men of experience know that the thing is so, but do not know why, while the others know the ‘why’ and the cause.",
+   "translation": "W. D. Ross, Metaphysica, 2nd edition (Oxford, 1928), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/metaphysics.1.i.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/metaphysics.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo08arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo08arisuoft/theworksofaristo08arisuoft_djvu.txt"
+  },
+  {
+   "id": "metaphysics-991b1",
+   "author": "Aristotle",
+   "work": "Metaphysics",
+   "book": "I",
+   "chapter": "9",
+   "bekker": "991b1–3",
+   "speaker": "Aristotle",
+   "title": "Can the Forms exist apart from the things?",
+   "topics": [
+    "forms",
+    "form",
+    "ideas",
+    "idea",
+    "apart",
+    "separate",
+    "substance",
+    "in the things",
+    "platonic",
+    "plato",
+    "criticism",
+    "aristotle"
+   ],
+   "related_pages": [
+    "/plato"
+   ],
+   "text": "Again, it would seem impossible that the substance and that of which it is the substance should exist apart; how, therefore, could the Ideas, being the substances of things, exist apart?",
+   "translation": "W. D. Ross, Metaphysica, 2nd edition (Oxford, 1928), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/metaphysics.1.i.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/metaphysics.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo08arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo08arisuoft/theworksofaristo08arisuoft_djvu.txt"
+  },
+  {
+   "id": "metaphysics-1013a24",
+   "author": "Aristotle",
+   "work": "Metaphysics",
+   "book": "V",
+   "chapter": "2",
+   "bekker": "1013a24–33",
+   "speaker": "Aristotle",
+   "title": "The four causes",
+   "topics": [
+    "four causes",
+    "cause",
+    "causes",
+    "material",
+    "matter",
+    "form",
+    "pattern",
+    "maker",
+    "end",
+    "purpose",
+    "why",
+    "aristotle"
+   ],
+   "related_pages": [
+    "/socrates"
+   ],
+   "text": "‘Cause’ means (1) that from which, as immanent material, a thing comes into being, e.g. the bronze is the cause of the statue and the silver of the saucer, and so are the classes which include these. (2) The form or pattern, i.e. the definition of the essence, and the classes which include this (e.g. the ratio 2:1 and number in general are causes of the octave), and the parts included in the definition. (3) That from which the change or the resting from change first begins; e.g. the adviser is a cause of the action, and the father a cause of the child, and in general the maker a cause of the thing made and the change-producing of the changing. (4) The end, i.e. that for the sake of which a thing is; e.g. health is the cause of walking.",
+   "translation": "W. D. Ross, Metaphysica, 2nd edition (Oxford, 1928), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/metaphysics.5.v.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/metaphysics.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo08arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo08arisuoft/theworksofaristo08arisuoft_djvu.txt"
+  },
+  {
+   "id": "ethics-1096a14",
+   "author": "Aristotle",
+   "work": "Nicomachean Ethics",
+   "book": "I",
+   "chapter": "6",
+   "bekker": "1096a14–17",
+   "speaker": "Aristotle",
+   "title": "Truth above friends (on Plato's Forms)",
+   "topics": [
+    "truth",
+    "friends",
+    "friend",
+    "plato",
+    "forms",
+    "disagree",
+    "disagreement",
+    "honour",
+    "teacher",
+    "aristotle",
+    "criticism"
+   ],
+   "related_pages": [
+    "/plato",
+    "/socrates"
+   ],
+   "text": "Yet it would perhaps be thought to be better, indeed to be our duty, for the sake of maintaining the truth even to destroy what touches us closely, especially as we are philosophers or lovers of wisdom; for, while both are dear, piety requires us to honour truth above our friends.",
+   "translation": "W. D. Ross, Ethica Nicomachea (Oxford, 1925), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/nicomachaen.1.i.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/nicomachaen.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo09arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo09arisuoft/theworksofaristo09arisuoft_djvu.txt"
+  },
+  {
+   "id": "ethics-1103a32",
+   "author": "Aristotle",
+   "work": "Nicomachean Ethics",
+   "book": "II",
+   "chapter": "1",
+   "bekker": "1103a32–34",
+   "speaker": "Aristotle",
+   "title": "We learn by doing",
+   "topics": [
+    "learn by doing",
+    "doing",
+    "practice",
+    "habit",
+    "builders",
+    "building",
+    "training",
+    "learning",
+    "skill",
+    "aristotle"
+   ],
+   "related_pages": [
+    "/",
+    "/socrates"
+   ],
+   "text": "For the things we have to learn before we can do them, we learn by doing them, e.g. men become builders by building",
+   "translation": "W. D. Ross, Ethica Nicomachea (Oxford, 1925), public domain in the US",
+   "source_url": "https://classics.mit.edu/Aristotle/nicomachaen.2.ii.html",
+   "source_text_url": "https://classics.mit.edu/Aristotle/nicomachaen.mb.txt",
+   "print_url": "https://archive.org/details/theworksofaristo09arisuoft",
+   "print_text_url": "https://archive.org/download/theworksofaristo09arisuoft/theworksofaristo09arisuoft_djvu.txt"
   }
  ]
 }

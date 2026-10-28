@@ -14,6 +14,8 @@ body.cave { background: #F7F6F1; }
 .cv-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; color: #fff7ec; }
 .cv-lede { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.55; color: #e8dccb; max-width: var(--measure); }
 .cv-hero figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+/* the epigraph (epigraph.css) on the dark wall: its colour tokens, firelit */
+.cv-hero .epigraph { --ep-ink: #efe3d1; --ep-cite: #cdbda6; --ep-rule: #6b5a47; }
 .cv-hero figure img { width: 100%; height: auto; display: block; border-radius: 12px; }
 .cv-hero figcaption { font-size: var(--fs-sm); line-height: 1.5; color: #bfae96; }
 .cv-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1vw, 24px); }

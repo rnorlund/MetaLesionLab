@@ -10,7 +10,9 @@
   'use strict';
   var T = window.TOT, h = T.h;
   var MAX_TURNS = 8, EXAMINE_MAX = 5;
-  var GUTENBERG = { republic: 1497, cratylus: 1616, phaedrus: 1636, meno: 1643 };
+  var GUTENBERG = { republic: 1497, cratylus: 1616, phaedrus: 1636, meno: 1643, theaetetus: 1726, apology: 1656, timaeus: 1572 };
+  var ARISTOTLE = { metaphysics: ['Metaphysics', 'metaphysics'], ethics: ['Ethics', 'nicomachaen'] };  // Ross's translation at MIT
+  var PASSAGE_ID = /^(republic|cratylus|phaedrus|meno|theaetetus|apology|timaeus|metaphysics|ethics)-(\d+[a-e](?:\d+)?)/;
   var EXPERIMENTS = { forms: 'Forms', damage: 'damage', bird: 'name-a-bird', cave: 'Cave', cratylus: 'bouba/kiki', lifespan: 'life-of-a-chair' };
   var CASES = { chair: '/plato#variety', clock: '/plato/forms', bird: '/plato/bird', game: '/plato/bird' };
   var FACE = '/static/img/socrates/socrates-';
@@ -29,13 +31,18 @@
 
   // --- links and labels --------------------------------------------------------------------
   function passageHref(id) {
-    var m = /^(republic|cratylus|phaedrus|meno)-/.exec(String(id || '').trim().toLowerCase());
-    return m ? 'https://www.gutenberg.org/ebooks/' + GUTENBERG[m[1]] : null;
+    var m = PASSAGE_ID.exec(String(id || '').trim().toLowerCase());
+    if (!m) return null;
+    if (ARISTOTLE[m[1]]) return 'https://classics.mit.edu/Aristotle/' + ARISTOTLE[m[1]][1] + '.html';
+    return 'https://www.gutenberg.org/ebooks/' + GUTENBERG[m[1]];
   }
   function passageLabel(id) {
-    var m = /^(republic|cratylus|phaedrus|meno)-(\d+[a-e]?)/.exec(String(id || '').trim().toLowerCase());
-    return m ? m[1].charAt(0).toUpperCase() + m[1].slice(1) + ' ' + m[2] : 'Plato';
+    var m = PASSAGE_ID.exec(String(id || '').trim().toLowerCase());
+    if (!m) return 'Plato';
+    if (ARISTOTLE[m[1]]) return 'Aristotle, ' + ARISTOTLE[m[1]][0] + ' ' + m[2];
+    return m[1].charAt(0).toUpperCase() + m[1].slice(1) + ' ' + m[2];
   }
+  function isAristotleHref(href) { return /^https:\/\/classics\.mit\.edu\/Aristotle\//.test(href); }
   function experimentKey(arg) {
     var k = String(arg || '').trim().toLowerCase().replace(/^name\s*[:=]\s*/, '').split(/[\s,]/)[0];
     return EXPERIMENTS[k] ? k : null;
@@ -61,6 +68,7 @@
     href = String(href || '');
     if (/^\/(plato|draw|socrates|ask|lab|challenge)(\/[a-z]+)?([?#][^\s"'<>]*)?$/.test(href)) return href;
     if (/^https:\/\/www\.gutenberg\.org\/ebooks\/\d+$/.test(href)) return href;
+    if (/^https:\/\/classics\.mit\.edu\/Aristotle\/[a-z]+(\.\d+\.[ivx]+)?\.html$/.test(href)) return href;
     return null;
   }
 
@@ -234,7 +242,8 @@
       seen[href] = 1;
       var ext = /^https/.test(href);
       src.appendChild(h('a', { href: href, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null },
-        [passage ? 'Plato’s text (Gutenberg)' : c2.label.split(' · ')[0], ext ? ' ↗' : ' →']));
+        [passage ? (isAristotleHref(href) ? 'Aristotle’s text (MIT Classics)' : 'Plato’s text (Gutenberg)')
+          : c2.label.split(' · ')[0], ext ? ' ↗' : ' →']));
     });
     if (S.context && /\[your_drawing\]/.test(ev.text || '') && !seen['/draw']) src.appendChild(h('a', { href: '/draw' }, ['Your drawing →']));
     if (src.childNodes.length && !final) foot.appendChild(src);
@@ -541,7 +550,7 @@
         : !s.turns_left ? 'You’ve used today’s turns with Socrates on this demo. Every page of the lab still works.' : '';
       $('off').hidden = !why;
       $('off').textContent = why;
-      $('tool-list').textContent = 'Tools: ' + s.tools.join(', ') + '. All read-only. Plato passages: Benjamin Jowett’s translation (1892), public domain, checked word for word against Project Gutenberg.';
+      $('tool-list').textContent = 'Tools: ' + s.tools.join(', ') + '. All read-only. Passages: Plato in Benjamin Jowett’s translation (1892) and Aristotle in W. D. Ross’s (1925, 1928), public domain, checked word for word against Project Gutenberg.';
       updateMeta();
       return s;
     }).catch(function () { return null; });
