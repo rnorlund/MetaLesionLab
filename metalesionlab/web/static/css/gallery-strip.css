@@ -4,7 +4,9 @@
    picture styles (.lab-pic, .lab-cell, .lab-flip). */
 .lab-strip {
   --lab-bg: #16181D; --lab-card: #20232A; --lab-ink: #F5F4EF; --lab-muted: #BDBBB2; --lab-gold: #FBBF24;
-  --lab-pad: var(--gutter, clamp(16px, 4vw, 96px));  /* the site's gutter (app.css) */
+  /* the site's gutter (app.css), plus the margin beside the 2400px page on very wide windows, so the band's heading and
+     first card line up with the page's content */
+  --lab-pad: max(var(--gutter, clamp(16px, 4vw, 96px)), calc((var(--lab-vw, 100vw) - 2400px) / 2 + var(--gutter, 96px)));
   position: relative; box-sizing: border-box; width: var(--lab-vw, auto); max-width: none;
   margin: clamp(28px, 4vw, 56px) 0 clamp(20px, 3vw, 40px); padding: clamp(26px, 2.4vw, 34px) 0 clamp(28px, 2.6vw, 38px);
   background: var(--lab-bg); color: var(--lab-ink); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif);
