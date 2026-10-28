@@ -52,7 +52,8 @@ NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"]},
         {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"]},
-        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside"]},
+        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside", "/plato/gallery"]},
+        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"]},
         # its own page once /plato/inside is served, else the section on /plato
         {"href": "/plato/inside", "label": "Inside the model", "needs": "/plato/inside", "current": ["/plato/inside"]},
         {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato", "unless": "/plato/inside"},
@@ -375,6 +376,9 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
         items = series(app)
         page = page.replace("<!--#series:sub-->", render_series([s for s in items if s["path"] != "/plato"]))
         page = page.replace("<!--#series-->", render_series(items))
+    if site == "plato" and path != "/plato/gallery" and has_page(app, "/plato/gallery"):
+        from metalesionlab.web.plato_gallery_routes import add_strip  # "From the lab", above the footer
+        page = add_strip(page)
     link = render_sister(app)
     if "<!--#sister-->" in page:
         page = page.replace("<!--#sister-->", link)

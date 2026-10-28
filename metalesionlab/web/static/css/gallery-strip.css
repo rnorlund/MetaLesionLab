@@ -1,0 +1,78 @@
+/* "From the lab" (static/js/gallery-strip.js): a dark film-strip band at the foot of every Plato page, after the
+   page's content and before its footer, never fixed. It spans the window (the script sets --lab-vw), its cards grow
+   with the window, and it is a plain scrollable row with prefers-reduced-motion. The gallery page reuses the card
+   picture styles (.lab-pic, .lab-cell, .lab-flip). */
+.lab-strip {
+  --lab-bg: #16181D; --lab-card: #20232A; --lab-ink: #F5F4EF; --lab-muted: #BDBBB2; --lab-gold: #FBBF24;
+  --lab-pad: clamp(16px, 4vw, 96px);
+  position: relative; box-sizing: border-box; width: var(--lab-vw, auto); max-width: none;
+  margin: clamp(28px, 4vw, 56px) 0 clamp(20px, 3vw, 40px); padding: clamp(26px, 2.4vw, 34px) 0 clamp(28px, 2.6vw, 38px);
+  background: var(--lab-bg); color: var(--lab-ink); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif);
+}
+.lab-strip[hidden] { display: none; }
+/* sprocket holes along both edges */
+.lab-strip::before, .lab-strip::after { content: ""; position: absolute; left: 0; right: 0; height: 7px; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 12px, rgba(255, 255, 255, 0.13) 12px 24px); }
+.lab-strip::before { top: 8px; }
+.lab-strip::after { bottom: 8px; }
+
+.lab-strip-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px;
+  padding: 0 var(--lab-pad); margin-bottom: 16px; }
+.lab-strip-head h2 { margin: 0; font-size: clamp(20px, 1.7vw, 28px); letter-spacing: -0.01em; color: var(--lab-ink); }
+.lab-strip-sub { margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: var(--lab-muted); max-width: 70ch; }
+.lab-strip-ctrl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lab-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; height: 44px;
+  padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.32); background: transparent;
+  color: var(--lab-ink); font: inherit; font-size: 14px; cursor: pointer; }
+.lab-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.lab-btn svg { width: 14px; height: 14px; }
+.lab-all { color: var(--lab-gold); font-weight: 600; font-size: 14px; padding: 10px 4px; }
+.lab-strip a:focus-visible, .lab-btn:focus-visible { outline: 3px solid var(--lab-gold); outline-offset: 2px; border-radius: 6px; }
+
+.lab-strip-track { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; cursor: grab;
+  padding: 4px var(--lab-pad) 6px; scroll-padding-inline: var(--lab-pad); }
+.lab-strip-track::-webkit-scrollbar { display: none; }
+.lab-strip.is-dragging .lab-strip-track { cursor: grabbing; user-select: none; }
+.lab-strip-list { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; width: max-content; }
+
+.lab-card { position: relative; flex: none; width: clamp(236px, 19vw, 400px); display: flex; flex-direction: column;
+  background: var(--lab-card); border-radius: 14px; overflow: hidden; }
+.lab-card:focus-within { outline: 3px solid var(--lab-gold); outline-offset: 2px; }
+.lab-card-body { display: flex; flex-direction: column; gap: 4px; padding: 11px 14px 13px; min-width: 0; }
+.lab-card-cat { font-family: var(--mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lab-muted); }
+.lab-card.is-degrade .lab-card-cat { color: var(--lab-gold); }
+.lab-card-title { color: var(--lab-ink); font-weight: 600; font-size: clamp(15px, 1vw, 17px); line-height: 1.3; text-decoration: none; }
+.lab-card-title::after { content: ""; position: absolute; inset: 0; z-index: 1; }  /* the whole card opens the gallery */
+.lab-card-cap { font-size: 13px; color: var(--lab-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-card-go { position: relative; z-index: 2; align-self: flex-start; margin-top: 2px; font-size: 13px; color: var(--lab-gold); }
+.lab-card:hover .lab-card-title { text-decoration: underline; text-underline-offset: 3px; }
+.lab-card-all { justify-content: center; align-items: center; padding: 24px; text-align: center; background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.3); }
+.lab-card-all .lab-card-title { color: var(--lab-gold); font-size: 17px; }
+
+/* ---------- card pictures (shared with the gallery page) ---------- */
+.lab-pic { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2;
+  background: #FFFFFF; overflow: hidden; container-type: size; }
+.lab-pic > img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.lab-cell { position: relative; display: block; overflow: hidden; flex: none; max-width: 100%;
+  width: min(100cqw, 100cqh * var(--r, 1)); }
+.lab-cell img { display: block; height: 100%; max-width: none; position: absolute; top: 0; left: 0; user-select: none; }
+.lab-pic-pair { gap: 6px; padding: 0 6px; }
+.lab-pic-pair .lab-cell { width: min(44cqw, 100cqh * var(--r, 1)); }
+.lab-pic-pair.is-pair .lab-cell { width: min(58cqw, 100cqh * var(--r, 1)); }
+.lab-pic-pair.is-pair .lab-cell.is-half { width: min(29cqw, 100cqh * var(--r, 1)); }
+.lab-arrow { flex: none; color: #6B7280; font-size: 18px; }
+.lab-frame { position: absolute; left: 8px; bottom: 9px; z-index: 0; font: 500 11px/1.2 var(--mono, ui-monospace, monospace);
+  background: rgba(17, 24, 39, 0.8); color: #FFFFFF; padding: 3px 7px; border-radius: 6px; max-width: calc(100% - 16px);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(17, 24, 39, 0.1); }
+.lab-bar i { display: block; height: 100%; background: #C2410C; transition: width 0.3s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-strip-track { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.35) transparent; scroll-snap-type: x proximity; }
+  .lab-strip-track::-webkit-scrollbar { display: block; height: 8px; }
+  .lab-card { scroll-snap-align: start; }
+  .lab-bar i { transition: none; }
+}
+@media print { .lab-strip { display: none; } }

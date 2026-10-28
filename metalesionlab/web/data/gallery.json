@@ -1,0 +1,1265 @@
+{
+ "about": "Curated pictures from the Plato's Chair experiments, for /plato/gallery and the \"From the lab\" strip on every Plato page. Captions are hand-written and every number is from docs/plato*.md. thumb is the card picture; for a sequence it is a sprite of all its frames side by side (scripts/plato_gallery_export.py writes the pictures). A frame with a \"pair\" shows two panels side by side, named by pair_labels. No child's drawing appears anywhere.",
+ "categories": [
+  "Watch it degrade",
+  "The Forms",
+  "Shadows",
+  "Words and shapes",
+  "Growing up"
+ ],
+ "credits": [
+  "People's drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0.",
+  "Meta's models: Muse Image (drawings), Muse Spark (descriptions, names, labels), Muse Glimmer (names, open weights), DINOv2 (similarity).",
+  "Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M. Stable Diffusion v1.1–v1.5, CreativeML OpenRAIL-M.",
+  "Janus-Pro-7B (DeepSeek), MIT.",
+  "Published figures only: Ćwiek et al. 2022 (bouba and kiki), Banks & Connell 2023 (CC BY 4.0, category norms), Long et al. 2024 (children's drawings: statistics only, none shown).",
+  "Damage here is done to AI models on purpose. Links to neurology are analogies, not claims about people."
+ ],
+ "items": [
+  {
+   "id": "telephone-beanbag",
+   "title": "A beanbag becomes a croissant, then a window",
+   "caption": "Each round, Muse Spark describes the drawing and Muse Image draws the description. The beanbag became “a plump croissant”, then “a semicircular fanlight window”.",
+   "category": "Watch it degrade",
+   "link": "/plato/telephone#player",
+   "thumb": "/static/img/gallery/telephone-beanbag.webp",
+   "alt": "Eleven doodles in a row: a beanbag chair, then a croissant, then a fan-shaped half ring, ending as a semicircular fanlight window.",
+   "credit": "Muse Spark and Muse Image (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/telephone-beanbag-0.webp",
+      "label": "start"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-1.webp",
+      "label": "copy 1"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-2.webp",
+      "label": "copy 2"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-3.webp",
+      "label": "copy 3"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-4.webp",
+      "label": "copy 4"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-5.webp",
+      "label": "copy 5"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-6.webp",
+      "label": "copy 6"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-7.webp",
+      "label": "copy 7"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-8.webp",
+      "label": "copy 8"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-9.webp",
+      "label": "copy 9"
+     },
+     {
+      "src": "/static/img/gallery/telephone-beanbag-10.webp",
+      "label": "copy 10"
+     }
+    ]
+   }
+  },
+  {
+   "id": "telephone-high-chair",
+   "title": "The high chair falls into the textbook chair",
+   "caption": "The tray was gone after one copy, and the picture stayed Muse’s slat-back textbook chair for nine generations (distance to it 0.25 → 0.09 → 0.07).",
+   "category": "Watch it degrade",
+   "link": "/plato/telephone#player",
+   "thumb": "/static/img/gallery/telephone-high-chair.webp",
+   "alt": "Eleven doodles: a high chair with a tray, then, from the first copy on, a plain slat-back chair, the same textbook chair to the end.",
+   "credit": "Muse Spark and Muse Image (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/telephone-high-chair-0.webp",
+      "label": "start"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-1.webp",
+      "label": "copy 1"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-2.webp",
+      "label": "copy 2"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-3.webp",
+      "label": "copy 3"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-4.webp",
+      "label": "copy 4"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-5.webp",
+      "label": "copy 5"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-6.webp",
+      "label": "copy 6"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-7.webp",
+      "label": "copy 7"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-8.webp",
+      "label": "copy 8"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-9.webp",
+      "label": "copy 9"
+     },
+     {
+      "src": "/static/img/gallery/telephone-high-chair-10.webp",
+      "label": "copy 10"
+     }
+    ]
+   }
+  },
+  {
+   "id": "telephone-folding-chair",
+   "title": "A folding chair becomes a scribbled diamond",
+   "caption": "Ten rounds of describe-then-draw turned this folding chair into a scribbled diamond. Asked to pick its kind from a list, Muse Spark still chose “a folding chair”.",
+   "category": "Watch it degrade",
+   "link": "/plato/telephone#player",
+   "thumb": "/static/img/gallery/telephone-folding-chair.webp",
+   "alt": "Eleven doodles: a wooden folding chair whose back thins away until only a diamond-shaped seat on crossed legs is left, then just a scribbled diamond.",
+   "credit": "Muse Spark and Muse Image (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-0.webp",
+      "label": "start"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-1.webp",
+      "label": "copy 1"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-2.webp",
+      "label": "copy 2"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-3.webp",
+      "label": "copy 3"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-4.webp",
+      "label": "copy 4"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-5.webp",
+      "label": "copy 5"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-6.webp",
+      "label": "copy 6"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-7.webp",
+      "label": "copy 7"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-8.webp",
+      "label": "copy 8"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-9.webp",
+      "label": "copy 9"
+     },
+     {
+      "src": "/static/img/gallery/telephone-folding-chair-10.webp",
+      "label": "copy 10"
+     }
+    ]
+   }
+  },
+  {
+   "id": "telephone-throne",
+   "title": "The throne’s crown ends up on a pole",
+   "caption": "Muse Spark’s first description never said “throne”. The crown survived anyway, ending on a pole above a black oval.",
+   "category": "Watch it degrade",
+   "link": "/plato/telephone#player",
+   "thumb": "/static/img/gallery/telephone-throne.webp",
+   "alt": "Eleven doodles: a throne with a crown-shaped back; the back narrows to a pole with a crown on top, above a round black seat on spindly legs.",
+   "credit": "Muse Spark and Muse Image (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/telephone-throne-0.webp",
+      "label": "start"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-1.webp",
+      "label": "copy 1"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-2.webp",
+      "label": "copy 2"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-3.webp",
+      "label": "copy 3"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-4.webp",
+      "label": "copy 4"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-5.webp",
+      "label": "copy 5"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-6.webp",
+      "label": "copy 6"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-7.webp",
+      "label": "copy 7"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-8.webp",
+      "label": "copy 8"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-9.webp",
+      "label": "copy 9"
+     },
+     {
+      "src": "/static/img/gallery/telephone-throne-10.webp",
+      "label": "copy 10"
+     }
+    ]
+   }
+  },
+  {
+   "id": "damage-rocking-chair",
+   "title": "A rocking chair: a red car, or charcoal",
+   "caption": "Noise in Stable Diffusion XL’s language part turns a rocking chair into a room, then a red car. Noise in its drawing part dissolves it into charcoal.",
+   "category": "Watch it degrade",
+   "link": "/plato/damage#slider",
+   "thumb": "/static/img/gallery/damage-rocking-chair.webp",
+   "alt": "Two rows of five pictures of a rocking chair by Stable Diffusion XL. Language part damaged: the chair sits in a room, then becomes a red car. Drawing part damaged: the lines blur into gray charcoal texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/damage-rocking-chair-0.webp",
+      "label": "intact",
+      "pair": "/static/img/gallery/damage-rocking-chair-0b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-rocking-chair-1.webp",
+      "label": "level 1",
+      "pair": "/static/img/gallery/damage-rocking-chair-1b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-rocking-chair-2.webp",
+      "label": "level 2",
+      "pair": "/static/img/gallery/damage-rocking-chair-2b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-rocking-chair-3.webp",
+      "label": "level 3",
+      "pair": "/static/img/gallery/damage-rocking-chair-3b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-rocking-chair-4.webp",
+      "label": "level 4",
+      "pair": "/static/img/gallery/damage-rocking-chair-4b.webp"
+     }
+    ],
+    "pair_labels": [
+     "Language part: noise added",
+     "Drawing part: noise added"
+    ]
+   }
+  },
+  {
+   "id": "damage-wheelchair",
+   "title": "A wheelchair becomes a bicycle",
+   "caption": "Switch off neurons in Stable Diffusion XL’s language part and its wheelchair becomes a bicycle. In its drawing part, the lines break into stripes and checks.",
+   "category": "Watch it degrade",
+   "link": "/plato/damage#slider",
+   "thumb": "/static/img/gallery/damage-wheelchair.webp",
+   "alt": "Two rows of five pictures of a wheelchair. Language part damaged: from level 2 on it is a bicycle. Drawing part damaged: concentric scribbles, then stripes, then a black-and-white checkerboard.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/damage-wheelchair-0.webp",
+      "label": "intact",
+      "pair": "/static/img/gallery/damage-wheelchair-0b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-wheelchair-1.webp",
+      "label": "level 1",
+      "pair": "/static/img/gallery/damage-wheelchair-1b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-wheelchair-2.webp",
+      "label": "level 2",
+      "pair": "/static/img/gallery/damage-wheelchair-2b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-wheelchair-3.webp",
+      "label": "level 3",
+      "pair": "/static/img/gallery/damage-wheelchair-3b.webp"
+     },
+     {
+      "src": "/static/img/gallery/damage-wheelchair-4.webp",
+      "label": "level 4",
+      "pair": "/static/img/gallery/damage-wheelchair-4b.webp"
+     }
+    ],
+    "pair_labels": [
+     "Language part: neurons off",
+     "Drawing part: neurons off"
+    ]
+   }
+  },
+  {
+   "id": "damage-clock-numbers",
+   "title": "Damaged clocks lose their numbers first",
+   "caption": "Damage Stable Diffusion XL’s drawing part and the numbers go first: 12 numbers in order fall from 33% of clocks to 4%, while the outline survives on 85%.",
+   "category": "Watch it degrade",
+   "link": "/plato/damage#clock-h",
+   "thumb": "/static/img/gallery/damage-clock-numbers.webp",
+   "alt": "Four clocks asked for 6:30. Intact: Roman numerals and hands. With 10% and 15% of the drawing part’s neurons off, the outline, hands and tick marks remain but the numerals are gone. At 20%: bold, distorted strokes.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/damage-clock-numbers-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/damage-clock-numbers-1.webp",
+      "label": "drawing part, 10% off"
+     },
+     {
+      "src": "/static/img/gallery/damage-clock-numbers-2.webp",
+      "label": "drawing part, 15% off"
+     },
+     {
+      "src": "/static/img/gallery/damage-clock-numbers-3.webp",
+      "label": "drawing part, 20% off"
+     }
+    ]
+   }
+  },
+  {
+   "id": "damage-clock-cyclist",
+   "title": "A clock turns into a cyclist",
+   "caption": "Damage the language part instead and whole clocks disappear: this 8:45 became a cyclist. The clocks it still draws keep their numbers.",
+   "category": "Watch it degrade",
+   "link": "/plato/damage#clock-h",
+   "thumb": "/static/img/gallery/damage-clock-cyclist.webp",
+   "alt": "Four pictures asked for a clock showing 8:45. Intact and with mild noise in the language part: a clock with Roman numerals. With stronger noise: a person riding a bicycle.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/damage-clock-cyclist-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/damage-clock-cyclist-1.webp",
+      "label": "language part, noise ×0.5"
+     },
+     {
+      "src": "/static/img/gallery/damage-clock-cyclist-2.webp",
+      "label": "language part, noise ×0.75"
+     },
+     {
+      "src": "/static/img/gallery/damage-clock-cyclist-3.webp",
+      "label": "language part, noise ×1"
+     }
+    ]
+   }
+  },
+  {
+   "id": "damage-janus-wheelchair",
+   "title": "Janus’s wheelchair becomes a tricycle, then a car",
+   "caption": "Janus-Pro-7B reads and draws with one language model. Switch off 20%, 35% and 50% of its neurons and the wheelchair becomes a tricycle, a trike, then a car.",
+   "category": "Watch it degrade",
+   "link": "/plato/damage#janus-sec",
+   "thumb": "/static/img/gallery/damage-janus-wheelchair.webp",
+   "alt": "Four pen sketches by Janus-Pro: a wheelchair, then a tricycle, a small trike, and the outline of a car.",
+   "credit": "Janus-Pro-7B (DeepSeek), MIT",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/damage-janus-wheelchair-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/damage-janus-wheelchair-1.webp",
+      "label": "20% of neurons off"
+     },
+     {
+      "src": "/static/img/gallery/damage-janus-wheelchair-2.webp",
+      "label": "35% off"
+     },
+     {
+      "src": "/static/img/gallery/damage-janus-wheelchair-3.webp",
+      "label": "50% off"
+     }
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-chair",
+   "title": "A chair becomes two people at a café",
+   "caption": "Noise in Stable Diffusion XL’s words part swaps the armchair for café chairs, then for two people at a table. Noise in its drawing part dissolves it.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-chair.webp",
+   "alt": "Two rows of six pictures of a chair by Stable Diffusion XL, one seed. Words part damaged: a modern armchair becomes a pair of café chairs, then two people at a table by a window. Drawing part damaged: the chair dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-chair-0.webp",
+      "pair": "/static/img/gallery/draw-damage-chair-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-chair-1.webp",
+      "pair": "/static/img/gallery/draw-damage-chair-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-chair-2.webp",
+      "pair": "/static/img/gallery/draw-damage-chair-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-chair-3.webp",
+      "pair": "/static/img/gallery/draw-damage-chair-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-chair-4.webp",
+      "pair": "/static/img/gallery/draw-damage-chair-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-chair-5.webp",
+      "pair": "/static/img/gallery/draw-damage-chair-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-umbrella",
+   "title": "An umbrella turns into a motorbike",
+   "caption": "With noise in its words part, Stable Diffusion XL’s umbrella moves outdoors and becomes a motorbike. With noise in its drawing part, it sinks into gray texture.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-umbrella.webp",
+   "alt": "Two rows of six pictures of a umbrella by Stable Diffusion XL, one seed. Words part damaged: the umbrella stands outdoors, then becomes a motorbike in a street. Drawing part damaged: the umbrella dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-umbrella-0.webp",
+      "pair": "/static/img/gallery/draw-damage-umbrella-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-umbrella-1.webp",
+      "pair": "/static/img/gallery/draw-damage-umbrella-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-umbrella-2.webp",
+      "pair": "/static/img/gallery/draw-damage-umbrella-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-umbrella-3.webp",
+      "pair": "/static/img/gallery/draw-damage-umbrella-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-umbrella-4.webp",
+      "pair": "/static/img/gallery/draw-damage-umbrella-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-umbrella-5.webp",
+      "pair": "/static/img/gallery/draw-damage-umbrella-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-bicycle",
+   "title": "A bicycle grows a rider",
+   "caption": "Noise in the words part adds a rider in a helmet to Stable Diffusion XL’s bicycle. Noise in the drawing part keeps the bicycle but buries it in scribbles.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-bicycle.webp",
+   "alt": "Two rows of six pictures of a bicycle by Stable Diffusion XL, one seed. Words part damaged: a rider in a helmet appears on the bicycle. Drawing part damaged: the bicycle dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-bicycle-0.webp",
+      "pair": "/static/img/gallery/draw-damage-bicycle-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-bicycle-1.webp",
+      "pair": "/static/img/gallery/draw-damage-bicycle-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-bicycle-2.webp",
+      "pair": "/static/img/gallery/draw-damage-bicycle-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-bicycle-3.webp",
+      "pair": "/static/img/gallery/draw-damage-bicycle-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-bicycle-4.webp",
+      "pair": "/static/img/gallery/draw-damage-bicycle-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-bicycle-5.webp",
+      "pair": "/static/img/gallery/draw-damage-bicycle-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-house",
+   "title": "A house that stays a house",
+   "caption": "Not everything wanders: with noise in its words part, Stable Diffusion XL’s house stays a house. Noise in its drawing part dissolves the same house into texture.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-house.webp",
+   "alt": "Two rows of six pictures of a house by Stable Diffusion XL, one seed. Words part damaged: the house stays a house, drawn in more detail. Drawing part damaged: the house dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-house-0.webp",
+      "pair": "/static/img/gallery/draw-damage-house-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-house-1.webp",
+      "pair": "/static/img/gallery/draw-damage-house-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-house-2.webp",
+      "pair": "/static/img/gallery/draw-damage-house-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-house-3.webp",
+      "pair": "/static/img/gallery/draw-damage-house-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-house-4.webp",
+      "pair": "/static/img/gallery/draw-damage-house-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-house-5.webp",
+      "pair": "/static/img/gallery/draw-damage-house-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-cat",
+   "title": "A cat zooms in on its own face",
+   "caption": "Noise in the words part zooms Stable Diffusion XL’s cat in to a close-up of its face, then out again. Noise in the drawing part breaks it into patches.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-cat.webp",
+   "alt": "Two rows of six pictures of a cat by Stable Diffusion XL, one seed. Words part damaged: a close-up of a cat’s face, then a whole cat again. Drawing part damaged: the cat dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-cat-0.webp",
+      "pair": "/static/img/gallery/draw-damage-cat-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cat-1.webp",
+      "pair": "/static/img/gallery/draw-damage-cat-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cat-2.webp",
+      "pair": "/static/img/gallery/draw-damage-cat-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cat-3.webp",
+      "pair": "/static/img/gallery/draw-damage-cat-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cat-4.webp",
+      "pair": "/static/img/gallery/draw-damage-cat-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cat-5.webp",
+      "pair": "/static/img/gallery/draw-damage-cat-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-tree",
+   "title": "A tree steps out into a street",
+   "caption": "With noise in its words part, Stable Diffusion XL’s tree keeps its shape, then stands in a street beside a house. Noise in its drawing part dissolves it.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-tree.webp",
+   "alt": "Two rows of six pictures of a tree by Stable Diffusion XL, one seed. Words part damaged: the tree keeps its shape, then stands in a street beside a house. Drawing part damaged: the tree dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-tree-0.webp",
+      "pair": "/static/img/gallery/draw-damage-tree-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-tree-1.webp",
+      "pair": "/static/img/gallery/draw-damage-tree-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-tree-2.webp",
+      "pair": "/static/img/gallery/draw-damage-tree-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-tree-3.webp",
+      "pair": "/static/img/gallery/draw-damage-tree-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-tree-4.webp",
+      "pair": "/static/img/gallery/draw-damage-tree-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-tree-5.webp",
+      "pair": "/static/img/gallery/draw-damage-tree-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-face",
+   "title": "A face becomes someone else",
+   "caption": "Noise in Stable Diffusion XL’s words part turns one woman’s face into a different person’s, with glasses and curly hair. Noise in its drawing part dissolves it.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-face.webp",
+   "alt": "Two rows of six pictures of a face by Stable Diffusion XL, one seed. Words part damaged: the woman’s face becomes a different person with curly hair and glasses. Drawing part damaged: the face dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-face-0.webp",
+      "pair": "/static/img/gallery/draw-damage-face-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-face-1.webp",
+      "pair": "/static/img/gallery/draw-damage-face-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-face-2.webp",
+      "pair": "/static/img/gallery/draw-damage-face-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-face-3.webp",
+      "pair": "/static/img/gallery/draw-damage-face-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-face-4.webp",
+      "pair": "/static/img/gallery/draw-damage-face-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-face-5.webp",
+      "pair": "/static/img/gallery/draw-damage-face-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-sailboat",
+   "title": "A sailboat becomes a man at the harbour",
+   "caption": "Noise in Stable Diffusion XL’s words part replaces the sailboat with a young man looking out over a harbour, then a crowd. Noise in its drawing part dissolves it.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-sailboat.webp",
+   "alt": "Two rows of six pictures of a boat by Stable Diffusion XL, one seed. Words part damaged: a young man looking out over a harbour replaces the boat, then people in orange jackets. Drawing part damaged: the boat dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-sailboat-0.webp",
+      "pair": "/static/img/gallery/draw-damage-sailboat-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-sailboat-1.webp",
+      "pair": "/static/img/gallery/draw-damage-sailboat-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-sailboat-2.webp",
+      "pair": "/static/img/gallery/draw-damage-sailboat-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-sailboat-3.webp",
+      "pair": "/static/img/gallery/draw-damage-sailboat-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-sailboat-4.webp",
+      "pair": "/static/img/gallery/draw-damage-sailboat-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-sailboat-5.webp",
+      "pair": "/static/img/gallery/draw-damage-sailboat-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-cup",
+   "title": "A cup becomes a busy café",
+   "caption": "Noise in Stable Diffusion XL’s words part puts the cup on a saucer, then turns it into a crowded café. Noise in its drawing part fades it.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-cup.webp",
+   "alt": "Two rows of six pictures of a cup by Stable Diffusion XL, one seed. Words part damaged: the cup sits on a saucer, then becomes a café full of people. Drawing part damaged: the cup dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-cup-0.webp",
+      "pair": "/static/img/gallery/draw-damage-cup-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cup-1.webp",
+      "pair": "/static/img/gallery/draw-damage-cup-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cup-2.webp",
+      "pair": "/static/img/gallery/draw-damage-cup-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cup-3.webp",
+      "pair": "/static/img/gallery/draw-damage-cup-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cup-4.webp",
+      "pair": "/static/img/gallery/draw-damage-cup-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-cup-5.webp",
+      "pair": "/static/img/gallery/draw-damage-cup-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "draw-damage-book",
+   "title": "A book becomes a bedroom with a dog",
+   "caption": "Noise in Stable Diffusion XL’s words part opens the book, then replaces it with a bedroom and a dog. Noise in its drawing part blurs it into texture.",
+   "category": "Watch it degrade",
+   "link": "/draw",
+   "thumb": "/static/img/gallery/draw-damage-book.webp",
+   "alt": "Two rows of six pictures of a book by Stable Diffusion XL, one seed. Words part damaged: the book opens, then becomes a bedroom with bookshelves and a dog. Drawing part damaged: the book dissolves into gray texture.",
+   "credit": "Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/draw-damage-book-0.webp",
+      "pair": "/static/img/gallery/draw-damage-book-0.webp",
+      "label": "intact"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-book-1.webp",
+      "pair": "/static/img/gallery/draw-damage-book-1b.webp",
+      "label": "step 1 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-book-2.webp",
+      "pair": "/static/img/gallery/draw-damage-book-2b.webp",
+      "label": "step 2 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-book-3.webp",
+      "pair": "/static/img/gallery/draw-damage-book-3b.webp",
+      "label": "step 3 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-book-4.webp",
+      "pair": "/static/img/gallery/draw-damage-book-4b.webp",
+      "label": "step 4 of 5"
+     },
+     {
+      "src": "/static/img/gallery/draw-damage-book-5.webp",
+      "pair": "/static/img/gallery/draw-damage-book-5b.webp",
+      "label": "step 5 of 5"
+     }
+    ],
+    "pair_labels": [
+     "Words part damaged",
+     "Drawing part damaged"
+    ]
+   }
+  },
+  {
+   "id": "cave-rabbit",
+   "title": "A rabbit’s shadow is just “Shadow”",
+   "caption": "Meta’s open model Muse Glimmer named the rabbit from its drawing, outline and silhouette. For its cast shadow it said “Shadow”, its most common wrong answer (10 times).",
+   "category": "Shadows",
+   "link": "/plato/cave#medium",
+   "thumb": "/static/img/gallery/cave-rabbit.webp",
+   "alt": "Four versions of a rabbit: the line drawing, its outline, a black silhouette, and a soft gray shadow on a wall.",
+   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/cave-rabbit-0.webp",
+      "label": "drawing: “rabbit”"
+     },
+     {
+      "src": "/static/img/gallery/cave-rabbit-1.webp",
+      "label": "outline: “Bunny”"
+     },
+     {
+      "src": "/static/img/gallery/cave-rabbit-2.webp",
+      "label": "silhouette: “Bunny”"
+     },
+     {
+      "src": "/static/img/gallery/cave-rabbit-3.webp",
+      "label": "cast shadow: “Shadow”"
+     }
+    ]
+   }
+  },
+  {
+   "id": "cave-hat",
+   "title": "A hat becomes a bowler, then a UFO",
+   "caption": "Muse Glimmer named the hat from its drawing and outline, called its silhouette a “bowler”, and its cast shadow a “UFO”, one of seven UFOs.",
+   "category": "Shadows",
+   "link": "/plato/cave#medium",
+   "thumb": "/static/img/gallery/cave-hat.webp",
+   "alt": "Four versions of a hat: the line drawing, its outline, a black silhouette, and a soft gray oval shadow on a wall.",
+   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/cave-hat-0.webp",
+      "label": "drawing: “Hat”"
+     },
+     {
+      "src": "/static/img/gallery/cave-hat-1.webp",
+      "label": "outline: “Hat”"
+     },
+     {
+      "src": "/static/img/gallery/cave-hat-2.webp",
+      "label": "silhouette: “bowler”"
+     },
+     {
+      "src": "/static/img/gallery/cave-hat-3.webp",
+      "label": "cast shadow: “UFO”"
+     }
+    ]
+   }
+  },
+  {
+   "id": "cave-wall",
+   "title": "Twelve shadows on the cave wall",
+   "caption": "Meta’s open model Muse Glimmer named 67 of 100 everyday objects from their cast shadows. Here the scissors and anchor survive; the rabbit and guitar become “Shadow”.",
+   "category": "Shadows",
+   "link": "/plato/cave#game",
+   "thumb": "/static/img/gallery/cave-wall.webp",
+   "alt": "Twelve dark shadows on a firelit cave wall, each with Muse Glimmer’s answer: rabbit “Shadow”, scissors correct, hat “UFO”, anchor correct, guitar “Shadow”, bicycle correct, glove “hand”, cat correct, igloo “Umbrella”, helicopter correct, bread “UFO”, umbrella correct.",
+   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "image": "/static/img/gallery/cave-wall-full.webp"
+  },
+  {
+   "id": "cave-versions",
+   "title": "What survives as a shadow?",
+   "caption": "Muse Glimmer named 100% of the line drawings, 86% of their outlines, 90% of filled silhouettes and 67% of soft cast shadows. The clock was lost in every reduced version.",
+   "category": "Shadows",
+   "link": "/plato/cave#survive",
+   "thumb": "/static/img/gallery/cave-versions.webp",
+   "alt": "A grid of four objects (cat, scissors, bicycle, clock), each as a line drawing, an outline, a black silhouette and a gray cast shadow. The clock’s outline, silhouette and shadow are plain circles.",
+   "credit": "Line drawings: Muse Image; outlines, silhouettes and shadows made by code; names: Muse Glimmer (Meta)",
+   "image": "/static/img/gallery/cave-versions-full.webp"
+  },
+  {
+   "id": "forms-sixteen-chairs",
+   "title": "Asked for 16 chairs, Muse drew one",
+   "caption": "Left: Muse Image’s 16 chairs, the same slat-back chair in the same three-quarter view. Right: 16 people’s chairs from Quick, Draw!. Spread 0.13 against 0.36.",
+   "category": "The Forms",
+   "link": "/plato#hero",
+   "thumb": "/static/img/gallery/forms-sixteen-chairs.webp",
+   "alt": "Two grids of 16 chair doodles. Left, by Meta’s Muse Image: nearly identical slat-back wooden chairs in three-quarter view. Right, by 16 people: simple side-view chairs, each drawn differently.",
+   "credit": "Muse Image (Meta); people: Google Quick, Draw! (CC BY 4.0)",
+   "image": "/static/img/gallery/forms-sixteen-chairs-full.webp"
+  },
+  {
+   "id": "forms-stacked",
+   "title": "Stacked: one sharp chair, or a cloud",
+   "caption": "Lay the 16 drawings on top of each other. Muse Image’s chairs make one sharp chair; people’s make a cloud of lines.",
+   "category": "The Forms",
+   "link": "/plato#hero",
+   "thumb": "/static/img/gallery/forms-stacked.webp",
+   "alt": "Muse Image’s 16 chairs and people’s 16 chairs slide from a grid onto one another: the AI’s stack into one dark, sharp chair, people’s into a gray cloud of lines.",
+   "credit": "Muse Image (Meta); people: Google Quick, Draw! (CC BY 4.0)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/forms-stacked-0.webp",
+      "label": "16 side by side",
+      "pair": "/static/img/gallery/forms-stacked-0b.webp"
+     },
+     {
+      "src": "/static/img/gallery/forms-stacked-1.webp",
+      "label": "sliding together",
+      "pair": "/static/img/gallery/forms-stacked-1b.webp"
+     },
+     {
+      "src": "/static/img/gallery/forms-stacked-2.webp",
+      "label": "stacked",
+      "pair": "/static/img/gallery/forms-stacked-2b.webp"
+     }
+    ],
+    "pair_labels": [
+     "Muse Image",
+     "People (Quick, Draw!)"
+    ]
+   }
+  },
+  {
+   "id": "forms-clock-1010",
+   "title": "The AI’s average clock reads 10:10",
+   "caption": "Averaged pixel by pixel, Muse Image’s 16 clocks show crisp hands at ten past ten (13 of 16 read 10:10 by eye). People’s 200 clocks blur into a soft ring.",
+   "category": "The Forms",
+   "link": "/plato/forms#average",
+   "thumb": "/static/img/gallery/forms-clock-1010.webp",
+   "alt": "Two pixel averages. Left, Muse Image’s 16 clock doodles: a crisp ring of ticks with two sharp hands at ten past ten. Right, 200 people’s clocks: a soft gray ring with a faint stroke up to the 12.",
+   "credit": "Muse Image (Meta); people: Google Quick, Draw! (CC BY 4.0)",
+   "image": "/static/img/gallery/forms-clock-1010-full.webp"
+  },
+  {
+   "id": "forms-clock-asked",
+   "title": "Ask for a time, and it draws it",
+   "caption": "10:10 is a default, not a limit. Asked for a time, Muse Image draws it: none of its 72 time-asked clocks shows 10:10, and 93% get the minute hand right.",
+   "category": "The Forms",
+   "link": "/plato/forms#asked",
+   "thumb": "/static/img/gallery/forms-clock-asked.webp",
+   "alt": "Ten clock doodles by Muse Image, each labelled with the time asked, from 1:20 to 12:25. The hands point roughly to each asked time, never to ten past ten.",
+   "credit": "Muse Image (Meta)",
+   "image": "/static/img/gallery/forms-clock-asked-full.webp"
+  },
+  {
+   "id": "forms-table",
+   "title": "Plato’s table, drawn the same way 16 times",
+   "caption": "Plato’s own example in Republic X. Muse Image’s 16 tables are almost the same four-legged table: 61% less varied than people’s tables (ratio 0.39).",
+   "category": "The Forms",
+   "link": "/plato/forms#bed-table",
+   "thumb": "/static/img/gallery/forms-table.webp",
+   "alt": "Two grids of 16 table doodles. Left, Muse Image: the same four-legged table in three-quarter view. Right, people: quick, varied line drawings of tables.",
+   "credit": "Muse Image (Meta); people: Google Quick, Draw! (CC BY 4.0)",
+   "image": "/static/img/gallery/forms-table-full.webp"
+  },
+  {
+   "id": "forms-bed",
+   "title": "Plato’s bed, sixteen times over",
+   "caption": "Plato’s other example in Republic X. Muse Image’s 16 beds have about half the variety of people’s (ratio 0.47), right at the median of 36 things.",
+   "category": "The Forms",
+   "link": "/plato/forms#bed-table",
+   "thumb": "/static/img/gallery/forms-bed.webp",
+   "alt": "Two grids of 16 bed doodles. Left, Muse Image: near-identical beds with a headboard and pillows in three-quarter view. Right, people: varied quick drawings of beds.",
+   "credit": "Muse Image (Meta); people: Google Quick, Draw! (CC BY 4.0)",
+   "image": "/static/img/gallery/forms-bed-full.webp"
+  },
+  {
+   "id": "forms-named-kinds",
+   "title": "Name the kind, and the variety returns",
+   "caption": "“Any kind of chair” still gives the textbook chair. But asked for 16 named kinds, from rocking chair to throne, Muse Image draws as varied as people.",
+   "category": "The Forms",
+   "link": "/plato#variety",
+   "thumb": "/static/img/gallery/forms-named-kinds.webp",
+   "alt": "Sixteen doodles by Muse Image, one per named kind: rocking chair, armchair, folding chair, office chair, recliner, beanbag, highchair, wheelchair, dining chair, bar chair, lounge chair, wingback, cantilever chair, throne, Adirondack chair, gaming chair.",
+   "credit": "Muse Spark and Muse Image (Meta)",
+   "image": "/static/img/gallery/forms-named-kinds-full.webp"
+  },
+  {
+   "id": "forms-sdxl",
+   "title": "Another image model varies far more",
+   "caption": "This is Muse, not every image model. Given the same prompt, Stable Diffusion XL (middle) varies more for 34 of 35 things, at about 2.4 times the spread.",
+   "category": "The Forms",
+   "link": "/plato#second-model",
+   "thumb": "/static/img/gallery/forms-sdxl.webp",
+   "alt": "Three grids of nine chairs from the same prompt. Left, Muse Image: the same slatted chair. Middle, Stable Diffusion XL: armchairs, an office chair and framed, shaded scenes. Right, people: quick line drawings.",
+   "credit": "Muse Image (Meta); Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M; people: Google Quick, Draw! (CC BY 4.0)",
+   "image": "/static/img/gallery/forms-sdxl-full.webp"
+  },
+  {
+   "id": "cratylus-bouba-kiki",
+   "title": "Bouba is round, kiki is spiky",
+   "caption": "Muse Image drew all 12 “bouba”s as soft blobs and all 12 “kiki”s as stars, the match people make: 72% of 917 people in 25 languages.",
+   "category": "Words and shapes",
+   "link": "/plato/cratylus#words",
+   "thumb": "/static/img/gallery/cratylus-bouba-kiki.webp",
+   "alt": "Top: 12 shapes Muse Image drew for “bouba”, soft rounded blobs. Bottom: 12 shapes it drew for “kiki”, spiky stars.",
+   "credit": "Muse Image (Meta); people: Ćwiek et al. 2022 (published figures only)",
+   "image": "/static/img/gallery/cratylus-bouba-kiki-full.webp"
+  },
+  {
+   "id": "cratylus-keti",
+   "title": "But “keti” comes out round",
+   "caption": "“Keti” has kiki’s hard sounds, yet Muse Image drew 12 round blobs. All eight new words came out rounded: it learned the famous words, not the sounds.",
+   "category": "Words and shapes",
+   "link": "/plato/cratylus#sound",
+   "thumb": "/static/img/gallery/cratylus-keti.webp",
+   "alt": "Top: 12 spiky stars Muse Image drew for “kiki”. Bottom: 12 rounded blobs it drew for the made-up word “keti”.",
+   "credit": "Muse Image (Meta)",
+   "image": "/static/img/gallery/cratylus-keti-full.webp"
+  },
+  {
+   "id": "cratylus-no-name",
+   "title": "A shape with no name is spiky",
+   "caption": "With no name at all, “a shape” came out as stars and polygons. Any made-up name except kiki and takete turned it into a soft blob.",
+   "category": "Words and shapes",
+   "link": "/plato/cratylus#words",
+   "thumb": "/static/img/gallery/cratylus-no-name.webp",
+   "alt": "Twelve shapes Muse Image drew for “a shape”: five-pointed stars, pentagons and hexagons.",
+   "credit": "Muse Image (Meta)",
+   "image": "/static/img/gallery/cratylus-no-name-full.webp"
+  },
+  {
+   "id": "bird-game",
+   "title": "Name a game: chess. Draw one: Super Mario",
+   "caption": "Asked to name a game, Muse Spark said chess 49 times in 50. Asked to draw one, Muse Image drew a Super Mario-style platformer 9 times in 12.",
+   "category": "Words and shapes",
+   "link": "/plato/bird#draw",
+   "thumb": "/static/img/gallery/bird-game.webp",
+   "alt": "Twelve doodles by Muse Image for “a game”: mostly platform-game scenes, a little runner jumping over gaps and up steps towards a flag, and a winding maze.",
+   "credit": "Muse Spark and Muse Image (Meta)",
+   "image": "/static/img/gallery/bird-game-full.webp"
+  },
+  {
+   "id": "bird-sparrow",
+   "title": "Name a bird: sparrow, 49 times in 50",
+   "caption": "Muse Spark named a sparrow 49 times in 50, and Muse Image drew the same little songbird 12 times. Twenty people named 11 different birds.",
+   "category": "Words and shapes",
+   "link": "/plato/bird#pick",
+   "thumb": "/static/img/gallery/bird-sparrow.webp",
+   "alt": "Twelve bird doodles by Muse Image, all the same small songbird in side view.",
+   "credit": "Muse Spark and Muse Image (Meta); people: Banks & Connell (2023), CC BY 4.0",
+   "image": "/static/img/gallery/bird-sparrow-full.webp"
+  },
+  {
+   "id": "lifespan-sketch",
+   "title": "A tiny AI learns to draw a chair",
+   "caption": "Trained from random weights on 20,000 people’s chairs, a small sketch model goes from scribbles (13% recognizable) to chairs (80%), ending less varied than its data.",
+   "category": "Growing up",
+   "link": "/plato/lifespan#grow",
+   "thumb": "/static/img/gallery/lifespan-sketch.webp",
+   "alt": "Seven training stages of a small sketch model, its first four drawings at each: dots and stray lines at step 0, then angular strokes, then simple side-view chairs by step 25,600.",
+   "credit": "A small sketch model trained on Google Quick, Draw! chairs (CC BY 4.0)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/lifespan-sketch-0.webp",
+      "label": "step 0 · 13% recognizable"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sketch-1.webp",
+      "label": "step 100 · 46%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sketch-2.webp",
+      "label": "step 200 · 63%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sketch-3.webp",
+      "label": "step 800 · 75%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sketch-4.webp",
+      "label": "step 3,200 · 81%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sketch-5.webp",
+      "label": "step 12,800 · 89%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sketch-6.webp",
+      "label": "step 25,600 · 80%"
+     }
+    ]
+   }
+  },
+  {
+   "id": "lifespan-sd-stages",
+   "title": "Stable Diffusion has no public childhood",
+   "caption": "Five public training stages of Stable Diffusion, one seed. Its first public checkpoint already draws as recognizably as a 10-year-old, so there is no childhood to watch.",
+   "category": "Growing up",
+   "link": "/plato/lifespan#curves",
+   "thumb": "/static/img/gallery/lifespan-sd-stages.webp",
+   "alt": "The same chair prompt and seed at Stable Diffusion v1.1 to v1.5: a bentwood chair with a round seat each time, with small changes to the back.",
+   "credit": "Stable Diffusion v1.1–v1.5, CreativeML OpenRAIL-M",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/lifespan-sd-stages-0.webp",
+      "label": "v1.1"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sd-stages-1.webp",
+      "label": "v1.2"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sd-stages-2.webp",
+      "label": "v1.3"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sd-stages-3.webp",
+      "label": "v1.4"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-sd-stages-4.webp",
+      "label": "v1.5"
+     }
+    ]
+   }
+  },
+  {
+   "id": "lifespan-life",
+   "title": "The life of a chair, without children’s drawings",
+   "caption": "No child’s drawing is shown: each tile counts how many of 10 chair drawings a model recognizes. 53% at age 2, 89% at 10, 92% for adults.",
+   "category": "Growing up",
+   "link": "/plato/lifespan#timeline",
+   "thumb": "/static/img/gallery/lifespan-life.webp",
+   "alt": "Icon arrays of 10 chairs, coloured for how many drawings are recognized as chairs: 5 at age 2, 8 at age 6, 9 at age 10 and 9 for adults; then Muse Image’s chair.",
+   "credit": "Children: group statistics only (Long et al. 2024), no drawings shown; Muse Image (Meta)",
+   "sequence": {
+    "frames": [
+     {
+      "src": "/static/img/gallery/lifespan-life-0.webp",
+      "label": "age 2 · 53%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-life-1.webp",
+      "label": "age 6 · 80%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-life-2.webp",
+      "label": "age 10 · 89%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-life-3.webp",
+      "label": "adults · 92%"
+     },
+     {
+      "src": "/static/img/gallery/lifespan-life-4.webp",
+      "label": "Muse Image’s chair"
+     }
+    ]
+   }
+  }
+ ]
+}
