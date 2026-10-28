@@ -201,8 +201,9 @@ python scripts/plato_glimmer_run.py extra data/core --family naming-mlp-mean --d
 python scripts/plato_glimmer_run.py extra data/core --family random-mlp-mean --doses 0.36
 # local: copy runs/plato_glimmer/raw/ to PlatosChair/inside_glimmer/raw/, then
 python scripts/plato_glimmer_analyze.py
+python scripts/plato_inside_web_export.py   # /plato/inside: per-layer maps, spreads and thumbnails
 ```
 
 Outputs: `PlatosChair/inside_glimmer/results.json` and `PlatosChair/inside_glimmer/figures/`.
 
-Human drawings: Google Creative Lab, "The Quick, Draw! Dataset", https://github.com/googlecreativelab/quickdraw-dataset, licensed CC BY 4.0. The human doodles stay out of this repository.
+Human drawings: Google Creative Lab, "The Quick, Draw! Dataset", https://github.com/googlecreativelab/quickdraw-dataset, licensed CC BY 4.0. The full set of human drawings stays out of this repository; the site ships only small credited thumbnails of the drawings shown, as CC BY 4.0 allows.

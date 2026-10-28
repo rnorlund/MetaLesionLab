@@ -137,7 +137,7 @@
         var out = [];
         if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw']);
         if (hasSocrates()) out.push(['Ask Socrates', '/socrates']);
-        out.push(['See the whole experiment', '/plato'], ['Look inside the model', '/plato#inside']);
+        out.push(['See the whole experiment', '/plato'], ['Look inside the model', T.hasPage('/plato/inside') ? '/plato/inside' : '/plato#inside']);
         return out;
       } }
   ];

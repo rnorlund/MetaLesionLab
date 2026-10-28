@@ -8,7 +8,7 @@ Plato held that each kind of thing has one ideal Form, and every real one is a c
 
 The series follows the life of a chair, as an analogy: children's drawings move toward the adult chair from age 2 to 10, a small model trained on people's chairs grows from scribbles to adult-like chairs, and damage to an image model's language part makes its chair wander off into other things, much as drawings lose their distinctive features in some brain diseases (Bozeat et al. 2003; published neurology, not our data).
 
-- **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
+- **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/plato/inside` (Muse Glimmer's 52 layers, one by one), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
 - **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md).
 
 ## What we found
@@ -95,6 +95,7 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 27 | The life of a chair (`/plato/lifespan`): children's drawings by age, Stable Diffusion's training stages, and a sketch model trained from scratch, pre-registered |
 | Oct 27 | Plato's Chair, damaged (`/plato/damage`): reversible lesions in SDXL's text encoders and UNet, damaged Muse Glimmer reading doodles, clocks, and Janus-Pro, pre-registered |
 | Oct 27 | Consistency pass: every number on the pages and in the docs checked against its source |
+| Oct 27 | Inside the model (`/plato/inside`): drag through Muse Glimmer's 52 layers and watch Muse Image's doodles of a thing collapse while people's stay spread out |
 | Oct 27 | Two sites from one codebase (`MLL_SITE`): Plato's Chair, and its sister project Tippa Lingua on its own landing page, each with only its own pages, nav and paid routes, and a per-site data bundle. The opening animation on Plato's landing page (the cave, ending on the Form chair, now the logo) |
 
 ### Prior research context (not part of this submission)
@@ -342,7 +343,7 @@ python -m metalesionlab.web --site lingua --port 8001    # Tippa Lingua (MLL_SIT
 
 Each site registers only its own pages and APIs (`SITE_ROUTERS` in `metalesionlab/web/app.py`); the other site's paths answer 404. Set `MLL_SISTER_URL` to the other site's address to show the "Sister project" link at the foot of every page.
 
-- **Plato's Chair:** `/` (a short opening animation once per browser session, then draw a chair blind and see the reveal; `?nosplash=1` skips the animation), `/plato` (the whole experiment and "inside the model"), the rest of the Plato series (`/plato/forms`, `/plato/cave`, `/plato/cratylus`, `/plato/bird`, `/plato/damage`, `/plato/lifespan`), `/draw` (Draw a chair) and `/socrates` (Ask Socrates). The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`.
+- **Plato's Chair:** `/` (a short opening animation once per browser session, then draw a chair blind and see the reveal; `?nosplash=1` skips the animation), `/plato` (the whole experiment), `/plato/inside` (inside the model), the rest of the Plato series (`/plato/forms`, `/plato/cave`, `/plato/cratylus`, `/plato/bird`, `/plato/damage`, `/plato/lifespan`), `/draw` (Draw a chair) and `/socrates` (Ask Socrates). The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`.
 - **Tippa Lingua:** `/` (its landing page), `/take` (public naming test), `/assess` (Naming Assessment), `/scorer` (Scorer), `/studio` (Test Studio), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab) and `/challenge` (You vs. the AI).
 
 Every page of a site has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.

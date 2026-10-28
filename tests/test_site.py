@@ -20,12 +20,12 @@ from metalesionlab.web import site
 
 REPO = Path(web.__file__).resolve().parents[2]
 PAGES = {
-    "plato": ["/", "/draw", "/plato", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird", "/plato/damage",
+    "plato": ["/", "/draw", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird", "/plato/damage",
               "/plato/lifespan", "/socrates"],
     "lingua": ["/", "/take", "/assess", "/scorer", "/studio", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge"],
 }
 APIS = {  # GET endpoints that answer without data (200, or 503 while a data file is missing), never 404
-    "plato": ["/api/plato", "/api/plato/forms", "/api/plato/cave", "/api/plato/cratylus", "/api/plato/bird",
+    "plato": ["/api/plato", "/api/plato/inside", "/api/plato/forms", "/api/plato/cave", "/api/plato/cratylus", "/api/plato/bird",
               "/api/plato/damage", "/api/plato/lifespan", "/api/draw/concepts", "/api/draw/status", "/api/socrates/status"],
     "lingua": ["/api/status", "/api/sets", "/api/scenes", "/api/lab/conditions", "/api/lab/human", "/api/lab/cut",
                "/api/lab/bilingual", "/api/ask/status", "/api/assess/config", "/api/pages"],
@@ -237,7 +237,12 @@ def test_more_menu_holds_the_series(client):
     html = client.get("/plato").text
     more = re.search(r'<details class="nav-more[^"]*">(.*?)</details>', html, re.S).group(1)
     for s in site.SERIES[1:]:
-        assert f'href="{s["path"]}"' in more, s["path"]
+        if s["path"] == "/plato/inside":  # in the nav itself, so not repeated under More
+            assert 'href="/plato/inside"' not in more
+        elif site.has_page(web.app, s["path"]):
+            assert f'href="{s["path"]}"' in more, s["path"]
+        else:  # merged later (/plato/atlas, /plato/telephone): no link until its route exists
+            assert f'href="{s["path"]}"' not in html, s["path"]
     assert "More from the lab" not in more
 
 
@@ -247,6 +252,11 @@ def test_current_page_is_marked_once(client):
         assert re.findall(r'<a [^>]*aria-current="page"[^>]*>([^<]+)', nav) == [label], path
     nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/plato/cave").text, re.S).group(0)
     assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Experiments", "Name the shadow"]
+    # "Inside the model" is its own page once /plato/inside is served: the nav item, not Experiments, nor More
+    html = client.get("/plato/inside").text
+    nav = re.search(r'<nav class="topnav".*?</nav>', html, re.S).group(0)
+    assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Inside the model"]
+    assert nav.count('href="/plato/inside"') == 1 and 'href="/plato#inside"' not in nav
 
 
 def test_lingua_current_page_is_exact_for_the_lab():
@@ -285,9 +295,9 @@ def test_series_cards_and_links_appear_only_when_served(client):
 
 
 def test_every_served_experiment_card_states_its_finding(client):
-    """All seven experiments are finished: no card falls back to the "see what we found" link."""
+    """Every experiment served so far is finished: no card falls back to the "see what we found" link."""
     items = client.get("/api/site").json()["series"]
-    assert len(items) == 7
+    assert len(items) >= 8 and items[1]["path"] == "/plato/inside"
     for item in items:
         assert item.get("finding"), item["path"]
 

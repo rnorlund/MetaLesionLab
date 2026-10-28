@@ -45,14 +45,17 @@ SITE_URL = os.environ.get("TIPPA_SITE_URL", "").rstrip("/")  # e.g. https://exam
 TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 
 # --- the nav: one list per site --------------------------------------------------------------
-# "needs": shown only when the app serves that path. "current": path prefixes that mark it as the page
+# "needs": shown only when the app serves that path ("unless": hidden when it serves this one). "current": path
+# prefixes that mark it as the page ("not_current": paths it is not current on)
 # ("exact": the path itself only). Everything else the site has goes under "More" (MORE, and the series).
 NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"]},
         {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"]},
-        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"]},
-        {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato"},
+        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside"]},
+        # its own page once /plato/inside is served, else the section on /plato
+        {"href": "/plato/inside", "label": "Inside the model", "needs": "/plato/inside", "current": ["/plato/inside"]},
+        {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato", "unless": "/plato/inside"},
         {"href": "/socrates", "label": "Ask Socrates", "needs": "/socrates", "current": ["/socrates"], "accent": True},
         {"href": GITHUB, "label": "Code", "external": True},
     ],
@@ -96,6 +99,10 @@ SERIES = [
     {"path": "/plato", "slug": "chair", "question": "Is there one ideal chair?", "source": "Republic X · the Forms",
      "title": "Plato’s Chair",
      "finding": "Muse Image drew the same chair 16 times, and drew 34 of 35 things more alike than people do."},
+    {"path": "/plato/inside", "slug": "inside", "question": "What happens to a drawing inside the machine?",
+     "source": "Republic VII · out of the cave", "title": "Inside the model",
+     "finding": "From about layer 36 of 52 (the median), Muse Glimmer holds Muse Image’s doodles of a thing together; "
+                "at the last layer, people’s are about 6 times as spread out."},
     {"path": "/plato/forms", "slug": "forms", "question": "Is there one ideal clock, bed or table?",
      "source": "Republic X · Plato’s own bed and table", "title": "The Platonic clock", "finding": None},
     {"path": "/plato/cave", "slug": "cave", "question": "Can you know a thing from its shadow?",
@@ -108,6 +115,10 @@ SERIES = [
      "source": "Our own question", "title": "Damage the painter", "finding": None},
     {"path": "/plato/lifespan", "slug": "lifespan", "question": "Is learning remembering the Forms?",
      "source": "Meno · children, adults and a model in training", "title": "The life of a chair", "finding": None},
+    {"path": "/plato/atlas", "slug": "atlas", "question": "Is every thing one Form, or only some?",
+     "source": "Republic X", "title": "The Atlas of Forms", "finding": None},
+    {"path": "/plato/telephone", "slug": "telephone", "question": "What survives a copy of a copy?",
+     "source": "Republic X · the painter’s copy", "title": "Plato’s Telephone", "finding": None},
 ]
 
 # Small line drawings for cards that have no picture yet (stroke = currentColor).
@@ -127,6 +138,19 @@ _ART = {
                 '<path d="M84 22v38M108 22v38M84 26h24M84 36h24M84 46h24M82 60h28l-3 6H85zM85 66v16M107 66v16"/>',
     "damage": '<path d="M44 14v40M76 14v18M76 40v14M44 16h32M44 26h14M64 26h12M44 36h32M40 54h44l-4 8H44z'
               'M44 62v18M80 62v8M80 74v6M48 62l-2 14"/><path d="M70 30l6 4 6-6" stroke-dasharray="2 4"/>',
+    "inside": '<path d="M20 22h80M20 36h80M20 50h80M20 64h80" stroke-opacity="0.35"/>'
+              '<circle cx="30" cy="22" r="3"/><circle cx="62" cy="22" r="3"/><circle cx="92" cy="22" r="3"/>'
+              '<circle cx="42" cy="36" r="3"/><circle cx="74" cy="36" r="3"/><circle cx="52" cy="50" r="3"/>'
+              '<circle cx="66" cy="50" r="3"/><circle cx="60" cy="64" r="4" fill="currentColor"/>',
+    "atlas": '<rect x="14" y="12" width="26" height="20" rx="3"/><rect x="47" y="12" width="26" height="20" rx="3"/>'
+             '<rect x="80" y="12" width="26" height="20" rx="3"/><rect x="14" y="38" width="26" height="20" rx="3"/>'
+             '<rect x="47" y="38" width="26" height="20" rx="3"/><rect x="80" y="38" width="26" height="20" rx="3"/>'
+             '<rect x="14" y="64" width="26" height="20" rx="3"/><rect x="47" y="64" width="26" height="20" rx="3"/>'
+             '<rect x="80" y="64" width="26" height="20" rx="3"/>',
+    "telephone": '<path d="M14 30v22M30 30v22M14 33h16M12 52h20M14 52v12M30 52v12"/>'
+                 '<path d="M52 32v20M68 34v18M52 35h16M50 52h20M53 52v11M67 52v12" stroke-dasharray="5 2"/>'
+                 '<path d="M90 36v16M104 38v14M90 40h14M88 52h18M92 52v10M103 52v9" stroke-dasharray="3 3"/>'
+                 '<path d="M36 44h8M74 44h8M41 40l4 4-4 4M79 40l4 4-4 4"/>',
 }
 
 
@@ -201,6 +225,8 @@ def _esc(s) -> str:
 
 
 def _is_current(item: dict, path: str) -> bool:
+    if path in item.get("not_current", []):
+        return False
     for prefix in item.get("current", []):
         if path == prefix or (prefix != "/" and not item.get("exact") and path.startswith(prefix + "/")):
             return True
@@ -222,9 +248,11 @@ def _link(item: dict, path: str, cls: str = "") -> str:
 def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
     site, b = site_of(app), brand_of(app)
     flags = pages_flags(app)
-    main = [n for n in NAV[site] if not n.get("needs") or flags.get(n["needs"])]
+    main = [n for n in NAV[site] if (not n.get("needs") or flags.get(n["needs"]))
+            and not (n.get("unless") and flags.get(n["unless"]))]
     more = [m for m in MORE[site] if flags.get(m["href"])]
-    subs = [s for s in SERIES if s["path"] != "/plato" and flags.get(s["path"])]
+    inline_hrefs = {n["href"] for n in main}  # a series page with its own nav item (/plato/inside) isn't repeated
+    subs = [s for s in SERIES if s["path"] != "/plato" and flags.get(s["path"]) and s["path"] not in inline_hrefs]
 
     def more_list() -> str:
         parts = []
