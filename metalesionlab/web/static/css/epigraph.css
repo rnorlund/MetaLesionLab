@@ -1,0 +1,68 @@
+/* Epigraph (metalesionlab/web/epigraph.py): one short verified quotation with who said it, the reference
+   number and the translator. A light italic serif (IBM Plex Serif 300, the serif Ask Socrates uses), the
+   citation in small caps after a thin rule. It sits inside .page, so it keeps the page's gutters
+   (--gutter), and it keeps the prose measure (--measure, counted in the body text's ch, so the larger
+   serif sets a short, comfortable line). The words come from public_data/plato_passages.json, verified
+   word for word; nothing here changes them.
+
+   Variants: .epigraph--inline (inside a box: smaller, no outer margin) and .epigraph--band (one of several
+   in .epigraph-band, a row that wraps). Colours are tokens, so a dark band can reset them. */
+.epigraph {
+  --ep-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+  --ep-ink: var(--ink-2, #374151);
+  --ep-cite: var(--muted, #4B5563);
+  --ep-rule: var(--line-2, #D1D5DB);
+  --ep-size: clamp(19px, calc(11px + 1vw), 40px);
+  margin: clamp(20px, 2.2vw, 52px) 0;
+  padding: 0;
+  max-width: var(--measure, 75ch);
+}
+.epigraph blockquote { margin: 0; padding: 0; }
+.epigraph blockquote p {
+  margin: 0;
+  font-family: var(--ep-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--ep-size);
+  line-height: 1.4;
+  letter-spacing: -0.004em;
+  color: var(--ep-ink);
+  text-indent: -0.42em;   /* the opening quotation mark hangs in the margin */
+  text-wrap: pretty;
+}
+.epigraph figcaption {
+  margin: 0.85em 0 0;
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: max(var(--fs-sm, 13px), calc(var(--ep-size) * 0.46));  /* grows with the quote on wide screens */
+  line-height: 1.5;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.07em;
+  color: var(--ep-cite);
+}
+.epigraph figcaption::before {
+  content: "";
+  display: inline-block;
+  width: 2.4em;
+  height: 1px;
+  margin-right: 0.7em;
+  vertical-align: 0.32em;
+  background: var(--ep-rule);
+}
+.epigraph cite { font-family: var(--ep-serif); font-style: italic; font-variant-caps: normal; letter-spacing: 0; }
+.epigraph-ref { font-variant-caps: normal; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.epigraph-tr { white-space: nowrap; }
+.epigraph-tr a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px;
+  text-decoration-color: var(--ep-rule); text-underline-offset: 0.2em; }
+.epigraph-tr a:hover { text-decoration-color: currentColor; }
+
+/* Inside a box (Aristotle's reply on /plato). */
+.epigraph--inline { --ep-size: clamp(17px, calc(11px + 0.55vw), 26px); margin: 0; max-width: none; }
+
+/* A row of epigraphs (the landing page's quote band). */
+.epigraph-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30ch), 1fr));
+  gap: clamp(24px, 3vw, 72px); align-items: start; }
+.epigraph--band { --ep-size: clamp(18px, calc(11px + 0.6vw), 30px); margin: 0; max-width: none; }
+
+@media (max-width: 520px) {
+  .epigraph blockquote p { text-indent: 0; }
+}

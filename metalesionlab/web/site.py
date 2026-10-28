@@ -11,6 +11,7 @@ it) passes through it, and it:
   from the site's NAV and MORE below, so the nav is the same on every page of a site (model chips such
   as #sample-chip are kept). The Plato site's brand slot holds its logo, the Form chair (FORM_CHAIR);
 - fills <!--#series--> (every Plato series card) and <!--#series:sub--> (the series without /plato);
+- fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py);
 - keeps <!--#if /path-->…<!--#else-->…<!--#endif--> blocks by whether the app serves /path
   (<!--#if series--> asks whether any experiment of the series besides /plato is served);
 - fills <!--#sister--> with the "Sister project" link (MLL_SISTER_URL), or adds that link at the foot
@@ -376,6 +377,9 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
         items = series(app)
         page = page.replace("<!--#series:sub-->", render_series([s for s in items if s["path"] != "/plato"]))
         page = page.replace("<!--#series-->", render_series(items))
+    if "<!--#epigraph:" in page:
+        from metalesionlab.web import epigraph  # verified quotations, from public_data/plato_passages.json
+        page = epigraph.fill(page)
     if site == "plato" and path != "/plato/gallery" and has_page(app, "/plato/gallery"):
         from metalesionlab.web.plato_gallery_routes import add_strip  # "From the lab", above the footer
         page = add_strip(page)

@@ -500,27 +500,99 @@ def test_guard_counts_socrates_turns_as_paid_with_per_visitor_limits(tmp_path):
 # --- data files ---------------------------------------------------------------------------------------------
 
 STEPHANUS = re.compile(r"^\d{2,3}[a-e](?:–(?:\d{2,3})?[a-e])?$")
+BEKKER = re.compile(r"^\d{3,4}[ab]\d{1,2}(?:–(?:\d{3,4}[ab])?\d{1,2})?$")
+PLATO_WORKS = {"Republic", "Cratylus", "Phaedrus", "Meno", "Theaetetus", "Apology", "Timaeus"}
+ARISTOTLE_WORKS = {"Metaphysics": "metaphysics", "Nicomachean Ethics": "ethics"}
 
 
 def test_passages_file_schema():
     ps = PASSAGES["passages"]
-    assert 10 <= len(ps) <= 16 and len(P) == len(ps)  # unique ids
-    assert "Jowett" in PASSAGES["translation"] and "public domain" in PASSAGES["license"].lower()
+    assert 10 <= len(ps) <= 32 and len(P) == len(ps)  # unique ids
+    assert "Jowett" in PASSAGES["translations"]["Plato"] and "public domain" in PASSAGES["license"].lower()
+    assert "Ross" in PASSAGES["translations"]["Aristotle, Metaphysics"] and "Aristotle" in PASSAGES["attribution"]
     for p in ps:
-        assert set(p) >= {"id", "work", "stephanus", "speaker", "title", "topics", "text", "translation", "source_url",
+        assert set(p) >= {"id", "author", "work", "speaker", "title", "topics", "text", "translation", "source_url",
                           "source_text_url"}, p["id"]
-        assert p["work"] in {"Republic", "Cratylus", "Phaedrus", "Meno"} and p["id"].startswith(p["work"].lower() + "-")
-        assert STEPHANUS.match(p["stephanus"]), p["stephanus"]
-        assert p["id"].split("-")[1] in p["stephanus"].replace("–", "") or p["stephanus"].endswith(p["id"][-1])
-        assert p["translation"] == "Benjamin Jowett (1892), public domain"
-        assert re.fullmatch(r"https://www\.gutenberg\.org/ebooks/\d+", p["source_url"])
-        assert p["source_text_url"].startswith("https://www.gutenberg.org/cache/epub/")
-        assert 5 <= len(p["text"].split()) <= 110 and p["text"] == p["text"].strip() and "  " not in p["text"]
+        assert 5 <= len(p["text"].split()) <= 150 and p["text"] == p["text"].strip() and "  " not in p["text"]
         assert p["topics"] and all(t == t.lower() for t in p["topics"])
-    works = {p["work"] for p in ps}
-    assert works == {"Republic", "Cratylus", "Phaedrus", "Meno"}
-    assert any(p["stephanus"].startswith("597") for p in ps) and any(p["stephanus"].startswith("514") for p in ps)
-    assert any(p["stephanus"].startswith("275") for p in ps) and any(p["stephanus"].startswith("383") for p in ps)
+        if p["author"] == "Plato":
+            assert p["work"] in PLATO_WORKS and p["id"].startswith(p["work"].lower() + "-")
+            assert STEPHANUS.match(p["stephanus"]), p["stephanus"]
+            assert p["id"].split("-")[1] in p["stephanus"].replace("–", "") or p["stephanus"].endswith(p["id"][-1])
+            assert p["translation"] == "Benjamin Jowett (1892), public domain"
+            assert re.fullmatch(r"https://www\.gutenberg\.org/ebooks/\d+", p["source_url"])
+            assert p["source_text_url"].startswith("https://www.gutenberg.org/cache/epub/")
+        else:  # Aristotle: Bekker numbers, Ross's translation, the MIT text and the printed edition's scan
+            assert p["author"] == "Aristotle" and p["speaker"] == "Aristotle" and "stephanus" not in p
+            assert p["id"].startswith(ARISTOTLE_WORKS[p["work"]] + "-") and p["book"] and p["chapter"]
+            assert BEKKER.match(p["bekker"]), p["bekker"]
+            assert p["id"].split("-")[1] in p["bekker"].replace("–", "")
+            assert "W. D. Ross" in p["translation"] and "public domain in the US" in p["translation"]
+            assert re.search(r"\((?:2nd edition, )?Oxford, 19(?:2[5-9]|30)\)", p["translation"])  # US PD: before 1931
+            assert re.fullmatch(r"https://classics\.mit\.edu/Aristotle/[a-z]+\.\d+\.[ivx]+\.html", p["source_url"])
+            assert re.fullmatch(r"https://classics\.mit\.edu/Aristotle/[a-z]+\.mb\.txt", p["source_text_url"])
+            assert re.fullmatch(r"https://archive\.org/details/\w+", p["print_url"])
+            assert p["print_text_url"].startswith("https://archive.org/download/") and p["print_text_url"].endswith(
+                "_djvu.txt")
+            if "as_printed" in p:  # a book's first word set in capitals, quoted in sentence case
+                assert p["as_printed"].lower() == p["text"].lower() and p["as_printed"] != p["text"]
+    assert {p["work"] for p in ps if p["author"] == "Plato"} == PLATO_WORKS
+    assert {p["work"] for p in ps if p["author"] == "Aristotle"} == set(ARISTOTLE_WORKS)
+    steph = [p["stephanus"] for p in ps if p["author"] == "Plato"]
+    for page in ("597", "514", "275", "383", "155", "38a", "28a", "518"):
+        assert any(s.startswith(page) for s in steph), page
+    bekker = [p["bekker"] for p in ps if p["author"] == "Aristotle"]
+    for page in ("980a21", "981a", "1013a", "1103a"):
+        assert any(b.startswith(page) for b in bekker), page
+
+
+def test_passage_tool_marks_aristotle_and_says_to_credit_him():
+    r = S.dispatch("plato_passage", {"topic": "all men by nature desire to know"})
+    first = r["passages"][0]
+    assert first["id"] == "metaphysics-980a21" and first["author"] == "Aristotle" and first["bekker"] == "980a21–24"
+    assert "stephanus" not in first and "student's student" in first["attribution"]
+    assert first["text"] == P["metaphysics-980a21"]["text"] and first["url"].startswith("https://classics.mit.edu/")
+    assert "Aristotle" in r["quote_rule"]
+    assert S.dispatch("plato_passage", {"topic": "metaphysics 1013a24–33"})["passages"][0]["id"] == "metaphysics-1013a24"
+    plato = S.dispatch("plato_passage", {"topic": "theaetetus-155d"})["passages"][0]
+    assert plato["author"] == "Plato" and "attribution" not in plato
+    assert "Aristotle, Metaphysics 980a21–24" in S.summarize("plato_passage", r)
+
+
+def test_quote_check_wants_aristotle_credited_to_aristotle():
+    plato = [p["text"] for p in P.values() if p["author"] == "Plato"]
+    ari = [p["text"] for p in P.values() if p["author"] == "Aristotle"]
+
+    def check(text):
+        return S.check_quotes(text, plato, aristotle_texts=ari)
+    good = check("My student's student, Aristotle, wrote: “All men by nature desire to know.” "
+                 "[plato_passage: metaphysics-980a21]")
+    assert good["bad_quotes"] == [] and good["quotes"] == 1
+    after = check("“For men of experience know that the thing is so, but do not know why,” as Aristotle put it.")
+    assert after["bad_quotes"] == []
+    for wrong in ('As I always say, "All men by nature desire to know." [plato_passage: metaphysics-980a21]',
+                  'Plato wrote that "men become builders by building". Is a model a builder?',
+                  '"We learn by doing them, e.g. men become builders by building" [plato_passage: ethics-1103a32]'):
+        r = check(wrong)
+        assert r["bad_quotes"] == r["misattributed_quotes"] and len(r["bad_quotes"]) == 1, wrong
+    invented = check('Aristotle said "we are what we repeatedly do".')  # Durant's line, not Aristotle's
+    assert invented["bad_quotes"] == ["we are what we repeatedly do"] and invented["misattributed_quotes"] == []
+    plato_quote = check('Socrates says "philosophy begins in wonder" [plato_passage: theaetetus-155d].')
+    assert plato_quote["bad_quotes"] == []
+
+
+def test_an_uncredited_aristotle_quote_is_repaired_and_then_dropped():
+    bad = ('As I say, "All men by nature desire to know" [plato_passage: metaphysics-980a21]. A model wants nothing.'
+           '\n\nDoes a model desire anything?')
+    api = FakeAPI([_reply(None, [_call("plato_passage", {"topic": "desire to know"})]), _reply(bad), _reply(bad)])
+    ans = _answer(_events(S.SocratesAgent(api), "Does the AI want to know things?"))
+    assert "Name Aristotle" in api.requests[-1]["messages"][1]["content"]
+    assert "desire to know" not in ans["text"] and ans["check"]["bad_quotes"] == []
+    fixed = ('My student\'s student, Aristotle, wrote: "All men by nature desire to know" '
+             '[plato_passage: metaphysics-980a21]. A model wants nothing.\n\nDoes a model desire anything?')
+    api2 = FakeAPI([_reply(None, [_call("plato_passage", {"topic": "desire to know"})]), _reply(fixed)])
+    ans2 = _answer(_events(S.SocratesAgent(api2), "Does the AI want to know things?"))
+    assert ans2["check"]["ok"] and ans2["check"]["quotes"] == 1 and "Aristotle" in ans2["text"]
 
 
 def test_glimmer_inside_file_schema():
