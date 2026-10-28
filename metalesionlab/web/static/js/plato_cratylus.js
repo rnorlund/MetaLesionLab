@@ -47,38 +47,36 @@
   }
   function hideTip(wrap) { var t = wrap.querySelector('.ck-tip'); if (t) t.hidden = true; }
 
-  // --- the first screen: three numbers as small graphics (statviz.js) -------------------------------------------
+  // --- the first screen: three numbers drawn (FirstLook, statviz.js) ---------------------------------------------
   function corners(w) { var x = word(w); return x ? { k: Math.round(x.share_with_corners * x.n), n: x.n } : { k: 0, n: 0 }; }
-  function heroStat(host, opts, chip) {
-    var g = h('div');
-    host.appendChild(h('li', { class: 'fs-stat' }, chip ? [g, chip] : [g]));
-    if (window.StatViz) window.StatViz.render(g, opts);
-  }
-  function chip(cls, words) { return h('p', { class: 'fs-verdict ' + cls, text: words }); }
+  function verdict(held, words) { return held ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: words || 'Prediction failed' }; }
   function hero() {
-    var host = $('hero-stats');
-    host.innerHTML = '';
+    if (!window.FirstLook) return;
     var ki = corners('kiki'), ke = corners('keti'), te = corners('tepi'), kiw = word('kiki'), bw = word('bouba');
-    heroStat(host, { kind: 'dots', k: ki.k, n: ki.n, tone: 'orange', cols: 6,
-      label: '“kiki” pictures with sharp corners: stars, every one spikier than every “bouba”',
-      alt: ki.k + ' of ' + ki.n + ' pictures of kiki have sharp corners (solidity ' + f2(kiw.solidity.mean) + ' vs ' + f2(bw.solidity.mean) + ' for bouba).' },
-      // pre-registered: kiki spikier than bouba, the AUC's CI above 0.5 on at least two of the three measures
-      ['solidity', 'corners', 'axis'].filter(function (m) { var c = D.contrasts.kiki_vs_bouba[m]; return c && c.auc_ci && c.auc_ci[0] > 0.5; }).length >= 2 ?
-        chip('yes', 'As predicted') : chip('no', 'Prediction failed'));
-    heroStat(host, { kind: 'dots', k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12,
-      label: '“keti” and “tepi” pictures with a sharp corner: kiki’s hard sounds, drawn as blobs',
-      alt: (ke.k + te.k) + ' of ' + (ke.n + te.n) + ' pictures of the new words keti and tepi have a sharp corner (solidity ' +
-        f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + ').' },
-      // pre-registered: words with kiki's sounds come out spikier than words with bouba's (solidity, CI above 0)
-      D.contrasts.spiky_vs_round_class.solidity.diff_ci[0] > 0 ? chip('yes', 'As predicted') : chip('no', 'Prediction failed'));
+    var kb = D.contrasts.kiki_vs_bouba, cls = D.contrasts.spiky_vs_round_class.solidity;
     var sp = pct(D.choice.spark_both_match.p), pe = pct(D.people.both_trials_match), gl = pct(D.choice.glimmer_both_match.p);
-    heroStat(host, { kind: 'bars', values: [sp, pe, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100,
-      value: sp + '%', unit: 'vs ' + pe + '%', label: 'chose round for “bouba” and spiky for “kiki”',
-      alt: 'Matched both words: Muse Spark ' + sp + '% of its answers, people ' + pe + '% (' + D.people.n_people + ' people, ' + D.people.n_languages +
-        ' languages), Muse Glimmer ' + gl + '%.' },
-      sp >= pe && gl >= pe ? chip('yes', 'As predicted') : sp >= pe ? chip('part', 'Partly: Glimmer no') : chip('no', 'Prediction failed'));
-    $('hero-qual').textContent = 'People: ' + D.people.n_people + ' in ' + D.people.n_languages + ' languages (Ćwiek et al., 2022), who heard the words; the models only saw letters. ' +
-      'Muse Glimmer, Meta’s open model, leans round for “bouba” but has no preference for “kiki”. The classic words appear on thousands of web pages about this very effect.';
+    window.FirstLook.render($('hero-stats'), { stats: [
+      // planned: kiki spikier than bouba, the AUC's CI above 0.5 on at least two of the three measures
+      { kind: 'dots', verdict: verdict(['solidity', 'corners', 'axis'].filter(function (m) { var c = kb[m]; return c && c.auc_ci && c.auc_ci[0] > 0.5; }).length >= 2),
+        o: { k: ki.k, n: ki.n, tone: 'orange', cols: 6, label: '“kiki” pictures with sharp corners: stars, like people’s',
+          alt: ki.k + ' of ' + ki.n + ' pictures of kiki have sharp corners (solidity ' + f2(kiw.solidity.mean) + ' vs ' + f2(bw.solidity.mean) + ' for bouba).' },
+        q: 'Every one spikier than every “bouba”: solidity ' + f2(kiw.solidity.mean) + ' against ' + f2(bw.solidity.mean) + '.' },
+      // planned: words with kiki's sounds come out spikier than words with bouba's (solidity, CI above 0)
+      { kind: 'dots', verdict: verdict(cls.diff_ci[0] > 0),
+        o: { k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12, label: '“keti” and “tepi” pictures with a sharp corner',
+          alt: (ke.k + te.k) + ' of ' + (ke.n + te.n) + ' pictures of the new words keti and tepi have a sharp corner (solidity ' +
+            f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + ').' },
+        q: 'Kiki’s hard sounds, drawn as blobs (solidity ' + f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + '). Planned: spiky.' },
+      // planned: both AIs match both words at least as often as people do
+      { kind: 'bars', verdict: sp >= pe && gl >= pe ? verdict(true) : sp >= pe ? { tone: 'part', text: 'Partly: Glimmer no' } : verdict(false),
+        o: { values: [sp, pe, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100, value: sp + '%', unit: 'vs ' + pe + '%',
+          label: 'chose round for “bouba” and spiky for “kiki”',
+          alt: 'Matched both words: Muse Spark ' + sp + '% of its answers, people ' + pe + '% (' + D.people.n_people + ' people, ' + D.people.n_languages +
+            ' languages), Muse Glimmer ' + gl + '%.' },
+        q: 'People: ' + D.people.n_people + ' in ' + D.people.n_languages + ' languages. Glimmer has no preference for “kiki”.' }
+    ] });
+    $('hero-qual').textContent = 'The classic words appear on thousands of web pages about this very effect, and people heard the words while the models only saw letters. ' +
+      'Twelve pictures per word; Spark’s ' + sp + '% rests on ' + D.choice.spark_both_match.n + ' paired answers.';
   }
 
   // --- your turn ---------------------------------------------------------------------------------

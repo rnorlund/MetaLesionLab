@@ -12,8 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
-<link rel="stylesheet" href="/static/css/plato_cave.css">
 <link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
+<link rel="stylesheet" href="/static/css/plato_cave.css">
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="cave">
@@ -23,27 +24,27 @@
 
 <main id="main" tabindex="-1">
 
-<section class="cv-hero fs-hero" aria-labelledby="hero-h">
-  <div class="cv-hero-text fs-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Can you know a thing from its shadow? · <i>Republic</i> VII, the Cave · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">Name the shadow</h1>
-    </div>
-    <!--#epigraph:republic-518b-->
-    <p class="fs-answer" id="hero-answer">It named most of the shadows, and when it failed, its favorite answer was simply the word “Shadow”.</p>
-    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
-    <p class="fs-qual" id="hero-qual">One drawing per object, one prompt, one way of casting the shadow. People saw different drawings, so that comparison is by concept.</p>
+<section class="fl fl-side cv-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Can you know a thing from its shadow? · <i>Republic</i> VII, the Cave · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">Name the shadow</h1>
   </div>
-  <figure class="fs-visual cv-pairs" aria-labelledby="pairs-cap">
+  <!--#epigraph:republic-518b-->
+  <div class="fl-ctx">
+    <p>Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed Meta’s open model Muse Glimmer 100 everyday objects as bare shadows. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">It named most of the shadows, and when it failed, its favorite answer was simply the word “Shadow”.</p>
+  <figure class="fl-visual cv-pairs" aria-labelledby="pairs-cap">
     <div class="cv-pairs-grid" id="hero-pairs"></div>
-    <figcaption class="fs-cap" id="pairs-cap">Six of the 100 shadows Meta’s open model Muse Glimmer was shown, each beside the drawing that cast it, with the one word it answered.</figcaption>
+    <figcaption class="fl-cap" id="pairs-cap">Six of the 100 shadows Meta’s open model Muse Glimmer was shown, each beside the drawing that cast it, with the one word it answered.</figcaption>
   </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-qual">One drawing per object, one prompt, one way of casting the shadow. People saw different drawings, so that comparison is by concept.</p>
 </section>
 
 <section class="cv-sec" id="game" aria-labelledby="game-h">
   <div class="cv-sec-head">
     <h2 id="game-h">Your turn: name the shadow</h2>
-    <p class="fs-intro">Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed Meta’s open model Muse Glimmer 100 everyday objects as bare shadows. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
     <p class="cv-sec-lede">Type what you think each shadow is, then reveal the object and what the AI said. Your answers stay in your browser; nothing is sent or stored.</p>
   </div>
   <div class="cv-score" aria-live="polite"><span id="score-you">You: <b>0</b> of 0</span><span id="score-ai"></span></div>
@@ -130,6 +131,7 @@
 
 <script src="/static/js/common.js"></script>
 <script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_cave.js"></script>
 </body>
 </html>

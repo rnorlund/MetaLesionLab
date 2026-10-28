@@ -1,6 +1,7 @@
 """The first screen of six series pages (/plato/cave, cratylus, bird, damage, telephone, lifespan): the question,
-one striking picture, a one-sentence answer, and at most three headline numbers drawn as small graphics (statviz.js),
-with the honest qualifiers beside them. Each page's scripts run under node in a small stand-in for the browser
+one striking picture, a one-sentence answer, and at most three headline numbers drawn as small graphics, each with its
+qualifier and, for a planned prediction, how it came out. They share the card and the drawing helper of the first four
+pages (plato_firstlook.css and FirstLook.render in plato_firstlook.js), so all ten read alike. Each page's scripts run under node in a small stand-in for the browser
 (tests/firstscreen_dom.js), fed the real API response, and the numbers they draw are checked against the same data
 here, so a headline can't drift from the results or be typed in by hand."""
 import json
@@ -56,7 +57,7 @@ def first_screen(client, page, tmp_path, ids=("hero-stats", "hero-answer", "hero
 
 def stats(html):
     """The headline graphics in #hero-stats: [(number, unit, caption, kind)]."""
-    items = re.findall(r'<li class="fs-stat">(.*?)</li>', html, re.S)
+    items = re.findall(r'<figure class="fl-stat">(.*?)</figure>', html, re.S)
     out = []
     for it in items:
         num = re.search(r'<span class="sv-num">(.*?)</span>', it)
@@ -71,24 +72,31 @@ def text(html):
     return re.sub(r"<[^>]+>", "", html)
 
 
+def verdicts(html):
+    """How the planned predictions came out, in order: [(tone, words)]."""
+    return re.findall(r'<span class="fl-verdict (\w+)">(.*?)</span>', html)
+
+
 # --- the shape every first screen shares ------------------------------------------------------------------------
 
 @pytest.mark.parametrize("page", sorted(PAGES))
 def test_first_screen_leads_with_question_picture_answer_and_numbers(client, page):
     src = (web.HERE / "pages" / f"plato_{page}.html").read_text()
-    hero = re.search(r'<section class="[\w-]+ fs-hero".*?</section>', src, re.S)
+    hero = re.search(r'<section class="fl fl-side [\w-]+".*?</section>', src, re.S)
     assert hero, page
     h = hero.group(0)
     # the question, as before: the kicker and the page's question, then the verified epigraph right under it
     assert "What would Plato ask an AI?" in h and 'class="kicker-q"' in h
     assert re.search(r'<div class="title-pair">.*?</div>\s*<!--#epigraph:' + EPIGRAPH[page] + "-->", h, re.S)
-    # then the answer, the numbers and the qualifiers, and one picture
-    order = [h.index(x) for x in ('class="fs-answer"', 'id="hero-stats"', 'class="fs-qual"')]
+    # then, as on the first four pages: the introduction, the answer, one picture, the numbers and the note
+    order = [h.index(x) for x in ('class="fl-ctx"', 'class="fl-answer"', 'class="fl-visual', 'id="hero-stats"', 'class="fl-note"')]
     assert order == sorted(order)
-    assert h.count('class="fs-answer"') == 1 and h.count("fs-visual") == 1
-    # the graphics component, linked before the page's own script
-    assert src.index("/static/js/statviz.js") < src.index(f"/static/js/plato_{page}.js")
-    assert "/static/css/statviz.css" in src and "/static/css/plato_firstscreen.css" in src
+    assert h.count('class="fl-answer"') == 1 and h.count('class="fl-visual') == 1
+    # the graphics and the shared helper, linked before the page's own script; the card's sheet before this one
+    js = [src.index(f"/static/js/{f}") for f in ("statviz.js", "plato_firstlook.js", f"plato_{page}.js")]
+    assert js == sorted(js)
+    assert src.index("/static/css/plato_firstlook.css") < src.index("/static/css/plato_firstscreen.css")
+    assert "/static/css/statviz.css" in src
 
 
 @pytest.mark.parametrize("page", sorted(PAGES))
@@ -118,6 +126,13 @@ def test_cave_first_screen(client, tmp_path):
     s = stats(ids["hero-stats"])
     assert len(s) == 3
     assert s[0][:2] == (str(named), f"of {sh['n']}") and s[0][3] == "dots"
+    acc = d["accuracy"]  # planned: drawing > outline ≈ silhouette > shadow, silhouettes 15 points below the drawings
+    o_, s_ = acc["outline"]["accuracy"], acc["silhouette"]["accuracy"]
+    order = acc["original"]["accuracy"] >= max(o_, s_) and min(o_, s_) > sh["accuracy"]
+    p1 = ("yes", "As predicted") if order and -acc["silhouette"]["diff_vs_original"] >= 0.15 else (
+        ("part", "Partly as predicted") if order else ("no", "Prediction failed"))
+    rho_held = d["human"]["silhouette"]["rho_correct"]["ci95"][0] > 0
+    assert verdicts(ids["hero-stats"]) == [p1, ("yes", "As predicted") if rho_held else ("no", "Prediction failed")]
     assert s[1][:2] == (str(m["just_shadow"]), f"of {e['n_errors']}") and "Shadow" in s[1][2]
     assert s[2][0] == f"{round(hs['ai_accuracy_on_shared'] * 100)}%" and s[2][1] == f"vs {round(hs['people_mean_on_shared'] * 100)}%"
     assert ids["hero-stats"].count('class="sv-on sv-ink"') == named  # one filled dot per shadow it named
@@ -125,7 +140,7 @@ def test_cave_first_screen(client, tmp_path):
     pairs = ids["hero-pairs"]  # shadows beside the drawings that cast them, with what the AI said
     assert pairs.count('class="cv-pair ') == 6 and pairs.count("/static/img/plato_cave/shadow_") == 6
     assert pairs.count("/static/img/plato_cave/original_") == 6 and "“" not in pairs.split("Glimmer: ")[0]
-    assert "rank correlation" in text(ids["hero-qual"])  # the qualifier, from the same data
+    assert "rank correlation" in text(ids["hero-stats"]) and "Muse Spark" in text(ids["hero-qual"])  # qualifiers, from the data
 
 
 def test_cratylus_first_screen(client, tmp_path):
@@ -138,12 +153,14 @@ def test_cratylus_first_screen(client, tmp_path):
     assert s[1][:2] == (str(corners("keti") + corners("tepi")), f"of {w['keti']['n'] + w['tepi']['n']}")
     assert s[2][0] == f"{round(d['choice']['spark_both_match']['p'] * 100)}%"
     assert s[2][1] == f"vs {round(d['people']['both_trials_match'] * 100)}%"
-    assert "no preference for “kiki”" in text(ids["hero-qual"])
+    assert "no preference for “kiki”" in text(ids["hero-stats"])
+    assert f"rests on {d['choice']['spark_both_match']['n']} paired answers" in text(ids["hero-qual"])
     # the verdicts of the pre-registered predictions ride with the numbers; keti and tepi broke one
-    verdicts = re.findall(r'<p class="fs-verdict (\w+)">(.*?)</p>', ids["hero-stats"])
-    assert verdicts[0] == ("yes", "As predicted")
-    assert verdicts[1] == (("yes", "As predicted") if d["contrasts"]["spiky_vs_round_class"]["solidity"]["diff_ci"][0] > 0
-                           else ("no", "Prediction failed"))
+    v = verdicts(ids["hero-stats"])
+    assert v[0] == ("yes", "As predicted")
+    assert v[1] == (("yes", "As predicted") if d["contrasts"]["spiky_vs_round_class"]["solidity"]["diff_ci"][0] > 0
+                    else ("no", "Prediction failed"))
+    assert v[2] == ("part", "Partly: Glimmer no")
 
 
 def test_bird_first_screen(client, tmp_path):
@@ -157,7 +174,7 @@ def test_bird_first_screen(client, tmp_path):
     glim = d["summary"]["glimmer_T1.0"]["dominance"]  # Glimmer is not as narrow, and the verdict says so
     assert f'{round(glim["ai_mean"]["mean"] * 100)}</span>' in ids["hero-stats"]
     if dom["diff"]["ci95"][0] > 0 and glim["diff"]["ci95"][0] <= 0:
-        assert '<p class="fs-verdict part">Partly: Glimmer no</p>' in ids["hero-stats"]
+        assert verdicts(ids["hero-stats"])[0] == ("part", "Partly: Glimmer no")
     assert s[1][:2] == (str(dom["n_ai_higher"]), f"of {dom['n']}")
     assert s[2][:2] == (str(pic["top_count"]), f"of {len(pic['labels'])}")
     top = bird["tables"]["spark"][0]
@@ -183,8 +200,7 @@ def test_damage_first_screen(client, tmp_path):
     mild = min((r for r in c["features"] if r["cond"].startswith("unet-zero@")), key=lambda r: float(r["cond"].split("@")[1]))
     assert s[2][0] == f"{round(intact['values'][fi] * 100)}% → {round(mild['values'][fi] * 100)}%"
     # the verdicts are shown, and the failed prediction is not dressed up
-    hs = ids["hero-stats"]
-    assert "As predicted" in hs and "Prediction failed" in hs
+    assert verdicts(ids["hero-stats"]) == [("yes", "As predicted"), ("no", "Prediction failed")]
     assert text(ids["hero-qual"]).startswith("Partly supported.") and "reversed for neurons switched off" in text(ids["hero-qual"])
     clocks = ids["hero-clocks-row"]  # three clocks beside the slider: intact, and each part at its strongest damage
     assert clocks.count("<img") == 3 and "clock_8_45_intact.webp" in clocks and 'hidden=""' not in ids["hero-clocks"]
@@ -221,9 +237,12 @@ def test_lifespan_first_screen(client, tmp_path):
     t = ai["tests"]["d_adult"]["last_minus_first"]
     clear = t["ci95"][0] > 0 or t["ci95"][1] < 0
     assert s[1][0] == ("No closer" if not clear else "Farther" if t["mean"] > 0 else "Closer")
-    assert f"adults’ {round(ad['recog'] * 100)}%" in text(ids["hero-qual"])
+    assert f"adults {round(ad['recog'] * 100)}%" in text(ids["hero-stats"])
+    words = {True: ("yes", "As predicted"), False: ("no", "Prediction failed")}
+    assert verdicts(ids["hero-stats"]) == [words[d["children"]["predictions"]["C1_recognizability_rises"]],
+                                           words[ai["predictions"]["A3_d_adult_changes"]]]
     # still never a child's drawing on the first screen
     src = (web.HERE / "pages" / "plato_lifespan.html").read_text()
-    hero = re.search(r'<section class="ls-hero fs-hero".*?</section>', src, re.S).group(0)
+    hero = re.search(r'<section class="fl fl-side ls-hero".*?</section>', src, re.S).group(0)
     assert set(re.findall(r"/static/img/plato_lifespan/([\w.]+)", hero)) == {
         "chair_adults.webp", "chair_muse.webp", "chair_sd_v11.webp", "chair_sd_v15.webp"}

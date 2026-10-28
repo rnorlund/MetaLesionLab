@@ -1,97 +1,37 @@
-/* The first screen of six series pages (/plato/cave, cratylus, bird, damage, telephone, lifespan): the question, one
-   striking picture from the experiment, a one-sentence answer, and at most three headline numbers drawn as small
-   graphics (statviz.js), with the honest qualifiers in a smaller line. Everything else follows below, unchanged.
+/* The first screen of six series pages (/plato/cave, cratylus, bird, damage, telephone, lifespan), in the same family
+   as /plato/inside, forms, atlas and scale: plato_firstlook.css lays out the card (.fl) and FirstLook.render draws the
+   numbers (statviz.js), so all ten read alike. The question, one picture of the experiment's own material, the answer
+   in one sentence, at most three numbers drawn as small graphics, each with its qualifier, and a note; then, in the
+   same card, the epigraph and the longer introduction.
 
-   Layout: .fs-hero is two columns, the words (.fs-text) and the picture (.fs-visual). On a phone it becomes one
-   column: question, answer, picture, numbers, qualifiers, and then the epigraph, which keeps its place under the
-   title in the page source. Colours are the site's tokens only; line art sits on a light
-   paper card (--paper). Loaded after each page's own stylesheet. */
-.fs-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  gap: clamp(18px, 1.6vw, 40px) clamp(28px, 3.4vw, 96px);
-  align-items: start;
+   These six pictures are taller than the first four's, so on a wide window the numbers and the note sit beside the
+   picture, under the answer (.fl-side), and everything fits a 1280 x 800 window. A planned prediction's verdict leads
+   its number's qualifier (.fl-verdict). Colours are the site's tokens only; line art sits on paper (--paper). Loaded
+   after plato_firstlook.css. */
+@media (min-width: 960px) {
+  .fl.fl-side {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+    grid-template-rows: auto auto auto auto 1fr auto;
+    grid-template-areas: "title visual" "answer visual" "stats visual" "note visual" ". visual" "quote ctx";
+    row-gap: clamp(14px, 1.2vw, 30px);
+  }
+  .fl.fl-side .fl-stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(14px, 1.3vw, 34px); }
+  .fl.fl-side .fl-note { max-width: 62ch; }
 }
-.fs-text { display: flex; flex-direction: column; gap: clamp(12px, 1vw, 24px); min-width: 0; }
-.fs-hero .title-pair h1 { margin: 0; }
-/* The verified epigraph stays under the title, set smaller here so the answer and the numbers fit the first screen. */
-.fs-hero figure.epigraph, .fs-hero figure.epigraph[data-speaker] {
-  --ep-size: clamp(15px, calc(8px + 0.62vw), 28px);
-  --ep-face: clamp(40px, calc(16px + 2.2vw), 92px);
-  --ep-gap: clamp(12px, 1vw, 24px);
-  margin: 0;
-}
-.fs-hero figure.epigraph figcaption { margin-top: 0.5em; }
-.fs-answer {
-  margin: 0;
-  max-width: 44ch;
-  font-size: clamp(19px, calc(11px + 0.66vw), 32px);
-  line-height: 1.36;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  color: var(--ink);
-  text-wrap: pretty;
-}
-.fs-answer b { font-weight: 700; }
+.fl-side .fl-stat .sv { --sv-cell: clamp(10px, calc(5px + 0.45vw), 18px); }  /* three numbers share the narrower column */
+.fl-side .fl-stat .sv-num { font-size: clamp(26px, calc(14px + 1.3vw), 56px); }
+.fl-side .fl-stat .sv-unit { font-size: clamp(13px, calc(8px + 0.45vw), 22px); }
+.fl-side .fl-stat .sv-cap { max-width: 32ch; }
+.fl-side .fl-answer b { font-weight: 750; }
 
-/* The headline numbers: up to three small graphics side by side, each with a short label. */
-.fs-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(150px, 11vw, 300px)), 1fr));
-  gap: clamp(14px, 1.4vw, 36px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.fs-stat { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.fs-stat .sv { --sv-cell: clamp(10px, calc(5px + 0.45vw), 18px); }  /* dot grids a little smaller: three share a row */
-.fs-stat .sv-cap { max-width: 30ch; }
-.fs-stat .sv-num { font-size: clamp(26px, calc(14px + 1.3vw), 56px); }
-.fs-stat .sv-unit { font-size: clamp(13px, calc(8px + 0.45vw), 22px); }
-/* a verdict under a number: "as predicted", "the prediction failed" */
-.fs-verdict {
-  align-self: flex-start;
-  margin: 0;
-  padding: 2px 9px;
-  border: 1px solid var(--line-2);
-  border-radius: 999px;
-  font-size: var(--fs-sm);
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-.fs-verdict.yes { border-color: currentColor; color: var(--green); }
-.fs-verdict.no { border-color: currentColor; color: var(--orange); }
-.fs-verdict.part { border-color: currentColor; color: var(--ink-2); }
-.fs-qual { margin: 0; max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.55; color: var(--muted); }
-.fs-qual b { color: var(--ink-2); font-weight: 600; }
-.fs-more { font-size: var(--fs-sm); font-weight: 600; color: var(--ink-2); text-decoration: underline;
-  text-decoration-color: var(--line-2); text-underline-offset: 0.2em; }
-.fs-more:hover { color: var(--ink); text-decoration-color: currentColor; }
+/* How a planned prediction came out, at the head of its number's qualifier. */
+.fl-verdict { display: inline-block; margin: 0 0.25em 0.25em 0; padding: 0 8px; border: 1px solid currentColor; border-radius: 999px;
+  font-weight: 600; line-height: 1.55; color: var(--ink-2); }
+.fl-verdict.yes { color: var(--green); }
+.fl-verdict.no { color: var(--orange); }
 
-/* The picture column. */
-.fs-visual { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.fs-paper { background: var(--paper, #fbfaf5); border: 1px solid var(--line); border-radius: 12px; }
-.fs-cap { margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); max-width: var(--measure); }
-.fs-cap b { color: var(--ink-2); font-weight: 600; }
-
-/* A section that now holds what used to sit in the hero (the old lede, the short answer list). */
-.fs-intro { margin: 0; max-width: var(--measure); font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
-
-/* One column on tablets and phones: the picture right under the question. */
-@media (max-width: 900px) {
-  .fs-hero { display: flex; flex-direction: column; gap: 16px; }
-  .fs-text { display: contents; }
-  .fs-hero .title-pair { order: 1; }
-  .fs-answer { order: 2; }
-  .fs-visual { order: 3; }
-  .fs-stats { order: 4; }
-  .fs-qual { order: 5; }
-  .fs-hero > .fs-text > figure.epigraph { order: 6; }
-  .fs-hero .fs-tail { order: 7; }
-}
-@media (max-width: 560px) {
-  .fs-stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: 14px 16px; }
-  .fs-answer { font-size: 19px; }
+@media (max-width: 600px) {
+  .fl.fl-side .fl-stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: 16px; }
 }
 
 /* --- /plato/damage: the slider stays the picture; three clocks in a column beside it ------------------------------ */
@@ -113,7 +53,10 @@
 /* --- /plato/cave: shadows beside the drawings that cast them, on the dark, firelit wall -------------------------
    The wall stays dark in either theme, so its words and numbers take the wall's own light text colour: the ink tokens
    are re-pointed at currentColor here, and statviz draws in it. */
-.cv-hero.fs-hero { align-items: start; }
+/* The page links plato_firstlook.css before plato_cave.css, so the wall's own colours win over the card's; these
+   keep the card's layout. */
+.fl.cv-hero { align-items: start; gap: var(--fl-gap) clamp(24px, 3vw, 84px); padding: clamp(18px, 2.2vw, 56px); border-color: transparent; }
+@media (max-width: 959px) { .fl.cv-hero { grid-template-columns: minmax(0, 1fr); } }
 .cv-hero {
   --ink: currentColor;
   --ink-2: color-mix(in srgb, currentColor 90%, transparent);
@@ -159,7 +102,7 @@
 
 /* --- /plato/cratylus: the wall of bouba, kiki and keti, kept within the window's height ------------------------- */
 .ck-wall { align-items: flex-start; }
-.ck-hero .ck-wall img { width: auto; max-width: 100%; max-height: max(440px, calc(100vh - 190px)); }
+.ck-hero .ck-wall img { width: auto; max-width: 100%; max-height: max(440px, calc(100vh - 260px)); }
 
 /* --- /plato/telephone: two chains drifting, every second copy; the high chair beside Muse's textbook chair ------- */
 .tp-drift { gap: clamp(10px, 1vw, 22px); }

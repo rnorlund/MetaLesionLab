@@ -403,74 +403,64 @@
     host.appendChild(right);
   }
 
-  // ---------- the first screen: three headline numbers as small graphics (statviz.js), and the clocks ----------
-  function verdictChip(ok, rev) {
-    return el('p', { class: 'fs-verdict ' + (ok ? 'yes' : rev ? 'no' : 'part'),
-      text: ok ? 'As predicted' : rev ? 'Prediction reversed' : 'Not distinguishable at this n' });
-  }
-  function heroStat(host, opts, chip) {
-    var li = el('li', { class: 'fs-stat' });
-    var g = el('div');
-    li.appendChild(g);
-    if (chip) li.appendChild(chip);
-    host.appendChild(li);
-    if (window.StatViz) window.StatViz.render(g, opts);
-    return li;
+  // ---------- the first screen: three headline numbers drawn (FirstLook, statviz.js), and the clocks ----------
+  // How a planned prediction came out, from its matched test: {tone, text} for FirstLook's verdict.
+  function verdictOf(t) {
+    var held = excludesZero(t.ci95) && Math.sign(t.difference) === t.predicted_sign;
+    var rev = excludesZero(t.ci95) && Math.sign(t.difference) === -t.predicted_sign;
+    return held ? { tone: 'yes', text: 'As predicted' } : rev ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not distinguishable at this n' };
   }
 
   function renderHero() {
     var d = S.data, host = $('hero-stats');
-    if (!host) return;
-    host.innerHTML = '';
-    var m = d.matched['text-zero vs unet-zero'] || {};
-    // 1. What: the asked kind, lost faster after language damage (pre-registered primary test)
+    if (!host || !window.FirstLook) return;
+    var m = d.matched['text-zero vs unet-zero'] || {}, stats = [];
+    // 1. What: the asked kind, lost faster after language damage (the pre-registered primary test)
     var kc = m.delta_correct;
     if (kc) {
       var lang = Math.round(-kc.language * 100), draw = Math.round(-kc.drawing * 100);
-      var ok = excludesZero(kc.ci95) && Math.sign(kc.difference) === kc.predicted_sign;
-      var rev = excludesZero(kc.ci95) && Math.sign(kc.difference) === -kc.predicted_sign;
-      heroStat(host, { kind: 'bars', values: [lang, draw], labels: ['language', 'drawing'], tones: ['blue', 'orange'], max: 100,
-        value: lang + ' vs ' + draw, unit: ' pts',
-        label: 'fewer chairs still the asked kind, at equal picture change',
-        alt: 'Language part damaged: ' + lang + ' points fewer chairs still read as the asked kind; drawing part damaged: ' + draw +
-          ' points fewer, at the same amount of picture change (neurons switched off).' }, verdictChip(ok, rev));
+      stats.push({ kind: 'bars', verdict: verdictOf(kc),
+        o: { values: [lang, draw], labels: ['language', 'drawing'], tones: ['blue', 'orange'], max: 100, value: lang + ' vs ' + draw, unit: ' pts',
+          label: 'fewer chairs still the asked kind, at equal picture change',
+          alt: 'Language part damaged: ' + lang + ' points fewer chairs still read as the asked kind; drawing part damaged: ' + draw +
+            ' points fewer, at the same amount of picture change (neurons switched off).' },
+        q: 'Pre-registered test: ' + pts(kc.difference) + ', ' + ciPts(kc.ci95) + '.' });
     }
-    // 2. Back to the plain chair? Farther from it, not closer (the prediction failed)
-    var pz = (d.pooled['text-zero'] || {}).delta_d_proto, pd = (d.pooled['unet-zero'] || {}).delta_d_proto;
+    // 2. Back to the plain chair? Farther from it, not closer
+    var pz = (d.pooled['text-zero'] || {}).delta_d_proto, pd = (d.pooled['unet-zero'] || {}).delta_d_proto, h2 = m.delta_d_proto;
     if (pz && pd) {
-      var farther = pz.ci95[0] > 0;
-      heroStat(host, { kind: 'bars', values: [pz.mean, pd.mean], labels: ['language', 'drawing'], tones: ['blue', 'orange'], digits: 2,
-        value: farther ? 'Farther' : 'No closer', unit: '',
-        label: 'from the plain chair, not back to it (change in distance)',
-        alt: 'Back to the plain chair? No. Distance to the plain chair grew by ' + pz.mean.toFixed(2) + ' after language damage and by ' +
-          pd.mean.toFixed(2) + ' after drawing damage (neurons switched off, averaged over the damage levels).' }, el('p', { class: 'fs-verdict no', text: 'Prediction failed' }));
+      stats.push({ kind: 'bars', verdict: h2 ? (verdictOf(h2).tone === 'yes' ? verdictOf(h2) : { tone: 'no', text: 'Prediction failed' }) : null,
+        o: { values: [pz.mean, pd.mean], labels: ['language', 'drawing'], tones: ['blue', 'orange'], digits: 2,
+          value: pz.ci95[0] > 0 ? 'Farther' : 'No closer', unit: '', label: 'from the plain chair, not back to it (change in distance)',
+          alt: 'Back to the plain chair? No. Distance to the plain chair grew by ' + pz.mean.toFixed(2) + ' after language damage and by ' +
+            pd.mean.toFixed(2) + ' after drawing damage (neurons switched off, averaged over the damage levels).' },
+        q: 'Predicted: back toward the plain chair, as in semantic dementia.' });
     }
     // 3. Clocks: the mildest drawing damage strips the numbers first
     var c = d.clocks, fi = c && c.feature_names ? c.feature_names.indexOf('12 numbers in order') : -1;
     if (fi >= 0) {
       var intact = c.features.filter(function (r) { return r.cond === 'intact'; })[0];
       var mild = c.features.filter(function (r) { return r.cond.indexOf('unet-zero@') === 0; })
-        .sort(function (a, b) { return parseFloat(a.cond.split('@')[1]) - parseFloat(b.cond.split('@')[1]); })[0];
+        .sort(function (x, y) { return parseFloat(x.cond.split('@')[1]) - parseFloat(y.cond.split('@')[1]); })[0];
       if (intact && mild) {
         var a = Math.round(intact.values[fi] * 100), b = Math.round(mild.values[fi] * 100);
-        heroStat(host, { kind: 'bars', values: [a, b], labels: ['intact', 'drawing'], tones: ['ink', 'orange'], max: 100,
-          value: a + '% → ' + b + '%', unit: '',
-          label: 'clocks with all 12 numbers in order: drawing damage strips them first',
-          alt: 'Clocks with all 12 numbers in order: ' + a + '% intact, ' + b + '% after the mildest drawing damage (' + mild.label + ').' });
+        stats.push({ kind: 'bars',
+          o: { values: [a, b], labels: ['intact', 'drawing'], tones: ['ink', 'orange'], max: 100, value: a + '% → ' + b + '%', unit: '',
+            label: 'clocks with all 12 numbers in order: drawing damage strips them first',
+            alt: 'Clocks with all 12 numbers in order: ' + a + '% intact, ' + b + '% after the mildest drawing damage (' + mild.label + ').' },
+          q: 'The mildest drawing damage. Language damage removes the whole clock instead.' });
       }
     }
-    // the honest qualifiers, from the same numbers
+    window.FirstLook.render(host, { stats: stats });
+    // the note: the dissociation's verdict, from the same numbers
     var q = $('hero-qual'), clean = m.delta_p_clean, cn = (d.matched['text-noise vs unet-noise'] || {}).delta_p_clean;
     if (q && kc && clean && cn) {
-      var heldNoise = excludesZero(cn.ci95) && Math.sign(cn.difference) === cn.predicted_sign;
-      var revOff = excludesZero(clean.ci95) && Math.sign(clean.difference) === -clean.predicted_sign;
+      var whatHeld = verdictOf(kc).tone === 'yes', heldNoise = verdictOf(cn).tone === 'yes';
+      var heldOff = verdictOf(clean).tone === 'yes', revOff = verdictOf(clean).tone === 'no';
       q.innerHTML = '';
-      var whatHeld = excludesZero(kc.ci95) && Math.sign(kc.difference) === kc.predicted_sign;
-      var heldOff = excludesZero(clean.ci95) && Math.sign(clean.difference) === clean.predicted_sign;
       q.appendChild(el('b', { text: whatHeld && heldNoise && heldOff ? 'Supported. ' : whatHeld || heldNoise || heldOff ? 'Partly supported. ' : 'Not supported. ' }));
-      q.appendChild(document.createTextNode('The “what” half held in the pre-registered test (neurons switched off: difference ' + pts(kc.difference) + ', ' + ciPts(kc.ci95) +
-        '). The “how” half ' + (heldNoise ? 'held for noise' : 'did not hold for noise') + (revOff ? ' but reversed for neurons switched off' : '') +
-        ' ('));
+      q.appendChild(document.createTextNode('The “what” half held; the “how” half ' + (heldNoise ? 'held for noise' : 'did not hold for noise') +
+        (revOff ? ' but reversed for neurons switched off' : '') + ' ('));
       q.appendChild(el('a', { href: '#diss-h', text: 'details' }));
       q.appendChild(document.createTextNode('). The readers are AI models; an analogy, not a claim about people.'));
     }

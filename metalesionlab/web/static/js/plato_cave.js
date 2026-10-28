@@ -44,7 +44,7 @@
   }
   function hideTip(wrap) { var t = wrap.querySelector('.cv-tip'); if (t) t.hidden = true; }
 
-  // --- the first screen: shadows beside the drawings that cast them, and three numbers (statviz.js) ------------
+  // --- the first screen: shadows beside the drawings that cast them, and three numbers drawn (FirstLook) ---------
   var PAIRS = ['rabbit', 'anchor', 'hat', 'bicycle', 'guitar', 'glove'];  // four misses and two hits, as on the wall
   function heroPairs() {
     var box = $('hero-pairs');
@@ -61,32 +61,36 @@
       ]));
     });
   }
-  function heroStat(host, opts) {
-    var g = h('div');
-    host.appendChild(h('li', { class: 'fs-stat' }, [g]));
-    if (window.StatViz) window.StatViz.render(g, opts);
-  }
   function hero() {
     var a = D.accuracy, m = D.medium_answers.shadow, e = D.errors.shadow, hs = D.human.silhouette, sh = a.shadow;
     var named = Math.round(sh.accuracy * sh.n);
     $('hero-answer').textContent = 'It named ' + named + ' of ' + sh.n + ' shadows, and when it failed, its favorite answer was simply the word “Shadow”.';
     heroPairs();
-    var host = $('hero-stats');
-    host.innerHTML = '';
-    heroStat(host, { kind: 'dots', k: named, n: sh.n, cols: 10, tone: 'ink',
-      label: 'cast shadows named correctly (the drawings: ' + pct(a.original.accuracy) + '%)',
-      alt: 'Muse Glimmer named ' + named + ' of ' + sh.n + ' cast shadows correctly, and ' + pct(a.original.accuracy) + '% of the drawings.' });
-    heroStat(host, { kind: 'dots', k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange',
-      label: 'of its wrong answers were just “Shadow”; ' + m.ufo + ' more were “UFO”',
-      alt: m.just_shadow + ' of its ' + e.n_errors + ' wrong answers to cast shadows were just the word Shadow, and ' + m.ufo + ' were UFO.' });
+    if (!window.FirstLook) return;
+    // planned: drawing > outline ≈ silhouette > shadow, the silhouette at least 15 points below the drawing
+    var order = a.original.accuracy >= Math.max(a.outline.accuracy, a.silhouette.accuracy) &&
+      Math.min(a.outline.accuracy, a.silhouette.accuracy) > sh.accuracy;
+    var gap = Math.round(-a.silhouette.diff_vs_original * 100), r = hs.rho_correct;
     var ai = pct(hs.ai_accuracy_on_shared), pp = pct(hs.people_mean_on_shared);
-    heroStat(host, { kind: 'bars', values: [ai, pp], labels: ['Glimmer', 'people'], tones: ['ink', 'orange'], max: 100,
-      value: ai + '%', unit: 'vs ' + pp + '%', label: 'silhouettes named, the same ' + D.human.n_shared_concepts + ' objects',
-      alt: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects: Muse Glimmer named ' + ai + '%, people ' + pp + '% (published, other drawings).' });
-    var r = hs.rho_correct;
-    $('hero-qual').textContent = 'Objects people found hard as silhouettes were harder for the AI too (rank correlation ' + r.rho.toFixed(2) +
-      ', 95% CI ' + r.ci95[0].toFixed(2) + ' to ' + r.ci95[1].toFixed(2) + '). People saw different drawings (Wagemans et al., 2008), so that comparison is by concept. ' +
-      'One drawing per object, one prompt, one way of casting the shadow.';
+    window.FirstLook.render($('hero-stats'), { stats: [
+      { kind: 'dots', verdict: order && gap >= 15 ? { tone: 'yes', text: 'As predicted' } : order ? { tone: 'part', text: 'Partly as predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { k: named, n: sh.n, cols: 10, tone: 'ink', label: 'cast shadows named correctly',
+          alt: 'Muse Glimmer named ' + named + ' of ' + sh.n + ' cast shadows correctly, and ' + pct(a.original.accuracy) + '% of the drawings.' },
+        q: 'Drawings ' + pct(a.original.accuracy) + '%, silhouettes ' + pct(a.silhouette.accuracy) + '%: ' + (!order ? 'not the planned order.' :
+          gap >= 15 ? 'the planned order.' : 'the planned order, but ' + gap + ' points down, not 15.') },
+      { kind: 'dots',
+        o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'of its wrong answers were just “Shadow”',
+          alt: m.just_shadow + ' of its ' + e.n_errors + ' wrong answers to cast shadows were just the word Shadow, and ' + m.ufo + ' were UFO.' },
+        q: m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' Never “Shadow” for a sharp silhouette.' : '') },
+      { kind: 'bars', verdict: r.ci95[0] > 0 ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { values: [ai, pp], labels: ['Glimmer', 'people'], tones: ['ink', 'orange'], max: 100, value: ai + '%', unit: 'vs ' + pp + '%',
+          label: 'silhouettes named, the same ' + D.human.n_shared_concepts + ' objects',
+          alt: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects: Muse Glimmer named ' + ai + '%, people ' + pp + '% (published, other drawings).' },
+        q: 'Hard for people, harder for the AI: rank correlation ' + r.rho.toFixed(2) + ' [' + r.ci95[0].toFixed(2) + ', ' + r.ci95[1].toFixed(2) + '].' }
+    ] });
+    $('hero-qual').textContent = 'People saw different drawings (Wagemans et al., 2008), so that comparison is by concept. One drawing per object, one prompt, ' +
+      'one way of casting the shadow' + (D.spark && D.spark.accuracy ? '; Muse Spark, a second model, named ' + pct(D.spark.accuracy.shadow.accuracy) + '% of its ' +
+      D.spark.n_items + ' shadows.' : '.');
   }
 
   // --- the game ------------------------------------------------------------------------------

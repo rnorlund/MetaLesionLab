@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_cratylus.css">
 <link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="cratylus">
@@ -23,28 +24,28 @@
 
 <main id="main" tabindex="-1">
 
-<section class="ck-hero fs-hero" aria-labelledby="hero-h">
-  <div class="ck-hero-text fs-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Do names fit things by nature? · <i>Cratylus</i> · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">Bouba and kiki</h1>
-    </div>
-    <!--#epigraph:cratylus-439b-->
-    <p class="fs-answer" id="hero-answer">Meta’s image model draws “bouba” round and “kiki” spiky, as people do, but “keti”, a new word with kiki’s sounds, comes out round: it learned the famous words, not the sounds.</p>
-    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
-    <p class="fs-qual" id="hero-qual">The classic words appear on thousands of web pages about this very effect. People heard the words; the models only saw letters.</p>
+<section class="fl fl-side ck-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Do names fit things by nature? · <i>Cratylus</i> · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">Bouba and kiki</h1>
   </div>
-  <figure class="fs-visual ck-wall">
+  <!--#epigraph:cratylus-439b-->
+  <div class="fl-ctx">
+    <p>In the <i>Cratylus</i>, Socrates asks whether names fit things by nature. People all over the world call a round blob “bouba” and a spiky star “kiki”. Meta’s image model has never heard a word. We asked it to draw a shape called “bouba”, and one called “kiki”.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Meta’s image model draws “bouba” round and “kiki” spiky, as people do, but “keti”, a new word with kiki’s sounds, comes out round: it learned the famous words, not the sounds.</p>
+  <figure class="fl-visual ck-wall">
     <img src="/static/img/plato_cratylus/wall.webp" width="1378" height="1600"
          alt="Twelve drawings by Muse Image of a shape called bouba: round, cloud-like blobs, beside twelve people’s circles from Quick, Draw!. Twelve drawings of kiki: spiky stars, beside twelve people’s stars. And twelve drawings each of the made-up words keti and tepi: round blobs again.">
     <figcaption class="ck-cap">Muse Image drew each word 12 times, in separate calls. People’s circles and stars: Google Quick, Draw! (CC BY 4.0).</figcaption>
   </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-qual">The classic words appear on thousands of web pages about this very effect. People heard the words; the models only saw letters.</p>
 </section>
 
 <section class="ck-sec" id="try" aria-labelledby="try-h">
   <div class="ck-sec-head">
     <h2 id="try-h">Your turn</h2>
-    <p class="fs-intro">In the <i>Cratylus</i>, Socrates asks whether names fit things by nature. People all over the world call a round blob “bouba” and a spiky star “kiki”. Meta’s image model has never heard a word. We asked it to draw a shape called “bouba”, and one called “kiki”.</p>
     <p class="ck-sec-lede">The same question people answered in 25 languages. Click a shape; your choice stays in your browser.</p>
   </div>
   <div class="ck-try">
@@ -129,6 +130,7 @@
 
 <script src="/static/js/common.js"></script>
 <script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_cratylus.js"></script>
 </body>
 </html>

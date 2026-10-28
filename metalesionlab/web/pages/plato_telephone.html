@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_telephone.css">
 <link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="tp">
@@ -23,21 +24,22 @@
 
 <main id="main" tabindex="-1">
 
-<section class="tp-hero fs-hero" aria-labelledby="hero-h">
-  <div class="tp-hero-text fs-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What survives a copy of a copy? · <i>Republic</i> X · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">Plato’s Telephone</h1>
-    </div>
-    <!--#epigraph:republic-597e-->
-    <p class="fs-answer" id="hero-answer">Copied ten times, most chairs drifted away from Muse’s textbook chair (only the high chair fell into it), and each chair’s name faded before the word “chair” did.</p>
-    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
-    <p class="fs-qual" id="hero-qual">Spark’s sentence is the bottleneck: what it doesn’t say can’t survive. Eight starting chairs and two controls, three chains each.</p>
+<section class="fl fl-side tp-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What survives a copy of a copy? · <i>Republic</i> X · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">Plato’s Telephone</h1>
   </div>
-  <figure class="fs-visual tp-drift" aria-labelledby="drift-cap">
+  <!--#epigraph:republic-597e-->
+  <div class="fl-ctx">
+    <p>Muse Spark looks at a drawing and describes it in a sentence or two. Muse Image draws that description. Spark describes the new drawing, and so on, ten times.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Copied ten times, most chairs drifted away from Muse’s textbook chair (only the high chair fell into it), and each chair’s name faded before the word “chair” did.</p>
+  <figure class="fl-visual tp-drift" aria-labelledby="drift-cap">
     <div class="tp-drift-rows" id="hero-chains"></div>
-    <figcaption class="fs-cap" id="drift-cap">Muse Spark describes a drawing, Muse Image draws the description, ten times over. Two of the 30 chains, every second copy.</figcaption>
+    <figcaption class="fl-cap" id="drift-cap">Muse Spark describes a drawing, Muse Image draws the description, ten times over. Two of the 30 chains, every second copy.</figcaption>
   </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-qual">Spark’s sentence is the bottleneck: what it doesn’t say can’t survive. Eight starting chairs and two controls, three chains each.</p>
 </section>
 
 <nav class="tp-jump" aria-label="On this page">
@@ -51,7 +53,7 @@
 
 <section class="tp-sec tp-allchains" id="all-chains" aria-labelledby="all-chains-h">
   <h2 id="all-chains-h">Watch every chain</h2>
-  <p class="tp-lede">Muse Spark looks at a drawing and describes it in a sentence or two. Muse Image draws that description. Spark describes the new drawing, and so on, ten times. Each row below is one chain. Slide or press play to watch what survives.</p>
+  <p class="tp-lede">Each row below is one chain: a starting drawing, then Spark’s description drawn by Muse Image, ten times over. Slide or press play to watch what survives.</p>
 
   <div class="tp-player" id="player">
     <button type="button" class="tp-play" id="play" aria-pressed="false"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg><span>Play</span></button>
@@ -146,6 +148,7 @@
 
 <script src="/static/js/common.js"></script>
 <script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_telephone.js"></script>
 </body>
 </html>

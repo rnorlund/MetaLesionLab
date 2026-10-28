@@ -33,19 +33,12 @@
   function defaultName(s) { return s.concept === 'chair' ? 'default chair' : s.concept === 'hat' ? 'default hat' : 'default clock'; }
   function kindName(s) { return s.label.replace(/ chair$/, '').replace(/^Adirondack$/, 'Adirondack'); }
 
-  // ---------- the first screen: two chains drifting, and three numbers (statviz.js) ----------
+  // ---------- the first screen: two chains drifting, and three numbers drawn (FirstLook, statviz.js) ----------
   var HERO_GENS = [0, 2, 4, 6, 8, 10];
   function firstClause(t) {  // "A rough black-ink sketch of a semicircular fanlight window" from Spark's whole description
     var s = String(t || ''), cut = s.indexOf(',', 30);
     return cut > 0 && cut < 110 ? s.slice(0, cut) + ' …' : s.length > 110 ? s.slice(0, 108) + ' …' : s;
   }
-  function heroStat(host, opts, chip) {
-    var g = h('div');
-    var li = h('li', { class: 'fs-stat' }, chip ? [g, chip] : [g]);
-    host.appendChild(li);
-    if (window.StatViz) window.StatViz.render(g, opts);
-  }
-  function verdict(cls, words) { return h('p', { class: 'fs-verdict ' + cls }, words); }
 
   function renderHero() {
     var box = document.getElementById('hero-chains');
@@ -76,28 +69,29 @@
         last ? h('p', { class: 'tp-drift-said' }, [h('span', null, 'Spark, copy 10: '), h('q', null, firstClause(last))]) : null
       ]));
     });
-    var host = document.getElementById('hero-stats');
-    host.innerHTML = '';
+    if (!window.FirstLook) return;
     var t1 = D.tests.P1_drift_to_form, t2 = D.tests.P2_convergence, t3 = D.tests.P3_kind_first;
     var cc = D.chains.filter(function (c) { return !seedOf(c.seed).control; });
     var away = cc.filter(function (c) { return c.d_proto[N - 1] > c.d_proto[0]; }).length;
-    heroStat(host, { kind: 'dots', k: away, n: cc.length, cols: 8, tone: 'blue',
-      label: 'chair chains ended farther from the textbook chair than they started',
-      alt: away + ' of ' + cc.length + ' chains from the 8 starting chairs ended farther from Muse’s textbook chair than they started.' },
-      verdict(t1.supported ? 'yes' : 'no', t1.supported ? 'As predicted' : 'Prediction failed'));
-    var apart = t2.change.ci95[0] > 0;
-    heroStat(host, { kind: 'bars', values: [t2.g0, t2.g10], labels: ['start', 'copy 10'], tones: ['muted', 'blue'], digits: 2,
-      value: f2(t2.g10), unit: 'from ' + f2(t2.g0), label: 'apart, chains from different chairs: they spread out, not together',
-      alt: 'The distance between chains from different starting chairs went from ' + f2(t2.g0) + ' at the start to ' + f2(t2.g10) + ' after ten copies.' },
-      verdict(t2.supported ? 'yes' : apart ? 'no' : 'part', t2.supported ? 'As predicted' : apart ? 'Prediction reversed' : 'Not supported'));
-    var k = t3.first_loss_kind.mean, c = t3.first_loss_category.mean;
-    heroStat(host, { kind: 'bars', values: [k, c], labels: ['the kind', '“chair”'], tones: ['blue', 'orange'], max: N, digits: 1,
-      value: k.toFixed(1) + ' vs ' + c.toFixed(1), unit: '', label: 'copies until Spark first dropped the name (11 = never)',
-      alt: 'Spark’s descriptions first dropped the kind’s name at copy ' + k.toFixed(1) + ' on average, and the word chair at ' + c.toFixed(1) + '.' },
-      verdict(t3.supported ? 'yes' : 'part', t3.supported ? 'As predicted' : 'Not supported'));
-    document.getElementById('hero-qual').textContent = 'On average the 8 chairs went from ' + f2(t1.g0) + ' to ' + f2(t1.g10) +
-      ' from the textbook chair (change ' + signed(t1.change.mean, f2) + ', 95% CI ' + ciTxt(t1.change.ci95, f2) + '): no clear pull either way. ' +
-      'Spark’s sentence is the bottleneck: what it doesn’t say can’t survive. Eight starting chairs, three chains each.';
+    var apart = t2.change.ci95[0] > 0, k = t3.first_loss_kind.mean, c = t3.first_loss_category.mean;
+    window.FirstLook.render(document.getElementById('hero-stats'), { stats: [
+      { kind: 'dots', verdict: t1.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { k: away, n: cc.length, cols: 8, tone: 'blue', label: 'chair chains ended farther from the textbook chair than they started',
+          alt: away + ' of ' + cc.length + ' chains from the 8 starting chairs ended farther from Muse’s textbook chair than they started.' },
+        q: 'On average ' + f2(t1.g0) + ' → ' + f2(t1.g10) + ', change ' + signed(t1.change.mean, f2) + ' ' + ciTxt(t1.change.ci95, f2) + ': no clear pull.' },
+      { kind: 'bars', verdict: t2.supported ? { tone: 'yes', text: 'As predicted' } : apart ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not supported' },
+        o: { values: [t2.g0, t2.g10], labels: ['start', 'copy 10'], tones: ['muted', 'blue'], digits: 2, value: f2(t2.g10), unit: 'from ' + f2(t2.g0),
+          label: 'apart, chains from different chairs: they spread out, not together',
+          alt: 'The distance between chains from different starting chairs went from ' + f2(t2.g0) + ' at the start to ' + f2(t2.g10) + ' after ten copies.' },
+        q: 'Change ' + signed(t2.change.mean, f2) + ' ' + ciTxt(t2.change.ci95, f2) + '. Chains of one chair end ' + f2(t2.within_g10.mean) + ' apart.' },
+      { kind: 'bars', verdict: t3.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'part', text: 'Not supported' },
+        o: { values: [k, c], labels: ['the kind', '“chair”'], tones: ['blue', 'orange'], max: N, digits: 1, value: k.toFixed(1) + ' vs ' + c.toFixed(1), unit: '',
+          label: 'copies until Spark first dropped the name (11 = never)',
+          alt: 'Spark’s descriptions first dropped the kind’s name at copy ' + k.toFixed(1) + ' on average, and the word chair at ' + c.toFixed(1) + '.' },
+        q: 'Difference ' + signed(t3.difference.mean, f2) + ' copies ' + ciTxt(t3.difference.ci95, f2) + ', ' + cc.length + ' chains.' }
+    ] });
+    document.getElementById('hero-qual').textContent = 'Spark’s sentence is the bottleneck: what it doesn’t say can’t survive. Eight starting chairs and two controls, ' +
+      'three chains each, one describing and one drawing prompt.';
   }
 
   // ---------- the chain rows ----------

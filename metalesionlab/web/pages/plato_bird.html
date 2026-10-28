@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/plato_bird.css">
 <link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 </head>
 <body class="pb">
@@ -32,18 +33,17 @@
 
 <main id="main" tabindex="-1">
 
-<section class="pb-hero fs-hero" aria-labelledby="hero-h">
-  <div class="pb-hero-text fs-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one best example of a kind? · the Forms, Wittgenstein, Rosch · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">Plato’s Bird</h1>
-    </div>
-    <!--#epigraph:theaetetus-155d-->
-    <p class="fs-answer" id="hero-answer">Ask Meta’s Muse Spark to name a bird and it says “sparrow” 49 times out of 50; ask 20 people and you get 11 different birds.</p>
-    <ul class="fs-stats" id="hero-stats" aria-label="Headline numbers"></ul>
-    <p class="fs-qual" id="hero-qual">The 117-category shares are measured at people’s sample size. The AI answered once per call at its default settings; people named birds aloud for a minute and we kept their first.</p>
+<section class="fl fl-side pb-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one best example of a kind? · the Forms, Wittgenstein, Rosch · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">Plato’s Bird</h1>
   </div>
-  <figure class="fs-visual pb-hero-fig" aria-labelledby="hero-cap">
+  <!--#epigraph:theaetetus-155d-->
+  <div class="fl-ctx">
+    <p>Is there one best example of a kind? We asked the same question for 117 categories: name one member. People’s first answers come from the Banks &amp; Connell (2023) norms, 20 UK adults per category; Meta’s Muse Spark answered 50 times per category, and Muse Glimmer, Meta’s open model, was sampled 50 times.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Ask Meta’s Muse Spark to name a bird and it says “sparrow” 49 times out of 50; ask 20 people and you get 11 different birds.</p>
+  <figure class="fl-visual pb-hero-fig" aria-labelledby="hero-cap">
     <p class="pb-q">“Name one member of the category <b>bird</b>.”</p>
     <div class="pb-shares" id="hero-shares"></div>
     <div class="pb-drawn">
@@ -52,6 +52,8 @@
     </div>
     <figcaption id="hero-cap" class="pb-cap">Each bar is everyone’s answers; each piece is one bird, as wide as its share. People: the first bird each of 20 UK adults named aloud (Banks &amp; Connell, 2023). Muse Spark: 50 separate calls. Muse Glimmer: 50 samples at temperature 1.</figcaption>
   </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-qual">The 117-category shares are measured at people’s sample size. The AI answered once per call at its default settings; people named birds aloud for a minute and we kept their first.</p>
 </section>
 
 <nav class="pb-jump" aria-label="On this page">
@@ -156,6 +158,7 @@
 
 <script src="/static/js/common.js"></script>
 <script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_bird.js"></script>
 </body>
 </html>
