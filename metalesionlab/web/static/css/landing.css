@@ -31,6 +31,11 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #
 .hero-sub { margin: 0; font-size: clamp(19px, calc(12px + 0.75vw), 30px); line-height: 1.4; color: var(--ink-2); max-width: 30ch; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
 .hero-invite { margin: -6px 0 0; font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 44ch; }
+.hero-invite.busy { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--ink); }
+.hero-invite.busy::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor;
+  border-right-color: transparent; animation: hero-spin .8s linear infinite; flex: none; }
+@keyframes hero-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .hero-invite.busy::before { animation: none; } }
 .hero-tour { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 8px 0; font: inherit; font-size: var(--fs-body); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .hero-tour svg { width: 10px; height: 10px; color: var(--orange); }
 .hero-tour:hover { color: var(--ink); }

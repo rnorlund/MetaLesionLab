@@ -229,6 +229,7 @@ def preload() -> threading.Thread:
     (on a 2-CPU Space that load is the slow part). If it fails, the first drawing loads it as before."""
     def warm():
         try:
+            reference().concept("chair")  # the landing page's thing: its vectors are read on first use too
             embedder.get()([draw.render([[[0, 40], [0, 40]]])])
         except Exception:  # noqa: BLE001
             pass

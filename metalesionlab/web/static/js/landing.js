@@ -26,10 +26,24 @@
       title: 'Before we tell you anything: draw {a thing}.', instruction: 'You have 20 seconds.', heading: 'h2',
       concept: 'chair', picker: false, deepLink: false, revealStrip: false,
       results: document.getElementById('hero-results'), scrollTo: revealEl,
-      onReveal: function () { reveal('drawn'); }
+      // The chairs show the moment the visitor submits; the score follows a moment later, just below them.
+      onSubmit: function (e) {
+        reveal('drawn');
+        invite('Measuring where your ' + e.concept.label + ' lands. Your results will appear just below.', true);
+        revealEl.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+      },
+      onReveal: function () { reveal('drawn'); invite('Your chair’s results are just below.', false); },
+      onError: function (e) { invite('We couldn’t measure your drawing: ' + (e.message || 'please try again') + ' Scroll up to try again.', false); }
     });
   } else if (revealEl) {
     revealEl.hidden = false;
+  }
+  function invite(text, busy) {
+    var el = document.getElementById('reveal-invite');
+    if (!el) return;
+    el.hidden = false;
+    el.textContent = text;
+    el.classList.toggle('busy', !!busy);
   }
   if (skip) {
     skip.addEventListener('click', function (e) {
@@ -51,23 +65,8 @@
   function cancelAuto() { clearTimeout(autoTimer); autoTimer = null; autoDone = true; }
   if (btn) btn.addEventListener('click', function () { cancelAuto(); stack(); });
 
-  // Once per visit, when the grids are on screen: stack, hold, and spread out again. Not with reduced
-  // motion, and not while the guided tour is running (its first step does this itself).
-  function touring() { try { return window.sessionStorage.getItem('tot-tour-step') != null; } catch (e) { return false; } }
-  function autoplay() {
-    if (autoDone || still || touring()) return;
-    autoDone = true;
-    autoTimer = setTimeout(function () {
-      stack(true);
-      autoTimer = setTimeout(function () { stack(false); autoTimer = null; }, 3600);
-    }, 1400);
-  }
-  if (fig && 'IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      if (entries.some(function (e) { return e.isIntersecting && e.intersectionRatio > 0.55; })) { io.disconnect(); autoplay(); }
-    }, { threshold: [0.55] });
-    io.observe(fig);
-  }
+  // The chairs start spread out and stack only when the visitor presses the button (or the tour's first step
+  // does it).
 
   T.landing = { stack: stack, cancelAuto: cancelAuto, reveal: reveal, draw: drawApp };
 })();

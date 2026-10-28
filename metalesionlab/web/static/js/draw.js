@@ -71,6 +71,7 @@
     '  <div class="dw-muse-strip" data-dw="strip" role="img"></div>' +
     '  <p class="dw-cap" data-dw="strip-cap"></p>' +
     '</section>' +
+    '<p class="dw-wait" data-dw="wait" role="status"></p>' +
     '<p class="dw-fair" data-dw="fair"></p>' +
     // An abstract idea (God, love, time…): AI only. People never drew these for Quick, Draw!, so nothing here is
     // a number about people: only where the drawing lands among Muse Image's own 16.
@@ -795,7 +796,9 @@
       updateButtons();
       var c = concept();
       status('Measuring your ' + thingName(c) + ' with DINOv2…', 'busy');
-      var slow = setTimeout(function () { status('Waking up the model (only the first drawing takes a few seconds)…', 'busy'); }, 1800);
+      var slow = setTimeout(function () { status('Still measuring your ' + thingName(c) + '…', 'busy'); }, 4000);
+      waiting(c);  // Muse Image's drawings right away: something to look at while the score is on its way
+      if (o.onSubmit) o.onSubmit({ concept: c, instance: api });
       var drawMs = S.started && !S.upload ? Date.now() - S.started : null;  // drawing time, on the pad only
       var sent = { key: S.key, strokes: S.strokes.map(function (s) { return [s[0].slice(), s[1].slice()]; }), upload: S.upload, blind: S.blind };
       var call;
@@ -816,8 +819,23 @@
         if (r.picture) return image(r.picture).then(function (im) { sent.picture = im; });
       }).then(function () {
         if (S.result) reveal();
-      }).catch(function (e) { status(e.message || 'Something went wrong. Please try again.', 'error'); })
-        .then(function () { clearTimeout(slow); S.busy = false; updateButtons(); });
+      }).catch(function (e) {
+        status(e.message || 'Something went wrong. Please try again.', 'error');
+        if (res.classList.contains('dw-waiting')) { res.classList.remove('dw-waiting'); res.hidden = true; }
+        if (o.onError) o.onError(e);
+      }).then(function () { clearTimeout(slow); S.busy = false; updateButtons(); });
+    }
+
+    // While the score is on its way: the reveal strip (when this page has one) and a "measuring" line, the rest of
+    // the results hidden until reveal() fills them.
+    function waiting(c) {
+      if (!o.revealStrip) return;
+      res.classList.add('dw-waiting');
+      res.hidden = false;
+      hideDamage();
+      fillStrip(c);
+      q('wait').textContent = 'Measuring where your ' + thingName(c) + ' lands…';
+      setTimeout(function () { res.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
     }
 
     function hideResults() {
@@ -831,7 +849,21 @@
     function reveal() {
       var r = S.result, c = concept();
       markSeen();
+      var shown = res.classList.contains('dw-waiting');
+      res.classList.remove('dw-waiting');
       res.hidden = false;
+      if (!shown) fillStrip(c);
+      q('fair').textContent = isIdea(c) ? ideaFair(c) : fair(c);
+      if (isIdea(c)) showIdeaResults(r, c); else showResults(r, c);
+      showDamage();  // after the results, apart from them; it gets the thing's key only
+      if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
+      document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
+      var target = o.scrollTo || res;
+      if (!shown || o.scrollTo) setTimeout(function () { target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
+    }
+
+    // Muse Image's doodles of the thing (animated in, unless the visitor prefers less motion).
+    function fillStrip(c) {
       var strip = q('strip');
       if (strip) {
         q('reveal-h').textContent = 'Here’s what Meta’s Muse Image drew when asked for ' + nounPhrase(c) + ', ' + c.n_ai + ' times';
@@ -848,13 +880,6 @@
         q('strip-cap').textContent = (isIdea(c) ? ideaHook(c) : hook(c)) + ' One prompt each time: “a quick simple doodle sketch of ' +
           nounPhrase(c) + '”.';
       }
-      q('fair').textContent = isIdea(c) ? ideaFair(c) : fair(c);
-      if (isIdea(c)) showIdeaResults(r, c); else showResults(r, c);
-      showDamage();  // after the results, apart from them; it gets the thing's key only
-      if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
-      document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
-      var target = o.scrollTo || res;
-      setTimeout(function () { target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
     }
 
     function showMode(idea) {
