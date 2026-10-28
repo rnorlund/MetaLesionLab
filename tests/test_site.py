@@ -21,17 +21,18 @@ from metalesionlab.web import site
 REPO = Path(web.__file__).resolve().parents[2]
 PAGES = {
     "plato": ["/", "/draw", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird", "/plato/damage",
-              "/plato/lifespan", "/socrates"],
+              "/plato/lifespan", "/plato/gallery", "/socrates"],
     "lingua": ["/", "/take", "/assess", "/scorer", "/studio", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge"],
 }
 APIS = {  # GET endpoints that answer without data (200, or 503 while a data file is missing), never 404
     "plato": ["/api/plato", "/api/plato/inside", "/api/plato/forms", "/api/plato/cave", "/api/plato/cratylus", "/api/plato/bird",
-              "/api/plato/damage", "/api/plato/lifespan", "/api/draw/concepts", "/api/draw/status", "/api/socrates/status"],
+              "/api/plato/damage", "/api/plato/lifespan", "/api/plato/gallery", "/api/draw/concepts", "/api/draw/status",
+              "/api/socrates/status"],
     "lingua": ["/api/status", "/api/sets", "/api/scenes", "/api/lab/conditions", "/api/lab/human", "/api/lab/cut",
                "/api/lab/bilingual", "/api/ask/status", "/api/assess/config", "/api/pages"],
 }
 NAV = {
-    "plato": ["Home", "Draw", "Experiments", "Inside the model", "Ask Socrates", "Code"],
+    "plato": ["Home", "Draw", "Experiments", "Gallery", "Inside the model", "Ask Socrates", "Code"],
     "lingua": ["Home", "Take the test", "Scorer", "Test Studio", "Model Lab", "Ask the Lab", "Code"],
 }
 OTHER = {"plato": "lingua", "lingua": "plato"}

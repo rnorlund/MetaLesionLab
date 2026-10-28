@@ -1,0 +1,119 @@
+/* The gallery (/plato/gallery). Paper like the other Plato pages; fluid: the page fills wide windows, the grid
+   adds columns as the window grows (auto-fill), cards grow with it, and prose keeps a readable measure.
+   Card pictures (.lab-pic, .lab-cell, .lab-flip) are styled in gallery-strip.css. */
+.gx { background: #F7F6F1; }
+.gx .page { max-width: var(--page-max, none); padding-inline: var(--gutter, clamp(16px, 4vw, 96px)); }
+.gx main { margin-top: 20px; display: flex; flex-direction: column; gap: 18px; outline: none; }
+
+.gx-hero { display: flex; flex-direction: column; gap: 10px; padding: clamp(18px, 2.4vw, 36px); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 16px; }
+.gx-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
+.gx-kicker a { color: inherit; }
+.gx-hero h1 { margin: 0; font-size: var(--fs-h1, clamp(34px, 4.6vw, 58px)); letter-spacing: -0.02em; line-height: 1.02; }
+.gx-lede { margin: 0; font-size: var(--fs-lede, clamp(16px, 1.25vw, 19px)); line-height: 1.55; color: var(--ink-2); max-width: var(--measure, 82ch); }
+
+/* filter chips and Shuffle */
+.gx-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.gx-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gx-chip, .gx-shuffle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px;
+  border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); font: inherit;
+  font-size: 14px; font-weight: 500; cursor: pointer; }
+.gx-chip-n { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.gx-chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; }
+.gx-chip[aria-pressed="true"] .gx-chip-n { color: #D1D5DB; }
+.gx-shuffle svg { width: 16px; height: 16px; }
+.gx-chip:hover, .gx-shuffle:hover { border-color: var(--ink); }
+.gx-count { margin: -6px 0 0; font-size: 13px; color: var(--muted); }
+
+/* the grid: as many columns as fit, every card at least ~300 px (or the full width of a phone) */
+.gx-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(14px, 1.4vw, 24px);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(280px, 17vw, 440px)), 1fr)); }
+.gx-loading { color: var(--muted); }
+.gx-card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid #E7E5DF;
+  border-radius: 16px; overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.gx-card:hover { border-color: #CFCBC0; box-shadow: 0 6px 20px rgba(17, 24, 39, 0.08); }
+.gx-card:focus-within { outline: 3px solid var(--blue); outline-offset: 2px; }
+.gx-card .lab-pic { border-bottom: 1px solid #EEECE6; }
+.gx-card-body { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 16px; }
+.gx-card-cat { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.gx-card.is-degrade .gx-card-cat { color: var(--orange-dark); }
+.gx-card-title { margin: 0; font-size: clamp(17px, 1.1vw, 20px); line-height: 1.25; }
+.gx-card-link { color: var(--ink); text-decoration: none; }
+.gx-card-link::after { content: ""; position: absolute; inset: 0; }  /* the whole card opens the large view */
+.gx-card:hover .gx-card-link { text-decoration: underline; text-underline-offset: 3px; }
+.gx-card-link:focus-visible { outline: none; }
+.gx-card-cap { margin: 0; font-size: var(--fs-sm, 14px); line-height: 1.5; color: var(--ink-2); }
+
+.gx-credits { margin-top: 12px; padding: clamp(16px, 2vw, 28px); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 16px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.gx-credits h2 { margin: 0 0 8px; font-size: 18px; color: var(--ink); }
+.gx-credits ul { margin: 0 0 10px; padding-left: 20px; max-width: 110ch; }
+.gx-credits p { margin: 0; max-width: 110ch; }
+
+/* ---------- the large view ---------- */
+html.gx-locked { overflow: hidden; }
+.gx-view { width: min(1680px, calc(100vw - 2 * clamp(8px, 2vw, 40px))); max-width: none; max-height: calc(100dvh - 2 * clamp(8px, 2vw, 32px));
+  padding: 0; border: 0; border-radius: 18px; background: #FFFFFF; color: var(--ink); overflow: auto; }
+.gx-view::backdrop { background: rgba(10, 12, 16, 0.78); }
+.gx-view-inner { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+  gap: clamp(16px, 2vw, 32px); padding: clamp(52px, 4vw, 64px) clamp(16px, 3vw, 48px) clamp(18px, 2.4vw, 36px); }
+.gx-stage-wrap { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.gx-stage { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 200px; }
+.gx-single { display: flex; justify-content: center; width: 100%; }
+.gx-single img { display: block; max-width: 100%; max-height: min(68dvh, 760px); width: auto; height: auto; object-fit: contain;
+  border-radius: 8px; }
+.gx-single:not(.gx-still) img { min-height: min(52dvh, 400px); max-height: min(62dvh, 640px); aspect-ratio: auto; }
+.gx-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 24px); width: 100%; }
+.gx-pair figure { margin: 0; display: flex; flex-direction: column; gap: 6px; align-items: center; min-width: 0; }
+.gx-pair figcaption { font-size: 13px; font-weight: 600; color: var(--ink-2); text-align: center; }
+.gx-pair img { width: 100%; max-width: 560px; max-height: min(56dvh, 560px); object-fit: contain; border-radius: 8px; }
+.gx-frame-label { font-family: var(--mono); font-size: 13px; color: var(--ink-2); text-align: center; }
+.gx-frame-label b { color: var(--ink); font-weight: 600; }
+
+.gx-player { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.gx-player[hidden] { display: none; }
+.gx-play { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px;
+  border: 1px solid var(--ink); background: var(--ink); color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; }
+.gx-play svg { width: 12px; height: 12px; }
+.gx-play[aria-pressed="true"] .gx-icon-play, .gx-play[aria-pressed="false"] .gx-icon-pause { display: none; }
+.gx-play[aria-pressed="false"] { background: var(--panel); color: var(--ink); }
+.gx-frames { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.gx-frame-btn { display: block; padding: 2px; border: 2px solid transparent; border-radius: 8px; background: #FFFFFF; cursor: pointer;
+  width: clamp(44px, 4.4vw, 76px); container-type: inline-size; }
+.gx-frame-btn.is-pair { width: clamp(72px, 7vw, 132px); }
+.gx-frame-btn .lab-cell { width: 100%; border-radius: 4px; }
+.gx-frame-btn[aria-current] { border-color: #C2410C; }
+.gx-frame-btn:hover { border-color: var(--line-2); }
+.gx-frame-btn[aria-current]:hover { border-color: #C2410C; }
+
+.gx-side { display: flex; flex-direction: column; gap: 10px; align-self: start; }
+.gx-view-cat { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--orange-dark); }
+.gx-side h2 { margin: 0; font-size: clamp(22px, 1.8vw, 30px); line-height: 1.15; letter-spacing: -0.01em; }
+.gx-view-cap { margin: 0; font-size: var(--fs-body, 16px); line-height: 1.55; color: var(--ink-2); }
+.gx-view-credit { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.gx-view-pos { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.gx-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.gx-go, .gx-share { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px;
+  font-weight: 600; font-size: 15px; text-decoration: none; }
+.gx-go { background: var(--ink); color: #FFFFFF; }
+.gx-share { border: 1px solid var(--ink); color: var(--ink); background: var(--panel); }
+.gx-share svg { width: 15px; height: 15px; }
+.gx-nav, .gx-close { position: absolute; top: 10px; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+  border-radius: 999px; border: 1px solid var(--line-2); background: #FFFFFF; color: var(--ink); cursor: pointer; }
+.gx-nav svg, .gx-close svg { width: 16px; height: 16px; }
+.gx-close { right: 10px; }
+.gx-next { right: 62px; }
+.gx-prev { right: 114px; }
+.gx-nav:hover, .gx-close:hover { border-color: var(--ink); }
+.gx-view button:focus-visible, .gx-view a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  .gx-view-inner { grid-template-columns: minmax(0, 1fr); }
+  .gx-single img { max-height: 52dvh; }
+  .gx-single:not(.gx-still) img { min-height: 0; }
+  .gx-pair img { max-height: 40dvh; }
+}
+@media (max-width: 520px) {
+  .gx-chip, .gx-shuffle { padding: 8px 12px; font-size: 13px; }
+  .gx-frame-btn { width: 40px; }
+}
