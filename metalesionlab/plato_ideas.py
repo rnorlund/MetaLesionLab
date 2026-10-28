@@ -152,6 +152,52 @@ BY_KEY = {i.key: i for i in IDEAS}
 GROUPS = {"god": "God, the maker of the one true bed", "plato": "Plato's own highest Forms",
           "life": "Ideas everyone lives with"}
 
+# Beyond nouns (docs/plato_ideas_damage_plan.md): two verbs and two adjectives, drawn exactly as the ideas were
+# (same template, settings and script). Verbs are gerunds and adjectives take "something", so each phrase fits
+# "a quick simple doodle sketch of {phrase}" like a bare idea. "Quick" is left out: the template already says
+# "a quick simple doodle", so a drawing of "something quick" could not be told apart from the template's own
+# word; "fast" asks the same question without it. Kept apart from IDEAS so the 11 ideas' pre-registered
+# statistics are unchanged. Options and predictions were fixed in the plan before any of these was drawn.
+WORDS = [
+    Idea("running", "running", "running", "action", "runner", (
+        ("runner", "one person running"),
+        ("group", "two or more people running, or a race"),
+        ("animal", "an animal running"),
+        ("feet or shoes", "running shoes, feet or legs, with no whole figure"),
+        ("motion lines", "motion or speed lines, with no figure"),
+        ("track", "a running track, a path or a finish line, with no figure"),
+    )),
+    Idea("thinking", "thinking", "thinking", "action", "thinker pose", (
+        ("thinker pose", "a person with a hand on the chin or head, pondering"),
+        ("thought bubble", "a head or a person with a thought bubble or cloud"),
+        ("brain", "a brain"),
+        ("light bulb", "a light bulb"),
+        ("question marks", "question marks"),
+        ("gears", "gears or cogs"),
+    )),
+    Idea("something_fast", "something fast", "something fast", "quality", "race car", (
+        ("race car", "a car or a race car"),
+        ("rocket or plane", "a rocket, a jet or a plane"),
+        ("fast animal", "a cheetah or another fast animal"),
+        ("runner", "a person running"),
+        ("lightning", "a lightning bolt"),
+        ("train", "a train"),
+        ("motion lines", "speed lines or a blur, with no clear object"),
+    )),
+    Idea("something_heavy", "something heavy", "something heavy", "quality", "weight", (
+        ("weight", "a weight, a kettlebell, a dumbbell or a barbell"),
+        ("anvil", "an anvil"),
+        ("rock", "a rock or a boulder"),
+        ("elephant", "an elephant or another big animal"),
+        ("box or safe", "a box, a crate or a safe"),
+        ("person lifting", "a person lifting or carrying a heavy load"),
+    )),
+]
+WORDS_BY_KEY = {w.key: w for w in WORDS}
+WORD_GROUPS = {"action": "Actions (verbs)", "quality": "Qualities (adjectives)"}
+ANY = {**BY_KEY, **WORDS_BY_KEY}  # every drawn phrase, ideas and words, by key
+WORDS_BUDGET_USD = 2.0  # this task's hard cap for the words' Muse Image pictures, counted at IMAGE_USD
+
 
 # God's human-like share (exploratory, set beside the Lausanne "Drawings of gods" children): a human figure,
 # bearded or not, or a hand. Light, clouds, an eye and religious symbols count as not human-like.
@@ -201,8 +247,13 @@ _DISPLAY = {"reaper": "a hooded figure with a scythe", "figure with scales": "a 
             "bird": "a flying bird", "bird and cage": "a bird leaving a cage", "ageing": "growing old",
             "religious symbol": "a religious symbol", "torch statue": "a statue with a torch",
             "wings or halo": "a figure with wings or a halo", "eye or lips": "an eye or lips",
-            "book": "an open book", "couple": "a couple"}
-_NO_ARTICLE = {"hands", "people", "broken chains", "open arms", "balloons", "flowers", "helping hands"}
+            "book": "an open book", "couple": "a couple",
+            "runner": "a person running", "group": "people running", "animal": "an animal running",
+            "thinker pose": "a person pondering, hand on chin", "rocket or plane": "a rocket or a plane",
+            "fast animal": "a fast animal", "person lifting": "a person lifting a load",
+            "box or safe": "a box or a safe", "feet or shoes": "feet or shoes", "track": "a running track"}
+_NO_ARTICLE = {"hands", "people", "broken chains", "open arms", "balloons", "flowers", "helping hands",
+               "motion lines", "question marks", "gears"}
 
 
 def display(short: str, name: str | None = None) -> str:
