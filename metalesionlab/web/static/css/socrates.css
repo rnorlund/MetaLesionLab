@@ -8,11 +8,28 @@
   --bronze-line: #E4D3B4;
 }
 
-.so { margin: 20px auto 0; width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: 18px; outline: none; }
-.so-hero { padding: 28px 28px 22px; display: flex; flex-direction: column; gap: 10px; }
+/* Fluid: the page grows with the window (no narrow centred column); prose keeps a 70-80ch measure. On wide
+   windows the dialogue takes the main column and "How it works" and the method sit beside it. */
+body.socrates .page { max-width: none; padding-inline: clamp(16px, 4vw, 96px); }
+body.socrates .footnote { max-width: 110ch; }
+.so { margin: 20px 0 0; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 1.4vw, 28px); align-items: start; outline: none; }
+.so-side { display: flex; flex-direction: column; gap: clamp(18px, 1.4vw, 28px); min-width: 0; }
+@media (min-width: 1100px) {
+  .so { grid-template-columns: minmax(0, 1fr) minmax(300px, 32%); }
+  .so-hero, .so-drawing { grid-column: 1 / -1; }
+  .so-dialogue { grid-column: 1; }
+  .so-side { grid-column: 2; }
+}
+@media (min-width: 1800px) {
+  .so { grid-template-columns: minmax(0, 1fr) minmax(360px, 28%); }
+  .so-body, .so-said, .so-how-list, .so-method-list { font-size: 17px; }
+}
+.so-text p, .so-text ul, .so-text ol, .so-said, .so-examine-intro p { max-width: 78ch; }
+.so-ask p { max-width: 62ch; }
+.so-hero { padding: clamp(20px, 2vw, 40px) clamp(18px, 2.2vw, 44px) clamp(16px, 1.6vw, 32px); display: flex; flex-direction: column; gap: 10px; }
 .so-kicker { font-family: var(--mono); font-size: 12px; color: var(--bronze); letter-spacing: 0.02em; }
 .so-hero h1 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: clamp(34px, 5vw, 48px); letter-spacing: -0.01em; line-height: 1.05; }
-.so-lede { margin: 0; font-size: 17px; line-height: 1.55; color: var(--ink-2); max-width: 680px; }
+.so-lede { margin: 0; font-size: clamp(16px, 0.35vw + 12.5px, 21px); line-height: 1.55; color: var(--ink-2); max-width: 75ch; }
 .so-key {
   height: 12px; margin-top: 8px; background: var(--bronze-line);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M0 11.25H24M9.75 11.25V.75H2.25V8.25H6.75V3.75H5.25M21.75 11.25V.75H14.25V8.25H18.75V3.75H17.25' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x left center / 24px 12px;
@@ -111,7 +128,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-hero-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
 .so-hero-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .so-portrait { margin: 0; flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.so-portrait img { width: 128px; height: 128px; border-radius: 50%; background: #fff; border: 2px solid var(--bronze-line); display: block; }
+.so-portrait img { width: clamp(112px, 9vw, 220px); height: auto; aspect-ratio: 1; border-radius: 50%; background: #fff; border: 2px solid var(--bronze-line); display: block; }
 .so-portrait figcaption { font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center; }
 .so-face { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 1.5px solid var(--bronze-line); display: block; }
 
@@ -160,7 +177,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
   .so-speaker { grid-column: 1; grid-row: auto; flex-direction: row; align-items: center; gap: 8px; }
   .so-face { width: 32px; height: 32px; }
   .so-hero-row { align-items: flex-start; }
-  .so-portrait img { width: 72px; height: 72px; }
+  .so-portrait img { width: 72px; }
   .so-portrait figcaption { max-width: 80px; font-size: 9.5px; }
   .so-modes { display: flex; width: 100%; }
   .so-mode { flex: 1 1 0; }
