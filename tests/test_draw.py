@@ -306,9 +306,12 @@ def test_the_app_never_imports_the_model_at_startup():
 
 
 def test_nav_links_draw_a_chair():
-    c = TestClient(web.app)  # the nav comes from web/site.py, so check the pages as served
-    for path in ("/", "/challenge", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/scorer", "/studio", "/assess", "/draw"):
+    c = TestClient(web.app_for("plato"))  # the nav comes from web/site.py, so check the pages as served
+    for path in ("/", "/plato", "/plato/cave", "/plato/damage", "/socrates", "/draw"):
         assert 'href="/draw"' in c.get(path).text, path
+    # Draw a chair is the Plato site's: the Lingua site neither serves it nor links to it
+    lingua = TestClient(web.app_for("lingua"))
+    assert lingua.get("/draw").status_code == 404 and 'href="/draw"' not in lingua.get("/lab").text
 
 
 # --- fetching the model at build time ------------------------------------------------------------------

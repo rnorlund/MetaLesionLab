@@ -1,16 +1,22 @@
-# Fly.io config for the Tippa Lingua public demo. Copy to the repo root as fly.toml, change `app`,
-# then follow deploy/README.md. No secrets here: MODEL_API_KEY goes in with `fly secrets set`.
-app = "tippa-lingua-demo"
+# Fly.io config for one site's public demo. Copy to the repo root as fly.toml, change `app` and, for the
+# sister project, MLL_SITE (both places), then follow deploy/README.md. No secrets here: MODEL_API_KEY goes
+# in with `fly secrets set`.
+app = "platos-chair-demo"
 primary_region = "iad"
 
 [build]
   dockerfile = "Dockerfile"
 
+[build.args]
+  MLL_SITE = "plato"  # or "lingua"; build the matching bundle first (build_site_bundle.py --site ...)
+
 [env]
+  MLL_SITE = "plato"
   PORT = "8080"
   TOT_CLIENT_IP_HEADER = "fly-client-ip"  # Fly's own header for the visitor's address
   TIPPA_PUBLIC_DAILY_USD = "2"
   MLL_BUDGET_USD = "10"
+  # MLL_SISTER_URL = "https://<the other site>"  # the "Sister project" link at the foot of every page
 
 [http_service]
   internal_port = 8080
@@ -21,9 +27,9 @@ primary_region = "iad"
 # Run one machine (fly deploy --ha=false): one ledger and one set of per-visitor counters.
 
 # The spend ledger and volunteers' summaries survive restarts on this volume:
-#   fly volumes create tippa_data --size 1 --region iad
+#   fly volumes create mll_data --size 1 --region iad
 [[mounts]]
-  source = "tippa_data"
+  source = "mll_data"
   destination = "/data"
 
 [[vm]]

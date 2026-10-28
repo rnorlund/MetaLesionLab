@@ -4,10 +4,12 @@
    checks them), so the tour makes no AI calls. Blind draw first: on the landing page Socrates asks for a
    chair before anything of Muse Image's is shown; the chairs appear when the visitor draws or presses Next.
    The current step lives in sessionStorage, so the tour carries on across page loads. At most 10 steps; it
-   ends at /draw when the server has that page (TOT.hasPage), with "Ask me yourself" (/socrates). */
+   ends at /draw when the server has that page (TOT.hasPage), with "Ask me yourself" (/socrates).
+   It is the Plato's Chair site's tour: where /plato isn't served (the Lingua site, MLL_SITE=lingua) it does nothing. */
 (function () {
   'use strict';
   var T = window.TOT, h = T.h;
+  if (!T.hasPage('/plato')) return;
   var STEP_KEY = 'tot-tour-step', OFFER_KEY = 'tot-tour-offer-done', SEEN_KEY = 'tot-draw-seen';
   var PHONE = 640;
   var FACE = '/static/img/socrates/socrates-';
@@ -140,7 +142,7 @@
         var out = [];
         if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw']);
         if (hasSocrates()) out.push(['Ask me yourself', '/socrates'], ['Let me examine you', '/socrates?mode=examine']);
-        out.push(['See the whole experiment', '/plato']);
+        out.push(['See the whole experiment', '/plato'], ['Look inside the model', T.hasPage('/plato/inside') ? '/plato/inside' : '/plato#inside']);
         return out;
       } }
   ];

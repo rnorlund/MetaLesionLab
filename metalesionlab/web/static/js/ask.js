@@ -19,7 +19,7 @@
   function hrefFor(tool, arg) {
     var m = COND.exec(arg || '');
     if (m && tool !== 'plato_stats') return '/lab?c=' + encodeURIComponent(m[0]);
-    if (tool === 'plato_stats') return '/plato#everything';
+    if (tool === 'plato_stats') return T.hasPage('/plato') ? '/plato#everything' : DOCS + 'plato.md';  // the sister site's
     if (tool === 'cut_results') return '/lab/cut';
     if (tool === 'bilingual_results') return '/lab/bilingual';
     if (tool === 'language_support') return DOCS + 'languages.md';
@@ -27,6 +27,7 @@
   }
   function safeHref(href) {
     href = String(href || '');
+    if (/^\/plato([?#/]|$)/.test(href) && !T.hasPage('/plato')) return DOCS + 'plato.md';  // Plato's Chair is the sister site
     if (/^\/(lab|plato|ask|challenge|take|studio|scorer|assess)(\/cut)?([?#][^\s"'<>]*)?$/.test(href)) return href;
     if (href.indexOf(DOCS) === 0 || /^https:\/\/(doi\.org|pmc\.ncbi\.nlm\.nih\.gov|arxiv\.org)\//.test(href)) return href;
     return null;

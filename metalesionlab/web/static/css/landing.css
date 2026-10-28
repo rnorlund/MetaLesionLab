@@ -1,4 +1,5 @@
-/* Landing page: Plato's Chair. Paper #F7F6F1, ink navy, Muse Image blue, people orange. */
+/* Landing pages: the Plato site's (pages/index.html), and the shared parts of the Lingua site's (lingua.css adds its own).
+   Paper #F7F6F1, ink navy, Muse Image blue, people orange. */
 body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #C2410C; }
 .landing main { outline: none; }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
@@ -133,33 +134,17 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 .split-text > p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
 .btn-line { display: flex; flex-wrap: wrap; gap: 10px; }
 
-/* more from the lab */
-.more-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
-.more-card { display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 22px; text-decoration: none; color: var(--ink); }
-.more-card:hover { color: var(--ink); border-color: var(--ink); }
-.more-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); }
-.more-title { font-size: 21px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; }
-.more-text { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
-.bl-mini { display: flex; flex-direction: column; gap: 8px; }
-.bl-cap { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.bl-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) 44px; gap: 10px; align-items: center; font-size: 14px; }
-.bl-row b { text-align: right; }
-.bl-track { height: 14px; background: #EEF0F3; border-radius: 0 7px 7px 0; overflow: hidden; }
-.bl-track i { display: block; height: 100%; border-radius: 0 7px 7px 0; }
-.bl-en { background: #2a78d6; }
-.bl-es { background: #eb6834; }
-.more-links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; }
-.more-links li { display: flex; flex-direction: column; gap: 2px; padding: 14px 20px; border-top: 1px solid var(--line); }
-.more-links li:first-child { border-top: 0; }
-.more-links a { font-weight: 600; font-size: 16px; text-decoration: none; padding: 2px 0; }
-.more-links a:hover { text-decoration: underline; }
-.more-links span { font-size: 14px; color: var(--muted); line-height: 1.5; }
-
 /* footer */
 .lfoot { background: var(--ink); color: #D1D5DB; }
 .lfoot-row { padding-top: 36px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; font-size: 14px; }
 .lfoot .lbrand { font-weight: 700; font-size: 18px; color: #F9FAFB; }
 .lfoot a { color: #F9FAFB; margin-left: auto; padding: 10px 0; }
+/* "Sister project: …" (site.py fills <!--#sister--> when MLL_SISTER_URL is set) */
+.lfoot-sister { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; flex-basis: 100%; order: 1; }
+.lfoot-credit { order: 2; }
+.lfoot-sister:empty { display: none; }
+.lfoot .lfoot-sister a { margin-left: 0; }
+.lfoot .sister-tag { color: #9CA3AF; }
 .lfoot-credit { flex-basis: 100%; margin: 4px 0 0; font-size: 13px; line-height: 1.55; color: #9CA3AF; }
 .landing :focus-visible { outline-color: #2563EB; }
 
@@ -174,7 +159,7 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
   .draw-grid { grid-template-columns: minmax(0, 1fr); }
   .hero-pad { max-width: 560px; width: 100%; }
   .hero-sub, .hero-ask .hero-sub { max-width: none; }
-  .plato-sec, .split, .more-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .plato-sec, .split { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .inside-fig { order: 2; }
 }
 @media (max-width: 720px) {

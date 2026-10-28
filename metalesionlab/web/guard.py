@@ -25,6 +25,10 @@ With PUBLIC_DEMO=1, visitors can't run up the Meta API bill:
 Any POST, PUT, PATCH or DELETE under /api/ that isn't on the FREE list below counts as paid, so a new
 route is limited and stops at the cap until it's listed here. /api/ask... (Ask the Lab) and
 /api/socrates... (Ask Socrates, one bucket per dialogue turn) are paid; their status polls (GET) are free.
+
+The two sites (MLL_SITE, brand.py) serve different routes, so each guard knows only its own site's
+routes: on the Plato site that is Ask Socrates (paid) and Draw a chair (free), and everything else
+under /api/ that mutates falls to the "other" bucket (and then 404s). The Lingua site has the rest.
 """
 from __future__ import annotations
 
@@ -46,7 +50,7 @@ from starlette.datastructures import Headers, MutableHeaders
 from starlette.requests import Request as StarletteRequest
 
 from metalesionlab import meta_api
-from metalesionlab.brand import BRAND
+from metalesionlab.brand import LINGUA
 from metalesionlab.meta_api import BudgetExceeded
 from metalesionlab.web import limits
 
@@ -58,12 +62,32 @@ DRAIN_BYTES = 16 * MB  # an oversized upload is read and dropped up to this size
 BANNER_TAG = b'<script src="/static/js/guard-banner.js" defer></script>'
 # Picture, SAM check and Muse Spark naming per candidate, as in app.COST_PER_CANDIDATE.
 COST_PER_CANDIDATE = meta_api.IMAGE_PRICE + meta_api.SAM_PRICE + 0.002
-# Shown when today's budget is used up: things that work without new Meta API calls.
-EXAMPLES = [
-    {"label": "Watch the recorded Scorer demo", "href": "/scorer", "tour": "scorer"},
-    {"label": "Play You vs. the AI (typed answers are free)", "href": "/challenge"},
-    {"label": "Explore the Model Lab results", "href": "/lab"},
-]
+# Shown when today's budget is used up: things that work without new Meta API calls, per site.
+EXAMPLES = {
+    "lingua": [
+        {"label": "Watch the recorded Scorer demo", "href": "/scorer", "tour": "scorer"},
+        {"label": "Play You vs. the AI (typed answers are free)", "href": "/challenge"},
+        {"label": "Explore the Model Lab results", "href": "/lab"},
+    ],
+    "plato": [
+        {"label": "See the experiments", "href": "/plato"},
+        {"label": "Draw a chair (runs on our server, no AI calls)", "href": "/draw"},
+        {"label": "Name the shadow", "href": "/plato/cave"},
+    ],
+}
+# What pauses when the budget is used up, and what stays free (the banner and the 503 message say so).
+PAUSED = {"lingua": "New scoring and picture generation pause",
+          "plato": "Ask Socrates pauses"}
+STAYS_FREE = {"lingua": "Browsing, replays and exports are free.",
+              "plato": "The experiments and Draw a chair are free."}
+BUDGET_DETAIL = {
+    "lingua": ("Today's live demo budget for AI calls is used up, so new scoring and picture generation "
+               "are paused until 00:00 UTC ({wait} from now). Everything else still works: browse the results, "
+               "play You vs. the AI with typed answers, or press Demo on any page for a recorded example."),
+    "plato": ("Today's live demo budget for AI calls is used up, so Ask Socrates is paused until 00:00 UTC "
+              "({wait} from now). Everything else still works: every experiment replays recorded results, and "
+              "Draw a chair runs on our own server."),
+}
 # Paid requests per visitor per minute, by bucket.
 BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "socrates": 5, "other": 10}  # a fast /take is ~20 a minute
 # Daily limits the guard counts itself; limits.py counts builds, scenes and scored responses.
@@ -75,27 +99,29 @@ PUBLIC_LIMITS = {"build": 3, "scene": 2, "score": 150}
 WHAT = {"build": "picture sets", "scene": "scenes", "photo": "photo tests", "score": "scored answers",
         "ask": "questions", "socrates": "dialogue turns", "other": "requests"}
 
-# Mutating /api/ routes that never call a Meta API. Everything else that mutates is treated as paid.
+# Mutating /api/ routes that never call a Meta API, and the site that serves them. Everything else that
+# mutates is treated as paid.
 FREE = [
-    ({"POST"}, re.compile(r"/api/challenge/score/?")),
-    ({"POST"}, re.compile(r"/api/assess/(report\.pdf|forms)/?")),
-    ({"POST"}, re.compile(r"/api/assess/norms/[^/]+/?")),
-    ({"PATCH"}, re.compile(r"/api/sets/[^/]+/items/\d+/?")),
-    ({"PATCH"}, re.compile(r"/api/scenes/[^/]+/?")),
-    ({"POST"}, re.compile(r"/api/draw(/upload)?/?")),  # Draw a chair: CPU only, no API calls; draw_routes.py has its own limits
+    ({"POST"}, re.compile(r"/api/challenge/score/?"), "lingua"),
+    ({"POST"}, re.compile(r"/api/assess/(report\.pdf|forms)/?"), "lingua"),
+    ({"POST"}, re.compile(r"/api/assess/norms/[^/]+/?"), "lingua"),
+    ({"PATCH"}, re.compile(r"/api/sets/[^/]+/items/\d+/?"), "lingua"),
+    ({"PATCH"}, re.compile(r"/api/scenes/[^/]+/?"), "lingua"),
+    # Draw a chair: CPU only, no API calls; draw_routes.py has its own limits
+    ({"POST"}, re.compile(r"/api/draw(/upload)?/?"), "plato"),
 ]
 MUTATING = {"POST", "PUT", "PATCH", "DELETE"}
-# (methods, path, rule name)
+# (methods, path, rule name, site)
 PAID = [
-    ({"POST"}, re.compile(r"/api/sets/?"), "build"),
-    ({"POST"}, re.compile(r"/api/scenes/?"), "scene"),
-    ({"POST"}, re.compile(r"/api/assess/photo-test/?"), "photo"),
-    ({"POST"}, re.compile(r"/api/score/naming/text/?"), "text"),
-    ({"POST"}, re.compile(r"/api/(score/naming|assess/naming)/?"), "audio_short"),
-    ({"POST"}, re.compile(r"/api/score/(description|fluency)/?"), "audio_long"),
-    ({"POST"}, re.compile(r"/api/assess/rescore/?"), "text"),
-    (MUTATING, re.compile(r"/api/ask(/.*)?"), "ask"),  # GET /api/ask/status is free
-    (MUTATING, re.compile(r"/api/socrates(/.*)?"), "socrates"),  # GET /api/socrates/status is free
+    ({"POST"}, re.compile(r"/api/sets/?"), "build", "lingua"),
+    ({"POST"}, re.compile(r"/api/scenes/?"), "scene", "lingua"),
+    ({"POST"}, re.compile(r"/api/assess/photo-test/?"), "photo", "lingua"),
+    ({"POST"}, re.compile(r"/api/score/naming/text/?"), "text", "lingua"),
+    ({"POST"}, re.compile(r"/api/(score/naming|assess/naming)/?"), "audio_short", "lingua"),
+    ({"POST"}, re.compile(r"/api/score/(description|fluency)/?"), "audio_long", "lingua"),
+    ({"POST"}, re.compile(r"/api/assess/rescore/?"), "text", "lingua"),
+    (MUTATING, re.compile(r"/api/ask(/.*)?"), "ask", "lingua"),  # GET /api/ask/status is free
+    (MUTATING, re.compile(r"/api/socrates(/.*)?"), "socrates", "plato"),  # GET /api/socrates/status is free
 ]
 
 
@@ -246,7 +272,8 @@ def _hours(seconds: float) -> str:
 
 class Guard:
     def __init__(self, settings: Settings, ledger_path: Callable[[], Path] | None = None,
-                 clock: Callable[[], float] = time.time, client_ip: Callable = limits.client_ip):
+                 clock: Callable[[], float] = time.time, client_ip: Callable = limits.client_ip,
+                 site: str | None = None):
         self.s = settings
         self.clock = clock
         self.ledger = DailyLedger(ledger_path or (lambda: meta_api.LEDGER))
@@ -254,6 +281,11 @@ class Guard:
         self.lock = threading.Lock()
         self.rules = make_rules(settings)
         self.client_ip = client_ip
+        # The routes of one site (install() passes the app's), or of both when no site is given.
+        self.site = site
+        self.text_site = site or "lingua"  # whose messages and examples to show
+        self.paid = [(m, p, name) for m, p, name, where in PAID if site in (None, where)]
+        self.free = [(m, p) for m, p, where in FREE if site in (None, where)]
 
     # --- today's budget ---------------------------------------------------------------------
 
@@ -291,11 +323,9 @@ class Guard:
 
     def budget_payload(self) -> dict:
         wait = self.resets_in_s()
-        return {"detail": ("Today's live demo budget for AI calls is used up, so new scoring and picture generation "
-                           f"are paused until 00:00 UTC ({_hours(wait)} from now). Everything else still works: "
-                           "browse the results, play You vs. the AI with typed answers, or press Demo on any page "
-                           "for a recorded example."),
-                "guard": "budget", "resets_in_s": wait, "examples": EXAMPLES}
+        return {"detail": BUDGET_DETAIL[self.text_site].format(wait=_hours(wait)),
+                "guard": "budget", "resets_in_s": wait, "examples": EXAMPLES[self.text_site],
+                "paused": PAUSED[self.text_site]}
 
     def budget_response(self, *_args) -> JSONResponse:
         payload = self.budget_payload()
@@ -307,10 +337,10 @@ class Guard:
     def match(self, method: str, path: str) -> Rule | None:
         if not path.startswith("/api/") or method in ("HEAD", "OPTIONS"):
             return None
-        for methods, pattern, name in PAID:
+        for methods, pattern, name in self.paid:
             if method in methods and pattern.fullmatch(path):
                 return self.rules[name]
-        if method not in MUTATING or any(method in m and p.fullmatch(path) for m, p in FREE):
+        if method not in MUTATING or any(method in m and p.fullmatch(path) for m, p in self.free):
             return None
         return self.rules["other"]
 
@@ -319,11 +349,11 @@ class Guard:
         if rule.bucket == "photo" and not self.s.photo_tests:
             return Decision(403, {"detail": "Personal tests from a photo are turned off on the live demo: they draw "
                                             "many pictures, and photos of people's homes shouldn't go through a public "
-                                            f"server. Run {BRAND} yourself to make one.", "guard": "off"},
+                                            f"server. Run {LINGUA.name} yourself to make one.", "guard": "off"},
                             {"X-Tippa-Guard": "off"})
         if rule.bucket == "build" and self.s.build_words <= 0:
             return Decision(403, {"detail": "Building new picture sets is turned off on the live demo. Open one of the "
-                                            f"demo sets below, or run {BRAND} yourself to build your own.",
+                                            f"demo sets below, or run {LINGUA.name} yourself to build your own.",
                                   "guard": "off"}, {"X-Tippa-Guard": "off"})
         return None
 
@@ -343,7 +373,7 @@ class Guard:
             return None, 0.25, None, None  # the route will reject it; meanwhile assume a large build
         if len(words) > self.s.build_words:
             return (Decision(422, {"detail": f"On the live demo a set has up to {self.s.build_words} words "
-                                             f"({len(words)} given). Run {BRAND} yourself for longer sets.",
+                                             f"({len(words)} given). Run {LINGUA.name} yourself for longer sets.",
                                    "guard": "size"}, {"X-Tippa-Guard": "size"}), 0.0, None, None)
         new_body = note = None
         if cands > self.s.build_candidates:
@@ -396,13 +426,18 @@ class Guard:
         out = {"public_demo": True, "daily_cap_usd": self.s.daily_usd, "spent_today_usd": round(spent, 4),
                "left_today_usd": round(max(0.0, self.s.daily_usd - spent), 4), "exhausted": self.would_exceed(),
                "ledger_ok": self.ledger_writable(),
-               "resets_in_s": self.resets_in_s(), "examples": EXAMPLES,
-               "studio": {"build_words": self.s.build_words, "build_candidates": self.s.build_candidates,
-                          "photo_tests": self.s.photo_tests},
-               "audio": {"max_mb": {"naming": self.s.audio_mb, "description": self.s.long_audio_mb,
-                                    "fluency": self.s.long_audio_mb}, "max_s": dict(self.s.clip_s)},
-               "per_minute": BURST_PER_MIN, "ask_per_day": self.s.ask_per_day,
-               "socrates_per_day": self.s.socrates_per_day}
+               "resets_in_s": self.resets_in_s(), "examples": EXAMPLES[self.text_site],
+               "paused": PAUSED[self.text_site], "free_note": STAYS_FREE[self.text_site],
+               "per_minute": {b: n for b, n in BURST_PER_MIN.items()
+                              if b == "other" or any(self.rules[name].bucket == b for _, _, name in self.paid)}}
+        if self.site in (None, "lingua"):
+            out.update({"studio": {"build_words": self.s.build_words, "build_candidates": self.s.build_candidates,
+                                   "photo_tests": self.s.photo_tests},
+                        "audio": {"max_mb": {"naming": self.s.audio_mb, "description": self.s.long_audio_mb,
+                                             "fluency": self.s.long_audio_mb}, "max_s": dict(self.s.clip_s)},
+                        "ask_per_day": self.s.ask_per_day})
+        if self.site in (None, "plato"):
+            out["socrates_per_day"] = self.s.socrates_per_day
         if debug:  # to check the proxy settings after deploying: the address the limits count by
             out["you"] = {"ip_seen": self.client_ip(request), "x_forwarded_for": request.headers.get("x-forwarded-for")}
         return out
@@ -551,14 +586,16 @@ def configure_web(web, s: Settings) -> None:
 
 
 def install(app: FastAPI, settings: Settings | None = None, web=None) -> Guard | None:
-    """Called once by app.py. Local mode: only GET /api/guard ({"public_demo": false})."""
+    """Called once per site by app.py (the app's site is app.state.site). Local mode: only GET /api/guard
+    ({"public_demo": false})."""
     s = settings or Settings.from_env()
     if not s.public_demo:
         app.add_api_route("/api/guard", lambda: {"public_demo": False}, methods=["GET"], include_in_schema=False)
         return None
-    guard = Guard(s)
+    site = getattr(app.state, "site", None)
+    guard = Guard(s, site=site)
     web = web or sys.modules.get("metalesionlab.web.app")
-    if web is not None:
+    if web is not None and site in (None, "lingua"):  # builds, recordings and their limits are the Lingua site's
         configure_web(web, s)
     meta_api.budget_checks.append(guard.check_call)
     app.add_middleware(GuardMiddleware, guard=guard)
@@ -567,6 +604,6 @@ def install(app: FastAPI, settings: Settings | None = None, web=None) -> Guard |
     def guard_status(request: Request, debug: bool = False):
         return guard.status(request, debug)
     app.add_api_route("/api/guard", guard_status, methods=["GET"], include_in_schema=False)
-    log.warning("PUBLIC_DEMO=1: Meta API spending capped at $%.2f per UTC day; builds up to %d words",
-                s.daily_usd, s.build_words)
+    log.warning("PUBLIC_DEMO=1 (%s site): Meta API spending capped at $%.2f per UTC day; paid routes: %s",
+                site or "every", s.daily_usd, ", ".join(sorted({guard.rules[n].bucket for _, _, n in guard.paid})))
     return guard

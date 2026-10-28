@@ -55,7 +55,7 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(meta_api.MetaAPI, "__init__", no_api)
     challenge._cache.clear()
     _write_data(tmp_path)
-    return TestClient(web.app), tmp_path
+    return TestClient(web.app_for("lingua")), tmp_path
 
 
 def test_page_and_pages_flag(client):

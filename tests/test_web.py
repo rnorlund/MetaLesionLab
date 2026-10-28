@@ -55,7 +55,7 @@ def env(tmp_path, monkeypatch):
     web._lab_cache.clear()
     _make_set(tmp_path / "sets" / "demo")
     (tmp_path / "sets" / "demo" / "webmeta.json").write_text(json.dumps({"public": True}))  # listed in the pickers
-    return TestClient(web.app), tmp_path
+    return TestClient(web.app_for("lingua")), tmp_path
 
 
 def test_pages_and_status(env):

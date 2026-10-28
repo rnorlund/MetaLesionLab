@@ -1,6 +1,6 @@
-/* Landing page: draw first (the pad from draw.js, blind: nothing of Muse Image's chairs until the visitor
-   draws or skips), then the reveal with the one motion moment (stack the 16 chairs on top of each other),
-   the visitor's results, and the second-language card's numbers. */
+/* Plato's Chair's landing page: draw first (the pad from draw.js, blind: nothing of Muse Image's chairs
+   until the visitor draws or skips), then the reveal with the one motion moment (stack the 16 chairs on top
+   of each other) and the visitor's results. The opening animation is splash.js. */
 (function () {
   'use strict';
   var T = window.TOT;
@@ -67,29 +67,6 @@
       if (entries.some(function (e) { return e.isIntersecting && e.intersectionRatio > 0.55; })) { io.disconnect(); autoplay(); }
     }, { threshold: [0.55] });
     io.observe(fig);
-  }
-
-  // --- second-language card: the numbers shipped with /lab/bilingual (the HTML holds a fallback) ----
-  if (document.getElementById('bilingual-teaser')) {
-    T.api('/api/lab/bilingual').then(function (d) {
-      var sm = d && d.summary, sw = d && d.switching;
-      if (!sm || !sm.es) return;
-      var acc = { en: sm.es.acc_en, es: sm.es.acc_lang };
-      Object.keys(acc).forEach(function (v) {
-        if (acc[v] == null) return;
-        var bar = document.querySelector('[data-bl-bar="' + v + '"]'), val = document.querySelector('[data-bl-val="' + v + '"]');
-        if (bar) bar.style.width = Math.round(acc[v] * 100) + '%';
-        if (val) val.textContent = Math.round(acc[v] * 100) + '%';
-      });
-      var kinds = document.querySelector('[data-bl-kinds]');
-      if (kinds && sm.es.n_conditions) kinds.textContent = String(sm.es.n_conditions);
-      var p = document.querySelector('[data-bl-teaser-text]'), share = sw && sw.es && sw.es.english_answers.mean;
-      if (p && share != null) {
-        p.textContent = 'Under the same damage, Muse Glimmer named ' + Math.round(sm.es.extra_drop * 100) +
-          ' points fewer pictures in Spanish than in English, and ' + Math.round(share * 100) +
-          '% of its damaged Spanish answers came out in English. It echoes bilingual aphasia, as an analogy only.';
-      }
-    }).catch(function () {});
   }
 
   T.landing = { stack: stack, cancelAuto: cancelAuto, reveal: reveal, draw: drawApp };

@@ -1,7 +1,11 @@
-"""The site shell (web/site.py): one nav on every page, the name in one place, share tags, and the Plato
-series cards that appear only once their pages are served."""
+"""The site shell (web/site.py) for the two sites one codebase serves (MLL_SITE, brand.py): each site has
+only its own pages and APIs, its own nav and name, the sister link, share tags, and the Plato series cards
+that appear only once their pages are served. The default site is Plato's Chair."""
 import json
+import os
 import re
+import subprocess
+import sys
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -14,14 +18,32 @@ from metalesionlab import brand
 from metalesionlab.web import app as web
 from metalesionlab.web import site
 
-PAGES = ["/", "/plato", "/draw", "/challenge", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/scorer", "/studio",
-         "/assess", "/take", "/socrates"]
 REPO = Path(web.__file__).resolve().parents[2]
+PAGES = {
+    "plato": ["/", "/draw", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird", "/plato/damage",
+              "/plato/lifespan", "/socrates"],
+    "lingua": ["/", "/take", "/assess", "/scorer", "/studio", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge"],
+}
+APIS = {  # GET endpoints that answer without data (200, or 503 while a data file is missing), never 404
+    "plato": ["/api/plato", "/api/plato/inside", "/api/plato/forms", "/api/plato/cave", "/api/plato/cratylus", "/api/plato/bird",
+              "/api/plato/damage", "/api/plato/lifespan", "/api/draw/concepts", "/api/draw/status", "/api/socrates/status"],
+    "lingua": ["/api/status", "/api/sets", "/api/scenes", "/api/lab/conditions", "/api/lab/human", "/api/lab/cut",
+               "/api/lab/bilingual", "/api/ask/status", "/api/assess/config", "/api/pages"],
+}
+NAV = {
+    "plato": ["Home", "Draw", "Experiments", "Inside the model", "Ask Socrates", "Code"],
+    "lingua": ["Home", "Take the test", "Scorer", "Test Studio", "Model Lab", "Ask the Lab", "Code"],
+}
+OTHER = {"plato": "lingua", "lingua": "plato"}
 
 
 @pytest.fixture
 def client():
-    return TestClient(web.app)
+    return TestClient(web.app)  # the default site
+
+
+def sites():
+    return {key: TestClient(web.app_for(key)) for key in ("plato", "lingua")}
 
 
 @contextmanager
@@ -39,64 +61,215 @@ def served(*paths):
             web.app.router.routes.remove(route)
 
 
+def nav_block(html: str) -> str:
+    return re.search(r'<nav class="topnav" aria-label="Main">(.*?)</nav>', html, re.S).group(1)
+
+
 def nav_links(html: str) -> list[str]:
-    nav = re.search(r'<nav class="topnav" aria-label="Main">(.*?)</nav>', html, re.S).group(1)
-    return re.findall(r'href="([^"]+)"', nav)
+    return re.findall(r'href="([^"]+)"', nav_block(html))
 
 
-def test_every_page_has_the_same_nav(client):
-    seen = {}
-    for path in PAGES:
-        r = client.get(path)
-        assert r.status_code == 200, path
-        assert r.text.count('<header class="topbar site-head">') == 1, path
-        seen[path] = nav_links(r.text)
-    first = seen["/"]
-    assert all(links == first for links in seen.values()), seen
-    # Plato first; everything else is under More (next test), so every page is one click away.
-    assert first[:3] == ["/", "/draw", "/plato"] and "/plato#inside" in first
+def nav_labels(html: str) -> list[str]:
+    """The inline nav items, in order (the More menu's panel left out)."""
+    inline = re.sub(r'<details class="nav-more.*?</details>', "", nav_block(html), flags=re.S)
+    return [re.sub(r"<[^>]+>|↗", "", a).strip() for a in re.findall(r"<a [^>]*>(.*?)</a>", inline, re.S)]
 
 
-def test_more_menu_reaches_every_page(client):
-    html = client.get("/plato").text
-    more = re.search(r'<details class="nav-more[^"]*">(.*?)</details>', html, re.S).group(1)
-    for path in ("/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge", "/take", "/assess", "/scorer", "/studio"):
-        assert f'href="{path}"' in more, path
-    assert 'aria-current="page"' in nav_links_block(client.get("/lab").text)
-
-
-def nav_links_block(html: str) -> str:
+def header(html: str) -> str:
     return re.search(r'<header class="topbar site-head">.*?</header>', html, re.S).group(0)
 
 
+# --- one switch, two sites -------------------------------------------------------------------------
+
+def test_the_default_site_is_platos_chair():
+    assert web.app.state.site == "plato" == brand.DEFAULT_SITE
+    assert web.app_for() is web.app and web.app_for("plato") is web.app
+
+
+def test_site_key_reads_the_switch_and_refuses_typos(monkeypatch):
+    monkeypatch.delenv("MLL_SITE", raising=False)
+    assert brand.site_key() == "plato"
+    monkeypatch.setenv("MLL_SITE", " Lingua ")
+    assert brand.site_key() == "lingua" and brand.brand_for().name == brand.LINGUA.name
+    assert brand.sister_of("lingua") is brand.PLATO and brand.sister_of("plato") is brand.LINGUA
+    with pytest.raises(ValueError, match="MLL_SITE"):
+        brand.site_key("lingau")
+
+
+@pytest.mark.parametrize("key", ["plato", "lingua"])
+def test_each_site_serves_only_its_own_pages_and_apis(key):
+    c, other = sites()[key], OTHER[key]
+    for path in PAGES[key]:
+        assert c.get(path).status_code == 200, path
+    for path in PAGES[other]:
+        if path != "/":
+            assert c.get(path).status_code == 404, path
+    for path in APIS[key]:
+        assert c.get(path).status_code in (200, 503), path
+    for path in APIS[other]:
+        assert c.get(path).status_code == 404, path
+    for path in ("/api/site", "/api/guard", "/static/js/common.js"):  # shared by both
+        assert c.get(path).status_code == 200, path
+
+
+@pytest.mark.parametrize("key", ["plato", "lingua"])
+def test_each_site_has_its_own_nav_on_every_page(key):
+    c = sites()[key]
+    seen = {path: nav_links(c.get(path).text) for path in PAGES[key]}
+    first = seen["/"]
+    assert all(links == first for links in seen.values()), seen  # the same nav on every page of the site
+    assert nav_labels(c.get("/").text) == NAV[key]
+    for path in PAGES[OTHER[key]]:  # and no link to the other site's pages
+        if path != "/":
+            assert f'href="{path}"' not in first, path
+
+
+@pytest.mark.parametrize("key", ["plato", "lingua"])
+def test_each_site_wears_its_own_name(key):
+    c, b, other = sites()[key], brand.SITES[key], brand.SITES[OTHER[key]]
+    for path in PAGES[key]:
+        html = c.get(path).text
+        assert f"<b>{site._esc(b.name)}</b>" in header(html), path
+        assert json.loads(re.search(r'id="site-data">(.*?)</script>', html).group(1))["brand"] == b.name
+        assert other.name not in header(html) and site._esc(other.name) not in header(html), path
+        assert "{{" not in html and "<!--#" not in html, path  # every template mark is filled in
+    info = c.get("/api/site").json()
+    assert info["site"] == key and info["brand"] == b.name and info["tagline"] == b.tagline
+    assert c.app.title == b.name
+
+
+def test_plato_logo_and_favicons():
+    s = sites()
+    plato, lingua = s["plato"].get("/plato").text, s["lingua"].get("/lab").text
+    assert 'class="brand-logo"' in header(plato) and 'class="brand-logo"' not in header(lingua)
+    assert '<link rel="icon" href="/static/img/favicon-plato.svg"' in plato
+    assert '<link rel="icon" href="/static/img/favicon.svg"' in lingua
+    for c in s.values():
+        assert c.get("/static/img/favicon-plato.svg").status_code == 200
+
+
+@pytest.mark.parametrize("key", ["plato", "lingua"])
+def test_sister_link_follows_the_setting(key, monkeypatch):
+    c, other = sites()[key], brand.SITES[OTHER[key]]
+    monkeypatch.delenv("MLL_SISTER_URL", raising=False)
+    for path in ("/", PAGES[key][1]):
+        html = c.get(path).text
+        assert "Sister project" not in html and "sister-link" not in html, path
+    assert c.get("/api/site").json()["sister"] is None
+    monkeypatch.setenv("MLL_SISTER_URL", "https://other.example.org/")
+    for path in PAGES[key]:
+        html = c.get(path).text
+        assert html.count("Sister project: " + site._esc(other.name)) == 1, path
+        assert 'href="https://other.example.org/"' in html, path
+    assert c.get("/api/site").json()["sister"]["name"] == other.name
+
+
+def test_the_name_lives_in_brand_py(monkeypatch):
+    """Renaming a site is a change to metalesionlab/brand.py. The Lingua name is spelled nowhere else; the Plato
+    site is named after its first experiment, so that name appears as the experiment's, but the header, the
+    titles and the site data all come from brand.py."""
+    for folder, pattern in (("metalesionlab/web/pages", "*.html"), ("metalesionlab/web/static/js", "*.js"),
+                            ("metalesionlab/web/static/css", "*.css"), ("metalesionlab", "**/*.py")):
+        for f in (REPO / folder).glob(pattern):
+            if f.name != "brand.py":
+                assert brand.LINGUA.name not in f.read_text(), f
+    s = sites()
+    for key in ("plato", "lingua"):
+        monkeypatch.setitem(brand.SITES, key, brand.Brand(key, f"Renamed {key}", f"Tagline {key}"))
+        for path in PAGES[key][:4]:
+            html = s[key].get(path).text
+            assert f"<b>Renamed {key}</b>" in header(html) and f"Tagline {key}" in header(html), path
+            assert f"Renamed {key}" in re.search(r"<title>(.*?)</title>", html).group(1) or path in ("/lab", "/scorer", "/studio")
+            assert json.loads(re.search(r'id="site-data">(.*?)</script>', html).group(1))["brand"] == f"Renamed {key}"
+
+
+def test_the_other_site_runs_in_its_own_process(tmp_path):
+    """MLL_SITE=lingua in a fresh process: `app` is the Lingua site, with its own landing page and nav."""
+    code = ("import json; from fastapi.testclient import TestClient; import metalesionlab.web.app as a; "
+            "c = TestClient(a.app); h = c.get('/').text; "
+            "print(json.dumps([a.app.state.site, c.get('/take').status_code, c.get('/plato').status_code, "
+            "c.get('/draw').status_code, 'Not a medical test' in c.get('/take').text, h.count('class=\"series-card\"')]))")
+    env = {**os.environ, "MLL_SITE": "lingua"}
+    run = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=120, cwd=REPO)
+    assert run.returncode == 0, run.stderr[-2000:]
+    assert json.loads(run.stdout.strip().splitlines()[-1]) == ["lingua", 200, 404, 404, True, 0]
+    bad = subprocess.run([sys.executable, "-c", "import metalesionlab.web.app"], env={**os.environ, "MLL_SITE": "plat0"},
+                         capture_output=True, text=True, timeout=120, cwd=REPO)
+    assert bad.returncode != 0 and "MLL_SITE" in bad.stderr
+
+
+# --- the Lingua landing page --------------------------------------------------------------------------
+
+def test_lingua_landing_page_is_accurate_and_has_no_plato():
+    c = sites()["lingua"]
+    html = c.get("/").text
+    main = re.search(r"<main.*?</main>", html, re.S).group(0)
+    assert "16" in main and "languages measured" in main and "8</b><span>verified" in main
+    for lang in ("English", "Spanish", "French", "Brazilian Portuguese", "German", "Turkish", "Polish", "Indonesian"):
+        assert lang in main, lang
+    assert "n = 100" in main and "100 new pictures" in main and "docs/replication.md" in main
+    assert "+28 to +33" in main and "0.16%" in main and "57%" in main and "4<small> of 4" in main
+    assert "Not a medical test" in main
+    assert "Plato" not in main and "Socrates" not in main and "chair" not in main.lower()
+    for path in ("/plato", "/draw", "/socrates"):  # no link to the sister site's pages (the sister link is a full URL)
+        assert f'href="{path}' not in html, path
+    lowered = re.sub(r"<[^>]+>", " ", main).lower()
+    for word in ("diagnos", "screen", "impaired", "abnormal", "normal ", " risk", "healthy"):
+        assert word not in lowered, word
+    for path in ("/take", "/assess"):
+        assert "Not a medical test" in c.get(path).text or "no diagnosis" in c.get(path).text, path
+    assert 'property="og:image" content="http://testserver/static/img/og-tippa-lingua.jpg"' in html
+    card = web.HERE / "static" / "img" / "og-tippa-lingua.jpg"
+    assert card.stat().st_size < 300 * 1024 and Image.open(card).size == (1200, 630)
+
+
+def test_tour_is_only_on_the_plato_site():
+    s = sites()
+    assert "data-tour-start" in header(s["plato"].get("/plato").text)
+    for path in PAGES["lingua"]:
+        html = s["lingua"].get(path).text
+        assert "data-tour-start" not in header(html) and "/static/js/tour.js" not in html, path
+
+
+# --- the Plato site's shell ------------------------------------------------------------------------
+
+def test_more_menu_holds_the_series(client):
+    html = client.get("/plato").text
+    more = re.search(r'<details class="nav-more[^"]*">(.*?)</details>', html, re.S).group(1)
+    for s in site.SERIES[1:]:
+        if s["path"] == "/plato/inside":  # in the nav itself, so not repeated under More
+            assert 'href="/plato/inside"' not in more
+        elif site.has_page(web.app, s["path"]):
+            assert f'href="{s["path"]}"' in more, s["path"]
+        else:  # merged later (/plato/atlas, /plato/telephone): no link until its route exists
+            assert f'href="{s["path"]}"' not in html, s["path"]
+    assert "More from the lab" not in more
+
+
 def test_current_page_is_marked_once(client):
-    for path, label in (("/", "Home"), ("/plato", "Experiments"), ("/draw", "Draw a chair")):
+    for path, label in (("/", "Home"), ("/plato", "Experiments"), ("/draw", "Draw"), ("/socrates", "Ask Socrates")):
         nav = re.search(r'<nav class="topnav".*?</nav>', client.get(path).text, re.S).group(0)
         assert re.findall(r'<a [^>]*aria-current="page"[^>]*>([^<]+)', nav) == [label], path
-    nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/lab/cut").text, re.S).group(0)
+    nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/plato/cave").text, re.S).group(0)
+    assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Experiments", "Name the shadow"]
+    # "Inside the model" is its own page once /plato/inside is served: the nav item, not Experiments, nor More
+    html = client.get("/plato/inside").text
+    nav = re.search(r'<nav class="topnav".*?</nav>', html, re.S).group(0)
+    assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Inside the model"]
+    assert nav.count('href="/plato/inside"') == 1 and 'href="/plato#inside"' not in nav
+
+
+def test_lingua_current_page_is_exact_for_the_lab():
+    c = sites()["lingua"]
+    nav = re.search(r'<nav class="topnav".*?</nav>', c.get("/lab/cut").text, re.S).group(0)
     assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["What can I cut?"]
+    nav = re.search(r'<nav class="topnav".*?</nav>', c.get("/lab").text, re.S).group(0)
+    assert re.findall(r'aria-current="page"[^>]*>([^<]+)', nav) == ["Model Lab"]
 
 
-def test_header_keeps_page_chips(client):
-    head = nav_links_block(client.get("/lab").text)
+def test_header_keeps_page_chips():
+    head = header(sites()["lingua"].get("/lab").text)
     assert 'id="sample-chip"' in head and "Muse Glimmer 30B" in head
-
-
-def test_the_name_lives_in_one_place(client, monkeypatch):
-    """Renaming is a change to metalesionlab/brand.py: no page, script or module spells the name itself."""
-    for folder, pattern in (("metalesionlab/web/pages", "*.html"), ("metalesionlab/web/static/js", "*.js"),
-                            ("metalesionlab", "**/*.py")):
-        for f in (REPO / folder).glob(pattern):
-            if f.name == "brand.py":
-                continue
-            assert brand.BRAND not in f.read_text(), f
-    monkeypatch.setattr(site, "BRAND", "Plato’s Chair")
-    for path in ("/", "/plato", "/lab"):
-        html = client.get(path).text
-        assert "Plato’s Chair" in re.search(r"<title>(.*?)</title>", html).group(1) or path == "/lab"
-        assert '<a class="brand" href="/"><b>Plato’s Chair</b>' in html
-        assert json.loads(re.search(r'id="site-data">(.*?)</script>', html).group(1))["brand"] == "Plato’s Chair"
-        assert brand.BRAND not in html
 
 
 def test_series_cards_and_links_appear_only_when_served(client):
@@ -111,30 +284,28 @@ def test_series_cards_and_links_appear_only_when_served(client):
     landing = client.get("/").text
     assert landing.count('class="series-card"') == len(base) and 'href="/plato"' in landing
     assert new["question"] not in landing and f'href="{path}"' not in landing
-    assert ('id="series"' in client.get("/plato").text) == (len(base) > 1)
     with served(path):
         landing = client.get("/").text
         assert landing.count('class="series-card"') == len(base) + 1
         assert new["question"] in landing and new["source"] in landing
-        plato = client.get("/plato").text
-        assert 'id="series"' in plato and plato.count('class="series-card"') == len(base)  # the sub-pages only
-        assert f'href="{path}"' in nav_links_block(client.get("/lab").text)
+        assert f'href="{path}"' in header(client.get("/socrates").text)
         info = client.get("/api/site").json()
         assert info["pages"][path] and path in [s["path"] for s in info["series"]]
     assert f'href="{path}"' not in client.get("/").text
 
 
 def test_every_served_experiment_card_states_its_finding(client):
-    """All seven experiments are finished: no card falls back to the "see what we found" link."""
-    for item in client.get("/api/site").json()["series"]:
+    """Every experiment served so far is finished: no card falls back to the "see what we found" link."""
+    items = client.get("/api/site").json()["series"]
+    assert len(items) >= 8 and items[1]["path"] == "/plato/inside"
+    for item in items:
         assert item.get("finding"), item["path"]
 
 
 def test_series_override_file_sets_the_finding(client, tmp_path, monkeypatch):
     monkeypatch.setattr(site, "SERIES_DIR", tmp_path)
     (tmp_path / "cave.json").write_text(json.dumps({"finding": "It named 9 of 10 shadows.", "slug": "ignored"}))
-    with served("/plato/cave"):
-        assert "It named 9 of 10 shadows." in client.get("/").text
+    assert "It named 9 of 10 shadows." in client.get("/").text
 
 
 def test_calls_to_action_follow_the_routes(client):
@@ -145,8 +316,10 @@ def test_calls_to_action_follow_the_routes(client):
     assert re.search(r'id="reveal"[^>]*hidden', landing) and landing.index('id="hero-draw"') < landing.index('id="chairs"')
     # Ask Socrates is served: hero button, its own band, and the nav (as an accent item).
     assert site.has_page(web.app, "/socrates") and landing.count('href="/socrates"') >= 3
-    assert 'class="nav-accent"' in nav_links_block(client.get("/plato").text)
+    assert 'class="nav-accent"' in header(client.get("/plato").text)
     assert "<!--#" not in landing and "{{" not in landing  # every template mark is filled in
+    for path in ("/lab", "/take", "/ask", "/challenge", "/studio", "/scorer", "/assess"):  # nothing of the sister site's
+        assert f'href="{path}' not in landing, path
 
 
 def test_share_tags_and_card(client):
@@ -156,8 +329,10 @@ def test_share_tags_and_card(client):
         image = re.search(r'<meta property="og:image" content="([^"]+)"', html).group(1)
         assert image == "http://example.org/static/img/og-plato-chair.png"
         assert re.search(r'<meta property="og:title" content="[^"]+"', html)
-    # Pages without their own tags get the default card.
-    assert '<meta property="og:image" content="http://testserver/static/img/og-plato-chair.png">' in client.get("/lab").text
+    # Pages without their own tags get the site's default card.
+    assert '<meta property="og:image" content="http://testserver/static/img/og-plato-chair.png">' in client.get("/draw").text
+    lingua = sites()["lingua"].get("/lab").text
+    assert '<meta property="og:image" content="http://testserver/static/img/og-tippa-lingua.jpg">' in lingua
     card = web.HERE / "static" / "img" / "og-plato-chair.png"
     assert card.stat().st_size < 300 * 1024 and Image.open(card).size == (1200, 630)
 
@@ -165,7 +340,8 @@ def test_share_tags_and_card(client):
 def test_static_and_api_responses_are_untouched(client):
     r = client.get("/static/js/common.js")
     assert r.status_code == 200 and "site-data" in r.text and "{{BRAND}}" not in r.text
-    assert client.get("/api/status").json()["features"]
+    assert client.get("/api/plato").json()["core"]
+    assert sites()["lingua"].get("/api/status").json()["features"]
 
 
 TOUR = web.HERE / "static" / "js" / "tour.js"
@@ -184,7 +360,7 @@ def test_tour_is_plato_first_short_and_ends_at_draw():
     assert 6 <= steps <= 10
     pages = re.findall(r"\{ page: '([^']*)'", tour)
     assert pages[:3] == ["/", "/", "/plato"]  # the blind draw, the chairs, then the experiment
-    assert "'/scorer" not in tour and "'/studio" not in tour  # the naming tools are no longer on the tour
+    assert "'/scorer" not in tour and "'/studio" not in tour and "'/lab'" not in tour  # the sister site's pages
     last = tour[tour.rindex("{ page:"):]
     assert "'/draw'" in last and "finish: true" in last
 
@@ -244,3 +420,36 @@ def test_tour_is_keyboard_and_motion_friendly():
     reduced = css[css.index("prefers-reduced-motion"):]
     assert ".tour-face.pop { animation: none; }" in reduced[:reduced.index("}\n") + 60]
     assert "@media (max-width: 640px)" in css and ".tour-face { width: 48px" in css
+
+
+# --- the splash on Plato's landing page ------------------------------------------------------------
+
+def test_splash_is_on_the_plato_landing_only(client):
+    landing = client.get("/").text
+    assert '<script src="/static/js/splash.js"></script>' in landing
+    head = landing[:landing.index("</head>")]
+    assert "splash-on" in head and "nosplash=1" in head and "prefers-reduced-motion" in head
+    assert "tot-tour-step" in head and "pc-splash-seen" in head and "sessionStorage" in head
+    assert re.search(r"try \{.*\} catch \(e\)", head, re.S)  # storage that throws means no splash, not a broken page
+    for path in PAGES["plato"][1:]:
+        assert "splash" not in client.get(path).text, path
+    lingua = sites()["lingua"].get("/").text
+    assert "splash" not in lingua
+
+
+def test_splash_assets_are_small_webp_and_never_muse_images_chairs():
+    folder = web.HERE / "static" / "img" / "splash"
+    files = sorted(folder.iterdir())
+    assert files and all(f.suffix == ".webp" for f in files)
+    assert sum(f.stat().st_size for f in files) < 400 * 1024
+    assert all(Image.open(f).format == "WEBP" for f in files)
+    names = {f.stem for f in files}
+    assert not any(n.startswith(("muse", "chair_muse", "hero")) for n in names)  # the 16 alike chairs stay for the reveal
+    js = (web.HERE / "static" / "js" / "splash.js").read_text()
+    assert "/static/img/splash/" in js and "/static/img/plato/" not in js and "/static/img/draw/" not in js
+    assert "Skip" in js and "keydown" in js and "pc-splash-seen" in js
+    assert "Republic 515c" in js and "Republic 596a" in js
+    passages = (REPO / "public_data" / "plato_passages.json").read_text()  # quoted only from verified passages
+    for quote in ("To them, I said, the truth would be literally nothing but the shadows of the images.",
+                  "Whenever a number of individuals have a common name, we assume them to have also a corresponding idea or form"):
+        assert quote in js and quote in passages

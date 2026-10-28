@@ -306,7 +306,7 @@ def test_configure_web(monkeypatch):
 
 
 def test_whole_app_in_public_mode(tmp_path):
-    """The real app started with PUBLIC_DEMO=1 (in a fresh process, so other tests keep local mode)."""
+    """The real Lingua app started with PUBLIC_DEMO=1 (in a fresh process, so other tests keep local mode)."""
     ledger = tmp_path / "costs.jsonl"
     spend(ledger, 0.6, ts=time.time())
     script = textwrap.dedent("""
@@ -328,15 +328,66 @@ def test_whole_app_in_public_mode(tmp_path):
         print(json.dumps(out))
     """)
     env = {**os.environ, "PUBLIC_DEMO": "1", "TIPPA_PUBLIC_DAILY_USD": "0.5", "MLL_LEDGER": str(ledger),
-           "TIPPA_DATA_DIR": str(tmp_path / "data"), "MODEL_API_KEY": "test-not-a-key"}
+           "TIPPA_DATA_DIR": str(tmp_path / "data"), "MODEL_API_KEY": "test-not-a-key", "MLL_SITE": "lingua"}
     env.pop("TOT_LIMIT_BUILD", None)
     run = subprocess.run([sys.executable, "-c", script], env=env, capture_output=True, text=True, timeout=120,
                          cwd=Path(__file__).resolve().parents[1])
     assert run.returncode == 0, run.stderr[-2000:]
     out = json.loads(run.stdout.strip().splitlines()[-1])
     assert out["page"] and out["public"] and out["max_words"] == 4
+    assert "/scorer" in [e["href"] for e in out["guard"]["examples"]] and "studio" in out["guard"]
     assert out["clip"] == {"naming": 30, "description": 90, "fluency": 60}
     assert out["guard"]["public_demo"] and out["guard"]["exhausted"] and out["guard"]["daily_cap_usd"] == 0.5
     assert out["status"]["limits"]["build"]["per_day"] == 3
     assert out["typed"]["guard"] == "budget"
     assert out["hook"] == "DailyCapReached"
+
+
+def test_plato_site_in_public_mode(tmp_path):
+    """The Plato site with PUBLIC_DEMO=1: Ask Socrates is its paid route, the Lingua routes aren't there, the
+    Lingua settings are left alone, and the messages name what still works."""
+    ledger = tmp_path / "costs.jsonl"
+    spend(ledger, 0.6, ts=time.time())
+    script = textwrap.dedent("""
+        import json
+        from fastapi.testclient import TestClient
+        from metalesionlab.web import app as web
+        c = TestClient(web.app)
+        g = c.get("/api/guard").json()
+        socrates = c.post("/api/socrates", json={"messages": [{"role": "user", "content": "hi"}]})
+        out = {"site": web.app.state.site, "guard": g, "banner": "guard-banner.js" in c.get("/").text,
+               "socrates": [socrates.status_code, socrates.headers.get("x-tippa-guard")],
+               "lingua": [c.get(p).status_code for p in ("/api/sets", "/api/status", "/take", "/lab")],
+               "public": web.PUBLIC, "max_words": web.MAX_WORDS}
+        print(json.dumps(out))
+    """)
+    env = {**os.environ, "PUBLIC_DEMO": "1", "TIPPA_PUBLIC_DAILY_USD": "0.5", "MLL_LEDGER": str(ledger),
+           "TIPPA_DATA_DIR": str(tmp_path / "data"), "MODEL_API_KEY": "test-not-a-key", "MLL_SITE": "plato"}
+    env.pop("TOT_LIMIT_BUILD", None)
+    run = subprocess.run([sys.executable, "-c", script], env=env, capture_output=True, text=True, timeout=120,
+                         cwd=Path(__file__).resolve().parents[1])
+    assert run.returncode == 0, run.stderr[-2000:]
+    out = json.loads(run.stdout.strip().splitlines()[-1])
+    g = out["guard"]
+    assert out["site"] == "plato" and out["banner"] and g["public_demo"] and g["exhausted"]
+    assert out["socrates"] == [503, "budget"]  # paid, and today's budget is used up
+    assert out["lingua"] == [404, 404, 404, 404]  # no Test Studio, test or lab on this site
+    assert "Socrates" in g["paused"] and "/draw" in [e["href"] for e in g["examples"]]
+    assert "studio" not in g and "socrates_per_day" in g and set(g["per_minute"]) == {"socrates", "other"}
+    assert not out["public"] and out["max_words"] == 24  # the Lingua settings are left alone
+
+
+def test_each_site_guards_only_its_own_routes():
+    plato, lingua, both = (G.Guard(G.Settings(public_demo=True), site=s) for s in ("plato", "lingua", None))
+
+    def bucket(g, m, p):
+        return r.bucket if (r := g.match(m, p)) else None
+    assert bucket(plato, "POST", "/api/socrates") == "socrates" and bucket(plato, "POST", "/api/draw") is None
+    assert bucket(plato, "POST", "/api/sets") == "other" and bucket(plato, "POST", "/api/ask") == "other"
+    assert bucket(lingua, "POST", "/api/ask") == "ask" and bucket(lingua, "POST", "/api/sets") == "build"
+    assert bucket(lingua, "POST", "/api/socrates") == "other" and bucket(lingua, "POST", "/api/draw") == "other"
+    assert bucket(lingua, "POST", "/api/challenge/score") is None
+    assert bucket(both, "POST", "/api/socrates") == "socrates" and bucket(both, "POST", "/api/sets") == "build"
+    assert "Socrates" in plato.budget_payload()["detail"] and "scoring" in lingua.budget_payload()["detail"]
+    assert {e["href"] for e in plato.budget_payload()["examples"]} == {"/plato", "/draw", "/plato/cave"}
+    assert all(where in ("plato", "lingua") for *_, where in G.PAID + G.FREE)  # every listed route has its site

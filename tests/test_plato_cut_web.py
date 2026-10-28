@@ -13,13 +13,25 @@ DATA = web.HERE / "data"
 IMG = web.HERE / "static" / "img" / "plato"
 
 
+class Sites:
+    """The pages under test live on two sites: /plato on Plato's Chair, /lab/cut on Tippa Lingua."""
+    LINGUA = ("/lab", "/api/lab", "/challenge", "/studio", "/scorer", "/assess", "/take", "/ask")
+
+    def __init__(self):
+        self.plato = TestClient(web.app_for("plato"))
+        self.lingua = TestClient(web.app_for("lingua"))
+
+    def get(self, path, **kw):
+        return (self.lingua if path.startswith(self.LINGUA) else self.plato).get(path, **kw)
+
+
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.setattr(web, "DATA_DIR", tmp_path)
     monkeypatch.setattr(plato_routes, "PLATO_DIR", tmp_path / "no-plato-folder")
     plato_routes._cache.clear()
     cut_routes._cache.clear()
-    return TestClient(web.app), tmp_path
+    return Sites(), tmp_path
 
 
 def test_pages_render(client):
@@ -121,14 +133,19 @@ def test_cut_prefers_the_run_folder(client):
 
 
 def test_navigation_and_landing_link_the_new_pages(client):
-    """The nav comes from web/site.py, so check the pages as served."""
+    """The nav comes from web/site.py, so check the pages as served. Each site links only its own pages."""
     c, _ = client
-    for path in ("/challenge", "/lab", "/studio", "/scorer", "/assess", "/lab/cut", "/plato", "/"):
+    for path in ("/draw", "/socrates", "/plato/cave", "/plato", "/"):  # Plato's Chair
         assert 'href="/plato"' in c.get(path).text, path
+    for path in ("/challenge", "/lab", "/studio", "/scorer", "/assess", "/lab/cut"):  # Tippa Lingua
+        html = c.get(path).text
+        assert 'href="/lab/cut"' in html and 'href="/plato"' not in html, path
     assert 'href="/lab/cut"' in (web.HERE / "pages" / "lab.html").read_text()  # the Model Lab tabs
     landing = c.get("/").text
-    assert 'href="/lab/cut"' in landing and 'href="/lab/bilingual"' in landing and 'id="series"' in landing
-    assert 'class="series-card" href="/plato"' in landing  # Plato's Chair heads the series
+    assert 'id="series"' in landing and 'class="series-card" href="/plato"' in landing  # Plato's Chair heads the series
+    assert 'href="/lab/cut"' not in landing and 'href="/lab' not in landing
+    lingua = c.lingua.get("/").text
+    assert 'href="/lab/cut"' in lingua and 'href="/lab/bilingual"' in lingua and 'id="series"' not in lingua
 
 
 def test_tour_has_a_plato_step_and_stays_short():
