@@ -86,8 +86,7 @@
     var wall = g(S.ai + '_doodle_default'), e = eye(S.ai + '_doodle_default');
     if (e) {
       $('wall-ai-stat').textContent = eyeCount(e) + ' of ' + e.n + ' show 10:10';
-      $('wall-ai-sub').textContent = NAME[S.ai] + ', “a clock”, no time asked. Read by eye; our automatic reader counted ' +
-        wall.ten_ten.k + (S.ai === 'muse' ? ' and read most of the others as 11:10.' : '.');
+      $('wall-ai-sub').textContent = NAME[S.ai] + ', “a clock”, no time asked; read by eye (our automatic reader counted ' + wall.ten_ten.k + ').';
     } else {
       $('wall-ai-stat').textContent = wall.ten_ten.k + ' of ' + wall.ten_ten.n + ' show about 10:10';
       $('wall-ai-sub').textContent = NAME[S.ai] + ', “a clock”, no time asked.';
@@ -96,14 +95,14 @@
   }
 
   function heroStatic() {
-    var p = g('people'), e = eye('muse_doodle_default'), m = g('muse_doodle_default');
+    var p = g('people');
     var l = twelveThree(p);
     $('wall-people-stat').textContent = p.ten_ten.k + ' of ' + p.n + ' show about 10:10';
     html($('wall-people-sub'), '(' + pct(p.ten_ten.share) + '%). Their favourite: hands on the 12 and the 3 (' + l + ' of ' + p.n +
-      '). 16 drawings shown.<span class="credit">Google Quick, Draw! (CC BY 4.0)</span>');
-    var museN = e ? e.sure : m.ten_ten.k, museOf = e ? e.n : m.n;
-    html($('verdict'), 'Without a time, Muse Image draws the advert’s 10:10: <span class="n">' + museN + ' of ' + museOf +
-      '</span> clocks. People almost never do: <span class="n">' + pct(p.ten_ten.share) + '%</span>. Their favourite is 3:00.');
+      '). 16 drawings shown. <span class="credit">Google Quick, Draw! (CC BY 4.0)</span>');
+    var lead = window.FirstLook.forms(S.d);
+    window.FirstLook.render($('hero-stats'), lead);
+    $('hero-note').textContent = lead.note;
   }
 
   // ---- asked: time asked against time drawn ----

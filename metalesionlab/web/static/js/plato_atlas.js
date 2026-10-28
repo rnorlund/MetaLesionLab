@@ -59,18 +59,9 @@
 
   // --- hero ----------------------------------------------------------------------------------
   function hero() {
-    var a = D.summary.all, n = D.summary.n_concepts, nw = D.summary.new, sd = D.summary.sdxl.all;
-    $('answer').textContent = 'Muse Image drew ' + a.below_1 + ' of ' + n + ' things more alike than people did, at about half ' +
-      'their variety (' + pct(a.median) + '%). The ' + nw.n + ' things picked at random for the Atlas agree: ' + nw.below_1 + ' of ' + nw.n + '.';
-    var tiles = $('tiles');
-    tiles.innerHTML = '';
-    [[f2(a.median), 'Median spread, Muse ÷ people', '95% CI ' + ci(a.median_ci95) + ' · 1 = as varied as people'],
-     [a.below_1 + ' of ' + n, 'things Muse draws more alike than people', 'CI entirely below 1 for ' + a.ci_entirely_below_1],
-     [nw.below_1 + ' of ' + nw.n, 'new things below 1 (pre-registered test)', 'median ' + f2(nw.median) + ', CI ' + ci(nw.median_ci95)],
-     [f2(sd.median), 'SDXL’s median, same prompt', 'an open model; below 1 for ' + sd.below_1 + ' of ' + sd.n]
-    ].forEach(function (t) {
-      tiles.appendChild(h('div', { class: 'at-tile' }, [h('b', { text: t[0] }), h('span', { text: t[1] }), h('small', { text: t[2] })]));
-    });
+    var lead = window.FirstLook.atlas(D);
+    window.FirstLook.render($('tiles'), lead);
+    $('hero-note').textContent = lead.note;
     var box = $('hero-forms');
     box.innerHTML = '';
     var pick = [BY.chair].concat(D.concepts.filter(function (c) { return c.key !== 'chair'; }).slice(0, 7));
@@ -509,6 +500,5 @@
     var box = $('load-error');
     box.textContent = err.message || 'The Atlas of Forms results could not be loaded.';
     box.hidden = false;
-    $('answer').textContent = '';
   });
 })();

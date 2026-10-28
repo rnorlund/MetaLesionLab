@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_scale.css">
 </head>
 <body class="sc">
@@ -21,15 +23,21 @@
 
 <main id="main" tabindex="-1">
 
-<section class="sc-hero" aria-labelledby="hero-h">
-  <div class="sc-hero-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Does an AI’s chair change as it grows? · Our own question · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">An AI growing up</h1>
-    </div>
-    <p class="sc-lede">The <a href="https://arxiv.org/abs/2405.07987">Platonic Representation Hypothesis</a> (Huh, Cheung, Wang &amp; Isola, ICML 2024) proposes that AI models’ inner representations converge as they grow. If so, do bigger AIs also <i>draw</i> more alike, converging on one textbook chair, a Form emerging with scale? We asked language models from half a billion to 33 billion parameters, and three of Meta’s models, to draw a chair as SVG code. And we trained one small sketch model on 100 to 20,000 people’s chairs.</p>
-    <p class="sc-note">In short: bigger open models stop breaking but don’t converge on one chair; Meta’s Muse Wonder draws the same textbook chair every time. <a href="#answer">The short answer</a></p>
+<section class="fl fl-noquote sc-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Does an AI’s chair change as it grows? · Our own question · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">An AI growing up</h1>
   </div>
+  <div class="fl-ctx">
+    <p class="sc-lede">The <a href="https://arxiv.org/abs/2405.07987">Platonic Representation Hypothesis</a> (Huh, Cheung, Wang &amp; Isola, ICML 2024) proposes that AI models’ inner representations converge as they grow. If so, do bigger AIs also <i>draw</i> more alike, converging on one textbook chair, a Form emerging with scale? We asked language models from half a billion to 33 billion parameters, and three of Meta’s models, to draw a chair as SVG code. And we trained one small sketch model on 100 to 20,000 people’s chairs.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Bigger open models stop breaking but don’t converge on one chair; Meta’s Muse Wonder draws the same textbook chair every time.</p>
+  <figure class="fl-visual sc-lead">
+    <div class="sc-lead-wall" id="lead-wall"><p class="sc-note">Loading the chairs…</p></div>
+    <figcaption class="fl-cap">Each model’s first 12 answers to “Draw a simple chair as an SVG drawing”, rendered. A grey tile is a failure. <a href="#models">All 18 models</a></figcaption>
+  </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-note"></p>
 </section>
 
 <nav class="sc-jump" aria-label="On this page">
@@ -137,6 +145,8 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_scale.js"></script>
 </body>
 </html>
