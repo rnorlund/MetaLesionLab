@@ -29,6 +29,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 from draw_damage_sdxl import MODEL, THINGS, prompt, seed_for  # noqa: E402
+from metalesionlab import plato_ideas as I  # noqa: E402
+from metalesionlab import plato_ideas_damage as ID  # noqa: E402
 from metalesionlab.plato import BY_KEY as PLATO, STYLES  # noqa: E402
 from metalesionlab.plato_damage import NEGATIVE  # noqa: E402
 
@@ -36,7 +38,10 @@ REPO = Path(__file__).resolve().parents[1]
 IMG = REPO / "metalesionlab" / "web" / "static" / "img" / "draw_damage"
 URL = "/static/img/draw_damage/"
 RUN = Path("/Users/super/Documents/Meta_Hacking_Challenge/PlatosChair/draw_damage/run")
-BUDGET = 1_500_000  # bytes, every file in IMG together
+IDEAS_RUN = I.IDEAS_DIR / "damage" / "run"  # the ideas' and words' pictures (docs/plato_ideas_damage_plan.md)
+# Bytes, every file in IMG together. 1.5 MB held the 10 things; the 15 ideas and words take it to 2.5 MB, so the WebP
+# quality, and with it every thing's picture, stays as it was.
+BUDGET = 2_500_000
 SIDE, QUALITY = 176, 70
 
 ROWS = {
@@ -55,6 +60,15 @@ CANDIDATES = {"text-noise": [0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
 # chosen by eye from 12 intact candidates per thing and 3 candidates' dose sheets (PlatosChair/draw_damage/figures/).
 PICKS = {"chair": 7, "umbrella": 1, "bicycle": 10, "house": 0, "cat": 6, "tree": 3, "face": 2, "sailboat": 8,
          "cup": 5, "book": 8}
+# The ideas and words, in the pad's order (scripts/plato_ideas_web_export.PAD_ORDER, then the words). Their seed is
+# NOT chosen by eye: the pre-registered rule takes the intact DINOv2 medoid, SDXL's most typical intact drawing
+# (scripts/plato_ideas_damage.py pick -> PlatosChair/ideas/damage/picks.json).
+IDEA_ORDER = ["god", "love", "time", "death", "justice", "beauty", "the_good", "the_soul", "freedom", "happiness",
+              "truth"] + ID.WORD_KEYS
+IDEA_PICKS: dict[str, int] = {}
+# What SDXL's intact picture shows, by eye. The pad says it, because SDXL's idea need not be Muse Image's.
+INTACT_NOTES: dict[str, str] = {}
+STRIP_KEYS = THINGS + IDEA_ORDER
 
 
 def cond(family: str, dose: float) -> str:
@@ -62,7 +76,11 @@ def cond(family: str, dose: float) -> str:
 
 
 def label(key: str) -> str:
-    return PLATO[key].label
+    return I.ANY[key].label if key in I.ANY else PLATO[key].label
+
+
+def run_for(key: str, run: Path) -> Path:
+    return IDEAS_RUN if key in I.ANY else run
 
 
 def font(size: int):
@@ -141,16 +159,22 @@ def cmd_export(args):
     for old in IMG.glob("*.webp"):
         old.unlink()
     quality = args.quality
+    picks = {**PICKS, **IDEA_PICKS}
     while True:
         things, total = [], 0
-        for key in THINGS:
-            i = PICKS[key]
-            src = lambda c: args.run / c / key / f"s{i}.png"  # noqa: E731
+        for key in [k for k in STRIP_KEYS if k in picks]:
+            i, run = picks[key], run_for(key, args.run)
+            src = lambda c: run / c / key / f"s{i}.png"  # noqa: E731
             missing = [c for c in ["intact"] + [cond(r["family"], d) for r in ROWS.values() for d in r["doses"]]
                        if not src(c).exists()]
             if missing:
                 raise SystemExit(f"{key} s{i}: missing {missing}")
             entry = {"key": key, "label": label(key), "prompt": prompt(key), "seed": seed_for(key, i)}
+            if key in I.ANY:  # an idea or a word: "drawing of God", and what SDXL drew intact
+                entry.update({"group": "words" if key in I.WORDS_BY_KEY else "ideas",
+                              "what": "drawing of " + I.ANY[key].phrase})
+                if key in INTACT_NOTES:
+                    entry["intact_note"] = INTACT_NOTES[key]
             total += save_webp(src("intact"), IMG / f"{key}_intact.webp", args.side, quality)
             entry["intact"] = URL + f"{key}_intact.webp"
             for row, r in ROWS.items():
@@ -166,9 +190,9 @@ def cmd_export(args):
         print(f"{total} bytes is over budget; quality {quality}")
     data = {
         "about": ("What damage does to an AI's drawing: Stable Diffusion XL, an open image model, asked for each "
-                  "thing with one fixed seed, intact and with noise added to its text encoders (the part that "
-                  "handles words) or its UNet (the part that draws) at five increasing doses. About the model "
-                  "only: never compared with a visitor's drawing."),
+                  "thing, idea and word with one fixed seed, intact and with noise added to its text encoders (the "
+                  "part that handles words) or its UNet (the part that draws) at five increasing doses. These are "
+                  "SDXL's pictures, not Muse Image's. About the model only: never compared with a visitor's drawing."),
         "model": MODEL,
         "credit": "Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M",
         "license": "CreativeML OpenRAIL++-M",

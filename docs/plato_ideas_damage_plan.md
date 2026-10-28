@@ -151,3 +151,9 @@ Nothing here is a test of a person, and nothing is compared with a visitor's dra
 - **The words' Muse Image run is in.** 64 pictures in 16 calls, none refused, none short. Counted at $0.026 a picture this is $1.66; the shared ledger went from $63.24 to $63.88.
 - **The label check by eye is done**, before Glimmer saw any word's picture: `PlatosChair/ideas/labels_by_eye_words.json`, SHA-256 `46114f0e43ab2ff1e0b58806a671078d19e21ace4d6757c1b49e5d31982f041b`. No picture contains written words.
 - **Seen so far, before any Glimmer label or damage picture of the other ideas:** God's 16 intact SDXL pictures (the run's first condition), looked at once to check the run works. Nothing in the plan was changed after seeing them.
+
+## Addendum 2, before Glimmer saw any SDXL picture (Oct 28)
+
+- **God's 320 SDXL pictures are coded by eye** for person, beard and halo, before any Glimmer answer for an SDXL picture exists: `PlatosChair/ideas/damage/god_by_eye.json`, SHA-256 `e3629d62e22ebcdc95d1ad44b7b9da0ac6a55b1eab181e78364742156864dbbe`. The file states the coding rules; the halo is the least certain feature, because SDXL's ornament often puts rings and arches near a head.
+- **What the sheets show** (description only, no test): SDXL's intact God is dense, symmetric, icon-like line art, mostly a bearded man's face or bust, often crowned. Under language damage some intermediate frames are horned or creature-like figures, and a few are screaming faces. Per the plan, none of those will be featured in the gallery or in posts.
+- **The SDXL run had to move to axon-server01** (servers 02 and 03 were in use). It loads diffusers 0.42.0, the version on server03 where the pad's strips were made, from a private path, and one missing VAE file was downloaded. Settings, seeds and unit statistics (md5 `555d5524…`) are unchanged.
