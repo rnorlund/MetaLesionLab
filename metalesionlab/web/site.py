@@ -123,6 +123,9 @@ SERIES = [
      "source": "Republic X", "title": "The Atlas of Forms", "finding": None},
     {"path": "/plato/telephone", "slug": "telephone", "question": "What survives a copy of a copy?",
      "source": "Republic X · the painter’s copy", "title": "Plato’s Telephone", "finding": None},
+    {"path": "/plato/scale", "slug": "scale", "question": "Does an AI’s chair change as it grows?",
+     "source": "Our own question · the Platonic Representation Hypothesis", "title": "An AI growing up",
+     "finding": None},
 ]
 
 # Small line drawings for cards that have no picture yet (stroke = currentColor).
@@ -155,6 +158,10 @@ _ART = {
                  '<path d="M52 32v20M68 34v18M52 35h16M50 52h20M53 52v11M67 52v12" stroke-dasharray="5 2"/>'
                  '<path d="M90 36v16M104 38v14M90 40h14M88 52h18M92 52v10M103 52v9" stroke-dasharray="3 3"/>'
                  '<path d="M36 44h8M74 44h8M41 40l4 4-4 4M79 40l4 4-4 4"/>',
+    "scale": '<path d="M12 78l8-14M18 70l10 6M14 62l4 4" stroke-dasharray="3 3"/>'
+             '<path d="M44 52v14M58 50v16M44 54h14M42 66h18M44 66v12M58 66v12"/>'
+             '<path d="M84 20v38M106 20v38M84 26h22M84 36h22M84 46h22M82 58h26M84 58v22M106 58v22"/>'
+             '<path d="M24 86h84" stroke-opacity="0.35"/>',
 }
 
 

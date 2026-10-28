@@ -1,0 +1,446 @@
+<title>An AI Growing Up</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: controls, one full-width stage (16:9 on wide screens, 3:5 on phones), then the beat sheet.
+   Every chair is the model's real output: the sketch model's strokes as SVG paths, the language models' SVGs as
+   rendered masks, so the stage follows the theme (ink on paper, or chalk on slate). */
+:root {
+  --page: #f2f1ec; --ink: #171a22; --muted: #5e6472; --rule: #d8d6ce; --accent: #c2410c; --blue: #2456c8;
+  --paper: #fbfaf5; --line: #1c202b; --soft: #c3bfb2; --soft2: #e4e0d4; --veil: rgba(251, 250, 245, .92);
+  --people: #c2410c; --muse: #2456c8;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --hand: "Caveat", "Comic Sans MS", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --page: #12151c; --ink: #e7e9ee; --muted: #9ba3b2; --rule: #2a303c; --accent: #f08a4b; --blue: #7aa2ff;
+    --paper: #181c25; --line: #ece8dc; --soft: #485063; --soft2: #2c3240; --veil: rgba(24, 28, 37, .92); --people: #f08a4b; --muse: #7aa2ff; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --page: #12151c; --ink: #e7e9ee; --muted: #9ba3b2; --rule: #2a303c; --accent: #f08a4b; --blue: #7aa2ff;
+  --paper: #181c25; --line: #ece8dc; --soft: #485063; --soft2: #2c3240; --veil: rgba(24, 28, 37, .92); --people: #f08a4b; --muse: #7aa2ff; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; overflow-x: hidden; }
+.wrap { width: 100%; padding-left: max(16px, 3vw, env(safe-area-inset-left, 0px)); padding-right: max(16px, 3vw, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; display: grid; gap: 20px; }
+h1 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); margin: 0; line-height: 1.15; text-wrap: balance; }
+.kicker { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.lede { color: var(--muted); max-width: 75ch; margin: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { font: 600 .9rem var(--sans); padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: transparent; color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--page); border-color: var(--ink); }
+.chip:focus-visible, .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.btn { font: 600 .9rem var(--sans); padding: 7px 14px; border-radius: 8px; border: 0; background: var(--blue); color: #fff; cursor: pointer; }
+:root[data-theme="dark"] .btn:not(.ghost) { color: #0d1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn:not(.ghost) { color: #0d1220; } }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.spacer { flex: 1; }
+.status { font: 400 .8rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ---------- stage ---------- */
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: 82vh; min-height: 340px; border-radius: 14px; overflow: hidden;
+  background: var(--paper); color: var(--line); isolation: isolate; container-type: size; border: 1px solid var(--rule);
+  box-shadow: 0 18px 40px -28px rgba(0,0,0,.45); }
+@media (max-width: 640px) { .stage { aspect-ratio: 3 / 5; max-height: none; } }
+.ground { position: absolute; left: 3%; right: 3%; height: 0; border-top: 2px solid var(--soft); z-index: 1; }
+
+/* the AI: a brain on a little stand, and the pile of chairs it learned from */
+.ai { position: absolute; z-index: 4; display: grid; justify-items: center; gap: 4px; text-align: center; transform-origin: 50% 100%; }
+.brainbox { position: relative; display: grid; place-items: end center; }
+.brainbox svg { overflow: visible; display: block; transform-origin: 50% 100%; transition: transform 900ms cubic-bezier(.3,1.3,.5,1); }
+.brainbox svg path { fill: none; stroke: var(--line); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.brainbox svg .core { fill: var(--paper); }
+.brainbox.unknown svg path { stroke-dasharray: 5 5; }
+.brainbox .q { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); font: 700 clamp(18px, 5cqh, 46px)/1 var(--hand); color: var(--accent); opacity: 0; transition: opacity 300ms; }
+.brainbox.unknown .q { opacity: 1; }
+.ailab { font: 600 clamp(11px, 1.35cqw, 17px)/1.25 var(--sans); color: var(--line); white-space: nowrap; }
+.aisub { font: 500 clamp(9.5px, 1.05cqw, 13px)/1.25 var(--mono); color: var(--accent); letter-spacing: .04em; white-space: nowrap; }
+.pile { position: absolute; z-index: 3; display: grid; justify-items: center; gap: 4px; text-align: center; transition: opacity 500ms; }
+.pile svg { overflow: visible; display: block; }
+.pile svg rect { fill: var(--paper); stroke: var(--line); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.pile svg path { fill: none; stroke: var(--line); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.pile svg g.sheet { transition: opacity 260ms ease, transform 420ms cubic-bezier(.3,1.4,.5,1); }
+
+/* thought bubble with six chairs and a variety meter */
+.tail { position: absolute; z-index: 4; border-radius: 50%; border: 2px solid var(--line); background: var(--paper); opacity: 0; transition: opacity 300ms; }
+.bubble { position: absolute; z-index: 5; opacity: 0; transform-origin: 10% 100%; }
+.bubble .cloud { position: absolute; overflow: visible; pointer-events: none; }
+.bubble .cloud path { fill: var(--paper); stroke: var(--line); stroke-width: 2.2; stroke-linejoin: round; }
+.bin { position: absolute; inset: 9% 8% 8%; display: grid; grid-template-rows: auto 1fr auto; gap: 1.2cqh; }
+.blab { font: 500 clamp(9.5px, 1.1cqw, 13px)/1.25 var(--mono); color: var(--muted); text-align: center; letter-spacing: .03em; transition: opacity 250ms; }
+.tiles { display: grid; grid-template-columns: repeat(3, min(13cqw, 19cqh)); justify-content: center; align-content: center; gap: 1.4cqh 1.6cqw; min-height: 0; }
+@container (max-aspect-ratio: 1/1) { .tiles { grid-template-columns: repeat(3, min(25cqw, 13.5cqh)); gap: 1cqh 2.4cqw; } }
+.tile { position: relative; width: 100%; aspect-ratio: 1; border-radius: 6px; border: 1.5px solid var(--soft2); opacity: 0; }
+.tile i { position: absolute; inset: 7%; background: var(--line); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; }
+.tile svg { position: absolute; inset: 7%; width: 86%; height: 86%; overflow: visible; }
+.tile svg path { fill: none; stroke: var(--line); stroke-linecap: round; stroke-linejoin: round; stroke-width: 9; }
+.tile.fail { border-style: dashed; border-color: var(--soft); }
+.tile.fail span { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font: 500 clamp(8px, 1cqw, 12px)/1.15 var(--mono); color: var(--muted); padding: 2px; }
+.meter { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1.2cqw; font: 500 clamp(9px, 1.05cqw, 12.5px)/1.2 var(--mono); color: var(--muted); }
+.bar { position: relative; height: clamp(8px, 1.6cqh, 14px); border-radius: 999px; background: var(--soft2); }
+.bar b { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--line); width: 0; transition: width 700ms ease; }
+.bar .tick { position: absolute; top: -45%; bottom: -45%; width: 2px; border-radius: 1px; }
+.bar .tick.p { background: var(--people); } .bar .tick.m { background: var(--muse); }
+.tlabs { position: relative; height: 1.3em; grid-column: 2; font-size: clamp(8.5px, .95cqw, 11.5px); }
+.tlabs span { position: absolute; top: 0; white-space: nowrap; }
+.tlabs .p { color: var(--people); padding-left: 3px; }
+.tlabs .m { color: var(--muse); transform: translateX(-100%); padding-right: 3px; }
+.fails { font: 500 clamp(9px, 1.05cqw, 12.5px)/1.2 var(--mono); color: var(--muted); white-space: nowrap; }
+
+/* titles, act label, caption */
+.qbig { position: absolute; left: 0; right: 0; top: 36%; text-align: center; z-index: 8; font: 700 clamp(40px, 8cqw, 112px)/1 var(--hand); color: var(--line); opacity: 0; }
+.hud { position: absolute; left: 2.6%; top: 3.4%; z-index: 7; display: grid; gap: 2px; justify-items: start; max-width: 42%; }
+.qsmall { font: 700 clamp(20px, 2.8cqw, 38px)/1 var(--hand); color: var(--line); opacity: 0; }
+.act { font: 500 clamp(10px, 1.15cqw, 13.5px) var(--mono); color: var(--accent); letter-spacing: .08em; text-transform: uppercase; opacity: 0; transition: opacity 300ms; }
+.caption { position: absolute; left: 4%; right: 4%; bottom: 2.6%; z-index: 7; text-align: center; font: 400 clamp(12.5px, 1.45cqw, 17px)/1.4 var(--sans); color: var(--line); opacity: 0; transition: opacity 350ms ease; text-wrap: balance; }
+.caption.on { opacity: 1; }
+.caption b { font-weight: 700; }
+.caption cite { display: block; font: 400 clamp(10px, 1cqw, 12px)/1.35 var(--mono); color: var(--muted); letter-spacing: .03em; font-style: normal; margin-top: 3px; }
+@container (max-aspect-ratio: 1/1) {
+  .hud { max-width: 92%; }
+  .qsmall { font-size: clamp(20px, 6.6cqw, 30px); }
+  .act { font-size: clamp(9.5px, 2.8cqw, 12px); }
+  .caption { font-size: clamp(12px, 3.4cqw, 15px); }
+  .caption cite { font-size: clamp(9.5px, 2.6cqw, 11.5px); }
+  .blab, .meter, .fails { font-size: clamp(8.5px, 2.5cqw, 11px); }
+  .tile.fail span { font-size: clamp(8px, 2.3cqw, 11px); }
+  .ailab { font-size: clamp(11px, 3.4cqw, 15px); }
+  .aisub { font-size: clamp(9px, 2.6cqw, 12px); }
+  .qbig { font-size: clamp(40px, 14cqw, 76px); }
+  .endline { font-size: clamp(21px, 7cqw, 38px); }
+  .cites { font-size: clamp(9.5px, 2.7cqw, 12px); }
+}
+
+/* end card */
+.card { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: var(--veil); opacity: 0; visibility: hidden; transition: opacity 600ms ease, visibility 0s linear 600ms; padding: 4%; }
+.card.on { opacity: 1; visibility: visible; transition: opacity 600ms ease; }
+.card .inner { display: grid; gap: clamp(10px, 2.2cqh, 22px); justify-items: center; text-align: center; max-width: 64rem; }
+.endline { margin: 0; font: 700 clamp(22px, 4cqw, 54px)/1.12 var(--sans); color: var(--line); text-wrap: balance; }
+.endline span { display: block; }
+.endline .form { color: var(--accent); }
+.endline .small { font-weight: 400; font-size: .62em; margin-top: .4em; color: var(--muted); }
+.cites { margin: 0; font: 400 clamp(10px, 1.1cqw, 13px)/1.45 var(--mono); color: var(--muted); max-width: 74ch; text-wrap: balance; }
+.cardbtns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.cardbtns .btn { font-size: clamp(.82rem, 1.3cqw, 1rem); padding: .6em 1.1em; }
+
+/* beat sheet */
+.sheets { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 32px; }
+@media (max-width: 860px) { .sheets { grid-template-columns: 1fr; } }
+.sheet { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.sheet h2 { font-size: 1.15rem; margin: 0; }
+.sheet ol, .sheet ul { margin: 0; padding-left: 1.2em; display: grid; gap: 9px; }
+.sheet li { color: var(--ink); overflow-wrap: anywhere; }
+.sheet li .tc { font-family: var(--mono); font-size: .78rem; color: var(--accent); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.sheet li .src { display: block; font-size: .84rem; color: var(--muted); margin-top: 2px; }
+.sheet a { color: var(--blue); }
+.note { border-top: 1px solid var(--rule); padding-top: 14px; color: var(--muted); font-size: .9rem; display: grid; gap: 6px; }
+.note p { margin: 0; max-width: 95ch; }
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <span class="kicker">Mockup · Plato’s Chair · What would Plato ask an AI?</span>
+    <h1>An AI growing up</h1>
+    <p class="lede">__LEDE__</p>
+  </header>
+
+  <div class="controls" role="group" aria-label="Playback">
+    <button class="btn" id="replay" type="button">Replay</button>
+    <button class="chip" id="slow" type="button" aria-pressed="false">Slow motion</button>
+    <button class="btn ghost" id="skip" type="button">Skip to end</button>
+    <span class="spacer"></span>
+    <span class="status" id="clock" aria-hidden="true">0.0 s</span>
+  </div>
+
+  <div class="stage" id="stage" role="img" aria-label="__ARIA__">
+    <div class="ground" id="ground"></div>
+    <div class="pile" id="pile"><svg id="pilesvg" aria-hidden="true"></svg><div class="aisub" id="pilelab"></div></div>
+    <div class="ai" id="ai">
+      <div class="brainbox" id="brainbox"><svg id="brainsvg" viewBox="0 0 120 96" aria-hidden="true"><g id="brainlive"></g></svg><span class="q">?</span></div>
+      <div class="ailab" id="ailab"></div><div class="aisub" id="aisub"></div>
+    </div>
+    <div class="tail" id="t1"></div><div class="tail" id="t2"></div><div class="tail" id="t3"></div>
+    <div class="bubble" id="bubble">
+      <svg class="cloud" id="cloud" aria-hidden="true"><path id="cloudpath" d="" /></svg>
+      <div class="bin">
+        <div class="blab" id="blab"></div>
+        <div class="tiles" id="tiles"></div>
+        <div>
+          <div class="meter"><span>how varied</span><div class="bar" id="bar"><b id="barfill"></b><i class="tick p" id="tickp"></i><i class="tick m" id="tickm"></i></div><span class="fails" id="fails"></span></div>
+          <div class="meter"><span style="visibility:hidden">how varied</span><div class="tlabs"><span class="p" id="labp">people</span><span class="m" id="labm">Muse Image</span></div><span class="fails" style="visibility:hidden">failed 12 of 12</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="qbig" id="qbig">An AI growing up</div>
+    <div class="hud"><div class="qsmall" id="qsmall">An AI growing up</div><div class="act" id="act"></div></div>
+    <div class="caption" id="caption" aria-live="polite"></div>
+
+    <div class="card" id="end" role="dialog" aria-label="End card">
+      <div class="inner">
+        <p class="endline">__ENDLINE__</p>
+        <p class="cites">__ENDCITES__</p>
+        <div class="cardbtns"><button class="btn" id="replay2" type="button">Replay</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheets">
+    <section class="sheet" aria-labelledby="beats">
+      <h2 id="beats">Beat sheet (about __SECONDS__ seconds)</h2>
+      <ol id="beatlist">__BEATS__</ol>
+    </section>
+    <section class="sheet" aria-labelledby="refs">
+      <h2 id="refs">Sources, checked</h2>
+      <ul>__SOURCES__</ul>
+    </section>
+  </div>
+  <div class="note">__NOTES__</div>
+</div>
+
+<script>
+(function () {
+  var A = __ASSETS__;
+  function $(id) { return document.getElementById(id); }
+  var stage = $('stage'), ai = $('ai'), brainbox = $('brainbox'), brainsvg = $('brainsvg'), brainlive = $('brainlive'),
+      ailab = $('ailab'), aisub = $('aisub'), pile = $('pile'), pilesvg = $('pilesvg'), pilelab = $('pilelab'),
+      bubble = $('bubble'), cloud = $('cloud'), cloudpath = $('cloudpath'), tilesEl = $('tiles'), blab = $('blab'),
+      barfill = $('barfill'), fails = $('fails'), qbig = $('qbig'), qsmall = $('qsmall'), act = $('act'),
+      caption = $('caption'), endc = $('end'), clock = $('clock'), ground = $('ground');
+  var tails = [$('t1'), $('t2'), $('t3')];
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var S = A.stages, N = S.length;
+  var T = { title: 1600, step: A.step_ms, end: 0 };
+  T.start = 2100;
+  T.at = []; var t = T.start;
+  S.forEach(function (st, i) { if (i && S[i - 1].act !== st.act) t += 700; T.at.push(t); t += st.long ? T.step + 900 : T.step; });
+  T.end = t + 300;
+
+  var run = 0, speed = 1, timers = [], anims = [], L = {}, t0wall = 0, clockTimer = null, cur = -1;
+  function at(ms, fn) { var id = run; timers.push(setTimeout(function () { if (id === run) fn(); }, ms * speed)); }
+  function anim(el, frames, o) { o = Object.assign({ fill: 'forwards' }, o || {}); o.duration = (o.duration || 300) * speed; if (o.delay) o.delay *= speed; var a = el.animate(frames, o); anims.push(a); return a; }
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var q = Math.imul(seed ^ seed >>> 15, 1 | seed); q = q + Math.imul(q ^ q >>> 7, 61 | q) ^ q; return ((q ^ q >>> 14) >>> 0) / 4294967296; }; }
+  function f1(v) { return Math.round(v * 10) / 10; }
+  function ns(tag) { return document.createElementNS('http://www.w3.org/2000/svg', tag); }
+  function setCaption(html) { caption.classList.remove('on'); at(180, function () { caption.innerHTML = html; if (html) caption.classList.add('on'); }); }
+
+  // a side-view brain (the lifetime mockup's), facing right
+  var BRAIN = ['M24 60 C12 55 9 38 18 28 C25 15 42 9 58 10 C76 8 96 15 104 31 C111 43 109 57 100 63 C94 68 86 69 80 66 C73 71 62 72 54 69 C47 72 34 70 24 60 Z',
+               'M26 61 C22 71 31 79 43 77 C50 76 54 72 53 68', 'M55 69 C57 77 58 85 56 92',
+               'M48 55 C58 49 71 49 83 52', 'M63 11 C58 22 65 31 58 44', 'M30 30 C38 27 43 35 51 33', 'M80 20 C84 28 92 30 97 39',
+               'M36 45 C43 41 49 46 56 42', 'M70 36 C76 33 82 38 90 35', 'M20 44 C25 41 28 46 33 44'];
+  BRAIN.forEach(function (d, i) { var p = ns('path'); p.setAttribute('d', d); if (!i) p.setAttribute('class', 'core'); brainlive.appendChild(p); });
+
+  // ---------- layout from the stage's real size ----------
+  function layout() {
+    var W = stage.clientWidth, H = stage.clientHeight, wide = W / H >= 1.15;
+    L = { W: W, H: H, wide: wide };
+    L.G = H * (wide ? 0.80 : 0.86);
+    ground.style.top = L.G + 'px';
+    L.brainW = wide ? Math.min(W * 0.2, H * 0.36) : W * 0.42;          // the largest brain's width
+    var bh = L.brainW * 0.8;
+    brainsvg.style.width = L.brainW + 'px'; brainsvg.style.height = bh + 'px';
+    var aiX = W * (wide ? 0.16 : 0.27);
+    ai.style.left = (aiX - L.brainW / 2) + 'px'; ai.style.width = L.brainW + 'px';
+    ai.style.bottom = (H - L.G + 2) + 'px'; ai.style.top = 'auto';
+    var pw = wide ? Math.min(W * 0.12, H * 0.2) : W * 0.26;
+    pile.style.left = (W * (wide ? 0.34 : 0.74) - pw / 2) + 'px'; pile.style.width = pw + 'px';
+    pile.style.bottom = (H - L.G + 2) + 'px';
+    L.pileW = pw;
+    if (wide) { L.bx = W * 0.45; L.by = H * 0.045; L.bw = W * 0.5; L.bh = H * 0.66; }
+    else { L.bx = W * 0.05; L.by = H * 0.14; L.bw = W * 0.9; L.bh = H * 0.45; }
+    bubble.style.left = L.bx + 'px'; bubble.style.top = L.by + 'px'; bubble.style.width = L.bw + 'px'; bubble.style.height = L.bh + 'px';
+    var m = 22; cloud.setAttribute('width', L.bw + 2 * m); cloud.setAttribute('height', L.bh + 2 * m);
+    cloud.style.left = -m + 'px'; cloud.style.top = -m + 'px';
+    cloudpath.setAttribute('d', cloudPath(L.bw, L.bh, m));
+    L.aiX = aiX;
+    drawPile(cur >= 0 ? S[cur].pile : 0, false);
+    ticks();
+  }
+  function ticks() {
+    var max = A.bar_max, pp = A.people_spread / max * 100, mm = A.muse_spread / max * 100;
+    $('tickp').style.left = pp + '%'; $('tickm').style.left = mm + '%';
+    $('labp').style.left = pp + '%'; $('labm').style.left = mm + '%';
+  }
+  // a scalloped thought-bubble outline around a w x h box
+  function cloudPath(w, h, m) {
+    var a = w / 2, b = h / 2, n = 3.2, pts = [], acc = [0], K = 480;
+    for (var k = 0; k <= K; k++) {
+      var q = k / K * Math.PI * 2, c = Math.cos(q), s = Math.sin(q);
+      pts.push([a + a * Math.sign(c) * Math.pow(Math.abs(c), 2 / n), b + b * Math.sign(s) * Math.pow(Math.abs(s), 2 / n)]);
+      if (k) acc.push(acc[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+    }
+    var P = acc[K], NB = Math.max(12, Math.round(P / Math.max(46, Math.min(w, h) * 0.2))), sel = [], j = 0;
+    for (var i = 0; i < NB; i++) { var target = P * i / NB + P * 0.013; while (acc[j] < target && j < K) j++; sel.push(pts[j]); }
+    var r = rng(7), d = 'M' + f1(sel[0][0] + m) + ' ' + f1(sel[0][1] + m);
+    for (i = 0; i < NB; i++) {
+      var p = sel[i], qq = sel[(i + 1) % NB], mx = (p[0] + qq[0]) / 2, my = (p[1] + qq[1]) / 2;
+      var gx = Math.sign(mx - a) * Math.pow(Math.abs((mx - a) / a), n - 1) / a, gy = Math.sign(my - b) * Math.pow(Math.abs((my - b) / b), n - 1) / b;
+      var gl = Math.hypot(gx, gy) || 1, bump = Math.hypot(qq[0] - p[0], qq[1] - p[1]) * (0.42 + r() * 0.12);
+      d += ' Q' + f1(mx + gx / gl * bump + m) + ' ' + f1(my + gy / gl * bump + m) + ' ' + f1(qq[0] + m) + ' ' + f1(qq[1] + m);
+    }
+    return d + ' Z';
+  }
+
+  // ---------- the pile: one sheet per doubling-ish of the data (log scale), each a tiny chair doodle ----------
+  var CHAIR = 'M7 3v12M15 3v12M7 5h8M7 9h8M5 15h12M6 15v6M16 15v6';
+  function sheetsFor(n) { return n ? Math.max(1, Math.round(1 + 4.4 * Math.log10(n / 100))) : 0; }
+  function drawPile(n, animate) {
+    var k = sheetsFor(n), maxK = sheetsFor(20000), w = L.pileW, sh = w * 0.62;
+    var maxH = L.H * (L.wide ? 0.42 : 0.2), step = Math.min(sh * 0.36, Math.max(4, (maxH - sh) / (maxK - 1)));
+    var hgt = sh + step * (maxK - 1);
+    pilesvg.setAttribute('viewBox', '0 0 ' + f1(w) + ' ' + f1(hgt)); pilesvg.style.width = w + 'px'; pilesvg.style.height = hgt + 'px';
+    var have = pilesvg.querySelectorAll('g.sheet').length;
+    if (!animate) { pilesvg.innerHTML = ''; have = 0; }
+    var r = rng(11);
+    for (var i = 0; i < maxK; i++) r();
+    for (i = have; i < k; i++) {
+      var g = ns('g'); g.setAttribute('class', 'sheet');
+      var y = hgt - sh - i * step, rot = (rng(100 + i)() - .5) * 8, x = w * 0.08 + (rng(200 + i)() - .5) * w * 0.08;
+      g.setAttribute('transform', 'translate(' + f1(x) + ' ' + f1(y) + ') rotate(' + f1(rot) + ' ' + f1(w * 0.42) + ' ' + f1(sh / 2) + ')');
+      var rc = ns('rect'); rc.setAttribute('width', f1(w * 0.84)); rc.setAttribute('height', f1(sh)); rc.setAttribute('rx', 3); g.appendChild(rc);
+      var p = ns('path'); p.setAttribute('d', CHAIR); p.setAttribute('transform', 'translate(' + f1(w * 0.42 - sh * 0.3) + ' ' + f1(sh * 0.12) + ') scale(' + f1(sh * 0.032) + ')'); g.appendChild(p);
+      pilesvg.appendChild(g);
+      if (animate) anim(g, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: (i - have) * 70 });
+    }
+    pilesvg.querySelectorAll('g.sheet').forEach(function (g, j) { if (j >= k) g.remove(); });
+  }
+
+  // ---------- tiles: strokes (the sketch model) or rendered masks (the language models) ----------
+  function tileEl(tdata) {
+    var el = document.createElement('div'); el.className = 'tile';
+    if (tdata.fail) { el.classList.add('fail'); var sp = document.createElement('span'); sp.textContent = tdata.fail; el.appendChild(sp); }
+    else if (tdata.png) { var i = document.createElement('i'); i.style.webkitMaskImage = 'url("' + tdata.png + '")'; i.style.maskImage = 'url("' + tdata.png + '")'; el.appendChild(i); }
+    else if (tdata.strokes) {
+      var svg = ns('svg'); svg.setAttribute('viewBox', '0 0 256 256');
+      tdata.strokes.forEach(function (s) {
+        var d = ''; for (var k = 0; k < s[0].length; k++) d += (k ? ' L' : 'M') + s[0][k] + ' ' + s[1][k];
+        if (s[0].length === 1) d += ' l0.5 0';
+        var p = ns('path'); p.setAttribute('d', d); svg.appendChild(p);
+      });
+      el.appendChild(svg);
+    }
+    return el;
+  }
+  function showTiles(st, animate) {
+    tilesEl.innerHTML = '';
+    st.tiles.forEach(function (td, k) {
+      var el = tileEl(td); tilesEl.appendChild(el);
+      if (!animate) { el.style.opacity = 1; return; }
+      anim(el, [{ opacity: 0, transform: 'scale(.7)' }, { opacity: 1, transform: 'none' }], { duration: 260, delay: 90 * k, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+      var ps = el.querySelectorAll('path');
+      if (ps.length) {
+        var lens = [], sum = 0; ps.forEach(function (p) { var l = p.getTotalLength() || 1; lens.push(l); sum += l; });
+        var acc = 90 * k, total = 650;
+        ps.forEach(function (p, j) {
+          var dur = Math.max(40, total * lens[j] / sum);
+          p.style.strokeDasharray = lens[j] + ' ' + (lens[j] + 2); p.style.strokeDashoffset = lens[j];
+          anim(p, [{ strokeDashoffset: lens[j] }, { strokeDashoffset: 0 }], { duration: dur, delay: acc, easing: 'linear' });
+          acc += dur;
+        });
+      }
+    });
+    blab.textContent = st.blab;
+    barfill.style.width = (st.spread == null ? 0 : Math.min(1, st.spread / A.bar_max) * 100) + '%';
+    fails.textContent = st.fails;
+  }
+
+  function placeTails() {
+    var bb = brainbox.getBoundingClientRect(), sb = stage.getBoundingClientRect();
+    var hx = bb.left - sb.left + bb.width * 0.75, hy = bb.top - sb.top + bb.height * 0.05;
+    var ax = L.bx + L.bw * (L.wide ? 0.08 : 0.2), ay = L.by + L.bh + 2;
+    var dist = Math.hypot(ax - hx, ay - hy), R = [L.brainW * 0.03, L.brainW * 0.045, L.brainW * 0.06];
+    tails.forEach(function (tl, k) {
+      var u = [0.2, 0.5, 0.8][k], r = Math.max(3, Math.min(R[k], dist / 8));
+      tl.style.width = tl.style.height = 2 * r + 'px'; tl.style.left = (hx + (ax - hx) * u - r) + 'px'; tl.style.top = (hy + (ay - hy) * u - r) + 'px';
+    });
+  }
+
+  function setBrain(st, animate) {
+    var sc = st.brain;
+    brainsvg.style.transition = animate ? '' : 'none';
+    brainsvg.style.transform = 'scale(' + sc + ')';
+    if (!animate) { void brainsvg.offsetWidth; brainsvg.style.transition = ''; }
+    brainbox.classList.toggle('unknown', !!st.unknown);
+    ailab.textContent = st.ai; aisub.textContent = st.aisub;
+    setTimeout(placeTails, animate ? 950 * speed : 0);
+  }
+
+  function enterStage(i, animate) {
+    cur = i;
+    var st = S[i], prev = i ? S[i - 1] : null;
+    if (!prev || prev.act !== st.act) { act.textContent = st.actLabel; if (animate) anim(act, [{ opacity: 0 }, { opacity: 1 }], { duration: 350 }); else act.style.opacity = 1; }
+    setBrain(st, animate);
+    if (animate) anim(ai, [{ transform: 'translateY(0)' }, { transform: 'translateY(-3%)', offset: .4 }, { transform: 'translateY(0)' }], { duration: 500, easing: 'ease-out' });
+    pile.style.opacity = st.pile ? 1 : 0;
+    if (st.pile) { drawPile(st.pile, animate && prev && prev.pile); pilelab.textContent = st.pile.toLocaleString('en-US') + ' chairs'; }
+    if (animate) {
+      anim(tilesEl, [{ opacity: 1 }, { opacity: 0 }], { duration: 160 });
+      at(180, function () { anim(tilesEl, [{ opacity: 1 }, { opacity: 1 }], { duration: 10 }); showTiles(st, true); });
+    } else showTiles(st, false);
+    if (animate) setCaption(st.cap); else { caption.innerHTML = st.cap; caption.classList.add('on'); }
+  }
+
+  function reset() {
+    run++; timers.forEach(clearTimeout); timers = [];
+    anims.forEach(function (a) { try { a.cancel(); } catch (e) {} }); anims = []; cur = -1;
+    layout();
+    bubble.style.opacity = 0; tilesEl.innerHTML = ''; blab.textContent = ''; barfill.style.width = 0; fails.textContent = '';
+    tails.forEach(function (tl) { tl.style.opacity = 0; });
+    qbig.style.opacity = 0; qbig.style.transform = ''; qsmall.style.opacity = 0; act.style.opacity = 0;
+    ai.style.opacity = 0; pile.style.opacity = 0; caption.classList.remove('on'); caption.innerHTML = '';
+    endc.classList.remove('on');
+    return run;
+  }
+
+  function startClock() {
+    clearInterval(clockTimer); t0wall = performance.now();
+    clockTimer = setInterval(function () { var s = (performance.now() - t0wall) / speed / 1000; clock.textContent = (s > T.end / 1000 + 0.5 ? 'end' : s.toFixed(1) + ' s'); if (s > T.end / 1000 + 0.5) clearInterval(clockTimer); }, 100);
+  }
+
+  function play() {
+    reset();
+    if (reduce) return finalState();
+    startClock();
+    anim(qbig, [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 550, easing: 'ease-out' });
+    at(T.title, function () {
+      anim(qbig, [{ opacity: 1 }, { opacity: 0 }], { duration: 350 });
+      anim(qsmall, [{ opacity: 0 }, { opacity: 1 }], { duration: 350 });
+      anim(ai, [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 500 });
+    });
+    at(T.start - 250, function () {
+      anim(bubble, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+      placeTails(); tails.forEach(function (tl, k) { anim(tl, [{ opacity: 0 }, { opacity: 1 }], { duration: 200, delay: 60 * k }); });
+    });
+    S.forEach(function (st, i) { at(T.at[i], function () { enterStage(i, true); }); });
+    at(T.end, function () { caption.classList.remove('on'); endc.classList.add('on'); clock.textContent = 'end'; });
+  }
+
+  // the last frame, with no motion: Skip, reduced motion and resizing at the end
+  function finalState() {
+    reset(); clearInterval(clockTimer); clock.textContent = 'end';
+    qsmall.style.opacity = 1; ai.style.opacity = 1; bubble.style.opacity = 1;
+    enterStage(N - 1, false); act.textContent = S[N - 1].actLabel; act.style.opacity = 1;
+    tails.forEach(function (tl) { tl.style.opacity = 1; });
+    endc.classList.add('on');
+  }
+
+  $('replay').addEventListener('click', play);
+  $('replay2').addEventListener('click', play);
+  $('skip').addEventListener('click', finalState);
+  $('slow').addEventListener('click', function () { speed = speed === 1 ? 2.2 : 1; this.setAttribute('aria-pressed', speed !== 1); play(); });
+  var rz = null, lastW = stage.clientWidth;
+  window.addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () {
+      if (Math.abs(stage.clientWidth - lastW) < 2) return; lastW = stage.clientWidth;
+      if (endc.classList.contains('on') || reduce) finalState(); else play();
+    }, 200);
+  });
+  window.__growing = { T: T, play: play, finalState: finalState };
+  var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  var srcs = []; S.forEach(function (st) { st.tiles.forEach(function (td) { if (td.png) srcs.push(td.png); }); });
+  Promise.all(srcs.map(function (s) { return new Promise(function (r) { var i = new Image(); i.onload = i.onerror = r; i.src = s; }); }).concat([fontsReady])).then(play);
+})();
+</script>
