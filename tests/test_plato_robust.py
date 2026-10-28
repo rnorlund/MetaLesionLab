@@ -26,6 +26,19 @@ def test_median_ci_collapses_without_noise_and_widens_with_it():
     assert lo2 < 0.5 < hi2 and hi2 - lo2 > hi - lo
 
 
+def test_nearest_centroid_leave_one_out_removes_the_picture_from_its_own_mean():
+    from metalesionlab.plato_robust import nearest_centroid_share
+
+    # concept a: two orthogonal pictures; concept b: two identical pictures leaning slightly toward both of a's
+    b = np.array([0.3, 0.3, 1.0])
+    sets = {"a": np.array([[1.0, 0, 0], [0, 1.0, 0]]), "b": np.array([b, b])}
+    # counting itself, each a-picture is closest to its own set (0.5 > 0.28); without itself it is not (0 < 0.28)
+    assert nearest_centroid_share(sets, sets) == {"a": 1.0, "b": 1.0}
+    assert nearest_centroid_share(sets, sets, leave_one_out=True) == {"a": 0.0, "b": 1.0}
+    # new pictures (e.g. AI doodles) against people's sets; length does not matter, only direction
+    assert nearest_centroid_share({"b": 5 * np.array([b])}, sets) == {"b": 1.0}
+
+
 def _reference_like(**changes) -> dict:
     s = {"index_median": 0.49, "index_median_ci95": [0.42, 0.56], "concepts_below_1": 34, "n_concepts": 35,
          "chair_index_ci95": [0.24, 0.55], "muse_over_sdxl_median_ci95": [0.35, 0.5], "concepts_muse_below_sdxl": 34,

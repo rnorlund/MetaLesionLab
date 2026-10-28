@@ -119,6 +119,31 @@ def hierarchical_median_ci(draws: np.ndarray, reps: int = 2000, level: float = 0
     return [float(np.quantile(meds, a)), float(np.quantile(meds, 1 - a))]
 
 
+def nearest_centroid_share(queries: dict[str, np.ndarray], refs: dict[str, np.ndarray],
+                           leave_one_out: bool = False) -> dict[str, float]:
+    """Per concept: the share of query vectors that sit nearest their own concept among the reference sets.
+
+    "Nearest" is the highest mean cosine similarity to a set's vectors (the dot product with its mean unit
+    vector), as in the core recognisability check. With leave_one_out the queries are the reference sets
+    themselves (same rows), and each vector is left out of its own concept's mean."""
+    def unit(v):
+        return v / np.linalg.norm(v, axis=1, keepdims=True)
+
+    keys = list(refs)
+    sums = {k: unit(refs[k]).sum(0) for k in keys}
+    mus = np.stack([sums[k] / len(refs[k]) for k in keys])
+    out = {}
+    for j, k in enumerate(keys):
+        if k not in queries:
+            continue
+        q = unit(queries[k])
+        scores = q @ mus.T
+        if leave_one_out:
+            scores[:, j] = (q @ sums[k] - 1.0) / (len(refs[k]) - 1)  # q . q = 1 for a unit vector
+        out[k] = float(np.mean(np.argmax(scores, axis=1) == j))
+    return out
+
+
 # Pre-registered thresholds (docs/plato_robustness_plan.md). Do not change after results are seen.
 MIN_CONCEPTS_BELOW = 28     # of 35: the AI below people (core) and Muse below SDXL
 MIN_RHO = 0.6               # rank agreement of per-concept ratios with DINOv2-base
