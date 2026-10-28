@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_inside.css">
 </head>
 <body class="plato-inside">
@@ -21,17 +23,22 @@
 
 <main id="main" tabindex="-1">
 
-<section class="pi-hero" aria-labelledby="hero-h">
-  <div class="pi-hero-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to a drawing inside the machine? · <i>Republic</i> VII · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">Inside the model</h1>
-    </div>
-    <!--#epigraph:metaphysics-981a28-->
-    <p class="pi-lede">Plato thought every chair copies one ideal chair. We gave Meta’s open model Muse Glimmer the doodles from <a href="/plato">Plato’s Chair</a>, Muse Image’s and people’s, and read its state after each of its 52 layers. First it sees a drawing. Layer by layer, it settles on a name.</p>
-    <p class="pi-answer" id="hero-answer">Muse Image’s doodles of a thing arrive at one idea: by the naming layers they sit almost on one point. People’s doodles never do.</p>
+<section class="fl pi-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to a drawing inside the machine? · <i>Republic</i> VII · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">Inside the model</h1>
   </div>
-  <div class="pi-tiles" id="hero-tiles" aria-label="Three numbers from the experiment"></div>
+  <!--#epigraph:metaphysics-981a28-->
+  <div class="fl-ctx">
+    <p class="pi-lede">Plato thought every chair copies one ideal chair. We gave Meta’s open model Muse Glimmer the doodles from <a href="/plato">Plato’s Chair</a>, Muse Image’s and people’s, and read its state after each of its 52 layers. First it sees a drawing. Layer by layer, it settles on a name.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">By the time the model names them, Muse Image’s doodles of a thing sit almost on one point; people’s doodles stay spread out.</p>
+  <figure class="fl-visual pi-trip-fig">
+    <div class="pi-trip" id="hero-trip" role="img" aria-label="Muse Image’s chairs and people’s chairs inside Muse Glimmer at three layers"></div>
+    <figcaption class="fl-cap" id="hero-trip-cap"><span class="fl-key muse" aria-hidden="true"></span>Muse Image’s chairs and <span class="fl-key people" aria-hidden="true"></span>people’s chairs inside Muse Glimmer as it reads them, from its first layer to its last (52). Chairs it holds alike sit close; the circle is each set’s spread. <a href="#explorer">Drag through every layer, for 35 things</a></figcaption>
+  </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-note"></p>
 </section>
 
 <section class="pi-explorer" id="explorer" aria-labelledby="explorer-h">
@@ -152,6 +159,8 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_inside.js"></script>
 </body>
 </html>

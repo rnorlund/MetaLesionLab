@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_atlas.css">
 </head>
 <body class="atlas">
@@ -21,21 +23,22 @@
 
 <main id="main" tabindex="-1">
 
-<section class="at-hero" aria-labelledby="hero-h">
-  <div class="at-hero-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is every thing one Form, or only some? · <i>Republic</i> X · <a href="/plato">Plato series</a></span></p>
-      <h1 id="hero-h">The Atlas of Forms</h1>
-    </div>
-    <!--#epigraph:metaphysics-980a21-->
-    <p class="at-lede">Plato thought every everyday thing, a chair, a cup, a cat, has one ideal Form, and that the things we see are copies of it. We asked Meta’s image model, Muse Image, to doodle 135 everyday things, at least 12 times each. Then we set its drawings beside people’s.</p>
-    <p class="at-answer" id="answer">…</p>
+<section class="fl at-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is every thing one Form, or only some? · <i>Republic</i> X · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">The Atlas of Forms</h1>
   </div>
-  <figure class="at-hero-fig">
+  <!--#epigraph:metaphysics-980a21-->
+  <div class="fl-ctx">
+    <p class="at-lede">Plato thought every everyday thing, a chair, a cup, a cat, has one ideal Form, and that the things we see are copies of it. We asked Meta’s image model, Muse Image, to doodle 135 everyday things, at least 12 times each. Then we set its drawings beside people’s.</p>
+  </div>
+  <p class="fl-answer" id="answer">Muse Image draws almost every everyday thing more alike than people do: average its drawings and one crisp Form comes out, while people’s blur into a cloud.</p>
+  <figure class="fl-visual at-hero-fig">
     <div class="at-hero-forms" id="hero-forms"></div>
-    <figcaption class="at-cap">Each square is 12 drawings averaged pixel by pixel. <b class="k-muse">Muse Image</b> above, <b class="k-people">12 people</b> below. Crisp means every drawing was nearly the same.</figcaption>
+    <figcaption class="at-cap">Each square is 12 drawings averaged pixel by pixel. <b class="k-muse">Muse Image</b> above, <b class="k-people">12 people</b> below. Crisp means every drawing was nearly the same. <a href="#gallery">All 135 things</a></figcaption>
   </figure>
-  <div class="at-tiles" id="tiles" aria-live="polite"></div>
+  <div class="fl-stats" id="tiles" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-note"></p>
 </section>
 
 <nav class="at-jump" aria-label="On this page">
@@ -168,6 +171,8 @@ python scripts/plato_benchmark.py my_model \
 </dialog>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/plato_atlas.js"></script>
 </body>
 </html>
