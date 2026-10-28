@@ -201,6 +201,7 @@ python scripts/plato_glimmer_run.py extra data/core --family naming-mlp-mean --d
 python scripts/plato_glimmer_run.py extra data/core --family random-mlp-mean --doses 0.36
 # local: copy runs/plato_glimmer/raw/ to PlatosChair/inside_glimmer/raw/, then
 python scripts/plato_glimmer_analyze.py
+python scripts/plato_inside_web_export.py   # /plato/inside: per-layer maps, spreads and thumbnails
 ```
 
 Outputs: `PlatosChair/inside_glimmer/results.json` and `PlatosChair/inside_glimmer/figures/`.

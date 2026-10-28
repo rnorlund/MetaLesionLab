@@ -946,3 +946,4 @@ app.include_router(importlib.import_module("metalesionlab.web.plato_forms_routes
 app.include_router(importlib.import_module("metalesionlab.web.plato_cave_routes").router)  # Plato's Cave (/plato/cave)
 app.include_router(importlib.import_module("metalesionlab.web.plato_cratylus_routes").router)  # Plato's Cratylus (/plato/cratylus)
 app.include_router(importlib.import_module("metalesionlab.web.plato_lifespan_routes").router)  # The life of a chair (/plato/lifespan)
+app.include_router(importlib.import_module("metalesionlab.web.plato_inside_routes").router)  # Inside the model (/plato/inside)
