@@ -3,6 +3,9 @@
 Usage:
   python scripts/plato_ideas_generate.py [--keys god love ...] [--workers 3]
   python scripts/plato_ideas_generate.py --pilot god justice      one picture each, into pilot/ (not analysed)
+  python scripts/plato_ideas_generate.py --words                  the four words beyond nouns (running, thinking,
+                                                                  something fast, something heavy), same settings,
+                                                                  run tag "words", their own cap WORDS_BUDGET_USD
 
 The prompt is the concrete things' doodle prompt, word for word (plato.STYLES["doodle"], plato_ideas.prompt_for),
 and the settings are the first run's: separate calls of n = 4, no seed (none exists), pictures downscaled to
@@ -32,18 +35,26 @@ from openai import APITimeoutError  # noqa: E402
 
 from metalesionlab.meta_api import IMAGE_MODEL, LEDGER, MetaAPI, spent  # noqa: E402
 from metalesionlab.plato import downscale  # noqa: E402
-from metalesionlab.plato_ideas import (BATCH, BUDGET_USD, BY_KEY, IDEAS, IDEAS_DIR, IMAGE_USD, MAX_ATTEMPTS,  # noqa: E402
-                                       N_AI, SHARED_STOP, folder, prompt_for)
+from metalesionlab.plato_ideas import (ANY as BY_KEY, BATCH, BUDGET_USD, IDEAS, IDEAS_DIR, IMAGE_USD,  # noqa: E402
+                                       MAX_ATTEMPTS, N_AI, SHARED_STOP, WORDS, WORDS_BUDGET_USD, folder, prompt_for)
 
 SPEND_LOG = IDEAS_DIR / "spend.jsonl"
 CALL_LOG = IDEAS_DIR / "calls.jsonl"
 _lock = threading.RLock()  # re-entrant: the budget check and its reservation happen under one hold
+# The ideas' task counted every entry against BUDGET_USD; the words' task counts only its own run against its cap.
+CAP = {"main": BUDGET_USD, "pilot": BUDGET_USD, "words": WORDS_BUDGET_USD}
 
 
-def my_spend() -> float:
+def my_spend(run: str | None = None) -> float:
+    """This task's spend at IMAGE_USD a picture: every entry for the ideas' runs, only its own for the words."""
     if not SPEND_LOG.exists():
         return 0.0
-    return sum(json.loads(line)["usd"] for line in SPEND_LOG.read_text().splitlines() if line.strip())
+    rows = [json.loads(line) for line in SPEND_LOG.read_text().splitlines() if line.strip()]
+    if run == "words":
+        rows = [r for r in rows if r.get("run") == "words"]
+    elif run is not None:
+        rows = [r for r in rows if r.get("run") != "words"]
+    return sum(r["usd"] for r in rows)
 
 
 def append(path: Path, **entry) -> None:
@@ -68,8 +79,9 @@ def run_call(api: MetaAPI, key: str, call: int, n: int, out_dir: Path, tag: str)
     refused = 0
     for attempt in range(1, MAX_ATTEMPTS + 1):
         with _lock:
-            if my_spend() + n * IMAGE_USD > BUDGET_USD + 1e-9:
-                raise RuntimeError(f"task budget ${BUDGET_USD:.2f} reached (counted at ${IMAGE_USD}/picture)")
+            cap = CAP[tag]
+            if my_spend(tag) + n * IMAGE_USD > cap + 1e-9:
+                raise RuntimeError(f"task budget ${cap:.2f} reached (counted at ${IMAGE_USD}/picture)")
             if spent() >= SHARED_STOP:
                 raise RuntimeError(f"shared ledger reached ${SHARED_STOP:.2f}; stopping all paid calls")
             append(SPEND_LOG, kind="reserve", usd=n * IMAGE_USD, key=key, call=call, attempt=attempt, n=n, run=tag)
@@ -119,9 +131,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keys", nargs="*", help="ideas to draw (default: all, in order)")
     ap.add_argument("--pilot", nargs="*", help="one picture of each named idea, into pilot/ (not analysed)")
+    ap.add_argument("--words", action="store_true", help="the four words beyond nouns, run tag 'words'")
     ap.add_argument("--workers", type=int, default=3)
     args = ap.parse_args()
-    print(f"shared ledger {LEDGER}: ${spent():.2f}; this task so far ${my_spend():.3f} of ${BUDGET_USD:.2f}", flush=True)
+    tag = "words" if args.words else "main"
+    print(f"shared ledger {LEDGER}: ${spent():.2f}; this task so far ${my_spend(tag):.3f} of ${CAP[tag]:.2f}", flush=True)
     api = MetaAPI()
     api.client = api.client.with_options(timeout=400, max_retries=0)  # fail fast; we retry ourselves
 
@@ -129,10 +143,10 @@ def main():
         for key in args.pilot:
             got = run_call(api, key, 0, 1, IDEAS_DIR / "pilot" / key, "pilot")
             print(f"pilot {key}: {got[2]} picture", flush=True)
-        print(f"done; this task ${my_spend():.3f}; shared ledger ${spent():.2f}", flush=True)
+        print(f"done; this task ${my_spend('pilot'):.3f}; shared ledger ${spent():.2f}", flush=True)
         return
 
-    keys = args.keys or [i.key for i in IDEAS]
+    keys = args.keys or [i.key for i in (WORDS if args.words else IDEAS)]
     jobs = []
     for key in keys:
         idea, out = BY_KEY[key], folder(key)
@@ -145,11 +159,11 @@ def main():
     n_img = len(jobs) * BATCH
     print(f"{len(jobs)} calls, {n_img} pictures, ${n_img * IMAGE_USD:.2f} at ${IMAGE_USD}/picture "
           f"(the ledger books ${n_img * 0.01:.2f})", flush=True)
-    if my_spend() + n_img * IMAGE_USD > BUDGET_USD + 1e-9:
-        print(f"WARNING: that would pass the ${BUDGET_USD:.2f} cap; calls stop when it is reached", flush=True)
+    if my_spend(tag) + n_img * IMAGE_USD > CAP[tag] + 1e-9:
+        print(f"WARNING: that would pass the ${CAP[tag]:.2f} cap; calls stop when it is reached", flush=True)
     t0 = time.time()
     with ThreadPoolExecutor(args.workers) as pool:
-        futures = [pool.submit(run_call, api, key, call, BATCH, folder(key), "main") for key, call in jobs]
+        futures = [pool.submit(run_call, api, key, call, BATCH, folder(key), tag) for key, call in jobs]
         for k, fut in enumerate(as_completed(futures), 1):
             try:
                 key, call, got = fut.result()
@@ -161,7 +175,7 @@ def main():
         meta = json.loads((out / "meta.json").read_text())
         meta.update(n=len(list(out.glob("c*_*.png"))))
         (out / "meta.json").write_text(json.dumps(meta, indent=1))
-    print(f"done in {time.time() - t0:.0f}s; this task ${my_spend():.3f}; shared ledger ${spent():.2f}", flush=True)
+    print(f"done in {time.time() - t0:.0f}s; this task ${my_spend(tag):.3f}; shared ledger ${spent():.2f}", flush=True)
 
 
 if __name__ == "__main__":

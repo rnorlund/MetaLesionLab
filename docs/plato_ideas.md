@@ -146,6 +146,14 @@ This experiment asks how an AI pictures God and how people have. It makes no cla
 
 **Why it is not a comparison.** Those are children's colour drawings made with time to think; these are an AI's 20-second doodle prompts. We cite their group-level findings and use none of their pictures.
 
+## Follow-ups: God under damage, and words beyond nouns
+
+Two pre-registered extensions are written up in `docs/plato_ideas_damage.md` (plan: `docs/plato_ideas_damage_plan.md`). They do not change anything above.
+- **God and the other ideas under damage.** Muse Image cannot be damaged. So an open model, Stable Diffusion XL, drew each idea with its words part or its drawing part damaged, with the draw pad's own pipeline. Those pictures are SDXL's, not Muse's, and SDXL's intact God is its own: ornate, icon-like line art of a bearded man.
+- **Beyond nouns.** Muse Image drew running, thinking, something fast and something heavy, 16 times each.
+
+The pad has a damage strip for every idea and a third row, "Draw an action or a quality"; `/plato/ideas` has a God-under-damage slider and a "Beyond nouns" section.
+
 ## The draw pad: AI-only scoring
 
 The ideas sit on the pad (`/draw?thing=god`) after the 10 things, under "Draw the invisible". The landing page keeps the chair and adds one line: "Or draw something no one has seen: God, love, time…".

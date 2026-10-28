@@ -1,5 +1,5 @@
 {
- "about": "What damage does to an AI's drawing: Stable Diffusion XL, an open image model, asked for each thing with one fixed seed, intact and with noise added to its text encoders (the part that handles words) or its UNet (the part that draws) at five increasing doses. About the model only: never compared with a visitor's drawing.",
+ "about": "What damage does to an AI's drawing: Stable Diffusion XL, an open image model, asked for each thing, idea and word with one fixed seed, intact and with noise added to its text encoders (the part that handles words) or its UNet (the part that draws) at five increasing doses. These are SDXL's pictures, not Muse Image's. About the model only: never compared with a visitor's drawing.",
  "model": "stabilityai/stable-diffusion-xl-base-1.0",
  "credit": "Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M",
  "license": "CreativeML OpenRAIL++-M",
@@ -57,7 +57,7 @@
   }
  },
  "more": "/plato/damage",
- "total_bytes": 663464,
+ "total_bytes": 2202840,
  "things": [
   {
    "key": "chair",
@@ -267,6 +267,366 @@
     "/static/img/draw_damage/book_drawing_3.webp",
     "/static/img/draw_damage/book_drawing_4.webp",
     "/static/img/draw_damage/book_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "god",
+   "label": "God",
+   "prompt": "A quick simple doodle sketch of God, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20271113,
+   "group": "ideas",
+   "what": "drawing of God",
+   "intact_note": "ornate, icon-like line art: mostly a bearded man’s face or bust, often crowned (a beard in 10 of its 16 drawings, a halo in 6), where Muse drew a simple figure with a halo every time",
+   "intact": "/static/img/draw_damage/god_intact.webp",
+   "language": [
+    "/static/img/draw_damage/god_language_1.webp",
+    "/static/img/draw_damage/god_language_2.webp",
+    "/static/img/draw_damage/god_language_3.webp",
+    "/static/img/draw_damage/god_language_4.webp",
+    "/static/img/draw_damage/god_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/god_drawing_1.webp",
+    "/static/img/draw_damage/god_drawing_2.webp",
+    "/static/img/draw_damage/god_drawing_3.webp",
+    "/static/img/draw_damage/god_drawing_4.webp",
+    "/static/img/draw_damage/god_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "love",
+   "label": "love",
+   "prompt": "A quick simple doodle sketch of love, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20272105,
+   "group": "ideas",
+   "what": "drawing of love",
+   "intact_note": "ornate hearts in most of its 8 drawings",
+   "intact": "/static/img/draw_damage/love_intact.webp",
+   "language": [
+    "/static/img/draw_damage/love_language_1.webp",
+    "/static/img/draw_damage/love_language_2.webp",
+    "/static/img/draw_damage/love_language_3.webp",
+    "/static/img/draw_damage/love_language_4.webp",
+    "/static/img/draw_damage/love_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/love_drawing_1.webp",
+    "/static/img/draw_damage/love_drawing_2.webp",
+    "/static/img/draw_damage/love_drawing_3.webp",
+    "/static/img/draw_damage/love_drawing_4.webp",
+    "/static/img/draw_damage/love_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "time",
+   "label": "time",
+   "prompt": "A quick simple doodle sketch of time, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20274104,
+   "group": "ideas",
+   "what": "drawing of time",
+   "intact_note": "clocks and pocket watches in 7 of its 8 drawings",
+   "intact": "/static/img/draw_damage/time_intact.webp",
+   "language": [
+    "/static/img/draw_damage/time_language_1.webp",
+    "/static/img/draw_damage/time_language_2.webp",
+    "/static/img/draw_damage/time_language_3.webp",
+    "/static/img/draw_damage/time_language_4.webp",
+    "/static/img/draw_damage/time_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/time_drawing_1.webp",
+    "/static/img/draw_damage/time_drawing_2.webp",
+    "/static/img/draw_damage/time_drawing_3.webp",
+    "/static/img/draw_damage/time_drawing_4.webp",
+    "/static/img/draw_damage/time_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "death",
+   "label": "death",
+   "prompt": "A quick simple doodle sketch of death, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20273104,
+   "group": "ideas",
+   "what": "drawing of death",
+   "intact_note": "skulls and skeletons in nearly all of its 8 drawings",
+   "intact": "/static/img/draw_damage/death_intact.webp",
+   "language": [
+    "/static/img/draw_damage/death_language_1.webp",
+    "/static/img/draw_damage/death_language_2.webp",
+    "/static/img/draw_damage/death_language_3.webp",
+    "/static/img/draw_damage/death_language_4.webp",
+    "/static/img/draw_damage/death_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/death_drawing_1.webp",
+    "/static/img/draw_damage/death_drawing_2.webp",
+    "/static/img/draw_damage/death_drawing_3.webp",
+    "/static/img/draw_damage/death_drawing_4.webp",
+    "/static/img/draw_damage/death_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "justice",
+   "label": "justice",
+   "prompt": "A quick simple doodle sketch of justice, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20275103,
+   "group": "ideas",
+   "what": "drawing of justice",
+   "intact_note": "robed figures, a woman holding scales, or scales alone",
+   "intact": "/static/img/draw_damage/justice_intact.webp",
+   "language": [
+    "/static/img/draw_damage/justice_language_1.webp",
+    "/static/img/draw_damage/justice_language_2.webp",
+    "/static/img/draw_damage/justice_language_3.webp",
+    "/static/img/draw_damage/justice_language_4.webp",
+    "/static/img/draw_damage/justice_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/justice_drawing_1.webp",
+    "/static/img/draw_damage/justice_drawing_2.webp",
+    "/static/img/draw_damage/justice_drawing_3.webp",
+    "/static/img/draw_damage/justice_drawing_4.webp",
+    "/static/img/draw_damage/justice_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "beauty",
+   "label": "beauty",
+   "prompt": "A quick simple doodle sketch of beauty, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20276103,
+   "group": "ideas",
+   "what": "drawing of beauty",
+   "intact_note": "a young woman, mostly her face, in all 8 drawings, as Muse did",
+   "intact": "/static/img/draw_damage/beauty_intact.webp",
+   "language": [
+    "/static/img/draw_damage/beauty_language_1.webp",
+    "/static/img/draw_damage/beauty_language_2.webp",
+    "/static/img/draw_damage/beauty_language_3.webp",
+    "/static/img/draw_damage/beauty_language_4.webp",
+    "/static/img/draw_damage/beauty_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/beauty_drawing_1.webp",
+    "/static/img/draw_damage/beauty_drawing_2.webp",
+    "/static/img/draw_damage/beauty_drawing_3.webp",
+    "/static/img/draw_damage/beauty_drawing_4.webp",
+    "/static/img/draw_damage/beauty_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "the_good",
+   "label": "the Good",
+   "prompt": "A quick simple doodle sketch of the Good, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20277103,
+   "group": "ideas",
+   "what": "drawing of the Good",
+   "intact_note": "no one emblem: towns, streets, trees and faces",
+   "intact": "/static/img/draw_damage/the_good_intact.webp",
+   "language": [
+    "/static/img/draw_damage/the_good_language_1.webp",
+    "/static/img/draw_damage/the_good_language_2.webp",
+    "/static/img/draw_damage/the_good_language_3.webp",
+    "/static/img/draw_damage/the_good_language_4.webp",
+    "/static/img/draw_damage/the_good_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/the_good_drawing_1.webp",
+    "/static/img/draw_damage/the_good_drawing_2.webp",
+    "/static/img/draw_damage/the_good_drawing_3.webp",
+    "/static/img/draw_damage/the_good_drawing_4.webp",
+    "/static/img/draw_damage/the_good_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "the_soul",
+   "label": "the soul",
+   "prompt": "A quick simple doodle sketch of the soul, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20278103,
+   "group": "ideas",
+   "what": "drawing of the soul",
+   "intact_note": "faces and figures, one seated in meditation; none of Muse’s ghostly figures",
+   "intact": "/static/img/draw_damage/the_soul_intact.webp",
+   "language": [
+    "/static/img/draw_damage/the_soul_language_1.webp",
+    "/static/img/draw_damage/the_soul_language_2.webp",
+    "/static/img/draw_damage/the_soul_language_3.webp",
+    "/static/img/draw_damage/the_soul_language_4.webp",
+    "/static/img/draw_damage/the_soul_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/the_soul_drawing_1.webp",
+    "/static/img/draw_damage/the_soul_drawing_2.webp",
+    "/static/img/draw_damage/the_soul_drawing_3.webp",
+    "/static/img/draw_damage/the_soul_drawing_4.webp",
+    "/static/img/draw_damage/the_soul_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "freedom",
+   "label": "freedom",
+   "prompt": "A quick simple doodle sketch of freedom, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20279106,
+   "group": "ideas",
+   "what": "drawing of freedom",
+   "intact_note": "the Statue of Liberty’s head, or winged figures",
+   "intact": "/static/img/draw_damage/freedom_intact.webp",
+   "language": [
+    "/static/img/draw_damage/freedom_language_1.webp",
+    "/static/img/draw_damage/freedom_language_2.webp",
+    "/static/img/draw_damage/freedom_language_3.webp",
+    "/static/img/draw_damage/freedom_language_4.webp",
+    "/static/img/draw_damage/freedom_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/freedom_drawing_1.webp",
+    "/static/img/draw_damage/freedom_drawing_2.webp",
+    "/static/img/draw_damage/freedom_drawing_3.webp",
+    "/static/img/draw_damage/freedom_drawing_4.webp",
+    "/static/img/draw_damage/freedom_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "happiness",
+   "label": "happiness",
+   "prompt": "A quick simple doodle sketch of happiness, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20280102,
+   "group": "ideas",
+   "what": "drawing of happiness",
+   "intact_note": "mostly landscapes, trees and a village",
+   "intact": "/static/img/draw_damage/happiness_intact.webp",
+   "language": [
+    "/static/img/draw_damage/happiness_language_1.webp",
+    "/static/img/draw_damage/happiness_language_2.webp",
+    "/static/img/draw_damage/happiness_language_3.webp",
+    "/static/img/draw_damage/happiness_language_4.webp",
+    "/static/img/draw_damage/happiness_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/happiness_drawing_1.webp",
+    "/static/img/draw_damage/happiness_drawing_2.webp",
+    "/static/img/draw_damage/happiness_drawing_3.webp",
+    "/static/img/draw_damage/happiness_drawing_4.webp",
+    "/static/img/draw_damage/happiness_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "truth",
+   "label": "truth",
+   "prompt": "A quick simple doodle sketch of truth, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20281104,
+   "group": "ideas",
+   "what": "drawing of truth",
+   "intact_note": "mostly faces staring straight out",
+   "intact": "/static/img/draw_damage/truth_intact.webp",
+   "language": [
+    "/static/img/draw_damage/truth_language_1.webp",
+    "/static/img/draw_damage/truth_language_2.webp",
+    "/static/img/draw_damage/truth_language_3.webp",
+    "/static/img/draw_damage/truth_language_4.webp",
+    "/static/img/draw_damage/truth_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/truth_drawing_1.webp",
+    "/static/img/draw_damage/truth_drawing_2.webp",
+    "/static/img/draw_damage/truth_drawing_3.webp",
+    "/static/img/draw_damage/truth_drawing_4.webp",
+    "/static/img/draw_damage/truth_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "running",
+   "label": "running",
+   "prompt": "A quick simple doodle sketch of running, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20282104,
+   "group": "words",
+   "what": "drawing of running",
+   "intact_note": "a person running in all 8 drawings, as Muse did",
+   "intact": "/static/img/draw_damage/running_intact.webp",
+   "language": [
+    "/static/img/draw_damage/running_language_1.webp",
+    "/static/img/draw_damage/running_language_2.webp",
+    "/static/img/draw_damage/running_language_3.webp",
+    "/static/img/draw_damage/running_language_4.webp",
+    "/static/img/draw_damage/running_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/running_drawing_1.webp",
+    "/static/img/draw_damage/running_drawing_2.webp",
+    "/static/img/draw_damage/running_drawing_3.webp",
+    "/static/img/draw_damage/running_drawing_4.webp",
+    "/static/img/draw_damage/running_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "thinking",
+   "label": "thinking",
+   "prompt": "A quick simple doodle sketch of thinking, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20283100,
+   "group": "words",
+   "what": "drawing of thinking",
+   "intact_note": "people’s heads and faces, with no thought bubble",
+   "intact": "/static/img/draw_damage/thinking_intact.webp",
+   "language": [
+    "/static/img/draw_damage/thinking_language_1.webp",
+    "/static/img/draw_damage/thinking_language_2.webp",
+    "/static/img/draw_damage/thinking_language_3.webp",
+    "/static/img/draw_damage/thinking_language_4.webp",
+    "/static/img/draw_damage/thinking_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/thinking_drawing_1.webp",
+    "/static/img/draw_damage/thinking_drawing_2.webp",
+    "/static/img/draw_damage/thinking_drawing_3.webp",
+    "/static/img/draw_damage/thinking_drawing_4.webp",
+    "/static/img/draw_damage/thinking_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "something_fast",
+   "label": "something fast",
+   "prompt": "A quick simple doodle sketch of something fast, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20284103,
+   "group": "words",
+   "what": "drawing of something fast",
+   "intact_note": "no one object: streets, landscapes, buildings, a face",
+   "intact": "/static/img/draw_damage/something_fast_intact.webp",
+   "language": [
+    "/static/img/draw_damage/something_fast_language_1.webp",
+    "/static/img/draw_damage/something_fast_language_2.webp",
+    "/static/img/draw_damage/something_fast_language_3.webp",
+    "/static/img/draw_damage/something_fast_language_4.webp",
+    "/static/img/draw_damage/something_fast_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/something_fast_drawing_1.webp",
+    "/static/img/draw_damage/something_fast_drawing_2.webp",
+    "/static/img/draw_damage/something_fast_drawing_3.webp",
+    "/static/img/draw_damage/something_fast_drawing_4.webp",
+    "/static/img/draw_damage/something_fast_drawing_5.webp"
+   ]
+  },
+  {
+   "key": "something_heavy",
+   "label": "something heavy",
+   "prompt": "A quick simple doodle sketch of something heavy, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "seed": 20285102,
+   "group": "words",
+   "what": "drawing of something heavy",
+   "intact_note": "no one object: buildings, a bridge, a face, a seed pod, a dragon’s head",
+   "intact": "/static/img/draw_damage/something_heavy_intact.webp",
+   "language": [
+    "/static/img/draw_damage/something_heavy_language_1.webp",
+    "/static/img/draw_damage/something_heavy_language_2.webp",
+    "/static/img/draw_damage/something_heavy_language_3.webp",
+    "/static/img/draw_damage/something_heavy_language_4.webp",
+    "/static/img/draw_damage/something_heavy_language_5.webp"
+   ],
+   "drawing": [
+    "/static/img/draw_damage/something_heavy_drawing_1.webp",
+    "/static/img/draw_damage/something_heavy_drawing_2.webp",
+    "/static/img/draw_damage/something_heavy_drawing_3.webp",
+    "/static/img/draw_damage/something_heavy_drawing_4.webp",
+    "/static/img/draw_damage/something_heavy_drawing_5.webp"
    ]
   }
  ]

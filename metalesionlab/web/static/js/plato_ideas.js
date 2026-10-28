@@ -262,12 +262,204 @@
     legend.appendChild(h('span', null, [h('i', { class: 'line', style: { background: C.ink2 } }), 'medians (dashed)']));
   }
 
+  // --- God under damage (Stable Diffusion XL, an open model; not Muse Image) ------------------------------
+  // The slider shows one seed of SDXL's God (the pre-registered medoid) with its words part or its drawing part
+  // damaged; the charts count person, beard and halo over all its seeds (Muse Glimmer's answers).
+  var DM = { method: 'noise', level: 0 };
+  var FEATS = [['person', 'a person', 's-person'], ['beard', 'a beard', 's-beard'], ['halo', 'a halo', 's-halo'],
+               ['generic', 'a person with neither', 's-generic']];
+  function verdict(ok) { return ok ? 'supported' : 'not supported'; }
+  function pts1(x) { var v = Math.round(Math.abs(x) * 1000) / 10; return (x >= 0 ? '+' : '−') + v.toFixed(1); }  // share → ±points, half away from 0
+  function share(v) { return v == null ? '–' : pct(v) + '%'; }
+  function fams() { var m = D.damage.methods[DM.method]; return [m.lang, m.draw]; }
+  function readout(lv, f) {
+    var bits = [];
+    if (lv.cond !== 'intact') bits.push(lv.label);
+    bits.push('Glimmer: ' + f.emblem);
+    var has = ['person', 'beard', 'halo'].filter(function (k) { return f[k]; });
+    bits.push(has.length ? 'shows ' + has.join(', ') : 'no person');
+    return bits.join(' · ');
+  }
+  function renderDamageSlider() {
+    var X = D.damage, f = fams(), la = X.levels[f[0]], ld = X.levels[f[1]];
+    var max = Math.min(la.length, ld.length) - 1, r = $('dmg-level');
+    r.max = String(max);
+    if (DM.level > max) DM.level = max;
+    r.value = String(DM.level);
+    var a = X.frames[f[0]][DM.level], b = X.frames[f[1]][DM.level];
+    var step = DM.level ? 'damage step ' + DM.level + ' of ' + max : 'intact';
+    $('dmg-img-lang').src = a.img;
+    $('dmg-img-draw').src = b.img;
+    $('dmg-img-lang').alt = 'Stable Diffusion XL’s drawing of God, words part damaged, ' + step + '; Muse Glimmer reads ' + a.emblem;
+    $('dmg-img-draw').alt = 'Stable Diffusion XL’s drawing of God, drawing part damaged, ' + step + '; Muse Glimmer reads ' + b.emblem;
+    $('dmg-read-lang').textContent = readout(la[DM.level], a);
+    $('dmg-read-draw').textContent = readout(ld[DM.level], b);
+    $('dmg-level-out').textContent = step;
+    r.setAttribute('aria-valuetext', step);
+  }
+  // One small line chart per part: the share of SDXL's drawings of God showing each feature at each step.
+  function featureChart(host, fam, title) {
+    var R = D.damage.rates[fam], n = R.doses.length;
+    var W = Math.max(280, host.clientWidth || 420), H = Math.round(Math.min(300, Math.max(210, W * 0.55)));
+    var m = { l: 40, r: W < 380 ? 12 : 104, t: 30, b: 40 };
+    var x = function (i) { return m.l + (W - m.l - m.r) * i / (n - 1); };
+    var y = function (v) { return m.t + (H - m.t - m.b) * (1 - v); };
+    var root = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': title + ': ' + FEATS.map(function (ft) {
+      return ft[1] + ' ' + R[ft[0]].map(function (v) { return v == null ? '–' : pct(v) + '%'; }).join(', ');
+    }).join('; ') });
+    root.appendChild(s('text', { class: 'lbl-b', x: m.l, y: 16 }, title));
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+      root.appendChild(s('line', { class: 'grid', x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
+      root.appendChild(s('text', { class: 'tick', x: m.l - 6, y: y(v) + 4, 'text-anchor': 'end' }, pct(v) + '%'));
+    });
+    for (var i = 0; i < n; i++) {
+      root.appendChild(s('text', { class: 'tick', x: x(i), y: H - m.b + 18, 'text-anchor': 'middle' }, i === 0 ? 'intact' : String(i)));
+    }
+    root.appendChild(s('text', { class: 'tick', x: W - m.r, y: H - 4, 'text-anchor': 'end' }, 'more damage →'));
+    var ends = [];
+    FEATS.forEach(function (ft) {
+      var pts = R[ft[0]].map(function (v, i) { return v == null ? null : [x(i), y(v)]; }).filter(Boolean);
+      root.appendChild(s('polyline', { class: 'ln ' + ft[2], points: pts.map(function (p) { return p.join(','); }).join(' ') }));
+      pts.forEach(function (p) { root.appendChild(s('circle', { class: 'dt ' + ft[2], cx: p[0], cy: p[1], r: 4 })); });
+      if (pts.length) ends.push({ y: pts[pts.length - 1][1], text: ft[1].replace('a person with neither', 'neither') });
+    });
+    if (m.r > 40) {  // direct end labels, nudged apart
+      ends.sort(function (p, q) { return p.y - q.y; });
+      for (var k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < 14) ends[k].y = ends[k - 1].y + 14;
+      ends.forEach(function (e) { root.appendChild(s('text', { class: 'lbl', x: W - m.r + 10, y: e.y + 4 }, e.text)); });
+    }
+    var cross = s('line', { class: 'cross', x1: 0, x2: 0, y1: m.t, y2: H - m.b, visibility: 'hidden' });
+    root.appendChild(cross);
+    host.appendChild(root);
+    var labels = D.damage.levels[fam].map(function (lv) { return lv.label; });
+    root.addEventListener('pointermove', function (e) {
+      var rect = root.getBoundingClientRect(), k = W / rect.width, px = (e.clientX - rect.left) * k;
+      var i = Math.max(0, Math.min(n - 1, Math.round((px - m.l) / ((W - m.l - m.r) / (n - 1)))));
+      cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
+      showTip(host, x(i) / k, (e.clientY - rect.top), title + ' · ' + labels[i], FEATS.map(function (ft) {
+        var v = R[ft[0]][i];
+        return ft[1] + ': ' + (v == null ? '–' : Math.round(v * D.damage.n_seeds) + ' of ' + D.damage.n_seeds);
+      }));
+    });
+    root.addEventListener('pointerleave', function () { hideTip(host); cross.setAttribute('visibility', 'hidden'); });
+  }
+  function renderDamageCharts() {
+    var box = $('dmg-charts'), f = fams();
+    box.textContent = '';
+    var parts = [[f[0], 'Words part damaged'], [f[1], 'Drawing part damaged']];
+    var cells = parts.map(function () { var c = h('div', { class: 'iv-chart iv-dmg-chart' }); box.appendChild(c); return c; });
+    parts.forEach(function (p, i) { featureChart(cells[i], p[0], p[1]); });  // measured once both cells are laid out
+    var t = $('dmg-table'), X = D.damage;
+    t.textContent = '';
+    t.appendChild(h('thead', null, h('tr', null, ['Part damaged', 'Step'].concat(FEATS.map(function (ft) { return ft[1]; }))
+      .map(function (c, i) { return h('th', { class: i > 1 ? 'n' : null, text: c }); }))));
+    var body = h('tbody');
+    [[f[0], 'words'], [f[1], 'drawing']].forEach(function (p) {
+      X.levels[p[0]].forEach(function (lv, i) {
+        body.appendChild(h('tr', null, [h('td', { text: p[1] }), h('td', { text: lv.label })].concat(FEATS.map(function (ft) {
+          var v = X.rates[p[0]][ft[0]][i];
+          return h('td', { class: 'n', text: v == null ? '–' : Math.round(v * X.n_seeds) + ' / ' + X.n_seeds });
+        }))));
+      });
+    });
+    t.appendChild(body);
+  }
+  function damage() {
+    var X = D.damage;
+    if (!X) return;
+    $('damage').hidden = false;
+    var T1 = X.tests, d1 = T1.D1, nn = X.n_seeds;
+    $('dmg-n').textContent = String(nn);
+    $('dmg-answer').textContent = X.answer || '';
+    var lv = $('dmg-legend');
+    lv.textContent = '';
+    FEATS.forEach(function (ft) {
+      lv.appendChild(h('span', null, [h('i', { class: 'line ' + ft[2] }), ft[0] === 'generic' ? 'a person with neither beard nor halo' : ft[1]]));
+    });
+    // the pre-registered predictions, with what Glimmer (primary) and our eye found
+    var rows = [
+      ['Intact, SDXL draws a person (≥ 12 of ' + nn + '), a beard (≥ 8) and a halo less often than Muse (≤ 12)',
+       d1.person + ', ' + d1.beard + ' and ' + d1.halo + ' of ' + nn + (T1.D1_eye ? ' (by eye ' + T1.D1_eye.person + ', ' + T1.D1_eye.beard + ', ' + T1.D1_eye.halo + ')' : ''),
+       d1.passes.a_person_ge_12 && d1.passes.b_beard_ge_8 && d1.passes.c_halo_le_12],
+      ['Words damage takes the beard or halo before the figure', T1.D2_eye ? 'Glimmer: ' + verdict(T1.D2.primary) + '; by eye: ' + verdict(T1.D2_eye.primary) : verdict(T1.D2.primary), T1.D2.primary],
+      ['…and God drifts toward an ordinary person (≥ 4 of ' + nn + ' more), more than under drawing damage',
+       '+' + Math.round(T1.D3.language_rise * nn) + ' vs +' + Math.round(T1.D3.drawing_rise * nn) + ' of ' + nn + (T1.D3_eye ? ' (by eye +' + Math.round(T1.D3_eye.language_rise * nn) + ' vs +' + Math.round(T1.D3_eye.drawing_rise * nn) + ')' : ''), T1.D3.passes],
+      ['All 15 ideas and words: words damage changes the emblem more than drawing damage, at equal picture change',
+       pts1(T1.D4.difference) + ' points, 95% CI ' + pts1(T1.D4.ci95[0]) + ' to ' + pts1(T1.D4.ci95[1]), T1.D4.passes],
+      ['…and drawing damage costs more of the clean line drawing', sgn(T1.D5.difference) + ', CI ' + ciS(T1.D5.ci95), T1.D5.passes],
+      ['…and people appear where there were none, more under words damage', pts1(T1.D6.difference) + ' points, CI ' +
+        pts1(T1.D6.ci95[0]) + ' to ' + pts1(T1.D6.ci95[1]), T1.D6.passes]
+    ];
+    var vb = $('dmg-verdicts');
+    vb.textContent = '';
+    vb.appendChild(h('h3', { class: 'iv-h3', text: 'Predicted before the run' }));
+    var ul = h('ul', { class: 'iv-dmg-list' });
+    rows.forEach(function (r) {
+      ul.appendChild(h('li', { class: r[2] ? 'ok' : 'no' }, [h('b', { text: r[2] ? 'Held' : 'Failed' }), h('span', { text: r[0] }), h('small', { text: r[1] })]));
+    });
+    vb.appendChild(ul);
+    // controls
+    [].forEach.call($('dmg-method').querySelectorAll('button'), function (b) {
+      b.addEventListener('click', function () {
+        DM.method = b.getAttribute('data-method');
+        [].forEach.call($('dmg-method').children, function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        renderDamageSlider();
+        renderDamageCharts();
+      });
+    });
+    $('dmg-level').addEventListener('input', function (e) { DM.level = Number(e.target.value); renderDamageSlider(); });
+    Object.keys(X.frames).forEach(function (f) { X.frames[f].forEach(function (p) { (new Image()).src = p.img; }); });
+    renderDamageSlider();
+    renderDamageCharts();
+    $('dmg-charts-cap').textContent = X.charts_note || '';
+    // every other idea and word: intact, the most words damage, the most drawing damage (one seed each)
+    $('dmg-others-lede').textContent = X.others_note || '';
+    var ob = $('dmg-others');
+    ob.textContent = '';
+    X.others.forEach(function (o) {
+      ob.appendChild(h('figure', { class: 'iv-dmg-other' }, [
+        h('img', { src: o.trio, alt: 'Stable Diffusion XL’s drawing of ' + o.phrase + ': intact, with the most words-part damage, and with the most drawing-part damage',
+          width: 528, height: 176, loading: 'lazy', decoding: 'async' }),
+        h('figcaption', null, [h('b', { text: o.label }),
+          h('span', { text: o.same_emblem_lang_top == null ? 'no listed emblem when intact'
+            : 'emblem kept: words ' + share(o.same_emblem_lang_top) + ' · drawing ' + share(o.same_emblem_draw_top) }),
+          h('span', { text: 'a person: intact ' + share(o.person_intact) + ' · words ' + share(o.person_lang_top) + ' · drawing ' + share(o.person_draw_top) })])
+      ]));
+    });
+    $('dmg-others-cap').textContent = 'Each strip: intact · most damage to the words part · most damage to the drawing part, one seed (the intact ' +
+      'picture closest to the others). Percentages are over all 8 seeds at the most damage, by Muse Glimmer: the share still showing ' +
+      'its intact emblem, and the share with a person in it. All pictures ' +
+      'Stable Diffusion XL’s. ' + X.credit + '. Each idea’s full strip is on the draw pad, after you draw it.';
+  }
+
+  // --- beyond nouns: two verbs and two adjectives ---------------------------------------------------
+  function words() {
+    var W8 = D.words;
+    if (!W8) return;
+    $('words').hidden = false;
+    $('words-lede').textContent = W8.lede || '';
+    var box = $('words-grid');
+    box.textContent = '';
+    W8.words.forEach(function (x) {
+      var strip = h('div', { class: 'iv-strip', role: 'img', 'aria-label': 'Muse Image’s ' + x.n + ' drawings of ' + x.phrase + ': mostly ' + x.top.emblem });
+      for (var i = 0; i < x.n; i++) strip.appendChild(cell(x.sprite, i));
+      var hit = x.top.short === x.predicted_short;
+      box.appendChild(h('article', { class: 'iv-card' }, [
+        h('div', { class: 'iv-card-head' }, [h('b', { text: x.label }), h('span', { text: x.kind.toLowerCase() })]),
+        strip,
+        h('p', { class: 'iv-card-top' }, [h('b', { text: x.top.emblem }), document.createTextNode(' in ' + x.top.n + ' of ' + x.n),
+          h('small', { text: (hit ? 'as predicted' : 'predicted: ' + x.predicted) + ' · spread ' + f2(x.spread) + ' (95% CI ' + ci(x.spread_ci95) + ')' })])
+      ]));
+    });
+    $('words-cap').textContent = W8.caption || '';
+  }
+
   // --- draw one, and the method notes -------------------------------------------------------------
   function tryLinks() {
     var box = $('try-links');
     box.textContent = '';
     if (T.hasPage && !T.hasPage('/draw')) { $('try').hidden = true; return; }
-    D.ideas.forEach(function (x, i) {
+    D.ideas.concat(D.words ? D.words.words : []).forEach(function (x, i) {
       box.appendChild(h('a', { class: i === 0 ? 'lead' : null, href: '/draw?thing=' + encodeURIComponent(x.key), text: 'Draw ' + x.phrase }));
     });
   }
@@ -281,11 +473,13 @@
 
   function render() {
     hero();
+    damage();
     people();
     grid();
     bars();
     spreadText();
     spreadChart();
+    words();
     tryLinks();
     method();
   }
@@ -297,7 +491,9 @@
     var last = window.innerWidth, timer = 0;
     window.addEventListener('resize', function () {
       clearTimeout(timer);
-      timer = setTimeout(function () { if (window.innerWidth !== last) { last = window.innerWidth; spreadChart(); } }, 150);
+      timer = setTimeout(function () {
+        if (window.innerWidth !== last) { last = window.innerWidth; spreadChart(); if (D.damage) renderDamageCharts(); }
+      }, 150);
     });
   }).catch(function (e) {
     var el = $('load-error');

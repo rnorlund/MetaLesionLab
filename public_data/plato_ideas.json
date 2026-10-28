@@ -711,5 +711,893 @@
   "AI drawings: Meta Muse Image (muse-image-1.0), the same doodle prompt as the things",
   "Emblem labels: Meta Muse Glimmer 30B, run on our own GPU",
   "Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0)"
- ]
+ ],
+ "words": {
+  "plan": "docs/plato_ideas_damage_plan.md",
+  "tests": {
+   "W1": {
+    "predicted_on_top": 1,
+    "of": 4,
+    "words": [
+     "running"
+    ],
+    "passes": false
+   },
+   "W2": {
+    "concentration": {
+     "running": 1.0,
+     "thinking": 0.8125
+    },
+    "passes": true
+   },
+   "W3": {
+    "spread": {
+     "running": 0.2005,
+     "thinking": 0.191,
+     "something_fast": 0.455,
+     "something_heavy": 0.444
+    },
+    "passes": true
+   },
+   "W4": {
+    "ideas_median": 0.2272,
+    "passes": true
+   },
+   "W1_by_eye": {
+    "predicted_on_top": 2,
+    "words": [
+     "running",
+     "thinking"
+    ]
+   },
+   "W2_by_eye": {
+    "running": 1.0,
+    "thinking": 0.875
+   },
+   "context": {
+    "things_median": 0.1979,
+    "ideas_median": 0.2272,
+    "words_median": 0.3223,
+    "above_every_thing": [
+     "something_fast",
+     "something_heavy"
+    ],
+    "things_percentile": {
+     "running": 0.5111,
+     "thinking": 0.4444,
+     "something_fast": 1.0,
+     "something_heavy": 1.0
+    },
+    "ideas_below": {
+     "running": 2,
+     "thinking": 2,
+     "something_fast": 10,
+     "something_heavy": 10
+    }
+   },
+   "label_check": {
+    "pictures": 64,
+    "agreement": 0.8125,
+    "kappa": 0.7803,
+    "labels_by_eye_sha256": "46114f0e43ab2ff1e0b58806a671078d19e21ace4d6757c1b49e5d31982f041b"
+   }
+  },
+  "words": [
+   {
+    "key": "running",
+    "label": "running",
+    "group": "action",
+    "n": 16,
+    "prompt": "A quick simple doodle sketch of running, black marker on plain white, like a 20-second drawing, no text, no shading.",
+    "predicted": "a person running",
+    "top": {
+     "emblem": "a person running",
+     "short": "runner",
+     "n": 16,
+     "share": 1.0,
+     "share_ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "emblem_counts": [
+     [
+      "a person running",
+      16
+     ]
+    ],
+    "spread": 0.2005,
+    "spread_ci95": [
+     0.1686,
+     0.2298
+    ],
+    "by_eye": {
+     "top": "a person running",
+     "short": "runner",
+     "n": 16,
+     "share": 1.0,
+     "counts": [
+      [
+       "a person running",
+       16
+      ]
+     ]
+    },
+    "agreement": 1.0,
+    "refused": 0,
+    "attempts": 4
+   },
+   {
+    "key": "thinking",
+    "label": "thinking",
+    "group": "action",
+    "n": 16,
+    "prompt": "A quick simple doodle sketch of thinking, black marker on plain white, like a 20-second drawing, no text, no shading.",
+    "predicted": "a person pondering, hand on chin",
+    "top": {
+     "emblem": "a thought bubble",
+     "short": "thought bubble",
+     "n": 13,
+     "share": 0.8125,
+     "share_ci95": [
+      0.625,
+      1.0
+     ]
+    },
+    "emblem_counts": [
+     [
+      "a thought bubble",
+      13
+     ],
+     [
+      "a person pondering, hand on chin",
+      3
+     ]
+    ],
+    "spread": 0.191,
+    "spread_ci95": [
+     0.1483,
+     0.2349
+    ],
+    "by_eye": {
+     "top": "a person pondering, hand on chin",
+     "short": "thinker pose",
+     "n": 14,
+     "share": 0.875,
+     "counts": [
+      [
+       "a person pondering, hand on chin",
+       14
+      ],
+      [
+       "a thought bubble",
+       2
+      ]
+     ]
+    },
+    "agreement": 0.3125,
+    "refused": 0,
+    "attempts": 4
+   },
+   {
+    "key": "something_fast",
+    "label": "something fast",
+    "group": "quality",
+    "n": 16,
+    "prompt": "A quick simple doodle sketch of something fast, black marker on plain white, like a 20-second drawing, no text, no shading.",
+    "predicted": "a race car",
+    "top": {
+     "emblem": "a rocket or a plane",
+     "short": "rocket or plane",
+     "n": 11,
+     "share": 0.6875,
+     "share_ci95": [
+      0.5,
+      0.875
+     ]
+    },
+    "emblem_counts": [
+     [
+      "a rocket or a plane",
+      11
+     ],
+     [
+      "a race car",
+      4
+     ],
+     [
+      "motion lines",
+      1
+     ]
+    ],
+    "spread": 0.455,
+    "spread_ci95": [
+     0.3573,
+     0.5456
+    ],
+    "by_eye": {
+     "top": "a rocket or a plane",
+     "short": "rocket or plane",
+     "n": 11,
+     "share": 0.6875,
+     "counts": [
+      [
+       "a rocket or a plane",
+       11
+      ],
+      [
+       "a race car",
+       4
+      ]
+     ]
+    },
+    "agreement": 0.9375,
+    "refused": 0,
+    "attempts": 4
+   },
+   {
+    "key": "something_heavy",
+    "label": "something heavy",
+    "group": "quality",
+    "n": 16,
+    "prompt": "A quick simple doodle sketch of something heavy, black marker on plain white, like a 20-second drawing, no text, no shading.",
+    "predicted": "a weight",
+    "top": {
+     "emblem": "an anvil",
+     "short": "anvil",
+     "n": 11,
+     "share": 0.6875,
+     "share_ci95": [
+      0.5,
+      0.875
+     ]
+    },
+    "emblem_counts": [
+     [
+      "an anvil",
+      11
+     ],
+     [
+      "a weight",
+      4
+     ],
+     [
+      "something else",
+      1
+     ]
+    ],
+    "spread": 0.444,
+    "spread_ci95": [
+     0.2942,
+     0.5695
+    ],
+    "by_eye": {
+     "top": "an anvil",
+     "short": "anvil",
+     "n": 11,
+     "share": 0.6875,
+     "counts": [
+      [
+       "an anvil",
+       11
+      ],
+      [
+       "a weight",
+       4
+      ]
+     ]
+    },
+    "agreement": 1.0,
+    "refused": 0,
+    "attempts": 4
+   }
+  ]
+ },
+ "damage": {
+  "model": "stabilityai/stable-diffusion-xl-base-1.0",
+  "credit": "Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M",
+  "plan": "docs/plato_ideas_damage_plan.md",
+  "seed_index": 13,
+  "rates": {
+   "text-noise": {
+    "doses": [
+     0.0,
+     0.25,
+     0.5,
+     0.625,
+     0.75,
+     1.0
+    ],
+    "person": [
+     0.75,
+     0.6875,
+     0.625,
+     0.4375,
+     0.625,
+     0.75
+    ],
+    "beard": [
+     0.625,
+     0.4375,
+     0.1875,
+     0.0625,
+     0.0625,
+     0.125
+    ],
+    "halo": [
+     0.1875,
+     0.125,
+     0.1875,
+     0.0625,
+     0.125,
+     0.0
+    ],
+    "generic": [
+     0.1875,
+     0.3125,
+     0.3125,
+     0.375,
+     0.4375,
+     0.625
+    ],
+    "fails_first": {
+     "person": null,
+     "beard": 1,
+     "halo": 2
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.4375
+   },
+   "unet-noise": {
+    "doses": [
+     0.0,
+     0.75,
+     0.825,
+     0.9,
+     1.0,
+     1.1
+    ],
+    "person": [
+     0.75,
+     0.5,
+     0.4375,
+     0.5,
+     0.25,
+     0.125
+    ],
+    "beard": [
+     0.625,
+     0.3125,
+     0.3125,
+     0.3125,
+     0.0625,
+     0.0
+    ],
+    "halo": [
+     0.1875,
+     0.25,
+     0.0625,
+     0.0625,
+     0.0625,
+     0.125
+    ],
+    "generic": [
+     0.1875,
+     0.125,
+     0.125,
+     0.1875,
+     0.1875,
+     0.125
+    ],
+    "fails_first": {
+     "person": 3,
+     "beard": 3,
+     "halo": 1
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.0
+   },
+   "text-zero": {
+    "doses": [
+     0.0,
+     0.2,
+     0.25,
+     0.27,
+     0.29,
+     0.31
+    ],
+    "person": [
+     0.75,
+     0.8125,
+     0.6875,
+     0.375,
+     0.5,
+     0.5
+    ],
+    "beard": [
+     0.625,
+     0.5625,
+     0.25,
+     0.125,
+     0.0625,
+     0.0625
+    ],
+    "halo": [
+     0.1875,
+     0.0625,
+     0.1875,
+     0.125,
+     0.0625,
+     0.0625
+    ],
+    "generic": [
+     0.1875,
+     0.3125,
+     0.375,
+     0.3125,
+     0.4375,
+     0.4375
+    ],
+    "fails_first": {
+     "person": null,
+     "beard": 1,
+     "halo": 0
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.25
+   },
+   "unet-zero": {
+    "doses": [
+     0.0,
+     0.05,
+     0.1,
+     0.15,
+     0.2
+    ],
+    "person": [
+     0.75,
+     0.75,
+     0.625,
+     0.6875,
+     0.4375
+    ],
+    "beard": [
+     0.625,
+     0.5,
+     0.5625,
+     0.5,
+     0.125
+    ],
+    "halo": [
+     0.1875,
+     0.125,
+     0.1875,
+     0.0625,
+     0.125
+    ],
+    "generic": [
+     0.1875,
+     0.3125,
+     0.0625,
+     0.25,
+     0.375
+    ],
+    "fails_first": {
+     "person": null,
+     "beard": 3,
+     "halo": 2
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.1875
+   }
+  },
+  "rates_eye": {
+   "text-noise": {
+    "doses": [
+     0.0,
+     0.25,
+     0.5,
+     0.625,
+     0.75,
+     1.0
+    ],
+    "person": [
+     0.9375,
+     0.875,
+     0.6875,
+     0.6875,
+     0.6875,
+     0.875
+    ],
+    "beard": [
+     0.625,
+     0.4375,
+     0.1875,
+     0.125,
+     0.0625,
+     0.0
+    ],
+    "halo": [
+     0.375,
+     0.25,
+     0.125,
+     0.0625,
+     0.0625,
+     0.0
+    ],
+    "generic": [
+     0.25,
+     0.375,
+     0.4375,
+     0.5,
+     0.5625,
+     0.875
+    ],
+    "fails_first": {
+     "person": null,
+     "beard": 1,
+     "halo": 1
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.625
+   },
+   "unet-noise": {
+    "doses": [
+     0.0,
+     0.75,
+     0.825,
+     0.9,
+     1.0,
+     1.1
+    ],
+    "person": [
+     0.9375,
+     0.9375,
+     0.75,
+     0.625,
+     0.3125,
+     0.0625
+    ],
+    "beard": [
+     0.625,
+     0.4375,
+     0.375,
+     0.3125,
+     0.0625,
+     0.0
+    ],
+    "halo": [
+     0.375,
+     0.0625,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "generic": [
+     0.25,
+     0.4375,
+     0.375,
+     0.3125,
+     0.25,
+     0.0625
+    ],
+    "fails_first": {
+     "person": 3,
+     "beard": 3,
+     "halo": 0
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.1875
+   },
+   "text-zero": {
+    "doses": [
+     0.0,
+     0.2,
+     0.25,
+     0.27,
+     0.29,
+     0.31
+    ],
+    "person": [
+     0.9375,
+     0.9375,
+     0.625,
+     0.625,
+     0.5625,
+     0.5625
+    ],
+    "beard": [
+     0.625,
+     0.4375,
+     0.25,
+     0.125,
+     0.1875,
+     0.1875
+    ],
+    "halo": [
+     0.375,
+     0.25,
+     0.1875,
+     0.0625,
+     0.0,
+     0.0
+    ],
+    "generic": [
+     0.25,
+     0.375,
+     0.3125,
+     0.4375,
+     0.375,
+     0.375
+    ],
+    "fails_first": {
+     "person": null,
+     "beard": 1,
+     "halo": 2
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.1875
+   },
+   "unet-zero": {
+    "doses": [
+     0.0,
+     0.05,
+     0.1,
+     0.15,
+     0.2
+    ],
+    "person": [
+     0.9375,
+     0.9375,
+     0.9375,
+     0.875,
+     0.625
+    ],
+    "beard": [
+     0.625,
+     0.5625,
+     0.5625,
+     0.5,
+     0.1875
+    ],
+    "halo": [
+     0.375,
+     0.3125,
+     0.375,
+     0.1875,
+     0.1875
+    ],
+    "generic": [
+     0.25,
+     0.3125,
+     0.25,
+     0.3125,
+     0.3125
+    ],
+    "fails_first": {
+     "person": null,
+     "beard": 3,
+     "halo": null
+    },
+    "emblem_before_figure": true,
+    "generic_peak_rise": 0.0625
+   }
+  },
+  "tests": {
+   "D1": {
+    "person": 12,
+    "beard": 10,
+    "halo": 3,
+    "n": 16,
+    "passes": {
+     "a_person_ge_12": true,
+     "b_beard_ge_8": true,
+     "c_halo_le_12": true
+    }
+   },
+   "D1_eye": {
+    "person": 15,
+    "beard": 10,
+    "halo": 6,
+    "n": 16,
+    "passes": {
+     "a_person_ge_12": true,
+     "b_beard_ge_8": true,
+     "c_halo_le_12": true
+    }
+   },
+   "D2": {
+    "primary": true,
+    "secondary_zero": true
+   },
+   "D2_eye": {
+    "primary": true,
+    "secondary_zero": true
+   },
+   "D3": {
+    "language_rise": 0.4375,
+    "drawing_rise": 0.0,
+    "passes": true
+   },
+   "D3_eye": {
+    "language_rise": 0.625,
+    "drawing_rise": 0.1875,
+    "passes": true
+   },
+   "D4": {
+    "difference": -0.0948,
+    "ci95": [
+     -0.1635,
+     -0.03
+    ],
+    "targets": [
+     0.179,
+     0.3581,
+     0.5371
+    ],
+    "n_units": 78,
+    "language": -0.4735,
+    "drawing": -0.3787,
+    "ci95_by_key": [
+     -0.1726,
+     0.0055
+    ],
+    "passes": true
+   },
+   "D5": {
+    "difference": 0.0005,
+    "ci95": [
+     -0.0097,
+     0.0111
+    ],
+    "targets": [
+     0.1757,
+     0.3515,
+     0.5272
+    ],
+    "n_units": 128,
+    "language": -0.0978,
+    "drawing": -0.0983,
+    "ci95_by_key": [
+     -0.0115,
+     0.0128
+    ],
+    "passes": false
+   },
+   "D6": {
+    "difference": 0.1933,
+    "ci95": [
+     0.1075,
+     0.2861
+    ],
+    "targets": [
+     0.1733,
+     0.3466,
+     0.5198
+    ],
+    "n_units": 58,
+    "language": 0.2868,
+    "drawing": 0.0935,
+    "ci95_by_key": [
+     0.1004,
+     0.276
+    ],
+    "passes": true
+   },
+   "god_bearded": {
+    "noise": {
+     "difference": -0.1286,
+     "ci95": [
+      -0.293,
+      0.0416
+     ],
+     "targets": [
+      0.1799,
+      0.3598,
+      0.5396
+     ],
+     "n_units": 16,
+     "language": -0.3434,
+     "drawing": -0.2148
+    },
+    "zero": {
+     "difference": -0.0001,
+     "ci95": [
+      -0.1134,
+      0.1033
+     ],
+     "targets": [
+      0.1227,
+      0.2454,
+      0.3682
+     ],
+     "n_units": 16,
+     "language": -0.1274,
+     "drawing": -0.1273
+    }
+   },
+   "agreement": {
+    "person": {
+     "n": 320,
+     "agreement": 0.8094,
+     "kappa": 0.6013
+    },
+    "beard": {
+     "n": 320,
+     "agreement": 0.9437,
+     "kappa": 0.858
+    },
+    "halo": {
+     "n": 320,
+     "agreement": 0.8812,
+     "kappa": 0.4328
+    }
+   }
+  },
+  "severity": {
+   "text-noise": {
+    "all": {
+     "0.25": 0.2769,
+     "0.5": 0.4037,
+     "0.625": 0.5,
+     "0.75": 0.5914,
+     "1": 0.7029
+    },
+    "god": {
+     "0.25": 0.2088,
+     "0.5": 0.3677,
+     "0.625": 0.4526,
+     "0.75": 0.5564,
+     "1": 0.7195
+    }
+   },
+   "unet-noise": {
+    "all": {
+     "0.75": 0.4622,
+     "0.825": 0.5227,
+     "0.9": 0.5869,
+     "1": 0.6921,
+     "1.1": 0.8061
+    },
+    "god": {
+     "0.75": 0.4065,
+     "0.825": 0.483,
+     "0.9": 0.5501,
+     "1": 0.6551,
+     "1.1": 0.7933
+    }
+   },
+   "text-zero": {
+    "all": {
+     "0.2": 0.3126,
+     "0.25": 0.4707,
+     "0.27": 0.5257,
+     "0.29": 0.5435,
+     "0.31": 0.5616
+    },
+    "god": {
+     "0.2": 0.3126,
+     "0.25": 0.4707,
+     "0.27": 0.5257,
+     "0.29": 0.5435,
+     "0.31": 0.5616
+    }
+   },
+   "unet-zero": {
+    "all": {
+     "0.05": 0.1607,
+     "0.1": 0.2262,
+     "0.15": 0.3214,
+     "0.2": 0.4909
+    },
+    "god": {
+     "0.05": 0.1607,
+     "0.1": 0.2262,
+     "0.15": 0.3214,
+     "0.2": 0.4909
+    }
+   }
+  }
+ }
 }
