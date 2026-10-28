@@ -1,14 +1,21 @@
 /* Ask the Lab (/ask). Shared tokens are in app.css; this page also has a dark theme. */
-.ask { margin: 20px auto 0; width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.ask-hero { padding: 26px; display: flex; flex-direction: column; gap: 12px; }
+.ask { margin: 20px auto 0; width: 100%; display: flex; flex-direction: column; gap: 20px; outline: none; }
+@media (min-width: 1200px) {
+  .ask { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, clamp(320px, 24vw, 540px)); grid-template-areas: "hero how" "thread how";
+    gap: 20px clamp(20px, 1.6vw, 40px); align-items: start; }
+  .ask-hero { grid-area: hero; }
+  .ask-thread { grid-area: thread; }
+  .ask-how { grid-area: how; position: sticky; top: 16px; }
+}
+.ask-hero { padding: clamp(26px, 2vw, 52px); display: flex; flex-direction: column; gap: 12px; }
 .ask-kicker { font-family: var(--mono); font-size: 12px; color: var(--blue); }
-.ask-hero h1 { margin: 0; font-size: clamp(30px, 4vw, 42px); letter-spacing: -0.02em; line-height: 1.05; }
-.ask-lede { margin: 0; font-size: 17px; line-height: 1.55; color: var(--ink-2); max-width: 780px; }
+.ask-hero h1 { margin: 0; font-size: clamp(30px, calc(12px + 2.2vw), 68px); letter-spacing: -0.02em; line-height: 1.05; }
+.ask-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .ask-form { display: flex; gap: 10px; align-items: stretch; margin-top: 6px; }
-.ask-form textarea { flex: 1 1 auto; font-size: 16px; min-height: 52px; resize: vertical; line-height: 1.4; }
+.ask-form textarea { flex: 1 1 auto; font-size: clamp(16px, calc(11px + 0.35vw), 20px); min-height: 52px; resize: vertical; line-height: 1.4; }
 .ask-form .btn { min-width: 104px; }
 .ask-suggest { display: flex; flex-wrap: wrap; gap: 8px; }
-.ask-chip { border: 1px solid var(--line-2); background: var(--soft); color: var(--ink-2); border-radius: 999px; padding: 8px 14px; font-size: 13px; line-height: 1.35; cursor: pointer; text-align: left; min-height: 36px; }
+.ask-chip { border: 1px solid var(--line-2); background: var(--soft); color: var(--ink-2); border-radius: 999px; padding: 8px 14px; font-size: var(--fs-sm); line-height: 1.35; cursor: pointer; text-align: left; min-height: 36px; }
 .ask-chip:hover { border-color: var(--blue); color: var(--ink); }
 .ask-chip:disabled { opacity: 0.55; cursor: not-allowed; }
 .ask-meta { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
@@ -17,7 +24,7 @@
 .ask-thread:empty { display: none; }
 .ask-turn { display: flex; flex-direction: column; gap: 14px; }
 .ask-q { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
-.ask-q h2 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.ask-q h2 { margin: 0; font-size: clamp(17px, calc(12px + 0.4vw), 23px); font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .ask-state { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
 
 .ask-trace { border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
@@ -39,7 +46,7 @@
 .ask-data summary { cursor: pointer; font-size: 12px; color: var(--blue); width: fit-content; }
 .ask-data pre { max-height: 260px; overflow: auto; margin: 6px 0 0; padding: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: 11.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; color: var(--ink-2); }
 
-.ask-answer { font-size: 15.5px; line-height: 1.6; overflow-wrap: anywhere; }
+.ask-answer { font-size: calc(var(--fs-body) + 0.5px); line-height: 1.6; overflow-wrap: anywhere; max-width: var(--measure); }
 .ask-answer p { margin: 0 0 10px; }
 .ask-answer p:last-child, .ask-answer ul:last-child, .ask-answer ol:last-child { margin-bottom: 0; }
 .ask-answer ul, .ask-answer ol { margin: 0 0 10px; padding-left: 22px; }
@@ -62,7 +69,7 @@
 .ask-error { color: var(--red); }
 
 .ask-how h2 { margin-bottom: 10px; }
-.ask-steps-how { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.55; color: var(--ink-2); max-width: 820px; }
+.ask-steps-how { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .ask-steps-how b { color: var(--ink); }
 
 @media (max-width: 720px) {

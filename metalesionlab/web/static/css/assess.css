@@ -1,5 +1,5 @@
 /* Naming Assessment (/assess) and the public naming test (/take). */
-.page-intro { margin: 14px 0 0; font-size: 14px; color: var(--ink-2); }
+.page-intro { margin: 14px 0 0; font-size: clamp(14px, calc(10px + 0.25vw), 17px); color: var(--ink-2); }
 .page-intro p { margin: 0; }
 .disclaimer { margin: 0; padding: 10px 14px; border-radius: 10px; background: var(--amber-soft); border: 1px solid #FCD34D; font-size: 13px; }
 .input-unit { display: flex; align-items: center; gap: 6px; }
@@ -83,20 +83,26 @@ body.admin-open { overflow: hidden; }
 .admin-help { font-size: 12px; color: var(--muted); text-align: center; margin: 6px 0 0; }
 
 /* The public test */
-.take { max-width: 760px; margin: 20px auto 0; display: flex; flex-direction: column; gap: 16px; }
-.take .panel h2 { font-size: 20px; }
-.take .lead { font-size: 16px; color: var(--ink-2); margin: 0; }
-.take ul.plain { margin: 0; padding-left: 20px; line-height: 1.7; color: var(--ink-2); }
+.take { max-width: min(100%, 1680px); margin: 20px auto 0; display: flex; flex-direction: column; gap: 16px; }
+.take-intro .take-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.take .lead, .take ul.plain, .take .note, .take .small { max-width: var(--measure); }
+@media (min-width: 1100px) {  /* the test, then the consent beside it */
+  .panel.stack.take-intro { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px clamp(32px, 3vw, 80px); align-items: start; padding: clamp(18px, 2vw, 44px); }
+  .take-intro .take-col + .take-col { padding-top: 6px; }
+}
+.take .panel h2 { font-size: clamp(20px, calc(12px + 0.7vw), 30px); }
+.take .lead { font-size: var(--fs-lede); color: var(--ink-2); margin: 0; }
+.take ul.plain { margin: 0; padding-left: 20px; line-height: 1.7; color: var(--ink-2); font-size: var(--fs-body); }
 .choice { display: flex; flex-wrap: wrap; gap: 10px; }
 .choice .btn { flex: 1 1 200px; min-height: 56px; font-size: 16px; }
 .choice .btn[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; }
 .meter { height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
 .meter > div { height: 100%; width: 0; background: var(--green); transition: width 0.08s linear; }
 .big-result { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.big-result .stat b { font-size: 34px; }
+.big-result .stat b { font-size: clamp(34px, calc(20px + 1.1vw), 52px); }
 .big-result .stat .ref { display: block; margin-top: 6px; font-size: 13px; color: var(--ink-2); }
 .breakdown { margin: 0; padding-left: 20px; line-height: 1.7; }
-.heard-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.heard-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 9vw, 220px), 1fr)); gap: 10px; }
 .heard-list figure { margin: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #FFFFFF; font-size: 13px; }
 .heard-list img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; border-bottom: 1px solid var(--line); }
 .heard-list figcaption { padding: 6px 8px; display: flex; flex-direction: column; gap: 2px; }

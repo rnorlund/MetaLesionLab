@@ -135,20 +135,20 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .chip { border: 1px solid #4B5563; border-radius: 999px; padding: 4px 10px; color: #E5E7EB; }
 .chip-sample { background: var(--amber); color: var(--ink); border-color: var(--amber); font-weight: 500; }
 
-.layout { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; align-items: flex-start; }
-.layout > aside { flex: 1 1 300px; max-width: 380px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.layout { display: flex; flex-wrap: wrap; gap: clamp(20px, 1.4vw, 36px); margin-top: 20px; align-items: flex-start; }
+.layout > aside { flex: 1 1 300px; max-width: clamp(380px, 19vw, 480px); display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .layout > main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
 .row { display: flex; flex-wrap: wrap; gap: 20px; }
 .row > * { min-width: 0; }
 
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(18px, 1.2vw, 30px); }
 .panel.stack { display: flex; flex-direction: column; gap: 14px; }
-.panel h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.panel h2 { margin: 0; font-size: clamp(15px, calc(10px + 0.3vw), 18px); font-weight: 600; }
 .panel h2 .sub { font-weight: 400; color: var(--muted); }
 .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 14px; }
 .panel-head .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.lede { margin: 0; font-size: 13px; color: var(--muted); }
-.footnote { margin: 24px 0 0; font-size: 12px; color: var(--muted); }
+.lede { margin: 0; font-size: var(--fs-sm); color: var(--muted); max-width: var(--measure); }
+.footnote { margin: 24px 0 0; font-size: 12px; color: var(--muted); max-width: 120ch; }
 
 /* --- Model Lab tabs (/lab and /lab/cut) ------------------------------------------------ */
 .lab-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line-2); }
@@ -160,7 +160,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* --- forms ---------------------------------------------------------------------------- */
 .field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; min-width: 0; }
 .fields > .field { flex: 1 1 140px; }
-.field .hint { font-weight: 400; font-size: 12px; color: var(--muted); }
+.field .hint, .stack > .hint { font-weight: 400; font-size: 12px; color: var(--muted); }
 .fields { display: flex; flex-wrap: wrap; gap: 10px; }
 select, input[type="text"], input[type="search"], textarea {
   font-weight: 400; padding: 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel); width: 100%; min-height: 42px;
@@ -282,5 +282,16 @@ dialog::backdrop { background: rgba(17, 24, 39, 0.55); }
 .series-go { position: absolute; right: 16px; bottom: 14px; font-size: 18px; color: var(--muted); }
 .series-card .series-body { padding-right: 40px; }
 .series-draw { margin: 0; font-size: 16px; color: var(--ink-2); }
+
+/* A page's question over its big title ("What would Plato ask an AI?" over "Is there one ideal chair?"),
+   set as one composed title: the lead-in in the same sans at about 44% of the headline (never below
+   1.2rem, so on a phone it still reads as a lead-in), a short rule before it, a tight gap to the headline.
+   An optional second line (.kicker-q) names the question: "Question 1: …". */
+.title-pair { display: flex; flex-direction: column; min-width: 0; }
+.title-kicker { display: flex; flex-wrap: wrap; align-items: center; column-gap: 0.45em; margin: 0 0 0.32em;
+  font-family: var(--sans); font-size: max(1.2rem, calc(var(--fs-h1) * 0.44)); font-weight: 500; line-height: 1.2;
+  letter-spacing: -0.012em; color: var(--orange-dark); }
+.title-kicker::before { content: ""; flex: none; width: 1.1em; height: 2px; border-radius: 1px; background: currentColor; opacity: 0.85; }
+.title-kicker .kicker-q { flex-basis: 100%; margin-top: 0.25em; font-size: max(0.6em, 0.875rem); font-weight: 400; letter-spacing: 0; color: var(--ink-2); }
 .series-draw a { font-weight: 600; }
 
