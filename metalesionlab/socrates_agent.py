@@ -32,7 +32,7 @@ from typing import Callable
 
 from metalesionlab import agent_engine as engine
 from metalesionlab import lab_agent, meta_api
-from metalesionlab.brand import BRAND
+from metalesionlab.brand import PLATO
 
 MODEL = meta_api.CHAT_MODEL
 REASONING_EFFORT = "low"
@@ -680,7 +680,7 @@ STRIP = [re.compile(r"`[^`]*`"), re.compile(r"\]\([^)]*\)"), re.compile(r"https?
 SKIP = engine.NO_HARVEST | {"answer", "text", "quote_rule", "note", "reading", "definitions", "meaning"}
 
 
-SYSTEM_PROMPT = """You are an AI (Muse Spark, made by Meta) playing Socrates on "Ask Socrates", the dialogue page of "What would Plato ask an AI?", a series of experiments by """ + BRAND + """. You are not the historical Socrates; if asked who you are, say plainly that you are an AI playing Socrates.
+SYSTEM_PROMPT = """You are an AI (Muse Spark, made by Meta) playing Socrates on "Ask Socrates", the dialogue page of """ + PLATO.name + """ ("What would Plato ask an AI?"), a series of experiments that put Plato's questions to Meta's AI and to people. You are not the historical Socrates; if asked who you are, say plainly that you are an AI playing Socrates.
 
 The experiments, behind your tools:
 - plato_stats: Plato's Chair. Muse Image drew 35 things (chair, boat, umbrella, ...) 12-16 times each with the same doodle prompt; Meta DINOv2 measured how varied ("spread") its drawings are against 200 people's drawings of each thing from Google's Quick, Draw! game (CC BY 4.0). Index = AI spread / people's spread; below 1 means the AI is more uniform. Its chair: one slat-back dining chair, 16 times.

@@ -1,7 +1,14 @@
-"""Build the data bundle a public deployment of the web app reads (TIPPA_DATA_DIR), and check it.
+"""Build the data bundle a public deployment of one site reads (TIPPA_DATA_DIR), and check it.
 
-runs/ holds everything the experiments produced (159 MB, gitignored). The public site needs much
-less, so this copies exactly what the pages read into dist/site_data/ (gitignored):
+One codebase serves two sites (MLL_SITE, metalesionlab/brand.py), and each gets its own bundle:
+
+    --site plato   Plato's Chair (the default). Its pages read only files in the repository (web/data/,
+                   public_data/, static/), so the bundle holds no data from runs/ at all: just BUNDLE.json.
+                   Nothing of the naming lab (picture sets, lesion runs, scenes, judgments) goes with it.
+    --site lingua  Tippa Lingua, the sister project: the part of runs/ its pages read, below.
+
+runs/ holds everything the experiments produced (159 MB, gitignored). The Lingua site needs much
+less, so this copies exactly what its pages read into dist/site_data/ (gitignored):
 
     sets/<demo set>/      manifest.json and the chosen picture of each item (the other candidates
                           are left out); an item still in review keeps its candidates. Pictures are
@@ -21,10 +28,11 @@ Then it checks the bundle and exits non-zero if any check fails:
 - no human drawings (Quick, Draw! files) and no participant or patient folders;
 - no absolute local paths.
 
-    python scripts/build_site_bundle.py [--out dist/site_data] [--sets 'demo_*'] [--stage dist/space]
+    python scripts/build_site_bundle.py --site plato|lingua [--out dist/site_data] [--sets 'demo_*'] [--stage dist/space]
 
 --stage also assembles a ready-to-upload folder for a Hugging Face Space (Docker SDK): the tracked
-app code, public_data/, the Dockerfile and the bundle, with a Space README. See deploy/README.md.
+app code, public_data/, the Dockerfile (built for that site: MLL_SITE) and the bundle, with a Space
+README for the site. See deploy/README.md.
 """
 from __future__ import annotations
 
@@ -45,7 +53,7 @@ from PIL import Image
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from metalesionlab import meta_api  # noqa: E402
+from metalesionlab import brand, meta_api  # noqa: E402
 
 MARKER = "BUNDLE.json"
 AUDIO_EXT = {".wav", ".wave", ".mp3", ".m4a", ".aac", ".flac", ".ogg", ".oga", ".opus", ".webm", ".aif", ".aiff",
@@ -56,8 +64,32 @@ FORBIDDEN_PATH = re.compile(r"quickdraw|quick_draw|doodle|ndjson|(^|/)human(/|$)
                             r"(^|/)\.env|costs\.jsonl|norms|donations", re.I)  # donations: Draw a chair, never in a bundle
 KEY_SHAPES = [re.compile(rb"MODEL_API_KEY"), re.compile(rb"\bsk-[A-Za-z0-9_-]{20,}"),
               re.compile(rb"Bearer\s+[A-Za-z0-9._-]{20,}"), re.compile(rb"\bhf_[A-Za-z0-9]{30,}")]
-SPACE_README = """---
-title: Tippa Lingua
+SPACE_README = {
+    "plato": f"""---
+title: {brand.PLATO.name}
+emoji: 🪑
+colorFrom: gray
+colorTo: yellow
+sdk: docker
+app_port: 7860
+pinned: false
+license: apache-2.0
+short_description: Draw a chair, then see what Meta's AI drew
+---
+
+# {brand.PLATO.name}: {brand.PLATO.tagline.lower()}
+
+Plato thought every chair is a copy of one ideal chair. Draw yours in 20 seconds, then see what Meta's
+image model drew and where your chair lands among 200 people's. Seven of Plato's questions, put to Meta's
+AI and to people, with the results replayed from the experiments; and Ask Socrates, a Muse Spark agent
+that answers from those results.
+
+This Space is the live demo of https://github.com/rnorlund/MetaLesionLab (MLL_SITE=plato). Ask Socrates
+is the only part that calls Meta's models; its calls are capped per day for all visitors together.
+Research and teaching use only; nothing here is medical advice.
+""",
+    "lingua": f"""---
+title: {brand.LINGUA.name}
 emoji: 🗣️
 colorFrom: blue
 colorTo: yellow
@@ -65,18 +97,19 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: apache-2.0
-short_description: Language tests for people and AI, built on Meta's models
+short_description: {brand.LINGUA.tagline}, on Meta's models
 ---
 
-# Tippa Lingua
+# {brand.LINGUA.name}
 
 Build picture-based language tests in minutes, give them by voice, score them automatically, and run
 the same tests on Meta's open-weight model to see where language breaks.
 
-This Space is the live demo of https://github.com/rnorlund/MetaLesionLab. Calls to Meta's models are
-capped per day for all visitors together; once the day's budget is used up, the site shows recorded
-examples instead. Research and teaching use only; it doesn't diagnose.
-"""
+This Space is the live demo of https://github.com/rnorlund/MetaLesionLab (MLL_SITE=lingua). Calls to Meta's
+models are capped per day for all visitors together; once the day's budget is used up, the site shows
+recorded examples instead. Research and teaching use only; not a medical test.
+""",
+}
 
 
 # --- copying -------------------------------------------------------------------------------------
@@ -319,9 +352,9 @@ def report_size(out: Path) -> tuple[int, int]:
 
 # --- staging a Hugging Face Space -----------------------------------------------------------------
 
-def stage_space(bundle: Path, stage: Path) -> None:
+def stage_space(bundle: Path, stage: Path, site: str = brand.DEFAULT_SITE) -> None:
     """Tracked app code, public_data, the container files and the bundle, laid out like the repo so
-    the same Dockerfile builds here and from the repo root."""
+    the same Dockerfile builds here and from the repo root. The staged Dockerfile serves `site`."""
     if stage.exists():
         if not (stage / "Dockerfile").is_file() or not (stage / "dist" / "site_data" / MARKER).is_file():
             raise SystemExit(f"{stage} exists and isn't a staged Space; remove it or choose another --stage.")
@@ -337,31 +370,33 @@ def stage_space(bundle: Path, stage: Path) -> None:
         (stage / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(REPO / rel, stage / rel)
     shutil.copytree(bundle, stage / "dist" / "site_data")
-    (stage / "README.md").write_text(SPACE_README)
+    (stage / "README.md").write_text(SPACE_README[site])
+    dockerfile = stage / "Dockerfile"
+    text = dockerfile.read_text()
+    if "ARG MLL_SITE=" not in text:
+        raise SystemExit("The Dockerfile has no ARG MLL_SITE line, so the staged Space can't pick its site.")
+    dockerfile.write_text(re.sub(r"^ARG MLL_SITE=\S*$", f"ARG MLL_SITE={site}", text, count=1, flags=re.M))
     problems = [f"{p.relative_to(stage)}" for p in stage.rglob("*") if p.is_file() and
                 (p.suffix in (".pyc",) or p.name in (".env", "private_patterns.txt", "costs.jsonl"))]
     if problems:
         raise SystemExit(f"Staging picked up files that must not be uploaded: {problems}")
     size = sum(p.stat().st_size for p in stage.rglob("*") if p.is_file())
-    print(f"Staged a Hugging Face Space in {stage}: {len(tracked) + 5} code files plus the bundle, "
-          f"{size / 1e6:.1f} MB. Upload it as described in deploy/README.md.")
+    print(f"Staged a Hugging Face Space for {brand.SITES[site].name} (MLL_SITE={site}) in {stage}: "
+          f"{len(tracked) + 5} code files plus the bundle, {size / 1e6:.1f} MB. Upload it as described in deploy/README.md.")
 
 
 # --- main ----------------------------------------------------------------------------------------
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--runs", type=Path, default=REPO / "runs",
-                    help="source data folder (default runs/; a worktree falls back to the main checkout's)")
-    ap.add_argument("--out", type=Path, default=REPO / "dist" / "site_data")
-    ap.add_argument("--sets", action="append", default=None, help="set folders to include (glob; default demo_*)")
-    ap.add_argument("--no-quantize", action="store_true", help="copy pictures byte for byte")
-    ap.add_argument("--no-bilingual", action="store_true")
-    ap.add_argument("--allow-missing-patterns", action="store_true",
-                    help="build even if .githooks/private_patterns.txt can't be found")
-    ap.add_argument("--stage", type=Path, help="also assemble a Hugging Face Space folder here")
-    args = ap.parse_args()
+def write_marker(out: Path, site: str, **fields) -> None:
+    write_json(out / MARKER, {
+        "site": site, "built": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "commit": git("rev-parse", "--short", "HEAD"), **fields,
+        "about": f"Data for the {brand.SITES[site].name} web app (MLL_SITE={site}, TIPPA_DATA_DIR). "
+                 "Written by scripts/build_site_bundle.py.",
+    })
 
+
+def build_lingua(args, out: Path) -> None:
     runs = args.runs.resolve()
     if not (runs / "sets").is_dir() and args.runs == REPO / "runs":
         common = git("rev-parse", "--path-format=absolute", "--git-common-dir")
@@ -369,16 +404,10 @@ def main() -> int:
             runs = Path(common).parent / "runs"  # a worktree: use the main checkout's data
     if not (runs / "sets").is_dir():
         raise SystemExit(f"No sets/ in {runs}.")
-    out = args.out.resolve()
-    if out == runs or out.is_relative_to(runs) or runs.is_relative_to(out) or out in (REPO, Path.home(), Path("/")):
+    if out == runs or out.is_relative_to(runs) or runs.is_relative_to(out):
         raise SystemExit(f"Refusing to write the bundle to {out}.")
-    if out.exists():
-        if not (out / MARKER).is_file():
-            raise SystemExit(f"{out} exists and isn't a bundle (no {MARKER}); remove it or choose another --out.")
-        shutil.rmtree(out)
-    out.mkdir(parents=True)
-
-    print(f"Building the site bundle from {runs} into {out}")
+    prepare(out)
+    print(f"Building the {brand.LINGUA.name} bundle from {runs} into {out}")
     sets = bundle_sets(runs, out, args.sets or ["demo_*"], quantize=not args.no_quantize)
     if not sets:
         raise SystemExit("No picture sets matched.")
@@ -388,13 +417,48 @@ def main() -> int:
     if args.no_bilingual and (out / "bilingual").exists():
         shutil.rmtree(out / "bilingual")
         small = [s for s in small if not s.startswith("bilingual/")]
-    write_json(out / MARKER, {
-        "built": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "commit": git("rev-parse", "--short", "HEAD"),
-        "sets": sets, "lesion_conditions": n_conditions, "scenes": n_scenes, "other": small,
-        "pictures": "chosen picture per item (candidates for items in review)" +
-                    ("" if args.no_quantize else ", re-encoded as 256-color PNG"),
-        "about": "Data for the Tippa Lingua web app (TIPPA_DATA_DIR). Written by scripts/build_site_bundle.py.",
-    })
+    write_marker(out, "lingua", sets=sets, lesion_conditions=n_conditions, scenes=n_scenes, other=small,
+                 pictures="chosen picture per item (candidates for items in review)" +
+                          ("" if args.no_quantize else ", re-encoded as 256-color PNG"))
+
+
+def build_plato(args, out: Path) -> None:
+    """The Plato site reads only files in the repository, so its bundle carries no data from runs/."""
+    prepare(out)
+    print(f"Building the {brand.PLATO.name} bundle into {out}: its pages read only files in the repository "
+          "(web/data/, public_data/, static/), so nothing from runs/ is copied")
+    write_marker(out, "plato", sets=[], lesion_conditions=0, scenes=0, other=[],
+                 reads="metalesionlab/web/data/*.json, public_data/plato_*.json and static/ (all in the image)")
+
+
+def prepare(out: Path) -> None:
+    if out in (REPO, Path.home(), Path("/")) or REPO.is_relative_to(out):
+        raise SystemExit(f"Refusing to write the bundle to {out}.")
+    if out.exists():
+        if not (out / MARKER).is_file():
+            raise SystemExit(f"{out} exists and isn't a bundle (no {MARKER}); remove it or choose another --out.")
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--site", choices=sorted(brand.SITES), default=None,
+                    help=f"which site's bundle (default: MLL_SITE, else {brand.DEFAULT_SITE})")
+    ap.add_argument("--runs", type=Path, default=REPO / "runs",
+                    help="lingua: source data folder (default runs/; a worktree falls back to the main checkout's)")
+    ap.add_argument("--out", type=Path, default=REPO / "dist" / "site_data")
+    ap.add_argument("--sets", action="append", default=None, help="lingua: set folders to include (glob; default demo_*)")
+    ap.add_argument("--no-quantize", action="store_true", help="lingua: copy pictures byte for byte")
+    ap.add_argument("--no-bilingual", action="store_true", help="lingua: leave out the bilingual results")
+    ap.add_argument("--allow-missing-patterns", action="store_true",
+                    help="build even if .githooks/private_patterns.txt can't be found")
+    ap.add_argument("--stage", type=Path, help="also assemble a Hugging Face Space folder for the site here")
+    args = ap.parse_args()
+    site = brand.site_key(args.site)
+
+    out = args.out.resolve()
+    (build_plato if site == "plato" else build_lingua)(args, out)
 
     print("Size:")
     report_size(out)
@@ -407,7 +471,7 @@ def main() -> int:
     print("  passed: data-guard extensions and private patterns, no audio, no API key, no human drawings, "
           "no participant data, no local paths")
     if args.stage:
-        stage_space(out, args.stage.resolve())
+        stage_space(out, args.stage.resolve(), site)
     return 0
 
 

@@ -163,7 +163,7 @@ def test_export_main_writes_compact_json(tmp_path, monkeypatch):
 @pytest.fixture
 def client():
     bilingual_routes._cache.clear()
-    return TestClient(web.app)
+    return TestClient(web.app_for("lingua"))
 
 
 def test_page_and_shipped_data(client):

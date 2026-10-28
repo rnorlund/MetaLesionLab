@@ -1,14 +1,19 @@
-# Tippa Lingua web app as a public demo: no GPU, no torch, spending capped by web/guard.py.
+# One site of the web app as a public demo: no GPU, no torch, spending capped by web/guard.py.
+# MLL_SITE picks the site (metalesionlab/brand.py): plato (Plato's Chair, the default) or lingua (the
+# sister project). Build the matching data bundle first:
 #
-#   python scripts/build_site_bundle.py            # writes dist/site_data (gitignored)
-#   docker build -t tippa-lingua .
-#   docker run -p 7860:7860 -e MODEL_API_KEY=... tippa-lingua
+#   python scripts/build_site_bundle.py --site plato        # writes dist/site_data (gitignored)
+#   docker build -t platos-chair .                          # or: --build-arg MLL_SITE=lingua
+#   docker run -p 7860:7860 -e MODEL_API_KEY=... platos-chair
 #
 # The API key comes from the host's secret store at run time; it is never in the image.
 # See deploy/README.md for Hugging Face Spaces, Fly.io and Render.
 FROM python:3.12-slim
 
-# ffmpeg reads browser recordings (the Scorer); DejaVu gives the PDF exports Unicode text.
+# Which site this image serves (build_site_bundle.py --stage writes the chosen one here).
+ARG MLL_SITE=plato
+
+# ffmpeg reads browser recordings (the Lingua site's Scorer); DejaVu gives its PDF exports Unicode text.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
@@ -21,18 +26,19 @@ COPY requirements-web.txt ./
 RUN pip install --no-cache-dir -r requirements-web.txt \
     && python -m nltk.downloader -q -d /usr/local/share/nltk_data wordnet
 
-# Draw a chair (/draw) runs Meta's DINOv2-base on the CPU with onnxruntime. The ONNX model is about 350 MB,
-# over the repository's 5 MB data guard, so it's fetched here once from a pinned export of the same weights
-# and checked against its SHA-256. Only this one file is copied first, so the layer stays cached when the
-# rest of the code changes.
+# Draw a chair (/draw, the Plato site) runs Meta's DINOv2-base on the CPU with onnxruntime. The ONNX model
+# is about 350 MB, over the repository's 5 MB data guard, so it's fetched here once from a pinned export of
+# the same weights and checked against its SHA-256. Only this one file is copied first, so the layer stays
+# cached when the rest of the code changes. The Lingua site doesn't need it.
 COPY metalesionlab/draw_fetch.py /tmp/draw_fetch.py
-RUN python /tmp/draw_fetch.py /app/models/dinov2-base.onnx && rm /tmp/draw_fetch.py
+RUN if [ "$MLL_SITE" = "plato" ]; then python /tmp/draw_fetch.py /app/models/dinov2-base.onnx; fi \
+    && rm /tmp/draw_fetch.py
 
 COPY pyproject.toml LICENSE ./
 COPY public_data ./public_data
 COPY metalesionlab ./metalesionlab
-# The data bundle is writable by the app: new tiny builds, thumbnails and the meaning-judge cache go
-# there (and are lost on restart, which is fine).
+# The data bundle is writable by the app: on the Lingua site new tiny builds, thumbnails and the
+# meaning-judge cache go there (and are lost on restart, which is fine). The Plato site's is empty.
 COPY --chown=app:app dist/site_data ./site_data
 # The spend ledger and volunteers' reference-range summaries. Mount persistent storage at /data to
 # keep them across restarts (the daily cap restarts from zero without it). The start script makes a
@@ -42,7 +48,8 @@ RUN mkdir -p /data && chown app:app /data
 COPY deploy/start.sh /usr/local/bin/tippa-start
 RUN chmod 755 /usr/local/bin/tippa-start  # uploads to a Space don't always keep the mode
 
-ENV PYTHONUNBUFFERED=1 \
+ENV MLL_SITE=${MLL_SITE} \
+    PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PUBLIC_DEMO=1 \
     TOT_PUBLIC=1 \

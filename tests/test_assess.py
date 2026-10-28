@@ -63,7 +63,7 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setattr(assess_routes, "_contributions", {})
     web.limiter.hits.clear()
     _make_set(tmp_path / "sets" / "demo_en")
-    return TestClient(web.app), tmp_path, api
+    return TestClient(web.app_for("lingua")), tmp_path, api
 
 
 def post_clip(client, wav, **form):

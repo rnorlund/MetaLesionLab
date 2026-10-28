@@ -1,4 +1,4 @@
-# Tippa Lingua: what would Plato ask an AI?
+# Plato's Chair: what would Plato ask an AI?
 
 **Asked for a chair, Meta's image model drew the same one 16 times. People drew 16 different ones, mostly of the same plain chair.**
 
@@ -8,7 +8,7 @@ Plato held that each kind of thing has one ideal Form, and every real one is a c
 
 The series follows the life of a chair, as an analogy: children's drawings move toward the adult chair from age 2 to 10, a small model trained on people's chairs grows from scribbles to adult-like chairs, and damage to an image model's language part makes its chair wander off into other things, much as drawings lose their distinctive features in some brain diseases (Bozeat et al. 2003; published neurology, not our data).
 
-- **See it:** run the site (below) and open `/` (the chairs), `/plato` (the whole experiment), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
+- **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/plato/inside` (Muse Glimmer's 52 layers, one by one), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
 - **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md).
 
 ## What we found
@@ -74,7 +74,9 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 26 | Repo, data guard, Meta Model API client with spend ledger and budget cap |
 | Oct 26 | Muse Glimmer in FP8 on a single L40S (32 GiB used). Picture naming with the reasoning channel skipped (it can leak into answers under heavy damage). Word lens (logit lens) that matches the model's own output at the last layer |
 | Oct 26 | Naming-error classifier (English and Spanish), with WordNet plus a Muse Spark judge for meaning. It passed 34 unit tests that day and agreed with the expected code on 19 of 20 live cases; the one miss was a mistake in the expected answer. |
-| Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. |
+| Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. A guided tour |
+| Oct 26 | You vs. the AI (`/challenge`): name 10 pictures beside Muse Glimmer, then watch it lose a word |
+| Oct 26 | Naming scored in French, Brazilian Portuguese, Hindi and Mandarin; language support measured in six languages ([docs/languages.md](docs/languages.md)) |
 | Oct 26 | Naming Assessment: speech-onset latency (max error 5.6 ms on synthesized speech), first-complete-response coding, review and override, PDF report, tracking across sessions, parallel forms, bring-your-own test (ZIP or folder; a PowerPoint is converted on the command line), personal tests from a photo, and a public naming test with an opt-in reference range |
 | Oct 26 | "What can I cut?": every Glimmer decoder layer skipped alone, a greedy removal path guarded by picture naming (English and Spanish) and perplexity on Muse Spark-written text, and real deletion of the chosen layers with measured size, memory and speed |
 | Oct 26 | Plato's Chair: 35 things, Muse Image against Quick, Draw!, measured with DINOv2; six prompt languages; inside Muse Glimmer; the Stable Diffusion XL comparison; the `/plato` and `/lab/cut` pages, which replay shipped statistics with no API calls |
@@ -92,6 +94,9 @@ Everything in this repository was written during the hackathon, starting at the 
 | Oct 27 | Draw a chair, round 2: the pad on the landing page, draw blind and then the reveal, photo upload, opt-in donation (off by default) |
 | Oct 27 | The life of a chair (`/plato/lifespan`): children's drawings by age, Stable Diffusion's training stages, and a sketch model trained from scratch, pre-registered |
 | Oct 27 | Plato's Chair, damaged (`/plato/damage`): reversible lesions in SDXL's text encoders and UNet, damaged Muse Glimmer reading doodles, clocks, and Janus-Pro, pre-registered |
+| Oct 27 | Consistency pass: every number on the pages and in the docs checked against its source |
+| Oct 27 | Inside the model (`/plato/inside`): drag through Muse Glimmer's 52 layers and watch Muse Image's doodles of a thing collapse while people's stay spread out |
+| Oct 27 | Two sites from one codebase (`MLL_SITE`): Plato's Chair, and its sister project Tippa Lingua on its own landing page, each with only its own pages, nav and paid routes, and a per-site data bundle. The opening animation on Plato's landing page (the cave, ending on the Form chair, now the logo) |
 
 ### Prior research context (not part of this submission)
 
@@ -99,15 +104,17 @@ The research question comes from the author's earlier work on simulating aphasia
 
 Built new during the hackathon:
 - everything on Meta's models (Muse Glimmer, Muse Spark, Muse Image, SAM 3.1, Muse Voice Transcribe, DINOv2),
-- Plato's Chair, the six other experiments of the series, and Draw a chair,
-- the test-building and scoring tools for people,
+- Plato's Chair, the six other experiments of the series, Draw a chair and Ask Socrates,
+- the test-building and scoring tools for people (Tippa Lingua),
 - the word lens,
-- the agent,
-- any-language support.
+- the Ask the Lab agent,
+- the language support, measured in 16 languages.
 
-## More from the lab
+## Sister project: Tippa Lingua
 
-Plato's Chair grew out of a lab for how people and AI find words. It is still here, one click away under **More** on every page.
+Plato's Chair grew out of a lab for how people and AI find words. That lab is now its own site, **Tippa Lingua**: picture-naming tests for people and AI, and a lesion lab for Meta's open model. It runs from this same codebase with `MLL_SITE=lingua` (see [Web app](#web-app)), and each site links to the other at the foot of every page. Plato's Chair is the hackathon entry; Tippa Lingua is its sister project.
+
+Its landing page puts the replication first: 16 languages measured (8 verified for spoken scoring), and the lesion results run again on 100 new pictures ([docs/replication.md](docs/replication.md)).
 
 Four tools share one pipeline:
 
@@ -275,7 +282,7 @@ The honest answer for this model is "not much". Two layers (28 and 31) can go wi
    - lesion conditions, error profiles by damage site, a search over the model's answers and the word lens;
    - layer removal, the bilingual test and Plato's Chair;
    - the published group profiles of people with aphasia, and language support.
-3. It answers with numbers, a `[tool: id]` citation for each one, and links into `/lab`, `/plato` and `/lab/cut`.
+3. It answers with numbers, a `[tool: id]` citation for each one, and links into `/lab` and `/lab/cut` (a Plato's Chair number links to its write-up, since `/plato` is on the sister site).
 
 Each step streams to the page as it happens (JSON lines), so you watch the trace live. The code is in `metalesionlab/lab_agent.py` and `metalesionlab/web/agent_routes.py`.
 
@@ -326,16 +333,24 @@ Every Meta API call is logged to `runs/costs.jsonl`, and new calls are refused o
 
 ## Web app
 
+One codebase serves two sites; `MLL_SITE` picks one (`metalesionlab/brand.py` holds both names):
+
 ```bash
 pip install -e ".[web]"
-python -m metalesionlab.web --port 8000   # then open http://127.0.0.1:8000
+python -m metalesionlab.web --port 8000                  # Plato's Chair (MLL_SITE=plato, the default)
+python -m metalesionlab.web --site lingua --port 8001    # Tippa Lingua (MLL_SITE=lingua)
 ```
 
-Pages: `/` (Plato's Chair), `/plato` (the whole experiment), the rest of the Plato series (`/plato/forms`, `/plato/cave`, `/plato/cratylus`, `/plato/bird`, `/plato/damage`, `/plato/lifespan`), `/draw` (Draw a chair), `/socrates` (Ask Socrates), `/challenge` (You vs. the AI), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab), `/scorer` (Scorer), `/studio` (Test Studio), `/assess` (Naming Assessment) and `/take` (public naming test). Every page has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
+Each site registers only its own pages and APIs (`SITE_ROUTERS` in `metalesionlab/web/app.py`); the other site's paths answer 404. Set `MLL_SISTER_URL` to the other site's address to show the "Sister project" link at the foot of every page.
+
+- **Plato's Chair:** `/` (a short opening animation once per browser session, then draw a chair blind and see the reveal; `?nosplash=1` skips the animation), `/plato` (the whole experiment), `/plato/inside` (inside the model), the rest of the Plato series (`/plato/forms`, `/plato/cave`, `/plato/cratylus`, `/plato/bird`, `/plato/damage`, `/plato/lifespan`), `/draw` (Draw a chair) and `/socrates` (Ask Socrates). The guided tour (about 90 seconds) goes from the landing page through `/plato` to `/draw`.
+- **Tippa Lingua:** `/` (its landing page), `/take` (public naming test), `/assess` (Naming Assessment), `/scorer` (Scorer), `/studio` (Test Studio), `/lab` (Model Lab), `/lab/cut` (What can I cut?), `/lab/bilingual` (Second language), `/ask` (Ask the Lab) and `/challenge` (You vs. the AI).
+
+Every page of a site has the same header (`metalesionlab/web/site.py`); experiments of the Plato series appear in it, and on the landing page, once their routes exist. The JSON API is documented at `/api/docs`. Voice scoring needs `ffmpeg` on `PATH` to read browser recordings; the assessment pages send WAV and don't.
 
 - Data lives in `TIPPA_DATA_DIR` (or `TOT_DATA_DIR`; default `runs/`): picture sets in `sets/`, description scenes in `scenes/`, precomputed lesion conditions in `lesion/`. The Model Lab shows a small, clearly labeled sample until `lesion/` has results.
 - Every route that spends Meta API credit has a per-visitor daily limit: 3 set builds, 3 scenes and 60 scored responses by default (`TOT_LIMIT_BUILD`, `TOT_LIMIT_SCENE`, `TOT_LIMIT_SCORE`). The overall budget cap still applies; once it's reached, the app says so and browsing, review and exports keep working.
-- For a public deployment, see [deploy/README.md](deploy/README.md): `scripts/build_site_bundle.py` copies the part of `runs/` the site reads and checks it for private data, and the container runs with `PUBLIC_DEMO=1`. That turns on `web/guard.py`: a daily cap on Meta API spending for all visitors together (`TIPPA_PUBLIC_DAILY_USD`, default $2), per-visitor limits on every paid route, tiny Test Studio builds, capped recordings, and visitors editing only what they built. When the day's budget is used up, the site shows recorded examples instead.
+- For a public deployment, see [deploy/README.md](deploy/README.md): `scripts/build_site_bundle.py --site plato|lingua` copies the part of `runs/` that site reads (nothing, for Plato's Chair) and checks it for private data, and the container runs with `PUBLIC_DEMO=1` and the site's `MLL_SITE`. That turns on `web/guard.py`: a daily cap on Meta API spending for all visitors together (`TIPPA_PUBLIC_DAILY_USD`, default $2), per-visitor limits on every paid route, tiny Test Studio builds, capped recordings, and visitors editing only what they built. When the day's budget is used up, the site shows recorded examples instead.
 - Scorer results stay in the browser until exported. The server doesn't store audio.
 - A full PNT-length session is 175 scored responses; on a local install raise `TOT_LIMIT_SCORE`. Set `TOT_RECEIPT_KEY` to keep public-test receipts valid across restarts.
 
