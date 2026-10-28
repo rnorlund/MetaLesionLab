@@ -111,3 +111,10 @@ On the pad, a visitor's drawing of an idea is scored only against Muse's 16:
 - the nearest of Muse's pictures and its emblem label.
 
 The scoring uses DINOv2 only, with no API call per drawing. No number about people is computed or shown for an idea.
+
+## Addendum, before Glimmer ran (Oct 28)
+
+- **The main run is in.** 176 pictures; 44 calls, none refused, none short.
+- **The label check by eye is done**, before any Glimmer label of a main-run picture: `PlatosChair/ideas/labels_by_eye.json`, SHA-256 `39043d3bd7f74e561b699c9c6ca39412e58ee1cf2a2a19198d9fd355014970ed`.
+- **No picture contains written words** (E5).
+- **I also counted, by eye, where the pictures show an emblem anywhere, not only as the main symbol.** This is exploratory. In *time*, every picture shows both a clock and an hourglass. In *justice*, scales and a blindfold appear in all 16. In *freedom*, a bird and broken chains appear in all 16. A single "main symbol" label cannot show this, so the write-up reports it beside the concentration.
