@@ -74,6 +74,8 @@ EXPERIMENTS = {
     "telephone": ("Plato's Telephone: what survives when two AIs copy each other's copies?", "/plato/telephone"),
     "ideas": ("The invisible Forms: Muse Image draws God, beauty, justice, the Good, love, death and other ideas no one "
               "has seen", "/plato/ideas"),
+    "phaedrus": ("Seven meanings: what writing keeps of “I never said she stole my money”, spoken seven ways",
+                 "/plato/phaedrus"),
 }
 _EXPERIMENT_ALIASES = {
     "form": "forms", "clock": "forms", "bed": "forms", "table": "forms", "platonic clock": "forms",
@@ -87,6 +89,9 @@ _EXPERIMENT_ALIASES = {
     "chains": "telephone", "describe and draw": "telephone",
     "invisible forms": "ideas", "the invisible forms": "ideas", "invisible": "ideas", "god": "ideas", "abstract": "ideas",
     "abstract ideas": "ideas", "emblems": "ideas", "draw god": "ideas", "draw the invisible": "ideas",
+    "seven meanings": "phaedrus", "stress": "phaedrus", "emphasis": "phaedrus", "prosody": "phaedrus",
+    "voice": "phaedrus", "living word": "phaedrus", "transcript": "phaedrus", "speech": "phaedrus",
+    "i never said she stole my money": "phaedrus",
 }
 # Each experiment's short answer, as its write-up states it (docs/plato_<name>.md). Sent with the data so the
 # headline (and its honest limits) is never lost when a large results file is cut to fit.
@@ -149,6 +154,15 @@ SHORT_ANSWERS = {
                  "high chair fell into the textbook chair, in 2 of its 3 chains, when its tray was lost at the first "
                  "redraw; the others wandered (a beanbag became a croissant, then a fanlight window). One protocol "
                  "and one prompt, and the description is the bottleneck.",
+    "phaedrus": "Spoken by 13 synthetic voices with each of its seven words stressed in turn, \"I never said she stole my "
+                "money\" came back from Meta's Voice Transcribe as the same words or nearly: 81 of 104 transcripts had exactly "
+                "its words, and the stray repeated words didn't recur when the same recordings were transcribed again, so "
+                "they were noise, not stress. From the transcripts, Muse Spark picked the meaning the speaker intended 9 "
+                "times in 91 (10%; chance is 14%). With the stressed word in italics it got 35 of 35; in CAPITALS 30 of 35, "
+                "missing every \"I\", which is always a capital. A plain prosody reader (pitch, loudness and length per word, "
+                "no AI) found the stressed word in 80 of 91 recordings (88%), though in two of the three voice families we "
+                "built the stress from those same cues. Pre-registered; the prediction that every voice's transcripts would "
+                "share the same words failed because of the stray words.",
     "ideas": "Asked for a quick doodle of God, Muse Image drew the same figure in all 16 drawings: a bearded man with "
              "long hair, a robe and a halo. Love was a heart and death a hooded figure with a scythe, every time. For 10 "
              "of 11 abstract ideas one emblem filled at least half of the 16 drawings (pre-registered; passed). Our "

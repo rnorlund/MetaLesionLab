@@ -1,7 +1,7 @@
 """The web app: two sites from one codebase, picked by MLL_SITE (metalesionlab/brand.py).
 
 - plato (the default): Plato's Chair. The landing page with the drawing pad, /draw, /plato and its
-  series, and /socrates. Its only paid route is Ask Socrates (Muse Spark).
+  series, and /socrates. Its paid routes are Ask Socrates (Muse Spark) and the voice test of /plato/phaedrus.
 - lingua: the sister project. Test Studio, Scorer and Model Lab over one small JSON API (defined in this
   module, on the `lingua` router), plus the naming test, the assessment, the challenge, Ask the Lab
   and the lab pages.
@@ -965,9 +965,10 @@ SITE_ROUTERS = {
         "plato_atlas_routes",  # The Atlas of Forms (/plato/atlas)
         "plato_scale_routes",  # An AI growing up (/plato/scale)
         "plato_ideas_routes",  # The invisible Forms (/plato/ideas)
+        "plato_phaedrus_routes",  # Seven meanings (/plato/phaedrus): its voice test is paid
         "plato_gallery_routes",  # the gallery (/plato/gallery) and the "From the lab" band on every Plato page
         "draw_routes",  # Draw a chair (/draw)
-        "socrates_routes",  # Ask Socrates (/socrates): the site's only paid route
+        "socrates_routes",  # Ask Socrates (/socrates): paid
     ],
     "lingua": [
         "app:lingua",  # the landing page, Test Studio, Scorer and Model Lab (/, /studio, /scorer, /lab)

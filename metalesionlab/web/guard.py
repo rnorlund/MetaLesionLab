@@ -27,7 +27,8 @@ route is limited and stops at the cap until it's listed here. /api/ask... (Ask t
 /api/socrates... (Ask Socrates, one bucket per dialogue turn) are paid; their status polls (GET) are free.
 
 The two sites (MLL_SITE, brand.py) serve different routes, so each guard knows only its own site's
-routes: on the Plato site that is Ask Socrates (paid) and Draw a chair (free), and everything else
+routes: on the Plato site that is Ask Socrates and Seven meanings' voice test (paid) and Draw a chair and the
+voice test's prosody reading (free), and everything else
 under /api/ that mutates falls to the "other" bucket (and then 404s). The Lingua site has the rest.
 """
 from __future__ import annotations
@@ -77,19 +78,19 @@ EXAMPLES = {
 }
 # What pauses when the budget is used up, and what stays free (the banner and the 503 message say so).
 PAUSED = {"lingua": "New scoring and picture generation pause",
-          "plato": "Ask Socrates pauses"}
+          "plato": "Ask Socrates and the voice test in Seven meanings pause"}
 STAYS_FREE = {"lingua": "Browsing, replays and exports are free.",
               "plato": "The experiments and Draw a chair are free."}
 BUDGET_DETAIL = {
     "lingua": ("Today's live demo budget for AI calls is used up, so new scoring and picture generation "
                "are paused until 00:00 UTC ({wait} from now). Everything else still works: browse the results, "
                "play You vs. the AI with typed answers, or press Demo on any page for a recorded example."),
-    "plato": ("Today's live demo budget for AI calls is used up, so Ask Socrates is paused until 00:00 UTC "
-              "({wait} from now). Everything else still works: every experiment replays recorded results, and "
-              "Draw a chair runs on our own server."),
+    "plato": ("Today's live demo budget for AI calls is used up, so Ask Socrates and the voice test in Seven meanings "
+              "are paused until 00:00 UTC ({wait} from now). Everything else still works: every experiment replays "
+              "recorded results, and Draw a chair runs on our own server."),
 }
 # Paid requests per visitor per minute, by bucket.
-BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "socrates": 5, "other": 10}  # a fast /take is ~20 a minute
+BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "socrates": 5, "phaedrus": 6, "other": 10}  # a fast /take is ~20 a minute
 # Daily limits the guard counts itself; limits.py counts builds, scenes and scored responses.
 OTHER_PER_DAY = 100
 # Daily limits.py defaults on the public demo (TOT_LIMIT_* in the environment still wins). Scoring is cheap
@@ -97,7 +98,7 @@ OTHER_PER_DAY = 100
 # generous; the daily dollar cap is what bounds spending.
 PUBLIC_LIMITS = {"build": 3, "scene": 2, "score": 150}
 WHAT = {"build": "picture sets", "scene": "scenes", "photo": "photo tests", "score": "scored answers",
-        "ask": "questions", "socrates": "dialogue turns", "other": "requests"}
+        "ask": "questions", "socrates": "dialogue turns", "phaedrus": "voice tries", "other": "requests"}
 
 # Mutating /api/ routes that never call a Meta API, and the site that serves them. Everything else that
 # mutates is treated as paid.
@@ -109,6 +110,8 @@ FREE = [
     ({"PATCH"}, re.compile(r"/api/scenes/[^/]+/?"), "lingua"),
     # Draw a chair: CPU only, no API calls; draw_routes.py has its own limits
     ({"POST"}, re.compile(r"/api/draw(/upload)?/?"), "plato"),
+    # Seven meanings' prosody reading: numpy on our server, no API calls; plato_phaedrus_routes.py has its own limits
+    ({"POST"}, re.compile(r"/api/phaedrus/listen/?"), "plato"),
 ]
 MUTATING = {"POST", "PUT", "PATCH", "DELETE"}
 # (methods, path, rule name, site)
@@ -122,6 +125,7 @@ PAID = [
     ({"POST"}, re.compile(r"/api/assess/rescore/?"), "text", "lingua"),
     (MUTATING, re.compile(r"/api/ask(/.*)?"), "ask", "lingua"),  # GET /api/ask/status is free
     (MUTATING, re.compile(r"/api/socrates(/.*)?"), "socrates", "plato"),  # GET /api/socrates/status is free
+    ({"POST"}, re.compile(r"/api/phaedrus/read/?"), "phaedrus", "plato"),  # Voice Transcribe and Muse Spark
 ]
 
 
@@ -146,6 +150,7 @@ class Settings:
     photo_tests: bool = False
     ask_per_day: int = 20
     socrates_per_day: int = 30  # dialogue turns; a dialogue has up to 8
+    phaedrus_per_day: int = 30  # Seven meanings' voice tries, about $0.003 each
     global_per_min: int = 60
     audio_mb: float = 2.5  # one naming answer
     long_audio_mb: float = 4.0  # a description or fluency recording
@@ -161,6 +166,7 @@ class Settings:
             photo_tests=env.get("TIPPA_PUBLIC_PHOTO_TESTS", "0") == "1",
             ask_per_day=int(_env_num(env, "TIPPA_PUBLIC_ASK_PER_DAY", 20)),
             socrates_per_day=int(_env_num(env, "TIPPA_PUBLIC_SOCRATES_PER_DAY", 30)),
+            phaedrus_per_day=int(_env_num(env, "TIPPA_PUBLIC_PHAEDRUS_PER_DAY", 30)),
             global_per_min=int(_env_num(env, "TIPPA_PUBLIC_GLOBAL_PER_MIN", 60)),
             audio_mb=_env_num(env, "TIPPA_PUBLIC_AUDIO_MB", 2.5),
         )
@@ -183,6 +189,7 @@ def make_rules(s: Settings) -> dict[str, Rule]:
         "text": Rule("score", 32 * 1024, 0.005),
         "ask": Rule("ask", 64 * 1024, 0.05),
         "socrates": Rule("socrates", 96 * 1024, 0.05),  # the dialogue so far rides along with each turn
+        "phaedrus": Rule("phaedrus", 512 * 1024, 0.01),  # a 16 kHz WAV of at most 12 s; a try costs about $0.003
         "other": Rule("other", 256 * 1024, 0.01),
     }
 
@@ -394,7 +401,8 @@ class Guard:
         now = self.clock()
         checks = [(("*", "*", 60), self.s.global_per_min, "busy"),
                   ((rule.bucket, ip, 60), BURST_PER_MIN.get(rule.bucket, 10), "burst")]
-        per_day = {"ask": self.s.ask_per_day, "socrates": self.s.socrates_per_day, "other": OTHER_PER_DAY}
+        per_day = {"ask": self.s.ask_per_day, "socrates": self.s.socrates_per_day, "phaedrus": self.s.phaedrus_per_day,
+                   "other": OTHER_PER_DAY}
         if rule.bucket in per_day:
             checks.append(((rule.bucket, ip, DAY_S), per_day[rule.bucket], "day"))
         with self.lock:
@@ -438,6 +446,7 @@ class Guard:
                         "ask_per_day": self.s.ask_per_day})
         if self.site in (None, "plato"):
             out["socrates_per_day"] = self.s.socrates_per_day
+            out["phaedrus_per_day"] = self.s.phaedrus_per_day
         if debug:  # to check the proxy settings after deploying: the address the limits count by
             out["you"] = {"ip_seen": self.client_ip(request), "x_forwarded_for": request.headers.get("x-forwarded-for")}
         return out

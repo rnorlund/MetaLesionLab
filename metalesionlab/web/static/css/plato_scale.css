@@ -1,12 +1,15 @@
 /* An AI growing up (/plato/scale). Paper like the other Plato pages. The three open families take the reference
    palette's first three categorical slots (blue, orange, aqua: validated all-pairs for colour-vision deficiency);
    Meta's models are ink with their own marker shapes and direct labels. Fluid: walls and charts fill wide windows;
-   prose keeps a ~75ch measure. Tiles are CSS masks over one sprite per wall, so ink follows the theme colour. */
+   prose keeps a ~75ch measure. Tiles are CSS masks over one sprite per wall, inked in a token: dark lines on
+   paper in both themes, like every drawing on the site. */
 .sc {
-  --qwen25: #2a78d6; --olmo2: #eb6834; --qwen3: #1baf7a; --meta: #171a22; --chart: #FCFCFB;
-  --gridline: #E7E5DE; --axis: #B9B7AD; --tile: #FFFFFF; --fail: #EFEDE6;
-  background: #F7F6F1;
+  --qwen25: var(--s-blue); --olmo2: var(--s-orange); --qwen3: var(--s-green); --meta: var(--s-meta); --chart: var(--chart-bg);
+  --gridline: #E7E5DE; --axis: #B9B7AD; --tile: var(--paper); --fail: #EFEDE6; --fail-line: var(--line-2); --sc-band: #F1EFE8;
+  background: var(--ground-warm);
 }
+:root[data-theme="dark"] .sc { --gridline: var(--chart-grid); --axis: var(--chart-axis); --fail: #DCD6CA; --fail-line: #B3AB9B;
+  --sc-band: #1C222C; }
 .sc main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .sc-note { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; max-width: 90ch; }
 .sc-sub { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
@@ -49,7 +52,7 @@
 .sc-chips button { font: inherit; font-size: 14px; min-height: 40px; padding: 6px 14px; border-radius: 999px;
   border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); cursor: pointer; }
 .sc-chips button:hover { border-color: var(--ink); }
-.sc-chips button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; font-weight: 600; }
+.sc-chips button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); font-weight: 600; }
 .sc-chips button:focus-visible, .sc-wall [tabindex]:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 /* walls */
@@ -67,10 +70,10 @@
 .sc-tiles { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(3px, 0.4vw, 8px); }
 .sc-tile { position: relative; aspect-ratio: 1; background: var(--tile); border: 1px solid var(--line);
   border-radius: 6px; overflow: hidden; }
-.sc-tile i { position: absolute; inset: 5%; background: var(--ink); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
-.sc-tile.fail { background: var(--fail) linear-gradient(to top right, transparent calc(50% - 1px), var(--line-2) 50%, transparent calc(50% + 1px)); }
+.sc-tile i { position: absolute; inset: 5%; background: var(--paper-ink); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.sc-tile.fail { background: var(--fail) linear-gradient(to top right, transparent calc(50% - 1px), var(--fail-line) 50%, transparent calc(50% + 1px)); }
 .sc-tile.fail span { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 2px;
-  font: 500 clamp(9px, calc(6px + 0.25vw), 12.5px)/1.15 var(--mono); color: var(--muted); }
+  font: 500 clamp(9px, calc(6px + 0.25vw), 12.5px)/1.15 var(--mono); color: var(--paper-muted); }
 .sc-tile.fail span em { font-style: normal; background: var(--fail); padding: 1px 3px; border-radius: 3px; }
 @media (max-width: 760px) {
   .sc-row { grid-template-columns: 1fr; }
@@ -93,7 +96,7 @@
 .sc-legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
 .sc-legend i.sq { width: 9px; height: 9px; border-radius: 1px; }
 .sc-legend i.dash { background: repeating-linear-gradient(90deg, var(--qwen25) 0 5px, transparent 5px 8px) !important; }
-.sc-tip { position: fixed; z-index: 30; pointer-events: none; background: var(--ink); color: #FFFFFF; font-size: 13px;
+.sc-tip { position: fixed; z-index: 30; pointer-events: none; background: var(--tip); color: var(--tip-ink); font-size: 13px;
   line-height: 1.35; padding: 6px 9px; border-radius: 6px; max-width: 260px; display: none; }
 
 /* tables */

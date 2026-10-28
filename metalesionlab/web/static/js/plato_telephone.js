@@ -5,8 +5,9 @@
   'use strict';
   var h = TOT.h;
   var SVGNS = 'http://www.w3.org/2000/svg';
-  var C = { blue: '#1D4ED8', orange: '#C2410C', teal: '#0D9488', ink: '#111827', ink2: '#374151', muted: '#6B7280',
-            grid: '#E1E0D9', seedLine: '#9CA3AF', surface: '#FCFCFB' };
+  // the theme's tokens (app.css, plato_telephone.css), so the charts follow the light or dark theme without redrawing
+  var C = { blue: 'var(--blue)', orange: 'var(--orange)', teal: 'var(--teal)', ink: 'var(--ink)', ink2: 'var(--ink-2)', muted: 'var(--faint)',
+            grid: 'var(--gridline)', seedLine: 'var(--line-3)', surface: 'var(--chart)' };
   var N = 11;
   var D = null, gen = 10, chain = 0, timer = null;  // open on the last generation: the whole filmstrip shows
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

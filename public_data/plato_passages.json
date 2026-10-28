@@ -6,7 +6,7 @@
   "Aristotle, Nicomachean Ethics": "W. D. Ross, Ethica Nicomachea (Oxford, 1925), public domain in the US"
  },
  "license": "Public domain. Jowett's translation (1892): Project Gutenberg texts are free of copyright in the United States; this file carries only short excerpts, without Gutenberg's header or trademark. Ross's translations of the Metaphysics (2nd edition, Oxford, 1928) and the Nicomachean Ethics (Oxford, 1925) were published more than 95 years ago, so they are in the public domain in the United States (in the UK and the EU they stay in copyright until the end of 2041, 70 years after Ross's death). Short excerpts only. The digital text checked against is the MIT Internet Classics Archive's (classics.mit.edu); the printed editions are the Internet Archive's scans.",
- "stephanus_note": "Gutenberg's Jowett texts have no Stephanus numbers. Each reference gives the page and section of the standard Stephanus pagination, placed by matching the passage with editions that print it (Perseus Digital Library); spot-checked for Republic 598a and 515b, Cratylus 427b and Phaedrus 275d. Aristotle's passages carry Bekker numbers (page, column and line), read from the margins of the printed Oxford editions, which number every fifth line.",
+ "stephanus_note": "Gutenberg's Jowett texts have no Stephanus numbers. Each reference gives the page and section of the standard Stephanus pagination, placed by matching the passage with editions that print it (Perseus Digital Library); spot-checked for Republic 598a and 515b, Cratylus 427b and Phaedrus 275d and 276a. Aristotle's passages carry Bekker numbers (page, column and line), read from the margins of the printed Oxford editions, which number every fifth line.",
  "attribution": "Aristotle was Plato's student, as Plato was Socrates'. Quote an Aristotle passage as Aristotle's (Socrates may call him his student's student), never as Plato's or Socrates' own words.",
  "verified": {
   "date": "2026-10-27",
@@ -467,6 +467,40 @@
     "/plato"
    ],
    "text": "I cannot help feeling, Phaedrus, that writing is unfortunately like painting; for the creations of the painter have the attitude of life, and yet if you ask them a question they preserve a solemn silence. And the same may be said of speeches. You would imagine that they had intelligence, but if you want to know anything and put a question to one of them, the speaker always gives one unvarying answer.",
+   "translation": "Benjamin Jowett (1892), public domain",
+   "source_url": "https://www.gutenberg.org/ebooks/1636",
+   "source_text_url": "https://www.gutenberg.org/cache/epub/1636/pg1636.txt"
+  },
+  {
+   "id": "phaedrus-276a",
+   "author": "Plato",
+   "work": "Phaedrus",
+   "stephanus": "276a",
+   "speaker": "Phaedrus, to Socrates, who agrees",
+   "title": "The living word, and the written word its image",
+   "topics": [
+    "writing",
+    "written word",
+    "speech",
+    "spoken word",
+    "living word",
+    "voice",
+    "image",
+    "soul",
+    "knowledge",
+    "stress",
+    "emphasis",
+    "tone",
+    "transcript",
+    "text",
+    "ai",
+    "language model"
+   ],
+   "related_pages": [
+    "/plato/phaedrus",
+    "/socrates"
+   ],
+   "text": "You mean the living word of knowledge which has a soul, and of which the written word is properly no more than an image?",
    "translation": "Benjamin Jowett (1892), public domain",
    "source_url": "https://www.gutenberg.org/ebooks/1636",
    "source_text_url": "https://www.gutenberg.org/cache/epub/1636/pg1636.txt"

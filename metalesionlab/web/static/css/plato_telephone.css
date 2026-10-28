@@ -2,10 +2,13 @@
    kind's name; orange: "chair" and same-start chains; teal: Spark's picture labels (validated together for
    colour-vision deficiency on the chart surface). Fluid: the page fills wide windows; prose keeps a ~75ch measure. */
 .tp {
-  --blue-s: #1D4ED8; --orange-s: #C2410C; --teal-s: #0D9488; --chart: #FCFCFB; --track: #EEEDE8;
-  --gridline: #E1E0D9; --axis: #C3C2B7;
-  background: #F7F6F1;
+  --blue-s: var(--blue); --orange-s: var(--orange); --teal-s: var(--teal); --chart: var(--chart-bg); --track: var(--chart-track);
+  --gridline: var(--chart-grid); --axis: var(--chart-axis);
+  --tp-player-bg: rgba(255, 255, 255, 0.96); --tp-veil: rgba(247, 246, 241, 0.86);
+  background: var(--ground-warm);
 }
+/* dark: the player floats as a dark bar; the strip stays paper, so its veil is paper too */
+:root[data-theme="dark"] .tp { --tp-player-bg: rgba(22, 27, 35, 0.96); --tp-veil: rgba(247, 245, 239, 0.86); }
 /* the page uses the shared layout tokens (app.css: --gutter, --page-max, --measure, fluid type), so its header
    lines up with every other page */
 .tp main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
@@ -23,10 +26,10 @@
 /* the player: play, generation slider, chain switch */
 .tp-player { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: "play slider chains" "play label chains"; align-items: center; gap: 2px 16px;
-  background: rgba(255, 255, 255, 0.96); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  background: var(--tp-player-bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
 .tp-play { grid-area: play; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 600;
   min-height: 44px; padding: 8px 18px; border-radius: 999px; border: 1px solid var(--ink); background: var(--ink);
-  color: #FFFFFF; cursor: pointer; }
+  color: var(--on-ink); cursor: pointer; }
 .tp-play svg { width: 12px; height: 12px; }
 .tp-play[aria-pressed="true"] { background: var(--panel); color: var(--ink); }
 .tp-slider { grid-area: slider; display: flex; flex-direction: column; min-width: 0; }
@@ -41,7 +44,7 @@
 .tp-chains button { font: inherit; font-size: 14px; min-height: 40px; padding: 6px 14px; border-radius: 999px;
   border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); cursor: pointer; }
 .tp-chains button:hover { border-color: var(--ink); }
-.tp-chains button[aria-checked="true"] { background: var(--ink); border-color: var(--ink); color: #FFFFFF; font-weight: 600; }
+.tp-chains button[aria-checked="true"] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); font-weight: 600; }
 
 /* chain rows */
 .tp-rows { display: flex; flex-direction: column; gap: 10px; }
@@ -54,18 +57,18 @@
 .tp-dist { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
 .tp-dist b { font-variant-numeric: tabular-nums; }
 .tp-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.tp-strip { position: relative; width: 100%; aspect-ratio: 11 / 1; background: #FFFFFF; border: 1px solid var(--line);
+.tp-strip { position: relative; width: 100%; aspect-ratio: 11 / 1; background: var(--paper); border: 1px solid var(--line);
   border-radius: 8px; overflow: hidden; cursor: pointer; }
 .tp-strip img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.tp-dim { position: absolute; top: 0; bottom: 0; right: 0; background: rgba(247, 246, 241, 0.86);
+.tp-dim { position: absolute; top: 0; bottom: 0; right: 0; background: var(--tp-veil);
   transition: width 0.35s ease; pointer-events: none; }
-.tp-cursor { position: absolute; top: 0; bottom: 0; width: calc(100% / 11); border: 3px solid var(--blue-s);
+.tp-cursor { position: absolute; top: 0; bottom: 0; width: calc(100% / 11); border: 3px solid var(--blue-fill);
   border-radius: 6px; transition: left 0.35s ease; pointer-events: none; box-sizing: border-box; }
-.tp-cursor.is-control { border-color: var(--ink-2); }
+.tp-cursor.is-control { border-color: var(--paper-ink-2); }
 .tp-pair { display: none; }
 .tp-desc { margin: 0; font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); max-width: 110ch; min-height: 3em; }
 .tp-desc .gen { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-right: 6px; }
-.tp-desc mark { background: #DBEAFE; color: var(--ink); font-weight: 600; border-radius: 3px; padding: 0 2px; }
+.tp-desc mark { background: var(--blue-soft); color: var(--ink); font-weight: 600; border-radius: 3px; padding: 0 2px; }
 .tp-status { font-size: 13px; color: var(--muted); }
 .tp-status b { color: var(--ink); }
 
@@ -92,7 +95,7 @@
 .tp-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
 .tp-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .tp-legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; }
-.tp-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px;
+.tp-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px;
   font-size: 12px; line-height: 1.45; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 260px; }
 .tp-tip b { font-size: 13px; }
 .tp-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 4px 0; font-size: 14px; }
@@ -102,7 +105,7 @@
 .tp-sec td.num, .tp-sec th.num { font-family: var(--mono); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tp-form-intro { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .tp-default { margin: 0; display: flex; align-items: center; gap: 10px; max-width: 320px; }
-.tp-default img { width: 96px; height: 96px; border: 1px solid var(--line); border-radius: 8px; background: #FFFFFF; flex: none; }
+.tp-default img { width: 96px; height: 96px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); flex: none; }
 .tp-default figcaption { font-size: 13px; line-height: 1.4; color: var(--ink-2); }
 .tp-form-intro .tp-sub { flex: 1 1 420px; }
 .tp-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 2.5vw, 64px); }
@@ -141,7 +144,7 @@
   /* on a phone the strip is too small to read, so the start and the current picture are shown large above it */
   .tp-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .tp-pair figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
-  .tp-pair .frame { aspect-ratio: 1 / 1; background-color: #FFFFFF; background-repeat: no-repeat; background-size: 1100% 100%;
+  .tp-pair .frame { aspect-ratio: 1 / 1; background-color: var(--paper); background-repeat: no-repeat; background-size: 1100% 100%;
     border: 1px solid var(--line); border-radius: 8px; }
   .tp-pair figcaption { font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .tp-desc { font-size: 14px; }

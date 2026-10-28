@@ -4,7 +4,7 @@
   'use strict';
   var T = window.TOT, h = T.h;
   var IMG = '/static/img/plato/';
-  var BLUE = '#1D4ED8', BLUE_SOFT = '#93C5FD', ORANGE = '#C2410C', TEAL = '#0D9488', GRID = '#E5E7EB', AXIS = '#9CA3AF';
+  var BLUE = 'var(--blue)', BLUE_SOFT = 'var(--blue-mid)', ORANGE = 'var(--orange)', TEAL = 'var(--teal)', GRID = 'var(--line)', AXIS = 'var(--line-3)';
   var NS = 'http://www.w3.org/2000/svg';
   var S = { data: null, concept: 'chair', who: 'ai', lang: 'chair' };
   var readyResolve;
@@ -133,11 +133,11 @@
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
       'aria-label': 'Dot chart of the ratio of the AI’s spread to people’s spread for 35 things, as DINOv2 measures it, sorted from umbrella (0.14, most uniform) to book (1.04, the only one at or above 1). The table below lists every value.' });
     [0, 0.25, 0.5, 0.75, 1, 1.25].forEach(function (t) {
-      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: top - 6, y2: H - bottom + 4, stroke: t === 1 ? '#6B7280' : GRID, 'stroke-width': 1 }));
-      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 12, fill: '#4B5563' }, String(t)));
+      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: top - 6, y2: H - bottom + 4, stroke: t === 1 ? 'var(--faint)' : GRID, 'stroke-width': 1 }));
+      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--muted)' }, String(t)));
     });
-    svg.appendChild(s('text', { x: x(1) - 4, y: top - 12, 'text-anchor': 'end', 'font-size': 12, fill: '#374151' }, 'as varied as people →'));
-    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: '#4B5563' },
+    svg.appendChild(s('text', { x: x(1) - 4, y: top - 12, 'text-anchor': 'end', 'font-size': 12, fill: 'var(--ink-2)' }, 'as varied as people →'));
+    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--muted)' },
       W < 520 ? 'Muse spread ÷ people’s (lower = more alike)' : 'Muse Image’s spread ÷ people’s spread  (lower = drawn more alike)'));
     rows.forEach(function (c, i) {
       var y = top + i * rowH + rowH / 2, em = hero && c.key === hero.core_key;
@@ -148,7 +148,7 @@
       if (c.index_ci95) {
         g.appendChild(s('line', { x1: x(c.index_ci95[0]), x2: x(c.index_ci95[1]), y1: y, y2: y, stroke: BLUE_SOFT, 'stroke-width': 3, 'stroke-linecap': 'round' }));
       }
-      g.appendChild(s('circle', { cx: x(c.index), cy: y, r: em ? 6 : 4.5, fill: BLUE, stroke: '#FFFFFF', 'stroke-width': 2 }));
+      g.appendChild(s('circle', { cx: x(c.index), cy: y, r: em ? 6 : 4.5, fill: BLUE, stroke: 'var(--chart-halo)', 'stroke-width': 2 }));
       hit.addEventListener('pointermove', function (e) {
         showTip(wrap, e, [c.label + (c.quickdraw !== c.label ? ' (' + c.quickdraw + ')' : ''),
           'Ratio ' + f2(c.index) + ' (95% CI ' + ci(c.index_ci95) + ')',
@@ -219,7 +219,7 @@
   // --- ask for variety ------------------------------------------------------------------------
   var VAR_ROWS = [['Usual prompt', 'default'], ['“Any kind”', 'any'], ['“An unusual kind”', 'unusual'], ['Named kinds, one each', 'listed']];
   function times(x) { return '×' + (x < 1 ? f2(x) : Number(x).toFixed(1)); }
-  /* One row of dots per prompt: every thing's spread ÷ people's spread, the median as a black bar, people at 1. */
+  /* One row of dots per prompt: every thing's spread ÷ people's spread, the median as a bar, people at 1. */
   function renderVarietyChart() {
     var wrap = $('var-chart'), v = S.data && S.data.variety;
     if (!wrap || !v) return;
@@ -235,21 +235,21 @@
         return r[0] + ': median ' + f2(v.conditions[r[1]].median_ratio); }).join('; ') + '. People are at 1.' });
     for (var t = 0; t <= xMax + 1e-9; t += 0.5) {
       svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: top, y2: H - bottom + 4, stroke: GRID }));
-      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 11, fill: '#4B5563' }, String(t)));
+      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, String(t)));
     }
-    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: '#374151' },
+    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--ink-2)' },
       'Muse Image’s spread ÷ people’s spread'));
     var labels = [];
     rows.forEach(function (row, ri) {
       var y0 = top + ri * (band + gapY) + 22, mid = y0 + band / 2, cond = row[1], med = v.conditions[cond].median_ratio;
       var pts = v.concepts.filter(function (c) { return c[cond] != null; });
-      labels.push(s('text', { x: left, y: y0 - 7, 'font-size': 12, 'font-weight': 600, fill: '#111827', stroke: '#FFFFFF', 'stroke-width': 4,
+      labels.push(s('text', { x: left, y: y0 - 7, 'font-size': 12, 'font-weight': 600, fill: 'var(--ink)', stroke: 'var(--chart-halo)', 'stroke-width': 4,
         'paint-order': 'stroke', 'pointer-events': 'none' }, row[0] + ' · median ' + f2(med) + (pts.length < 20 ? ' (' + pts.length + ' things)' : '')));
-      svg.appendChild(s('line', { x1: x(med), x2: x(med), y1: y0 + 2, y2: y0 + band - 2, stroke: '#111827', 'stroke-width': 2 }));
+      svg.appendChild(s('line', { x1: x(med), x2: x(med), y1: y0 + 2, y2: y0 + band - 2, stroke: 'var(--ink)', 'stroke-width': 2 }));
       pts.forEach(function (c, i) {
         var jitter = ((i * 37) % 11 - 5) / 5 * (band / 2 - 7), cy = mid + jitter, em = c.key === 'chair';
-        svg.appendChild(s('circle', { cx: x(c[cond]), cy: cy, r: em ? 6 : 4.5, fill: BLUE, stroke: em ? '#111827' : '#FFFFFF', 'stroke-width': 2 }));
-        if (em) labels.push(s('text', { x: x(c[cond]) + 9, y: cy + 4, 'font-size': 11, 'font-weight': 600, fill: '#111827', stroke: '#FFFFFF',
+        svg.appendChild(s('circle', { cx: x(c[cond]), cy: cy, r: em ? 6 : 4.5, fill: BLUE, stroke: em ? 'var(--ink)' : 'var(--chart-halo)', 'stroke-width': 2 }));
+        if (em) labels.push(s('text', { x: x(c[cond]) + 9, y: cy + 4, 'font-size': 11, 'font-weight': 600, fill: 'var(--ink)', stroke: 'var(--chart-halo)',
           'stroke-width': 3, 'paint-order': 'stroke', 'pointer-events': 'none' }, 'chair'));
         var hit = s('circle', { cx: x(c[cond]), cy: cy, r: 11, fill: 'transparent' });
         hit.addEventListener('pointermove', function (e) {
@@ -261,7 +261,7 @@
     });
     svg.appendChild(s('line', { x1: x(1), x2: x(1), y1: top, y2: H - bottom + 4, stroke: ORANGE, 'stroke-width': 2 }));
     labels.forEach(function (l) { svg.appendChild(l); });
-    svg.appendChild(s('text', { x: x(1) + 5, y: 12, 'font-size': 11, fill: '#374151' }, 'people = 1'));
+    svg.appendChild(s('text', { x: x(1) + 5, y: 12, 'font-size': 11, fill: 'var(--ink-2)' }, 'people = 1'));
     var old = wrap.querySelector('svg');
     if (old) wrap.replaceChild(svg, old); else wrap.insertBefore(svg, wrap.firstChild);
   }
@@ -306,7 +306,7 @@
     var lg = $('var-legend');
     lg.innerHTML = '';
     var key = function (color, label, line) { var i = h('i', { class: line ? 'line' : '' }); i.style.background = color; return h('span', null, [i, label]); };
-    [key(BLUE, 'one thing (Muse Image)'), key(ORANGE, 'People', true), h('span', { text: 'Black bar: median' })].forEach(function (k) { lg.appendChild(k); });
+    [key(BLUE, 'one thing (Muse Image)'), key(ORANGE, 'People', true), key('var(--ink)', 'Median (bar)', true)].forEach(function (k) { lg.appendChild(k); });
     renderVarietyKinds();
   }
   function renderVarietyKinds() {
@@ -400,22 +400,22 @@
       'aria-label': 'Scatter plot of 35 things: how varied people’s drawings are against how often Glimmer named them correctly. The more varied, the lower the accuracy on average; bench is lowest at 17%.' });
     [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
       svg.appendChild(s('line', { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: GRID }));
-      svg.appendChild(s('text', { x: m.l - 6, y: y(t) + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#4B5563' }, pct(t) + '%'));
+      svg.appendChild(s('text', { x: m.l - 6, y: y(t) + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--muted)' }, pct(t) + '%'));
     });
     var step = (x1 - x0) > 0.2 ? 0.05 : 0.02;
     for (var t = Math.ceil(x0 / step) * step; t <= x1 + 1e-9; t += step) {
-      svg.appendChild(s('text', { x: x(t), y: H - m.b + 16, 'text-anchor': 'middle', 'font-size': 11, fill: '#4B5563' }, t.toFixed(2)));
+      svg.appendChild(s('text', { x: x(t), y: H - m.b + 16, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, t.toFixed(2)));
     }
     svg.appendChild(s('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: AXIS }));
-    svg.appendChild(s('text', { x: m.l + (W - m.l - m.r) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: '#374151' }, 'How varied people’s drawings are (spread) →'));
-    svg.appendChild(s('text', { x: 0, y: 12, 'font-size': 12, fill: '#374151' }, W < 480 ? '↑ Named correctly by Glimmer' : '↑ How often Glimmer names people’s drawings correctly'));
+    svg.appendChild(s('text', { x: m.l + (W - m.l - m.r) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--ink-2)' }, 'How varied people’s drawings are (spread) →'));
+    svg.appendChild(s('text', { x: 0, y: 12, 'font-size': 12, fill: 'var(--ink-2)' }, W < 480 ? '↑ Named correctly by Glimmer' : '↑ How often Glimmer names people’s drawings correctly'));
     var LABEL = W < 480 ? { bench: 1, helicopter: 1, harp: 1 } : { bench: 1, helicopter: 1, harp: 1, clock: 1, guitar: 1, face: 1 };
     pts.forEach(function (p) {
       var cx = x(p.spread), cy = y(p.accuracy);
-      svg.appendChild(s('circle', { cx: cx, cy: cy, r: 4.5, fill: ORANGE, stroke: '#FFFFFF', 'stroke-width': 2 }));
+      svg.appendChild(s('circle', { cx: cx, cy: cy, r: 4.5, fill: ORANGE, stroke: 'var(--chart-halo)', 'stroke-width': 2 }));
       if (LABEL[p.label]) {
         var right = cx > W - 90;
-        svg.appendChild(s('text', { x: cx + (right ? -8 : 8), y: cy + 4, 'text-anchor': right ? 'end' : 'start', 'font-size': 11, fill: '#111827' }, p.label));
+        svg.appendChild(s('text', { x: cx + (right ? -8 : 8), y: cy + 4, 'text-anchor': right ? 'end' : 'start', 'font-size': 11, fill: 'var(--ink)' }, p.label));
       }
       var hit = s('circle', { cx: cx, cy: cy, r: 12, fill: 'transparent' });
       hit.addEventListener('pointermove', function (e) {
@@ -503,19 +503,19 @@
         f2(median(rows.map(function (r) { return r.muse_index; }))) + '); Stable Diffusion XL’s spread around and right of it (median ' + f2(sx.median_index) + ').' });
     for (var t = 0; t <= xMax + 1e-9; t += 0.5) {
       svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: top, y2: H - bottom + 4, stroke: GRID }));
-      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 11, fill: '#4B5563' }, String(t)));
+      svg.appendChild(s('text', { x: x(t), y: H - bottom + 18, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, String(t)));
     }
-    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: '#374151' }, 'model’s spread ÷ people’s spread'));
+    svg.appendChild(s('text', { x: left + (W - left - right) / 2, y: H - 4, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--ink-2)' }, 'model’s spread ÷ people’s spread'));
     var labels = [];
     [['Muse Image (Meta)', 'muse_index', BLUE], ['Stable Diffusion XL', 'sdxl_index', TEAL]].forEach(function (row, ri) {
       var y0 = top + ri * (band + 30) + 26, mid = y0 + band / 2, vals = rows.map(function (r) { return r[row[1]]; }), med = median(vals);
-      labels.push(s('text', { x: left, y: y0 - 8, 'font-size': 12, 'font-weight': 600, fill: '#111827', stroke: '#FFFFFF', 'stroke-width': 4,
+      labels.push(s('text', { x: left, y: y0 - 8, 'font-size': 12, 'font-weight': 600, fill: 'var(--ink)', stroke: 'var(--chart-halo)', 'stroke-width': 4,
         'paint-order': 'stroke', 'pointer-events': 'none' }, row[0] + ' · median ' + f2(med)));
-      svg.appendChild(s('line', { x1: x(med), x2: x(med), y1: y0 + 4, y2: y0 + band - 4, stroke: '#111827', 'stroke-width': 2 }));
+      svg.appendChild(s('line', { x1: x(med), x2: x(med), y1: y0 + 4, y2: y0 + band - 4, stroke: 'var(--ink)', 'stroke-width': 2 }));
       rows.forEach(function (r, i) {
         var jitter = ((i * 37) % 11 - 5) / 5 * (band / 2 - 8), cy = mid + jitter, chair = r.label === 'chair';
-        svg.appendChild(s('circle', { cx: x(r[row[1]]), cy: cy, r: chair ? 6 : 4.5, fill: row[2], stroke: chair ? '#111827' : '#FFFFFF', 'stroke-width': 2 }));
-        if (chair) labels.push(s('text', { x: x(r[row[1]]) + 9, y: cy + 4, 'font-size': 11, 'font-weight': 600, fill: '#111827', stroke: '#FFFFFF',
+        svg.appendChild(s('circle', { cx: x(r[row[1]]), cy: cy, r: chair ? 6 : 4.5, fill: row[2], stroke: chair ? 'var(--ink)' : 'var(--chart-halo)', 'stroke-width': 2 }));
+        if (chair) labels.push(s('text', { x: x(r[row[1]]) + 9, y: cy + 4, 'font-size': 11, 'font-weight': 600, fill: 'var(--ink)', stroke: 'var(--chart-halo)',
           'stroke-width': 3, 'paint-order': 'stroke', 'pointer-events': 'none' }, 'chair'));
         var hit = s('circle', { cx: x(r[row[1]]), cy: cy, r: 11, fill: 'transparent' });
         hit.addEventListener('pointermove', function (e) {
@@ -528,7 +528,7 @@
     });
     svg.appendChild(s('line', { x1: x(1), x2: x(1), y1: top, y2: H - bottom + 4, stroke: ORANGE, 'stroke-width': 2 }));
     labels.forEach(function (l) { svg.appendChild(l); });
-    svg.appendChild(s('text', { x: x(1) + 5, y: 12, 'font-size': 11, fill: '#374151' }, 'people = 1'));
+    svg.appendChild(s('text', { x: x(1) + 5, y: 12, 'font-size': 11, fill: 'var(--ink-2)' }, 'people = 1'));
     var old = wrap.querySelector('svg');
     if (old) wrap.replaceChild(svg, old); else wrap.insertBefore(svg, wrap.firstChild);
   }
@@ -581,7 +581,7 @@
       var key = function (color, label, line) { var i = h('i', { class: line ? 'line' : '' }); i.style.background = color; return h('span', null, [i, label]); };
       var chart = h('div', { class: 'pc-chart', id: 'sdxl-chart' });
       box.appendChild(h('div', { class: 'pc-sdxl-chart' }, [h('p', { class: 'pc-chart-title', text: 'How varied each thing is, compared with people' }), chart,
-        h('div', { class: 'pc-legend' }, [key(BLUE, 'Muse Image (Meta)'), key(TEAL, 'Stable Diffusion XL'), key(ORANGE, 'People', true), h('span', { text: 'Black bar: median' })])]));
+        h('div', { class: 'pc-legend' }, [key(BLUE, 'Muse Image (Meta)'), key(TEAL, 'Stable Diffusion XL'), key(ORANGE, 'People', true), key('var(--ink)', 'Median (bar)', true)])]));
       renderSdxlChart(chart, sx);
     }
     var fig = (S.data.figures || {}).sdxl_chair;

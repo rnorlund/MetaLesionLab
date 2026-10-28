@@ -1,5 +1,6 @@
 /* Plato's Chair. Paper #F7F6F1 like the game page; blue is the AI (Muse Image), orange is people. */
-body.plato { background: #F7F6F1; }
+body.plato { background: var(--ground-warm); --pc-reply: #FCFBF7; }
+:root[data-theme="dark"] body.plato { --pc-reply: #191B1F; }
 .plato main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .pc-kicker { font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
 .pc-cap { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
@@ -17,7 +18,7 @@ body.plato { background: #F7F6F1; }
 .pc-who button { font-weight: 600; font-size: 14px; }
 .pc-who button[data-who="ai"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--blue), 0 1px 2px rgba(0, 0, 0, 0.08); }
 .pc-who button[data-who="people"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--orange), 0 1px 2px rgba(0, 0, 0, 0.08); }
-.pc-frame { aspect-ratio: 884 / 924; background: #FCFCFB; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.pc-frame { aspect-ratio: 884 / 924; background: var(--paper-mat); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .pc-frame img { width: 100%; height: 100%; object-fit: contain; display: block; transition: opacity 0.18s ease; }
 .pc-frame img.swapping { opacity: 0.15; }
 
@@ -50,7 +51,7 @@ body.plato { background: #F7F6F1; }
 .pc-chart .tick text, .pc-chart .lbl { font-size: 12px; fill: var(--muted); }
 .pc-chart .lbl.em { fill: var(--ink); font-weight: 600; }
 .pc-chart .row-hit { fill: transparent; cursor: default; }
-.pc-chart .row-hit:hover, .pc-chart .row-hit.on { fill: rgba(17, 24, 39, 0.05); }
+.pc-chart .row-hit:hover, .pc-chart .row-hit.on { fill: var(--tint); }
 .pc-facts { display: flex; flex-direction: column; gap: 12px; }
 .pc-fact { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
 .pc-fact b { font-size: clamp(26px, calc(16px + 0.8vw), 38px); letter-spacing: -0.01em; line-height: 1.15; }
@@ -58,7 +59,7 @@ body.plato { background: #F7F6F1; }
 .pc-numbers { font-size: 14px; }
 /* "Aristotle's reply": a philosophical framing between the results, not a finding. The text, then one
    verified Aristotle passage (an inline epigraph, epigraph.css); side by side once there is room. */
-.pc-reply { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 2.4vw, 64px); align-items: center; background: #FCFBF7; }
+.pc-reply { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 2.4vw, 64px); align-items: center; background: var(--pc-reply); }
 .pc-reply-text { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .pc-reply h2 { font-size: clamp(24px, calc(14px + 1vw), 42px); }
 .pc-reply-text p { margin: 0; max-width: var(--measure); font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
@@ -77,11 +78,11 @@ body.plato { background: #F7F6F1; }
 .pc-robust-table .who { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
 .pc-robust-table .num { font-family: var(--mono); text-align: right; white-space: nowrap; }
 .pc-robust-table .ci { display: block; font-size: 11px; color: var(--muted); }
-.pc-robust-table tr.ref > * { background: #FFFFFF; }
+.pc-robust-table tr.ref > * { background: var(--panel); }
 .pc-numbers table { margin-top: 8px; }
 .pc-numbers td.num, .pc-numbers th.num { font-family: var(--mono); text-align: right; }
 
-.pc-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 260px; }
+.pc-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 260px; }
 .pc-tip b { font-size: 14px; }
 .pc-tip .key { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
 
@@ -89,7 +90,7 @@ body.plato { background: #F7F6F1; }
 .pc-lang-seg { max-width: 280px; }
 .pc-lang { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(28px, 2.5vw, 64px); align-items: start; }
 .pc-lang-fig, .pc-lang-avg { margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.pc-lang-fig img, .pc-lang-avg img { width: 100%; max-width: 1200px; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: #FCFCFB; }
+.pc-lang-fig img, .pc-lang-avg img { width: 100%; max-width: 1200px; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-mat); }
 .pc-lang-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .pc-lang-text h3 { margin: 0 0 6px; font-size: var(--fs-h3); }
 .pc-lang-text p { margin: 0 0 8px; max-width: var(--measure); font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
@@ -125,10 +126,10 @@ body.plato { background: #F7F6F1; }
 .pc-sdxl-text p.pc-caveat { font-size: 14px; color: var(--muted); border-left: 3px solid var(--line-2); padding-left: 12px; }
 .pc-not-all { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); background: var(--soft); border-radius: 8px; padding: 10px 12px; }
 .pc-sdxl-fig { grid-column: 1 / -1; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.pc-sdxl-fig img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: #FCFCFB; }
+.pc-sdxl-fig img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-mat); }
 .pc-pending { margin: 0; font-size: 17px; color: var(--ink-2); background: var(--soft); border: 1px dashed var(--line-2); border-radius: 12px; padding: 18px 20px; }
 .pc-sdxl-text p { margin: 0 0 10px; font-size: calc(var(--fs-body) + 1px); line-height: 1.6; color: var(--ink-2); }
-.pc-badge { display: inline-block; font-family: var(--mono); font-size: 12px; background: var(--amber-soft); border: 1px solid #FCD34D; color: var(--ink); border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+.pc-badge { display: inline-block; font-family: var(--mono); font-size: 12px; background: var(--amber-soft); border: 1px solid var(--amber-line); color: var(--ink); border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
 .pc-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--ink-2); margin-top: 6px; }
 .pc-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .pc-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
@@ -136,7 +137,7 @@ body.plato { background: #F7F6F1; }
 
 /* ask for variety */
 .pc-var-fig { margin: 0 0 24px; display: flex; flex-direction: column; gap: 8px; }
-.pc-var-fig img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: #FCFCFB; }
+.pc-var-fig img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-mat); }
 .pc-var-kinds { margin-top: 28px; max-width: var(--measure); }
 .pc-var-kinds h3 { margin: 0 0 8px; font-size: var(--fs-h3); line-height: 1.35; }
 .pc-var-kinds p { margin: 0 0 10px; font-size: calc(var(--fs-body) + 1px); line-height: 1.6; color: var(--ink-2); }

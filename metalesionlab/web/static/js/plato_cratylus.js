@@ -6,11 +6,12 @@
   var T = window.TOT, h = T.h;
   var IMG = '/static/img/plato_cratylus/';
   var NS = 'http://www.w3.org/2000/svg';
-  var SOUND = { round: '#2a78d6', spiky: '#eb6834', mixed: '#6250d6', neutral: '#8a8984' };
+  // the site's colour tokens (app.css: the validated --s-* palette), so a theme switch recolours the charts
+  var SOUND = { round: 'var(--s-blue)', spiky: 'var(--s-orange)', mixed: 'var(--s-violet)', neutral: 'var(--s-neutral)' };
   var SOUND_LABEL = { round: 'sounds round', spiky: 'sounds spiky', mixed: 'mixed sounds', neutral: 'neutral / no name' };
-  var WHO = { glimmer_picture: ['#2a78d6', 'Muse Glimmer, picture'], glimmer_text: ['#1baf7a', 'Muse Glimmer, words only'],
-              spark: ['#6250d6', 'Muse Spark, picture'] };
-  var PEOPLE = '#eb6834', GRID = '#E5E7EB', MUTED = '#6B7280';
+  var WHO = { glimmer_picture: ['var(--s-blue)', 'Muse Glimmer, picture'], glimmer_text: ['var(--s-green)', 'Muse Glimmer, words only'],
+              spark: ['var(--s-violet)', 'Muse Spark, picture'] };
+  var PEOPLE = 'var(--s-orange)', GRID = 'var(--line)', MUTED = 'var(--faint)', HALO = 'var(--chart-halo)';
   var MEASURE = {
     solidity: { label: 'Solidity', lo: 0.45, hi: 1.0, note: 'Solidity: the shape’s area over the area of a rubber band stretched around it. 1 = a blob with no dents; a star is about 0.5. Further left = spikier.', spikyLeft: true },
     corners: { label: 'Sharp corners', lo: 0, hi: 12, note: 'Sharp corners: places where the outline turns by 60° or more within a short stretch. A blob has none, a five-pointed star five.' },
@@ -150,7 +151,7 @@
       g.appendChild(hit);
       g.appendChild(s('text', { x: L - 10, y: y + 4, 'text-anchor': 'end', class: 'lbl' + (w.word === S.word ? ' em' : ''), fill: col, style: 'fill:' + col }, label(w.word)));
       if (e.ci95) g.appendChild(s('line', { x1: x(e.ci95[0]), x2: x(e.ci95[1]), y1: y, y2: y, stroke: col, 'stroke-width': 2, 'stroke-linecap': 'round' }));
-      g.appendChild(s('circle', { cx: x(e.mean), cy: y, r: 5, fill: col, stroke: '#fff', 'stroke-width': 2 }));
+      g.appendChild(s('circle', { cx: x(e.mean), cy: y, r: 5, fill: col, stroke: HALO, 'stroke-width': 2 }));
       hit.addEventListener('mousemove', function (evt) {
         showTip(wrap, evt, [label(w.word), m.label + ': ' + (S.m === 'corners' ? e.mean.toFixed(1) : f2(e.mean)) + (e.ci95 ? ' (95% CI ' + (S.m === 'corners' ? e.ci95[0].toFixed(1) + '–' + e.ci95[1].toFixed(1) : f2(e.ci95[0]) + '–' + f2(e.ci95[1])) + ')' : ''), SOUND_LABEL[w.sound] + ' · ' + w.n + ' pictures']);
       });
@@ -209,7 +210,7 @@
     var x = function (v) { return L + v * (W - L - R); };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Probability of picking the round shape for each word, by model, with people for bouba and kiki' });
     [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
-      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: Tp - 6, y2: H - 22, stroke: t === 0.5 ? '#9CA3AF' : GRID }));
+      svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: Tp - 6, y2: H - 22, stroke: t === 0.5 ? 'var(--line-3)' : GRID }));
       svg.appendChild(s('text', { x: x(t), y: H - 6, 'text-anchor': 'middle', class: 'lbl' }, pct(t) + '%'));
     });
     svg.appendChild(s('text', { x: x(0), y: 12, class: 'lbl' }, '← picks the spiky shape'));
@@ -221,7 +222,7 @@
         var e = D.choice[k][wd];
         if (!e || e.p_round == null) return;
         var cy = y + (j - 1) * 6;
-        var dot = s('circle', { cx: x(e.p_round), cy: cy, r: 4.5, fill: WHO[k][0], stroke: '#fff', 'stroke-width': 1.5 });
+        var dot = s('circle', { cx: x(e.p_round), cy: cy, r: 4.5, fill: WHO[k][0], stroke: HALO, 'stroke-width': 1.5 });
         svg.appendChild(dot);
         var hit = s('circle', { cx: x(e.p_round), cy: cy, r: 9, class: 'hit' });
         hit.addEventListener('mousemove', function (evt) { showTip(wrap, evt, [wd, WHO[k][1] + ': picks round ' + pct(e.p_round) + '%', e.n ? e.n + ' answers' : '']); });
@@ -231,7 +232,7 @@
       if (wd === 'bouba' || wd === 'kiki') {
         var p = wd === 'bouba' ? D.people.bouba_round_first_trials : 1 - D.people.kiki_spiky_first_trials;
         var cx = x(p), cy = y;
-        svg.appendChild(s('rect', { x: cx - 5, y: cy - 5, width: 10, height: 10, fill: PEOPLE, stroke: '#fff', 'stroke-width': 1.5, transform: 'rotate(45 ' + cx + ' ' + cy + ')' }));
+        svg.appendChild(s('rect', { x: cx - 5, y: cy - 5, width: 10, height: 10, fill: PEOPLE, stroke: HALO, 'stroke-width': 1.5, transform: 'rotate(45 ' + cx + ' ' + cy + ')' }));
         var ph = s('circle', { cx: cx, cy: cy, r: 9, class: 'hit' });
         ph.addEventListener('mousemove', function (evt) { showTip(wrap, evt, [wd, 'People: picks round ' + pct(p) + '%', 'Ćwiek et al. 2022, first trials (read from Fig. 6)']); });
         ph.addEventListener('mouseleave', function () { hideTip(wrap); });

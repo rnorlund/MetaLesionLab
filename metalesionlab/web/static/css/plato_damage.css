@@ -1,5 +1,5 @@
 /* Plato's Chair, damaged. Paper like the Plato page; blue = language part, orange = drawing part. */
-body.plato-damage { background: #F7F6F1; }
+body.plato-damage { background: var(--ground-warm); }
 .plato-damage main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 
 /* hero */
@@ -21,7 +21,7 @@ body.plato-damage { background: #F7F6F1; }
 .pd-panel.lang h2 { color: var(--blue); }
 .pd-panel.draw h2 { color: var(--orange); }
 .pd-sub { margin: 0 0 4px; font-size: 13px; color: var(--muted); }
-.pd-frame { aspect-ratio: 1; background: #FCFCFB; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pd-frame { aspect-ratio: 1; background: var(--paper-mat); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .pd-panel.lang .pd-frame { box-shadow: inset 0 -4px 0 var(--blue); }
 .pd-panel.draw .pd-frame { box-shadow: inset 0 -4px 0 var(--orange); }
 .pd-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -64,7 +64,7 @@ body.plato-damage { background: #F7F6F1; }
 .pd-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .pd-legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; }
 .pd-legend i.dash { border-top-style: dashed; }
-.pd-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px;
+.pd-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px;
   font-size: 12px; line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 240px; }
 
 .pd-proto { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
@@ -85,7 +85,7 @@ body.plato-damage { background: #F7F6F1; }
 .pd-clocks { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
 .pd-clocks p { margin: 0 0 10px; max-width: var(--measure); font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
 .pd-clockgrid { display: grid; grid-template-columns: 70px repeat(4, minmax(0, 1fr)); gap: 4px; align-items: center; }
-.pd-clockgrid img { width: 100%; aspect-ratio: 1; display: block; border-radius: 6px; border: 1px solid var(--line); background: #FCFCFB; }
+.pd-clockgrid img { width: 100%; aspect-ratio: 1; display: block; border-radius: 6px; border: 1px solid var(--line); background: var(--paper-mat); }
 .pd-clockgrid .h { font-size: 12px; color: var(--muted); text-align: center; }
 .pd-clockgrid .r { font-size: 12px; font-weight: 600; }
 .pd-clockgrid .r.lang { color: var(--blue); }
@@ -100,9 +100,9 @@ body.plato-damage { background: #F7F6F1; }
 .pd-janus p { margin: 0 0 10px; max-width: var(--measure); font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
 .pd-jstrip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
 .pd-jstrip figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
-.pd-jstrip img { width: 100%; aspect-ratio: 1; display: block; border-radius: 6px; border: 1px solid var(--line); background: #FCFCFB; }
+.pd-jstrip img { width: 100%; aspect-ratio: 1; display: block; border-radius: 6px; border: 1px solid var(--line); background: var(--paper-mat); }
 .pd-jstrip figcaption { font-size: 12px; color: var(--muted); text-align: center; }
-.pd-pending { margin: 0; font-size: 14px; color: var(--ink-2); background: var(--amber-soft); border: 1px solid #FCD34D; border-radius: 10px; padding: 10px 12px; }
+.pd-pending { margin: 0; font-size: 14px; color: var(--ink-2); background: var(--amber-soft); border: 1px solid var(--amber-line); border-radius: 10px; padding: 10px 12px; }
 
 .pd-method { background: var(--soft); }
 .pd-method h2 { font-size: clamp(22px, calc(14px + 0.65vw), 32px); }

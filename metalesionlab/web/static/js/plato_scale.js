@@ -3,7 +3,8 @@
    wall (static/img/plato_scale/wall_*.webp, 12 columns, one row per model or data size). */
 (function () {
   'use strict';
-  var COLOR = { 'Qwen2.5': '#2a78d6', 'OLMo 2': '#eb6834', 'Qwen3': '#1baf7a', 'Muse': '#171a22' };
+  // the theme's tokens (app.css, plato_scale.css), so the charts follow the light or dark theme without redrawing
+  var COLOR = { 'Qwen2.5': 'var(--s-blue)', 'OLMo 2': 'var(--s-orange)', 'Qwen3': 'var(--s-green)', 'Muse': 'var(--s-meta)' };
   var FAMILIES = ['Qwen2.5', 'OLMo 2', 'Qwen3'];
   var SPRITES = { models: '/static/img/plato_scale/wall_models.webp', data: '/static/img/plato_scale/wall_data.webp' };
   var $ = function (id) { return document.getElementById(id); };
@@ -100,7 +101,7 @@
     var p = shape === 'sq' ? s('rect', { x: x - 5, y: y - 5, width: 10, height: 10, rx: 1.5 }, g)
       : shape === 'dia' ? s('path', { d: 'M' + x + ' ' + (y - 6.5) + 'l6.5 6.5-6.5 6.5-6.5-6.5z' }, g)
         : s('circle', { cx: x, cy: y, r: 5 }, g);
-    p.setAttribute('fill', color); p.setAttribute('stroke', '#FCFCFB'); p.setAttribute('stroke-width', 1.5);
+    p.setAttribute('fill', color); p.setAttribute('stroke', 'var(--chart)'); p.setAttribute('stroke-width', 1.5);
     p.setAttribute('class', 'pt'); p.setAttribute('tabindex', '0'); p.setAttribute('aria-label', text);
     p.addEventListener('mouseenter', function (e) { showTip(e, text); });
     p.addEventListener('focus', function (e) { showTip(e, text); });
@@ -116,16 +117,16 @@
     var lx = function (v) { return L + (Math.log10(v) - Math.log10(cfg.x.min)) / (Math.log10(cfg.x.max) - Math.log10(cfg.x.min)) * pw; };
     var ly = function (v) { return T + (1 - (v - cfg.y.min) / (cfg.y.max - cfg.y.min)) * ph; };
     cfg.y.ticks.forEach(function (v) {
-      s('line', { x1: L, x2: W - 12, y1: ly(v), y2: ly(v), stroke: '#E7E5DE' }, svg);
+      s('line', { x1: L, x2: W - 12, y1: ly(v), y2: ly(v), stroke: 'var(--gridline)' }, svg);
       s('text', { x: L - 6, y: ly(v) + 4, 'text-anchor': 'end', 'font-size': 12 }, svg).textContent = cfg.y.fmt(v);
     });
     cfg.x.ticks.forEach(function (t) {
       s('text', { x: lx(t[0]), y: H - B + 17, 'text-anchor': 'middle', 'font-size': 12 }, svg).textContent = t[1];
     });
     s('text', { x: L + pw / 2, y: H - 5, 'text-anchor': 'middle', 'font-size': 12 }, svg).textContent = cfg.x.title;
-    s('line', { x1: L, x2: L + pw, y1: T + ph, y2: T + ph, stroke: '#B9B7AD' }, svg);
+    s('line', { x1: L, x2: L + pw, y1: T + ph, y2: T + ph, stroke: 'var(--axis)' }, svg);
     (cfg.refs || []).forEach(function (r) {
-      s('line', { x1: L, x2: W - 12, y1: ly(r.y), y2: ly(r.y), stroke: '#6B7280', 'stroke-dasharray': r.dash || '5 4' }, svg);
+      s('line', { x1: L, x2: W - 12, y1: ly(r.y), y2: ly(r.y), stroke: 'var(--faint)', 'stroke-dasharray': r.dash || '5 4' }, svg);
       s('text', { x: L + 4, y: ly(r.y) - 5, 'font-size': 11.5 }, svg).textContent = r.label;
     });
     var g = s('g', {}, svg);
@@ -146,7 +147,7 @@
     });
     if (cfg.side) {  // the API models: their own column, named under the axis, never placed on the size scale
       var x0 = W - sideW + 4, cw = sideW - 12;
-      s('rect', { x: x0, y: T, width: cw, height: ph, fill: '#F1EFE8', rx: 4 }, svg);
+      s('rect', { x: x0, y: T, width: cw, height: ph, fill: 'var(--sc-band)', rx: 4 }, svg);
       s('text', { x: x0 + cw / 2, y: T - 16, 'text-anchor': 'middle', 'font-size': 11 }, svg).textContent = 'API models,';
       s('text', { x: x0 + cw / 2, y: T - 4, 'text-anchor': 'middle', 'font-size': 11 }, svg).textContent = 'size undisclosed';
       cfg.side.forEach(function (m, i) {
@@ -230,7 +231,7 @@
       });
       var refs = [];
       if (col === 'spread') {
-        series.push({ name: 'its training chairs', color: '#6B7280', dash: '2 3', noPoints: true, pts: rowsOf('final').map(function (r) { return { x: r.size, y: r.train_spread }; }) });
+        series.push({ name: 'its training chairs', color: 'var(--faint)', dash: '2 3', noPoints: true, pts: rowsOf('final').map(function (r) { return { x: r.size, y: r.train_spread }; }) });
       }
       if (col === 'recog') refs.push({ y: d.anchors.people.recog, label: 'people’s chairs' });
       if (col === 'siglip' && d.reader_check) refs.push({ y: d.reader_check.people, label: 'people’s chairs' });

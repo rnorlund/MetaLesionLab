@@ -4,8 +4,9 @@
   'use strict';
   var h = TOT.h;
   var SVGNS = 'http://www.w3.org/2000/svg';
-  var COLORS = { people: '#C2410C', spark: '#1D4ED8', glimmer: '#0E9F6E', axis: '#C3C2B7', grid: '#E1E0D9',
-                 ink: '#111827', ink2: '#374151', muted: '#6B7280', chart: '#FCFCFB' };
+  // the site's colour tokens (app.css): a theme switch recolours the charts
+  var COLORS = { people: 'var(--orange)', spark: 'var(--blue)', glimmer: 'var(--s-glimmer)', axis: 'var(--chart-axis)', grid: 'var(--chart-grid)',
+                 ink: 'var(--ink)', ink2: 'var(--ink-2)', muted: 'var(--faint)', chart: 'var(--chart-bg)' };
   var QUICK = ['bird', 'fruit', 'fish', 'emotion', 'hat', 'gemstone', 'colour', 'insect', 'game'];
   var GAME_CATS = ['fruit', 'bird', 'colour', 'flower', 'fish', 'vegetable', 'musical instrument', 'sport', 'insect',
                    'tree', 'gemstone', 'weapon', 'snake', 'hat', 'emotion', 'furniture', 'metal', 'spice'];

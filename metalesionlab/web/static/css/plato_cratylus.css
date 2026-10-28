@@ -1,6 +1,6 @@
 /* Plato's Cratylus (/plato/cratylus). Blue = round-sounding words, orange = spiky-sounding, violet = mixed,
    gray = neutral; in the choice chart: blue Glimmer, aqua Glimmer from words, violet Spark, orange people. */
-body.cratylus { background: #F7F6F1; }
+body.cratylus { background: var(--ground-warm); }
 .cratylus main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 
 .ck-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px); display: grid;
@@ -33,12 +33,14 @@ body.cratylus { background: #F7F6F1; }
 .ck-try { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 3vw, 80px); align-items: center; }
 .ck-q { margin: 0; font-size: clamp(26px, calc(16px + 0.8vw), 38px); font-weight: 600; }
 .ck-q i { font-family: Georgia, serif; }
-.ck-pair { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; max-width: clamp(440px, 28vw, 640px); }  /* the pair is 640px */
+.ck-pair { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--paper); max-width: clamp(440px, 28vw, 640px); }  /* the pair is 640px */
+/* the pair is a drawing on paper in every theme, so its marks keep the light palette's blue and orange */
+.ck-pair { --ck-round: #2A78D6; --ck-round-tint: rgba(42, 120, 214, 0.08); --ck-spiky: #EB6834; --ck-spiky-tint: rgba(235, 104, 52, 0.12); }
 .ck-pair img { width: 100%; height: auto; display: block; }
 .ck-pair .sides { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; }
 .ck-pair .sides button { background: transparent; border: 0; cursor: pointer; font: inherit; }
-.ck-pair .sides button:hover, .ck-pair .sides button:focus-visible { background: rgba(42, 120, 214, 0.08); outline: 2px solid #2a78d6; outline-offset: -2px; }
-.ck-pair .sides button[aria-pressed="true"] { background: rgba(235, 104, 52, 0.12); outline: 3px solid #eb6834; outline-offset: -3px; }
+.ck-pair .sides button:hover, .ck-pair .sides button:focus-visible { background: var(--ck-round-tint); outline: 2px solid var(--ck-round); outline-offset: -2px; }
+.ck-pair .sides button[aria-pressed="true"] { background: var(--ck-spiky-tint); outline: 3px solid var(--ck-spiky); outline-offset: -3px; }
 .ck-steps { display: flex; gap: 8px; font-size: 13px; color: var(--muted); }
 .ck-out { max-width: var(--measure); font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; }
 .ck-out b { color: var(--ink); }
@@ -48,9 +50,9 @@ body.cratylus { background: #F7F6F1; }
 .ck-seg { max-width: 520px; }
 .ck-words { display: flex; flex-wrap: wrap; gap: 6px; }
 .ck-words button { font: inherit; font-size: 14px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
-.ck-words button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.ck-words button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
 .ck-words button .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
-.ck-strip { width: 100%; max-width: 880px; height: auto; display: block; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.ck-strip { width: 100%; max-width: 880px; height: auto; display: block; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
 
 /* charts */
 .ck-chart { position: relative; }
@@ -58,11 +60,11 @@ body.cratylus { background: #F7F6F1; }
 .ck-chart .lbl { font-size: 12px; fill: var(--muted); }
 .ck-chart .lbl.em { fill: var(--ink); font-weight: 600; }
 .ck-chart .hit { fill: transparent; cursor: pointer; }
-.ck-chart .row.on .hit { fill: rgba(17, 24, 39, 0.05); }
+.ck-chart .row.on .hit { fill: var(--tint); }
 .ck-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); margin: 0; }
 .ck-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
 .ck-legend i.d { border-radius: 2px; transform: rotate(45deg) scale(0.8); }
-.ck-tip { position: absolute; pointer-events: none; background: var(--ink); color: #F9FAFB; border-radius: 8px; padding: 8px 10px;
+.ck-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px;
   font-size: 12px; line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 280px; }
 .ck-tip b { font-size: 14px; }
 .ck-numbers { max-width: 100%; overflow-x: auto; }  /* the words table scrolls inside its column on a phone */
