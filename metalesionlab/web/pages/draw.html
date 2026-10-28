@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Draw a chair · {{BRAND}}</title>
-<meta name="description" content="Draw a chair in 20 seconds, then see what Meta’s image model drew and where your chair lands among 200 people’s, measured with Meta’s DINOv2.">
+<meta name="description" content="Draw a chair in 20 seconds, then see what Meta’s image model drew and where your chair lands among 200 people’s, measured with Meta’s DINOv2. Or draw something no one has seen, like God, love or time, and see how the AI pictured it.">
 <meta property="og:title" content="Draw a chair · {{BRAND}}">
 <meta property="og:description" content="Draw a chair in 20 seconds. Then see what Meta’s AI drew, and how original yours is.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
@@ -47,6 +47,24 @@
   <p class="dw-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw!</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image. The damaged drawings: Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M, made in advance and only shown, never compared with yours. Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. <span data-privacy-line>Drawings are processed in memory and never stored or logged.</span></p>
 </section>
 
+<!-- Draw the invisible (God, love, time…): AI only, so its own "How it works". -->
+<section class="dw-sec" id="how-ideas" aria-labelledby="how-ideas-h" hidden>
+  <h2 id="how-ideas-h">How it works for the invisible ideas</h2>
+  <ol class="dw-steps">
+    <li><b>Your drawing becomes a picture</b> the same way as for the things: lines rescaled, drawn black on white, then cropped to the ink.</li>
+    <li><b>Meta’s DINOv2 vision model</b> turns the picture into 768 numbers, and we compare them with the numbers for Muse Image’s 16 drawings of the same idea.</li>
+    <li><b>Muse’s idea</b> is the average of its 16 drawings. We count how many of Muse’s own drawings sit closer to it than yours does.</li>
+    <li><b>The emblems</b>, the main symbol in each of Muse’s drawings, were named in advance by Muse Glimmer, Meta’s open model, for Muse’s drawings only. Your drawing isn’t labeled, and no AI is asked about it.</li>
+  </ol>
+  <ul class="dw-caveats">
+    <li><b>AI only.</b> People never drew God, love or time for Google’s Quick, Draw! game, and we found no open collection of people’s drawings of these ideas. So there is no comparison with people here.</li>
+    <li><b>Far isn’t wrong.</b> Far from Muse’s picture says how your drawing differs from the AI’s habit. It says nothing about whether your idea is right, or good.</li>
+    <li><b>DINOv2 sees style too.</b> Muse draws clean marker sketches, and a drawing on the pad is a quick line, so most drawings land further out than all of Muse’s own.</li>
+    <li><b>One prompt, one model.</b> These are Muse Image’s drawings for the plain doodle prompt, the same one it got for the chair.<!--#if /plato/ideas--> The experiment is <a href="/plato/ideas">The invisible Forms</a>.<!--#endif--></li>
+  </ul>
+  <p class="dw-credit">AI drawings: Meta Muse Image. Emblem labels: Meta Muse Glimmer 30B, run on our own GPU. Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. <span data-privacy-line>Drawings are processed in memory and never stored or logged.</span></p>
+</section>
+
 </main>
 <p class="footnote">A science game for fun. Research and teaching use only.</p>
 </div>
@@ -54,12 +72,18 @@
 <script src="/static/js/common.js"></script>
 <script src="/static/js/draw.js"></script>
 <script>
-  // The standalone page: the thing picker, the reveal strip, and "How it works" once the drawing is in.
+  // The standalone page: the thing picker, the reveal strip, and "How it works" once the drawing is in (the
+  // abstract ideas, which are AI only, have their own).
+  var how = document.getElementById('how'), howIdeas = document.getElementById('how-ideas');
   window.TOTDraw.mount(document.getElementById('draw-app'), {
     kicker: 'A 20-second drawing game', title: 'Draw {a thing}.', instruction: 'You have 20 seconds. Don’t overthink it.',
     results: document.getElementById('draw-results'),
-    onReveal: function () { document.getElementById('how').hidden = false; },
-    onReset: function () { document.getElementById('how').hidden = true; }
+    onReveal: function (e) {
+      var idea = !!(e && e.concept && e.concept.mode === 'ai_only');
+      how.hidden = idea;
+      howIdeas.hidden = !idea;
+    },
+    onReset: function () { how.hidden = true; howIdeas.hidden = true; }
   });
 </script>
 <script src="/static/js/tour.js"></script>

@@ -195,6 +195,29 @@ def naming_prompt(idea: Idea) -> str:
             f"in this drawing? Answer with the words only.")
 
 
+# How the page names an emblem in a sentence ("Yours is closest to Muse's #7: a heart").
+_DISPLAY = {"reaper": "a hooded figure with a scythe", "figure with scales": "a blindfolded figure with scales",
+            "scales": "a pair of scales", "woman": "a woman's face", "light": "light", "clouds": "clouds",
+            "bird": "a flying bird", "bird and cage": "a bird leaving a cage", "ageing": "growing old",
+            "religious symbol": "a religious symbol", "torch statue": "a statue with a torch",
+            "wings or halo": "a figure with wings or a halo", "eye or lips": "an eye or lips",
+            "book": "an open book", "couple": "a couple"}
+_NO_ARTICLE = {"hands", "people", "broken chains", "open arms", "balloons", "flowers", "helping hands"}
+
+
+def display(short: str, name: str | None = None) -> str:
+    """An emblem's short name as a phrase with its article. 'something else' and 'can't tell' become Glimmer's
+    own words for the picture, in quotation marks, when it gave any."""
+    if short in ("something else", "can't tell"):
+        words = (name or "").strip().strip(".").lower()
+        return f"“{words}”" if words else "no clear symbol"
+    if short in _DISPLAY:
+        return _DISPLAY[short]
+    if short in _NO_ARTICLE:
+        return short
+    return ("an " if short[0] in "aeiou" else "a ") + short
+
+
 def reverse_index(n_emblems: int) -> list[int]:
     """Position j of the reversed options holds forward option back[j] (the last two stay put)."""
     return list(range(n_emblems - 1, -1, -1)) + [n_emblems, n_emblems + 1]

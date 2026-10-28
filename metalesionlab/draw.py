@@ -463,40 +463,116 @@ def score(vec: np.ndarray, concept: Concept, library: tuple[list[str], np.ndarra
     return out
 
 
-class Reference:
-    """web/data/draw.json plus the per-concept vector files, parsed on first use and kept."""
+# ---------- abstract ideas: AI-only scoring ----------
+# "Draw the invisible" (God, love, time...): Quick, Draw! has no people's drawings of these, so a drawing of an
+# idea is placed among Muse Image's 16 doodles only. Nothing about people is computed or returned for them.
 
-    def __init__(self, index: dict, root: Path):
+AI_ONLY = "ai_only"
+IDEAS_PATH = DATA_PATH.parent / "draw_ideas.json"   # written by scripts/plato_ideas_web_export.py
+AI_ONLY_FIELDS = {"concept", "mode", "d_ai", "muse_closer", "muse_closer_n", "muse_n", "nearest_ai", "d_nearest_ai",
+                  "nearest_emblem"}
+
+
+@dataclass
+class IdeaConcept:
+    key: str
+    label: str
+    ai_centroid: np.ndarray     # mean of Muse Image's unit CLS vectors: its idea of the thing
+    ai: np.ndarray              # (n_ai, 768) unit vectors
+    ai_loo: np.ndarray          # each Muse doodle's distance to the centroid of the other doodles
+    emblems: list[str]          # each Muse doodle's emblem label (Muse Glimmer, precomputed)
+
+    @classmethod
+    def from_json(cls, entry: dict, vectors: dict) -> "IdeaConcept":
+        return cls(entry["key"], entry["label"], unpack(vectors["ai_centroid"]), unit(unpack(vectors["ai"])),
+                   np.asarray(entry["ai_loo"], float), list(entry["emblems"]))
+
+
+def score_ai_only(vec: np.ndarray, concept: IdeaConcept) -> dict:
+    """Where one embedding lands among Muse Image's doodles of an idea: its distance from Muse's prototype, how
+    many of Muse's own doodles sit further from theirs (leave-one-out), and the nearest doodle with its emblem."""
+    v = unit(np.asarray(vec, dtype=np.float64).reshape(-1))
+    d_ai = float(1.0 - v @ unit(concept.ai_centroid))
+    sim = concept.ai @ v
+    near = int(np.argmax(sim))
+    return {
+        "concept": concept.key,
+        "mode": AI_ONLY,
+        "d_ai": round(d_ai, 4),
+        # The share of Muse's own doodles that are closer to its prototype than yours (ties count half).
+        "muse_closer": round(percentile_below(d_ai, concept.ai_loo), 1),
+        # How many of Muse's own doodles sit closer to their prototype than yours does to it: "further from Muse's
+        # idea of God than 14 of its 16 drawings".
+        "muse_closer_n": int(np.count_nonzero(concept.ai_loo < d_ai)),
+        "muse_n": int(len(concept.ai_loo)),
+        "nearest_ai": near,
+        "d_nearest_ai": round(float(1.0 - sim[near]), 4),
+        "nearest_emblem": concept.emblems[near] if near < len(concept.emblems) else None,
+    }
+
+
+class Reference:
+    """web/data/draw.json plus the per-concept vector files, parsed on first use and kept. The abstract ideas
+    (draw_ideas.json beside it, when present) join the list with mode "ai_only"."""
+
+    def __init__(self, index: dict, root: Path, ideas: dict | None = None):
         self.index = index
         self.root = Path(root)
-        self.entries = {c["key"]: c for c in index["concepts"]}
+        self.ideas = ideas or {}
+        idea_entries = [{**c, "mode": AI_ONLY} for c in self.ideas.get("concepts", [])]
+        self.entries = {c["key"]: c for c in index["concepts"] + idea_entries}
         lib = index.get("centroids") or {}
         self.library = (list(lib["keys"]), unpack(lib["vectors"])) if lib.get("keys") else None
         self.labels = lib.get("labels", {})
-        self._concepts: dict[str, Concept] = {}
+        self._concepts: dict[str, Concept | IdeaConcept] = {}
         self._lock = threading.Lock()
 
     @classmethod
-    def load(cls, path: Path = DATA_PATH) -> "Reference":
+    def load(cls, path: Path = DATA_PATH, ideas_path: Path | None = None) -> "Reference":
         path = Path(path)
-        return cls(json.loads(path.read_text()), path.parent)
+        ideas_path = Path(ideas_path) if ideas_path else path.parent / IDEAS_PATH.name
+        ideas = json.loads(ideas_path.read_text()) if ideas_path.is_file() else None
+        return cls(json.loads(path.read_text()), path.parent, ideas)
 
-    def concept(self, key: str) -> Concept:
+    def ai_only(self, key: str) -> bool:
+        return self.entries.get(key, {}).get("mode") == AI_ONLY
+
+    def concept(self, key: str) -> Concept | IdeaConcept:
         with self._lock:
             if key not in self._concepts:
                 entry = self.entries[key]
                 vectors = json.loads((self.root / entry["vectors"]).read_text())
-                self._concepts[key] = Concept.from_json(entry, vectors)
+                kind = IdeaConcept if entry.get("mode") == AI_ONLY else Concept
+                self._concepts[key] = kind.from_json(entry, vectors)
             return self._concepts[key]
 
     def score(self, key: str, vec: np.ndarray) -> dict:
+        if self.ai_only(key):  # only the AI-only fields, whatever score_ai_only may grow
+            return {k: v for k, v in score_ai_only(vec, self.concept(key)).items() if k in AI_ONLY_FIELDS}
         out = score(vec, self.concept(key), self.library)
         if "looks_like" in out:
             out["looks_like"] = [{"key": k, "label": self.labels.get(k, k)} for k in out["looks_like"]]
         return out
 
+    def doodle_distance(self, vec: np.ndarray) -> float:
+        """Distance from the nearest kind of doodle: people's centroids for the 35 things, and Muse's centroids
+        for the ideas. Used only to refuse photos of things; never returned for an idea."""
+        v = unit(np.asarray(vec, dtype=np.float64).reshape(-1))
+        cents = [self.library[1]] if self.library else []
+        cents += [self.concept(k).ai_centroid[None, :] for k in self.entries if self.ai_only(k)]
+        if not cents:
+            return 0.0
+        return float((1.0 - unit(np.vstack(cents)) @ v).min())
+
     def public(self) -> dict:
-        """What the page needs: labels, statistics, map points, distances and sprites (no 768-d vectors)."""
-        return {**{k: v for k, v in self.index.items() if k not in ("concepts", "centroids")},
-                "concepts": [{k: v for k, v in c.items() if k != "vectors"} for c in self.index["concepts"]]}
+        """What the page needs: labels, statistics, map points, distances and sprites (no 768-d vectors).
+        Abstract ideas come after the things, marked mode "ai_only" and group "ideas"."""
+        out = {**{k: v for k, v in self.index.items() if k not in ("concepts", "centroids")},
+               "concepts": [{k: v for k, v in c.items() if k != "vectors"} for c in self.index["concepts"]]}
+        if self.ideas.get("concepts"):
+            out["concepts"] += [{**{k: v for k, v in c.items() if k != "vectors"}, "mode": AI_ONLY, "group": "ideas"}
+                                for c in self.ideas["concepts"]]
+            out["groups"] = self.ideas.get("groups", [])
+            out["ideas_credits"] = self.ideas.get("credits", [])
+        return out
 

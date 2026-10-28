@@ -8,6 +8,11 @@
    the thing with its words part or its drawing part damaged. That strip is about the model only: it is never
    placed, compared or matched against the visitor's drawing.
 
+   Draw the invisible: the picker's second row holds abstract ideas (God, love, time…), marked mode "ai_only".
+   No one drew these for Quick, Draw!, so their results are AI only: the drawing's place among Muse Image's 16
+   (leave-one-out distances), its closest Muse drawing and that drawing's emblem (labeled in advance by Muse
+   Glimmer). The people's cards, the map and the Socrates link stay hidden for them; no people's number is shown.
+
    Reference data comes from /api/draw/concepts; a drawing is sent once to be scored (/api/draw, or
    /api/draw/upload for a photo, shrunk and re-encoded here first, which drops EXIF and location) and is
    never stored, unless donations are switched on server-side and the visitor opts in. */
@@ -67,7 +72,19 @@
     '  <p class="dw-cap" data-dw="strip-cap"></p>' +
     '</section>' +
     '<p class="dw-fair" data-dw="fair"></p>' +
-    '<div class="dw-tiles">' +
+    // An abstract idea (God, love, time…): AI only. People never drew these for Quick, Draw!, so nothing here is
+    // a number about people: only where the drawing lands among Muse Image's own 16.
+    '<div class="dw-tiles" data-dw="idea-tiles" hidden>' +
+    '  <article class="dw-card dw-orig"><h3>Next to Muse Image’s idea of <span data-phrase>God</span></h3>' +
+    '    <div class="dw-big"><span class="dw-big-num" data-dw="idea-num">–</span><span class="dw-big-text" data-dw="idea-text"></span></div>' +
+    '    <p class="dw-verdict" data-dw="idea-verdict"></p><div class="dw-chart" data-dw="idea-chart"></div>' +
+    '    <p class="dw-note" data-dw="idea-note"></p><p class="dw-oops" data-dw="idea-photo-note" hidden></p></article>' +
+    '  <article class="dw-card"><h3>Closest of Muse’s drawings</h3>' +
+    '    <p class="dw-headline" data-dw="idea-closest"></p><div class="dw-near dw-near-2" data-dw="idea-near"></div>' +
+    '    <div class="dw-emblems" data-dw="idea-emblems"></div><p class="dw-note" data-dw="idea-emblem-note"></p>' +
+    '    <details class="dw-numbers"><summary>See the numbers</summary><div class="table-wrap"><table class="data" data-dw="idea-numbers"></table></div></details></article>' +
+    '</div>' +
+    '<div class="dw-tiles" data-dw="people-tiles">' +
     '  <article class="dw-card dw-orig"><h3>Next to 200 people</h3>' +
     '    <div class="dw-big"><span class="dw-big-num" data-dw="orig-num">–</span><span class="dw-big-text" data-dw="orig-text"></span></div>' +
     '    <p class="dw-verdict" data-dw="orig-verdict"></p><div class="dw-chart" data-dw="orig-chart"></div>' +
@@ -75,7 +92,7 @@
     '  <article class="dw-card dw-vsmuse"><h3>Next to Muse Image</h3>' +
     '    <p class="dw-headline" data-dw="muse-text"></p><div class="dw-chart" data-dw="muse-chart"></div><p class="dw-note" data-dw="muse-note"></p></article>' +
     '</div>' +
-    '<div class="dw-pair">' +
+    '<div class="dw-pair" data-dw="people-pair">' +
     '  <article class="dw-card"><h3>Where your <span data-label>chair</span> lands</h3><div class="dw-legend" data-dw="map-legend"></div>' +
     '    <div class="dw-chart dw-map" data-dw="map-chart"></div><p class="dw-note" data-dw="map-note"></p></article>' +
     '  <article class="dw-card"><h3>Closest drawings</h3><div class="dw-near" data-dw="near"></div>' +
@@ -84,7 +101,7 @@
     '</div>' +
     '<article class="dw-card dw-share">' +
     '  <div class="dw-share-text"><h3>Share your <span data-label>chair</span></h3>' +
-    '    <p>Download the card, or post it. Then dare a friend to beat your score.</p>' +
+    '    <p data-dw="share-blurb">Download the card, or post it. Then dare a friend to beat your score.</p>' +
     '    <div class="dw-actions">' +
     '      <button type="button" class="btn btn-dark" data-dw="download">Download image</button>' +
     '      <a class="btn" data-dw="share-x" href="#" target="_blank" rel="noopener">Share on X</a>' +
@@ -158,6 +175,34 @@
     if (closer <= 0.5) return 'Further from Muse Image’s ' + c.label + ' than every one of ' + c.n_human + ' people’s ' + pl + '.';
     if (closer >= 99.5) return 'Closer to Muse Image’s ' + c.label + ' than all ' + c.n_human + ' people’s ' + pl + '.';
     return 'Closer to Muse Image’s ' + c.label + ' than ' + Math.round(closer) + '% of people’s ' + pl + '.';
+  }
+
+  // ---------- copy for an abstract idea (AI only: Muse Image's 16 drawings, never people's) ----------
+
+  function isIdea(c) { return !!c && c.mode === 'ai_only'; }
+  function nounPhrase(c) { return c.phrase || article(c.label); }  // "God", "the Good", "a chair"
+  function thingName(c) { return isIdea(c) ? 'drawing of ' + c.phrase : c.label; }
+  function ideaHook(c) {
+    var t = c.top, n = c.n_ai;
+    return t.n === n ? 'Muse Image drew ' + t.emblem + ' all ' + n + ' times.'
+      : 'Muse Image drew ' + t.emblem + ' in ' + t.n + ' of its ' + n + ' drawings.';
+  }
+  function ideaFair(c) {
+    return 'No one drew ' + c.phrase + ' for Google’s Quick, Draw! game, so there are no people’s drawings to compare with. ' +
+      'Your drawing is placed among Muse Image’s ' + c.n_ai + ' only, and nothing here is a score against people.';
+  }
+  function ideaSentence(r, c) {  // "further from Muse’s idea of God than 14 of its 16 drawings"
+    var k = r.muse_closer_n, n = r.muse_n, of = 'Muse’s idea of ' + c.phrase;
+    if (k >= n) return 'further from ' + of + ' than all ' + n + ' of its own drawings';
+    if (k <= 0) return 'closer to ' + of + ' than every one of its own ' + n + ' drawings';
+    return 'further from ' + of + ' than ' + k + ' of its ' + n + ' drawings';
+  }
+  function ideaVerdict(r) {
+    var k = r.muse_closer_n, n = r.muse_n;
+    if (k >= n) return 'A different picture from Muse’s';
+    if (k >= 0.75 * n) return 'Far from Muse’s picture';
+    if (k >= 0.25 * n) return 'Close to Muse’s picture';
+    return 'Right on Muse’s picture';
   }
 
   // ---------- sprites: thumbnails of Muse's doodles and people's drawings ----------
@@ -518,27 +563,37 @@
 
     // --- text ---
     function label() { return S.data ? concept().label : 'chair'; }
-    function fill(text) { return text.replace('{a thing}', article(label())).replace('{thing}', label()); }
+    function current() { return S.data ? concept() : { label: 'chair' }; }
+    function fill(text) { return text.replace('{a thing}', nounPhrase(current())).replace('{thing}', label()); }
     function renderText() {
+      var c = current();
       [el, res].forEach(function (root) {
-        root.querySelectorAll('[data-label]').forEach(function (n) { n.textContent = label(); });
-        root.querySelectorAll('[data-article]').forEach(function (n) { n.textContent = article(label()); });
+        root.querySelectorAll('[data-label]').forEach(function (n) { n.textContent = thingName(c); });
+        root.querySelectorAll('[data-article]').forEach(function (n) { n.textContent = nounPhrase(c); });
+        root.querySelectorAll('[data-phrase]').forEach(function (n) { n.textContent = c.phrase || c.label; });
       });
       q('title').textContent = fill(o.title);
-      q('instr').textContent = fill(o.instruction);
-      if (o.kicker) { q('kicker').textContent = o.kicker; q('kicker').hidden = false; }
+      q('instr').textContent = fill(isIdea(c) ? (o.ideaInstruction || 'You have 20 seconds. There’s no wrong answer.') : o.instruction);
+      if (o.kicker) { q('kicker').textContent = isIdea(c) ? (o.ideaKicker || 'Draw the invisible') : o.kicker; q('kicker').hidden = false; }
       if (o.picker && S.data) {
         el.querySelectorAll('[data-dw="chips"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.key === S.key)); });
       }
-      if (o.onConcept) o.onConcept(label());
+      if (o.onConcept) o.onConcept(label(), c);
     }
+    // Two rows of chips: the things people drew for Quick, Draw!, then the ideas no one has seen (AI only).
     function renderChips() {
-      var box = q('chips');
+      var box = q('chips'), groups = S.data.groups || [{ id: 'things', label: 'Or draw:' }];
       box.hidden = false;
-      box.appendChild(h('span', { class: 'dw-chips-label', text: 'Or draw:' }));
-      S.data.concepts.forEach(function (c) {
-        box.appendChild(h('button', { type: 'button', 'data-key': c.key, 'aria-pressed': 'false', text: c.label,
-          onclick: function () { choose(c.key); } }));
+      groups.forEach(function (g) {
+        var items = S.data.concepts.filter(function (c) { return (c.group || 'things') === g.id; });
+        if (!items.length) return;
+        var row = h('div', { class: 'dw-chip-row' + (g.id === 'ideas' ? ' dw-chip-ideas' : ''), role: 'group', 'aria-label': g.label.replace(/:$/, '') });
+        row.appendChild(h('span', { class: 'dw-chips-label', text: g.label }));
+        items.forEach(function (c) {
+          row.appendChild(h('button', { type: 'button', 'data-key': c.key, 'aria-pressed': 'false', text: c.label,
+            onclick: function () { choose(c.key); } }));
+        });
+        box.appendChild(row);
       });
     }
     function choose(key) {
@@ -646,7 +701,7 @@
       tm.classList.remove('up');
       var tick = function () {
         var left = Math.max(0, TIME_S - Math.floor((Date.now() - S.timerStart) / 1000));
-        tm.textContent = left ? left + ' s' : 'Time! Quick, Draw! players stopped here';
+        tm.textContent = left ? left + ' s' : isIdea(current()) ? 'Time!' : 'Time! Quick, Draw! players stopped here';
         if (!left) { tm.classList.add('up'); clearInterval(S.timerId); }
       };
       tick();
@@ -739,7 +794,7 @@
       stopTimer(false);
       updateButtons();
       var c = concept();
-      status('Measuring your ' + c.label + ' with DINOv2…', 'busy');
+      status('Measuring your ' + thingName(c) + ' with DINOv2…', 'busy');
       var slow = setTimeout(function () { status('Waking up the model (only the first drawing takes a few seconds)…', 'busy'); }, 1800);
       var drawMs = S.started && !S.upload ? Date.now() - S.started : null;  // drawing time, on the pad only
       var sent = { key: S.key, strokes: S.strokes.map(function (s) { return [s[0].slice(), s[1].slice()]; }), upload: S.upload, blind: S.blind };
@@ -755,7 +810,7 @@
       call.then(function (r) {
         S.result = r;
         S.sent = sent;
-        var msg = 'Done: ' + origSentence(r.originality, c) + '.';
+        var msg = 'Done: ' + (isIdea(c) ? ideaSentence(r, c) : origSentence(r.originality, c)) + '.';
         if (r.donation) msg += r.donation.status === 'saved' ? ' Thank you for donating your drawing to research.' : ' ' + r.donation.reason;
         status(msg);
         if (r.picture) return image(r.picture).then(function (im) { sent.picture = im; });
@@ -779,7 +834,7 @@
       res.hidden = false;
       var strip = q('strip');
       if (strip) {
-        q('reveal-h').textContent = 'Here’s what Meta’s Muse Image drew when asked for ' + article(c.label) + ', ' + c.n_ai + ' times';
+        q('reveal-h').textContent = 'Here’s what Meta’s Muse Image drew when asked for ' + nounPhrase(c) + ', ' + c.n_ai + ' times';
         strip.textContent = '';
         strip.classList.toggle('animate', !reduced());
         strip.style.setProperty('--cols', c.n_ai > 8 ? Math.ceil(c.n_ai / 2) : c.n_ai);  // two full rows: 8 + 8, or 6 + 6
@@ -789,11 +844,12 @@
           cl.style.animationDelay = (i * 70) + 'ms';
           strip.appendChild(cl);
         }
-        strip.setAttribute('aria-label', 'Muse Image’s ' + c.n_ai + ' doodles of ' + article(c.label));
-        q('strip-cap').textContent = hook(c) + ' One prompt each time: “a quick simple doodle sketch of ' + article(c.label) + '”.';
+        strip.setAttribute('aria-label', 'Muse Image’s ' + c.n_ai + ' doodles of ' + nounPhrase(c));
+        q('strip-cap').textContent = (isIdea(c) ? ideaHook(c) : hook(c)) + ' One prompt each time: “a quick simple doodle sketch of ' +
+          nounPhrase(c) + '”.';
       }
-      q('fair').textContent = fair(c);
-      showResults(r, c);
+      q('fair').textContent = isIdea(c) ? ideaFair(c) : fair(c);
+      if (isIdea(c)) showIdeaResults(r, c); else showResults(r, c);
       showDamage();  // after the results, apart from them; it gets the thing's key only
       if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
       document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
@@ -801,9 +857,92 @@
       setTimeout(function () { target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
     }
 
+    function showMode(idea) {
+      q('idea-tiles').hidden = !idea;
+      q('people-tiles').hidden = idea;
+      q('people-pair').hidden = idea;
+      q('share-blurb').textContent = idea ? 'Download the card, or post it. Then ask a friend how they would draw ' + concept().phrase + '.'
+        : 'Download the card, or post it. Then dare a friend to beat your score.';
+    }
+
+    // An abstract idea: where the drawing lands among Muse Image's 16, its closest Muse drawing and that drawing's
+    // emblem (labeled in advance by Muse Glimmer). No people's numbers exist for these, and none is shown.
+    function showIdeaResults(r, c) {
+      renderText();
+      showMode(true);
+      var n = r.muse_n, k = r.muse_closer_n;
+      q('idea-num').textContent = k + '/' + n;
+      q('idea-text').textContent = 'Your ' + thingName(c) + ' is ' + ideaSentence(r, c) + '.';
+      var v = q('idea-verdict');
+      v.textContent = '';
+      v.appendChild(h('b', { text: ideaVerdict(r) + '. ' }));
+      v.appendChild(document.createTextNode('Far here means far from the average of Muse Image’s ' + n + ' drawings of ' + c.phrase +
+        ', as Meta’s DINOv2 sees them. It is not a score of how good or how true a drawing is.'));
+      q('idea-note').textContent = 'Each dot is one of Muse’s drawings, placed by its distance from the average of its other ' + (n - 1) +
+        '. Yours is placed by its distance from the average of all ' + n + '. Your quick pad drawing and Muse’s marker sketches also ' +
+        'differ in style, and DINOv2 sees that too, so most visitors’ drawings land further out than Muse’s own.';
+      q('idea-photo-note').hidden = r.source !== 'upload';
+      q('idea-photo-note').textContent = 'Scored from a photo. Pen, paper and camera change how lines look, and DINOv2 sees that too.';
+      ideaCharts(c, r);
+      var box = q('idea-near');
+      box.textContent = '';
+      var mine = h('canvas', { width: 300, height: 300, 'aria-label': 'Your drawing' });
+      drawMine(mine.getContext('2d'), 0, 0, 300, 18, 5);
+      box.appendChild(h('figure', null, [mine, h('figcaption', null, [h('span', { class: 'k', style: { background: TEAL } }),
+        r.source === 'upload' ? 'Yours, as DINOv2 saw it' : 'Yours'])]));
+      box.appendChild(h('figure', null, [cell(c.sprites.muse, r.nearest_ai),
+        h('figcaption', null, [h('span', { class: 'k', style: { background: BLUE } }), 'Muse’s #' + (r.nearest_ai + 1) + ': ' + r.nearest_emblem,
+          h('span', { class: 'd', text: 'distance ' + f2(r.d_nearest_ai) })])]));
+      q('idea-closest').textContent = 'Yours is closest to Muse’s #' + (r.nearest_ai + 1) + ': ' + r.nearest_emblem + '.';
+      renderEmblems(q('idea-emblems'), c, r);
+      q('idea-emblem-note').textContent = 'Muse Glimmer, Meta’s open model, named the main symbol in each of Muse Image’s ' + n +
+        ' drawings, in advance. Your drawing isn’t labeled: it is only measured, by DINOv2, on this server.';
+      renderIdeaNumbers(r, c);
+      drawCard().catch(function () {});
+      updateShareLinks();
+      q('socrates-link').hidden = true;  // Socrates knows the people's numbers for things, not these ideas
+    }
+    function renderEmblems(box, c, r) {
+      box.textContent = '';
+      var n = c.n_ai, near = c.emblems[r.nearest_ai];
+      box.appendChild(h('p', { class: 'dw-emblems-h', text: 'What Muse Image drew for ' + c.phrase + ', ' + n + ' times' }));
+      c.emblem_counts.forEach(function (e) {
+        var name = e[0] === 'something else' ? 'something else' : e[0] === 'can’t tell' || e[0] === "can't tell" ? 'no clear symbol' : e[0];
+        var row = h('div', { class: 'dw-emblem' + (name === near ? ' is-near' : '') }, [
+          h('span', { class: 'dw-emblem-name', text: name }),
+          h('span', { class: 'dw-emblem-bar' }, h('i', { style: { width: (100 * e[1] / n) + '%' } })),
+          h('span', { class: 'dw-emblem-n', text: e[1] + ' of ' + n })
+        ]);
+        box.appendChild(row);
+      });
+    }
+    function ideaCharts(c, r) {
+      stripChart(q('idea-chart'), {
+        axis: 'distance from Muse Image’s idea of ' + c.phrase + ' →',
+        rows: [{ name: 'Muse Image’s ' + c.n_ai + ' drawings of ' + c.phrase, color: BLUE, values: c.ai_loo, sprite: c.sprites.muse, who: 'muse' }],
+        you: r.d_ai
+      });
+    }
+    function renderIdeaNumbers(r, c) {
+      var t = q('idea-numbers');
+      t.textContent = '';
+      var range = function (a) { return f2(median(a)) + ' (' + f2(min(a)) + '–' + f2(max(a)) + ')'; };
+      var rows = [
+        ['Your distance from Muse Image’s idea of ' + c.phrase, f2(r.d_ai)],
+        ['Muse’s own drawings, each from the average of the others: median (range)', range(c.ai_loo)],
+        ['Muse’s drawings that sit closer to its idea than yours', r.muse_closer_n + ' of ' + r.muse_n],
+        ['Closest of Muse’s drawings', '#' + (r.nearest_ai + 1) + ', distance ' + f2(r.d_nearest_ai)]
+      ];
+      t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Measure' }), h('th', { class: 'num', text: 'Cosine distance or count' })])));
+      t.appendChild(h('tbody', null, rows.map(function (row) {
+        return h('tr', null, [h('td', { text: row[0] }), h('td', { class: 'num', text: row[1] })]);
+      })));
+    }
+
     function showResults(r, c) {
       var p = r.originality;
       renderText();
+      showMode(false);
       q('orig-num').textContent = Math.round(p) + '%';
       q('orig-text').textContent = 'Your ' + c.label + ' is ' + origSentence(p, c) + '.';
       var v = q('orig-verdict');
@@ -925,25 +1064,26 @@
         g.lineWidth = 3;
         g.strokeStyle = INK;
         g.stroke();
-        var x = 660, mw = 492;
+        var x = 660, mw = 492, idea = isIdea(c);
         g.fillStyle = '#9A3412';
         g.font = '500 22px ' + mono;
-        g.fillText(('Draw ' + article(c.label)).toUpperCase(), x, 92);
+        g.fillText(('Draw ' + nounPhrase(c)).toUpperCase(), x, 92);
         g.fillStyle = INK;
         g.font = '700 132px ' + sans;
-        g.fillText(Math.round(r.originality) + '%', x - 6, 222);
+        g.fillText(idea ? r.muse_closer_n + '/' + r.muse_n : Math.round(r.originality) + '%', x - 6, 222);
         g.font = '600 32px ' + sans;
-        var y = wrap(g, cap1(origSentence(r.originality, c)) + '.', x, 272, mw, 40);
+        var y = wrap(g, idea ? 'Mine is ' + ideaSentence(r, c) + '.' : cap1(origSentence(r.originality, c)) + '.', x, 272, mw, 40);
         g.fillStyle = INK2;
         g.font = '400 24px ' + sans;
-        var other = r.own_rank > 3 && r.looks_like && r.looks_like[0];
-        wrap(g, other ? verdict(r.originality, c.label) + ', though Meta’s DINOv2 thinks it looks more like “' + other.label + '”.'
+        var other = !idea && r.own_rank > 3 && r.looks_like && r.looks_like[0];
+        wrap(g, idea ? ideaVerdict(r) + ', says Meta’s DINOv2.'
+          : other ? verdict(r.originality, c.label) + ', though Meta’s DINOv2 thinks it looks more like “' + other.label + '”.'
           : verdict(r.originality, c.label) + ', says Meta’s DINOv2.', x, y + 6, mw, 32);
         var n = c.n_ai, cols = 8, rows = Math.ceil(n / cols), gap = 4, cs = Math.floor((mw - gap * (cols - 1)) / cols);
         var sy = 608 - rows * cs - (rows - 1) * gap;
         g.fillStyle = MUTED;
         g.font = '400 21px ' + sans;
-        g.fillText(hook(c), x, sy - 14);
+        g.fillText(idea ? 'Muse Image’s ' + n + ' drawings of ' + c.phrase : hook(c), x, sy - 14);
         var sp = c.sprites.muse;
         for (var i = 0; i < n; i++) {
           var cx = x + (i % cols) * (cs + gap), cy = sy + Math.floor(i / cols) * (cs + gap);
@@ -960,12 +1100,14 @@
         g.fillText(shareUrl().replace(/^https?:\/\//, ''), 48 + nameW + 14, 650);
         g.font = '400 16px ' + sans;
         g.textAlign = 'right';
-        g.fillText('Compared with 200 Quick, Draw! drawings (CC BY 4.0) · Embeddings: Meta DINOv2', W - 48, 650);
+        g.fillText(idea ? 'Compared with Muse Image’s ' + c.n_ai + ' drawings only · Embeddings: Meta DINOv2'
+          : 'Compared with 200 Quick, Draw! drawings (CC BY 4.0) · Embeddings: Meta DINOv2', W - 48, 650);
         g.textAlign = 'left';
       });
     }
     function shareText() {
       var c = concept(), r = S.result;
+      if (isIdea(c)) return ideaHook(c) + ' Mine is ' + ideaSentence(r, c) + '. How do you picture ' + c.phrase + '?';
       return hook(c) + ' Mine is ' + origSentence(r.originality, c) + '. How original is yours?';
     }
     function updateShareLinks() {
@@ -1029,7 +1171,7 @@
         if (window.innerWidth === lastWidth) return;
         lastWidth = window.innerWidth;
         sizePad();
-        if (S.result && !res.hidden) charts(concept(), S.result);
+        if (S.result && !res.hidden) (isIdea(concept()) ? ideaCharts : charts)(concept(), S.result);
       }, 150);
     });
     // The pad grows with the window (up to 640px, draw.css), and the layout can change its size without a
@@ -1052,7 +1194,7 @@
         S.data = got[0];
         setupDonations((got[1] || {}).donations);
         var want = o.deepLink ? (new URL(location.href).searchParams.get('thing') || '').toLowerCase() : '';
-        var match = S.data.concepts.filter(function (c) { return c.key === want || c.label === want; })[0];
+        var match = S.data.concepts.filter(function (c) { return c.key === want || c.label.toLowerCase() === want; })[0];
         S.key = match ? match.key : (S.data.concepts.filter(function (c) { return c.key === S.key; })[0] || S.data.concepts[0]).key;
         if (o.picker) renderChips();
         renderText();

@@ -72,6 +72,8 @@ EXPERIMENTS = {
     "atlas": ("The Atlas of Forms: Plato's Chair for 135 everyday things, and a benchmark for any image model",
               "/plato/atlas"),
     "telephone": ("Plato's Telephone: what survives when two AIs copy each other's copies?", "/plato/telephone"),
+    "ideas": ("The invisible Forms: Muse Image draws God, beauty, justice, the Good, love, death and other ideas no one "
+              "has seen", "/plato/ideas"),
 }
 _EXPERIMENT_ALIASES = {
     "form": "forms", "clock": "forms", "bed": "forms", "table": "forms", "platonic clock": "forms",
@@ -83,6 +85,8 @@ _EXPERIMENT_ALIASES = {
     "atlas of forms": "atlas", "the atlas": "atlas", "benchmark": "atlas", "135 things": "atlas",
     "plato's telephone": "telephone", "telephone game": "telephone", "copy of a copy": "telephone",
     "chains": "telephone", "describe and draw": "telephone",
+    "invisible forms": "ideas", "the invisible forms": "ideas", "invisible": "ideas", "god": "ideas", "abstract": "ideas",
+    "abstract ideas": "ideas", "emblems": "ideas", "draw god": "ideas", "draw the invisible": "ideas",
 }
 # Each experiment's short answer, as its write-up states it (docs/plato_<name>.md). Sent with the data so the
 # headline (and its honest limits) is never lost when a large results file is cut to fit.
@@ -145,6 +149,15 @@ SHORT_ANSWERS = {
                  "high chair fell into the textbook chair, in 2 of its 3 chains, when its tray was lost at the first "
                  "redraw; the others wandered (a beanbag became a croissant, then a fanlight window). One protocol "
                  "and one prompt, and the description is the bottleneck.",
+    "ideas": "Asked for a quick doodle of God, Muse Image drew the same figure in all 16 drawings: a bearded man with "
+             "long hair, a robe and a halo. Love was a heart and death a hooded figure with a scythe, every time. For 10 "
+             "of 11 abstract ideas one emblem filled at least half of the 16 drawings (pre-registered; passed). Our "
+             "guesses at which emblem were right for only 5 of 11, so that prediction failed: beauty was a woman's face, "
+             "not a flower, and the Good a thumbs-up, not a sun. Ideas were not clearly more spread out than everyday "
+             "things (median spread 0.23 against 0.20; difference 95% CI -0.01 to +0.11), so that prediction failed too. "
+             "It is AI only: no one has collected people's quick doodles of these ideas that we could find. A Lausanne "
+             "study of children's drawings of god (87.6% human-like in a Swiss sample) is cited only as context. The "
+             "page describes what the model drew and makes no claim about God or any faith.",
 }
 QUICKDRAW = "Google Quick, Draw! (Google Creative Lab), CC BY 4.0"
 PEOPLE_PER_CONCEPT = 200  # Quick, Draw! drawings per concept (recognized, first 200 in file order; docs/plato.md)
