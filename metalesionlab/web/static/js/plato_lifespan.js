@@ -227,7 +227,22 @@
       ' over 21 things). It gains ' + pts(at.recog.last_minus_first.mean) + ' by v1.5 ' +
       ciPts(at.recog.last_minus_first.ci95) + ', mostly at v1.2, and its variety narrows a little. But its pictures stay as far from people’s drawings at v1.5 as at v1.1 (' +
       f2(ai.curves.d_adult.mean[0]) + ' and ' + f2(ai.curves.d_adult.mean[4]) + '). For the 10 main things, and at a lower guidance setting, nothing changes clearly.']));
-    if (sk) {
+    var ssd = D.sketch_seeds;
+    if (ssd && ssd.concepts && ssd.concepts.chair) {
+      var sc = ssd.concepts.chair, t1 = sc.tests['t1.0'].last, rc = sc.curves['t1.0'].recog.mean, nr = sc.seeds.length;
+      var allTemps = ssd.temps.every(function (tp) { return sc.tests['t' + tp.toFixed(1)].last.verdict === 'narrower'; });
+      ul.appendChild(h('li', null, [h('b', null, 'An AI that learns only from people’s chairs does grow up like a child. '),
+        'A small sketch model trained from scratch ' + nr + ' times starts at scribbles (' + pct(rc[0]) + ' recognizable) and ends at ' +
+        pct(rc[rc.length - 1]) + ' (mean of ' + nr + ' runs). ' +
+        (t1.verdict === 'narrower'
+          ? 'In ' + (t1.n_below_0 === t1.n_seeds ? 'all ' + nr : t1.n_below_0 + ' of ' + nr) + ' runs it ends less varied than the chairs it learned from (' +
+            lessPct(t1) + ' less, ' + deltaTxt(t1) + ')' + (allTemps ? ', at every sampling temperature we tried' : '') + ': like Muse Image, it narrows toward the typical chair.'
+          : 'Whether it ends narrower than the chairs it learned from does not hold up across runs (' + deltaTxt(t1) + ').') +
+        (ssd.concepts.cat && ssd.concepts.cat.tests['t1.0'].last.verdict !== 'narrower'
+          ? ' Not so for cats, which the same model learns much less well: its cats end ' +
+            (ssd.concepts.cat.tests['t1.0'].last.verdict === 'wider' ? 'more varied than the ones it learned from.' : 'neither clearly narrower nor wider.')
+          : '')]));
+    } else if (sk) {
       var st = sk.steps['t1.0'], last = st[String(Math.max.apply(null, Object.keys(st).map(Number)))];
       ul.appendChild(h('li', null, [h('b', null, 'An AI that learns only from people’s chairs does grow up like a child. '),
         'A small sketch model trained from scratch starts at scribbles (' + pct(st['0'].recog) + ' recognizable), ' +
@@ -392,40 +407,211 @@
       .concat(MEASURES.map(function (m) { return h('th', { class: 'num' }, m.name); })))), h('tbody', null, rows)]));
   }
 
-  // ---------- the sketch model ----------
-  function renderGrow() {
-    var sk = D.sketch;
-    var strips = document.getElementById('grow-strips');
-    strips.innerHTML = '';
-    if (!sk) { document.getElementById('grow').hidden = true; return; }
-    var st = sk.steps['t1.0'];
-    [0, 100, 200, 800, 3200, 25600].forEach(function (n) {
-      var r = st[String(n)];
-      if (!r) return;
-      strips.appendChild(h('figure', null, [h('figcaption', null, [h('b', null, n === 0 ? 'Untrained' : 'Step ' + n.toLocaleString('en-US')),
-        pct(r.recog) + ' recognizable']), h('img', { src: '/static/img/plato_lifespan/sketch_step' + n + '.webp', width: 1080, height: 132, loading: 'lazy',
-        alt: 'Six chairs the sketch model drew at training step ' + n }) ]));
-    });
-    // three small charts: one per measure, the sketch model as the only series, references labeled
-    var box = document.getElementById('grow-chart');
+  // ---------- watch an AI learn: the sketch model over 8 seeds (sketch_seeds) ----------
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var LEARN = { thing: 'chair', temp: 't1.0' };
+  var TEMP_NAME = { 't1.0': '1.0', 't0.8': '0.8', 't0.6': '0.6' };
+  function ss() { return D.sketch_seeds; }
+  function fmtStep(n) { return n.toLocaleString('en-US'); }
+  function lessPct(t) { return Math.round(-100 * t.mean_delta / t.ref_spread) + '%'; }
+
+  function renderPlayer() {
+    var a = ss().animation, steps = a.steps, i = 0, playing = false, timer = null, fadeTimer = null, touched = false;
+    var base = document.getElementById('learn-base'), top = document.getElementById('learn-top');
+    var range = document.getElementById('learn-range'), btn = document.getElementById('learn-play');
+    range.max = String(steps.length - 1);
+    function pos(k) { return (k % 5) / 4 * 100 + '% ' + Math.floor(k / 5) / 3 * 100 + '%'; }
+    function bar(v) {
+      var box = document.getElementById('learn-bar'), W = 360, lo = 0.2, hi = 0.55;
+      var x = function (s) { return 6 + (W - 12) * (Math.max(lo, Math.min(hi, s)) - lo) / (hi - lo); };
+      box.innerHTML = '';
+      var s = svg('svg', { viewBox: '0 0 ' + W + ' 50', preserveAspectRatio: 'xMinYMid meet', role: 'img', 'aria-label': 'How varied its chairs are: ' + f2(v) + ', against ' + f2(a.ref_spread) + ' for the people’s chairs it learned from' }, box);
+      svg('rect', { x: 6, y: 6, width: W - 12, height: 16, rx: 8, fill: C.track }, s);
+      if (v != null) svg('rect', { x: 6, y: 6, width: Math.max(16, x(v) - 6), height: 16, rx: 8, fill: C.ink2 }, s);
+      var rx = x(a.ref_spread);
+      svg('line', { x1: rx, x2: rx, y1: 1, y2: 27, stroke: C.people, 'stroke-width': 3 }, s);
+      text(s, Math.min(W - 6, Math.max(6, rx)), 44, 'people’s chairs it learned from: ' + f2(a.ref_spread),
+        { 'text-anchor': rx > W * 0.6 ? 'end' : rx < W * 0.4 ? 'start' : 'middle', fill: C.people, 'font-size': 12 });
+    }
+    function readout(k) {
+      document.getElementById('learn-step').textContent = fmtStep(steps[k]);
+      document.getElementById('learn-recog').textContent = pct(a.recog[k]);
+      document.getElementById('learn-spread').textContent = f2(a.spread[k]);
+      bar(a.spread[k]);
+      range.value = String(k);
+      range.setAttribute('aria-valuetext', 'Step ' + fmtStep(steps[k]));
+      document.getElementById('learn-frames').setAttribute('aria-label', '16 chairs drawn by the sketch model at training step ' +
+        fmtStep(steps[k]) + '; ' + pct(a.recog[k]) + ' of its drawings are recognizable as chairs');
+    }
+    function show(k, fade) {
+      i = k;
+      clearTimeout(fadeTimer);
+      if (!fade || REDUCED) {
+        base.style.backgroundPosition = pos(k);
+        top.classList.remove('fade');
+      } else {
+        top.style.backgroundPosition = pos(k);
+        top.classList.remove('fade');
+        void top.offsetWidth;  // restart the cross-fade
+        top.classList.add('fade');
+        fadeTimer = setTimeout(function () { base.style.backgroundPosition = pos(k); top.classList.remove('fade'); }, 380);
+      }
+      readout(k);
+    }
+    function tick() {
+      var last = i === steps.length - 1;
+      show(last ? 0 : i + 1, true);
+      timer = setTimeout(tick, i === steps.length - 1 ? 2600 : i === 0 ? 1400 : 950);
+    }
+    function play(on) {
+      playing = on;
+      clearTimeout(timer);
+      btn.textContent = on ? 'Pause' : 'Play';
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (on) timer = setTimeout(tick, i === steps.length - 1 ? 300 : 700);
+    }
+    btn.addEventListener('click', function () { touched = true; if (!playing && i === steps.length - 1) show(0, false); play(!playing); });
+    range.addEventListener('input', function () { touched = true; play(false); show(+range.value, false); });
+    show(REDUCED ? steps.length - 1 : 0, false);
+    document.getElementById('learn-cap').textContent = 'One run (seed 1 of 8) at temperature 1, chosen in the plan before any training. A blank tile is a drawing that was only a dot. ' +
+      'The numbers come from all 200 of this run’s drawings at each step; the 16 tiles are its first 16.';
+    if (!REDUCED && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && !touched && !playing) play(true);
+          else if (!e.isIntersecting && playing && !touched) play(false);
+        });
+      }, { threshold: 0.5 }).observe(document.getElementById('learn-player'));
+    }
+  }
+
+  function renderStroke() {
+    var box = document.getElementById('stroke-svg');
+    TOT.api('/static/img/plato_lifespan/sketch/stroke_order.json').then(function (d) {
+      var strokes = d.strokes;
+      var xs = [], ys = [];
+      strokes.forEach(function (st) { xs = xs.concat(st[0]); ys = ys.concat(st[1]); });
+      var dx = (255 - Math.max.apply(null, xs)) / 2, dy = (255 - Math.max.apply(null, ys)) / 2;
+      var paths = strokes.map(function (st) {
+        var pts = st[0].map(function (x, k) { return [x + dx, st[1][k] + dy]; });
+        if (pts.length === 1) pts.push(pts[0]);
+        var len = 0;
+        for (var k = 1; k < pts.length; k++) len += Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
+        var p = svg('path', { d: pts.map(function (q, k) { return (k ? 'L' : 'M') + q[0] + ' ' + q[1]; }).join(''), fill: 'none', stroke: C.ink,
+          'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': 1 }, box);
+        return { el: p, len: len };
+      });
+      function draw() {
+        var t = 250;
+        paths.forEach(function (p) {
+          if (!p.el.animate) return;
+          p.el.getAnimations().forEach(function (an) { an.cancel(); });
+          var dur = Math.max(250, p.len / 120 * 1000);
+          p.el.animate([{ strokeDashoffset: 1, stroke: C.people }, { strokeDashoffset: 0, stroke: C.people }], { duration: dur, delay: t, fill: 'both' });
+          p.el.animate([{ stroke: C.people }, { stroke: C.ink }], { duration: 250, delay: t + dur, fill: 'forwards' });
+          t += dur + 300;
+        });
+      }
+      document.getElementById('stroke-replay').addEventListener('click', draw);
+      document.getElementById('stroke-note').textContent = 'Seed 1 at step 25,600: tile ' + (d.index + 1) + ' of the 16 above, the first one that the measure calls a chair (the rule was set in the plan). ' +
+        strokes.length + (strokes.length === 1 ? ' stroke.' : ' strokes.');
+      if (REDUCED || !('IntersectionObserver' in window)) return;
+      var seen = false;
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting && !seen) { seen = true; draw(); } });
+      }, { threshold: 0.6 }).observe(box);
+    }).catch(function () { box.closest('.ls-stroke').hidden = true; });
+  }
+
+  function verdictWords(t) {
+    return t.verdict === 'narrower' ? 'narrower' : t.verdict === 'wider' ? 'wider' : 'no clear difference';
+  }
+  function deltaTxt(t) { return signed(t.mean_delta, f3) + ' ' + ciTxt(t.t_ci95, function (v) { return signed(v, f3); }); }
+
+  function renderVerdict() {
+    var box = document.getElementById('learn-verdict'), ch = ss().concepts.chair, t1 = ch.tests['t1.0'].last;
     box.innerHTML = '';
-    var steps = Object.keys(st).map(Number).sort(function (a, b) { return a - b; });
-    var kidChair = D.children.cells.chair, tr = sk.training_drawings;
-    var wrap = h('div', { class: 'ls-pair', style: 'grid-template-columns:repeat(3,minmax(0,1fr))' });
+    var all = t1.n_below_0 === t1.n_seeds;
+    var head = t1.verdict === 'narrower'
+      ? [h('b', null, 'It ends narrower than the chairs it learned from' + (all ? ', in all ' + t1.n_seeds + ' runs. ' : ' (' + t1.n_below_0 + ' of ' + t1.n_seeds + ' runs). ')),
+        'At its own temperature its chairs are ' + lessPct(t1) + ' less varied than the people’s chairs it learned from (' + f2(t1.model_spread) + ' vs ' + f2(t1.ref_spread) +
+        '; difference ' + deltaTxt(t1) + ', 95% CI across runs). Like Muse Image, it narrows toward the typical chair.']
+      : t1.verdict === 'wider'
+        ? [h('b', null, 'It ends more varied than the chairs it learned from. '), 'Difference ' + deltaTxt(t1) + ', 95% CI across runs.']
+        : [h('b', null, 'The narrowing does not hold up across runs. '), 'The difference is ' + deltaTxt(t1) + ' (95% CI across ' + t1.n_seeds + ' runs), and ' +
+          t1.n_below_0 + ' of ' + t1.n_seeds + ' runs end narrower. The first run’s result was not robust.'];
+    box.appendChild(h('p', null, head));
+    var tiles = h('div', { class: 'ls-tiles' });
+    ss().temps.forEach(function (tp) {
+      var t = ch.tests['t' + tp.toFixed(1)].last;
+      tiles.appendChild(h('div', { class: 'ls-tile' }, [h('span', null, 'Temperature ' + tp.toFixed(1) + (tp === 1 ? ' (its own)' : '')),
+        h('b', null, t.mean_delta < 0 ? lessPct(t) + ' less varied' : Math.round(100 * t.mean_delta / t.ref_spread) + '% more varied'),
+        h('small', null, 'difference ' + deltaTxt(t) + '; ' + t.n_below_0 + ' of ' + t.n_seeds + ' runs narrower')]));
+    });
+    box.appendChild(tiles);
+    var allT = ss().temps.every(function (tp) { return ch.tests['t' + tp.toFixed(1)].last.verdict === 'narrower'; });
+    var more = [allT ? 'It holds at all three sampling temperatures. ' : 'It does not hold at every temperature (' +
+      ss().temps.map(function (tp) { return tp.toFixed(1) + ': ' + verdictWords(ch.tests['t' + tp.toFixed(1)].last); }).join('; ') + '). '];
+    more.push('The first run, on a Mac, found −0.048 [−0.076, −0.022].');
+    box.appendChild(h('p', null, more));
+    var cat = ss().concepts.cat;
+    if (cat) {
+      var c1 = cat.tests['t1.0'].last, cr = cat.curves['t1.0'].recog.mean, crl = cr[cr.length - 1];
+      var how = 'Trained the same way on 20,000 cats (' + c1.n_seeds + ' runs), the same small model ';
+      var learned = 'learns them much less well (' + pct(crl) + ' of its cats are recognizable at the end, against ' + pct(cat.reference.recog) +
+        ' of the cats it learned from)';
+      box.appendChild(h('p', null, c1.verdict === 'narrower'
+        ? [h('b', null, 'Cats too. '), how + 'also ends narrower than what it learned from (' + lessPct(c1) + ' less varied, ' + deltaTxt(c1) + ').']
+        : c1.verdict === 'wider'
+          ? [h('b', null, 'But not for cats. '), how + learned + ', and its cats end more varied than theirs, not less (' + deltaTxt(c1) +
+            '). The narrowing shows up once a model has learned a thing well; before that, its drawings are still scattered.']
+          : [h('b', null, 'Not clearly for cats. '), how + learned + ', and its cats end neither clearly narrower nor wider (' + deltaTxt(c1) + ').']));
+    }
+  }
+
+  function learnTabs() {
+    var cs = Object.keys(ss().concepts);
+    function tabs(box, items, cur, onPick) {
+      box.innerHTML = '';
+      items.forEach(function (it) {
+        var b = h('button', { type: 'button', role: 'tab', 'aria-selected': it[0] === cur ? 'true' : 'false' }, it[1]);
+        b.addEventListener('click', function () { onPick(it[0]); });
+        box.appendChild(b);
+      });
+    }
+    tabs(document.getElementById('learn-thing'), cs.map(function (c) { return [c, c[0].toUpperCase() + c.slice(1) + ' (' + ss().concepts[c].seeds.length + ' runs)']; }),
+      LEARN.thing, function (v) { LEARN.thing = v; renderLearnCurves(); });
+    tabs(document.getElementById('learn-temp'), ss().temps.map(function (tp) { var k = 't' + tp.toFixed(1); return [k, 'Temperature ' + tp.toFixed(1)]; }),
+      LEARN.temp, function (v) { LEARN.temp = v; renderLearnCurves(); });
+  }
+
+  function renderLearnCurves() {
+    learnTabs();
+    var b = ss().concepts[LEARN.thing], cv = b.curves[LEARN.temp], steps = ss().steps, ref = b.reference, kids = b.children || {};
+    var box = document.getElementById('learn-chart');
+    box.innerHTML = '';
+    var wrap = h('div', { class: 'ls-pair ls-three' });
     box.appendChild(wrap);
+    var lx = function (n) { return Math.log10(n + 25); };
     MEASURES.slice(0, 3).forEach(function (md) {
       var fig = h('figure', { class: 'ls-panel' }, h('figcaption', null, md.name));
       var inner = h('div', { class: 'ls-chart' });
       fig.appendChild(inner);
       wrap.appendChild(fig);
-      var W = 300, H = 210, L = 40, R = 64, T = 10, B = 32;
-      var lx = function (n) { return Math.log10(n + 25); };
-      var xs = function (n) { return L + (W - L - R) * (lx(n) - lx(0)) / (lx(25600) - lx(0)); };
-      var vals = steps.map(function (n) { return st[String(n)][md.key]; }).concat([tr[md.key], kidChair['2'][md.key], kidChair['10'][md.key]]);
-      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = (hi - lo) * 0.1;
+      var W = 300, H = 214, L = 40, R = 66, T = 10, B = 32;
+      var xs = function (n) { return L + (W - L - R) * (lx(n) - lx(0)) / (lx(steps[steps.length - 1]) - lx(0)); };
+      var c = cv[md.key];
+      var refs = [['learned from', ref[md.key], C.muted]];
+      if (kids['2']) refs.push(['age 2', kids['2'][md.key], C.people], ['age 10', kids['10'][md.key], C.people]);
+      var vals = [];
+      c.ci95.forEach(function (q) { vals.push(q[0], q[1]); });
+      Object.keys(c.per_seed).forEach(function (sd) { c.per_seed[sd].forEach(function (v) { vals.push(v); }); });
+      refs.forEach(function (r) { vals.push(r[1]); });
+      vals = vals.filter(function (v) { return v != null && !isNaN(v); });
+      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = (hi - lo) * 0.08;
       var yd = [Math.max(0, lo - pad), md.key === 'recog' ? Math.min(1, hi + pad) : hi + pad];
       var ys = function (v) { return T + (H - T - B) * (yd[1] - v) / (yd[1] - yd[0]); };
-      var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': md.name + ' of the sketch model over training' }, inner);
+      var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': md.name + ' of the ' + LEARN.thing + ' sketch model over training, mean of ' + b.seeds.length + ' runs with a 95% band' }, inner);
       var tip = tipper(inner);
       niceTicks(yd[0], yd[1], 4).forEach(function (v) {
         svg('line', { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: C.grid }, s);
@@ -433,32 +619,73 @@
       });
       [0, 100, 1000, 10000].forEach(function (n) { text(s, xs(n), H - B + 15, n === 0 ? '0' : n >= 1000 ? (n / 1000) + 'k' : String(n), { 'text-anchor': 'middle' }); });
       text(s, (L + W - R) / 2, H - 3, 'training step', { 'text-anchor': 'middle', class: 'lbl' });
-      var refs = [['learned from', tr[md.key], C.muted], ['age 2', kidChair['2'][md.key], C.people], ['age 10', kidChair['10'][md.key], C.people]]
-        .map(function (r) { return { name: r[0], y: ys(r[1]), col: r[2], ly: ys(r[1]) }; })
-        .sort(function (a, b) { return a.y - b.y; });
-      refs.forEach(function (r, i) { if (i && r.ly - refs[i - 1].ly < 12) r.ly = refs[i - 1].ly + 12; });  // labels never overlap
-      refs.forEach(function (r) {
-        svg('line', { x1: L, x2: W - R, y1: r.y, y2: r.y, stroke: r.col, 'stroke-width': 1.2, opacity: 0.8 }, s);
+      var rl = refs.filter(function (r) { return r[1] != null; }).map(function (r) { return { name: r[0], y: ys(r[1]), ly: ys(r[1]), col: r[2] }; })
+        .sort(function (p, q) { return p.y - q.y; });
+      rl.forEach(function (r, k) { if (k && r.ly - rl[k - 1].ly < 12) r.ly = rl[k - 1].ly + 12; });
+      rl.forEach(function (r) {
+        svg('line', { x1: L, x2: W - R, y1: r.y, y2: r.y, stroke: r.col, 'stroke-width': 1.2, opacity: 0.85, 'stroke-dasharray': r.name === 'learned from' ? '4 3' : null }, s);
         text(s, W - R + 4, r.ly + 4, r.name, { class: 'lbl', 'font-size': 11 });
       });
-      svg('path', { d: steps.map(function (n, i) { return (i ? 'L' : 'M') + xs(n) + ' ' + ys(st[String(n)][md.key]); }).join(''), fill: 'none', stroke: C.sketch, 'stroke-width': 2, 'stroke-linejoin': 'round' }, s);
-      steps.forEach(function (n) {
-        var v = st[String(n)][md.key];
-        svg('circle', { cx: xs(n), cy: ys(v), r: 4, fill: C.sketch, stroke: '#FFFFFF', 'stroke-width': 2 }, s);
-        var hit = svg('circle', { cx: xs(n), cy: ys(v), r: 11, fill: 'transparent' }, s);
+      var idx = steps.map(function (n, k) { return k; }).filter(function (k) {
+        return c.mean[k] != null && !isNaN(c.mean[k]) && c.ci95[k][0] != null && !isNaN(c.ci95[k][0]);
+      });
+      var band = idx.map(function (k, j) { return (j ? 'L' : 'M') + xs(steps[k]) + ' ' + ys(c.ci95[k][1]); }).join('') +
+        idx.slice().reverse().map(function (k) { return 'L' + xs(steps[k]) + ' ' + ys(c.ci95[k][0]); }).join('') + 'Z';
+      svg('path', { d: band, fill: C.sketch, opacity: 0.14 }, s);
+      Object.keys(c.per_seed).forEach(function (sd) {
+        var d = '';
+        c.per_seed[sd].forEach(function (v, k) { if (v != null) d += (d ? 'L' : 'M') + xs(steps[k]) + ' ' + ys(v); });
+        svg('path', { d: d, fill: 'none', stroke: C.sketch, 'stroke-width': 1, opacity: 0.28 }, s);
+      });
+      svg('path', { d: idx.map(function (k, j) { return (j ? 'L' : 'M') + xs(steps[k]) + ' ' + ys(c.mean[k]); }).join(''), fill: 'none', stroke: C.ink, 'stroke-width': 2.2, 'stroke-linejoin': 'round' }, s);
+      // hover: one column per checkpoint, with a crosshair
+      var cross = svg('line', { x1: 0, x2: 0, y1: T, y2: H - B, stroke: C.ink2, 'stroke-width': 1, opacity: 0 }, s);
+      idx.forEach(function (k, j) {
+        var x0 = j ? (xs(steps[idx[j - 1]]) + xs(steps[k])) / 2 : L, x1 = j < idx.length - 1 ? (xs(steps[k]) + xs(steps[idx[j + 1]])) / 2 : W - R;
+        var hit = svg('rect', { x: x0, y: T, width: Math.max(1, x1 - x0), height: H - T - B, fill: 'transparent' }, s);
         hit.addEventListener('mousemove', function (e) {
-          var r = st[String(n)];
-          tip.show(e, '<b>Step ' + n.toLocaleString('en-US') + '</b><br>' + md.name + ': ' + md.fmt(v) + '<br>95% CI ' +
-            ciTxt(r[md.key + '_ci95'], md.key === 'recog' ? pct : f2) + '<br>' + r.n + ' drawings');
+          cross.setAttribute('x1', xs(steps[k])); cross.setAttribute('x2', xs(steps[k])); cross.setAttribute('opacity', 0.5);
+          var fm = md.key === 'recog' ? pct : f3;
+          tip.show(e, '<b>Step ' + fmtStep(steps[k]) + '</b><br>' + md.name + ': ' + fm(c.mean[k]) + ' (mean of ' + c.n_seeds[k] + ' runs)<br>95% CI ' +
+            ciTxt(c.ci95[k], fm) + '<br>What it learned from: ' + fm(ref[md.key]));
         });
-        hit.addEventListener('mouseleave', tip.hide);
+        hit.addEventListener('mouseleave', function () { tip.hide(); cross.setAttribute('opacity', 0); });
       });
     });
-    var last = st[String(steps[steps.length - 1])];
-    document.getElementById('grow-note').textContent = 'Dark line: the sketch model (chairs only, 64 drawings per step, temperature 1; scribbles that are a single point don’t count). ' +
-      'Lines: the 200 drawings it learned from (a random sample of its 20,000), and children’s chairs at 2 and at 10. ' +
-      'At the last step its variety is ' + f2(last.spread) + ' against ' + f2(tr.spread) + ' for its teachers (difference ' +
-      signed(last.spread_minus_training, f3) + ', 95% CI ' + ciTxt(last.spread_minus_training_ci95, f3) + '). One training run, one seed.';
+    var nm = LEARN.thing, tl = b.tests[LEARN.temp].last;
+    document.getElementById('learn-curves-sub').textContent = 'Each panel: the mean of the ' + b.seeds.length + ' runs (dark line), a 95% band across runs, and each run on its own (thin lines). ' +
+      '200 drawings per run and step, at temperature ' + TEMP_NAME[LEARN.temp] + '. Dashed: the 1,000 ' + nm + 's it learned from (a random sample of its 20,000).' +
+      (kids['2'] ? ' Orange: children’s ' + nm + 's at 2 and at 10.' : '');
+    document.getElementById('learn-curves-note').textContent = 'At the last step its variety is ' + f2(tl.model_spread) + ' against ' + f2(tl.ref_spread) +
+      ' for what it learned from: difference ' + deltaTxt(tl) + ' (95% CI across runs; resampling runs and drawings gives ' + ciTxt(tl.boot_ci95, function (v) { return signed(v, f3); }) + '). ' +
+      tl.n_below_0 + ' of ' + tl.n_seeds + ' runs end narrower. Single-dot drawings don’t count, so the first steps have fewer drawings.';
+    renderLearnTable();
+  }
+
+  function renderLearnTable() {
+    var rows = [];
+    Object.keys(ss().concepts).forEach(function (c) {
+      ss().temps.forEach(function (tp) {
+        var t = ss().concepts[c].tests['t' + tp.toFixed(1)].last;
+        var sg = function (v) { return signed(v, f3); };
+        rows.push(h('tr', null, [h('td', null, c), h('td', { class: 'num' }, tp.toFixed(1)), h('td', { class: 'num' }, f3(t.model_spread)), h('td', { class: 'num' }, f3(t.ref_spread)),
+          h('td', { class: 'num' }, sg(t.mean_delta)), h('td', { class: 'num' }, ciTxt(t.t_ci95, sg)), h('td', { class: 'num' }, ciTxt(t.boot_ci95, sg)),
+          h('td', { class: 'num' }, t.n_below_0 + ' of ' + t.n_seeds), h('td', null, verdictWords(t))]));
+      });
+    });
+    var tb = document.getElementById('learn-table');
+    tb.innerHTML = '';
+    tb.appendChild(h('table', null, [h('thead', null, h('tr', null, ['Thing', 'Temperature', 'Its variety', 'Learned from', 'Difference', '95% CI across runs',
+      '95% CI, runs and drawings', 'Runs narrower', 'Verdict'].map(function (x, k) { return h('th', { class: k && k < 8 ? 'num' : null }, x); }))), h('tbody', null, rows)]));
+    tb.appendChild(h('p', { class: 'ls-note' }, 'Last step (25,600). Variety: mean pairwise distance in sets of 16. The plan’s rule: narrower only if both CIs lie below 0.'));
+  }
+
+  function renderLearn() {
+    if (!ss() || !ss().concepts || !ss().concepts.chair) { document.getElementById('learn').hidden = true; return; }
+    renderPlayer();
+    renderStroke();
+    renderVerdict();
+    renderLearnCurves();
   }
 
   function renderAll() {
@@ -489,7 +716,7 @@
     thingSelect();
     renderAnswer();
     renderAll();
-    renderGrow();
+    renderLearn();
   }
 
   TOT.api('/api/plato/lifespan').then(function (data) { D = data; init(); }).catch(function (e) {
