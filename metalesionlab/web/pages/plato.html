@@ -24,6 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/tour.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
 <link rel="stylesheet" href="/static/css/plato.css">
 </head>
 <body class="plato">
@@ -33,13 +34,85 @@
 
 <main id="main" tabindex="-1">
 
+<!-- The result first: Muse Image's 16 chairs beside people's 16 (stack them), the answer in one line and three
+     numbers drawn as graphics (statviz.js). No drawing pad here: the home page is where a visitor draws the chair. -->
+<section class="pc-top" id="top" aria-labelledby="top-h">
+  <div class="pc-top-text">
+    <div class="title-pair">
+      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Plato’s Chair · Is there one ideal chair?</span></p>
+      <h1 id="top-h">Asked for a chair, Meta’s AI drew the same one 16&nbsp;times. People didn’t.</h1>
+    </div>
+    <p class="pc-lede pc-top-lede">Plato thought every chair is a copy of one ideal chair. Meta’s image model, Muse Image, acts as if it knows which one.</p>
+    <div class="pc-stats">
+      <div data-sv="spread" data-size="s" data-a="0.1338" data-b="0.3632" data-digits="2" data-a-label="Muse Image" data-b-label="People"
+           data-label="as spread out: people’s chairs, next to Muse Image’s"></div>
+      <div data-sv="dots" data-size="s" data-k="34" data-n="35" data-label="things Muse Image draws more alike than people do"></div>
+      <div data-sv="layers" data-size="s" data-at="36" data-n="52" data-value="36" data-unit=" of 52"
+           data-label="layers in, Meta’s open model holds Muse Image’s doodles as one"></div>
+    </div>
+    <div class="pc-cta">
+      <a class="btn btn-dark pc-cta-main" href="/#hero-draw">Draw your own chair</a>
+      <a class="btn" href="#experiments">See every experiment</a>
+    </div>
+  </div>
+
+  <figure class="pc-chairs" id="chairs" aria-labelledby="chairs-cap">
+    <div class="pc-chairs-pair">
+      <div class="pc-chairs-side" data-side="ai">
+        <p class="pc-chairs-label"><i class="pc-sw" aria-hidden="true"></i>Meta’s Muse Image <span>16 chairs</span></p>
+        <div class="pc-chairs-grid" role="img" aria-label="16 chair doodles by Meta’s Muse Image: nearly the same wooden chair with a slatted back, from the same three-quarter angle, every time. Stacked on top of each other, they make one sharp chair.">
+          <span style="--c:0;--r:0"></span><span style="--c:1;--r:0"></span><span style="--c:2;--r:0"></span><span style="--c:3;--r:0"></span>
+          <span style="--c:0;--r:1"></span><span style="--c:1;--r:1"></span><span style="--c:2;--r:1"></span><span style="--c:3;--r:1"></span>
+          <span style="--c:0;--r:2"></span><span style="--c:1;--r:2"></span><span style="--c:2;--r:2"></span><span style="--c:3;--r:2"></span>
+          <span style="--c:0;--r:3"></span><span style="--c:1;--r:3"></span><span style="--c:2;--r:3"></span><span style="--c:3;--r:3"></span>
+        </div>
+        <p class="pc-chairs-stat"><span class="when-grid">spread <b>0.13</b></span><span class="when-stacked">stacked: <b>one chair</b></span></p>
+      </div>
+      <div class="pc-chairs-side" data-side="people">
+        <p class="pc-chairs-label"><i class="pc-sw" aria-hidden="true"></i>16 people <span>16 chairs</span></p>
+        <div class="pc-chairs-grid" role="img" aria-label="16 chairs drawn by people in 20 seconds each: mostly the same simple chair seen from the side, each drawn differently. Stacked on top of each other, they make a cloud of lines.">
+          <span style="--c:0;--r:0"></span><span style="--c:1;--r:0"></span><span style="--c:2;--r:0"></span><span style="--c:3;--r:0"></span>
+          <span style="--c:0;--r:1"></span><span style="--c:1;--r:1"></span><span style="--c:2;--r:1"></span><span style="--c:3;--r:1"></span>
+          <span style="--c:0;--r:2"></span><span style="--c:1;--r:2"></span><span style="--c:2;--r:2"></span><span style="--c:3;--r:2"></span>
+          <span style="--c:0;--r:3"></span><span style="--c:1;--r:3"></span><span style="--c:2;--r:3"></span><span style="--c:3;--r:3"></span>
+        </div>
+        <p class="pc-chairs-stat"><span class="when-grid">spread <b>0.36</b></span><span class="when-stacked">stacked: <b>a cloud</b></span></p>
+      </div>
+    </div>
+    <div class="pc-chairs-foot">
+      <button type="button" class="pc-stack-btn" id="stack-btn" aria-pressed="false"><span class="when-grid">Stack all 16 on top of each other</span><span class="when-stacked">Spread them out again</span></button>
+      <figcaption id="chairs-cap" class="pc-cap">The same prompt every time: “a quick simple doodle sketch of a chair”. <b>Spread</b> is how different two drawings look on average, measured with Meta’s DINOv2 (0 would be 16 copies). People: players of Google’s Quick, Draw!, 20 seconds each (CC BY 4.0).</figcaption>
+    </div>
+  </figure>
+</section>
+
+<!-- The Experiments hub: every question in the series as one even grid (site.py: render_hub). -->
+<!--#if series-->
+<section class="pc-sec pc-hub" id="experiments" aria-labelledby="experiments-h">
+  <div class="pc-sec-head">
+    <span class="pc-kicker">The Plato series</span>
+    <h2 id="experiments-h">More of Plato’s questions, put to an AI and to people</h2>
+  </div>
+  <!--#series:hub-->
+</section>
+<!--#endif-->
+
+<nav class="pc-jump" aria-label="On this page">
+  <a href="#hero">Ask an AI, or ask people</a>
+  <a href="#everything">Almost everything</a>
+  <a href="#aristotle">Aristotle’s reply</a>
+  <a href="#variety" id="var-jump" hidden>Ask for variety</a>
+  <a href="#languages">In six languages</a>
+  <a href="#inside">Inside the AI</a>
+  <a href="#second-model">Is it just Meta’s model?</a>
+  <a href="#method">Method and caveats</a>
+</nav>
+
 <section class="pc-hero" id="hero" aria-labelledby="hero-h">
   <div class="pc-hero-text">
-    <div class="title-pair">
-      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Question 1: Is there one ideal chair?</span></p>
-      <h1 id="hero-h">Plato’s Chair</h1>
-    </div>
-    <p class="pc-lede">Plato held that each kind of thing has one ideal Form, and every real one is a copy (his own example was a bed). Is there one ideal chair? We asked Meta’s image model, Muse Image, to draw 16 chairs, and asked 16 people.</p>
+    <span class="pc-kicker">Chairs, boats, faces and people</span>
+    <h2 id="hero-h">Ask an AI, or ask people</h2>
+    <p class="pc-lede">Plato held that each kind of thing has one ideal Form, and every real one is a copy (his own example was a bed). We asked Meta’s image model, Muse Image, to draw 16 of a thing, and asked 16 people. Switch between them, and try another thing.</p>
   </div>
 
   <figure class="pc-hero-fig" id="hero-fig">
@@ -76,17 +149,6 @@
     </details>
   </div>
 </section>
-
-<nav class="pc-jump" aria-label="On this page">
-  <a href="#everything">Almost everything</a>
-  <a href="#aristotle">Aristotle’s reply</a>
-  <a href="#variety" id="var-jump" hidden>Ask for variety</a>
-  <a href="#languages">In six languages</a>
-  <a href="#inside">Inside the AI</a>
-  <a href="#second-model">Is it just Meta’s model?</a>
-  <!--#if series--><a href="#series">More of Plato’s questions</a><!--#endif-->
-  <a href="#method">Method and caveats</a>
-</nav>
 
 <section class="pc-sec" id="everything" aria-labelledby="ev-h">
   <div class="pc-sec-head">
@@ -223,16 +285,6 @@
   </div>
 </section>
 
-<!--#if series-->
-<section class="pc-sec" id="series" aria-labelledby="series-h">
-  <div class="pc-sec-head">
-    <span class="pc-kicker">The Plato series</span>
-    <h2 id="series-h">More of Plato’s questions, put to an AI and to people</h2>
-  </div>
-  <!--#series:sub-->
-</section>
-<!--#endif-->
-
 <section class="pc-sec pc-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul>
@@ -253,6 +305,7 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato.js"></script>
 <script src="/static/js/tour.js"></script>
 </body>

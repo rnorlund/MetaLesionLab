@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Draw a chair · {{BRAND}}</title>
-<meta name="description" content="Draw a chair in 20 seconds, then see what Meta’s image model drew and where your chair lands among 200 people’s, measured with Meta’s DINOv2. Or draw something no one has seen, like God, love or time, and see how the AI pictured it.">
-<meta property="og:title" content="Draw a chair · {{BRAND}}">
-<meta property="og:description" content="Draw a chair in 20 seconds. Then see what Meta’s AI drew, and how original yours is.">
+<title>Draw anything · {{BRAND}}</title>
+<meta name="description" content="Draw God, love, time or a chair in 20 seconds, then see what Meta’s image model drew. For things, see where yours lands among 200 people’s, measured with Meta’s DINOv2.">
+<meta property="og:title" content="Draw anything · {{BRAND}}">
+<meta property="og:description" content="Draw God in 20 seconds. Then see what Meta’s AI drew, 16 times.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,9 +22,21 @@
 
 <main id="main" tabindex="-1">
 
-<!-- Blind first: nothing about Muse Image's chairs until the visitor has drawn (or skipped). -->
+<!-- Blind first: nothing of Muse Image's drawings until the visitor has drawn. The picker shows words only; the
+     face-down cards say how many drawings wait, never what they show. -->
 <section class="dw-hero dw-solo" aria-label="Draw">
   <div id="draw-app"></div>
+  <div class="dw-stakes" id="dw-stakes">
+    <p class="dw-stakes-h">Hidden until you draw</p>
+    <div class="dw-stake">
+      <span class="dw-cards" data-stake-cards aria-hidden="true"></span>
+      <p><b data-stake-ai>16</b> drawings by Meta’s image model, shown when you’re done</p>
+    </div>
+    <div class="dw-stake" data-stake-people hidden>
+      <span class="dw-crowd" aria-hidden="true"></span>
+      <p><b data-stake-n>200</b> people’s drawings from Google’s Quick, Draw!</p>
+    </div>
+  </div>
 </section>
 
 <div id="draw-results"></div>
@@ -72,19 +84,42 @@
 <script src="/static/js/common.js"></script>
 <script src="/static/js/draw.js"></script>
 <script>
-  // The standalone page: the thing picker, the reveal strip, and "How it works" once the drawing is in (the
-  // abstract ideas, which are AI only, have their own).
+  // The standalone page: "Draw anything". It starts on God (the home page has the chair), with the picker of
+  // things and invisible ideas (built from the data), the reveal strip, and "How it works" once the drawing is in
+  // (the abstract ideas, which are AI only, have their own). Beside the pad, face-down cards count the drawings
+  // the visitor's will be set against, without showing any of them.
   var how = document.getElementById('how'), howIdeas = document.getElementById('how-ideas');
-  window.TOTDraw.mount(document.getElementById('draw-app'), {
-    kicker: 'A 20-second drawing game', title: 'Draw {a thing}.', instruction: 'You have 20 seconds. Don’t overthink it.',
+  var app = document.getElementById('draw-app'), stakes = document.getElementById('dw-stakes');
+  function cards(box, n, cls) {
+    if (box.childElementCount === n) return;
+    box.textContent = '';
+    for (var i = 0; i < n; i++) { var c = document.createElement('i'); if (cls) c.className = cls; box.appendChild(c); }
+  }
+  function showStakes(label, c) {
+    var ai = (c && c.n_ai) || 16, people = c && c.mode !== 'ai_only' && c.n_human;
+    stakes.querySelector('[data-stake-ai]').textContent = ai;
+    cards(stakes.querySelector('[data-stake-cards]'), ai);
+    stakes.querySelector('[data-stake-people]').hidden = !people;
+    if (people) {
+      stakes.querySelector('[data-stake-n]').textContent = people;
+      cards(stakes.querySelector('.dw-crowd'), Math.min(200, people));
+    }
+  }
+  window.TOTDraw.mount(app, {
+    kicker: 'Draw anything · 20 seconds', ideaKicker: 'Draw anything · 20 seconds',
+    title: 'Draw {a thing}.', instruction: 'Don’t overthink it. Then see what Meta’s AI drew.',
+    ideaInstruction: 'No one has seen it, so there’s no wrong answer. Then see what Meta’s AI drew.',
+    concept: 'god', conceptLabel: 'God', conceptMode: 'ai_only', onConcept: showStakes,
     results: document.getElementById('draw-results'),
     onReveal: function (e) {
       var idea = !!(e && e.concept && e.concept.mode === 'ai_only');
       how.hidden = idea;
       howIdeas.hidden = !idea;
+      stakes.hidden = true;  // the cards are face up now, just below
     },
-    onReset: function () { how.hidden = true; howIdeas.hidden = true; }
+    onReset: function () { how.hidden = true; howIdeas.hidden = true; stakes.hidden = false; }
   });
+  app.appendChild(stakes);  // a cell of the pad's layout (draw.css), under the picker
 </script>
 <script src="/static/js/tour.js"></script>
 </body>

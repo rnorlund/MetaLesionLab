@@ -19,6 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/gallery-strip.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
 <link rel="stylesheet" href="/static/css/plato_gallery.css">
 </head>
 <body class="gx" data-origin="{{ORIGIN}}">
@@ -28,12 +29,44 @@
 
 <main id="main" tabindex="-1">
 
-<section class="gx-hero" aria-labelledby="hero-h">
-  <div class="title-pair">
-    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">From the lab: the pictures our experiments made · <a href="/plato">Plato series</a></span></p>
-    <h1 id="hero-h">The gallery</h1>
+<!-- The wow first: two real sequences from the gallery (each opens in the viewer), the answer in one line, and three
+     numbers from the captions drawn as graphics (statviz.js). -->
+<section class="gx-hero gx-top" aria-labelledby="hero-h">
+  <div class="gx-top-text">
+    <div class="title-pair">
+      <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">The gallery: the pictures our experiments made · <a href="/plato">Plato series</a></span></p>
+      <h1 id="hero-h">Copy an AI’s drawing, or damage the AI, and a chair turns into something else.</h1>
+    </div>
+    <p class="gx-lede">Each picture says what it shows and links to its experiment. Click one to see it large; the arrow keys step through.</p>
+    <div class="gx-stats">
+      <div data-sv="bars" data-size="s" data-values="33,4" data-labels="Intact,Damaged" data-tones="ink,muted" data-max="100" data-suffix="%"
+           data-value="33% → 4%" data-label="of Stable Diffusion XL’s clocks show all 12 numbers in order: intact, then damaged"></div>
+      <div data-sv="dots" data-size="s" data-k="49" data-n="50" data-cols="10" data-label="times Muse Spark said “sparrow” when asked to name a bird"></div>
+      <div data-sv="dots" data-size="s" data-k="67" data-n="100" data-cols="20" data-label="everyday objects Meta’s open model named from their shadows"></div>
+    </div>
   </div>
-  <p class="gx-lede">The pictures our experiments made, each with what it shows and a link to the experiment. Many are sequences: watch a chair drift as two AIs copy each other’s copies, or an image model’s drawing degrade as we damage it on purpose. Click a picture to see it large; the arrow keys step through.</p>
+  <div class="gx-films">
+    <a class="gx-film" href="#telephone-beanbag">
+      <span class="gx-film-h"><b>Copied</b> 10 times by two AIs: a beanbag becomes a croissant, then a window</span>
+      <span class="gx-film-row" role="img" aria-label="Five of eleven doodles: a beanbag chair, a croissant, a fan-shaped half ring, and at copy 10 a semicircular fanlight window.">
+        <span class="gx-film-f"><img src="/static/img/gallery/telephone-beanbag-0.webp" width="400" height="400" alt=""><i>start</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/telephone-beanbag-2.webp" width="400" height="400" alt=""><i>copy 2</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/telephone-beanbag-4.webp" width="400" height="400" alt=""><i>copy 4</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/telephone-beanbag-7.webp" width="400" height="400" alt=""><i>copy 7</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/telephone-beanbag-10.webp" width="400" height="400" alt=""><i>copy 10</i></span>
+      </span>
+    </a>
+    <a class="gx-film" href="#damage-wheelchair">
+      <span class="gx-film-h"><b>Damaged</b> on purpose: switch off neurons in its language part and a wheelchair becomes a bicycle</span>
+      <span class="gx-film-row" role="img" aria-label="Five pictures of a wheelchair by Stable Diffusion XL as more of its language part is switched off: from level 2 on it is a bicycle.">
+        <span class="gx-film-f"><img src="/static/img/gallery/damage-wheelchair-0.webp" width="400" height="400" alt=""><i>intact</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/damage-wheelchair-1.webp" width="400" height="400" alt=""><i>level 1</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/damage-wheelchair-2.webp" width="400" height="400" alt=""><i>level 2</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/damage-wheelchair-3.webp" width="400" height="400" alt=""><i>level 3</i></span>
+        <span class="gx-film-f"><img src="/static/img/gallery/damage-wheelchair-4.webp" width="400" height="400" alt=""><i>level 4</i></span>
+      </span>
+    </a>
+  </div>
 </section>
 
 <div class="gx-bar" role="toolbar" aria-label="Filter and order">
@@ -82,6 +115,7 @@
 </dialog>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
 <script src="/static/js/gallery-strip.js"></script>
 <script src="/static/js/plato_gallery.js"></script>
 </body>
