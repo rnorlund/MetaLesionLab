@@ -27,7 +27,7 @@
 
 /* the grid: as many columns as fit, every card at least ~300 px (or the full width of a phone) */
 .gx-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(14px, 1.4vw, 24px);
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(280px, 17vw, 440px)), 1fr)); }
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(280px, 16vw, 420px)), 1fr)); }  /* 5 across at 2560, so the 200px frames are drawn at no more than about 1.4 times */
 .gx-loading { color: var(--muted); }
 .gx-card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid #E7E5DF;
   border-radius: 16px; overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; }

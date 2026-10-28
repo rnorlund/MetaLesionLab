@@ -224,13 +224,22 @@
     ui.shade.style.display = 'none';
     var r = unionRect(els);
     r = { top: r.top, bottom: r.bottom, left: Math.max(r.left, pad + 2), right: Math.min(r.right, vw - pad - 2) };
+    var cw = card.offsetWidth, ch = card.offsetHeight, gap = 14, top, left;
+    if (!phone()) {
+      // A target as wide as the page and too tall to leave room above or below (a whole section on a wide
+      // window): light up the part on screen down to where the caption goes, and put the caption under it,
+      // so it never covers what it talks about. scrollToTargets brings the target's top near the window's.
+      var beside = r.right + pad + gap + cw < vw - 8 || r.left - pad - gap - cw > 8;
+      var below = r.bottom + pad + gap + ch < vh - 8, above = r.top - pad - gap - ch > 8;
+      var cut = vh - 12 - ch - gap - pad;
+      if (!beside && !below && !above && cut - Math.max(r.top, 0) >= 160) r.bottom = cut;
+    }
     ui.spot.style.display = 'block';
     ui.spot.style.top = (r.top - pad) + 'px';
     ui.spot.style.left = (r.left - pad) + 'px';
     ui.spot.style.width = Math.max(0, r.right - r.left + 2 * pad) + 'px';
     ui.spot.style.height = (r.bottom - r.top + 2 * pad) + 'px';
     if (phone()) { card.style.left = card.style.top = ''; return; }
-    var cw = card.offsetWidth, ch = card.offsetHeight, gap = 14, top, left;
     var clampX = function (x) { return Math.max(12, Math.min(vw - cw - 12, x)); };
     var clampY = function (y) { return Math.max(12, Math.min(vh - ch - 12, y)); };
     if (r.bottom + pad + gap + ch < vh - 8) { top = r.bottom + pad + gap; left = clampX(r.left); }
@@ -261,7 +270,9 @@
       if (r.top >= 8 && r.bottom <= room - 8) return;
     } else {
       var needed = height + 20 + ui.card.offsetHeight;  // room for the caption below the target when both fit
-      wantTop = needed + 24 <= vh ? (vh - needed) / 2 : Math.max(12, (vh - height) / 2);
+      var wide = (r.right - r.left) + ui.card.offsetWidth + 40 > window.innerWidth;  // no room beside it either
+      // too tall for both: a wide target starts near the top (place() lights its top and puts the caption under it)
+      wantTop = needed + 24 <= vh ? (vh - needed) / 2 : wide ? 16 : Math.max(12, (vh - height) / 2);
     }
     window.scrollBy(0, r.top - wantTop);
   }
@@ -328,6 +339,11 @@
       place();
       scrollToTargets(targetsFor(step));
       place();
+      // Arriving on a new page, the browser may still scroll to the #anchor or shift the layout as pictures
+      // load: fit the target and caption again once the page has settled.
+      var refit = function () { if (current === i && ui) { scrollToTargets(targetsFor(step)); place(); } };
+      if (document.readyState !== 'complete') window.addEventListener('load', function () { setTimeout(refit, 60); }, { once: true });
+      else if (location.hash) setTimeout(refit, 350);
       ui.card.focus({ preventScroll: true });
       if (step.onShow) Promise.resolve().then(step.onShow).catch(function () {});
     });

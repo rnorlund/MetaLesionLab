@@ -143,7 +143,9 @@
 
   function meter(m, s) {
     var v = value(s, m.key);
-    var W = 300, H = 34, pad = 6;
+    // drawn at the reading column's own width, so the dots and the track keep their size on a wide window
+    var col = document.getElementById('read');
+    var W = Math.max(200, Math.round((col && col.clientWidth) || 300)), H = 34, pad = 10;
     var x = function (val) { return pad + (W - 2 * pad) * (val - m.lo) / (m.hi - m.lo); };
     var box = h('div', { class: 'ls-meter' });
     box.appendChild(h('div', { class: 'top' }, [h('span', null, m.name), h('b', null, isNaN(v) ? '–' : m.fmt(v))]));
@@ -713,6 +715,15 @@
     fromHash();
     range.value = String(stop);
     range.addEventListener('input', function () { stop = +range.value; renderStage(); });
+    var lastW = window.innerWidth, resizeTimer = 0;
+    window.addEventListener('resize', function () {  // the meters are drawn at the column's width
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        if (window.innerWidth === lastW) return;
+        lastW = window.innerWidth;
+        renderStage();
+      }, 150);
+    });
     thingSelect();
     renderAnswer();
     renderAll();

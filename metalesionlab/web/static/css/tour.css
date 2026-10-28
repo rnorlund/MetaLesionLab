@@ -49,7 +49,7 @@
 .demo-btn { border: 0; border-radius: 999px; background: #FDE68A; color: var(--ink); font-weight: 600; font-size: 13px; padding: 8px 14px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .demo-btn:hover { background: #FCD34D; }
 .demo-btn svg { width: 10px; height: 10px; }
-.page-intro { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+.page-intro { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: 10px; padding: 10px 14px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); }
 .page-intro p { margin: 0; color: var(--ink-2); }
 .link-btn { background: none; border: 0; padding: 0; color: var(--blue); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 .link-btn:hover { color: var(--blue-dark); }
