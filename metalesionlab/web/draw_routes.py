@@ -8,6 +8,10 @@ which drops EXIF and location) and treats it like Muse Image's pictures: flatten
 ink. Photos of things or scenes get a friendly refusal. Both embed with Meta's DINOv2-base on the CPU
 (metalesionlab/draw.py) and compare with precomputed reference data (web/data/draw.json).
 
+The abstract ideas ("Draw the invisible": God, love, time…, web/data/draw_ideas.json) take the same routes but
+are scored against Muse Image's 16 doodles only (draw.score_ai_only): Quick, Draw! has no people's drawings of
+them, so the response carries no number about people.
+
 No Meta API calls, so the spend guard lists both routes as free; they cost CPU instead, so they have
 their own limits: per visitor per day and per minute (limits.py buckets "draw" and "draw_burst"), a
 request-size cap, and DRAW_SLOTS embeddings at a time. The model loads on the first drawing only.
@@ -147,8 +151,10 @@ def score_upload(ref: draw.Reference, key: str, data: bytes, opts: dict) -> dict
         picture, stats = draw.prepare_upload(data)  # the photo itself goes no further than this
     except draw.DrawingError as e:
         raise HTTPException(422, str(e)) from None
-    result = ref.score(key, embed(picture))
-    stats["d_doodle"] = result.get("d_doodle", 0)
+    vec = embed(picture)
+    result = ref.score(key, vec)
+    # an idea's score says nothing about people's drawings, so its "is this a doodle at all?" check is done apart
+    stats["d_doodle"] = ref.doodle_distance(vec) if ref.ai_only(key) else result.get("d_doodle", 0)
     problem = draw.upload_problem(stats)
     if problem:
         raise HTTPException(422, problem)

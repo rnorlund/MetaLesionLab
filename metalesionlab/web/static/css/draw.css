@@ -191,3 +191,26 @@ body.draw .tour-offer { left: auto; right: 16px; }  /* keep the tour invitation 
   body.draw .tour-offer, body.landing .tour-offer { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .dw-results { scroll-behavior: auto; } .dw-muse-strip .dw-cell { animation: none !important; } }
+
+/* Draw the invisible: the picker's second row (abstract ideas, AI only) and the AI-only results. */
+.dw-chips { flex-direction: column; align-items: flex-start; gap: 8px; }
+.dw-chip-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dw-chip-ideas .dw-chips-label { color: var(--blue-dark); font-weight: 600; }
+.dw-chip-ideas button { border-style: dashed; border-color: #93C5FD; }
+.dw-chip-ideas button[aria-pressed="true"] { border-style: solid; }
+.dw-near-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: clamp(480px, 34vw, 900px); }
+.dw-emblems { display: flex; flex-direction: column; gap: 6px; }
+.dw-emblems-h { margin: 4px 0 2px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.dw-emblem { display: grid; grid-template-columns: minmax(0, 15em) minmax(48px, 1fr) auto; gap: 10px; align-items: center; font-size: 14px; color: var(--ink-2); }
+.dw-emblem-name { overflow-wrap: anywhere; }
+.dw-emblem-bar { height: 10px; background: var(--blue-soft); border-radius: 5px; overflow: hidden; }
+.dw-emblem-bar i { display: block; height: 100%; background: var(--blue); border-radius: 5px; }
+.dw-emblem-n { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.dw-emblem.is-near .dw-emblem-name { font-weight: 700; color: var(--ink); }
+.dw-emblem.is-near .dw-emblem-name::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #0D9488; margin-right: 6px; vertical-align: 1px; }
+@media (min-width: 1800px) {
+  .dw-results > [data-dw="idea-tiles"] .dw-card { grid-column: span 2; }
+}
+@media (max-width: 720px) {
+  .dw-emblem { grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) auto; font-size: 13px; }
+}

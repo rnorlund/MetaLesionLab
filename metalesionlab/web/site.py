@@ -105,6 +105,9 @@ SERIES = [
      "source": "Republic VII · out of the cave", "title": "Inside the model",
      "finding": "From about layer 36 of 52 (the median), Muse Glimmer holds Muse Image’s doodles of a thing together; "
                 "at the last layer, people’s are about 6 times as spread out."},
+    # its picture would show Muse Image's drawings of God, so it has none: the drawn icon keeps the blind draw
+    {"path": "/plato/ideas", "slug": "ideas", "question": "Can an AI draw what no one has seen?",
+     "source": "Republic X · God’s bed, Beauty, Justice, the Good", "title": "The invisible Forms", "finding": None},
     {"path": "/plato/forms", "slug": "forms", "question": "Is there one ideal clock, bed or table?",
      "source": "Republic X · Plato’s own bed and table", "title": "The Platonic clock", "finding": None},
     {"path": "/plato/cave", "slug": "cave", "question": "Can you know a thing from its shadow?",
@@ -154,6 +157,8 @@ _ART = {
              '<rect x="47" y="38" width="26" height="20" rx="3"/><rect x="80" y="38" width="26" height="20" rx="3"/>'
              '<rect x="14" y="64" width="26" height="20" rx="3"/><rect x="47" y="64" width="26" height="20" rx="3"/>'
              '<rect x="80" y="64" width="26" height="20" rx="3"/>',
+    "ideas": '<circle cx="60" cy="45" r="20" stroke-dasharray="4 5"/>'
+             '<path d="M60 9v9M60 72v9M24 45h9M87 45h9M35 20l6 6M79 64l6 6M85 20l-6 6M41 64l-6 6"/>',
     "telephone": '<path d="M14 30v22M30 30v22M14 33h16M12 52h20M14 52v12M30 52v12"/>'
                  '<path d="M52 32v20M68 34v18M52 35h16M50 52h20M53 52v11M67 52v12" stroke-dasharray="5 2"/>'
                  '<path d="M90 36v16M104 38v14M90 40h14M88 52h18M92 52v10M103 52v9" stroke-dasharray="3 3"/>'

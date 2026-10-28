@@ -1,0 +1,132 @@
+/* The invisible Forms (/plato/ideas). Same paper and colours as Plato's Chair: blue is Muse Image. The things
+   (everyday objects) are neutral gray context. The page uses the shared fluid tokens (app.css: --gutter,
+   --page-max, --measure, fluid type), so it grows with the window; prose keeps a readable measure. */
+body.ideas { background: #F7F6F1; }
+.ideas main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
+.ideas { --muse: #1D4ED8; --muse-2: #93C5FD; --muse-3: #DBEAFE; --thing: #6B7280; --teal: #0D9488; }
+.iv-cap { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
+
+/* hero: the text beside Muse Image's 16 drawings of God */
+.iv-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.5vw, 64px); display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 24px clamp(32px, 3.5vw, 96px); align-items: center; }
+.iv-hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.iv-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
+.iv-lede { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 25px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.iv-answer { margin: 0; font-size: clamp(21px, calc(14px + 0.55vw), 30px); font-weight: 700; line-height: 1.35; letter-spacing: -0.01em;
+  border-left: 4px solid var(--muse); padding-left: 16px; max-width: 46ch; }
+.iv-god { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.iv-god-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 0.5vw, 12px); padding: clamp(8px, 0.6vw, 14px);
+  background: #FCFCFB; border: 1px solid var(--line); border-radius: 14px; }
+.iv-cell { aspect-ratio: 1; background-repeat: no-repeat; background-color: #FFFFFF; border-radius: 6px; }
+.iv-god-grid .iv-cell { border: 1px solid #ECEAE4; }
+.iv-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(12px, 1vw, 24px); }
+.iv-tile { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--soft); }
+.iv-tile b { font-size: clamp(30px, calc(18px + 1vw), 46px); letter-spacing: -0.01em; line-height: 1.05; }
+.iv-tile span { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
+.iv-tile small { font-size: 12px; color: var(--muted); font-family: var(--mono); line-height: 1.4; }
+.iv-tile.fail b { color: var(--ink-2); }
+
+.iv-jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.iv-jump a { font-size: 14px; padding: 8px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.iv-jump a:hover { border-color: var(--ink); }
+
+/* sections */
+.iv-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 2.2vw, 56px) clamp(24px, 2.5vw, 64px);
+  display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 12px; min-width: 0; }
+.iv-sec-head { display: flex; flex-direction: column; gap: 8px; }
+.iv-sec-head > p { max-width: var(--measure); }
+.iv-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.015em; }
+.iv-sec-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
+
+/* how people picture God: the cited study beside a two-bar picture */
+.iv-people-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px clamp(28px, 3vw, 80px); align-items: start; }
+.iv-prose { display: flex; flex-direction: column; gap: 12px; max-width: var(--measure); }
+.iv-prose p { margin: 0; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
+.iv-src { font-size: var(--fs-sm) !important; color: var(--muted) !important; }
+.iv-compare { display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--line); border-radius: 12px; padding: clamp(14px, 1.2vw, 24px); background: var(--soft); }
+.iv-compare h3 { margin: 0; font-size: 14px; font-family: var(--mono); font-weight: 500; color: var(--muted); }
+.iv-cmp { display: flex; flex-direction: column; gap: 6px; }
+.iv-cmp-top { display: flex; justify-content: space-between; gap: 10px; font-size: var(--fs-sm); color: var(--ink-2); }
+.iv-cmp-top b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.iv-cmp-bar { height: 14px; border-radius: 4px; background: #E9E7E1; overflow: hidden; }
+.iv-cmp-bar i { display: block; height: 100%; border-radius: 4px; }
+.iv-cmp-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+
+/* eleven ideas: a card per idea with its 16 drawings */
+.iv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(300px, 21vw, 560px)), 1fr)); gap: clamp(12px, 1vw, 22px); }
+.iv-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; background: var(--panel); }
+.iv-card.is-god { border-color: var(--muse-2); }
+.iv-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.iv-card-head b { font-size: clamp(17px, calc(12px + 0.35vw), 22px); }
+.iv-card-head span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.iv-strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; background: #FCFCFB; border: 1px solid #ECEAE4; border-radius: 8px; padding: 4px; }
+.iv-strip .iv-cell { border-radius: 3px; }
+.iv-card-top { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
+.iv-card-top b { color: var(--ink); }
+.iv-card-top small { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+/* emblem bars: one stacked bar of 16 per idea; the top emblem in Muse blue, the rest lighter, unlabeled gray */
+.iv-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.iv-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.iv-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.iv-legend i.dot { border-radius: 50%; width: 10px; height: 10px; }
+.iv-legend i.line { width: 16px; height: 2px; border-radius: 1px; }
+.iv-bars { display: flex; flex-direction: column; gap: 10px; }
+.iv-bar-row { display: grid; grid-template-columns: minmax(84px, 9em) minmax(0, 1fr) minmax(0, 16em); gap: 6px clamp(10px, 1vw, 20px); align-items: center; }
+.iv-bar-name { font-weight: 600; font-size: var(--fs-body); }
+.iv-bar { position: relative; display: flex; gap: 2px; height: clamp(22px, 1.4vw, 30px); }
+.iv-bar span { position: relative; height: 100%; min-width: 4px; background: var(--muse-3); }
+.iv-bar span:first-child { border-radius: 4px 0 0 4px; }
+.iv-bar span:last-child { border-radius: 0 4px 4px 0; }
+.iv-bar span:only-child { border-radius: 4px; }
+.iv-bar span.top { background: var(--muse); }
+.iv-bar span.other { background: var(--muse-2); }
+.iv-bar span.none { background: #D1D5DB; }
+.iv-bar span:hover, .iv-bar span:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 1; }
+.iv-bar-half { position: absolute; top: -4px; bottom: -4px; left: 50%; width: 0; border-left: 1.5px dashed var(--ink-2); pointer-events: none; }
+.iv-bar-label { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.35; }
+.iv-bar-label b { color: var(--ink); }
+.iv-bar-label small { display: block; font-size: 12px; color: var(--muted); }
+.iv-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--ink); color: #F9FAFB; padding: 8px 10px; border-radius: 8px;
+  font-size: 12.5px; line-height: 1.45; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); max-width: 260px; }
+.iv-tip b { font-size: 14px; display: block; }
+.iv-numbers summary { cursor: pointer; font-size: 14px; color: var(--ink-2); }
+.iv-table-wrap { overflow-x: auto; margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; }
+.iv-numbers table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.iv-numbers th, .iv-numbers td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.iv-numbers th { background: var(--soft); font-weight: 600; white-space: nowrap; }
+.iv-numbers td.n { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+
+/* ideas against things: a dot plot of spread */
+.iv-chart { position: relative; width: 100%; min-width: 0; }
+.iv-chart svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--sans); }
+.iv-chart .tick { font-size: 12px; fill: var(--muted); }
+.iv-chart .lbl { font-size: 12.5px; fill: var(--ink-2); }
+.iv-chart .lbl-b { font-size: 13px; font-weight: 600; fill: var(--ink); }
+
+/* try it */
+.iv-try-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.iv-try-links a { font-size: clamp(15px, calc(10px + 0.35vw), 19px); padding: 8px 16px; min-height: 40px; display: inline-flex; align-items: center;
+  border-radius: 999px; border: 1.5px dashed var(--muse-2); background: var(--panel); color: var(--ink); text-decoration: none; }
+.iv-try-links a:hover { border-style: solid; border-color: var(--muse); }
+.iv-try-links a.lead { background: var(--ink); border: 1.5px solid var(--ink); color: #FFFFFF; font-weight: 600; }
+
+/* method */
+.iv-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
+.iv-credit { margin: 0; font-size: var(--fs-sm); max-width: 120ch; line-height: 1.55; color: var(--muted); }
+
+@media (min-width: 1700px) {  /* method notes in two columns on wide screens */
+  .iv-method ul { max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(40px, 4vw, 112px); }
+}
+@media (max-width: 1100px) {
+  .iv-hero { grid-template-columns: minmax(0, 1fr); }
+  .iv-people-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .ideas .page { padding: 12px 16px 32px; }
+  .iv-hero, .iv-sec { padding: 18px; border-radius: 14px; }
+  .iv-answer { padding-left: 12px; }
+  .iv-bar-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .iv-bar-label small { display: inline; }
+  .iv-strip { gap: 2px; padding: 3px; }
+}

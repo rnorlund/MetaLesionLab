@@ -48,6 +48,9 @@ body.landing { background: #FFFFFF; --paper: #F7F6F1; --ai: #1D4ED8; --people: #
   .hero-ask .hero-sub { max-width: 40ch; }
 }
 .hero-skip { font-size: clamp(16px, calc(11px + 0.3vw), 19px); font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; padding: 6px 0; }
+/* Draw the invisible: a small invitation to the abstract ideas (on /draw); the chair stays the pad's thing here */
+.hero-ideas { order: 9; margin: 0; padding-top: 12px; border-top: 1px dashed #D6D3CB; font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
+.hero-ideas a { font-weight: 600; text-underline-offset: 3px; }
 .hero-skip:hover { color: var(--orange-dark); }
 .hero-draw + .reveal-band { border-top: 1px solid #E7E5DF; padding-top: clamp(44px, 3.4vw, 88px); }
 .hero .reveal-h { margin: 0; font-size: clamp(30px, calc(16px + 2.6vw), 76px); line-height: 1.05; letter-spacing: -0.025em; font-weight: 700; }

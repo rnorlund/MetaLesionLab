@@ -1,0 +1,715 @@
+{
+ "experiment": "The invisible Forms",
+ "plan": "docs/plato_ideas_plan.md",
+ "writeup": "docs/plato_ideas.md",
+ "license": "statistics only: no drawings and no embeddings",
+ "summary": {
+  "n_ideas": 11,
+  "pictures": 176,
+  "refused_attempts": 0,
+  "attempts": 44,
+  "H1": {
+   "ideas_with_concentration_at_least_half": 10,
+   "of": 11,
+   "passes": true,
+   "median_concentration": 0.8125,
+   "median_concentration_ci95": [
+    0.625,
+    1.0
+   ]
+  },
+  "H2": {
+   "predicted_emblem_on_top": 5,
+   "of": 11,
+   "ideas": [
+    "god",
+    "love",
+    "time",
+    "the_soul",
+    "happiness"
+   ],
+   "passes": false
+  },
+  "H3_vs_atlas": {
+   "n_ideas": 11,
+   "n_things": 135,
+   "median_ideas": 0.2272,
+   "median_things": 0.1979,
+   "median_ideas_ci95": [
+    0.1907,
+    0.3107
+   ],
+   "median_things_ci95": [
+    0.184,
+    0.2185
+   ],
+   "difference": 0.0293,
+   "difference_ci95": [
+    -0.0146,
+    0.1121
+   ],
+   "p_perm_one_sided": 0.1564,
+   "ideas_above_things_median": 9,
+   "ideas_above_things_max": 2,
+   "passes": false
+  },
+  "H3_vs_pad": {
+   "n_ideas": 11,
+   "n_things": 10,
+   "median_ideas": 0.2272,
+   "median_things": 0.1228,
+   "median_ideas_ci95": [
+    0.1932,
+    0.3129
+   ],
+   "median_things_ci95": [
+    0.0907,
+    0.2077
+   ],
+   "difference": 0.1044,
+   "difference_ci95": [
+    0.0216,
+    0.1903
+   ],
+   "p_perm_one_sided": 0.0166,
+   "ideas_above_things_median": 11,
+   "ideas_above_things_max": 2,
+   "passes": true
+  },
+  "E1_concentration_vs_spread": {
+   "rho": -0.6451,
+   "ci95": [
+    -0.9224,
+    -0.0493
+   ],
+   "p_perm": 0.0392,
+   "n": 11
+  },
+  "E4_pixels": {
+   "median_ideas": 0.3527,
+   "median_things": 0.2094,
+   "ideas_above_things_median": 9
+  },
+  "label_check": {
+   "pictures": 176,
+   "agreement": 0.8807,
+   "kappa": 0.8716,
+   "same_top_emblem": 10,
+   "of": 11,
+   "by_eye_H1": 11,
+   "by_eye_H2": 6,
+   "labels_by_eye_sha256": "39043d3bd7f74e561b699c9c6ca39412e58ee1cf2a2a19198d9fd355014970ed"
+  },
+  "text_in_pictures": 0
+ },
+ "ideas": [
+  {
+   "key": "god",
+   "label": "God",
+   "group": "god",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of God, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a bearded man",
+   "top": {
+    "emblem": "a bearded man",
+    "short": "bearded man",
+    "n": 16,
+    "share": 1.0,
+    "share_ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a bearded man",
+     16
+    ]
+   ],
+   "spread": 0.2375,
+   "spread_ci95": [
+    0.1977,
+    0.2805
+   ],
+   "pixel_spread": 0.1963,
+   "by_eye": {
+    "top": "a bearded man",
+    "short": "bearded man",
+    "n": 16,
+    "share": 1.0,
+    "counts": [
+     [
+      "a bearded man",
+      16
+     ]
+    ]
+   },
+   "agreement": 1.0,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "love",
+   "label": "love",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of love, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a heart",
+   "top": {
+    "emblem": "a heart",
+    "short": "heart",
+    "n": 16,
+    "share": 1.0,
+    "share_ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a heart",
+     16
+    ]
+   ],
+   "spread": 0.1232,
+   "spread_ci95": [
+    0.1033,
+    0.1436
+   ],
+   "pixel_spread": 0.3897,
+   "by_eye": {
+    "top": "a heart",
+    "short": "heart",
+    "n": 16,
+    "share": 1.0,
+    "counts": [
+     [
+      "a heart",
+      16
+     ]
+    ]
+   },
+   "agreement": 1.0,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "time",
+   "label": "time",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of time, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a clock",
+   "top": {
+    "emblem": "a clock",
+    "short": "clock",
+    "n": 15,
+    "share": 0.9375,
+    "share_ci95": [
+     0.8125,
+     1.0
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a clock",
+     15
+    ],
+    [
+     "a hourglass",
+     1
+    ]
+   ],
+   "spread": 0.2098,
+   "spread_ci95": [
+    0.1595,
+    0.2592
+   ],
+   "pixel_spread": 0.4099,
+   "by_eye": {
+    "top": "a clock",
+    "short": "clock",
+    "n": 15,
+    "share": 0.9375,
+    "counts": [
+     [
+      "a clock",
+      15
+     ],
+     [
+      "a hourglass",
+      1
+     ]
+    ]
+   },
+   "agreement": 1.0,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "death",
+   "label": "death",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of death, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a skull",
+   "top": {
+    "emblem": "a hooded figure with a scythe",
+    "short": "reaper",
+    "n": 16,
+    "share": 1.0,
+    "share_ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a hooded figure with a scythe",
+     16
+    ]
+   ],
+   "spread": 0.2272,
+   "spread_ci95": [
+    0.2018,
+    0.2515
+   ],
+   "pixel_spread": 0.3277,
+   "by_eye": {
+    "top": "a hooded figure with a scythe",
+    "short": "reaper",
+    "n": 16,
+    "share": 1.0,
+    "counts": [
+     [
+      "a hooded figure with a scythe",
+      16
+     ]
+    ]
+   },
+   "agreement": 1.0,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "justice",
+   "label": "justice",
+   "group": "plato",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of justice, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a pair of scales",
+   "top": {
+    "emblem": "a blindfolded figure with scales",
+    "short": "figure with scales",
+    "n": 9,
+    "share": 0.5625,
+    "share_ci95": [
+     0.5,
+     0.8125
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a blindfolded figure with scales",
+     9
+    ],
+    [
+     "a pair of scales",
+     7
+    ]
+   ],
+   "spread": 0.2107,
+   "spread_ci95": [
+    0.1804,
+    0.2381
+   ],
+   "pixel_spread": 0.3364,
+   "by_eye": {
+    "top": "a blindfolded figure with scales",
+    "short": "figure with scales",
+    "n": 10,
+    "share": 0.625,
+    "counts": [
+     [
+      "a blindfolded figure with scales",
+      10
+     ],
+     [
+      "a pair of scales",
+      6
+     ]
+    ]
+   },
+   "agreement": 0.9375,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "beauty",
+   "label": "beauty",
+   "group": "plato",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of beauty, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a flower",
+   "top": {
+    "emblem": "a woman's face",
+    "short": "woman",
+    "n": 16,
+    "share": 1.0,
+    "share_ci95": [
+     1.0,
+     1.0
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a woman's face",
+     16
+    ]
+   ],
+   "spread": 0.152,
+   "spread_ci95": [
+    0.1286,
+    0.1755
+   ],
+   "pixel_spread": 0.1889,
+   "by_eye": {
+    "top": "a woman's face",
+    "short": "woman",
+    "n": 16,
+    "share": 1.0,
+    "counts": [
+     [
+      "a woman's face",
+      16
+     ]
+    ]
+   },
+   "agreement": 1.0,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "the_good",
+   "label": "the Good",
+   "group": "plato",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of the Good, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a sun",
+   "top": {
+    "emblem": "a thumbs-up",
+    "short": "thumbs-up",
+    "n": 12,
+    "share": 0.75,
+    "share_ci95": [
+     0.5625,
+     0.9375
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a thumbs-up",
+     12
+    ],
+    [
+     "a smiling face",
+     4
+    ]
+   ],
+   "spread": 0.2944,
+   "spread_ci95": [
+    0.2298,
+    0.3575
+   ],
+   "pixel_spread": 0.3461,
+   "by_eye": {
+    "top": "a thumbs-up",
+    "short": "thumbs-up",
+    "n": 12,
+    "share": 0.75,
+    "counts": [
+     [
+      "a thumbs-up",
+      12
+     ],
+     [
+      "a smiling face",
+      3
+     ],
+     [
+      "a sun",
+      1
+     ]
+    ]
+   },
+   "agreement": 0.9375,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "the_soul",
+   "label": "the soul",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of the soul, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a ghostly figure",
+   "top": {
+    "emblem": "a ghostly figure",
+    "short": "ghostly figure",
+    "n": 9,
+    "share": 0.5625,
+    "share_ci95": [
+     0.3125,
+     0.8125
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a ghostly figure",
+     9
+    ],
+    [
+     "can't tell",
+     3
+    ],
+    [
+     "something else",
+     2
+    ],
+    [
+     "a flame",
+     1
+    ],
+    [
+     "a swirl",
+     1
+    ]
+   ],
+   "spread": 0.2927,
+   "spread_ci95": [
+    0.2463,
+    0.3336
+   ],
+   "pixel_spread": 0.3527,
+   "by_eye": {
+    "top": "a ghostly figure",
+    "short": "ghostly figure",
+    "n": 14,
+    "share": 0.875,
+    "counts": [
+     [
+      "a ghostly figure",
+      14
+     ],
+     [
+      "a swirl",
+      2
+     ]
+    ]
+   },
+   "agreement": 0.625,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "freedom",
+   "label": "freedom",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of freedom, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a flying bird",
+   "top": {
+    "emblem": "broken chains",
+    "short": "broken chains",
+    "n": 12,
+    "share": 0.75,
+    "share_ci95": [
+     0.5,
+     0.9375
+    ]
+   },
+   "emblem_counts": [
+    [
+     "broken chains",
+     12
+    ],
+    [
+     "a flying bird",
+     3
+    ],
+    [
+     "a bird leaving a cage",
+     1
+    ]
+   ],
+   "spread": 0.4328,
+   "spread_ci95": [
+    0.3786,
+    0.4925
+   ],
+   "pixel_spread": 0.3844,
+   "by_eye": {
+    "top": "a flying bird",
+    "short": "bird",
+    "n": 12,
+    "share": 0.75,
+    "counts": [
+     [
+      "a flying bird",
+      12
+     ],
+     [
+      "broken chains",
+      3
+     ],
+     [
+      "a bird leaving a cage",
+      1
+     ]
+    ]
+   },
+   "agreement": 0.4375,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "happiness",
+   "label": "happiness",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of happiness, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "a smiling face",
+   "top": {
+    "emblem": "a smiling face",
+    "short": "smiling face",
+    "n": 13,
+    "share": 0.8125,
+    "share_ci95": [
+     0.625,
+     1.0
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a smiling face",
+     13
+    ],
+    [
+     "a joyful person",
+     2
+    ],
+    [
+     "a sun",
+     1
+    ]
+   ],
+   "spread": 0.2019,
+   "spread_ci95": [
+    0.17,
+    0.2346
+   ],
+   "pixel_spread": 0.3625,
+   "by_eye": {
+    "top": "a smiling face",
+    "short": "smiling face",
+    "n": 13,
+    "share": 0.8125,
+    "counts": [
+     [
+      "a smiling face",
+      13
+     ],
+     [
+      "a joyful person",
+      2
+     ],
+     [
+      "a sun",
+      1
+     ]
+    ]
+   },
+   "agreement": 1.0,
+   "refused": 0,
+   "attempts": 4
+  },
+  {
+   "key": "truth",
+   "label": "truth",
+   "group": "life",
+   "n": 16,
+   "prompt": "A quick simple doodle sketch of truth, black marker on plain white, like a 20-second drawing, no text, no shading.",
+   "predicted": "an eye",
+   "top": {
+    "emblem": "a pair of scales",
+    "short": "scales",
+    "n": 7,
+    "share": 0.4375,
+    "share_ci95": [
+     0.3125,
+     0.6875
+    ]
+   },
+   "emblem_counts": [
+    [
+     "a pair of scales",
+     7
+    ],
+    [
+     "an eye",
+     5
+    ],
+    [
+     "light",
+     2
+    ],
+    [
+     "a magnifying glass",
+     1
+    ],
+    [
+     "a mirror",
+     1
+    ]
+   ],
+   "spread": 0.5258,
+   "spread_ci95": [
+    0.411,
+    0.6117
+   ],
+   "pixel_spread": 0.3869,
+   "by_eye": {
+    "top": "a pair of scales",
+    "short": "scales",
+    "n": 9,
+    "share": 0.5625,
+    "counts": [
+     [
+      "a pair of scales",
+      9
+     ],
+     [
+      "light",
+      3
+     ],
+     [
+      "an eye",
+      2
+     ],
+     [
+      "a mirror",
+      2
+     ]
+    ]
+   },
+   "agreement": 0.75,
+   "refused": 0,
+   "attempts": 4
+  }
+ ],
+ "credits": [
+  "AI drawings: Meta Muse Image (muse-image-1.0), the same doodle prompt as the things",
+  "Emblem labels: Meta Muse Glimmer 30B, run on our own GPU",
+  "Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0)"
+ ]
+}

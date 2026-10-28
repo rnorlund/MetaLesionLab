@@ -964,6 +964,7 @@ SITE_ROUTERS = {
         "plato_telephone_routes",  # Plato's Telephone (/plato/telephone)
         "plato_atlas_routes",  # The Atlas of Forms (/plato/atlas)
         "plato_scale_routes",  # An AI growing up (/plato/scale)
+        "plato_ideas_routes",  # The invisible Forms (/plato/ideas)
         "plato_gallery_routes",  # the gallery (/plato/gallery) and the "From the lab" band on every Plato page
         "draw_routes",  # Draw a chair (/draw)
         "socrates_routes",  # Ask Socrates (/socrates): the site's only paid route
