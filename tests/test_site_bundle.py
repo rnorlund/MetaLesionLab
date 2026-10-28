@@ -97,3 +97,50 @@ def test_missing_private_patterns_fail_unless_allowed(runs, tmp_path, monkeypatc
     monkeypatch.setattr(B, "private_patterns", lambda: None)
     assert any("private_patterns.txt not found" in p for p in B.check_bundle(out))
     assert B.check_bundle(out, require_patterns=False) == []
+
+
+# --- one bundle per site -------------------------------------------------------------------------
+
+def build(monkeypatch, *args) -> int:
+    monkeypatch.setattr(B.sys, "argv", ["build_site_bundle.py", *args, "--allow-missing-patterns"])
+    return B.main()
+
+
+def test_plato_bundle_carries_nothing_from_runs(runs, tmp_path, monkeypatch):
+    out = tmp_path / "plato"
+    assert build(monkeypatch, "--site", "plato", "--runs", str(runs), "--out", str(out)) == 0
+    assert [p.relative_to(out).as_posix() for p in out.rglob("*")] == ["BUNDLE.json"]
+    marker = json.loads((out / "BUNDLE.json").read_text())
+    assert marker["site"] == "plato" and marker["sets"] == [] and marker["lesion_conditions"] == 0
+    assert "Plato" in marker["about"]
+
+
+def test_lingua_bundle_has_the_lab_data(runs, tmp_path, monkeypatch):
+    out = tmp_path / "lingua"
+    assert build(monkeypatch, "--site", "lingua", "--runs", str(runs), "--out", str(out)) == 0
+    marker = json.loads((out / "BUNDLE.json").read_text())
+    assert marker["site"] == "lingua" and marker["sets"] == ["demo_xx"] and marker["scenes"] == 1
+    assert (out / "sets" / "demo_xx" / "manifest.json").is_file() and (out / "lesion" / "demo_xx" / "index.json").is_file()
+
+
+def test_the_default_site_is_plato(runs, tmp_path, monkeypatch):
+    monkeypatch.delenv("MLL_SITE", raising=False)
+    out = tmp_path / "default"
+    assert build(monkeypatch, "--runs", str(runs), "--out", str(out)) == 0
+    assert json.loads((out / "BUNDLE.json").read_text())["site"] == "plato"
+
+
+@pytest.mark.parametrize("site", ["plato", "lingua"])
+def test_staged_space_serves_its_site(site, tmp_path, monkeypatch):
+    out = tmp_path / "bundle"
+    assert build(monkeypatch, "--site", "plato", "--out", str(out)) == 0  # any bundle will do here
+    stage = tmp_path / "space"
+    B.stage_space(out, stage, site)
+    docker = (stage / "Dockerfile").read_text()
+    assert f"ARG MLL_SITE={site}\n" in docker and "MLL_SITE=${MLL_SITE}" in docker
+    readme = (stage / "README.md").read_text()
+    name = B.brand.SITES[site].name
+    assert f"title: {name}" in readme and f"MLL_SITE={site}" in readme
+    desc = re.search(r"^short_description: (.*)$", readme, re.M).group(1)
+    assert len(desc) <= 60  # the Hub's limit
+    assert (stage / "metalesionlab" / "brand.py").is_file() and (stage / "dist" / "site_data" / "BUNDLE.json").is_file()

@@ -1,10 +1,12 @@
 /* Guided tour: about 90 seconds of Plato's Chair, from the stacked chairs to "draw your own".
    Every number comes from the page's own data (/api/plato); no AI calls. The current step lives in
    sessionStorage, so the tour carries on across page loads. At most 10 steps; it ends at /draw when the
-   server has that page (TOT.hasPage), and otherwise with the same closing card wherever it is. */
+   server has that page (TOT.hasPage), and otherwise with the same closing card wherever it is.
+   It is the Plato's Chair site's tour: where /plato isn't served (the Lingua site, MLL_SITE=lingua) it does nothing. */
 (function () {
   'use strict';
   var T = window.TOT, h = T.h;
+  if (!T.hasPage('/plato')) return;
   var STEP_KEY = 'tot-tour-step', OFFER_KEY = 'tot-tour-offer-done';
   var PHONE = 640;
 
@@ -135,7 +137,7 @@
         var out = [];
         if (hasDraw()) out.push(location.pathname === '/draw' ? ['Start drawing', null] : ['Draw a chair in 20 seconds', '/draw']);
         if (hasSocrates()) out.push(['Ask Socrates', '/socrates']);
-        out.push(['See the whole experiment', '/plato'], ['Look inside the Model Lab', '/lab']);
+        out.push(['See the whole experiment', '/plato'], ['Look inside the model', '/plato#inside']);
         return out;
       } }
   ];

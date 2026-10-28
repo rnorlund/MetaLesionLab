@@ -1,7 +1,17 @@
-"""The web app: Test Studio, Scorer and Model Lab over one small JSON API.
+"""The web app: two sites from one codebase, picked by MLL_SITE (metalesionlab/brand.py).
 
-Run:  uvicorn metalesionlab.web.app:app      (or: python -m metalesionlab.web)
-Data: TOT_DATA_DIR (default <repo>/runs) holds sets/, scenes/, lesion/ and cache/.
+- plato (the default): Plato's Chair. The landing page with the drawing pad, /draw, /plato and its
+  series, and /socrates. Its only paid route is Ask Socrates (Muse Spark).
+- lingua: the sister project. Test Studio, Scorer and Model Lab over one small JSON API (defined in this
+  module, on the `lingua` router), plus the naming test, the assessment, the challenge, Ask the Lab
+  and the lab pages.
+
+Each site registers only its own pages and APIs (SITE_ROUTERS below); both have /static,
+GET /api/site (site.py), GET /api/guard (guard.py) and the API docs. create_app(site) builds one
+site; `app` is the one MLL_SITE names, and app_for(site) gives either (the tests run both).
+
+Run:  uvicorn metalesionlab.web.app:app      (or: python -m metalesionlab.web [--site lingua])
+Data: TOT_DATA_DIR (default <repo>/runs) holds sets/, scenes/, lesion/ and cache/ (the Lingua site's).
 
 Every route that calls a Meta API has a per-visitor daily limit (limits.py); MetaAPI itself
 refuses calls past the global budget, which the app reports as a friendly 503.
@@ -28,15 +38,15 @@ from typing import Literal
 
 import httpx
 import openai
-from fastapi import FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
+from fastapi import APIRouter, FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel, Field
 from wordfreq import zipf_frequency
 
-from metalesionlab import meta_api
-from metalesionlab.brand import BRAND
+from metalesionlab import brand, meta_api
+from metalesionlab.brand import LINGUA
 from metalesionlab.meta_api import BudgetExceeded, MetaAPI, load_api_key
 from metalesionlab.naming_errors import LANGUAGE_NAMES, classify, is_word, spark_semantic_judge, tokens
 from metalesionlab.web import exports
@@ -73,22 +83,22 @@ AUDIO_SUFFIXES = {"audio/webm": ".webm", "audio/ogg": ".ogg", "audio/mp4": ".m4a
                   "audio/wave": ".wav"}
 BUDGET_MSG = ("This demo has reached its spending cap for Meta API calls, so new scoring and picture "
               "generation are paused. Browsing, review and exports still work.")
+PLATO_BUDGET_MSG = ("This demo has reached its spending cap for Meta API calls, so Ask Socrates is paused. "
+                    "The experiments and Draw a chair still work.")
 
-app = FastAPI(title=BRAND, version="0.1.0", docs_url="/api/docs", redoc_url=None)
-app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
-guard.install(app)  # PUBLIC_DEMO=1: daily spend cap, per-visitor limits, tiny builds (guard.py)
-importlib.import_module("metalesionlab.web.site").install(app)  # one header, the name, share tags, series cards
+# Test Studio, Scorer and Model Lab: the Lingua site's own pages and APIs, defined in this module.
+lingua = APIRouter()
+# The Plato site's landing page (its experiments have their own route modules).
+plato_home = APIRouter()
 
 
 # --- errors ----------------------------------------------------------------------------
 
-@app.exception_handler(BudgetExceeded)
-def _budget_exceeded(_request: Request, _exc: BudgetExceeded):
-    return JSONResponse({"detail": BUDGET_MSG}, status_code=503)
+def _budget_exceeded(request: Request, _exc: BudgetExceeded):
+    site = getattr(request.app.state, "site", brand.SITE)
+    return JSONResponse({"detail": PLATO_BUDGET_MSG if site == "plato" else BUDGET_MSG}, status_code=503)
 
 
-@app.exception_handler(openai.OpenAIError)
-@app.exception_handler(httpx.HTTPError)
 def _upstream_error(_request: Request, exc: Exception):
     log.warning("Meta API error: %s", exc)
     return JSONResponse({"detail": f"The Meta Model API returned an error ({type(exc).__name__}). "
@@ -204,7 +214,8 @@ def check_lang(lang: str) -> str:
 
 # --- pages -----------------------------------------------------------------------------
 
-PAGES = {"/": "index.html", "/studio": "studio.html", "/scorer": "scorer.html", "/lab": "lab.html"}
+PAGES = {"plato": {"/": "index.html"},
+         "lingua": {"/": "lingua.html", "/studio": "studio.html", "/scorer": "scorer.html", "/lab": "lab.html"}}
 
 
 def _page(name: str):
@@ -213,11 +224,13 @@ def _page(name: str):
     return page
 
 
-for _route, _name in PAGES.items():
-    app.add_api_route(_route, _page(_name), methods=["GET"], include_in_schema=False)
+for _route, _name in PAGES["plato"].items():
+    plato_home.add_api_route(_route, _page(_name), methods=["GET"], include_in_schema=False)
+for _route, _name in PAGES["lingua"].items():
+    lingua.add_api_route(_route, _page(_name), methods=["GET"], include_in_schema=False)
 
 
-@app.get("/api/status")
+@lingua.get("/api/status")
 def status(request: Request):
     ip = client_ip(request)
     return {
@@ -299,7 +312,7 @@ def set_summary(d: Path) -> dict:
     }
 
 
-@app.get("/api/sets")
+@lingua.get("/api/sets")
 def list_sets(show_all: bool = Query(False, alias="all")):
     """The demo sets, sets built on the site and sets marked public, newest first. Research sets and sets
     whose webmeta.json says "unlisted" (test builds) are left out unless ?all=1; they stay reachable by id."""
@@ -309,7 +322,7 @@ def list_sets(show_all: bool = Query(False, alias="all")):
     return sorted((s for s in sets if show_all or (s["public"] and not s["unlisted"])), key=lambda s: -s["created"])
 
 
-@app.get("/api/sets/{set_id}")
+@lingua.get("/api/sets/{set_id}")
 def get_set(set_id: str):
     d = set_path(set_id)
     meta = read_json(d / "webmeta.json") or {}
@@ -343,11 +356,11 @@ def _build(set_id: str, words: list[str], lang: str, style: str, candidates: int
         write_json(out_dir / "webmeta.json", meta)
 
 
-@app.post("/api/sets", status_code=202)
+@lingua.post("/api/sets", status_code=202)
 def create_set(body: NewSet, request: Request):
     if not ALLOW_BUILDS:
         raise HTTPException(403, "Building new picture sets is turned off on this demo. You can browse "
-                                 f"and export the existing sets, or run {BRAND} yourself.")
+                                 f"and export the existing sets, or run {LINGUA.name} yourself.")
     lang = check_lang(body.lang)
     lines, seen = [], set()
     for line in body.words.splitlines():
@@ -393,7 +406,7 @@ def check_edit(d: Path, token: str | None) -> None:
         raise HTTPException(403, "On this public demo you can edit only the sets you built in this browser.")
 
 
-@app.patch("/api/sets/{set_id}/items/{index}")
+@lingua.patch("/api/sets/{set_id}/items/{index}")
 def edit_item(set_id: str, index: int, body: ItemEdit, x_edit_token: str | None = Header(None)):
     """Reviewer changes: pick a different candidate picture, set accepted alternate names, or the status."""
     d = set_path(set_id)
@@ -422,7 +435,7 @@ def edit_item(set_id: str, index: int, body: ItemEdit, x_edit_token: str | None 
     return item
 
 
-@app.get("/media/sets/{set_id}/{path:path}")
+@lingua.get("/media/sets/{set_id}/{path:path}")
 def set_media(set_id: str, path: str, w: int | None = None):
     return image_response(safe_child(set_path(set_id), path), w)
 
@@ -439,14 +452,14 @@ def _download(content: bytes, media_type: str, filename: str) -> Response:
                     headers={"Content-Disposition": f"attachment; filename=\"{filename}\""})
 
 
-@app.get("/api/sets/{set_id}/norms.csv")
+@lingua.get("/api/sets/{set_id}/norms.csv")
 def export_norms(set_id: str):
     d = set_path(set_id)
     return _download(exports.norms_csv(_manifest_or_409(d)).encode("utf-8-sig"), "text/csv; charset=utf-8",
                      f"{set_id}_norms.csv")
 
 
-@app.get("/api/sets/{set_id}/cards.pdf")
+@lingua.get("/api/sets/{set_id}/cards.pdf")
 def export_cards(set_id: str, per_page: int = 4, word: bool = True, page: Literal["letter", "a4"] = "letter",
                  review: bool = False):
     if per_page not in exports.CARD_GRIDS:
@@ -458,7 +471,7 @@ def export_cards(set_id: str, per_page: int = 4, word: bool = True, page: Litera
     return _download(pdf, "application/pdf", f"{set_id}_cards.pdf")
 
 
-@app.get("/api/sets/{set_id}/set.zip")
+@lingua.get("/api/sets/{set_id}/set.zip")
 def export_zip(set_id: str):
     d = set_path(set_id)
     return _download(exports.set_zip(_manifest_or_409(d), d, set_id), "application/zip", f"{set_id}.zip")
@@ -511,13 +524,13 @@ def load_scene(scene_id: str) -> dict:
     return read_json(scene_path(scene_id))
 
 
-@app.get("/api/scenes")
+@lingua.get("/api/scenes")
 def list_scenes():
     scenes = [read_json(p) for p in scene_files()]
     return [scene_public(s) for s in scenes if isinstance(s, dict) and "id" in s and "content_units" in s]
 
 
-@app.post("/api/scenes", status_code=201)
+@lingua.post("/api/scenes", status_code=201)
 def create_scene(body: NewScene, request: Request):
     if not ALLOW_BUILDS:
         raise HTTPException(403, "Drawing new scenes is turned off on this demo.")
@@ -538,7 +551,7 @@ class SceneEdit(BaseModel):
     content_units: list[str] = Field(..., min_length=1, max_length=30)
 
 
-@app.patch("/api/scenes/{scene_id}")
+@lingua.patch("/api/scenes/{scene_id}")
 def edit_scene(scene_id: str, body: SceneEdit, x_edit_token: str | None = Header(None)):
     """The reviewer's corrected list of content units (what a full description should mention)."""
     path = scene_path(scene_id)
@@ -553,7 +566,7 @@ def edit_scene(scene_id: str, body: SceneEdit, x_edit_token: str | None = Header
     return scene_public(scene)
 
 
-@app.get("/media/scenes/{path:path}")
+@lingua.get("/media/scenes/{path:path}")
 def scene_media(path: str, w: int | None = None):
     return image_response(safe_child(SCENES_DIR, path), w)
 
@@ -664,7 +677,7 @@ def transcribe_upload(audio: UploadFile, task: str, lang: str, request: Request)
     return str(body.get("transcript") or "").strip(), round(duration, 2)
 
 
-@app.post("/api/score/naming")
+@lingua.post("/api/score/naming")
 def score_naming_audio(request: Request, audio: UploadFile = File(...), target: str = Form(..., max_length=60),
                        lang: str = Form("en"), set_id: str | None = Form(None), item: int | None = Form(None),
                        second_rater: bool = Form(True)):
@@ -675,7 +688,7 @@ def score_naming_audio(request: Request, audio: UploadFile = File(...), target: 
             "transcript": transcript, "duration_s": duration}
 
 
-@app.post("/api/score/naming/text")
+@lingua.post("/api/score/naming/text")
 def score_naming_text(body: TypedNaming, request: Request):
     check_lang(body.lang)
     entry = set_item(body.set_id, body.item)
@@ -684,7 +697,7 @@ def score_naming_text(body: TypedNaming, request: Request):
     return score_naming(body.target, body.response, body.lang, body.set_id, entry, body.second_rater)
 
 
-@app.post("/api/score/description")
+@lingua.post("/api/score/description")
 def score_description(request: Request, scene_id: str = Form(...), lang: str = Form("en"),
                       transcript: str | None = Form(None, max_length=6000), audio: UploadFile | None = File(None)):
     scorer = optional_module("metalesionlab.scorer", "Picture-description scoring")
@@ -702,7 +715,7 @@ def score_description(request: Request, scene_id: str = Form(...), lang: str = F
     return {"scene_id": scene_id, "transcript": transcript, "duration_s": duration, **result}
 
 
-@app.post("/api/score/fluency")
+@lingua.post("/api/score/fluency")
 def score_fluency(request: Request, category: str = Form(..., max_length=60), lang: str = Form("en"),
                   transcript: str | None = Form(None, max_length=4000), audio: UploadFile | None = File(None)):
     scorer = optional_module("metalesionlab.scorer", "Category-fluency scoring")
@@ -871,13 +884,13 @@ def condition_summary(c: dict, sample: bool) -> dict:
             "set": c.get("set"), "featured": bool(c.get("featured")), "flags": c.get("flags")}
 
 
-@app.get("/api/lab/conditions")
+@lingua.get("/api/lab/conditions")
 def lab_list():
     conditions, sample = lab_conditions()
     return {"sample": sample, "conditions": [condition_summary(c, sample) for c in conditions]}
 
 
-@app.get("/api/lab/conditions/{cond_id}")
+@lingua.get("/api/lab/conditions/{cond_id}")
 def lab_condition(cond_id: str):
     conditions, sample = lab_conditions()
     c = next((c for c in conditions if str(c["id"]) == cond_id), None)
@@ -908,7 +921,7 @@ def _source_info(sources: dict, key: str) -> dict:
             "note": src.get("note")}
 
 
-@app.get("/api/lab/human")
+@lingua.get("/api/lab/human")
 def lab_human():
     """Published group-level naming profiles (public_data/), as shares of the shared categories."""
     data = read_json(HUMAN_PROFILES)
@@ -932,17 +945,65 @@ def lab_human():
     controls = [{**c, "source": _source_info(sources, c.get("source", ""))} for c in data.get("controls", [])]
     return {"codes": SHARED_CODES, "pooled": pooled, "subtypes": subtypes, "controls": controls}
 
-app.include_router(importlib.import_module("metalesionlab.web.challenge").router)  # You vs. the AI (/challenge)
-app.include_router(importlib.import_module("metalesionlab.web.assess_routes").router)  # Naming Assessment
-app.include_router(importlib.import_module("metalesionlab.web.plato_routes").router)  # Plato's Chair (/plato)
-app.include_router(importlib.import_module("metalesionlab.web.plato_damage_routes").router)  # Plato's Chair, damaged (/plato/damage)
-app.include_router(importlib.import_module("metalesionlab.web.cut_routes").router)  # What can I cut? (/lab/cut)
-app.include_router(importlib.import_module("metalesionlab.web.bilingual_routes").router)  # Second language (/lab/bilingual)
-app.include_router(importlib.import_module("metalesionlab.web.agent_routes").router)  # Ask the Lab (/ask)
-app.include_router(importlib.import_module("metalesionlab.web.draw_routes").router)  # Draw your chair (/draw)
-app.include_router(importlib.import_module("metalesionlab.web.socrates_routes").router)  # Ask Socrates (/socrates)
-app.include_router(importlib.import_module("metalesionlab.web.plato_bird_routes").router)  # Plato's Bird (/plato/bird)
-app.include_router(importlib.import_module("metalesionlab.web.plato_forms_routes").router)  # Plato's Forms (/plato/forms)
-app.include_router(importlib.import_module("metalesionlab.web.plato_cave_routes").router)  # Plato's Cave (/plato/cave)
-app.include_router(importlib.import_module("metalesionlab.web.plato_cratylus_routes").router)  # Plato's Cratylus (/plato/cratylus)
-app.include_router(importlib.import_module("metalesionlab.web.plato_lifespan_routes").router)  # The life of a chair (/plato/lifespan)
+
+
+# --- the two sites ---------------------------------------------------------------------
+
+# Each site's routers, in order: "module" is metalesionlab.web.<module>.router, "module:name" another attribute.
+SITE_ROUTERS = {
+    "plato": [
+        "app:plato_home",  # the landing page: draw first, then the reveal (/)
+        "plato_routes",  # Plato's Chair (/plato)
+        "plato_forms_routes",  # Plato's Forms (/plato/forms)
+        "plato_cave_routes",  # Plato's Cave (/plato/cave)
+        "plato_cratylus_routes",  # Plato's Cratylus (/plato/cratylus)
+        "plato_bird_routes",  # Plato's Bird (/plato/bird)
+        "plato_damage_routes",  # Plato's Chair, damaged (/plato/damage)
+        "plato_lifespan_routes",  # The life of a chair (/plato/lifespan)
+        "draw_routes",  # Draw a chair (/draw)
+        "socrates_routes",  # Ask Socrates (/socrates): the site's only paid route
+    ],
+    "lingua": [
+        "app:lingua",  # the landing page, Test Studio, Scorer and Model Lab (/, /studio, /scorer, /lab)
+        "assess_routes",  # the naming test and the Naming Assessment (/take, /assess)
+        "challenge",  # You vs. the AI (/challenge)
+        "cut_routes",  # What can I cut? (/lab/cut)
+        "bilingual_routes",  # Second language (/lab/bilingual)
+        "agent_routes",  # Ask the Lab (/ask)
+    ],
+}
+
+
+def _router(ref: str):
+    module, _, name = ref.partition(":")
+    return getattr(importlib.import_module(f"metalesionlab.web.{module}"), name or "router")
+
+
+def create_app(site: str | None = None) -> FastAPI:
+    """One site (plato or lingua; default MLL_SITE): its own routers, the shared header and the guard."""
+    key = brand.site_key(site)
+    a = FastAPI(title=brand.SITES[key].name, version="0.1.0", docs_url="/api/docs", redoc_url=None)
+    a.state.site = key
+    a.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
+    guard.install(a)  # PUBLIC_DEMO=1: daily spend cap, per-visitor limits, tiny builds (guard.py)
+    importlib.import_module("metalesionlab.web.site").install(a)  # one header, the name, share tags, series cards
+    a.add_exception_handler(BudgetExceeded, _budget_exceeded)
+    a.add_exception_handler(openai.OpenAIError, _upstream_error)
+    a.add_exception_handler(httpx.HTTPError, _upstream_error)
+    for ref in SITE_ROUTERS[key]:
+        a.include_router(_router(ref))
+    return a
+
+
+_apps: dict[str, FastAPI] = {}
+
+
+def app_for(site: str | None = None) -> FastAPI:
+    """The app for a site, built once per process (`app` is one of these)."""
+    key = brand.site_key(site)
+    if key not in _apps:
+        _apps[key] = create_app(key)
+    return _apps[key]
+
+
+app = app_for()  # the site MLL_SITE names: Plato's Chair unless MLL_SITE=lingua

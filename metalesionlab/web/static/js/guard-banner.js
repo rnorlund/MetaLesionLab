@@ -63,7 +63,7 @@
     } });
     state.note = el('div', { class: 'tg-note', role: 'status' }, [
       el('span', {}, ['Live demo: calls to Meta’s models share a budget of ' + money(info.daily_cap_usd) + ' a day. ',
-        el('b', { text: pct + '% left today.' }), ' Browsing, replays and exports are free.']), hide
+        el('b', { text: pct + '% left today.' }), ' ' + (info.free_note || 'Browsing, replays and exports are free.')]), hide
     ]);
     document.body.insertBefore(state.note, document.body.firstChild);
   }
@@ -83,7 +83,8 @@
     state.banner = el('div', { class: 'tg-banner', role: 'region', 'aria-label': 'Live demo budget' }, [
       el('div', { class: 'tg-banner-in' }, [
         el('p', {}, [el('b', { text: 'Today’s live demo budget is used up. ' }),
-          'New scoring and picture generation pause until 00:00 UTC' + wait + '. Here’s a recorded example instead:']),
+          (info.paused || 'New scoring and picture generation pause') + ' until 00:00 UTC' + wait +
+          '. Here’s what still works:']),
         el('div', { class: 'tg-links' }, links)
       ])
     ]);

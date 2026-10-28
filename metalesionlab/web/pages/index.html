@@ -3,7 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plato’s Chair: what would Plato ask an AI? · {{BRAND}}</title>
+<title>{{BRAND}}: what would Plato ask an AI?</title>
+<script>
+/* The opening animation (static/js/splash.js) plays once per browser session. It is decided here, before
+   the first paint, so the page never flashes first: not with reduced motion, during the guided tour, on a
+   deep link (#…) or with ?nosplash=1 (tests, screenshots); ?splash=1 plays it again. */
+(function () {
+  try {
+    var q = location.search, s = window.sessionStorage;
+    if (/[?&]nosplash=1(&|$)/.test(q) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!/[?&]splash=1(&|$)/.test(q) && (location.hash || s.getItem('pc-splash-seen') || s.getItem('tot-tour-step') != null)) return;
+    document.documentElement.classList.add('splash-on');
+    setTimeout(function () {  // if splash.js never ran, show the page anyway
+      if (!document.querySelector('.splash') && !window.PCSplash) document.documentElement.classList.remove('splash-on');
+    }, 6000);
+  } catch (e) { /* storage off: no splash */ }
+})();
+</script>
+<style>html.splash-on { overflow: hidden; background: #17110c; } html.splash-on body { background: #17110c; } html.splash-on body > *:not(.splash) { visibility: hidden; }</style>
 <meta name="description" content="Asked for a chair, Meta’s image model Muse Image drew the same one 16 times. People drew 16 different ones, mostly of the same plain chair. We put Plato’s questions to AI and to people.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{{BRAND}}">
@@ -192,47 +209,20 @@
         <p>The things people draw in more different ways are harder for it to name: rank correlation −0.50 over 35 things. It named 95% of Muse Image’s doodles and 66% of people’s.</p>
         <div class="btn-line">
           <a class="lbtn lbtn-dark" href="/plato#inside">See inside Glimmer</a>
-          <a class="lbtn lbtn-outline" href="/lab">Open the Model Lab</a>
+          <!--#if /socrates--><a class="lbtn lbtn-outline" href="/socrates">Ask Socrates about it</a><!--#endif-->
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="band band-gray" id="more" aria-labelledby="more-h">
-  <div class="wrap section">
-    <div class="section-head">
-      <p class="kicker">More from the lab</p>
-      <h2 class="h2" id="more-h">Where this started: how people and AI find words</h2>
-      <p class="section-lede">The same lab gives picture-naming tests to people and to Muse Glimmer, damages the model on purpose, and reads its best guess after every layer.</p>
-    </div>
-    <div class="more-grid">
-      <a class="more-card" id="bilingual-teaser" href="/lab/bilingual">
-        <span class="more-kicker">Second language</span>
-        <span class="more-title">Damage an AI, and its second language breaks first</span>
-        <span class="bl-mini" aria-hidden="true">
-          <span class="bl-cap">Pictures named under the same damage (average of <span data-bl-kinds>41</span> kinds)</span>
-          <span class="bl-row"><span>English</span><span class="bl-track"><i class="bl-en" data-bl-bar="en" style="width:71%"></i></span><b data-bl-val="en">71%</b></span>
-          <span class="bl-row"><span>Spanish</span><span class="bl-track"><i class="bl-es" data-bl-bar="es" style="width:42%"></i></span><b data-bl-val="es">42%</b></span>
-        </span>
-        <span class="more-text" data-bl-teaser-text>Under the same damage, Muse Glimmer named 28 points fewer pictures in Spanish than in English, and about a quarter of its damaged Spanish answers came out in English. It echoes bilingual aphasia, as an analogy only.</span>
-      </a>
-      <ul class="more-links">
-        <li><a href="/lab">Model Lab</a><span>Switch off parts of Meta’s open model and watch it lose words, layer by layer.</span></li>
-        <li><a href="/take">Take the naming test</a><span>Name about 20 pictures out loud in 3 minutes. Not a medical test.</span></li>
-        <li><a href="/ask">Ask the Lab</a><span>A Muse Spark agent that answers from the lab’s results and shows every step.</span></li>
-        <li><a href="/lab/cut">What can I cut?</a><span>Remove whole layers from the model, with your own tests as the guardrail.</span></li>
-        <li><a href="/challenge">You vs. the AI</a><span>Name 10 pictures, then see how the AI named them.</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
 </main>
 
 <footer class="lfoot">
   <div class="wrap lfoot-row">
     <span class="lbrand">{{BRAND}}</span>
     <span>Built at the Meta Global AI Developer Hackathon, Oct 26 – Nov 4, 2026 · Apache 2.0</span>
+    <span class="lfoot-sister"><!--#sister--></span>
     <a href="https://github.com/rnorlund/MetaLesionLab">Code on GitHub</a>
     <p class="lfoot-credit">People’s drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image. Similarity: Meta DINOv2. Kinds: Muse Spark and Muse Glimmer. Second image model: Stable Diffusion XL (Stability AI). Plato’s <cite>Phaedrus</cite> and <cite>Republic</cite>: Benjamin Jowett’s translation, public domain. Research and teaching use only; nothing here is medical advice.</p>
   </div>
@@ -241,5 +231,6 @@
 <script src="/static/js/draw.js"></script>
 <script src="/static/js/landing.js"></script>
 <script src="/static/js/tour.js"></script>
+<script src="/static/js/splash.js"></script>
 </body>
 </html>

@@ -213,4 +213,5 @@ def test_forms_page_images_exist_and_are_small():
 
 
 def test_app_includes_the_forms_router_once():
-    assert (web.HERE / "app.py").read_text().count("metalesionlab.web.plato_forms_routes") == 1
+    assert web.SITE_ROUTERS["plato"].count("plato_forms_routes") == 1  # on the Plato site only
+    assert "plato_forms_routes" not in web.SITE_ROUTERS["lingua"]

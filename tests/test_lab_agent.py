@@ -336,7 +336,7 @@ def client(lab, monkeypatch):
     agent_routes.sessions.clear()
     agent_routes.addresses.clear()
     monkeypatch.setattr(agent_routes, "spend", agent_routes._Spend())
-    return TestClient(web.app)
+    return TestClient(web.app_for("lingua"))
 
 
 def _lines(resp):
@@ -386,9 +386,12 @@ def test_ask_rejects_empty_and_long_questions(client):
 
 
 def test_nav_links_ask_the_lab():
-    c = TestClient(web.app)  # the nav comes from web/site.py, so check the pages as served
-    for path in ("/lab", "/lab/cut", "/plato", "/challenge", "/studio", "/scorer", "/assess", "/", "/ask"):
+    c = TestClient(web.app_for("lingua"))  # the nav comes from web/site.py, so check the pages as served
+    for path in ("/lab", "/lab/cut", "/lab/bilingual", "/challenge", "/studio", "/scorer", "/assess", "/take", "/", "/ask"):
         assert 'href="/ask"' in c.get(path).text, path
+    # Ask the Lab is the Lingua site's: the Plato site neither serves it nor links to it
+    p = TestClient(web.app_for("plato"))
+    assert p.get("/ask").status_code == 404 and 'href="/ask"' not in p.get("/plato").text
 
 
 def test_meta_api_tags_ledger_entries(tmp_path, monkeypatch):
