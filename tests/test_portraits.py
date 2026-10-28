@@ -111,6 +111,24 @@ def test_socrates_page_credits_its_pictures_once():
     assert "drawn by Meta's Muse Image" in notice
 
 
+def test_portrait_colours_are_tokens_and_work_on_a_dark_page():
+    css = (STATIC / "css" / "portraits.css").read_text()
+    tokens, rest = css.split("html.portraits-chalk", 1)
+    tokens = tokens[tokens.index(":where(:root)"):]
+    # every colour is a token, set once in the :where(:root) block, which any theme's :root rule overrides
+    assert not re.search(r"#[0-9A-Fa-f]{3,8}\b|rgba?\(", rest), "colours outside the token block"
+    for name in ("--portrait-paper", "--portrait-ring", "--portrait-sheet", "--portrait-line-filter"):
+        assert name + ":" in tokens
+    # black lines always sit on a light sheet: faces on paper, whole figures on a sheet (or light lines, chalk)
+    assert re.search(r"\.epigraph-face, \.kicker-face, \.pt-guide img, \.demo-face \{[^}]*background: var\(--portrait-paper\)", css)
+    assert re.search(r"\.hero-plato img, \.pt-athens img, \.so-pair img \{[^}]*background: var\(--portrait-sheet\)[^}]*"
+                     r"filter: var\(--portrait-line-filter\)", css)
+    assert "--portrait-line-filter: invert(1)" in rest
+    # an epigraph with a face brings the portraits stylesheet with it, on any page
+    out = E.fill("<html><head></head><body><!--#epigraph:cratylus-439b--></body></html>")
+    assert out.count(PT.STYLESHEET) == 1 and out.index(PT.STYLESHEET) < out.index("</head>")
+
+
 def test_tour_button_shows_socrates():
     page = TestClient(web.app).get("/?nosplash=1").text
     btn = re.search(r'<button type="button" class="demo-btn" data-tour-start[^>]*>(.*?)</button>', page, re.S).group(1)
