@@ -783,6 +783,7 @@
         strip.textContent = '';
         strip.classList.toggle('animate', !reduced());
         strip.style.setProperty('--cols', c.n_ai > 8 ? Math.ceil(c.n_ai / 2) : c.n_ai);  // two full rows: 8 + 8, or 6 + 6
+        strip.style.setProperty('--n', c.n_ai);  // a wide window shows them on one row (draw.css)
         for (var i = 0; i < c.n_ai; i++) {
           var cl = cell(c.sprites.muse, i);
           cl.style.animationDelay = (i * 70) + 'ms';
@@ -1031,6 +1032,18 @@
         if (S.result && !res.hidden) charts(concept(), S.result);
       }, 150);
     });
+    // The pad grows with the window (up to 640px, draw.css), and the layout can change its size without a
+    // window resize (a scrollbar appears, the fonts load). Strokes are kept in 0–1000 pad units, so a new
+    // size only needs a new backing store and a redraw to stay sharp and in place.
+    if (window.ResizeObserver) {
+      var padSide = 0;
+      new ResizeObserver(function () {
+        var w = pad.getBoundingClientRect().width;
+        if (Math.abs(w - padSide) < 0.5) return;
+        padSide = w;
+        sizePad();
+      }).observe(pad);
+    }
     sizePad();
     updateButtons();
     renderText();
