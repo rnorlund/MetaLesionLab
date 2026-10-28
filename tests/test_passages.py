@@ -89,6 +89,41 @@ def test_pages_ask_only_for_verified_passages():
             assert pid in P, (page.name, pid)
 
 
+PLACED = {  # each series page: one epigraph, just below its shared title header, no passage twice
+    "plato_lifespan.html": "meno-85c", "plato_telephone.html": "republic-597e", "plato_cave.html": "republic-518b",
+    "plato_cratylus.html": "cratylus-439b", "plato_atlas.html": "metaphysics-980a21",
+    "plato_inside.html": "metaphysics-981a28", "plato_damage.html": "timaeus-28a", "plato_bird.html": "theaetetus-155d",
+    "plato_forms.html": "republic-596a",
+}
+
+
+def test_each_series_page_has_one_epigraph_below_its_title():
+    assert len(set(PLACED.values())) == len(PLACED)
+    for name, pid in PLACED.items():
+        text = (web.HERE / "pages" / name).read_text()
+        assert text.count("<!--#epigraph:") == 1, name
+        assert re.search(r'<div class="title-pair">.*?</div>\s*<!--#epigraph:' + re.escape(pid) + r"-->", text, re.S), name
+
+
+def test_aristotles_reply_on_plato_is_a_labelled_framing():
+    page = TestClient(web.app).get("/plato").text
+    box = re.search(r'<aside class="pc-sec pc-reply" id="aristotle".*?</aside>', page, re.S).group(0)
+    assert "A philosophical framing, not a finding" in box and "Aristotle’s reply" in box
+    assert box.count("<figure class=") == 1 and 'data-passage="metaphysics-981a5"' in box and "tr. W. D. Ross" in box
+    prose = re.search(r'<div class="pc-reply-text">.*?<p>(.*?)</p>', box, re.S).group(1)
+    assert 3 <= len(re.findall(r"[.?!](?:\s|$)", prose)) <= 4 and "“" not in prose and '"' not in prose  # no quotes
+    assert '<a href="#aristotle">' in page and page.index('id="everything"') < page.index('id="aristotle"')
+
+
+def test_landing_quote_band_sits_below_the_reveal():
+    page = TestClient(web.app).get("/?nosplash=1").text
+    band = re.search(r'<section class="band quote-band" id="quotes".*?</section>', page, re.S).group(0)
+    assert page.index('id="reveal"') < page.index('id="quotes"') < page.index('id="findings"')
+    ids = re.findall(r'data-passage="([^"]+)"', band)
+    assert len(ids) == 3 and {P[i]["author"] for i in ids} == {"Plato", "Aristotle"}
+    assert band.count('class="epigraph epigraph--band"') == 3 and 'class="epigraph-band"' in band
+
+
 def test_epigraph_css_keeps_the_layout_tokens():
     css = (web.HERE / "static" / "css" / "epigraph.css").read_text()
     assert "var(--measure" in css and "font-style: italic" in css and "all-small-caps" in css

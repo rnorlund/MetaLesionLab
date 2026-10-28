@@ -76,8 +76,9 @@ def citation(p: dict) -> str:
     lead = _e(author) + ","
     if author == "Plato" and str(p.get("speaker", "")).startswith("Socrates"):
         lead = "Socrates, in Plato’s"
+    # The dot keeps to the reference (a no-break space), so a long citation wraps after it, never before it.
     return (f'<span class="epigraph-who">{lead}</span> {where} <span class="epigraph-ref">{_e(ref)}</span>'
-            f'<span class="epigraph-tr"> · <a href="{_e(p["source_url"])}" rel="noopener" '
+            f' · <span class="epigraph-tr"><a href="{_e(p["source_url"])}" rel="noopener" '
             f'title="{_e(p["translation"])}">tr. {_e(TRANSLATOR.get(author, ""))}</a></span>')
 
 

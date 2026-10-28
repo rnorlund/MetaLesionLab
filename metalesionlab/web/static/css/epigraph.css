@@ -6,13 +6,17 @@
    word for word; nothing here changes them.
 
    Variants: .epigraph--inline (inside a box: smaller, no outer margin) and .epigraph--band (one of several
-   in .epigraph-band, a row that wraps). Colours are tokens, so a dark band can reset them. */
-.epigraph {
+   in .epigraph-band, a row that wraps). Colours are tokens, so a dark band can reset them.
+   The selectors name the element (figure.epigraph) so a page's own "figure" rules inside its hero
+   (.ck-hero figure, .cv-hero figure) don't reset the epigraph's spacing: this sheet loads last and wins. */
+figure.epigraph {
   --ep-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
   --ep-ink: var(--ink-2, #374151);
   --ep-cite: var(--muted, #4B5563);
   --ep-rule: var(--line-2, #D1D5DB);
   --ep-size: clamp(19px, calc(11px + 1vw), 40px);
+  display: block;
+  min-width: 0;
   margin: clamp(20px, 2.2vw, 52px) 0;
   padding: 0;
   max-width: var(--measure, 75ch);
@@ -56,12 +60,12 @@
 .epigraph-tr a:hover { text-decoration-color: currentColor; }
 
 /* Inside a box (Aristotle's reply on /plato). */
-.epigraph--inline { --ep-size: clamp(17px, calc(11px + 0.55vw), 26px); margin: 0; max-width: none; }
+figure.epigraph--inline { --ep-size: clamp(17px, calc(11px + 0.55vw), 26px); margin: 0; max-width: none; }
 
 /* A row of epigraphs (the landing page's quote band). */
 .epigraph-band { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30ch), 1fr));
   gap: clamp(24px, 3vw, 72px); align-items: start; }
-.epigraph--band { --ep-size: clamp(18px, calc(11px + 0.6vw), 30px); margin: 0; max-width: none; }
+figure.epigraph--band { --ep-size: clamp(18px, calc(11px + 0.6vw), 30px); margin: 0; max-width: none; }
 
 @media (max-width: 520px) {
   .epigraph blockquote p { text-indent: 0; }
