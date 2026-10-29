@@ -427,71 +427,17 @@
   }
 
   // ---------- the first screen: three headline numbers drawn (FirstLook, statviz.js), and the clocks ----------
-  // How a planned prediction came out, from its matched test: {tone, text} for FirstLook's verdict.
-  function verdictOf(t) {
-    var held = excludesZero(t.ci95) && Math.sign(t.difference) === t.predicted_sign;
-    var rev = excludesZero(t.ci95) && Math.sign(t.difference) === -t.predicted_sign;
-    return held ? { tone: 'yes', text: 'As predicted' } : rev ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Too close to call' };
-  }
-
+  // The numbers and the split's verdict are FirstLook.damage's (plato_firstlook.js), which the Damaged AI hub
+  // (/damaged) draws too, so the two first screens can't disagree.
   function renderHero() {
-    var d = S.data, host = $('hero-stats');
+    var host = $('hero-stats');
     if (!host || !window.FirstLook) return;
-    var m = d.matched['text-zero vs unet-zero'] || {}, stats = [];
-    // 1. What: the asked kind, lost faster after language damage (the pre-registered primary test)
-    var kc = m.delta_correct;
-    if (kc) {
-      var lang = Math.round(-kc.language * 100), draw = Math.round(-kc.drawing * 100);
-      var v1 = verdictOf(kc);
-      stats.push({ kind: 'bars', verdict: v1,
-        o: { values: [lang, draw], labels: ['words', 'drawing'], tones: ['blue', 'orange'], max: 100, value: lang + ' vs ' + draw, unit: ' pts',
-          label: 'fewer chairs still the kind we asked for, in percentage points, when damage to either part changed the picture equally',
-          alt: 'Words part damaged: ' + lang + ' points fewer chairs still read as the kind we asked for; drawing part damaged: ' + draw +
-            ' points fewer, at the same amount of picture change (neurons switched off).' },
-        q: 'We predicted damage to the words part would lose the asked kind faster. ' + (v1.tone === 'yes' ? 'It did: ' : v1.tone === 'no' ?
-          'The opposite happened: ' : 'Too close to call: ') + 'a gap of ' + Math.abs(Math.round(kc.difference * 100)) + ' points, ' + between(kc.ci95) +
-          '. This was our planned main test.' });
-    }
-    // 2. Back to the plain chair? Farther from it, not closer
-    var pz = (d.pooled['text-zero'] || {}).delta_d_proto, pd = (d.pooled['unet-zero'] || {}).delta_d_proto, h2 = m.delta_d_proto;
-    if (pz && pd) {
-      var held2 = h2 && verdictOf(h2).tone === 'yes';
-      stats.push({ kind: 'bars', verdict: h2 ? (held2 ? verdictOf(h2) : { tone: 'no', text: 'Prediction failed' }) : null,
-        o: { values: [pz.mean, pd.mean], labels: ['words', 'drawing'], tones: ['blue', 'orange'], digits: 2,
-          value: pz.ci95[0] > 0 ? 'Farther' : 'No closer', unit: '',
-          label: 'from the AI’s plain, ordinary chair, not back toward it: how much more different the damaged pictures look',
-          alt: 'Back to the plain chair? No. Distance from the plain chair grew by ' + pz.mean.toFixed(2) + ' after damage to the words part and by ' +
-            pd.mean.toFixed(2) + ' after damage to the drawing part (neurons switched off, averaged over the damage steps).' },
-        q: 'We predicted damage to the words part would turn the rocking chair back into a plain chair, as happens in semantic dementia, ' +
-          'a brain disease that wears away what words mean. ' + (held2 ? 'It did.' : pz.ci95[0] > 0 ? 'It didn’t: the pictures moved farther away.' :
-          'It didn’t: they came no closer.') });
-    }
-    // 3. Clocks: the mildest drawing damage strips the numbers first
-    var c = d.clocks, fi = c && c.feature_names ? c.feature_names.indexOf('12 numbers in order') : -1;
-    if (fi >= 0) {
-      var intact = c.features.filter(function (r) { return r.cond === 'intact'; })[0];
-      var mild = c.features.filter(function (r) { return r.cond.indexOf('unet-zero@') === 0; })
-        .sort(function (x, y) { return parseFloat(x.cond.split('@')[1]) - parseFloat(y.cond.split('@')[1]); })[0];
-      if (intact && mild) {
-        var a = Math.round(intact.values[fi] * 100), b = Math.round(mild.values[fi] * 100);
-        stats.push({ kind: 'bars',
-          o: { values: [a, b], labels: ['undamaged', 'drawing'], tones: ['ink', 'orange'], max: 100, value: a + '% → ' + b + '%', unit: '',
-            label: 'of clocks have all 12 numbers in order, undamaged and then after the lightest damage to the drawing part: the numbers go first',
-            alt: 'Clocks with all 12 numbers in order: ' + a + '% undamaged, ' + b + '% after the lightest damage to the drawing part (' + mild.label + ').' },
-          q: 'Meta’s chat AI, Muse Spark, checked each clock. Damage to the words part removes the whole clock instead.' });
-      }
-    }
-    window.FirstLook.render(host, { stats: stats });
-    // the note: the dissociation's verdict, from the same numbers
-    var q = $('hero-qual'), clean = m.delta_p_clean, cn = (d.matched['text-noise vs unet-noise'] || {}).delta_p_clean;
-    if (q && kc && clean && cn) {
-      var whatHeld = verdictOf(kc).tone === 'yes', heldNoise = verdictOf(cn).tone === 'yes';
-      var heldOff = verdictOf(clean).tone === 'yes', revOff = verdictOf(clean).tone === 'no';
+    var lead = window.FirstLook.damage(S.data), q = $('hero-qual');
+    window.FirstLook.render(host, lead);
+    if (q && lead.split) {  // the note: the dissociation's verdict, from the same numbers
       q.innerHTML = '';
-      q.appendChild(el('b', { text: whatHeld && heldNoise && heldOff ? 'Supported. ' : whatHeld || heldNoise || heldOff ? 'Partly supported. ' : 'Not supported. ' }));
-      q.appendChild(document.createTextNode('We predicted damage to the words part would make it forget what to draw, and damage to the drawing part ' +
-        'how to draw. The “what” half ' + (whatHeld ? 'held' : 'did not hold') + '; the “how” half ' + (heldNoise ? 'held for added noise' : 'did not hold for added noise') +
-        (revOff ? ' but reversed for neurons switched off' : '') + ' ('));
+      q.appendChild(el('b', { text: lead.split.head + ' ' }));
+      q.appendChild(document.createTextNode(lead.split.text + ' ('));
       q.appendChild(el('a', { href: '#diss-h', text: 'details' }));
       q.appendChild(document.createTextNode('). The judges are AI models, and this is an analogy, not a claim about people.'));
     }

@@ -191,12 +191,13 @@ class MetaAPI:
         return resp
 
     def generate_images(self, prompt: str, n: int = 1, size: str | None = None,
-                        output_format: str = "png") -> list[bytes]:
+                        output_format: str = "png", ledger_tag: str | None = None) -> list[bytes]:
         _check_budget(n * IMAGE_PRICE)
         extra = {"size": size} if size else {}
         resp = self.client.images.generate(model=IMAGE_MODEL, prompt=prompt, n=n,
                                            output_format=output_format, **extra)
-        _record("image", IMAGE_MODEL, len(resp.data) * IMAGE_PRICE, n=len(resp.data))
+        _record("image", IMAGE_MODEL, len(resp.data) * IMAGE_PRICE, n=len(resp.data),
+                **({"tag": ledger_tag} if ledger_tag else {}))
         return [base64.b64decode(d.b64_json) for d in resp.data]
 
     def segment(self, image: bytes, text: str, mime: str = "image/png") -> tuple[list[SamMatch], str]:

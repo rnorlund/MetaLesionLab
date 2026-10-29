@@ -20,8 +20,8 @@ from metalesionlab.web import site
 
 REPO = Path(web.__file__).resolve().parents[2]
 PAGES = {
-    "plato": ["/", "/draw", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird", "/plato/damage",
-              "/plato/lifespan", "/plato/gallery", "/socrates"],
+    "plato": ["/", "/draw", "/damaged", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird",
+              "/plato/damage", "/plato/lifespan", "/plato/gallery", "/socrates"],
     "lingua": ["/", "/take", "/assess", "/scorer", "/studio", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge"],
 }
 APIS = {  # GET endpoints that answer without data (200, or 503 while a data file is missing), never 404
@@ -32,7 +32,8 @@ APIS = {  # GET endpoints that answer without data (200, or 503 while a data fil
                "/api/lab/bilingual", "/api/ask/status", "/api/assess/config", "/api/pages"],
 }
 NAV = {
-    "plato": ["Home", "Draw", "Experiments", "Gallery", "Inside the model", "Ask Socrates", "Code"],
+    # the Plato question first (Draw), damage second (Damaged AI, then Inside the model), the other experiments, the gallery last
+    "plato": ["Home", "Draw", "Damaged AI", "Inside the model", "Experiments", "Gallery", "Ask Socrates", "Code"],
     "lingua": ["Home", "Take the test", "Scorer", "Test Studio", "Model Lab", "Ask the Lab", "Code"],
 }
 OTHER = {"plato": "lingua", "lingua": "plato"}
@@ -245,6 +246,12 @@ def test_more_menu_holds_the_series(client):
         else:  # merged later (/plato/atlas, /plato/telephone): no link until its route exists
             assert f'href="{s["path"]}"' not in html, s["path"]
     assert "More from the lab" not in more
+    # the damage experiments in a group of their own, after the rest of the series
+    groups = re.split(r'<p class="nav-group">([^<]+)</p>', more)[1:]
+    groups = dict(zip(groups[::2], groups[1::2]))
+    assert list(groups) == ["The Plato series", "Damaged AI"]
+    assert re.findall(r'href="([^"]+)"', groups["Damaged AI"]) == site.DAMAGED_PAGES
+    assert not set(re.findall(r'href="([^"]+)"', groups["The Plato series"])) & set(site.DAMAGED_PAGES)
 
 
 def current_labels(nav: str) -> list[str]:
@@ -258,6 +265,11 @@ def test_current_page_is_marked_once(client):
         assert current_labels(nav) == [label], path
     nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/plato/cave").text, re.S).group(0)
     assert current_labels(nav) == ["Experiments", "Name the shadow"]
+    # the damage experiments belong to Damaged AI, not to Experiments
+    nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/damaged").text, re.S).group(0)
+    assert current_labels(nav) == ["Damaged AI"]
+    nav = re.search(r'<nav class="topnav".*?</nav>', client.get("/plato/damage").text, re.S).group(0)
+    assert current_labels(nav) == ["Damaged AI", "Damage the painter"]
     # "Inside the model" is its own page once /plato/inside is served: the nav item, not Experiments, nor More
     html = client.get("/plato/inside").text
     nav = re.search(r'<nav class="topnav".*?</nav>', html, re.S).group(0)

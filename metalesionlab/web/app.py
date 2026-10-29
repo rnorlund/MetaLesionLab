@@ -959,6 +959,7 @@ SITE_ROUTERS = {
         "plato_cratylus_routes",  # Plato's Cratylus (/plato/cratylus)
         "plato_bird_routes",  # Plato's Bird (/plato/bird)
         "plato_damage_routes",  # Plato's Chair, damaged (/plato/damage)
+        "damaged_routes",  # Damaged AI, the hub of the damage experiments (/damaged)
         "plato_lifespan_routes",  # The life of a chair (/plato/lifespan)
         "plato_inside_routes",  # Inside the model (/plato/inside)
         "plato_telephone_routes",  # Plato's Telephone (/plato/telephone)
@@ -966,6 +967,7 @@ SITE_ROUTERS = {
         "plato_scale_routes",  # An AI growing up (/plato/scale)
         "plato_ideas_routes",  # The invisible Forms (/plato/ideas)
         "plato_phaedrus_routes",  # Seven meanings (/plato/phaedrus): its voice test is paid
+        "plato_clock_routes",  # The clock test (/plato/clock)
         "plato_gallery_routes",  # the gallery (/plato/gallery) and the "From the lab" band on every Plato page
         "draw_routes",  # Draw a chair (/draw)
         "socrates_routes",  # Ask Socrates (/socrates): paid
