@@ -55,8 +55,10 @@ TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # ("exact": the path itself only). Everything else the site has goes under "More" (MORE, and the series).
 # The series pages about damaging an AI belong to Damaged AI (/damaged, damaged_routes.py), not to Experiments (/plato):
 # they mark Damaged AI as the current page, have their own group under More, and appear on the Damaged AI hub's cards
-# instead of the Experiments hub on /plato.
-DAMAGED_PAGES = ["/plato/damage"]
+# instead of the Experiments hub on /plato. A damage page that isn't in SERIES (it asks no question of Plato's) takes
+# its More-menu label from DAMAGED_TITLES.
+DAMAGED_PAGES = ["/plato/damage", "/plato/glimmer"]
+DAMAGED_TITLES = {"/plato/glimmer": "What a damaged AI forgets first"}
 NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"], "icon": "home"},
@@ -423,11 +425,14 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
     more = [m for m in MORE[site] if flags.get(m["href"])]
     inline_hrefs = {n["href"] for n in main}  # a series page with its own nav item (/plato/inside) isn't repeated
     subs = [s for s in SERIES if s["path"] != "/plato" and flags.get(s["path"]) and s["path"] not in inline_hrefs]
+    in_series = {s["path"]: s for s in subs}
+    subs += [{"path": p, "title": t} for p, t in DAMAGED_TITLES.items() if flags.get(p) and p not in in_series]
+    damaged = [next(s for s in subs if s["path"] == p) for p in DAMAGED_PAGES if any(s["path"] == p for s in subs)]
 
     def more_list() -> str:
         parts = []
         for group, items in (("The Plato series", [s for s in subs if s["path"] not in DAMAGED_PAGES]),
-                             ("Damaged AI", [s for s in subs if s["path"] in DAMAGED_PAGES])):
+                             ("Damaged AI", damaged)):
             if items:
                 parts.append(f'<p class="nav-group">{group}</p>')
                 parts += [_link({"href": s["path"], "label": s["title"]}, path) for s in items]
