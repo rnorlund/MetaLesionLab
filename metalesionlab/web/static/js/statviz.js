@@ -17,6 +17,13 @@
    class="sv-row" puts the number beside the graphic. From script: StatViz.render(el, opts) draws one element
    (opts override its data-*), StatViz.html(kind, opts) returns the markup as a string (it needs no DOM), and
    StatViz.kinds lists the kinds. The look lives in statviz.css, in the site's colour tokens only.
+
+   Animate on view. A drawn graphic waits (class sv-wait, its entrance paused) until it scrolls into view, then plays
+   (sv-play): the number counts up, a dot grid fills dot by dot, the two clusters drift in from one wide cloud into
+   their tight and loose shapes, the layer marker slides from layer 1 to its layer and bars grow. render() does this
+   for every graphic it draws; StatViz.watch(el) or StatViz.watchAll(root) does it for statviz markup drawn some other
+   way (FirstLook.render calls it). The markup and its final values are the same either way: with
+   prefers-reduced-motion, without IntersectionObserver or in print, the graphic is simply drawn, already complete.
 */
 (function (root) {
   'use strict';
@@ -40,7 +47,7 @@
   function r1(x) { return Math.round(x * 10) / 10; }
   function times(x) { return (x >= 10 ? String(Math.round(x)) : String(r1(x))) + '×'; }
   function fmt(x, digits) { return digits == null ? String(x) : Number(x).toFixed(digits); }
-  function delay(i, n) { return ' style="--d:' + Math.round(i * Math.min(18, 500 / Math.max(1, n))) + 'ms"'; }  // the stagger, capped
+  function delay(i, n) { return ' style="--d:' + Math.round(i * Math.min(28, 900 / Math.max(1, n))) + 'ms"'; }  // the stagger, capped
   // A small seeded generator, so a cluster looks the same on every load and in every test.
   function rng(seed) {
     var s = seed >>> 0;
@@ -73,12 +80,16 @@
     };
   }
 
+  // Each dot also carries where its entrance starts (--dx, --dy): one wide cloud, the same for both clusters, so on
+  // view Muse Image's dots visibly collapse into a knot while people's stay loose (statviz.css, sv-drift).
   function cluster(spread, max, seed, t, count, label) {
-    var R = 44 * Math.max(0.06, spread / max), rand = rng(seed), pts = [];
+    var R = 44 * Math.max(0.06, spread / max), rand = rng(seed), from = rng(3), pts = [];
     for (var i = 0; i < count; i++) {
       var a = rand() * Math.PI * 2, d = R * Math.sqrt(0.08 + 0.92 * rand());
-      pts.push('<circle class="sv-on sv-' + t + '" cx="' + r1(50 + d * Math.cos(a)) + '" cy="' + r1(50 + d * Math.sin(a)) +
-        '" r="3.4"' + delay(i, count) + '/>');
+      var x = 50 + d * Math.cos(a), y = 50 + d * Math.sin(a);
+      var fa = from() * Math.PI * 2, fd = 44 * Math.sqrt(0.15 + 0.85 * from());
+      pts.push('<circle class="sv-on sv-' + t + '" cx="' + r1(x) + '" cy="' + r1(y) + '" r="3.4" style="--d:' + i * 22 + 'ms;--dx:' +
+        r1(50 + fd * Math.cos(fa) - x) + 'px;--dy:' + r1(50 + fd * Math.sin(fa) - y) + 'px"/>');
     }
     return '<svg class="sv-svg" viewBox="0 0 100 100" aria-hidden="true">' +
       '<circle class="sv-ring" cx="50" cy="50" r="' + r1(R + 4) + '"/>' + pts.join('') + '</svg>';
@@ -117,7 +128,7 @@
       value: String(at), unit: ' of ' + n, alt: alt,
       plot: '<div class="sv-lay" style="--n:' + n + '"><svg class="sv-svg" viewBox="-4 0 ' + (W + 8) + ' ' + (top + h) +
         '" role="img" aria-label="' + esc(alt) + '"><title>' + esc(alt) + '</title>' + segs.join('') +
-        '<path class="sv-mark" d="M' + (mx - 5) + ' 3h10l-5 8z"/></svg>' +
+        '<path class="sv-mark" d="M' + (mx - 5) + ' 3h10l-5 8z" style="--mx:' + (1 - at) * step + 'px"/></svg>' +
         '<span class="sv-ticks" aria-hidden="true"><span>1</span><span>' + n + '</span></span></div>'
     };
   }
@@ -173,7 +184,87 @@
     var size = el.getAttribute('data-size');
     if (size) el.classList.add('sv-' + size);
     el.setAttribute('data-sv-done', '1');
+    watch(el);
     return el;
+  }
+
+  // ---------- animate on view ----------
+  // A graphic waits (sv-wait: statviz.css holds its entrance at the first frame) until it is in view, then plays. Inside
+  // a block the site's motion layer hasn't revealed yet (motion.js: .mo-r without .mo-in), it waits for that block's
+  // "mo:in" so it plays where it can be seen. Nothing is hidden for good: the failsafe plays it after a few seconds.
+  var io = null;
+  function moving() {
+    try {
+      return !!(root.IntersectionObserver && root.matchMedia && !root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) { return false; }
+  }
+  function play(el) {
+    if (!el.classList.contains('sv-wait')) return;
+    var held = el.closest && el.closest('.mo-r:not(.mo-in)');
+    if (held && !el.__svHeld) {
+      el.__svHeld = true;
+      var go = function () { setTimeout(function () { play(el); }, 120); };
+      held.addEventListener('mo:in', go, { once: true });
+      setTimeout(go, 2500);
+      return;
+    }
+    el.classList.remove('sv-wait');
+    el.classList.add('sv-play');
+    var nums = el.querySelectorAll('.sv-num, .sv-key b, .sv-bar-v');
+    for (var i = 0; i < nums.length; i++) countUp(nums[i], 1600);
+  }
+  function watch(el) {
+    if (!el || el.__svWatched || !moving()) return el;
+    el.__svWatched = true;
+    el.classList.add('sv-wait');
+    if (!io) {
+      io = new root.IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { io.unobserve(e.target); play(e.target); }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.25 });
+    }
+    io.observe(el);
+    return el;
+  }
+  function watchAll(scope) {
+    var els = (scope || root.document).querySelectorAll('.sv');
+    for (var i = 0; i < els.length; i++) watch(els[i]);
+    return els.length;
+  }
+  // Every number in a label's own text counts up from 0 to its value, keeping its decimals and the text around it
+  // ("2.7×", "33% → 4%"; child elements are left alone). The label keeps its final width meanwhile, so nothing beside
+  // it moves, and its last frame is its own text again.
+  var NUM = /\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?/g;
+  function countUp(node, ms) {
+    var jobs = [];
+    for (var c = node.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType !== 3) continue;
+      var text = c.nodeValue, parts = [], last = 0, m;
+      NUM.lastIndex = 0;
+      while ((m = NUM.exec(text))) { parts.push(text.slice(last, m.index), m[0]); last = m.index + m[0].length; }
+      if (parts.length) jobs.push({ node: c, text: text, parts: parts.concat(text.slice(last)) });
+    }
+    if (!jobs.length || !root.requestAnimationFrame || node.__svCounting) return;
+    node.__svCounting = true;
+    node.style.minWidth = node.getBoundingClientRect().width + 'px';
+    if (root.getComputedStyle(node).display === 'inline') node.style.display = 'inline-block';
+    var t0 = null;
+    function frame(t) {
+      if (t0 == null) t0 = t;
+      var k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+      jobs.forEach(function (j) {
+        j.node.nodeValue = k >= 1 ? j.text : j.parts.map(function (p, i) {
+          if (i % 2 === 0) return p;
+          var v = parseFloat(p.replace(/,/g, '')), dec = (p.split('.')[1] || '').length, x = v * e;
+          return p.indexOf(',') >= 0 ? Math.round(x).toLocaleString('en-US') : x.toFixed(dec);
+        }).join('');
+      });
+      if (k < 1) return root.requestAnimationFrame(frame);
+      node.style.minWidth = node.style.display = '';
+      node.__svCounting = false;
+    }
+    root.requestAnimationFrame(frame);
   }
   function renderAll(scope) {
     var els = (scope || document).querySelectorAll('[data-sv]:not([data-sv-done])');
@@ -183,7 +274,8 @@
     return els.length;
   }
 
-  var api = { html: html, render: render, renderAll: renderAll, kinds: KINDS.slice(), tones: TONES.slice() };
+  var api = { html: html, render: render, renderAll: renderAll, watch: watch, watchAll: watchAll, countUp: countUp,
+    kinds: KINDS.slice(), tones: TONES.slice() };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root && root.document) {
     root.StatViz = api;

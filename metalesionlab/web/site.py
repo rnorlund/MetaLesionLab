@@ -15,6 +15,7 @@ it) passes through it, and it:
 - fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py), with its speaker's face;
 - on the Plato site, adds the portraits (portraits.py): Plato beside "What would Plato ask an AI?" and Socrates
   as a floating guide on the series pages, and the "drawn by Meta's Muse Image" credit wherever one is shown;
+- on the Plato site, links the shared motion layer (static/css/motion.css, static/js/motion.js: MOTION below);
 - keeps <!--#if /path-->…<!--#else-->…<!--#endif--> blocks by whether the app serves /path
   (<!--#if series--> asks whether any experiment of the series besides /plato is served);
 - fills <!--#sister--> with the "Sister project" link (MLL_SISTER_URL), or adds that link at the foot
@@ -566,10 +567,31 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
             f'<script type="application/json" id="site-data">{data}</script>')
     if "og:image" not in page:
         head += share_tags(page, origin_url, path, site)
+    if site == "plato":
+        page = add_motion(page)
     page = _ASSET.sub(_versioned, page)
     page = _set_theme(page, site)
     at = page.find("</head>")
     return page[:at] + head + page[at:] if at >= 0 else head + page
+
+
+# The shared motion layer on every Plato page (static/css/motion.css, static/js/motion.js: scroll reveals, card hovers,
+# the first screen's entrance). MOTION_BOOT runs before the first paint and only when motion is welcome (no reduced
+# motion, an IntersectionObserver, no ?motion=0): "mo" lets motion.css move things, "mo-boot" hides the first screen
+# until motion.js has set it up. If motion.js hasn't run 2.5 s later, both go again, so nothing stays hidden.
+MOTION_BOOT = (
+    "<script>(function(){var d=document.documentElement;try{if(!window.IntersectionObserver||"
+    "matchMedia('(prefers-reduced-motion: reduce)').matches||/[?&]motion=0(&|$)/.test(location.search))return;}"
+    "catch(e){return;}d.classList.add('mo','mo-boot');setTimeout(function(){if(!window.PCMotion)"
+    "d.classList.remove('mo','mo-boot');},2500);})();</script>"
+)
+MOTION = ('<link rel="stylesheet" href="/static/css/motion.css">' + MOTION_BOOT
+          + '<script src="/static/js/motion.js" defer></script>')
+
+
+def add_motion(page: str) -> str:
+    at = page.find("</head>")
+    return page if at < 0 or "/static/js/motion.js" in page else page[:at] + MOTION + page[at:]
 
 
 # Every stylesheet and script link carries the file's modification time (?v=…), so a browser that cached

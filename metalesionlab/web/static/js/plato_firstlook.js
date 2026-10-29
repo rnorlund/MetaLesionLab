@@ -59,7 +59,8 @@
     var alt = o.alt || ('Layer ' + at + ' of ' + n + ', range ' + o.lo + ' to ' + o.hi);
     return frame(String(at), 'of ' + n + ' layers',
       '<div class="sv-lay" style="--n:' + n + '"><svg class="sv-svg" viewBox="-4 0 ' + (W + 8) + ' ' + (top + hh + 4) + '" role="img" aria-label="' +
-      esc(alt) + '"><title>' + esc(alt) + '</title>' + out.join('') + '<path class="sv-mark" d="M' + (mx - 5) + ' 1h10l-5 8z"/></svg>' +
+      esc(alt) + '"><title>' + esc(alt) + '</title>' + out.join('') + '<path class="sv-mark" d="M' + (mx - 5) + ' 1h10l-5 8z" style="--mx:' +
+      (1 - at) * step + 'px"/></svg>' +
       '<span class="sv-ticks fl-lticks" aria-hidden="true"><span>1</span><span class="fl-lband" style="left:' + (100 * (mid + 4) / (W + 8)).toFixed(1) + '%">' +
       o.lo + '–' + o.hi + '</span><span>' + n + '</span></span></div>', o.label);
   }
@@ -128,8 +129,10 @@
       '<figcaption class="fl-q">' + v + esc(spec.q) + '</figcaption></figure>';
   }
 
+  // The graphics play when they come into view, like statviz's own (StatViz.watchAll: count up, fill, drift, slide).
   function render(box, page) {
     box.innerHTML = page.stats.map(figure).join('');
+    try { if (SV && SV.watchAll) SV.watchAll(box); } catch (e) { /* drawn, just not animated */ }
     return box;
   }
 
