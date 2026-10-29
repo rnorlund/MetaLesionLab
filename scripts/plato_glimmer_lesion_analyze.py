@@ -168,26 +168,40 @@ def cmd_embed(args):
 
 # ---------- descriptions: the blinded sheet, then the rubric ----------
 
+SAMPLE = 150
+
+
 def cmd_sheet(args):
-    """Every main-run description, shuffled, with only an id and which thing was asked. The key (id -> condition)
-    is written separately and not read while coding."""
-    rows = []
+    """A seeded stratified random sample of 150 descriptions for coding by eye (a dated deviation from coding all 756,
+    for cost): drawn round-robin over the strata thing x damage type x step (intact counts once per type), so each
+    stratum gets as even a share as 150 allows. Shuffled; the sheet shows only an id and the thing, never the condition.
+    The key (id -> condition) is written separately and not opened while coding."""
+    rng = np.random.default_rng(20261029)
+    strata = {}
     for cond, rec in cond_files("raw").items():
+        t_, _ = gl.parse_condition(cond)
         for t in gl.THINGS:
-            for s in rec["things"][t.key]["describe"]:
-                rows.append({"cond": cond, "thing": t.key, "i": s["i"], "text": s["text"]})
-    rng = np.random.default_rng(20261028)
-    order = rng.permutation(len(rows))
+            strata[(t.key, cond)] = [{"cond": cond, "thing": t.key, "i": s["i"], "text": s["text"]}
+                                     for s in rec["things"][t.key]["describe"]]
+    for v in strata.values():
+        rng.shuffle(v)
+    keys = sorted(strata, key=lambda k: (k[1], k[0]))
+    order = rng.permutation(len(keys))
+    picked = []
+    while len(picked) < SAMPLE:
+        for k in order:
+            if strata[keys[k]] and len(picked) < SAMPLE:
+                picked.append(strata[keys[k]].pop())
+    picked = [picked[k] for k in rng.permutation(len(picked))]
     sheet, key = [], {}
-    for n, k in enumerate(order):
-        r = rows[k]
+    for n, r in enumerate(picked):
         sid = f"d{n:04d}"
         sheet.append({"id": sid, "thing": r["thing"], "text": r["text"]})
         key[sid] = {"cond": r["cond"], "thing": r["thing"], "i": r["i"]}
     (D / "byeye").mkdir(exist_ok=True)
     (D / "byeye" / "sheet.json").write_text(json.dumps(sheet, indent=0, ensure_ascii=False))
     (D / "byeye" / "key.json").write_text(json.dumps(key, indent=0))
-    print(f"{len(sheet)} descriptions on the sheet", flush=True)
+    print(f"{len(sheet)} descriptions on the sheet, {len(strata)} strata", flush=True)
 
 
 def cmd_score(args):
@@ -195,7 +209,7 @@ def cmd_score(args):
         codes = D / "byeye" / "codes.json"
         plan = (ROOT / "docs" / "plato_glimmer_lesion_plan.md").read_text()
         if not codes.exists():
-            raise SystemExit("code the descriptions by eye first (byeye/codes.json)")
+            raise SystemExit("code the sampled descriptions by eye first (byeye/codes.json)")
         digest = hashlib.sha256(codes.read_bytes()).hexdigest()
         if digest not in plan:
             raise SystemExit(f"record the by-eye codes' SHA-256 ({digest}) in the plan before scoring")

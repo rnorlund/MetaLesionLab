@@ -139,3 +139,7 @@ The slider follows one answer per thing through every step: the thing's **undama
 ## Cost
 
 No paid API calls. Glimmer runs on our own GPU (axon-server01). SigLIP 2, DINOv2 and Chromium run on the Mac.
+
+## Deviation, Oct 29 (cost, before any main-run result was seen)
+
+The by-eye check above said all 756 descriptions would be coded by eye. To save effort, the keyword rubric is the **primary** word measure on all 756, and I code by eye a **stratified random sample of 150** instead: seeded (20261029), balanced round-robin across thing x condition (so across damage type and dose), shuffled, showing only an id and the thing, never the condition. The codes (`byeye/codes.json`) are hashed in a commit before `score` runs, as before. I report rubric-against-eye agreement on those 150 (percent agreement, and each side's yes rate). The "named vs by-eye correct" gap secondary analysis is dropped, since the sample cannot give a full curve.

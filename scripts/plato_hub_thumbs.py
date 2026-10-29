@@ -302,8 +302,21 @@ def damaged_forget() -> Image.Image:
                   (chair(0.9), "90% off", ORANGE)], side=200, gap=22, arrows=(0, 1, 2))
 
 
+def damaged_glimmer_draws() -> Image.Image:
+    """Muse Glimmer's chair and clock (never God) as more of its neurons are switched off: the drawing goes."""
+    sheet = Image.open(IMG / "plato_glimmer" / "featured_late.webp")
+    cw, ch = sheet.width // 3, sheet.height // 6
+    tiles = [(cells_at(sheet, cw, ch, k, r), lab, col) for k, r, lab, col in
+             [(0, 0, "undamaged chair", INK), (0, 3, "damaged", ORANGE), (1, 0, "undamaged clock", INK), (1, 3, "damaged", ORANGE)]]
+    return strip(tiles, side=200, gap=26, arrows=(0, 2))
+
+
+def cells_at(sheet: Image.Image, cw: int, ch: int, col: int, row: int) -> Image.Image:
+    return sheet.crop((col * cw, row * ch, (col + 1) * cw, (row + 1) * ch))
+
+
 DAMAGED = {"damaged-painter": damaged_painter, "damaged-ideas": damaged_ideas, "damaged-clocks": damaged_clocks,
-           "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-yourself": damaged_yourself,
+           "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-glimmer-draws": damaged_glimmer_draws, "damaged-yourself": damaged_yourself,
            "damaged-forget": damaged_forget}
 
 
