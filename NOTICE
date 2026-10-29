@@ -10,6 +10,7 @@ Third-party material keeps its own license and credit:
 - Stable Diffusion XL outputs: CreativeML OpenRAIL++-M, Stability AI.
 - Stable Diffusion v1.1–v1.5 outputs: CreativeML OpenRAIL-M (CompVis, Stability AI, RunwayML).
 - Janus-Pro-7B outputs: MIT, DeepSeek.
+- Kokoro-82M voices (public_data/plato_phaedrus_audio/, the clips of /plato/phaedrus): Apache-2.0, hexgrad.
 - Category production norms (public_data/plato_bird.json): Banks & Connell (2023), CC BY 4.0.
 - Children's drawing statistics (public_data/plato_lifespan.json): group-level statistics derived from
   Long, Fan, Huey, Chai & Frank (2024), whose data are CC BY-NC-SA 4.0; no child's drawing is included.
