@@ -60,7 +60,7 @@ def test_first_screen_asks_the_question(client):
     main = main_of(page)
     hero = main[:main.index('id="results"')]
     assert "<h1" in hero and "What happens to an AI’s idea of a thing when we damage it?" in hero
-    assert "What would Plato ask an AI?" in hero
+    assert "Plato would ask:" in hero  # the series kicker (portraits.kicker_face): his face and these words
     # plain words: damage is said in full the first time, before the page uses the word on its own
     first = text(hero).index("damage")
     assert "switched off some of their artificial neurons, or added random noise to them" in text(hero)[:first + 200]

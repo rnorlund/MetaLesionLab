@@ -61,7 +61,8 @@
     var alt = o.alt || ('Stage ' + at + ' of ' + n + ', range ' + o.lo + ' to ' + o.hi);
     return frame(String(at), 'of ' + n + ' stages',
       '<div class="sv-lay" style="--n:' + n + '"><svg class="sv-svg" viewBox="-4 0 ' + (W + 8) + ' ' + (top + hh + 4) + '" role="img" aria-label="' +
-      esc(alt) + '"><title>' + esc(alt) + '</title>' + out.join('') + '<path class="sv-mark" d="M' + (mx - 5) + ' 1h10l-5 8z"/></svg>' +
+      esc(alt) + '"><title>' + esc(alt) + '</title>' + out.join('') + '<path class="sv-mark" d="M' + (mx - 5) + ' 1h10l-5 8z" style="--mx:' +
+      (1 - at) * step + 'px"/></svg>' +
       '<span class="sv-ticks fl-lticks" aria-hidden="true"><span>1</span><span class="fl-lband" style="left:' + (100 * (mid + 4) / (W + 8)).toFixed(1) + '%">' +
       o.lo + '–' + o.hi + '</span><span>' + n + '</span></span></div>', o.label);
   }
@@ -142,8 +143,9 @@
 
   // "How we know": the disclosure under the numbers. Its summary carries Aristotle, who checks the evidence; inside,
   // the page's own introduction (.fl-ctx), each number with its qualifier and verdict, then the notes and caveats.
-  var HOW_SUMMARY = '<summary><span class="fl-how-t">How we know</span><span class="pt-badge pt-aristotle">' +
-    '<img src="/static/img/portraits/aristotle-neutral.webp" alt="" width="40" height="40" decoding="async">Aristotle checks the evidence</span></summary>';
+  var HOW_SUMMARY = '<summary><span class="fl-how-t">How we know</span> <span class="pt-badge pt-aristotle">' +
+    '<img class="pt-badge-face" src="/static/img/portraits/aristotle-neutral.webp" width="256" height="256" alt="" loading="lazy">' +
+    '<span class="pt-badge-text">Aristotle checks the evidence</span></span></summary>';
 
   // The list of qualifiers, one per number (pure: the tests read it under node).
   function how(page) {
@@ -163,7 +165,7 @@
     var d = scope.querySelector('details.fl-how');
     if (!d) {
       d = doc.createElement('details');
-      d.className = 'fl-how';
+      d.className = 'fl-how how-we-know';
       d.setAttribute('id', 'hero-how');
       d.innerHTML = HOW_SUMMARY;
       box.parentNode.insertBefore(d, box.nextSibling);
@@ -180,9 +182,11 @@
     return d;
   }
 
+  // The graphics play when they come into view, like statviz's own (StatViz.watchAll: count up, fill, drift, slide).
   function render(box, page) {
     box.innerHTML = page.stats.map(figure).join('');
     disclose(box, page);
+    try { if (SV && SV.watchAll) SV.watchAll(box); } catch (e) { /* drawn, just not animated */ }
     return box;
   }
 

@@ -6,32 +6,32 @@ body.cratylus { background: var(--ground-warm); }
 .ck-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(32px, 2.5vw, 64px); display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr); gap: 24px clamp(36px, 4vw, 112px); align-items: start; }
 .ck-hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.ck-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
-.ck-lede { margin: 0; font-size: clamp(19px, calc(13px + 0.45vw), 25px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.ck-hero h1 { margin: 0; font-size: var(--fs-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: var(--lh-display); }
+.ck-lede { margin: 0; font-size: var(--fs-intro); font-weight: var(--fw-lead); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .ck-hero figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .ck-hero figure img { width: 100%; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); }
-.ck-cap { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
+.ck-cap { font-size: var(--fs-small); line-height: 1.5; color: var(--muted); margin: 0; }
 .ck-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1vw, 24px); }
 .ck-tile { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
-.ck-tile b { font-size: clamp(30px, calc(18px + 0.9vw), 44px); letter-spacing: -0.01em; line-height: 1.1; }
-.ck-tile span { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); }
+.ck-tile b { font-size: var(--fs-number-sm); font-weight: var(--fw-number); letter-spacing: var(--ls-number); line-height: 1.1; }
+.ck-tile span { font-size: var(--fs-small); line-height: 1.45; color: var(--ink-2); }
 .ck-tile.em { border-left: 4px solid var(--orange); }
 
-.ck-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.2vw, 56px) clamp(32px, 2.5vw, 64px); display: flex;
+.ck-sec { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: var(--space-sec) 0 0; margin-top: clamp(8px, 1.4vw, 28px); display: flex;
   flex-direction: column; gap: 18px; scroll-margin-top: 12px; }
 .ck-sec-head { display: flex; flex-direction: column; gap: 8px; }
 .ck-sec-head > p { max-width: var(--measure); }
-.ck-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.015em; }
-.ck-sec-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
+.ck-sec h2 { margin: 0; font-size: var(--fs-h2); font-weight: var(--fw-h2); letter-spacing: var(--ls-h2); }
+.ck-sec-lede { margin: 0; font-size: var(--fs-intro); font-weight: var(--fw-lead); line-height: 1.6; color: var(--ink-2); }
 .ck-two { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(28px, 2.5vw, 64px); align-items: start; }
 .ck-facts { display: flex; flex-direction: column; gap: 12px; }
 .ck-fact { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
-.ck-fact b { font-size: clamp(24px, calc(15px + 0.75vw), 36px); letter-spacing: -0.01em; line-height: 1.15; }
+.ck-fact b { font-size: var(--fs-number-sm); font-weight: var(--fw-number); letter-spacing: var(--ls-number); line-height: 1.15; }
 .ck-fact span { max-width: var(--measure); font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
 
 /* your turn */
 .ck-try { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 3vw, 80px); align-items: center; }
-.ck-q { margin: 0; font-size: clamp(26px, calc(16px + 0.8vw), 38px); font-weight: 600; }
+.ck-q { margin: 0; font-size: var(--fs-h3); font-weight: var(--fw-h3); }
 .ck-q i { font-family: Georgia, serif; }
 .ck-pair { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--paper); max-width: clamp(440px, 28vw, 640px); }  /* the pair is 640px */
 /* the pair is a drawing on paper in every theme, so its marks keep the light palette's blue and orange */
@@ -41,15 +41,15 @@ body.cratylus { background: var(--ground-warm); }
 .ck-pair .sides button { background: transparent; border: 0; cursor: pointer; font: inherit; }
 .ck-pair .sides button:hover, .ck-pair .sides button:focus-visible { background: var(--ck-round-tint); outline: 2px solid var(--ck-round); outline-offset: -2px; }
 .ck-pair .sides button[aria-pressed="true"] { background: var(--ck-spiky-tint); outline: 3px solid var(--ck-spiky); outline-offset: -3px; }
-.ck-steps { display: flex; gap: 8px; font-size: 13px; color: var(--muted); }
+.ck-steps { display: flex; gap: 8px; font-size: var(--fs-small); color: var(--muted); }
 .ck-out { max-width: var(--measure); font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; }
 .ck-out b { color: var(--ink); }
-.ck-actions button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
+.ck-actions button { font: inherit; font-size: var(--fs-small); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
 
 /* word picker */
 .ck-seg { max-width: 520px; }
 .ck-words { display: flex; flex-wrap: wrap; gap: 6px; }
-.ck-words button { font: inherit; font-size: 14px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
+.ck-words button { font: inherit; font-size: var(--fs-small); padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
 .ck-words button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
 .ck-words button .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
 .ck-strip { width: 100%; max-width: 880px; height: auto; display: block; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
@@ -61,20 +61,20 @@ body.cratylus { background: var(--ground-warm); }
 .ck-chart .lbl.em { fill: var(--ink); font-weight: 600; }
 .ck-chart .hit { fill: transparent; cursor: pointer; }
 .ck-chart .row.on .hit { fill: var(--tint); }
-.ck-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); margin: 0; }
+.ck-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-small); color: var(--ink-2); margin: 0; }
 .ck-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
 .ck-legend i.d { border-radius: 2px; transform: rotate(45deg) scale(0.8); }
 .ck-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 8px; padding: 8px 10px;
-  font-size: 12px; line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 280px; }
-.ck-tip b { font-size: 14px; }
+  font-size: var(--fs-small); line-height: 1.5; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); max-width: 280px; }
+.ck-tip b { font-size: var(--fs-small); }
 .ck-numbers { max-width: 100%; overflow-x: auto; }  /* the words table scrolls inside its column on a phone */
-.ck-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 6px 0; font-size: 14px; }
-.ck-numbers table { margin-top: 8px; font-size: 14px; border-collapse: collapse; }
+.ck-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 6px 0; font-size: var(--fs-small); }
+.ck-numbers table { margin-top: 8px; font-size: var(--fs-small); border-collapse: collapse; }
 .ck-numbers th, .ck-numbers td { padding: 4px 10px; border-bottom: 1px solid var(--line); text-align: left; }
 .ck-numbers td.num, .ck-numbers th.num { font-family: var(--mono); text-align: right; }
 
 .ck-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: var(--measure); font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
-.ck-credit { max-width: 120ch; font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; margin: 0; }
+.ck-credit { max-width: 120ch; font-size: var(--fs-small); color: var(--muted); line-height: 1.6; margin: 0; }
 
 /* Wide windows: the tall wall of drawings stops at 900px; the charts, drawn in 600- and 640-unit boxes, stop at
    about 1.6 times, and the notes beside them take the rest. */
@@ -86,5 +86,5 @@ body.cratylus { background: var(--ground-warm); }
 }
 @media (max-width: 900px) {
   .ck-hero, .ck-two, .ck-try { grid-template-columns: minmax(0, 1fr); }
-  .ck-hero, .ck-sec { padding: 22px 16px; }
+  .ck-hero, .ck-sec { padding: var(--space-sec) 0 0; }
 }

@@ -37,7 +37,7 @@ figure.epigraph {
 .epigraph figcaption {
   margin: 0.85em 0 0;
   font-family: var(--sans, system-ui, sans-serif);
-  font-size: max(var(--fs-sm, 13px), calc(var(--ep-size) * 0.46));  /* grows with the quote on wide screens */
+  font-size: var(--fs-small);  /* grows with the quote on wide screens */
   line-height: 1.5;
   font-variant-caps: all-small-caps;
   letter-spacing: 0.07em;
