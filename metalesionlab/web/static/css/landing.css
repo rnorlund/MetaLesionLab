@@ -74,10 +74,12 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 
 /* the two grids, and the stacking moment */
 .chairs { margin: 0; background: var(--panel); border: 1px solid var(--line-warm); border-radius: 20px; padding: 18px 18px 16px; box-shadow: var(--l-shadow); }
-.chairs-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
-.chairs-side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.chairs-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto; gap: 10px 18px; }
+/* Label, grid and stat share rows across both sides (subgrid), so the two grids always start at the same height. */
+.chairs-side { display: grid; grid-row: span 3; grid-template-rows: subgrid; gap: 10px; min-width: 0; align-content: start; }
 .chairs-label { margin: 0; display: flex; align-items: center; gap: 8px; font-size: var(--fs-body); font-weight: 600; flex-wrap: wrap; }
-.chairs-label b { font-weight: 400; color: var(--muted); font-family: var(--mono); font-size: var(--fs-label); }
+.chairs-label b { font-weight: 400; color: var(--muted); font-family: var(--mono); font-size: var(--fs-label); flex-basis: 100%; }
+.chairs-label { align-self: end; }
 .sw { width: 10px; height: 18px; border-radius: 2px; display: inline-block; flex: none; }
 .sw-ai { background: var(--ai); }
 .sw-people { background: var(--people); }

@@ -194,10 +194,12 @@ body.plato { background: var(--ground-warm); --pc-reply: #FCFBF7; }
 .pc-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .pc-cta .btn { font-size: var(--fs-body); padding: 12px 20px; }
 .pc-chairs { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.pc-chairs-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 28px); }
-.pc-chairs-side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pc-chairs-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto; gap: 8px clamp(12px, 1.2vw, 28px); }
+/* Label, grid and stat share rows across both sides (subgrid), so the two grids always start at the same height. */
+.pc-chairs-side { display: grid; grid-row: span 3; grid-template-rows: subgrid; gap: 8px; min-width: 0; align-content: start; }
 .pc-chairs-label { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: var(--fs-body); font-weight: 600; }
-.pc-chairs-label span { font-family: var(--mono); font-size: var(--fs-label); font-weight: 400; color: var(--muted); }
+.pc-chairs-label span { font-family: var(--mono); font-size: var(--fs-label); font-weight: 400; color: var(--muted); flex-basis: 100%; }
+.pc-chairs-label { align-self: end; }
 .pc-sw { display: inline-block; flex: none; width: 10px; height: 18px; border-radius: 2px; }
 [data-side="ai"] .pc-sw { background: var(--blue); }
 [data-side="people"] .pc-sw { background: var(--orange); }
