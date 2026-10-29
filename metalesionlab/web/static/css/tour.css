@@ -8,17 +8,17 @@
 .tour-card.sheet { left: 8px !important; right: 8px; bottom: 8px; top: auto !important; width: auto; max-height: 48vh; overflow-y: auto; transform: none; }
 .tour-card.loading { opacity: 0.6; }
 .tour-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.tour-progress { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.tour-progress { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .tour-bar { height: 4px; background: var(--line); border-radius: 999px; overflow: hidden; }
 .tour-bar > div { height: 100%; background: var(--orange); border-radius: 999px; transition: width 0.25s ease; }
-.tour-card h2 { margin: 2px 0 0; font-size: 17px; letter-spacing: -0.01em; }
-.tour-card p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.tour-card h2 { margin: 2px 0 0; font-size: var(--fs-h3); font-weight: var(--fw-h3); letter-spacing: var(--ls-h3); }
+.tour-card p { margin: 0; font-size: var(--fs-small); line-height: 1.5; color: var(--ink-2); }
 .tour-extra { display: flex; flex-direction: column; gap: 8px; }
 .tour-extra:empty { display: none; }
 .tour-actions { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
 .tour-gap { flex: 1; }
-.tour-skip { background: none; border: 0; padding: 8px 4px; color: var(--muted); font-size: 13px; text-decoration: underline; cursor: pointer; min-height: 36px; }
-.tour-x { border: 0; background: none; font-size: 20px; line-height: 1; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; color: var(--muted); }
+.tour-skip { background: none; border: 0; padding: 8px 4px; color: var(--muted); font-size: var(--fs-small); text-decoration: underline; cursor: pointer; min-height: 36px; }
+.tour-x { border: 0; background: none; font-size: var(--fs-intro); line-height: 1; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; color: var(--muted); }
 .tour-x:hover { background: var(--ground); color: var(--ink); }
 
 /* Socrates, the guide: his portrait and a speech bubble (a question, then a pointer). */
@@ -32,25 +32,28 @@
 .tour-bubble { --tb-ink: #1F2937; position: relative; background: var(--bronze-soft); color: var(--tb-ink); border: 1px solid var(--bronze-line); border-radius: 12px; padding: 9px 12px 10px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .tour-bubble::before { content: ''; position: absolute; left: -8px; top: 22px; width: 14px; height: 14px; background: var(--bronze-soft); border-left: 1px solid var(--bronze-line); border-bottom: 1px solid var(--bronze-line); transform: rotate(45deg); }
 :root[data-theme="dark"] .tour-bubble { --tb-ink: var(--ink); }
-.tour-who { font-size: 12px !important; line-height: 1.3 !important; color: var(--bronze-dark) !important; }
+.tour-who { font-size: var(--fs-small) !important; line-height: 1.3 !important; color: var(--bronze-dark) !important; }
 .tour-who b { font-weight: 700; letter-spacing: 0.04em; }
 .tour-kicker { color: var(--faint); }
-.tour-card h2.tour-q { margin: 0; font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic; font-weight: 500; font-size: clamp(17.5px, 0.45vw + 11.5px, 23px); line-height: 1.38; letter-spacing: 0; color: var(--ink); }
-.tour-card p.tour-p { font-size: clamp(14px, 0.25vw + 10.8px, 17px); line-height: 1.5; color: var(--ink-2); }
-.tour-credit { font-size: 11.5px !important; line-height: 1.4 !important; color: var(--muted) !important; }
+.tour-card h2.tour-q { margin: 0; font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic; font-weight: var(--fw-h3); font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--ls-h3); color: var(--ink); }
+.tour-card p.tour-p { font-size: var(--fs-small); line-height: 1.5; color: var(--ink-2); }
+.tour-credit { font-size: var(--fs-label) !important; line-height: 1.4 !important; color: var(--muted) !important; }
 .tour-credit[hidden] { display: none; }
 .tour-socrates .tour-extra { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .tour-socrates .tour-extra > :first-child, .tour-socrates .tour-extra > :last-child:nth-child(even) { grid-column: 1 / -1; }
-.tour-socrates .tour-extra .btn { justify-content: center; text-align: center; min-height: 38px; padding: 7px 10px; font-size: 14px; }
+.tour-socrates .tour-extra .btn { justify-content: center; text-align: center; min-height: 38px; padding: 7px 10px; font-size: var(--fs-small); }
 .tour-offer-face { width: 40px; height: 40px; border-radius: 50%; background: var(--portrait-paper, var(--paper)); border: 1.5px solid var(--portrait-ring, var(--bronze-line)); flex: 0 0 auto; }
 
 .tour-offer { position: fixed; z-index: 998; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 10px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px 10px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); max-width: calc(100vw - 32px); }
-.tour-offer p { margin: 0; font-size: 14px; }
+.tour-offer p { margin: 0; font-size: var(--fs-small); }
 
-.demo-btn { border: 0; border-radius: 999px; background: var(--amber); color: var(--on-amber); font-weight: 600; font-size: 13px; padding: 8px 14px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.demo-btn { border: 0; border-radius: 999px; background: var(--amber); color: var(--on-amber); font-weight: 600; font-size: var(--fs-small); padding: 8px 14px; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .demo-btn:hover { background: var(--amber-hover); }
+/* in the Plato site's quiet header (app.css): an outline, Socrates' face and "Tour" */
+.topbar:has(.nav-btn) .demo-btn { border: 1px solid var(--line-2); background: transparent; color: var(--ink); font-weight: 500; }
+.topbar:has(.nav-btn) .demo-btn:hover { background: var(--tint); border-color: var(--line-3); }
 .demo-btn svg { width: 10px; height: 10px; }
-.page-intro { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: 10px; padding: 10px 14px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); }
+.page-intro { margin-top: 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--orange); border-radius: 10px; padding: 10px 14px; font-size: var(--fs-small); }
 .page-intro p { margin: 0; color: var(--ink-2); }
 .link-btn { background: none; border: 0; padding: 0; color: var(--blue); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 .link-btn:hover { color: var(--blue-dark); }
@@ -67,6 +70,6 @@
   .tour-say { grid-template-columns: 48px minmax(0, 1fr); gap: 10px; }
   .tour-face { width: 48px; height: 48px; }
   .tour-bubble::before { top: 14px; }
-  .tour-card h2.tour-q { font-size: 16px; }
-  .tour-card p.tour-p { font-size: 13.5px; }
+  .tour-card h2.tour-q { font-size: var(--fs-h3); font-weight: var(--fw-h3); }
+  .tour-card p.tour-p { font-size: var(--fs-small); }
 }

@@ -38,19 +38,37 @@ def _e(s) -> str:
     return html.escape(str(s), quote=True)
 
 
-def face(name: str, cls: str = "epigraph-face") -> str:
-    """The speaker's face as an <img>, or "" for anyone but Plato, Socrates and Aristotle."""
+def name_label(name: str) -> str:
+    """A portrait's name in the one name-label style (portraits.css .pt-name). The picture's alt text or the words
+    beside it already name the person, so screen readers skip the label."""
+    return f'<span class="pt-name" aria-hidden="true">{_e(name)}</span>'
+
+
+def face(name: str, cls: str = "epigraph-face", named: bool = False) -> str:
+    """The speaker's face as an <img>, or "" for anyone but Plato, Socrates and Aristotle. named: the face and its
+    name label together (<span class="pt-who">), as beside an epigraph."""
     src = FACES.get(name)
     if not src:
         return ""
     alt = f"{name} ({LOOKS[name]}), a marker doodle {CREDIT}"
-    return (f'<img class="{_e(cls)}" src="{src}" width="256" height="256" loading="lazy" decoding="async" '
-            f'alt="{_e(alt)}" title="{_e(name)}, {CREDIT}">')
+    img = (f'<img class="{_e(cls)}" src="{src}" width="256" height="256" loading="lazy" decoding="async" '
+           f'alt="{_e(alt)}" title="{_e(name)}, {CREDIT}">')
+    return f'<span class="pt-who">{img}{name_label(name)}</span>' if named else img
+
+
+# Aristotle checks the evidence: the badge on a "How we know" disclosure (plato_firstlook.js) and a findings card's
+# "More detail" (findings.js). The scripts build the same markup; portraits.css documents it.
+ARISTOTLE_BADGE = ('<span class="pt-badge pt-aristotle"><img class="pt-badge-face" src="' + IMG + 'aristotle-neutral.webp" '
+                   'width="256" height="256" alt="" loading="lazy" decoding="async" title="Aristotle, ' + CREDIT + '">'
+                   '<span class="pt-badge-text">Aristotle checks the evidence</span></span>')
 
 
 # --- what the middleware adds -------------------------------------------------------------------------
 
 _KICKER = re.compile(r'<p class="title-kicker">(What would Plato ask an AI\?)')
+ASKS = "Plato would ask:"  # the kicker's words on the series pages and hubs, beside his face
+_HERO_CAP = re.compile(r'(<figure class="hero-plato">.*?<figcaption>)', re.S)
+_ATHENS = re.compile(r'(<img class="pt-athens-(plato|aristotle)"[^>]*>)')
 _FOOTNOTE = re.compile(r'(<p class="(?:footnote|lfoot-credit)"[^>]*>)(.*?)(</p>)', re.S)
 _SHOWN = {  # a portrait's file -> whose it is (for the credit line)
     "/static/img/portraits/plato-": ("Plato",),
@@ -66,10 +84,18 @@ def is_series(path: str) -> bool:
 
 
 def kicker_face(page: str) -> str:
-    """Plato, thinking, beside the series line "What would Plato ask an AI?" (the first one on the page)."""
+    """Plato asks: his face, thinking, and "Plato would ask:" in place of the series line "What would Plato ask an
+    AI?" (the first one on the page), so the page's question (its h1) reads as his."""
     img = (f'<img class="kicker-face" src="{THINKING}" width="256" height="256" decoding="async" '
            f'alt="Plato, thinking (a marker doodle {CREDIT})" title="Plato asks. Drawn by Meta’s Muse Image">')
-    return _KICKER.sub(lambda m: f'<p class="title-kicker has-face">{img}{m.group(1)}', page, count=1)
+    return _KICKER.sub(lambda m: f'<p class="title-kicker has-face">{img}<span class="kicker-who">{ASKS}</span>', page, count=1)
+
+
+def name_faces(page: str) -> str:
+    """Every whole-figure portrait gets its name: Plato pointing up in the landing hero, and the pair of
+    gestures in /plato's Aristotle's reply."""
+    page = _HERO_CAP.sub(lambda m: m.group(1) + name_label("Plato") + " ", page, count=1)
+    return _ATHENS.sub(lambda m: f'<span class="pt-who">{m.group(1)}{name_label(m.group(2).title())}</span>', page)
 
 
 def guide() -> str:
@@ -121,6 +147,7 @@ def link_css(page: str) -> str:
 
 def decorate(page: str, path: str, socrates: bool) -> str:
     """The portraits a Plato-site page gets; socrates: whether the app serves /socrates (the guide's link)."""
+    page = name_faces(page)
     if is_series(path):
         page = kicker_face(page)
         if socrates and 'class="pt-guide"' not in page:

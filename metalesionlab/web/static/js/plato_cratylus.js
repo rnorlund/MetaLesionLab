@@ -15,7 +15,7 @@
   var MEASURE = {
     solidity: { label: 'Solidity', lo: 0.45, hi: 1.0, note: 'Solidity: the shape’s area over the area of a rubber band stretched around it. 1 = a blob with no dents; a star is about 0.5. Further left = spikier.', spikyLeft: true },
     corners: { label: 'Sharp corners', lo: 0, hi: 12, note: 'Sharp corners: places where the outline turns by 60° or more within a short stretch. A blob has none, a five-pointed star five.' },
-    axis: { label: 'People’s round→spiky scale', lo: -0.1, hi: 1.1, note: 'Where the drawing sits in Meta’s DINOv2 picture space between people’s circles and clouds (0) and their stars, zigzags and lightning bolts (1).' }
+    axis: { label: 'People’s round→spiky scale', lo: -0.1, hi: 1.1, note: 'People’s round→spiky scale: how much the drawing looks like people’s circles and clouds (0) or like their stars, zigzags and lightning bolts (1), judged by a Meta AI that compares pictures (DINOv2).' }
   };
   var D = null, S = { m: 'solidity', word: 'bouba' };
 
@@ -59,25 +59,29 @@
     window.FirstLook.render($('hero-stats'), { stats: [
       // planned: kiki spikier than bouba, the AUC's CI above 0.5 on at least two of the three measures
       { kind: 'dots', verdict: verdict(['solidity', 'corners', 'axis'].filter(function (m) { var c = kb[m]; return c && c.auc_ci && c.auc_ci[0] > 0.5; }).length >= 2),
-        o: { k: ki.k, n: ki.n, tone: 'orange', cols: 6, label: '“kiki” pictures with sharp corners: stars, like people’s',
+        o: { k: ki.k, n: ki.n, tone: 'orange', cols: 6, label: 'pictures of “kiki” with sharp corners',
           alt: ki.k + ' of ' + ki.n + ' pictures of kiki have sharp corners (solidity ' + f2(kiw.solidity.mean) + ' vs ' + f2(bw.solidity.mean) + ' for bouba).' },
-        q: 'Every one spikier than every “bouba”: solidity ' + f2(kiw.solidity.mean) + ' against ' + f2(bw.solidity.mean) + '.' },
+        q: 'Predicted: “kiki” spikier than “bouba”. Every kiki was spikier than every bouba (solidity, where 1 is a smooth blob: ' + f2(kiw.solidity.mean) +
+          ' against ' + f2(bw.solidity.mean) + ').' },
       // planned: words with kiki's sounds come out spikier than words with bouba's (solidity, CI above 0)
       { kind: 'dots', verdict: verdict(cls.diff_ci[0] > 0),
-        o: { k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12, label: '“keti” and “tepi” pictures with a sharp corner',
+        o: { k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12, label: 'pictures with a sharp corner: “keti”, “tepi”',
           alt: (ke.k + te.k) + ' of ' + (ke.n + te.n) + ' pictures of the new words keti and tepi have a sharp corner (solidity ' +
             f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + ').' },
-        q: 'Kiki’s hard sounds, drawn as blobs (solidity ' + f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + '). Planned: spiky.' },
+        q: '“Keti” and “tepi” are made-up words with kiki’s hard sounds. Predicted: made-up words with kiki’s hard sounds come out spikier. Keti and tepi came out as blobs (solidity ' + f2(word('keti').solidity.mean) +
+          ' and ' + f2(word('tepi').solidity.mean) + '; 1 is a smooth blob).' },
       // planned: both AIs match both words at least as often as people do
-      { kind: 'bars', verdict: sp >= pe && gl >= pe ? verdict(true) : sp >= pe ? { tone: 'part', text: 'Partly: Glimmer no' } : verdict(false),
+      { kind: 'bars', verdict: sp >= pe && gl >= pe ? verdict(true) : sp >= pe ? { tone: 'part', text: 'Partly as predicted' } : verdict(false),
         o: { values: [sp, pe, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100, value: sp + '%', unit: 'vs ' + pe + '%',
-          label: 'chose round for “bouba” and spiky for “kiki”',
+          label: 'matched “bouba” to round, “kiki” to spiky',
           alt: 'Matched both words: Muse Spark ' + sp + '% of its answers, people ' + pe + '% (' + D.people.n_people + ' people, ' + D.people.n_languages +
             ' languages), Muse Glimmer ' + gl + '%.' },
-        q: 'People: ' + D.people.n_people + ' in ' + D.people.n_languages + ' languages. Glimmer has no preference for “kiki”.' }
+        q: 'Predicted: both AIs match both words at least as often as people (' + D.people.n_people + ' people, ' + D.people.n_languages + ' languages). ' +
+          (sp >= pe ? 'Meta’s chat AI, Muse Spark, did. ' : '') + (gl >= pe ? 'So did Meta’s open AI model, Glimmer.' :
+            'Meta’s open AI model, Glimmer, didn’t: it shows no preference for “kiki”.') }
     ] });
-    $('hero-qual').textContent = 'The classic words appear on thousands of web pages about this very effect, and people heard the words while the models only saw letters. ' +
-      'Twelve pictures per word; Spark’s ' + sp + '% rests on ' + D.choice.spark_both_match.n + ' paired answers.';
+    $('hero-qual').textContent = 'Caveats: the classic words appear on thousands of web pages about this very effect, so an AI can learn the answer by reading. ' +
+      'People heard the words; the AIs only saw letters. Twelve pictures per word; Muse Spark’s ' + sp + '% rests on ' + D.choice.spark_both_match.n + ' paired answers.';
   }
 
   // --- your turn ---------------------------------------------------------------------------------
@@ -131,7 +135,7 @@
     var list = ORDER.map(word).filter(Boolean);
     var rowH = 22, L = 200, R = 20, Tp = 24, W = 640, H = Tp + list.length * rowH + 26;
     var x = function (v) { return L + (v - m.lo) / (m.hi - m.lo) * (W - L - R); };
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': m.label + ' of Muse Image’s drawings for each word, with 95% intervals' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': m.label + ' of Muse Image’s drawings for each word, with the likely range (95% interval)' });
     var ticks = S.m === 'corners' ? [0, 3, 6, 9, 12] : S.m === 'solidity' ? [0.5, 0.6, 0.7, 0.8, 0.9, 1.0] : [0, 0.25, 0.5, 0.75, 1];
     ticks.forEach(function (t) {
       svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: Tp - 6, y2: H - 22, stroke: GRID }));
@@ -153,7 +157,7 @@
       if (e.ci95) g.appendChild(s('line', { x1: x(e.ci95[0]), x2: x(e.ci95[1]), y1: y, y2: y, stroke: col, 'stroke-width': 2, 'stroke-linecap': 'round' }));
       g.appendChild(s('circle', { cx: x(e.mean), cy: y, r: 5, fill: col, stroke: HALO, 'stroke-width': 2 }));
       hit.addEventListener('mousemove', function (evt) {
-        showTip(wrap, evt, [label(w.word), m.label + ': ' + (S.m === 'corners' ? e.mean.toFixed(1) : f2(e.mean)) + (e.ci95 ? ' (95% CI ' + (S.m === 'corners' ? e.ci95[0].toFixed(1) + '–' + e.ci95[1].toFixed(1) : f2(e.ci95[0]) + '–' + f2(e.ci95[1])) + ')' : ''), SOUND_LABEL[w.sound] + ' · ' + w.n + ' pictures']);
+        showTip(wrap, evt, [label(w.word), m.label + ': ' + (S.m === 'corners' ? e.mean.toFixed(1) : f2(e.mean)) + (e.ci95 ? ' (likely range ' + (S.m === 'corners' ? e.ci95[0].toFixed(1) + '–' + e.ci95[1].toFixed(1) : f2(e.ci95[0]) + '–' + f2(e.ci95[1])) + ')' : ''), SOUND_LABEL[w.sound] + ' · ' + w.n + ' pictures']);
       });
       hit.addEventListener('mouseleave', function () { hideTip(wrap); });
       hit.addEventListener('click', function () { S.word = w.word; wordsChart(); strip(); });
@@ -174,29 +178,30 @@
   function wordsTable() {
     var tb = $('words-table');
     tb.innerHTML = '';
-    tb.appendChild(h('tr', {}, [h('th', { text: 'Word' }), h('th', { class: 'num', text: 'Solidity' }), h('th', { class: 'num', text: 'Corners' }), h('th', { class: 'num', text: 'Round→spiky' }), h('th', { class: 'num', text: 'n' })]));
+    tb.appendChild(h('tr', {}, [h('th', { text: 'Word' }), h('th', { class: 'num', text: 'Solidity' }), h('th', { class: 'num', text: 'Corners' }), h('th', { class: 'num', text: 'Round→spiky' }), h('th', { class: 'num', text: 'Pictures' })]));
     ORDER.map(word).filter(Boolean).forEach(function (w) {
       tb.appendChild(h('tr', {}, [h('td', { text: label(w.word) }), h('td', { class: 'num', text: f2(w.solidity.mean) }), h('td', { class: 'num', text: w.corners.mean.toFixed(1) }), h('td', { class: 'num', text: f2(w.axis.mean) }), h('td', { class: 'num', text: w.n })]));
     });
     var k = D.contrasts.kiki_vs_bouba, t = D.contrasts.takete_vs_maluma;
-    $('words-lede').textContent = 'Every kiki drawing is spikier than every bouba drawing on solidity and on people’s round-to-spiky scale (probability of superiority ' +
-      f2(k.solidity.auc) + ' and ' + f2(k.axis.auc) + '); takete against maluma, the same. Every other made-up word, whatever its sounds, came out as a rounded blob. Ask for “a shape” with no name, and you get stars and polygons.';
+    $('words-lede').textContent = 'Every kiki drawing is spikier than every bouba drawing, on two measures: solidity, and where it sits between people’s circles and stars ' +
+      '(the chance a random kiki beats a random bouba: ' + f2(k.solidity.auc) + ' and ' + f2(k.axis.auc) + ', where 1 means always). Takete against maluma: the same. ' +
+      'Every other made-up word, whatever its sounds, came out as a rounded blob. Ask for “a shape” with no name, and you get stars and polygons.';
     void t;
   }
 
   // --- sound or famous word ------------------------------------------------------------------
   function sound() {
     var g = D.grid.solidity, c = D.contrasts.spiky_vs_round_class.solidity, sp = D.choice.grid.spark;
-    $('sound-lede').textContent = 'Bouba, kiki, maluma and takete are famous: they appear in thousands of papers and web pages about this effect. So we made up eight new words that cross the sounds people link to round shapes (b, m, l; o, u) with the sounds they link to spiky ones (k, t, p; i, e). The image model ignores the sounds. The chat model does not.';
+    $('sound-lede').textContent = 'Bouba, kiki, maluma and takete are famous: they appear in thousands of papers and web pages about this effect. So we made up eight new words that cross the sounds people link to round shapes (b, m, l; o, u) with the sounds they link to spiky ones (k, t, p; i, e). The image AI, Muse Image, ignores the sounds. Meta’s chat AI, Muse Spark, does not.';
     var a = $('sound-facts');
     a.innerHTML = '';
-    a.appendChild(fact('Drawings: no', 'Muse Image drew all eight new words as rounded blobs. Hard consonants made no difference to solidity (' + (g.consonant_effect.diff >= 0.005 ? '+' : '') + f2(g.consonant_effect.diff) + ', 95% CI ' + f2(g.consonant_effect.diff_ci[0]) + ' to ' + f2(g.consonant_effect.diff_ci[1]) + '). Across the classic and new words, the spiky-sounding words are spikier only because of kiki and takete: ' + f2(c.diff) + ' (CI ' + f2(c.diff_ci[0]) + ' to ' + f2(c.diff_ci[1]) + ').'));
+    a.appendChild(fact('Drawings: no', 'Muse Image drew all eight new words as rounded blobs. Hard consonants (k, t, p) made no difference to solidity (' + (g.consonant_effect.diff >= 0.005 ? '+' : '') + f2(g.consonant_effect.diff) + ', likely between ' + f2(g.consonant_effect.diff_ci[0]) + ' and ' + f2(g.consonant_effect.diff_ci[1]) + '). Across all the words, the spiky-sounding ones look spikier only because of kiki and takete: ' + f2(c.diff) + ' (likely between ' + f2(c.diff_ci[0]) + ' and ' + f2(c.diff_ci[1]) + ', too close to call).'));
     var nn = word('(no name)');
     a.appendChild(fact('Any name rounds it', 'With no name, “a shape” came out as stars and polygons (solidity ' + f2(nn.solidity.mean) + '). With a made-up name, even fana or keti, it became a soft blob, unless the name was kiki or takete.'));
     var b = $('sound-facts-2');
     b.innerHTML = '';
     if (sp) {
-      b.appendChild(fact('Choices: yes', 'Asked which shape is “keti”, Muse Spark picked the spiky one. For new words with soft consonants it picked the round shape ' + pct(sp.cells['soft/rounded']) + '% and ' + pct(sp.cells['soft/unrounded']) + '% of the time; with hard consonants, ' + pct(sp.cells['hard/rounded']) + '% and ' + pct(sp.cells['hard/unrounded']) + '%. Consonant effect ' + pct(sp.consonant_effect.diff) + ' points (CI ' + pct(sp.consonant_effect.diff_ci[0]) + ' to ' + pct(sp.consonant_effect.diff_ci[1]) + '); vowel effect ' + pct(sp.vowel_effect.diff) + ' points (CI ' + pct(sp.vowel_effect.diff_ci[0]) + ' to ' + pct(sp.vowel_effect.diff_ci[1]) + ').'));
+      b.appendChild(fact('Choices: yes', 'Asked which shape is “keti”, Muse Spark picked the spiky one. For new words with soft consonants (b, m, l) it picked the round shape ' + pct(sp.cells['soft/rounded']) + '% and ' + pct(sp.cells['soft/unrounded']) + '% of the time; with hard ones (k, t, p), ' + pct(sp.cells['hard/rounded']) + '% and ' + pct(sp.cells['hard/unrounded']) + '%. The consonants moved its choice by ' + pct(sp.consonant_effect.diff) + ' points (likely ' + pct(sp.consonant_effect.diff_ci[0]) + ' to ' + pct(sp.consonant_effect.diff_ci[1]) + '); the vowels by ' + pct(sp.vowel_effect.diff) + ' points (likely ' + String(pct(sp.vowel_effect.diff_ci[0])).replace('-', '−') + ' to ' + pct(sp.vowel_effect.diff_ci[1]) + ').'));
     }
     b.appendChild(fact('Like people', 'Consonants mattering more than vowels is what experiments with people find too (Fort, Martin and Peperkamp, 2015). Spelling the word out (k-i-k-i) or adding how to say it changed nothing: kiki stayed a star.'));
   }
@@ -208,7 +213,7 @@
     var list = ['bouba', 'maluma', 'bomu', 'lobu', 'bemi', 'limi', 'kotu', 'tupo', 'keti', 'tepi', 'kiki', 'takete', 'fana', 'hasa', 'nafa', 'safa'];
     var rowH = 24, L = 80, R = 20, Tp = 22, W = 600, H = Tp + list.length * rowH + 26;
     var x = function (v) { return L + v * (W - L - R); };
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Probability of picking the round shape for each word, by model, with people for bouba and kiki' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Chance of picking the round shape for each word, by AI, with people for bouba and kiki' });
     [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
       svg.appendChild(s('line', { x1: x(t), x2: x(t), y1: Tp - 6, y2: H - 22, stroke: t === 0.5 ? 'var(--line-3)' : GRID }));
       svg.appendChild(s('text', { x: x(t), y: H - 6, 'text-anchor': 'middle', class: 'lbl' }, pct(t) + '%'));
@@ -245,10 +250,10 @@
     Object.keys(WHO).forEach(function (k) { leg.appendChild(h('span', {}, [h('i', { style: { background: WHO[k][0] } }), WHO[k][1]])); });
     leg.appendChild(h('span', {}, [h('i', { class: 'd', style: { background: PEOPLE } }), 'People (published)']));
     var c = D.choice, p = D.people;
-    $('choice-lede').textContent = 'Shown a round blob and a spiky star, which is “bouba”? Muse Spark answered like a person, only more so. Muse Glimmer, Meta’s open model, leans toward the round shape for every word and barely tells bouba from kiki.';
+    $('choice-lede').textContent = 'Shown a round blob and a spiky star, which is “bouba”? Muse Spark answered like a person, only more so. Muse Glimmer, Meta’s open AI model, leans toward the round shape for every word and barely tells bouba from kiki.';
     var f = $('choice-facts');
     f.innerHTML = '';
-    f.appendChild(fact(pct(c.spark_both_match.p) + '% vs ' + pct(p.both_trials_match) + '%', 'Matched both bouba and kiki: Muse Spark (' + c.spark_both_match.n + ' paired trials) vs. 917 people in 25 languages (95% credible interval ' + pct(p.both_trials_match_cri95[0]) + '–' + pct(p.both_trials_match_cri95[1]) + '%; English speakers about ' + pct(p.english_posterior) + '%).'));
+    f.appendChild(fact(pct(c.spark_both_match.p) + '% vs ' + pct(p.both_trials_match) + '%', 'Matched both bouba and kiki: Muse Spark (' + c.spark_both_match.n + ' paired tries) against 917 people in 25 languages (people: probably between ' + pct(p.both_trials_match_cri95[0]) + '% and ' + pct(p.both_trials_match_cri95[1]) + '%; English speakers about ' + pct(p.english_posterior) + '%).'));
     f.appendChild(fact(pct(c.glimmer_both_match.p) + '%', 'Muse Glimmer’s chance of matching both (picture). It gives “bouba” the round shape ' + pct(c.glimmer_picture.bouba.p_round) + '% of the time but “kiki” the spiky one only ' + pct(1 - c.glimmer_picture.kiki.p_round) + '%. Told the shapes in words instead, it does better: ' + pct(c.glimmer_text.bouba.p_round) + '% round for bouba, ' + pct(1 - c.glimmer_text.kiki.p_round) + '% spiky for kiki.'));
   }
 

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300&display=swap');  /* the light weight of "Big and quiet" (the pages' own link loads 400 to 700) */
 /* Shared styles for every page. Ink #111827, ground #F3F4F6, intact blue, lesion orange.
    Colours are tokens, one set per theme: light (:root, and :root[data-theme="light"]) and dark
    (:root[data-theme="dark"]). site.py sets data-theme on <html>: the Plato site starts dark, and a visitor's
@@ -239,30 +240,53 @@
   --gutter: clamp(16px, 4vw, 96px);
   --page-max: min(100%, 2400px);
   --measure: 75ch;
-  /* Fluid type: body text 15px up to about 1600px wide, then growing to 18px at 2560px; headings follow
-     the width the whole way (the values at 1280px are the sizes the pages were designed at). */
-  --fs-body: clamp(15px, calc(10px + 0.3125vw), 18px);
-  --fs-sm: clamp(13px, calc(9.5px + 0.22vw), 15px);
-  --fs-lede: clamp(17px, calc(12px + 0.36vw), 21px);
-  --fs-h1: clamp(32px, calc(20px + 2.6vw), 80px);
-  --fs-h2: clamp(24px, calc(14px + 1.4vw), 50px);
-  --fs-h3: clamp(18px, calc(13px + 0.6vw), 28px);
+  /* --- Type: "Big and quiet" ------------------------------------------------------------------------------
+     One sans (IBM Plex Sans, 300/400/500/700) for every heading and every line of text; the mono only for small
+     data labels (a picture's step, an axis tick). Every font-size on the Plato site is one of these tokens
+     (tests/test_type_scale.py). Each is fluid: the comment gives its size at 1280px, the width it was designed at;
+     it shrinks to the first value on a phone and grows to the last on a wide screen. The same in both themes. */
+  --fs-display: clamp(40px, calc(28px + 3.75vw), 80px);     /* 76  the page title (h1) */
+  --fs-h2: clamp(30px, calc(19px + 1.95vw), 46px);          /* 44  a section's heading */
+  --fs-lead: clamp(20px, calc(14px + 0.94vw), 28px);        /* 26  the answer, in one sentence */
+  --fs-h3: clamp(19px, calc(14px + 0.625vw), 26px);         /* 22  a card's or a sub-section's title */
+  --fs-intro: clamp(18px, calc(14px + 0.47vw), 24px);       /* 20  a section's opening paragraph */
+  --fs-body: clamp(16px, calc(12px + 0.39vw), 20px);        /* 17  text */
+  --fs-small: clamp(14px, calc(11px + 0.3125vw), 17px);     /* 15  captions, notes, labels, the page kicker, the nav */
+  --fs-label: clamp(12px, calc(9px + 0.39vw), 16px);        /* 14  verdicts, the mono data labels, tags */
+  --fs-number: clamp(44px, calc(32px + 3.125vw), 76px);     /* 72  a headline number (statviz, first look) */
+  --fs-number-sm: clamp(26px, calc(18px + 1.72vw), 42px);   /* 40  a number's secondary part ("vs", "of 16"), a tile's number */
+  --fs-brand: var(--fs-intro);                              /* 20  the site name in the header */
+  /* the names the pages used before (kept so older rules still resolve) */
+  --fs-h1: var(--fs-display);
+  --fs-sm: var(--fs-small);
+  --fs-lede: var(--fs-intro);
+  /* weights, line heights and tracking, one per role */
+  --fw-display: 700; --fw-h2: 700; --fw-h3: 500; --fw-lead: 300; --fw-number: 300; --fw-strong: 600;
+  --lh-display: 1.0; --lh-h2: 1.1; --lh-h3: 1.25; --lh-lead: 1.4; --lh-body: 1.5; --lh-small: 1.45; --lh-number: 1.0;
+  --ls-display: -0.03em; --ls-h2: -0.02em; --ls-h3: -0.01em; --ls-number: -0.02em;
+  /* spacing: generous */
+  --space-block: clamp(28px, calc(12px + 2.8vw), 64px);     /* 48  between the first screen's major blocks */
+  --space-grid: clamp(20px, calc(8px + 2.2vw), 48px);       /* 36  between cards in a grid */
+  --space-sec: clamp(28px, calc(14px + 2vw), 56px);         /* 40  above a section's heading, under its rule */
 }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: var(--fs-body); line-height: 1.45; }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: var(--fs-body); line-height: var(--lh-body); }
 a { color: var(--blue); }
 a:hover { color: var(--blue-dark); }
 img { max-width: 100%; }
-h1, h2, h3 { line-height: 1.2; }
+/* The roles' weights and tracking (any page rule that sets them wins: :where() has no weight) */
+:where(h1) { font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: var(--lh-display); }
+:where(h2) { font-weight: var(--fw-h2); letter-spacing: var(--ls-h2); line-height: var(--lh-h2); }
+:where(h3) { font-weight: var(--fw-h3); letter-spacing: var(--ls-h3); line-height: var(--lh-h3); }
 button, input, select, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .mono { font-family: var(--mono); }
 .muted { color: var(--muted); }
-.small { font-size: 13px; }
-.xsmall { font-size: 12px; }
+.small { font-size: var(--fs-small); }
+.xsmall { font-size: var(--fs-label); }
 .skip { position: absolute; left: 16px; top: -60px; background: var(--panel); color: var(--ink); padding: 10px 14px; border-radius: 8px; z-index: 50; }
 .skip:focus { top: 12px; }
 [hidden] { display: none !important; }
@@ -275,17 +299,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--bar-ink); text-decoration: none; white-space: nowrap; margin-right: 6px; }
 .brand:hover { color: var(--bar-ink); }
 .brand-name { display: flex; flex-direction: column; gap: 1px; }
-.brand-name b { font-weight: 700; font-size: clamp(19px, calc(14px + 0.3vw), 23px); letter-spacing: -0.01em; line-height: 1.15; }
-.brand-tag { font-family: var(--mono); font-size: 11px; color: var(--bar-muted); }
+.brand-name b { font-weight: 700; font-size: var(--fs-brand); letter-spacing: -0.01em; line-height: 1.15; }
+.brand-tag { font-family: var(--mono); font-size: var(--fs-label); color: var(--bar-muted); }
 /* The Plato site's logo, the Form chair (site.py FORM_CHAIR; the landing page's splash flies into it) */
 .brand-logo { flex: none; width: 38px; height: 38px; margin: -4px 0 -4px -4px; color: var(--bar-ink); }
 .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; flex: 1 1 auto; }
-.topnav > a, .nav-more > summary { color: var(--bar-ink); padding: 10px clamp(12px, 0.7vw, 18px); border-radius: 8px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); text-decoration: none; cursor: pointer; white-space: nowrap; }
+.topnav > a, .nav-more > summary { color: var(--bar-ink); padding: 10px clamp(12px, 0.7vw, 18px); border-radius: 8px; font-size: var(--fs-small); text-decoration: none; cursor: pointer; white-space: nowrap; }
 .topnav > a:hover, .nav-more > summary:hover { background: var(--bar-hover); color: var(--bar-ink); }
 .topnav > a[aria-current="page"] { color: var(--bar-current-ink); background: var(--bar-current); font-weight: 600; }
 .topnav > a.nav-accent { background: var(--orange-fill); color: var(--on-accent); font-weight: 600; }
 .topnav > a.nav-accent:hover { background: var(--orange-fill-hover); }
-.topnav .ext { font-size: 11px; color: var(--bar-faint); }
+.topnav .ext { font-size: var(--fs-label); color: var(--bar-faint); }
 .nav-more { position: relative; }
 .nav-more > summary, .nav-menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; }
 .nav-more > summary::-webkit-details-marker, .nav-menu > summary::-webkit-details-marker { display: none; }
@@ -294,51 +318,52 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nav-more.is-current > summary { box-shadow: inset 0 -2px 0 var(--orange); }
 .nav-panel { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; min-width: 250px; max-height: min(70vh, 560px); overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: 12px; padding: 8px; box-shadow: 0 0 0 1px var(--panel-edge), 0 18px 40px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; }
 .nav-more .nav-panel { left: 0; right: auto; }
-.nav-panel a { color: var(--ink); text-decoration: none; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+.nav-panel a { color: var(--ink); text-decoration: none; padding: 10px 12px; border-radius: 8px; font-size: var(--fs-small); }
 .nav-panel a:hover { background: var(--ground); color: var(--ink); }
 .nav-panel a[aria-current="page"] { background: var(--ground); font-weight: 600; box-shadow: inset 3px 0 0 var(--orange); }
-.nav-group { margin: 8px 12px 2px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.nav-group { margin: 8px 12px 2px; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .nav-menu { display: none; margin-left: auto; }
-.nav-menu > summary { color: var(--bar-ink); padding: 9px 12px; border: 1px solid var(--bar-line); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.nav-menu > summary { color: var(--bar-ink); padding: 9px 12px; border: 1px solid var(--bar-line); border-radius: 8px; font-size: var(--fs-small); font-weight: 600; cursor: pointer; }
 .nav-burger, .nav-burger::before, .nav-burger::after { display: block; width: 14px; height: 2px; background: currentColor; border-radius: 2px; position: relative; }
 .nav-burger::before, .nav-burger::after { content: ''; position: absolute; left: 0; }
 .nav-burger::before { top: -5px; }
 .nav-burger::after { top: 5px; }
 .nav-menu .nav-panel { left: 0; right: 0; width: auto; }  /* full width of the header bar */
-.chips { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; font-family: var(--mono); font-size: 11px; }
+.chips { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; font-family: var(--mono); font-size: var(--fs-label); }
 .topbar .chips { flex-basis: 100%; margin-left: 0; }
 @media (min-width: 1100px) { .topbar .chips { flex-basis: auto; } }
-/* The Plato site's main items (site.py: NAV items with an "icon"): even-weighted buttons, each a line icon and a
-   label in the same weight, so the current page changes the fill only, never the size. Ask Socrates keeps its accent. */
-.topnav:has(> a.nav-btn) { gap: clamp(4px, 0.35vw, 10px); }
-.topnav > a.nav-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px clamp(10px, 0.55vw, 16px); font-weight: 600;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 24%, transparent); }
-.topnav > a.nav-btn[aria-current="page"], .topnav > a.nav-btn.nav-accent { box-shadow: none; }
+/* The Plato site's header (site.py: its main items carry an "icon", .nav-btn), Big and quiet: no bar and no boxed
+   buttons. The name, then quiet text links, small and muted; the current page in ink over a 2px orange underline.
+   Ask Socrates keeps a subtle accent (its colour). The brand is the way home, so the Home item stays in the phone
+   menu only. The icons stay in the phone menu too. */
+.topbar:has(.nav-btn) { background: transparent; color: var(--ink); border-radius: 0; border-bottom: 1px solid var(--line);
+  padding: clamp(8px, 0.6vw, 14px) 0 clamp(10px, 0.8vw, 18px); column-gap: clamp(20px, 2.2vw, 48px); }
+.topbar:has(.nav-btn) .brand, .topbar:has(.nav-btn) .brand:hover, .topbar:has(.nav-btn) .brand-logo { color: var(--ink); }
+.topbar:has(.nav-btn) .brand-tag { color: var(--faint); }
+.topnav:has(> a.nav-btn) { gap: 4px clamp(14px, 1.6vw, 32px); }
+.topbar:has(.nav-btn) .topnav > a, .topbar:has(.nav-btn) .nav-more > summary { display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 0 4px; border-radius: 0; background: transparent; box-shadow: none; font-size: var(--fs-small); font-weight: 400; color: var(--muted); }
+.topbar:has(.nav-btn) .topnav > a:hover, .topbar:has(.nav-btn) .nav-more > summary:hover { background: transparent; color: var(--ink); }
+.topbar:has(.nav-btn) .topnav > a[aria-current="page"] { background: transparent; color: var(--ink); font-weight: 500; box-shadow: inset 0 -2px 0 var(--orange); }
+.topbar:has(.nav-btn) .topnav > a.nav-accent { background: transparent; color: var(--orange-dark); font-weight: 500; }
+.topbar:has(.nav-btn) .topnav > a.nav-accent:hover { background: transparent; color: var(--orange); }
+.topbar:has(.nav-btn) .topnav .ext { color: var(--faint); }
+.topbar:has(.nav-btn) .nav-more.is-current > summary { color: var(--ink); box-shadow: inset 0 -2px 0 var(--orange); }
+.topnav > a.nav-btn .nav-ico, .topnav > a.nav-btn[href="/"] { display: none; }
 .nav-ico { width: 16px; height: 16px; flex: none; }
 .nav-panel .nav-btn { display: flex; align-items: center; gap: 10px; }
-@media (min-width: 861px) and (max-width: 1600px) {  /* one row with the Tour button: Home becomes its icon, the tagline goes */
+.topbar:has(.nav-btn) .theme-toggle { border-color: var(--line-2); color: var(--muted); }
+.topbar:has(.nav-btn) .theme-toggle:hover { background: var(--tint); color: var(--ink); }
+.topbar:has(.nav-btn) .nav-menu > summary { color: var(--ink); border-color: var(--line-2); font-weight: 500; }
+@media (min-width: 861px) and (max-width: 1600px) {  /* one row with the Tour button: the tagline goes */
   .topbar:has(.nav-btn) .brand-tag { display: none; }
-  .topnav > a.nav-btn[href="/"] { gap: 0; }
-  .topnav > a.nav-btn[href="/"] .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
-@media (min-width: 861px) and (max-width: 1500px) {  /* still one row at 1280 with every button: a little tighter, the same buttons */
-  .topbar:has(.nav-btn) { column-gap: 12px; }
-  .topbar:has(.nav-btn) .brand { margin-right: 0; }
-  .topnav:has(> a.nav-btn) { gap: 3px; }
-  .topnav:has(> a.nav-btn) > a, .topbar:has(.nav-btn) .nav-more > summary { padding-left: 7px; padding-right: 7px; font-size: 13px; }
-  .topnav > a.nav-btn { gap: 5px; }
-}
-@media (min-width: 861px) and (max-width: 1279px) {  /* too narrow for one row: logo, Tour and theme on top, the buttons below */
+@media (min-width: 861px) and (max-width: 1279px) {  /* too narrow for one row: logo, Tour and theme on top, the links below */
   .topbar:has(.nav-btn) .brand { order: 1; }
   .topbar:has(.nav-btn) .demo-btn { order: 2; margin-left: auto; }
   .topbar:has(.nav-btn) .theme-toggle { order: 3; }
   .topbar:has(.nav-btn) .topnav { order: 4; flex-basis: 100%; }
   .topbar:has(.nav-btn):not(:has(.demo-btn)) .theme-toggle { margin-left: auto; }
-}
-@media (min-width: 861px) and (max-width: 1000px) {  /* the buttons' row, still one line on a small tablet */
-  .topnav:has(> a.nav-btn) { gap: 2px; }
-  .topnav:has(> a.nav-btn) > a, .topbar:has(.nav-btn) .nav-more > summary { padding-left: 6px; padding-right: 6px; }
-  .topnav > a.nav-btn { gap: 4px; }
 }
 @media (max-width: 860px) {
   .topnav { display: none; }
@@ -355,11 +380,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .topbar { padding-left: 12px; padding-right: 10px; column-gap: 8px; }
   .brand { gap: 7px; margin-right: 0; }
   .brand-logo { width: 28px; height: 28px; margin-left: -2px; }
-  .brand-name b { font-size: 17px; }
+  .brand-name b { font-size: var(--fs-brand); }
   .nav-menu > summary { padding: 9px 10px; }
 }
 /* "Sister project: …" at the foot of every page (site.py; only when MLL_SISTER_URL is set) */
-.site-foot { max-width: var(--page-max); margin: 0 auto; padding: 4px var(--gutter) 28px; font-size: 13px; color: var(--muted); }
+.site-foot { max-width: var(--page-max); margin: 0 auto; padding: 4px var(--gutter) 28px; font-size: var(--fs-small); color: var(--muted); }
 .site-foot p { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
 .sister-link { font-weight: 600; }
 .sister-tag { color: var(--muted); }
@@ -375,7 +400,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 [data-theme-toggle] .tt-sun, :root[data-theme="dark"] [data-theme-toggle] .tt-moon { display: none; }
 /* the phone menu's row (THEME_MENU_ITEM): shown only where the bar has no room for the switch */
 .nav-theme { display: none; align-items: center; gap: 10px; width: 100%; margin: 4px 0; padding: 11px 12px; border: 0;
-  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 14px; text-align: left; cursor: pointer; }
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font-size: var(--fs-small); text-align: left; cursor: pointer; }
 .nav-theme:hover { background: var(--ground); }
 .nav-theme svg { width: 16px; height: 16px; flex: none; }
 .nav-theme .tt-to-dark, :root[data-theme="dark"] .nav-theme .tt-to-light { display: inline; }
@@ -399,37 +424,37 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(18px, 1.2vw, 30px); }
 .panel.stack { display: flex; flex-direction: column; gap: 14px; }
-.panel h2 { margin: 0; font-size: clamp(15px, calc(10px + 0.3vw), 18px); font-weight: 600; }
+.panel h2 { margin: 0; font-size: var(--fs-body); font-weight: 600; }
 .panel h2 .sub { font-weight: 400; color: var(--muted); }
 .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 14px; }
-.panel-head .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.lede { margin: 0; font-size: var(--fs-sm); color: var(--muted); max-width: var(--measure); }
-.footnote { margin: 24px 0 0; font-size: 12px; color: var(--muted); max-width: 120ch; }
+.panel-head .meta { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
+.lede { margin: 0; font-size: var(--fs-small); color: var(--muted); max-width: var(--measure); }
+.footnote { margin: 24px 0 0; font-size: var(--fs-small); color: var(--muted); max-width: 120ch; }
 
 /* --- Model Lab tabs (/lab and /lab/cut) ------------------------------------------------ */
 .lab-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 14px; border-bottom: 1px solid var(--line-2); }
-.lab-tabs a { padding: 10px 14px; font-size: 14px; font-weight: 500; color: var(--ink-2); text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.lab-tabs a { padding: 10px 14px; font-size: var(--fs-small); font-weight: 500; color: var(--ink-2); text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; }
 .lab-tabs a:hover { color: var(--ink); border-bottom-color: var(--line-2); }
 .lab-tabs a[aria-current="page"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--orange); }
-.lab-tabs .new { font-family: var(--mono); font-size: 10px; background: var(--orange-soft); color: var(--orange-dark); border-radius: 999px; padding: 2px 7px; margin-left: 6px; vertical-align: 1px; }
+.lab-tabs .new { font-family: var(--mono); font-size: var(--fs-label); background: var(--orange-soft); color: var(--orange-dark); border-radius: 999px; padding: 2px 7px; margin-left: 6px; vertical-align: 1px; }
 
 /* --- forms ---------------------------------------------------------------------------- */
-.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-small); font-weight: 500; min-width: 0; }
 .fields > .field { flex: 1 1 140px; }
-.field .hint, .stack > .hint { font-weight: 400; font-size: 12px; color: var(--muted); }
+.field .hint, .stack > .hint { font-weight: 400; font-size: var(--fs-small); color: var(--muted); }
 .fields { display: flex; flex-wrap: wrap; gap: 10px; }
 select, input[type="text"], input[type="search"], textarea {
   font-weight: 400; padding: 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel); width: 100%; min-height: 42px;
 }
 textarea { resize: vertical; }
-textarea.mono { font-family: var(--mono); font-size: 13px; }
+textarea.mono { font-family: var(--mono); font-size: var(--fs-label); }
 input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--blue); }
-.check { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 400; }
+.check { display: flex; gap: 8px; align-items: center; font-size: var(--fs-small); font-weight: 400; }
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
-legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
+legend { font-size: var(--fs-small); font-weight: 500; padding: 0; margin-bottom: 6px; }
 
 .seg { display: flex; gap: 4px; background: var(--ground); padding: 4px; border-radius: 10px; }
-.seg button, .seg label { flex: 1; font-size: 13px; padding: 10px 6px; border: 0; border-radius: 7px; background: transparent; color: var(--ink-2); cursor: pointer; text-align: center; }
+.seg button, .seg label { flex: 1; font-size: var(--fs-small); padding: 10px 6px; border: 0; border-radius: 7px; background: transparent; color: var(--ink-2); cursor: pointer; text-align: center; }
 .seg button[aria-pressed="true"], .seg input:checked + span { background: var(--panel); font-weight: 600; color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
 .seg label { padding: 0; display: flex; }
 .seg label span { flex: 1; padding: 10px 6px; border-radius: 7px; }
@@ -438,7 +463,7 @@ legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
 .seg button:disabled, .seg input:disabled + span { color: var(--faint); cursor: not-allowed; }
 
 /* --- buttons -------------------------------------------------------------------------- */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--btn-edge); background: var(--panel); color: var(--ink); text-decoration: none; cursor: pointer; min-height: 44px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: var(--fs-small); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--btn-edge); background: var(--panel); color: var(--ink); text-decoration: none; cursor: pointer; min-height: 44px; }
 .btn:hover { background: var(--soft); color: var(--ink); }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .btn-primary { background: var(--blue-fill); border-color: var(--blue-fill); color: var(--on-accent); }
@@ -449,28 +474,28 @@ legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
 .btn-dark:hover { background: var(--ink-hover); color: var(--on-ink); }
 .btn-record { background: var(--red-fill); border-color: var(--red-fill); color: var(--on-accent); }
 .btn-record:hover { background: var(--red-fill-hover); color: var(--on-accent); }
-.btn-ghost { border: 1px dashed var(--line-3); font-weight: 400; color: var(--ink-2); font-size: 13px; }
-.btn-small { padding: 7px 11px; min-height: 36px; font-size: 13px; }
+.btn-ghost { border: 1px dashed var(--line-3); font-weight: 400; color: var(--ink-2); font-size: var(--fs-small); }
+.btn-small { padding: 7px 11px; min-height: 36px; font-size: var(--fs-small); }
 .btn-block { width: 100%; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* --- pills, notes ----------------------------------------------------------------------- */
-.pill { display: inline-block; font-size: 11px; font-weight: 600; color: var(--on-ink); border-radius: 999px; padding: 3px 9px; background: var(--ink); white-space: nowrap; }
+.pill { display: inline-block; font-size: var(--fs-label); font-weight: 600; color: var(--on-ink); border-radius: 999px; padding: 3px 9px; background: var(--ink); white-space: nowrap; }
 .pill-kept { background: var(--green); }
 .pill-review { background: var(--amber); color: var(--on-amber); }
 .pill-excluded { background: var(--line); color: var(--ink-2); }
 .pill-sample { background: var(--amber); color: var(--on-amber); }
 .pill-soft { background: var(--ground); color: var(--ink-2); font-weight: 500; }
-.note { border-radius: 10px; padding: 12px 14px; font-size: 13px; background: var(--soft); border: 1px solid var(--line); }
+.note { border-radius: 10px; padding: 12px 14px; font-size: var(--fs-small); background: var(--soft); border: 1px solid var(--line); }
 .note-warn { background: var(--amber-soft); border-color: var(--amber-line); }
 .note-error { background: var(--red-soft); border-color: var(--red-line); color: var(--red-ink); }
 .note-ok { background: var(--green-soft); border-color: var(--green-line); color: var(--green-ink); }
 .note-sample { background: var(--amber-soft); border-color: var(--amber-line); color: var(--ink); }
 .note p { margin: 0; }
-.empty { padding: 28px 16px; text-align: center; color: var(--muted); font-size: 14px; border: 1px dashed var(--line-2); border-radius: 10px; }
+.empty { padding: 28px 16px; text-align: center; color: var(--muted); font-size: var(--fs-small); border: 1px dashed var(--line-2); border-radius: 10px; }
 
 .toast-zone { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; width: min(560px, calc(100% - 32px)); }
-.toast { background: var(--tip); color: var(--tip-ink); border-radius: 10px; padding: 12px 16px; font-size: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
+.toast { background: var(--tip); color: var(--tip-ink); border-radius: 10px; padding: 12px 16px; font-size: var(--fs-small); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
 .toast.error { background: var(--red-deep); }
 
 .progress { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
@@ -481,30 +506,30 @@ legend { font-size: 13px; font-weight: 500; padding: 0; margin-bottom: 6px; }
 
 /* --- cards ---------------------------------------------------------------------------- */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 11vw, 240px), 1fr)); gap: 12px; }
-.card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; background: var(--panel); text-align: left; padding: 0; font-size: 12px; color: var(--ink); }
+.card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; background: var(--panel); text-align: left; padding: 0; font-size: var(--fs-small); color: var(--ink); }
 button.card { cursor: pointer; }
 button.card:hover { border-color: var(--line-3); }
 .card[aria-pressed="true"], .card.selected { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
-.card .pic { aspect-ratio: 1 / 0.75; background: var(--soft); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--faint); overflow: hidden; }
+.card .pic { aspect-ratio: 1 / 0.75; background: var(--soft); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: var(--fs-label); color: var(--faint); overflow: hidden; }
 .card .pic img { width: 100%; height: 100%; object-fit: contain; background: var(--paper); }
 .card .body { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 .kv { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 8px; }
 .kv > span:first-child { color: var(--muted); }
 .kv > span:last-child { font-family: var(--mono); text-align: right; overflow-wrap: break-word; min-width: 0; margin-left: auto; }
-.card .word { font-weight: 600; font-size: 14px; }
-.flag { font-size: 11px; color: var(--orange-dark); background: var(--orange-soft); border-radius: 6px; padding: 3px 7px; align-self: flex-start; }
+.card .word { font-weight: 600; font-size: var(--fs-small); }
+.flag { font-size: var(--fs-label); color: var(--orange-dark); background: var(--orange-soft); border-radius: 6px; padding: 3px 7px; align-self: flex-start; }
 
 /* --- tables --------------------------------------------------------------------------- */
 .table-wrap { overflow-x: auto; position: relative; }  /* contains .sr-only cells, which are absolute */
-table.data { border-collapse: collapse; width: 100%; font-size: 13px; }
-table.data th { text-align: left; color: var(--muted); font-size: 12px; font-weight: 500; padding: 8px; white-space: nowrap; }
+table.data { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
+table.data th { text-align: left; color: var(--muted); font-size: var(--fs-small); font-weight: 500; padding: 8px; white-space: nowrap; }
 table.data td { padding: 8px; border-top: 1px solid var(--line); vertical-align: middle; }
-table.data select { min-height: 36px; padding: 6px 8px; font-size: 12px; width: auto; }
+table.data select { min-height: 36px; padding: 6px 8px; font-size: var(--fs-small); width: auto; }
 
 /* --- stacked bars and legends --------------------------------------------------------- */
 .stack-bar { display: flex; height: 16px; border-radius: 4px; overflow: hidden; gap: 2px; }
 .stack-bar > div { min-width: 2px; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--ink-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: var(--fs-small); color: var(--ink-2); }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
 
@@ -512,9 +537,9 @@ table.data select { min-height: 36px; padding: 6px 8px; font-size: 12px; width: 
 dialog { border: 0; border-radius: 14px; padding: 0; width: min(920px, calc(100% - 24px)); max-height: calc(100% - 24px); box-shadow: 0 0 0 1px var(--panel-edge), 0 24px 64px rgba(0, 0, 0, 0.3); color: var(--ink); background: var(--panel); }
 dialog::backdrop { background: var(--scrim); }
 .dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); z-index: 1; }
-.dialog-head h2 { margin: 0; font-size: 17px; }
+.dialog-head h2 { margin: 0; font-size: var(--fs-h3); font-weight: var(--fw-h3); }
 .dialog-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 16px; }
-.icon-btn { border: 1px solid var(--line-2); background: var(--panel); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: 18px; line-height: 1; }
+.icon-btn { border: 1px solid var(--line-2); background: var(--panel); border-radius: 8px; width: 40px; height: 40px; cursor: pointer; font-size: var(--fs-intro); line-height: 1; }
 
 @media (max-width: 720px) {
   .page { padding: 12px var(--gutter) 32px; }
@@ -523,33 +548,50 @@ dialog::backdrop { background: var(--scrim); }
   .layout > aside { max-width: none; }
   .cards { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
-/* the Plato series cards (rendered by web/site.py, also used on /plato) */
-.series-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(260px, 16vw, 360px)), 1fr)); gap: clamp(16px, 1vw, 24px); }
-.series-card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line-warm); border-radius: 16px; overflow: hidden; color: var(--ink); text-decoration: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-.series-card:hover { color: var(--ink); border-color: var(--ink); box-shadow: 0 10px 24px var(--shadow); }
-.series-art { display: flex; align-items: center; justify-content: center; height: clamp(132px, 7.5vw, 190px); background: var(--paper-mat); border-bottom: 1px solid var(--paper-line); color: var(--paper-ink); }
+/* the Plato series cards (rendered by web/site.py, also used on /plato): borderless and quiet. The picture on paper,
+   then the question (a card title), then its source and one muted line. */
+.series-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(260px, 16vw, 360px)), 1fr)); gap: var(--space-grid); }
+.series-card { position: relative; display: flex; flex-direction: column; gap: 14px; background: transparent; border: 0; border-radius: 0; color: var(--ink); text-decoration: none; }
+.series-card:hover { color: var(--ink); }
+.series-art { display: flex; align-items: center; justify-content: center; height: clamp(132px, 9vw, 240px); background: var(--paper-mat); border: 1px solid var(--paper-line); border-radius: 12px; overflow: hidden; color: var(--paper-ink); transition: border-color 0.2s ease; }
+.series-card:hover .series-art { border-color: var(--line-3); }
 .series-art svg { width: 120px; height: 90px; }
 .series-art img { width: 100%; height: 100%; object-fit: cover; }
 .series-art-blind > svg { display: none; }  /* its icon stands in on the landing page until the reveal (landing.css) */
-.series-body { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px 18px; flex: 1; }
-.series-q { font-size: clamp(19px, calc(13px + 0.5vw), 25px); font-weight: 700; line-height: 1.22; letter-spacing: -0.01em; }
-.series-src { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.series-finding { display: block; margin: 6px 0 0; font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
-.series-new { color: var(--orange-dark); font-weight: 600; }
-.series-go { position: absolute; right: 16px; bottom: 14px; font-size: 18px; color: var(--muted); }
-.series-card .series-body { padding-right: 40px; }
-.series-draw { margin: 0; font-size: 16px; color: var(--ink-2); }
+.series-body { display: flex; flex-direction: column; gap: 6px; padding: 0; flex: 1; }
+.series-q { font-size: var(--fs-h3); font-weight: var(--fw-h3); line-height: var(--lh-h3); letter-spacing: var(--ls-h3); }
+.series-card:hover .series-q { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+.series-src { font-size: var(--fs-label); color: var(--faint); }
+.series-finding { display: block; margin: 2px 0 0; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--muted); }
+.series-new { color: var(--orange-dark); font-weight: var(--fw-strong); }
+.series-go { display: none; }
+.series-draw { margin: 0; font-size: var(--fs-body); color: var(--ink-2); }
 
-/* A page's question over its big title ("What would Plato ask an AI?" over "Is there one ideal chair?"),
-   set as one composed title: the lead-in in the same sans at about 44% of the headline (never below
-   1.2rem, so on a phone it still reads as a lead-in), a short rule before it, a tight gap to the headline.
-   An optional second line (.kicker-q) names the question: "Question 1: …". */
-.title-pair { display: flex; flex-direction: column; min-width: 0; }
-.title-kicker { display: flex; flex-wrap: wrap; align-items: center; column-gap: 0.45em; margin: 0 0 0.32em;
-  font-family: var(--sans); font-size: max(1.2rem, calc(var(--fs-h1) * 0.44)); font-weight: 500; line-height: 1.2;
-  letter-spacing: -0.012em; color: var(--orange-dark); }
-.title-kicker::before { content: ""; flex: none; width: 1.1em; height: 2px; border-radius: 1px; background: currentColor; opacity: 0.85; }
-.title-kicker .kicker-q { flex-basis: 100%; margin-top: 0.25em; font-size: max(0.6em, 0.875rem); font-weight: 400; letter-spacing: 0; color: var(--ink-2); }
+/* --- The page kicker: "What would Plato ask an AI?" over every page's title -----------------------------------
+   Quiet: Plato's face on its paper circle (portraits.css), a thin rule in the accent, then the words, small and
+   muted. It is a label, not a heading, so it never competes with the title under it. There are no section
+   eyebrows: a section leads with its h2 alone, under a thin rule (.sec-rule, and each page's section class).
+   An optional second line (.kicker-q) names the question ("Question 1: …") in the same small, quieter style. */
+.title-pair { display: flex; flex-direction: column; gap: clamp(14px, calc(6px + 1.1vw), 28px); min-width: 0; }
+.title-pair > h1, .title-pair > h2 { margin: 0; }
+.title-kicker { --kicker-rule: var(--orange); display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; row-gap: 4px; margin: 0;
+  font-family: var(--sans); font-size: var(--fs-small); font-weight: 400; line-height: var(--lh-small); letter-spacing: 0; color: var(--muted); }
+.title-kicker::before { content: ""; flex: none; width: 32px; height: 1px; background: var(--kicker-rule); }
+.title-kicker .kicker-face { order: -1; }  /* the face, then the rule, then the words */
+.title-kicker .kicker-q { flex-basis: 100%; font-size: var(--fs-small); font-weight: 400; color: var(--faint); }
 .title-kicker .kicker-q a { color: inherit; }  /* "Plato series", the way back on every series page */
-.series-draw a { font-weight: 600; }
+.series-draw a { font-weight: var(--fw-strong); }
+
+/* --- Section headings: the h2 alone, under a thin rule ------------------------------------------------------ */
+.sec-rule { border-top: 1px solid var(--line); padding-top: var(--space-sec); }
+
+/* --- "How we know": a quiet disclosure under a first screen's numbers (plato_firstlook.js) ------------------- */
+details.how-we-know { font-size: var(--fs-small); color: var(--muted); }
+details.how-we-know > summary { display: inline; list-style: none; cursor: pointer; color: var(--muted);
+  text-decoration: underline; text-decoration-color: var(--line-2); text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
+details.how-we-know > summary::-webkit-details-marker { display: none; }
+details.how-we-know > summary::marker { content: ""; }
+details.how-we-know > summary:hover { color: var(--ink); text-decoration-color: currentColor; }
+details.how-we-know[open] > summary { color: var(--ink-2); }
+details.how-we-know > :not(summary) { margin: 12px 0 0; max-width: var(--measure); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
 

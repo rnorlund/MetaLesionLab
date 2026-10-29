@@ -211,6 +211,9 @@
   function thingName(c) { return isIdea(c) ? 'drawing of ' + c.phrase : c.label; }
   function ideaHook(c) {
     var t = c.top, n = c.n_ai;
+    if (c.key === 'god' && t.n === n) {  // what is drawn, said plainly and neutrally
+      return 'Muse Image drew the same figure all ' + n + ' times: a bearded man with long hair and a halo, as in Western religious art.';
+    }
     return t.n === n ? 'Muse Image drew ' + t.emblem + ' all ' + n + ' times.'
       : 'Muse Image drew ' + t.emblem + ' in ' + t.n + ' of its ' + n + ' drawings.';
   }

@@ -29,15 +29,15 @@
     var p1 = d.predictions && d.predictions.P1;
     var agree = M.agreement;
     return {
-      answer: (at > 8 ? 'Yes, by our count: ' : 'Not on the hands: ') + 'Meta’s image AI drew 10 past 11, with all 12 numbers, on ' + e.all_three +
-        ' of its ' + M.n + ' clocks, and ' + (ten ? 'the 10:10 of watch adverts on ' + ten + '.' : 'never the 10:10 of watch adverts.'),
+      answer: (at > 8 ? 'Yes: ' : 'Not on the hands: ') + 'Meta’s image AI drew 10 past 11, with all 12 numbers, on ' + e.all_three +
+        ' of its ' + M.n + ' clocks.',
       stats: [
         { kind: 'dots', o: { k: full.k, n: full.n, cols: 35, tone: 'orange', value: pct(full.k / full.n), unit: '',
-            label: 'of the adults got all three points for their clock: ' + full.k + ' of ' + full.n },
-          q: 'Marked by the study’s own raters. ' + P.two_points.k + ' more got two of the three points: a circle, all 12 numbers, and the hands at 10 past 11.' },
+            label: 'of adults got all three points' },
+          q: full.k + ' of ' + full.n + ' adults got all three points for their clock. Marked by the study’s own raters. ' + P.two_points.k + ' more got two of the three points: a circle, all 12 numbers, and the hands at 10 past 11.' },
         { kind: 'dots', o: { k: at, n: M.n, cols: 8, tone: 'blue', label: 'of the AI’s clocks show 10 past 11, by our count' },
           verdict: p1 ? { tone: p1.supported ? 'yes' : 'no', text: 'We expected 7 or fewer' } : null,
-          q: (ten ? ten + ' show 10:10. ' : 'None shows 10:10. ') + (sw ? cap(words(sw)) + ' have the long and short hands the wrong way round' : '') +
+          q: 'Counted by us, not by software. ' + (ten ? ten + ' show 10:10, the watch-advert time. ' : 'None shows 10:10. ') + (sw ? cap(words(sw)) + ' have the long and short hands the wrong way round' : '') +
             (oth ? (sw ? ', and ' : '') + words(oth) + ' has a third hand' : '') + '. Meta’s chat AI, Muse Spark, marking the same clocks, counted only ' +
             count(s.times, '11:10') + ': it mixed up which hand was which.' },
         { kind: 'pbars', o: { value: e.contour.k + ' · ' + e.numbers.k + ' · ' + e.hands.k, unit: 'of ' + M.n,

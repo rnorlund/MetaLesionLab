@@ -1,0 +1,8 @@
+# SHA-256 of the by-eye codes (canonical JSON: sorted keys, no spaces), written before any automatic
+# scoring (docs/plato_cave_twins_plan.md). Files: PlatosChair/cave_twins/codes/codes_<sheet>.json
+ea09cee351c22b74c5066e3934a29359d2bebcbe12ab6b7fd6c66fe60ddb287c  codes_describe.json  (48 items)
+e7183f27d6de0eb94802222734d75eb7e6edc9e78914a09e51d510fa20d72e4b  notes_describe.json
+26e24d614dda5291d565d2db69db39523d136f1ddd242d27b7d8fa274a3565da  codes_chair.json  (48 items)
+1182f0b56f989403aeb095a7206b7bf69b36c54e865cc0b22f8aa38038ed78af  notes_chair.json
+ea447047744a5a7fa74007b9ad38bebd98a9da4a4503408b6d28e7fe44802af7  codes_clock.json  (48 items)
+1ce0bc322fb82d3436ecee2fa72dfdd5f7a291fda8c72864d7e447e0e1419b0a  notes_clock.json

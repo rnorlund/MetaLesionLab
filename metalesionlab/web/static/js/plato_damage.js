@@ -6,8 +6,8 @@
   var NS = 'http://www.w3.org/2000/svg';
   var LANG = 'var(--blue)', DRAW = 'var(--orange)', GRID = 'var(--line)', AXIS = 'var(--line-3)', INK = 'var(--ink)';
   var S = { data: null, kind: null, method: 'noise', level: 3 };  // open on a damaged pair: the striking picture first
-  var OUTCOME = { correct: 'the asked kind', plain: 'a plain, ordinary one', other_kind: 'another kind',
-                  cant_tell: 'can’t tell, or not one', specific: 'a specific kind' };
+  var OUTCOME = { correct: 'the kind we asked for', plain: 'a plain, ordinary one', other_kind: 'another kind',
+                  cant_tell: 'can’t tell, or not a chair', specific: 'a specific kind' };
 
   function $(id) { return document.getElementById(id); }
   function el(tag, attrs, kids) {
@@ -31,8 +31,20 @@
   function f2(x) { return x == null ? '–' : (x < 0 ? '−' : '') + Math.abs(x).toFixed(2); }
   function pct(x) { return x == null ? '–' : Math.round(x * 100) + '%'; }
   function pts(x) { return x == null ? '–' : (x < 0 ? '−' : '+') + Math.abs(Math.round(x * 100)) + ' pts'; }
-  function ciPts(c) { return c ? '95% CI ' + pts(c[0]) + ' to ' + pts(c[1]) : ''; }
+  function ciPts(c) { return c ? 'likely range ' + pts(c[0]) + ' to ' + pts(c[1]) : ''; }
   function excludesZero(c) { return c && (c[0] > 0 || c[1] < 0); }
+  // "probably between 4 and 20 points" when the range is all one side of zero; the signed range otherwise
+  function between(c) {
+    if (!c) return '';
+    var a = Math.abs(Math.round(c[0] * 100)), b = Math.abs(Math.round(c[1] * 100));
+    return excludesZero(c) ? 'probably between ' + Math.min(a, b) + ' and ' + Math.max(a, b) + ' points' : 'somewhere between ' + pts(c[0]) + ' and ' + pts(c[1]);
+  }
+  // the data's own summary sentences, in the page's words (never its numbers)
+  function plainWords(t) {
+    return String(t).replace(/\bSDXL\b/g, 'Stable Diffusion XL').replace(/\bdoodles\b/g, 'drawings').replace(/\bdose\b/g, 'damage step')
+      .replace(/\bLanguage damage\b/g, 'Damage to the words part').replace(/\bDrawing damage\b/g, 'Damage to the drawing part').replace(/\bintact\b/g, 'undamaged');
+  }
+  function partName(label) { return String(label).replace(/^language\b/, 'words part').replace(/^drawing\b/, 'drawing part'); }
 
   // ---------- slider ----------
   function fams() { var m = S.data.slider.methods[S.method]; return [m.lang, m.draw]; }
@@ -40,9 +52,9 @@
   function readout(p) {
     if (!p) return '';
     var bits = [];
-    if (p.change != null && p.change > 0.0005) bits.push('changed ' + f2(p.change));
+    if (p.change != null && p.change > 0.0005) bits.push('picture changed ' + f2(p.change));
     if (p.outcome) bits.push('Glimmer: <b>' + (OUTCOME[p.outcome] || p.outcome) + '</b>');
-    if (p.name) bits.push('named it “' + p.name.replace(/[<>&]/g, '') + '”');
+    if (p.name) bits.push('calls it “' + p.name.replace(/[<>&]/g, '') + '”');
     return bits.join(' · ');
   }
 
@@ -58,13 +70,13 @@
     var kindLabel = sl.kinds.filter(function (k) { return k.key === S.kind; })[0].label;
     $('img-lang').src = a.img;
     $('img-draw').src = b.img;
-    $('img-lang').alt = 'SDXL asked for a ' + kindLabel + ', language part damaged, ' + (S.level ? 'level ' + S.level : 'intact') +
-      (a.name ? '; Glimmer names it ' + a.name : '');
-    $('img-draw').alt = 'SDXL asked for a ' + kindLabel + ', drawing part damaged, ' + (S.level ? 'level ' + S.level : 'intact') +
-      (b.name ? '; Glimmer names it ' + b.name : '');
+    $('img-lang').alt = 'Stable Diffusion XL asked for a ' + kindLabel + ', words part damaged, ' + (S.level ? 'step ' + S.level : 'undamaged') +
+      (a.name ? '; Glimmer calls it ' + a.name : '');
+    $('img-draw').alt = 'Stable Diffusion XL asked for a ' + kindLabel + ', drawing part damaged, ' + (S.level ? 'step ' + S.level : 'undamaged') +
+      (b.name ? '; Glimmer calls it ' + b.name : '');
     $('read-lang').innerHTML = S.level ? lev[S.level].label + ' · ' + readout(a) : readout(a);
     $('read-draw').innerHTML = S.level ? levD[S.level].label + ' · ' + readout(b) : readout(b);
-    var txt = S.level === 0 ? 'intact' : 'level ' + S.level + ' of ' + max;
+    var txt = S.level === 0 ? 'undamaged' : 'step ' + S.level + ' of ' + max;
     $('level-out').textContent = txt;
     r.setAttribute('aria-valuetext', txt);
   }
@@ -178,14 +190,14 @@
       points.push({ x: q.d_intact, y: q[measure] + offset, lo: q[measure + '_ci'][0] + offset,
         hi: q[measure + '_ci'][1] + offset,
         tip: (fam.indexOf('zero') > 0 ? Math.round(q.dose * 100) + '% of neurons off' : 'noise × ' + q.dose) +
-          '<br>changed ' + f2(q.d_intact) + '<br>value ' + f2(q[measure] + offset) });
+          '<br>picture changed ' + f2(q.d_intact) + '<br>value ' + f2(q[measure] + offset) });
     });
     return { name: name, colour: colour, dash: dash, points: points };
   }
 
   function famPair() { var m = S.data.slider.methods[S.method]; return [m.lang, m.draw]; }
 
-  function tile(host, q, m, unitFn, langWord, drawWord) {
+  function tile(host, q, m, unitFn, langWord, drawWord, predicted) {
     if (!m) return;
     var t = el('div', { class: 'pd-tile' });
     t.appendChild(el('div', { class: 'q', text: q }));
@@ -198,8 +210,8 @@
     t.appendChild(el('div', { class: 'ci', text: 'difference ' + pts(m.difference) + ' (' + ciPts(m.ci95) + ')' }));
     var ok = excludesZero(m.ci95) && Math.sign(m.difference) === m.predicted_sign;
     var rev = excludesZero(m.ci95) && Math.sign(m.difference) === -m.predicted_sign;
-    t.appendChild(el('div', { class: 'verdict', text: ok ? 'As predicted.' : rev ? 'Opposite to the prediction.' :
-      'Not distinguishable at this n.' }));
+    t.appendChild(el('div', { class: 'verdict', text: (predicted ? 'We predicted ' + predicted + ' ' : '') + (ok ? 'As predicted.' :
+      rev ? 'The opposite happened.' : 'Too close to call with this many pictures.') }));
     host.appendChild(t);
   }
 
@@ -209,28 +221,30 @@
     var prim = (d.matched['text-zero vs unet-zero'] || {}).delta_correct;
     var note = $('diss-primary');
     if (prim && note) {
-      note.textContent = 'Pre-registered primary test (neurons switched off): at equal picture change, language damage left ' +
-        Math.abs(Math.round(prim.difference * 100)) + ' points fewer chairs that Glimmer reads as the asked kind (' + ciPts(prim.ci95) +
-        '). Showing below: ' + (S.method === 'zero' ? 'neurons switched off (primary).' : 'noise in the neurons (secondary); switch at the top.');
+      note.textContent = 'Our planned main test (neurons switched off): when both kinds of damage had changed the picture equally, damage to the words part left ' +
+        Math.abs(Math.round(prim.difference * 100)) + ' points fewer chairs that Glimmer reads as the kind we asked for (' + between(prim.ci95) +
+        '). Below: ' + (S.method === 'zero' ? 'neurons switched off (the main test).' : 'noise added to neurons (a second test); switch with the buttons at the top.');
     }
-    tile(tiles, 'Still the kind we asked for (Glimmer), change from intact at matched picture change', m.delta_correct,
-      pts, 'language', 'drawing');
-    tile(tiles, 'Still a clean line drawing (Glimmer’s yes), change from intact', m.delta_p_clean, pts, 'language', 'drawing');
-    tile(tiles, '“Is this a drawing of a chair?” (Glimmer’s yes), change from intact', m.delta_p_is_a, pts, 'language', 'drawing');
+    tile(tiles, 'Still the kind we asked for, says Glimmer: change from undamaged', m.delta_correct,
+      pts, 'words part', 'drawing part', 'the words part would lose the kind faster.');
+    tile(tiles, 'Still a clean line drawing, says Glimmer: change from undamaged', m.delta_p_clean, pts, 'words part', 'drawing part',
+      'the drawing part would lose clean lines faster.');
+    tile(tiles, 'Glimmer says yes to “Is this a drawing of a chair?”: change from undamaged', m.delta_p_is_a, pts, 'words part', 'drawing part',
+      'the words part would lose “chair” faster.');
     var charts = $('diss-charts'); charts.innerHTML = '';
-    var c1 = el('div', { class: 'pd-chart' }, [el('h3', { text: 'What it is: still the asked kind' })]);
-    var c2 = el('div', { class: 'pd-chart' }, [el('h3', { text: 'How it is drawn: Glimmer says “clean line drawing”' })]);
+    var c1 = el('div', { class: 'pd-chart' }, [el('h3', { text: 'What it draws: still the kind we asked for' })]);
+    var c2 = el('div', { class: 'pd-chart' }, [el('h3', { text: 'How it draws: Glimmer says “clean line drawing”' })]);
     charts.appendChild(c1); charts.appendChild(c2);
-    var xlab = 'how much the picture changed (DINOv2 distance to its intact twin)';
-    lineChart(c1, { label: 'Share of chairs still read as the asked kind, by how much damage changed the picture',
-      series: [series(f[0], 'delta_correct', 1, 'language', LANG, false), series(f[1], 'delta_correct', 1, 'drawing', DRAW, true)],
+    var xlab = 'how much the picture changed from its undamaged twin';
+    lineChart(c1, { label: 'Share of chairs still read as the kind we asked for, by how much damage changed the picture',
+      series: [series(f[0], 'delta_correct', 1, 'words part', LANG, false), series(f[1], 'delta_correct', 1, 'drawing part', DRAW, true)],
       xlab: xlab, ymin: 0, ymax: 1, yfmt: pct });
-    lineChart(c2, { label: 'Change in Glimmer’s P(clean line drawing), by how much damage changed the picture',
-      series: [series(f[0], 'delta_p_clean', 0, 'language', LANG, false), series(f[1], 'delta_p_clean', 0, 'drawing', DRAW, true)],
+    lineChart(c2, { label: 'Change in how sure Glimmer is that it is a clean line drawing, by how much damage changed the picture',
+      series: [series(f[0], 'delta_p_clean', 0, 'words part', LANG, false), series(f[1], 'delta_p_clean', 0, 'drawing part', DRAW, true)],
       xlab: xlab, yfmt: f2 });
-    $('diss-legend').innerHTML = '<span><i style="border-color:' + LANG + '"></i>language part damaged</span>' +
+    $('diss-legend').innerHTML = '<span><i style="border-color:' + LANG + '"></i>words part damaged</span>' +
       '<span><i class="dash" style="border-color:' + DRAW + '"></i>drawing part damaged</span>' +
-      '<span>shaded: 95% CI over 64 pictures</span>';
+      '<span>shaded: the likely range (95% interval) over 64 pictures</span>';
     if (d.diss_caveat) $('diss-caveat').textContent = d.diss_caveat;
   }
 
@@ -242,29 +256,32 @@
     var left = el('div');
     var tz = pooled['text-zero'] && pooled['text-zero'].delta_d_proto, tn = pooled['text-noise'] && pooled['text-noise'].delta_d_proto;
     var closer = (tz && tz.ci95[1] < 0) || (tn && tn.ci95[1] < 0);
-    left.appendChild(el('p', { class: 'pd-verdict', text: closer ? 'Partly: some language damage moves the chairs toward the plain chair.' :
-      'No. Damaged language does not bring back the plain chair. It wanders off to other things.' }));
-    var txt = 'Distance to the plain chair (the average of SDXL’s own “a chair” pictures), change from intact, averaged over the damage levels: ';
+    left.appendChild(el('p', { class: 'pd-verdict', text: closer ? 'Partly: some damage to the words part moves the chairs toward the plain chair.' :
+      'No. Damage to the words part does not bring back the plain chair. The pictures wander off to other things.' }));
+    var txt = 'How much farther the damaged pictures are from the plain chair than the undamaged ones, averaged over the damage steps ' +
+      '(0 = no change; positive = farther). The plain chair is the average of the AI’s own pictures of just “a chair”, and a Meta AI that ' +
+      'compares pictures (DINOv2) measures the distance. ';
     ['text-zero', 'text-noise', 'unet-zero', 'unet-noise'].forEach(function (fam, i) {
       var v = pooled[fam] && pooled[fam].delta_d_proto;
       if (!v) return;
-      txt += (i ? '; ' : '') + (fam.indexOf('text') === 0 ? 'language' : 'drawing') + (fam.indexOf('zero') > 0 ? ' (off) ' : ' (noise) ') +
+      txt += (i ? '; ' : '') + (fam.indexOf('text') === 0 ? (i ? 'words part' : 'Words part') : 'drawing part') + (fam.indexOf('zero') > 0 ? ', neurons off: ' : ', noise: ') +
         (v.mean >= 0 ? '+' : '−') + Math.abs(v.mean).toFixed(2) + ' [' + f2(v.ci95[0]) + ', ' + f2(v.ci95[1]) + ']';
     });
-    left.appendChild(el('p', { text: txt + '. Positive means farther from the plain chair.' }));
-    if (m) left.appendChild(el('p', { text: 'At matched picture change, language minus drawing damage: ' + (m.difference >= 0 ? '+' : '−') +
-      Math.abs(m.difference).toFixed(3) + ' (95% CI ' + f2(m.ci95[0]) + ' to ' + f2(m.ci95[1]) + '). The prediction was below zero.' }));
+    left.appendChild(el('p', { text: txt + '. In brackets: the likely range (95% interval).' }));
+    if (m) left.appendChild(el('p', { text: 'Compared at equal picture change, words damage minus drawing damage: ' + (m.difference >= 0 ? '+' : '−') +
+      Math.abs(m.difference).toFixed(3) + ' (likely range ' + f2(m.ci95[0]) + ' to ' + f2(m.ci95[1]) + '). We predicted a number below zero: ' +
+      'words damage moving the chairs closer to the plain chair.' }));
     host.appendChild(left);
-    var c = el('div', { class: 'pd-chart' }, [el('h3', { text: 'Distance to the plain chair, change from intact' })]);
+    var c = el('div', { class: 'pd-chart' }, [el('h3', { text: 'Distance from the plain chair: change from undamaged' })]);
     host.appendChild(c);
-    lineChart(c, { label: 'Change in distance to the plain-chair prototype by how much the picture changed',
-      series: [series('text-zero', 'delta_d_proto', 0, 'language, off', LANG, false), series('text-noise', 'delta_d_proto', 0, 'language, noise', LANG, true),
+    lineChart(c, { label: 'Change in distance from the plain chair, by how much the picture changed',
+      series: [series('text-zero', 'delta_d_proto', 0, 'words, off', LANG, false), series('text-noise', 'delta_d_proto', 0, 'words, noise', LANG, true),
         series('unet-zero', 'delta_d_proto', 0, 'drawing, off', DRAW, false), series('unet-noise', 'delta_d_proto', 0, 'drawing, noise', DRAW, true)],
       xlab: 'how much the picture changed', yfmt: f2 });
     // what it turned into
     var names = $('names'); names.innerHTML = '';
-    [['text-noise', 'lang', 'Language part, noise'], ['text-zero', 'lang', 'Language part, neurons off'],
-     ['unet-noise', 'draw', 'Drawing part, noise'], ['unet-zero', 'draw', 'Drawing part, neurons off']].forEach(function (x) {
+    [['text-noise', 'lang', 'Words part, noise added'], ['text-zero', 'lang', 'Words part, neurons off'],
+     ['unet-noise', 'draw', 'Drawing part, noise added'], ['unet-zero', 'draw', 'Drawing part, neurons off']].forEach(function (x) {
       var list = (d.names || {})[x[0]];
       if (!list || !list.length) return;
       var card = el('div', { class: 'card ' + x[1] }, [el('h3', { text: x[2] + ': what Glimmer called the most damaged chairs' })]);
@@ -282,19 +299,22 @@
     host.innerHTML = '';
     var left = el('div'), right = el('div', { class: 'pd-chart' });
     var ml = g.matched_loss || {}, cond = g.conditions || {};
-    left.appendChild(el('p', { text: 'Intact, Glimmer picks the right kind for ' + pct(g.intact_accuracy) + ' of ' + g.n_pictures +
-      ' doodles of 22 things. For the ' + g.n_intact_correct + ' it got right, we counted what the damaged Glimmer answers instead. ' +
-      'We only trust an answer that stays the same when the options are listed in reverse order; the rest are letter habits, not readings.' }));
+    left.appendChild(el('p', { text: 'Undamaged, Glimmer picks the right kind for ' + pct(g.intact_accuracy) + ' of ' + g.n_pictures +
+      ' drawings of 22 things. For the ' + g.n_intact_correct + ' it got right, we counted what the damaged Glimmer answers instead. ' +
+      'We only trust an answer that stays the same when we list the options in reverse order. The rest are habits, like always picking ' +
+      'the same letter, not real readings.' }));
     var L = [0.1, 0.2, 0.3].map(function (d) { return cond['language-mlp-mean@' + d]; });
     if (L[0] && L[2]) {
-      left.appendChild(el('p', { class: 'pd-verdict', text: 'When a damaged Glimmer still answers steadily, its mistakes are “a plain, ordinary …”, almost never another specific kind. Language-neuron damage: ' +
-        L.map(function (x) { return pct(x.strict_plain.mean); }).join(', ') + ' of the specific kinds become plain at the three doses.' }));
+      left.appendChild(el('p', { class: 'pd-verdict', text: 'When a damaged Glimmer still answers steadily, its mistakes are “a plain, ordinary …”, almost never another specific kind. With its language neurons damaged, ' +
+        L.map(function (x) { return pct(x.strict_plain.mean); }).join(', ').replace(/, ([^,]*)$/, ' and $1') + ' of the specific kinds become “plain” at the three damage steps.' }));
     }
     if (ml['language-mlp-mean']) {
       var a = ml['language-mlp-mean'].strict_plain, v = ml['visual-mlp-mean'];
-      left.appendChild(el('p', { text: 'That looks like the slide from the specific to the general seen in semantic dementia, but it is not a sign of language damage: the same number of random neurons, compared at the same loss of right answers, does the same (difference ' +
-        pts(a.difference) + ', ' + ciPts(a.ci95) + '). It is a generic fallback of a damaged reader.' +
-        (v ? ' Damage to the seeing neurons is different: almost no plain answers (' + pts(v.strict_plain.difference) + ' vs. random) and many more letter guesses (' + pts(v.strict_order_bias.difference) + ', ' + ciPts(v.strict_order_bias.ci95) + ').' : '') }));
+      left.appendChild(el('p', { text: 'That looks like the slide from the specific to the general seen in semantic dementia. But it is not a sign of language damage: ' +
+        'switching off the same number of random neurons, compared at the same loss of right answers, does the same (difference ' +
+        pts(a.difference) + ', ' + ciPts(a.ci95) + '). It is what any damaged reader falls back on.' +
+        (v ? ' Damage to the seeing neurons is different: almost no “plain” answers (' + pts(v.strict_plain.difference) + ' against random) and many more ' +
+          'letter guesses (' + pts(v.strict_order_bias.difference) + ', ' + ciPts(v.strict_order_bias.ci95) + ').' : '') }));
     }
     host.appendChild(left);
     host.appendChild(right);
@@ -345,22 +365,24 @@
     var body = el('tbody');
     Object.keys(doses).map(Number).sort(function (a, b) { return a - b; }).forEach(function (d) {
       var r = doses[d].read, w = doses[d].draw;
-      body.appendChild(el('tr', {}, [el('td', { text: d ? Math.round(d * 100) + '%' : 'none (intact)' }),
+      body.appendChild(el('tr', {}, [el('td', { text: d ? Math.round(d * 100) + '%' : 'none (undamaged)' }),
         el('td', { class: 'num', text: r ? pct(r.correct.mean) + ' of ' + r.n : '–' }),
         el('td', { class: 'num', text: w ? pct(w.kind_kept.mean) + ' of ' + w.n : 'pending' }),
         el('td', { class: 'num', text: w ? f2(w.d_intact.mean) : '–' })]));
     });
     tb.appendChild(body);
     var left = el('div');
-    if (j.summary) left.appendChild(el('p', { class: 'pd-verdict', text: j.summary }));
+    if (j.summary) left.appendChild(el('p', { class: 'pd-verdict', text: plainWords(j.summary).replace(/\bJanus reads\b/, 'Janus-Pro reads') }));
     left.appendChild(el('div', { class: 'pd-tablewrap' }, tb));
-    left.appendChild(el('p', { class: 'pd-caveat', text: 'Reading: 40 Muse Image doodles of named chairs, hats and birds, multiple choice. Drawing: 8 chair kinds and the plain chair × 4 seeds; “draws the asked kind” means the drawing sits nearest its own kind among the intact drawings (DINOv2). Small n: a first look.' }));
+    left.appendChild(el('p', { class: 'pd-caveat', text: 'Reading: 40 Muse Image drawings of named chairs, hats and birds, picking the kind from a list. ' +
+      'Drawing: 8 kinds of chair and the plain chair, each from 4 random starting points. “Draws the asked kind” means the drawing looks most like ' +
+      'the undamaged drawings of its own kind, to a Meta AI that compares pictures (DINOv2). Few pictures: a first look only.' }));
     host.appendChild(left);
     if (j.strip && j.strip.length) {
       var strip = el('div', { class: 'pd-jstrip' });
       j.strip.forEach(function (p) {
-        strip.appendChild(el('figure', {}, [el('img', { src: p.img, alt: 'Janus-Pro asked for a wheelchair, ' + (p.dose ? Math.round(p.dose * 100) + '% of language neurons off' : 'intact'), loading: 'lazy' }),
-          el('figcaption', { text: p.dose ? Math.round(p.dose * 100) + '% off' : 'intact' })]));
+        strip.appendChild(el('figure', {}, [el('img', { src: p.img, alt: 'Janus-Pro asked for a wheelchair, ' + (p.dose ? Math.round(p.dose * 100) + '% of language neurons off' : 'undamaged'), loading: 'lazy' }),
+          el('figcaption', { text: p.dose ? Math.round(p.dose * 100) + '% off' : 'undamaged' })]));
       });
       host.appendChild(strip);
     }
@@ -372,7 +394,7 @@
     if (!c) { host.textContent = 'Still running.'; return; }
     host.innerHTML = '';
     var left = el('div'), right = el('div');
-    if (c.summary) c.summary.forEach(function (t) { left.appendChild(el('p', { text: t })); });
+    if (c.summary) c.summary.forEach(function (t) { left.appendChild(el('p', { text: plainWords(t).replace(/^Intact /, 'Undamaged ') })); });
     if (c.features) {
       var tb = el('table', { class: 'pd-table' });
       var head = el('tr', {}, [el('th', { text: 'Condition' })]);
@@ -380,7 +402,7 @@
       tb.appendChild(el('thead', {}, head));
       var body = el('tbody');
       c.features.forEach(function (r) {
-        var tr = el('tr', {}, [el('td', { text: r.label })]);
+        var tr = el('tr', {}, [el('td', { text: r.cond === 'intact' ? 'undamaged' : partName(r.label) })]);
         r.values.forEach(function (v) { tr.appendChild(el('td', { class: 'num', text: pct(v) })); });
         body.appendChild(tr);
       });
@@ -391,11 +413,12 @@
     ['3_00', '8_45'].forEach(function (t) {
       var grid = el('div', { class: 'pd-clockgrid' });
       grid.appendChild(el('div', { class: 'h', text: t.replace('_', ':') }));
-      ['intact', 'level 1', 'level 2', 'level 3'].forEach(function (h) { grid.appendChild(el('div', { class: 'h', text: h })); });
-      [['text-' + method, 'lang', 'language'], ['unet-' + method, 'draw', 'drawing']].forEach(function (x) {
+      ['undamaged', 'step 1', 'step 2', 'step 3'].forEach(function (h) { grid.appendChild(el('div', { class: 'h', text: h })); });
+      [['text-' + method, 'lang', 'words'], ['unet-' + method, 'draw', 'drawing']].forEach(function (x) {
         var seq = (strip[x[0]] || {})[t] || [];
         grid.appendChild(el('div', { class: 'r ' + x[1], text: x[2] }));
-        seq.forEach(function (p) { grid.appendChild(el('img', { src: p.img, alt: 'Clock asked to show ' + t.replace('_', ':') + ', ' + x[2] + ' part damaged, ' + p.label, loading: 'lazy' })); });
+        seq.forEach(function (p) { grid.appendChild(el('img', { src: p.img, alt: 'Clock asked to show ' + t.replace('_', ':') + ', ' +
+          (p.label === 'intact' ? 'undamaged' : x[2] + ' part damaged, ' + p.label), loading: 'lazy' })); });
       });
       right.appendChild(grid);
     });
@@ -416,7 +439,7 @@
       q.appendChild(el('b', { text: lead.split.head + ' ' }));
       q.appendChild(document.createTextNode(lead.split.text + ' ('));
       q.appendChild(el('a', { href: '#diss-h', text: 'details' }));
-      q.appendChild(document.createTextNode('). The readers are AI models; an analogy, not a claim about people.'));
+      q.appendChild(document.createTextNode('). The judges are AI models, and this is an analogy, not a claim about people.'));
     }
     renderHeroClocks();
   }
@@ -429,16 +452,16 @@
     var lang = ((c.strip[m.lang] || {})[t] || []), draw = ((c.strip[m.draw] || {})[t] || []);
     if (!lang.length || !draw.length) { fig.hidden = true; return; }
     row.innerHTML = '';
-    [[lang[0], 'intact', ''], [lang[lang.length - 1], 'language part', 'lang'], [draw[draw.length - 1], 'drawing part', 'draw']].forEach(function (x) {
+    [[lang[0], 'undamaged', ''], [lang[lang.length - 1], 'words part', 'lang'], [draw[draw.length - 1], 'drawing part', 'draw']].forEach(function (x) {
       var p = x[0];
       row.appendChild(el('figure', { class: 'pd-heroclock ' + x[2] }, [
         el('img', { src: p.img, width: 180, height: 180, loading: 'lazy',
-          alt: 'A clock asked to show 8:45, ' + (x[2] ? x[1] + ' damaged, ' + p.label : 'intact') }),
+          alt: 'A clock asked to show 8:45, ' + (x[2] ? x[1] + ' damaged, ' + p.label : 'undamaged') }),
         el('figcaption', {}, [el('b', { text: x[1] }), x[2] ? el('span', { text: p.label }) : null])]));
     });
     $('hero-clocks-cap').innerHTML = '';
-    $('hero-clocks-cap').appendChild(document.createTextNode('And clocks: SDXL asked for “a simple clock face showing 8:45”, intact and at the strongest damage. '));
-    $('hero-clocks-cap').appendChild(el('a', { href: '#clock-h', text: 'All the clocks' }));
+    $('hero-clocks-cap').appendChild(document.createTextNode('And clocks: the same AI asked for “a simple clock face showing 8:45”, undamaged and at the heaviest damage to each part. '));
+    $('hero-clocks-cap').appendChild(el('a', { href: '#clock-h', text: 'See all the clocks' }));
     fig.hidden = false;
   }
 

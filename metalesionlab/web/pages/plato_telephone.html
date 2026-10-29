@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plato’s Telephone · {{BRAND}}</title>
-<meta name="description" content="An AI passes a picture down a chain: Muse Spark describes it, Muse Image draws the description, ten times over. Does every chair end as the same textbook chair? Watch 30 chains drift.">
+<meta name="description" content="A game of telephone between two of Meta’s AIs: one describes a drawing of a chair, the other draws the description, ten times over. Does every chair end up as the same plain chair? Watch 30 chains drift.">
 <meta property="og:title" content="Plato’s Telephone · {{BRAND}}">
-<meta property="og:description" content="Describe it, draw it, describe the drawing, ten times. What survives when an AI copies its own copies?">
+<meta property="og:description" content="One AI describes a drawing, another draws the description, ten times over. What survives when AIs copy their own copies?">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,57 +31,58 @@
   </div>
   <!--#epigraph:republic-597e-->
   <div class="fl-ctx">
-    <p>Muse Spark looks at a drawing and describes it in a sentence or two. Muse Image draws that description. Spark describes the new drawing, and so on, ten times.</p>
+    <p>Telephone is the party game where a whispered message changes as it passes down a line. We played it with two of Meta’s AIs. Meta’s chat AI, Muse Spark, looks at a drawing of a chair and describes it in a sentence or two. Meta’s image AI, Muse Image, draws that description. Spark describes the new drawing, and so on, ten times.</p>
+    <p>Asked just for “a chair”, Muse Image nearly always draws the same plain wooden chair with a slatted back: its textbook chair. Plato thought every real chair copies one ideal chair, its Form, and called a painting a copy of a copy. Would copying pull every chair toward Muse Image’s textbook chair?</p>
   </div>
-  <p class="fl-answer" id="hero-answer">Copied ten times, most chairs drifted away from Muse’s textbook chair (only the high chair fell into it), and each chair’s name faded before the word “chair” did.</p>
+  <p class="fl-answer" id="hero-answer">Copied ten times by two AIs, most chairs drifted from the AI’s usual chair, and their kind was forgotten first.</p>
   <figure class="fl-visual tp-drift" aria-labelledby="drift-cap">
     <div class="tp-drift-rows" id="hero-chains"></div>
-    <figcaption class="fl-cap" id="drift-cap">Muse Spark describes a drawing, Muse Image draws the description, ten times over. Two of the 30 chains, every second copy.</figcaption>
+    <figcaption class="fl-cap" id="drift-cap">Two of our 30 chains: the starting picture and every second copy. In each round, Meta’s chat AI, Muse Spark, describes the last picture, and Meta’s image AI, Muse Image, draws the description. At the end of each row: Muse Image’s textbook chair, the plain chair it draws when asked just for “a chair”. Only the high chair fell into it.</figcaption>
   </figure>
   <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
-  <p class="fl-note" id="hero-qual">Spark’s sentence is the bottleneck: what it doesn’t say can’t survive. Eight starting chairs and two controls, three chains each.</p>
+  <p class="fl-note" id="hero-qual">Only Spark’s sentence passes from one picture to the next, so anything it leaves out is lost. A small test: 8 starting chairs plus 2 things that aren’t chairs, for comparison, with 3 chains each.</p>
 </section>
 
 <nav class="tp-jump" aria-label="On this page">
-  <a href="#all-chains">All 30 chains</a>
-  <a href="#form">Do the chains end at the textbook chair?</a>
+  <a href="#all-chains">Watch all 30 chains</a>
+  <a href="#form">Do copies drift to the textbook chair?</a>
   <a href="#converge">Do different chairs end up alike?</a>
-  <a href="#words">Last words</a>
-  <a href="#plato">Copies of copies</a>
+  <a href="#words">Which words survive?</a>
+  <a href="#plato">Plato on copies of copies</a>
   <a href="#method">Method and caveats</a>
 </nav>
 
 <section class="tp-sec tp-allchains" id="all-chains" aria-labelledby="all-chains-h">
-  <h2 id="all-chains-h">Watch every chain</h2>
-  <p class="tp-lede">Each row below is one chain: a starting drawing, then Spark’s description drawn by Muse Image, ten times over. Slide or press play to watch what survives.</p>
+  <h2 id="all-chains-h">Watch all 30 chains of copies</h2>
+  <p class="tp-lede">Each row is one chain. It starts from one of Muse Image’s own drawings of a particular kind of chair. Then Spark describes the picture and Muse Image draws the description, ten times. Slide or press play to see what survives. Each starting picture went through three separate chains: switch between them with the Chain buttons.</p>
 
   <div class="tp-player" id="player">
     <button type="button" class="tp-play" id="play" aria-pressed="false"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg><span>Play</span></button>
     <div class="tp-slider">
-      <input type="range" id="gen" min="0" max="10" step="1" value="10" aria-label="Generation, from the starting picture (0) to 10 copies later" aria-describedby="gen-label">
+      <input type="range" id="gen" min="0" max="10" step="1" value="10" aria-label="Which copy to show, from the starting picture (0) to the tenth copy" aria-describedby="gen-label">
       <div class="tp-ticks" id="ticks" aria-hidden="true"></div>
     </div>
-    <p class="tp-gen-label" id="gen-label" aria-live="polite">Generation 10</p>
-    <div class="tp-chains" role="radiogroup" aria-label="Which of the three chains per start" id="chains"></div>
+    <p class="tp-gen-label" id="gen-label" aria-live="polite">Copy 10 of 10</p>
+    <div class="tp-chains" role="radiogroup" aria-label="Which of the three chains from each starting picture" id="chains"></div>
   </div>
 
   <div class="tp-rows" id="rows"><p class="tp-note">Loading the chains…</p></div>
 
   <div class="tp-answer" id="answer">
-    <h3>Short answer</h3>
+    <h3>The short answer</h3>
     <ul id="answer-list"><li>Loading the results…</li></ul>
   </div>
 </section>
 
 <section class="tp-sec" id="form" aria-labelledby="form-h">
-  <h2 id="form-h">Do the chains end at the textbook chair?</h2>
+  <h2 id="form-h">Do the copies drift toward Muse Image’s textbook chair?</h2>
   <div class="tp-form-intro">
     <figure class="tp-default">
       <img src="/static/img/plato_telephone/default_chair.webp" width="176" height="176" loading="lazy"
-           alt="Muse Image’s textbook chair: a slat-back dining chair in three-quarter view, drawn as a quick marker doodle.">
-      <figcaption>Muse’s textbook chair: its most typical drawing for plain “a chair”</figcaption>
+           alt="Muse Image’s textbook chair: a plain wooden dining chair with a slatted back, seen at an angle, drawn as a quick marker doodle.">
+      <figcaption>Muse Image’s textbook chair: its most typical drawing when asked just for “a chair”</figcaption>
     </figure>
-    <p class="tp-sub" id="form-sub">How far each picture sits from Muse Image’s default chair (the average of the 16 chairs it draws when asked just for “a chair”), measured by Meta’s DINOv2 image model. Lower is closer. The flat line is how close Muse’s own default chairs sit to their average: a chain that fell into the textbook chair would end there, as two high-chair chains did.</p>
+    <p class="tp-sub" id="form-sub">Each line shows how different the pictures look from the textbook chair, copy by copy. A Meta AI that compares pictures (DINOv2) does the judging: 0 would mean identical, so lower is closer. To be exact, we compare with the average of the 16 chairs Muse Image drew when asked just for “a chair”. The flat line shows how close those 16 chairs sit to their own average. A chain that turned into the textbook chair would end on that line, as two high-chair chains did.</p>
   </div>
   <div class="tp-legend" id="form-legend"></div>
   <div class="tp-chart" id="form-chart"></div>
@@ -91,7 +92,7 @@
 
 <section class="tp-sec" id="converge" aria-labelledby="converge-h">
   <h2 id="converge-h">Do different chairs end up alike?</h2>
-  <p class="tp-sub" id="converge-sub">If every chain fell toward one Form, chains from different starting chairs would end up close together. Blue: how far apart chains from different starting chairs are. Orange: how far apart the three chains from the same chair are (they start as the same picture).</p>
+  <p class="tp-sub" id="converge-sub">If copying pulled every chair toward one ideal chair (Plato’s Form: the one perfect version of a thing, which every real one copies), chains from different starting chairs would end up looking alike. Blue: how different chains from different starting chairs look from one another. Orange: how different the three chains from the same starting chair look from one another. They begin as the same picture, so orange starts at 0.</p>
   <div class="tp-legend" id="converge-legend"></div>
   <div class="tp-chart" id="converge-chart"></div>
   <p class="tp-note" id="converge-note"></p>
@@ -99,43 +100,43 @@
 </section>
 
 <section class="tp-sec" id="words" aria-labelledby="words-h">
-  <h2 id="words-h">Last words: what the descriptions keep</h2>
-  <p class="tp-sub" id="words-sub">Anything Spark doesn’t say can’t survive. For each generation: does the description still say “chair”, does it still name the kind (rocking, throne, beanbag …), and does Spark, shown the picture, still pick that kind from a list of 16 kinds of chair?</p>
+  <h2 id="words-h">Which words survive the copying?</h2>
+  <p class="tp-sub" id="words-sub">Only Spark’s words pass from one picture to the next, so anything it doesn’t say is lost. At each copy we checked three things. Does the description still say “chair”? Does it still name the kind of chair (rocking, throne, beanbag …)? And when we show Spark the picture with a list of 16 kinds of chair, does it still pick the right kind?</p>
   <div class="tp-legend" id="words-legend"></div>
   <div class="tp-chart" id="words-chart"></div>
   <p class="tp-note" id="words-note"></p>
   <div class="tp-two">
-    <div><h3>When each chair lost its name</h3><div id="loss-table"></div></div>
-    <div><h3>Words the chains picked up and dropped</h3><div id="word-shift"></div></div>
+    <div><h3>When each chain stopped naming its kind of chair</h3><p class="tp-note">The copy whose description first left out the kind. “Kept” means it never did; “never said” means not even Spark’s description of the starting picture named it.</p><div id="loss-table"></div></div>
+    <div><h3>Words that became more, and less, common</h3><div id="word-shift"></div></div>
   </div>
   <details class="tp-numbers"><summary>The numbers as a table</summary><div id="words-table"></div></details>
 </section>
 
 <section class="tp-sec" id="plato" aria-labelledby="plato-h">
-  <h2 id="plato-h">Copies of copies</h2>
+  <h2 id="plato-h">Plato on copies of copies</h2>
   <div class="tp-prose">
-    <p>In <i>Republic</i> X, Socrates ranks three beds: the Form, the carpenter’s bed, and the painter’s picture of the carpenter’s bed, a copy of a copy.</p>
+    <p>In Plato’s <i>Republic</i> (Book X), Socrates ranks three beds. First the Form: the one perfect, ideal bed, which every real bed copies. Then the carpenter’s bed. Then the painter’s picture of the carpenter’s bed, which is a copy of a copy.</p>
     <div id="passages"></div>
-    <p>In the <i>Parmenides</i>, Plato turns the worry on the Forms themselves: if a thing is a likeness of its Form, the likeness seems to need yet another Form, and so on without end. A telephone chain is the practical version: every picture here is a copy of a description of a copy.</p>
-    <p><b>People have played this game.</b> Frederic Bartlett (<i>Remembering</i>, 1932) passed drawings from person to person, each redrawing the last. In his best-known chain an ambiguous drawing turned into a conventional face. That chain is famous, but Carbon and Albrecht (2012) ran five experiments and did not find a systematic drift toward the face. In iterated learning, each learner learns from the previous learner’s output. Made-up languages passed along such chains became easier to learn and more structured (Kirby, Cornish &amp; Smith, 2008), and theory and experiments suggest that chains settle on what the learners already expect, their prior (Griffiths &amp; Kalish, 2007; Xu &amp; Griffiths, 2010). On that view, where a chain ends up shows the copier’s own expectations.</p>
-    <p><b>Why it matters for AI.</b> Models trained on earlier models’ output can lose the rare parts of the data, the tails of the distribution: “model collapse” (Shumailov et al., 2024, <i>Nature</i>). Our chains involve no training, only two models copying each other at inference time, so this asks a smaller question: are unusual chairs the tails that get lost?</p>
+    <p>In another dialogue, the <i>Parmenides</i>, Plato turns the worry on the Forms themselves. If a thing is a likeness of its Form, that likeness seems to need yet another Form, and so on without end. A chain of copies is the practical version: every picture here is a copy of a description of a copy.</p>
+    <p><b>People have played this game.</b> In 1932 the psychologist Frederic Bartlett passed drawings from person to person, each redrawing the last one (<i>Remembering</i>). In his best-known chain, an unclear drawing turned into an ordinary face. That chain is famous, but when Carbon and Albrecht (2012) tried it in five experiments, they found no consistent drift toward the face. Researchers have also passed made-up languages from learner to learner, each learning from the one before (this is called iterated learning). The languages became easier to learn and more regular (Kirby, Cornish &amp; Smith, 2008). Theory and experiments suggest such chains settle on what the learners already expect (Griffiths &amp; Kalish, 2007; Xu &amp; Griffiths, 2010). On that view, where a chain ends up shows the copier’s own expectations.</p>
+    <p><b>Why it matters for AI.</b> When new AIs are trained on text or pictures made by older AIs, they can lose the rare, unusual examples: a problem called “model collapse” (Shumailov et al., 2024, <i>Nature</i>). Our chains involve no training, only two finished AIs copying each other. So we ask a smaller question: are unusual chairs the rare examples that get lost?</p>
   </div>
 </section>
 
 <section class="tp-sec tp-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
-    <li><b>Starts.</b> Eight of Muse Image’s own named-kind doodles from <a href="/plato">Plato’s Chair</a> (rocking chair, throne, beanbag, wheelchair, office chair, folding chair, high chair, Adirondack chair) and two controls that aren’t chairs (a top hat and a cuckoo clock). Three independent chains per start, ten generations each: 300 new pictures.</li>
-    <li><b>Each step.</b> Muse Spark (<code>muse-spark-1.3</code>, minimal reasoning) gets the current picture and: <i>“Describe this drawing so someone could redraw it. One or two sentences. Don’t name an artist.”</i> Muse Image (<code>muse-image-1.0</code>) gets Plato’s Chair’s doodle prompt with the description in place of the object: <i>“A quick simple doodle sketch of {description}, black marker on plain white, like a 20-second drawing, no text, no shading.”</i></li>
-    <li><b>Measures.</b> Meta’s DINOv2 image model compares pictures (cosine distance between their embeddings, after cropping each to its ink). Muse’s default chair is the average of the 16 doodles it drew for plain “a chair”. Spark also labeled each picture’s kind of chair from a list of 16 (or 12 kinds of hat and clock). CIs come from resampling the 8 starting chairs and then the chains within each.</li>
-    <li><b>Planned first.</b> The design and predictions were committed before any chain was run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_telephone_plan.md">the plan</a>). Results are reported whichever way they came out (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_telephone.md">the write-up</a>).</li>
+    <li><b>Starting pictures.</b> Eight chair doodles that Muse Image drew for <a href="/plato">Plato’s Chair</a> when asked for a particular kind of chair (rocking chair, throne, beanbag, wheelchair, office chair, folding chair, high chair, Adirondack chair). For comparison, two things that aren’t chairs (a top hat and a cuckoo clock): our controls. Three separate chains per starting picture, ten copies (generations) each: 300 new pictures.</li>
+    <li><b>Each round.</b> Muse Spark (version <code>muse-spark-1.3</code>, with its thinking before answering set to the minimum) gets the current picture and these words: <i>“Describe this drawing so someone could redraw it. One or two sentences. Don’t name an artist.”</i> Muse Image (<code>muse-image-1.0</code>) gets Plato’s Chair’s usual doodle request, with Spark’s description in place of the object: <i>“A quick simple doodle sketch of {description}, black marker on plain white, like a 20-second drawing, no text, no shading.”</i></li>
+    <li><b>Measures.</b> DINOv2, a Meta AI that compares pictures, turns each picture (cropped to its ink) into a list of numbers that describes how it looks. The difference between two pictures is the cosine distance between their lists (0 = identical). The textbook chair, as measured, is the average of the 16 doodles Muse Image drew for plain “a chair”. Spark also labeled each picture’s kind of chair from a list of 16 kinds (or 12 kinds of hat, and of clock). The likely ranges (95% confidence intervals) come from bootstrapping: repeating the analysis on many random re-draws of the 8 starting chairs, then of the chains within each.</li>
+    <li><b>Planned first.</b> We wrote down the design and our predictions before running any chain (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_telephone_plan.md">the plan</a>). We report each result however it came out (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_telephone.md">the write-up</a>).</li>
     <li><b>Caveats.</b>
       <ul>
-        <li>Spark’s sentence is the bottleneck: what it doesn’t say can’t survive, and what it stresses gets drawn bigger. This measures the pair, describer and drawer, not Muse Image alone.</li>
-        <li>One describing prompt, one drawing prompt, one reasoning setting. A shorter description, or a different drawer, could behave differently.</li>
-        <li>Turning a picture into words always loses things, so no chain is expected to stay identical.</li>
-        <li>Eight starting chairs and two controls are few. The controls are one picture each.</li>
-        <li>This is how Muse behaves by default under one protocol, not a general property of Meta’s models.</li>
+        <li>Only Spark’s sentence passes from one picture to the next: what it doesn’t say can’t survive, and what it stresses gets drawn bigger. So this measures the pair, describer and drawer, not Muse Image alone.</li>
+        <li>One way of asking for a description, one way of asking for a drawing, one thinking setting. Shorter descriptions, or a different drawing AI, could behave differently.</li>
+        <li>Turning a picture into words always loses something, so no chain is expected to stay identical.</li>
+        <li>Eight starting chairs and two comparison pictures are few. Each comparison is a single picture.</li>
+        <li>This is how these two Muse models behave with their usual settings in one set-up, not a general property of Meta’s AIs.</li>
       </ul></li>
   </ul>
   <p class="tp-credit" id="credits"></p>
