@@ -1,0 +1,47 @@
+/* Hero carousel (static/js/hero-carousel.js): a first screen's pictures as a slideshow. Big and quiet: no box, pictures on
+   paper (--paper), a caption in the muted colour, small controls. Every slide shares one grid cell, so the area is as
+   tall as the tallest slide and nothing moves when the slide changes. --hc-interval is how long a slide stays (the
+   script sets it from its `interval`). Motion only with prefers-reduced-motion: no-preference. Tokens only.
+   Without the script, .hc-static (the first slide, written out in the page) shows as it is. */
+.hc-static { display: flex; flex-direction: column; gap: 12px; }
+.hc, .hc-static { --hc-btn: clamp(36px, calc(30px + 0.5vw), 46px); }
+.hc { --hc-interval: 7s; display: flex; flex-direction: column; gap: 14px; min-width: 0; border-radius: 14px; }
+.hc:focus { outline: none; }
+.hc:focus-visible { outline: 3px solid var(--focus); outline-offset: 8px; }
+.hc-slides { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; touch-action: pan-y; }
+.hc-slide { grid-area: 1 / 1; margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; opacity: 0; visibility: hidden; }
+.hc-slide.is-active { opacity: 1; visibility: visible; }
+.hc-strip { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); gap: clamp(6px, 0.8vw, 16px); }
+.hc-pic { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.hc-paper { display: block; background: var(--paper); border-radius: 12px; overflow: hidden; aspect-ratio: 1 / 1; }
+.hc-paper img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.hc-lab { font-size: var(--fs-label); line-height: 1.3; color: var(--muted); text-align: center; }
+.hc-cap { margin: 0; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: 1.3; color: var(--ink-2); }
+.hc-cap a { color: inherit; text-decoration-color: var(--line-3); text-underline-offset: 0.2em; }
+
+.hc-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.hc-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--hc-btn); height: var(--hc-btn); padding: 0;
+  border: 1px solid var(--line-3); border-radius: 999px; background: transparent; color: var(--ink-2); cursor: pointer; }
+.hc-btn:hover { color: var(--ink); border-color: var(--faint); }
+.hc-btn svg { width: 12px; height: 12px; }
+.hc-i-play { display: none; }
+.hc-toggle.is-stopped .hc-i-pause { display: none; }
+.hc-toggle.is-stopped .hc-i-play { display: block; }
+.hc-btn:focus-visible, .hc-dot:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.hc-dots { display: flex; align-items: center; }
+.hc-dot { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: var(--hc-btn); padding: 0; border: 0; background: transparent; cursor: pointer; }
+.hc-pip { position: relative; display: block; width: 10px; height: 10px; border-radius: 999px; border: 1px solid var(--faint); overflow: hidden; }
+.hc-dot[aria-current="true"] .hc-pip { width: 34px; }
+.hc-fill { position: absolute; inset: 0; background: var(--orange); transform-origin: 0 50%; transform: scaleX(0); }
+.hc-dot[aria-current="true"] .hc-fill { transform: none; }
+.hc:not(.is-stopped) .hc-dot[aria-current="true"] .hc-fill { animation: hc-fill var(--hc-interval) linear both; }
+.hc.is-held .hc-dot[aria-current="true"] .hc-fill { animation-play-state: paused; }
+@keyframes hc-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hc-slide { transition: opacity 600ms ease, visibility 0s linear 600ms; }
+  .hc-slide.is-active { transition: opacity 600ms ease, visibility 0s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hc-fill { animation: none !important; }
+}

@@ -66,7 +66,8 @@ def test_first_screen_asks_the_question(client):
     assert "switched off some of their artificial neurons, or added random noise to them" in text(hero)[:first + 200]
     assert 'data-passage="republic-596a"' in hero  # a verified epigraph: a common name and its idea or form
     assert 'class="fl-answer"' in hero and "<b>what</b>" in hero and "<b>how</b>" in hero
-    for i in ("film-rows", "hero-stats", "hero-qual"):
+    assert "data-hero-carousel" in hero  # the picture area is the hero carousel (its first slide is written out)
+    for i in ("hero-stats", "hero-qual"):
         assert f'id="{i}"' in hero, i
     assert "/static/js/plato_firstlook.js" in page and "/static/js/statviz.js" in page and "/static/js/plato_damaged.js" in page
     assert "It is a comparison, not a claim about people." in hero
@@ -113,7 +114,7 @@ def text(html):
 
 
 def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
-    ids, d, ideas = first_screen(client, tmp_path, ("hero-stats", "hero-qual", "film-rows"))
+    ids, d, ideas = first_screen(client, tmp_path, ("hero-stats", "hero-qual"))
     s = stats(ids["hero-stats"])
     assert len(s) == 3
     # 1. language damage loses the asked kind faster (the pre-registered primary test of /plato/damage)
@@ -150,21 +151,16 @@ def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
     assert 'href="/plato/damage#diss-h"' in ids["hero-qual"] and 'href="/plato/damage#proto-h"' in ids["hero-qual"]
 
 
-def test_the_picture_is_the_rocking_chair_that_becomes_a_car(client, tmp_path):
-    ids, d, _ = first_screen(client, tmp_path, ("film-rows",))
-    film = ids["film-rows"]
-    sl = d["slider"]
-    kind = next(k for k in sl["kinds"] if "rocking" in k["key"])
-    rows = re.findall(r'<div class="dm-row (\w+)"[^>]*>(.*?)</ol></div>', film, re.S)
-    assert [r for r, _ in rows] == ["lang", "draw"]
-    for (row, html), fam in zip(rows, (sl["methods"]["noise"]["lang"], sl["methods"]["noise"]["draw"])):
-        frames = sl["pictures"][kind["key"]][fam][:4]
-        assert re.findall(r'<img src="([^"]+)"', html) == [f["img"] for f in frames], row
-        assert all((STATIC / f["img"][len("/static/"):]).is_file() for f in frames)
-    lang = sl["pictures"][kind["key"]][sl["methods"]["noise"]["lang"]]
-    last = re.findall(r'<li class="dm-frame last">(.*?)</li>', rows[0][1], re.S)[0]
-    assert lang[3]["name"] == "car" and "“car”" in last  # Glimmer's own word for the most damaged picture shown
-    assert "“rocking chair”" in rows[0][1]  # Glimmer's "rockingchair", spaced like the kind
+def test_the_picture_is_a_carousel_that_starts_on_the_rocking_chair_that_becomes_a_car(client):
+    page = client.get("/damaged").text
+    cfg = json.loads(re.search(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', page, re.S).group(1))
+    first = cfg["slides"][0]
+    assert first["caption"] == "rocking chair \u2192 car" and len(cfg["slides"]) == 4
+    for sl in cfg["slides"]:
+        assert len(sl["caption"].split()) <= 10
+        for im in sl["images"]:
+            assert (STATIC / im["src"][len("/static/"):]).is_file(), im["src"]
+    assert "hc-static" in page and "rocking_chair_text-noise_3.webp" in page  # the first slide shows without JavaScript
 
 
 # --- the cards ----------------------------------------------------------------------------------------------------
@@ -215,7 +211,7 @@ JARGON = [r"\bSDXL\b", r"\bUNet\b", r"text encoder", r"\bCI\b", r"\bpts\b", r"[P
 
 def test_the_hub_speaks_plain_words(client, tmp_path):
     """No unexplained jargon anywhere a visitor reads on the hub: the first screen as drawn, its alt texts, and the cards."""
-    ids, _, _ = first_screen(client, tmp_path, ("hero-stats", "hero-qual", "film-rows"))
+    ids, _, _ = first_screen(client, tmp_path, ("hero-stats", "hero-qual"))
     main = main_of(client.get("/damaged").text)
     main = re.sub(r'<figure class="epigraph.*?</figure>', "", main, flags=re.S)  # Plato's words stay verbatim
     shown = text(main) + " ".join(text(v) for v in ids.values())
