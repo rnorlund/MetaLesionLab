@@ -122,8 +122,10 @@
 .tp-drift-said span { color: var(--muted); }
 .tp-allchains .tp-lede { max-width: var(--measure); }
 @media (max-width: 560px) {
-  .tp-drift-frames { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 8px; }
-  .tp-drift-frames figure.ref { padding-left: 0; border-left: 0; }
+  /* time runs left to right on every screen: a swipeable strip, never a wrapped grid */
+  .tp-drift-frames { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; scrollbar-width: thin; }
+  .tp-drift-frames figure { flex: 0 0 22%; scroll-snap-align: start; }
+  .tp-drift-frames figure.ref { padding-left: 8px; }
 }
 
 /* --- /plato/telephone and /plato/lifespan: the short-answer list now sits in the section below the first screen -- */
@@ -131,7 +133,14 @@
 .tp-allchains, .ls-grow { gap: 18px; }
 
 /* --- /plato/lifespan: who draws a chair, and how (people, Muse Image, Stable Diffusion's first and last stage) --- */
-.ls-who-rows { display: flex; flex-direction: column; gap: clamp(8px, 0.8vw, 18px); }
+.ls-who-rows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(8px, 0.8vw, 18px) clamp(12px, 1.4vw, 28px); }
+.ls-who-row.people, .ls-who-row.muse { grid-column: 1 / -1; }
+.ls-who-row.sd { justify-content: space-between; }
+/* the two Stable Diffusion rows are training time: the first version at the left, the later one at the right */
+@media (max-width: 640px) {
+  .ls-who-rows { display: flex; flex-wrap: wrap; }
+  .ls-who-row.sd { flex: 1 1 100%; }
+}
 .ls-who-row { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .ls-who-row figcaption { display: flex; align-items: center; flex-wrap: wrap; gap: 0 6px; font-size: var(--fs-small); color: var(--muted); }
 .ls-who-row figcaption b { color: var(--ink); font-weight: 600; }
@@ -141,3 +150,18 @@
 .ls-who-row.sd .key { background: var(--sd, var(--green)); }
 .ls-who-row img { width: 100%; max-width: 1218px; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line);
   background: var(--paper, #fbfaf5); }
+
+/* Wide first screen (.fl-wide, /damaged and /plato/damage only): the text spans the page left to right (kicker, title,
+   then the answer at a readable measure) and the carousel's row of pictures runs underneath, full width. The numbers
+   below keep their row of three. */
+.fl.fl-wide > .title-pair h1 { max-width: none; text-wrap: balance; }
+.fl.fl-wide .fl-answer { max-width: 58ch; }
+@media (min-width: 960px) {
+  .fl.fl-side.fl-wide {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "title" "answer" "visual" "stats" "note" "quote" "ctx";
+  }
+  .fl.fl-wide .fl-visual { align-self: stretch; }
+  .fl.fl-wide .pd-visual { grid-template-columns: minmax(0, 1fr); }
+}

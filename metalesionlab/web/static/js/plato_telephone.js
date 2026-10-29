@@ -94,14 +94,14 @@
             'Average change in their difference from it: ' + signed(t1.change.mean, f2) + ', ' + between(t1.change.ci95, f2) + '.' },
         q: 'Chains of copies that ended farther from the textbook chair than they started. We predicted the copies would drift toward it. ' + p1 + ': their average difference from it (0 = identical) went from ' + f2(t1.g0) + ' to ' +
           f2(t1.g10) + (clear(t1.change.ci95) ? '.' : ', no clear pull either way.') },
-      { kind: 'bars', verdict: t2.supported ? { tone: 'yes', text: 'As predicted' } : apart ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not supported' },
-        o: { values: [t2.g0, t2.g10], labels: ['start', 'copy 10'], tones: ['muted', 'blue'], digits: 2, value: f2(t2.g10), unit: 'from ' + f2(t2.g0),
+      { kind: 'bars', ask: 'Difference between chains from different chairs', verdict: t2.supported ? { tone: 'yes', text: 'As predicted' } : apart ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not supported' },
+        o: { values: [t2.g0, t2.g10], labels: ['At the start', 'After 10 copies'], tones: ['muted', 'blue'], digits: 2,
           label: 'difference between chains from different chairs',
           alt: 'The difference between chains from different starting chairs went from ' + f2(t2.g0) + ' at the start to ' + f2(t2.g10) +
             ' after ten copies. Even the three chains of one chair, which start as the same picture, end ' + f2(t2.within_g10.mean) + ' apart.' },
         q: 'The difference between chains from different starting chairs (0 = identical). We predicted different chairs would end up alike. ' + p2 + ' (by ' + signed(t2.change.mean, f2) + ', ' + between(t2.change.ci95, f2) + ').' },
-      { kind: 'bars', verdict: t3.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'part', text: 'Not supported' },
-        o: { values: [k, c], labels: ['kind of chair', '“chair”'], tones: ['blue', 'orange'], max: N, digits: 1, value: k.toFixed(1) + ' vs ' + c.toFixed(1), unit: '',
+      { kind: 'bars', ask: 'Copies until the kind of chair is lost', verdict: t3.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'part', text: 'Not supported' },
+        o: { values: [k, c], labels: ['The kind of chair', 'The word “chair”'], tones: ['blue', 'orange'], max: N, digits: 1, suffix: ' copies',
           label: 'copies until the kind of chair is lost',
           alt: 'Over ' + cc.length + ' chains, Spark’s descriptions first left out the kind of chair at copy ' + k.toFixed(1) + ' on average, and the word chair at copy ' +
             c.toFixed(1) + '.' },

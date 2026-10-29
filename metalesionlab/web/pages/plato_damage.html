@@ -16,6 +16,8 @@
 <link rel="stylesheet" href="/static/css/statviz.css">
 <link rel="stylesheet" href="/static/css/plato_firstlook.css">
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
+<link rel="stylesheet" href="/static/css/hero-carousel.css">
+<link rel="stylesheet" href="/static/css/findings.css">
 </head>
 <body class="plato-damage">
 <a class="skip" href="#main">Skip to content</a>
@@ -26,7 +28,7 @@
 
 <main id="main" tabindex="-1">
 
-<section class="fl fl-side pd-hero" aria-labelledby="hero-h">
+<section class="fl fl-side fl-wide pd-hero" aria-labelledby="hero-h">
   <div class="title-pair">
     <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to an AI’s idea of a chair when we damage it? · our own question · <a href="/plato">Plato series</a></span></p>
     <h1 id="hero-h">Plato’s Chair, damaged</h1>
@@ -37,7 +39,249 @@
     <p class="fl-small">Damage the words part and the rocking chair becomes a room, a car or a person, never a plain chair. Damage the drawing part and the lines dissolve, but the rocking chair survives more often. We predicted this split before the experiment; it held only in part (see <a href="#diss-h">Does it forget what to draw, or how?</a>).</p>
   </div>
   <p class="fl-answer" id="hero-answer">Damage its word-reading part and an AI forgets <b>what</b> to draw; damage its painting part and it forgets <b>how</b>.</p>
-  <div class="fl-visual pd-visual">
+  <figure class="fl-visual pd-visual" data-hero-carousel data-layout="row" aria-label="Four things an AI draws, with more damage to the words or drawing part">
+    <script type="application/json">{
+ "slides": [
+  {
+   "caption": "rocking chair → car",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/dense/rocking_0.webp",
+     "alt": "A rocking chair drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_1.webp",
+     "alt": "A rocking chair with the words part damaged, step 1 of 9",
+     "label": "noise × 0.2"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_2.webp",
+     "alt": "A rocking chair with the words part damaged, step 2 of 9",
+     "label": "noise × 0.3"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_3.webp",
+     "alt": "A rocking chair with the words part damaged, step 3 of 9",
+     "label": "noise × 0.4"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_4.webp",
+     "alt": "A rocking chair with the words part damaged, step 4 of 9",
+     "label": "noise × 0.5"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_5.webp",
+     "alt": "A rocking chair with the words part damaged, step 5 of 9",
+     "label": "noise × 0.6"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_6.webp",
+     "alt": "A rocking chair with the words part damaged, step 6 of 9",
+     "label": "noise × 0.7"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_7.webp",
+     "alt": "A rocking chair with the words part damaged, step 7 of 9",
+     "label": "noise × 0.8"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_8.webp",
+     "alt": "A rocking chair with the words part damaged, step 8 of 9",
+     "label": "noise × 0.9"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/rocking_9.webp",
+     "alt": "A rocking chair with the words part damaged, step 9 of 9",
+     "label": "noise × 1"
+    }
+   ]
+  },
+  {
+   "caption": "throne → bar",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/dense/throne_0.webp",
+     "alt": "A throne drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_1.webp",
+     "alt": "A throne with the words part damaged, step 1 of 9",
+     "label": "noise × 0.2"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_2.webp",
+     "alt": "A throne with the words part damaged, step 2 of 9",
+     "label": "noise × 0.3"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_3.webp",
+     "alt": "A throne with the words part damaged, step 3 of 9",
+     "label": "noise × 0.4"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_4.webp",
+     "alt": "A throne with the words part damaged, step 4 of 9",
+     "label": "noise × 0.5"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_5.webp",
+     "alt": "A throne with the words part damaged, step 5 of 9",
+     "label": "noise × 0.6"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_6.webp",
+     "alt": "A throne with the words part damaged, step 6 of 9",
+     "label": "noise × 0.7"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_7.webp",
+     "alt": "A throne with the words part damaged, step 7 of 9",
+     "label": "noise × 0.8"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_8.webp",
+     "alt": "A throne with the words part damaged, step 8 of 9",
+     "label": "noise × 0.9"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/throne_9.webp",
+     "alt": "A throne with the words part damaged, step 9 of 9",
+     "label": "noise × 1"
+    }
+   ]
+  },
+  {
+   "caption": "God → an ordinary person",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/dense/god_0.webp",
+     "alt": "God drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_1.webp",
+     "alt": "God with the words part damaged, step 1 of 9",
+     "label": "noise × 0.2"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_2.webp",
+     "alt": "God with the words part damaged, step 2 of 9",
+     "label": "noise × 0.3"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_3.webp",
+     "alt": "God with the words part damaged, step 3 of 9",
+     "label": "noise × 0.4"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_4.webp",
+     "alt": "God with the words part damaged, step 4 of 9",
+     "label": "noise × 0.5"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_5.webp",
+     "alt": "God with the words part damaged, step 5 of 9",
+     "label": "noise × 0.6"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_6.webp",
+     "alt": "God with the words part damaged, step 6 of 9",
+     "label": "noise × 0.7"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_7.webp",
+     "alt": "God with the words part damaged, step 7 of 9",
+     "label": "noise × 0.8"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_8.webp",
+     "alt": "God with the words part damaged, step 8 of 9",
+     "label": "noise × 0.9"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/god_9.webp",
+     "alt": "God with the words part damaged, step 9 of 9",
+     "label": "noise × 1"
+    }
+   ]
+  },
+  {
+   "caption": "a clock losing its numbers",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/dense/clock_0.webp",
+     "alt": "A clock showing 8:45 drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_1.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 1 of 9",
+     "label": "noise × 0.7"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_2.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 2 of 9",
+     "label": "noise × 0.75"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_3.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 3 of 9",
+     "label": "noise × 0.8"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_4.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 4 of 9",
+     "label": "noise × 0.85"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_5.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 5 of 9",
+     "label": "noise × 0.9"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_6.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 6 of 9",
+     "label": "noise × 0.95"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_7.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 7 of 9",
+     "label": "noise × 1"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_8.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 8 of 9",
+     "label": "noise × 1.05"
+    },
+    {
+     "src": "/static/img/plato_damage/dense/clock_9.webp",
+     "alt": "A clock showing 8:45 with the drawing part damaged, step 9 of 9",
+     "label": "noise × 1.1"
+    }
+   ]
+  }
+ ]
+}</script>
+    <div class="hc-static"><div class="hc-strip" style="--n:10"><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_0.webp" alt="A rocking chair drawn by Stable Diffusion XL, undamaged" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">undamaged</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_1.webp" alt="A rocking chair with the words part damaged, step 1 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.2</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_2.webp" alt="A rocking chair with the words part damaged, step 2 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.3</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_3.webp" alt="A rocking chair with the words part damaged, step 3 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.4</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_4.webp" alt="A rocking chair with the words part damaged, step 4 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.5</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_5.webp" alt="A rocking chair with the words part damaged, step 5 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.6</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_6.webp" alt="A rocking chair with the words part damaged, step 6 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.7</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_7.webp" alt="A rocking chair with the words part damaged, step 7 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.8</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_8.webp" alt="A rocking chair with the words part damaged, step 8 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 0.9</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/dense/rocking_9.webp" alt="A rocking chair with the words part damaged, step 9 of 9" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">noise × 1</figcaption></figure></div><p class="hc-cap"><a href="/plato/damage">rocking chair → car</a></p></div>
+  </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-qual">Our planned prediction held only in part: see <a href="#diss-h">Does it forget what to draw, or how?</a> This is an analogy, not a claim about people.</p>
+</section>
+
+<section class="fd" data-findings aria-label="Five findings, each with its charts">
+  <article class="fd-item" id="finding-words-or-painting" data-title="Words part or painting part?" data-line="Each part forgets in its own way." data-img="/static/img/plato_damage/rocking_chair_text-noise_3.webp" data-alt="A rocking chair turned into a car by damage to the words part">
+    <div class="fd-main">
+      <div class="fd-media"><figure><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair, undamaged"><figcaption>undamaged</figcaption></figure><figure><img src="/static/img/plato_damage/rocking_chair_text-noise_3.webp" alt="The rocking chair with the words part damaged: a car"><figcaption>words part</figcaption></figure><figure><img src="/static/img/plato_damage/rocking_chair_unet-noise_3.webp" alt="The rocking chair with the drawing part damaged"><figcaption>drawing part</figcaption></figure></div>
+      <div class="fd-text">
+        <h3>Words part or painting part?</h3>
+        <p>Damage the words part and the AI forgets what to draw.</p>
+        <p>Damage the painting part and it forgets how to draw.</p>
+        <div class="fd-number" id="fd-num-diss" hidden><p class="fd-num-l"></p><div class="fd-num-v sv sv-bars-host"></div><p class="fd-verdict"></p></div>
+      </div>
+    </div>
+    <div class="fd-extra">
     <figure class="pd-slider" id="slider" aria-label="Damage slider">
       <div class="pd-controls">
         <div class="seg" role="group" aria-label="Which picture" id="kind-seg"></div>
@@ -67,60 +311,118 @@
       </div>
       <figcaption class="pd-cap" id="slider-cap">Every step starts the AI from the same random starting point, so you see what the damage did to this one picture. Under each picture: how much damage, how much the picture changed (0 = not at all), and what Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), says it shows. One example picture per kind of chair; the full write-up shows them all.</figcaption>
     </figure>
-    <figure class="pd-heroclocks" id="hero-clocks" aria-labelledby="hero-clocks-cap" hidden>
-      <div class="pd-heroclocks-row" id="hero-clocks-row"></div>
-      <figcaption class="fl-cap" id="hero-clocks-cap"></figcaption>
-    </figure>
-  </div>
-  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
-  <p class="fl-note" id="hero-qual">Our planned prediction held only in part: see <a href="#diss-h">Does it forget what to draw, or how?</a> This is an analogy, not a claim about people.</p>
-</section>
-
-<section class="pd-sec" aria-labelledby="diss-h">
-  <h2 id="diss-h">Does it forget what to draw, or how?</h2>
+<div class="pd-sec" aria-labelledby="diss-h">
+  <h4 id="diss-h">Does it forget what to draw, or how?</h4>
   <p class="pd-intro" id="diss-intro">We asked for 8 kinds of chair, each from 8 random starting points, and checked two things at every damage step. Is it still the kind we asked for? (Muse Glimmer looks at the picture and says.) And is it still a clean black-on-white line drawing? (Glimmer again, plus simple pixel counts.) The two parts break at different rates, so we compare them when the damage has changed the picture by the same amount.</p>
   <p class="pd-verdict" id="diss-primary"></p>
   <div class="pd-tiles" id="diss-tiles"></div>
   <div class="pd-charts" id="diss-charts"></div>
   <div class="pd-legend" id="diss-legend"></div>
-  <p class="pd-caveat" id="diss-caveat">Verdict: partly supported. We predicted damage to the words part would make the AI forget what to draw, and damage to the drawing part how to draw. The “what” half held in our planned main test: at equal picture change, words damage lost the asked kind faster than drawing damage did. The “how” half held for added noise, but reversed for neurons switched off. There, words damage also cost more clean line drawings (difference −5 pts; switch to “Neurons switched off” at the top), because our request’s style words (“doodle, black marker, no shading”) pass through the damaged words part too.</p>
-</section>
-
-<section class="pd-sec" aria-labelledby="proto-h">
-  <h2 id="proto-h">Does a damaged AI fall back on its plain, ordinary chair?</h2>
-  <p class="pd-intro">In semantic dementia, a brain disease that slowly wears away what words and things mean, people’s drawings lose the details that make a thing special. They drift toward the typical member of its kind: a duck gets four legs (Bozeat and colleagues, 2003). As an analogy, not a claim about people, we predicted the same here: damage to the words part should turn the rocking chair back into the plain chair the AI draws when asked for just “a chair”.</p>
-  <div class="pd-proto" id="proto"></div>
-  <div class="pd-names" id="names"></div>
-</section>
-
-<section class="pd-sec" aria-labelledby="glim-h">
-  <h2 id="glim-h">What if we damage an AI that looks, instead of one that draws?</h2>
-  <p class="pd-intro">Muse Glimmer looked at quick drawings by Meta’s image AI, Muse Image, of named kinds (a throne, a wheelchair, a top hat …). For each one, it picked which kind it shows from a list. Then we damaged Glimmer: we switched off (set to their average) the neurons most active for language, for naming, or for seeing. For a fair comparison, we also switched off the same number of neurons picked at random.</p>
-  <div class="pd-glim" id="glim"></div>
-</section>
-
-<section class="pd-sec" aria-labelledby="janus-h" id="janus-sec">
-  <h2 id="janus-h">In an AI that both draws and reads, does damage take both skills?</h2>
-  <p class="pd-intro">Janus-Pro, an open AI from DeepSeek that both reads and draws pictures, uses one language core for both jobs. We switched off a share of that core’s neurons. Then we asked it to draw chairs, and to say which kind of thing Muse Image’s drawings show. Do the two skills fail together?</p>
-  <div class="pd-janus" id="janus"></div>
-</section>
-
-<section class="pd-sec" aria-labelledby="clock-h">
-  <h2 id="clock-h">On a damaged AI’s clocks, the numbers go first</h2>
-  <p class="pd-intro">Drawing a clock is an old test that neurologists (brain doctors) give patients; here it is only an analogy. We asked Stable Diffusion XL for “a simple clock face showing” six different times, undamaged and damaged. Then Meta’s chat AI, Muse Spark, checked each clock against a list we wrote: an outline, the 12 numbers in order, two hands, the time shown.</p>
-  <div class="pd-clocks" id="clocks"></div>
-</section>
-
-<section class="pd-sec pd-method" aria-labelledby="method-h">
-  <h2 id="method-h">Method and caveats</h2>
-  <ul id="method-list">
+</div>
+    </div>
+    <details class="how-we-know fd-more"><summary>More detail</summary>
+      <ul>
     <li><b>The drawer.</b> Stable Diffusion XL base 1.0, run on a lab computer. The part that reads the words is its two text encoders (CLIP ViT-L and OpenCLIP bigG); the part that paints the picture is its UNet. The damage is temporary: small add-ons (hooks) change the neurons’ signals as they pass through, and never touch the AI’s stored settings (its weights).</li>
     <li><b>Damage.</b> Either a share of the neurons switched off (a heavier step keeps every neuron a lighter step switched off, and adds more), or random noise (Gaussian) added to every neuron, scaled to each neuron’s usual range. The same random starting point (seed) at every step makes the pictures matched pairs.</li>
     <li><b>Matched severity.</b> The two parts break at different amounts of damage, so we compare them at equal amounts of picture change, not equal damage. Picture change is how different the damaged picture looks from its undamaged twin to a Meta AI that compares pictures (DINOv2).</li>
-    <li><b>The judges are AIs.</b> Muse Glimmer judges the kind and the drawing style; Muse Spark reads the clocks; DINOv2 measures how alike pictures look. Each can be wrong, and a picture of “a throne” can be a fine drawing of a chair that Glimmer calls plain.</li>
-    <li><b>An analogy, not a claim about people.</b> This is a model of how damage to parts of an AI changes its drawings. The link to semantic dementia and to clock drawing is an analogy; nothing here says anything about any person.</li>
     <li><b>Planned in advance (pre-registered).</b> We wrote down our predictions, measures and damage amounts, and saved them publicly, before the main runs. A small trial run beforehand set the range of damage.</li>
-  </ul>
+      </ul>
+  <p class="pd-caveat" id="diss-caveat">Verdict: partly supported. We predicted damage to the words part would make the AI forget what to draw, and damage to the drawing part how to draw. The “what” half held in our planned main test: at equal picture change, words damage lost the asked kind faster than drawing damage did. The “how” half held for added noise, but reversed for neurons switched off. There, words damage also cost more clean line drawings (difference −5 pts; switch to “Neurons switched off” at the top), because our request’s style words (“doodle, black marker, no shading”) pass through the damaged words part too.</p>
+    </details>
+  </article>
+  <article class="fd-item" id="finding-plain-chair" data-title="Back to the plain chair?" data-line="We predicted it would. It did not." data-img="/static/img/plato_damage/rocking_chair_text-noise_2.webp" data-alt="A plain chair, not a rocking chair">
+    <div class="fd-main">
+      <div class="fd-media"><figure><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair, undamaged"><figcaption>undamaged</figcaption></figure><figure><img src="/static/img/plato_damage/rocking_chair_text-noise_3.webp" alt="The rocking chair with the words part damaged: a car, not a plain chair"><figcaption>damaged</figcaption></figure></div>
+      <div class="fd-text">
+        <h3>Back to the plain chair?</h3>
+        <p>We expected a damaged AI to fall back on a plain chair.</p>
+        <p>It drifted farther from the plain chair instead.</p>
+        <div class="fd-number" id="fd-num-proto" hidden><p class="fd-num-l"></p><div class="fd-num-v sv sv-bars-host"></div><p class="fd-verdict"></p></div>
+      </div>
+    </div>
+    <div class="fd-extra">
+<div class="pd-sec" aria-labelledby="proto-h">
+  <h4 id="proto-h">Does a damaged AI fall back on its plain, ordinary chair?</h4>
+  <p class="pd-intro">In semantic dementia, a brain disease that slowly wears away what words and things mean, people’s drawings lose the details that make a thing special. They drift toward the typical member of its kind: a duck gets four legs (Bozeat and colleagues, 2003). As an analogy, not a claim about people, we predicted the same here: damage to the words part should turn the rocking chair back into the plain chair the AI draws when asked for just “a chair”.</p>
+  <div class="pd-proto" id="proto"></div>
+  <div class="pd-names" id="names"></div>
+</div>
+    </div>
+    <details class="how-we-know fd-more"><summary>More detail</summary>
+      <ul>
+    <li><b>An analogy, not a claim about people.</b> This is a model of how damage to parts of an AI changes its drawings. The link to semantic dementia and to clock drawing is an analogy; nothing here says anything about any person.</li>
+      </ul>
+    </details>
+  </article>
+  <article class="fd-item" id="finding-looks" data-title="The AI that looks" data-line="Damage a reader, not a drawer." data-img="/static/img/plato_damage/throne_intact.webp" data-alt="A drawing of a throne">
+    <div class="fd-main">
+      <div class="fd-media"><figure><img src="/static/img/plato_damage/throne_intact.webp" alt="A drawing of a throne"><figcaption>throne</figcaption></figure><figure><img src="/static/img/plato_damage/wheelchair_intact.webp" alt="A drawing of a wheelchair"><figcaption>wheelchair</figcaption></figure></div>
+      <div class="fd-text">
+        <h3>The AI that looks</h3>
+        <p>We damaged Muse Glimmer, an AI that looks at pictures.</p>
+        <p>Then we asked it which kind of chair it saw.</p>
+        
+      </div>
+    </div>
+    <div class="fd-extra">
+<div class="pd-sec" aria-labelledby="glim-h">
+  <h4 id="glim-h">What if we damage an AI that looks, instead of one that draws?</h4>
+  <p class="pd-intro">Muse Glimmer looked at quick drawings by Meta’s image AI, Muse Image, of named kinds (a throne, a wheelchair, a top hat …). For each one, it picked which kind it shows from a list. Then we damaged Glimmer: we switched off (set to their average) the neurons most active for language, for naming, or for seeing. For a fair comparison, we also switched off the same number of neurons picked at random.</p>
+  <div class="pd-glim" id="glim"></div>
+</div>
+    </div>
+    <details class="how-we-know fd-more"><summary>More detail</summary>
+      <ul>
+    <li><b>The judges are AIs.</b> Muse Glimmer judges the kind and the drawing style; Muse Spark reads the clocks; DINOv2 measures how alike pictures look. Each can be wrong, and a picture of “a throne” can be a fine drawing of a chair that Glimmer calls plain.</li>
+      </ul>
+    </details>
+  </article>
+  <article class="fd-item" id="finding-draws-and-reads" data-title="One AI that draws and reads" data-line="Does damage take both skills?" data-img="/static/img/plato_damage/janus_wheelchair_intact.webp" data-alt="A wheelchair drawn by Janus-Pro">
+    <div class="fd-main">
+      <div class="fd-media"><figure><img src="/static/img/plato_damage/janus_wheelchair_intact.webp" alt="A wheelchair drawn by Janus-Pro, undamaged"><figcaption>undamaged</figcaption></figure><figure><img src="/static/img/plato_damage/janus_wheelchair_lm-zero_0.5.webp" alt="The same wheelchair with half of the language neurons off"><figcaption>50% off</figcaption></figure></div>
+      <div class="fd-text">
+        <h3>One AI that draws and reads</h3>
+        <p>Janus-Pro draws and reads with one shared language core.</p>
+        <p>We switched off part of that core and tested both skills.</p>
+        
+      </div>
+    </div>
+    <div class="fd-extra">
+<div class="pd-sec" id="janus-sec" aria-labelledby="janus-h">
+  <h4 id="janus-h">In an AI that both draws and reads, does damage take both skills?</h4>
+  <p class="pd-intro">Janus-Pro, an open AI from DeepSeek that both reads and draws pictures, uses one language core for both jobs. We switched off a share of that core’s neurons. Then we asked it to draw chairs, and to say which kind of thing Muse Image’s drawings show. Do the two skills fail together?</p>
+  <div class="pd-janus" id="janus"></div>
+</div>
+    </div>
+    <details class="how-we-know fd-more"><summary>More detail</summary>
+      <p>The same neurons are switched off for both jobs. The judges are AIs, and can be wrong.</p>
+    </details>
+  </article>
+  <article class="fd-item" id="finding-clocks" data-title="Clocks" data-line="The numbers go first." data-img="/static/img/plato_damage/clock_8_45_unet-noise_2.webp" data-alt="A clock that has lost its numbers">
+    <div class="fd-main">
+      <div class="fd-media"><figure><img src="/static/img/plato_damage/clock_8_45_intact.webp" alt="A clock showing 8:45, undamaged"><figcaption>undamaged</figcaption></figure><figure><img src="/static/img/plato_damage/clock_8_45_unet-noise_2.webp" alt="The same clock with the drawing part damaged"><figcaption>drawing part damaged</figcaption></figure></div>
+      <div class="fd-text">
+        <h3>Clocks</h3>
+        <p>Drawing damage takes a clock’s numbers first.</p>
+        <p>Words damage removes the whole clock instead.</p>
+        <div class="fd-number" id="fd-num-clocks" hidden><p class="fd-num-l"></p><div class="fd-num-v sv sv-bars-host"></div><p class="fd-verdict"></p></div>
+      </div>
+    </div>
+    <div class="fd-extra">
+<div class="pd-sec" aria-labelledby="clock-h">
+  <h4 id="clock-h">On a damaged AI’s clocks, the numbers go first</h4>
+  <p class="pd-intro">Drawing a clock is an old test that neurologists (brain doctors) give patients; here it is only an analogy. We asked Stable Diffusion XL for “a simple clock face showing” six different times, undamaged and damaged. Then Meta’s chat AI, Muse Spark, checked each clock against a list we wrote: an outline, the 12 numbers in order, two hands, the time shown.</p>
+  <div class="pd-clocks" id="clocks"></div>
+</div>
+    </div>
+    <details class="how-we-know fd-more"><summary>More detail</summary>
+      <p>Muse Spark checked each clock against a list we wrote, and it can be wrong. Drawing a clock is an old test that doctors give patients; here it is only an analogy.</p>
+    </details>
+  </article>
+</section>
+
+<section class="pd-sec pd-method" aria-labelledby="method-h">
+  <h2 id="method-h">Read more</h2>
   <p>Read more: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_damage.md">the full write-up</a> and <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_damage_plan.md">the plan we wrote before the experiment</a>. The pictures and raw results live outside this repository; the app ships only statistics and the pictures on this page.</p>
   <p class="pd-credit">Drawer: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M. Doodles of named kinds: Meta Muse Image 1.0. Readers: Meta Muse Glimmer 30B, Muse Spark 1.3. Similarity: Meta DINOv2. One model that draws and reads: Janus-Pro-7B (DeepSeek), MIT.</p>
 </section>
@@ -133,6 +435,8 @@
 <script src="/static/js/common.js"></script>
 <script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato_firstlook.js"></script>
+<script src="/static/js/hero-carousel.js"></script>
+<script src="/static/js/findings.js"></script>
 <script src="/static/js/plato_damage.js"></script>
 </body>
 </html>

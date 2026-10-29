@@ -77,7 +77,7 @@ html.gx-locked { overflow: hidden; }
 .gx-play svg { width: 12px; height: 12px; }
 .gx-play[aria-pressed="true"] .gx-icon-play, .gx-play[aria-pressed="false"] .gx-icon-pause { display: none; }
 .gx-play[aria-pressed="false"] { background: var(--panel); color: var(--ink); }
-.gx-frames { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.gx-frames { list-style: none; margin: 0; padding: 0 0 4px; display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; justify-content: safe center; scrollbar-width: thin; }  /* time runs left to right: a strip, never wrapped */
 .gx-frame-btn { display: block; padding: 2px; border: 2px solid transparent; border-radius: 8px; background: var(--paper); cursor: pointer;
   width: clamp(44px, 4.4vw, 76px); container-type: inline-size; }
 .gx-frame-btn.is-pair { width: clamp(72px, 7vw, 132px); }

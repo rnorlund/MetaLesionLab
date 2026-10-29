@@ -442,6 +442,21 @@
       q.appendChild(document.createTextNode('). The judges are AI models, and this is an analogy, not a claim about people.'));
     }
     renderHeroClocks();
+    renderCardNumbers(lead);
+  }
+
+  // The big number on each finding card (findings.js panel): the same numbers and verdicts the first screen draws.
+  function renderCardNumbers(lead) {
+    var ids = { diss: /fewer chairs/, proto: /plain chair/, clocks: /clocks keep/ };
+    Object.keys(ids).forEach(function (k) {
+      var host = $('fd-num-' + k), st = (lead.stats || []).filter(function (x) { return ids[k].test(x.o.label); })[0];
+      if (!host || !st) return;
+      host.querySelector('.fd-num-v').innerHTML = window.FirstLook.html({ kind: st.kind, o: Object.assign({}, st.o, { nocap: true, value: undefined, unit: undefined }) });
+      host.querySelector('.fd-num-l').textContent = (st.ask || st.o.label).replace(/^./, function (c) { return c.toUpperCase(); });
+      var v = host.querySelector('.fd-verdict');
+      if (st.verdict) { v.textContent = st.verdict.text; v.className = 'fd-verdict ' + st.verdict.tone; } else v.hidden = true;
+      host.hidden = false;
+    });
   }
 
   // three clocks asked to show 8:45: intact, and the most damaged language and drawing parts, for the chosen kind of damage

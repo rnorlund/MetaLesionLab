@@ -65,9 +65,13 @@ def stats(html):
     for it in items:
         num = re.search(r'<span class="sv-num">(.*?)</span>', it)
         unit = re.search(r'<span class="sv-unit">(.*?)</span>', it)
-        cap = re.search(r'<p class="sv-cap">(.*?)</p>', it)
+        cap = re.search(r'<p class="fl-ask">(.*?)</p>', it)
+        assert cap and len(cap.group(1).split()) <= 10 and it.index('class="fl-ask"') < min(
+            it.index(m) for m in ('class="sv-num"', 'class="sv-bar-v"', "<svg") if m in it), "the label comes first"
         kind = re.search(r'class="sv sv-(\w+)', it)
-        out.append((num and num.group(1), unit and unit.group(1).strip(), cap and cap.group(1), kind and kind.group(1)))
+        rows = [(n, re.sub(r"<[^>]+>", "", v)) for n, v in re.findall(
+            r'<span class="sv-bar-l">([^<]*)</span>.*?<span class="sv-bar-v">(.*?)</span></div>', it, re.S)]
+        out.append((num and num.group(1), unit and unit.group(1).strip(), cap and cap.group(1), kind and kind.group(1), rows))
     return out
 
 
@@ -85,7 +89,7 @@ def verdicts(html):
 @pytest.mark.parametrize("page", sorted(PAGES))
 def test_first_screen_leads_with_question_picture_answer_and_numbers(client, page):
     src = (web.HERE / "pages" / f"plato_{page}.html").read_text()
-    hero = re.search(r'<section class="fl fl-side [\w-]+".*?</section>', src, re.S)
+    hero = re.search(r'<section class="fl fl-side (?:fl-wide )?[\w-]+".*?</section>', src, re.S)
     assert hero, page
     h = hero.group(0)
     # the question, as before: the kicker and the page's question, then the verified epigraph right under it
@@ -137,7 +141,7 @@ def test_cave_first_screen(client, tmp_path):
     rho_held = d["human"]["silhouette"]["rho_correct"]["ci95"][0] > 0
     assert verdicts(ids["hero-stats"]) == [p1, ("yes", "As predicted") if rho_held else ("no", "Prediction failed")]
     assert s[1][:2] == (str(m["just_shadow"]), f"of {e['n_errors']}") and "Shadow" in s[1][2]
-    assert s[2][0] == f"{round(hs['ai_accuracy_on_shared'] * 100)}%" and s[2][1] == f"vs {round(hs['people_mean_on_shared'] * 100)}%"
+    assert [v for _, v in s[2][4]] == [f"{round(hs['ai_accuracy_on_shared'] * 100)}%", f"{round(hs['people_mean_on_shared'] * 100)}%"]
     assert ids["hero-stats"].count('class="sv-on sv-ink"') == named  # one filled dot per shadow it named
     # the answer names the AI in full: it is read before the introduction that would otherwise say who "it" is
     assert f"Meta’s open AI model, Muse Glimmer, named {named} of {sh['n']} shadows" in text(ids["hero-answer"])
@@ -156,8 +160,7 @@ def test_cratylus_first_screen(client, tmp_path):
     assert len(s) == 3
     assert s[0][:2] == (str(corners("kiki")), f"of {w['kiki']['n']}")
     assert s[1][:2] == (str(corners("keti") + corners("tepi")), f"of {w['keti']['n'] + w['tepi']['n']}")
-    assert s[2][0] == f"{round(d['choice']['spark_both_match']['p'] * 100)}%"
-    assert s[2][1] == f"vs {round(d['people']['both_trials_match'] * 100)}%"
+    assert [v for _, v in s[2][4]][:2] == [f"{round(d['choice']['spark_both_match']['p'] * 100)}%", f"{round(d['people']['both_trials_match'] * 100)}%"]
     assert "no preference for “kiki”" in text(ids["hero-stats"])
     assert f"rests on {d['choice']['spark_both_match']['n']} paired answers" in text(ids["hero-qual"])
     # the verdicts of the pre-registered predictions ride with the numbers; keti and tepi broke one
@@ -176,9 +179,9 @@ def test_bird_first_screen(client, tmp_path):
     pic = d["pictures"]["bird"]["spark"]
     s = stats(ids["hero-stats"])
     assert len(s) == 3
-    assert s[0][:2] == (f"{round(dom['ai_mean']['mean'] * 100)}%", f"vs {round(dom['human_mean']['mean'] * 100)}%")
+    assert [v for _, v in s[0][4]][:2] == [f"{round(dom['ai_mean']['mean'] * 100)}%", f"{round(dom['human_mean']['mean'] * 100)}%"]
     glim = d["summary"]["glimmer_T1.0"]["dominance"]  # Glimmer is not as narrow, and the verdict says so
-    assert f'{round(glim["ai_mean"]["mean"] * 100)}</span>' in ids["hero-stats"]
+    assert [v for _, v in s[0][4]][2] == f'{round(glim["ai_mean"]["mean"] * 100)}%'
     if dom["diff"]["ci95"][0] > 0 and glim["diff"]["ci95"][0] <= 0:
         assert verdicts(ids["hero-stats"])[0] == ("part", "Partly as predicted")
         # the sentence beside the verdict says what was predicted and which half held
@@ -196,23 +199,23 @@ def test_bird_first_screen(client, tmp_path):
 
 
 def test_damage_first_screen(client, tmp_path):
-    ids, d = first_screen(client, "damage", tmp_path, ("hero-stats", "hero-answer", "hero-qual", "hero-clocks", "hero-clocks-row"))
+    ids, d = first_screen(client, "damage", tmp_path, ("hero-stats", "hero-answer", "hero-qual"))
     kc = d["matched"]["text-zero vs unet-zero"]["delta_correct"]
     s = stats(ids["hero-stats"])
     assert len(s) == 3
-    assert s[0][:2] == (f"{round(-kc['language'] * 100)} vs {round(-kc['drawing'] * 100)}", "pts")
+    assert [v for _, v in s[0][4]] == [f"{round(-kc['language'] * 100)} pts", f"{round(-kc['drawing'] * 100)} pts"]
     pz = d["pooled"]["text-zero"]["delta_d_proto"]
-    assert s[1][0] == ("Farther" if pz["ci95"][0] > 0 else "No closer")
+    assert ("farther from the plain chair" if pz["ci95"][0] > 0 else "did not bring chairs back") in text(ids["hero-stats"])
     c = d["clocks"]
     fi = c["feature_names"].index("12 numbers in order")
     intact = next(r for r in c["features"] if r["cond"] == "intact")
     mild = min((r for r in c["features"] if r["cond"].startswith("unet-zero@")), key=lambda r: float(r["cond"].split("@")[1]))
-    assert s[2][0] == f"{round(intact['values'][fi] * 100)}% → {round(mild['values'][fi] * 100)}%"
+    assert [v for _, v in s[2][4]] == [f"{round(intact['values'][fi] * 100)}%", f"{round(mild['values'][fi] * 100)}%"]
     # the verdicts are shown, and the failed prediction is not dressed up
     assert verdicts(ids["hero-stats"]) == [("yes", "As predicted"), ("no", "Prediction failed")]
     assert text(ids["hero-qual"]).startswith("Partly supported.") and "reversed for neurons switched off" in text(ids["hero-qual"])
-    clocks = ids["hero-clocks-row"]  # three clocks beside the slider: intact, and each part at its strongest damage
-    assert clocks.count("<img") == 3 and "clock_8_45_intact.webp" in clocks and 'hidden=""' not in ids["hero-clocks"]
+    page = client.get("/plato/damage").text  # the picture area is the hero carousel; one of its slides is a clock losing its numbers
+    assert "data-hero-carousel" in page and "dense/clock_0.webp" in page and "dense/clock_9.webp" in page
 
 
 def test_telephone_first_screen(client, tmp_path):
@@ -224,8 +227,8 @@ def test_telephone_first_screen(client, tmp_path):
     s = stats(ids["hero-stats"])
     assert len(s) == 3
     assert s[0][:2] == (str(away), f"of {len(chairs)}")
-    assert s[1][:2] == (f"{t2['g10']:.2f}", f"from {t2['g0']:.2f}")
-    assert s[2][0] == f"{t3['first_loss_kind']['mean']:.1f} vs {t3['first_loss_category']['mean']:.1f}"
+    assert [v for _, v in s[1][4]] == [f"{t2['g0']:.2f}", f"{t2['g10']:.2f}"]
+    assert [v for _, v in s[2][4]] == [f"{t3['first_loss_kind']['mean']:.1f} copies", f"{t3['first_loss_category']['mean']:.1f} copies"]
     hs = ids["hero-stats"]
     assert ("Prediction failed" in hs) == (not d["tests"]["P1_drift_to_form"]["supported"])
     chains = ids["hero-chains"]  # the two striking chains, start and every second copy, beside the textbook chair
@@ -242,10 +245,10 @@ def test_lifespan_first_screen(client, tmp_path):
     s = stats(ids["hero-stats"])
     assert len(s) == 2
     r2, r10 = round(c["recog"]["mean"][0] * 100), round(c["recog"]["mean"][-1] * 100)
-    assert s[0][0] == f"{r10}%" and s[0][1] == f"at 10, from {r2}% at 2"
+    assert [v for _, v in s[0][4]][:2] == [f"{r2}%", f"{r10}%"] and s[0][4][0][0] == "Age 2"
     t = ai["tests"]["d_adult"]["last_minus_first"]
     clear = t["ci95"][0] > 0 or t["ci95"][1] < 0
-    assert s[1][0] == ("No closer" if not clear else "Farther" if t["mean"] > 0 else "Closer")
+    assert len(s[1][4]) == 4 and s[1][0] is None
     assert f"adults {round(ad['recog'] * 100)}%" in text(ids["hero-stats"])
     words = {True: ("yes", "As predicted"), False: ("no", "Prediction failed")}
     assert verdicts(ids["hero-stats"]) == [words[d["children"]["predictions"]["C1_recognizability_rises"]],

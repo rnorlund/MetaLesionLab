@@ -34,9 +34,9 @@
     var ver = function (k) { return k.replace(/^v/, ''); };
     window.FirstLook.render(host, { stats: [
       // 1. children become recognizable; Stable Diffusion's first public version already is
-      { kind: 'bars', verdict: verdict(cp.C1_recognizability_rises),
-        o: { values: [r2, r10, rad, rsd], labels: ['age ' + ages[0], 'age ' + ages[last], 'adults', 'AI ' + ck[0]], tones: ['orange', 'orange', 'ink', 'green'],
-          max: 100, value: r10 + '%', unit: 'at ' + ages[last] + ', from ' + r2 + '% at ' + ages[0],
+      { kind: 'bars', ask: 'Drawings an AI recognizes', verdict: verdict(cp.C1_recognizability_rises),
+        o: { values: [r2, r10, rad, rsd], labels: ['Age ' + ages[0], 'Age ' + ages[last], 'Adults', 'AI ' + ck[0]], tones: ['orange', 'orange', 'ink', 'green'],
+          max: 100, suffix: '%',
           label: 'of children’s drawings an AI recognizes',
           alt: 'Recognized: ' + r2 + '% of 2-year-olds’ drawings, ' + r10 + '% of 10-year-olds’, ' + rad + '% of adults’, and ' + rsd +
             '% of Stable Diffusion ' + ck[0] + '’s pictures.' },
@@ -44,8 +44,8 @@
           (slope ? ': ' + (slope.mean_slope < 0 ? 'down ' : 'up ') + one(Math.abs(slope.mean_slope)) + ' points a year (' + between(slope.ci95, one) + ')' : '') +
           '. For comparison: adults ' + rad + '%; Stable Diffusion’s first public version (AI ' + ck[0] + ') already ' + rsd + '%.' },
       // 2. distance to people's drawings: children close in, Stable Diffusion does not
-      { kind: 'bars', verdict: verdict(ap.A3_d_adult_changes),
-        o: { values: [c.d_adult.mean[0], c.d_adult.mean[last], sd0, sdN], labels: ['age ' + ages[0], 'age ' + ages[last], 'AI ' + ck[0], 'AI ' + ck[n]],
+      { kind: 'bars', ask: 'Distance from the average adult drawing', verdict: verdict(ap.A3_d_adult_changes),
+        o: { values: [c.d_adult.mean[0], c.d_adult.mean[last], sd0, sdN], labels: ['Age ' + ages[0], 'Age ' + ages[last], 'AI ' + ck[0], 'AI ' + ck[n]],
           tones: ['orange', 'orange', 'green', 'green'], digits: 2,
           value: excludesZero(t.ci95) ? (t.mean > 0 ? 'Farther' : 'Closer') : 'No closer', unit: '',
           label: (excludesZero(t.ci95) && t.mean > 0 ? 'from' : 'to') + ' the average adult drawing, for Stable Diffusion',

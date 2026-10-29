@@ -1,0 +1,84 @@
+/* Hero carousel (static/js/hero-carousel.js): a first screen's pictures as a slideshow. Big and quiet: no box, pictures on
+   paper (--paper), a caption in the muted colour, small controls. Every slide shares one grid cell, so the area is as
+   tall as the tallest slide and nothing moves when the slide changes. --hc-interval is how long a slide stays (the
+   script sets it from its `interval`). Motion only with prefers-reduced-motion: no-preference. Tokens only.
+   Without the script, .hc-static (the first slide, written out in the page) shows as it is. */
+.hc-static { display: flex; flex-direction: column; gap: 12px; }
+.hc, .hc-static { --hc-btn: clamp(36px, calc(30px + 0.5vw), 46px); }
+.hc { --hc-interval: 7s; display: flex; flex-direction: column; gap: 14px; min-width: 0; border-radius: 14px; }
+.hc:focus { outline: none; }
+.hc:focus-visible { outline: 3px solid var(--focus); outline-offset: 8px; }
+.hc-slides { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; touch-action: pan-y; }
+.hc-slide { grid-area: 1 / 1; margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; opacity: 0; visibility: hidden; }
+.hc-slide.is-active { opacity: 1; visibility: visible; }
+.hc-strip { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); gap: clamp(6px, 0.8vw, 16px); }
+.hc-pic { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.hc-paper { display: block; background: var(--paper); border-radius: 12px; overflow: hidden; aspect-ratio: 1 / 1; }
+.hc-paper img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.hc-lab { font-size: var(--fs-label); line-height: 1.3; color: var(--muted); text-align: center; }
+.hc-cap { margin: 0; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: 1.3; color: var(--ink-2); }
+.hc-cap a { color: inherit; text-decoration-color: var(--line-3); text-underline-offset: 0.2em; }
+
+.hc-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.hc-btn { display: inline-flex; align-items: center; justify-content: center; width: var(--hc-btn); height: var(--hc-btn); padding: 0;
+  border: 1px solid var(--line-3); border-radius: 999px; background: transparent; color: var(--ink-2); cursor: pointer; }
+.hc-btn:hover { color: var(--ink); border-color: var(--faint); }
+.hc-btn svg { width: 12px; height: 12px; }
+.hc-i-play { display: none; }
+.hc-toggle.is-stopped .hc-i-pause { display: none; }
+.hc-toggle.is-stopped .hc-i-play { display: block; }
+.hc-btn:focus-visible, .hc-dot:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.hc-dots { display: flex; align-items: center; }
+.hc-dot { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: var(--hc-btn); padding: 0; border: 0; background: transparent; cursor: pointer; }
+.hc-pip { position: relative; display: block; width: 10px; height: 10px; border-radius: 999px; border: 1px solid var(--faint); overflow: hidden; }
+.hc-dot[aria-current="true"] .hc-pip { width: 34px; }
+.hc-fill { position: absolute; inset: 0; background: var(--orange); transform-origin: 0 50%; transform: scaleX(0); }
+.hc-dot[aria-current="true"] .hc-fill { transform: none; }
+.hc:not(.is-stopped) .hc-dot[aria-current="true"] .hc-fill { animation: hc-fill var(--hc-interval) linear both; }
+.hc.is-held .hc-dot[aria-current="true"] .hc-fill { animation-play-state: paused; }
+@keyframes hc-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hc-slide { transition: opacity 600ms ease, visibility 0s linear 600ms; }
+  .hc-slide.is-active { transition: opacity 600ms ease, visibility 0s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hc-fill { animation: none !important; }
+}
+
+/* Wide screens: the pictures fill the column beside the title and answer. A slide of four is a 2x2 grid of larger
+   squares, centred on the text; every slide shares one cell, so nothing jumps. Narrow screens stay stacked. */
+@media (min-width: 960px) {
+  .fl-visual:has(.hc, .hc-static) { align-self: center; justify-content: center; }
+  .hc, .hc-static { width: min(100%, clamp(27rem, 26vw, 40rem)); margin-inline: auto; }
+  .hc-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hc-strip[style*="--n: 1"], .hc-strip[style*="--n:1"], .hc-strip[style*="--n: 2"], .hc-strip[style*="--n:2"] { grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+}
+
+/* Row layout (data-layout="row"): one slide is ONE horizontal row of equal square tiles, left to right through the
+   steps, each with its small label; the figure spans the full content width, under the text. Every tile is one sixth
+   of the row (--hc-cols, the most steps any slide has), so a slide of four or five starts at the text's left edge, tiles never change size
+   between slides, and every slide reserves the same height. Phones (up to 640px): a horizontal scroll strip, a little
+   more than two tiles showing, snapping to a tile. */
+[data-layout="row"] .hc-static { width: 100%; max-width: none; margin-inline: 0; }
+[data-layout="row"] { --hc-cols: 10; --hc-gap: clamp(8px, 1vw, 20px); width: 100%; max-width: none; margin-inline: 0; }
+[data-layout="row"] .hc-strip { display: flex; justify-content: flex-start; gap: var(--hc-gap); }
+[data-layout="row"] .hc-pic { flex: 0 0 calc((100% - (var(--hc-cols) - 1) * var(--hc-gap)) / var(--hc-cols)); }
+[data-layout="row"] .hc-slides { align-items: start; }
+@media (max-width: 640px) {
+  [data-layout="row"] .hc-strip { justify-content: flex-start; overflow-x: auto; scroll-snap-type: x proximity; touch-action: pan-x pan-y;
+    padding-bottom: 4px; scrollbar-width: thin; }
+  [data-layout="row"] .hc-pic { flex-basis: 42%; scroll-snap-align: start; }
+}
+
+/* Steps control and the left-to-right cue. Hidden steps (.hc-off) leave the row; --hc-cols is how many show. */
+.hc-off { display: none !important; }
+.hc-more { margin: 0; width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; font-size: var(--fs-label); color: var(--muted); }
+.hc-rule { flex: 1 1 auto; height: 1px; background: var(--line-3); }
+.hc-count { display: inline-flex; align-items: center; gap: 4px; margin-inline-start: auto; font-size: var(--fs-label); color: var(--muted); }
+.hc-count-l { margin-inline-end: 6px; }
+.hc-count button { min-width: 34px; height: 30px; padding: 0 8px; border: 1px solid var(--line-3); border-radius: 999px; background: transparent;
+  color: var(--ink-2); font: inherit; cursor: pointer; }
+.hc-count button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-2); background: var(--chart-track); }
+.hc-count button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+@media (max-width: 640px) { .hc-count { display: none; } }

@@ -116,10 +116,9 @@
     var glimSaid = !gt ? '' : gt.diff.ci95[0] <= 0 && gt.diff.ci95[1] >= 0 ? 'was as varied as people.' :
       gt.diff.mean > 0 ? 'stuck to its favourite more than people too.' : 'was more varied than people.';
     var stats = [
-      { kind: 'bars', verdict: sparkYes && glimYes === false ? { tone: 'part', text: 'Partly as predicted' } :
+      { kind: 'bars', ask: 'Answers that go to its favourite', verdict: sparkYes && glimYes === false ? { tone: 'part', text: 'Partly as predicted' } :
           sparkYes ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
-        o: { values: gl == null ? [ai, hu] : [ai, hu, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['blue', 'orange', 'green'], max: 100,
-          value: ai + '%', unit: 'vs ' + hu + '%',
+        o: { values: gl == null ? [ai, hu] : [ai, hu, gl], labels: ['Spark', 'People', 'Glimmer'], tones: ['blue', 'orange', 'green'], max: 100, suffix: '%',
           label: 'of answers go to its favourite, against ' + hu + '% for people',
           alt: 'Across ' + s.n + ' categories, Muse Spark’s favourite answer takes ' + ai + '% of its answers; people’s favourite takes ' + hu + '%' +
             (gl == null ? '.' : '; Muse Glimmer’s, at its standard randomness setting, ' + gl + '%.') },
@@ -134,7 +133,7 @@
     ];
     if (pic && pic.spark) {
       var nPics = (pic.spark.labels || []).length || 12, rest = nPics - pic.spark.top_count;
-      stats.push({ kind: 'dots',
+      stats.push({ kind: 'dots', ask: 'Muse Image birds that look like a ' + pic.spark.top[0],
         o: { k: pic.spark.top_count, n: nPics, tone: 'ink', cols: 6, label: 'of Muse Image’s birds look like a ' + pic.spark.top[0],
           alt: pic.spark.top_count + ' of the ' + nPics + ' birds Muse Image drew look like a ' + pic.spark.top[0] + ' to Muse Spark.' },
         q: 'We asked Muse Spark which bird each drawing shows.' + (rest > 0 ? ' The other ' + rest + ' show the same small songbird.' : '') });

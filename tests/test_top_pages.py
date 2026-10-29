@@ -107,7 +107,7 @@ def test_plato_numbers_match_the_data(client):
     top = main_of(client.get("/plato").text).split('id="experiments"')[0]
     d = json.loads((web.HERE / "data" / "plato.json").read_text())
     chair = next(h for h in d["hero"] if h["key"] == "chair")
-    assert f'data-a="{chair["ai_spread"]}" data-b="{chair["human_spread"]}"' in top
+    assert f'data-values="{chair["ai_spread"]},{chair["human_spread"]}"' in top
     assert f'data-k="{d["core"]["below_1"]}" data-n="{d["core"]["n_concepts"]}"' in top
     inside = json.loads((web.HERE / "data" / "plato_inside.json").read_text())
     assert f'data-at="{int(inside["summary"]["median_collapse_layer"])}" data-n="{inside["n_layers"]}"' in top

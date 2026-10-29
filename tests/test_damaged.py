@@ -66,7 +66,8 @@ def test_first_screen_asks_the_question(client):
     assert "switched off some of their artificial neurons, or added random noise to them" in text(hero)[:first + 200]
     assert 'data-passage="republic-596a"' in hero  # a verified epigraph: a common name and its idea or form
     assert 'class="fl-answer"' in hero and "<b>what</b>" in hero and "<b>how</b>" in hero
-    for i in ("film-rows", "hero-stats", "hero-qual"):
+    assert "data-hero-carousel" in hero  # the picture area is the hero carousel (its first slide is written out)
+    for i in ("hero-stats", "hero-qual"):
         assert f'id="{i}"' in hero, i
     assert "/static/js/plato_firstlook.js" in page and "/static/js/statviz.js" in page and "/static/js/plato_damaged.js" in page
     assert "It is a comparison, not a claim about people." in hero
@@ -100,11 +101,15 @@ def first_screen(client, tmp_path, ids):
 
 
 def stats(html):
+    """Each number block: its label (before any value) and its rows (name, value, units)."""
     out = []
     for it in re.findall(r'<figure class="fl-stat">(.*?)</figure>', html, re.S):
-        num = re.search(r'<span class="sv-num">(.*?)</span>', it).group(1)
-        unit = re.search(r'<span class="sv-unit">(.*?)</span>', it)
-        out.append((num, unit.group(1).strip() if unit else "", re.search(r'<p class="sv-cap">(.*?)</p>', it).group(1)))
+        ask = re.search(r'<p class="fl-ask">(.*?)</p>', it).group(1)
+        assert it.index('class="fl-ask"') < it.index("sv-bar-v"), "the label comes before the values"
+        assert len(ask.split()) <= 10
+        rows = [(m[0], m[1], m[2].strip()) for m in re.findall(
+            r'<span class="sv-bar-l">(.*?)</span>.*?<span class="sv-bar-v">([^<]*)(?:<span class="sv-bar-u">(.*?)</span>)?</span>', it, re.S)]
+        out.append((ask, rows))
     return out
 
 
@@ -113,17 +118,18 @@ def text(html):
 
 
 def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
-    ids, d, ideas = first_screen(client, tmp_path, ("hero-stats", "hero-qual", "film-rows"))
+    ids, d, ideas = first_screen(client, tmp_path, ("hero-stats", "hero-qual"))
     s = stats(ids["hero-stats"])
     assert len(s) == 3
     # 1. language damage loses the asked kind faster (the pre-registered primary test of /plato/damage)
     kc = d["matched"]["text-zero vs unet-zero"]["delta_correct"]
-    assert s[0][:2] == (f"{round(-kc['language'] * 100)} vs {round(-kc['drawing'] * 100)}", "in 100")
+    assert [r[1:] for r in s[0][1]] == [(str(round(-kc["language"] * 100)), "of 100"), (str(round(-kc["drawing"] * 100)), "of 100")]
+    assert [r[0] for r in s[0][1]] == ["Damaged the words part", "Damaged the painting part"]
     # 2. Stable Diffusion XL's God turns into an ordinary person under language damage, not drawing damage (D3)
     x = ideas["damage"]
     d3, n = x["tests"]["D3"], x["n_seeds"]
     lang, draw = round(d3["language_rise"] * n), round(d3["drawing_rise"] * n)
-    assert s[1][:2] == (f"+{lang} vs +{draw}", f"of {n}") and "ordinary person" in s[1][2]
+    assert [r[1:] for r in s[1][1]] == [(str(lang), f"of {n}"), (str(draw), f"of {n}")] and "ordinary person" in s[1][0]
     eye = x["tests"]["D3_eye"]
     assert f"Counted by eye instead: +{round(eye['language_rise'] * n)} vs +{round(eye['drawing_rise'] * n)}." in ids["hero-stats"]
     # 3. clocks with all 12 numbers in order: intact against the mildest drawing damage
@@ -131,7 +137,8 @@ def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
     fi = c["feature_names"].index("12 numbers in order")
     intact = next(r for r in c["features"] if r["cond"] == "intact")
     mild = min((r for r in c["features"] if r["cond"].startswith("unet-zero@")), key=lambda r: float(r["cond"].split("@")[1]))
-    assert s[2][0] == f"{round(intact['values'][fi] * 100)}% → {round(mild['values'][fi] * 100)}%"
+    assert [r[1] for r in s[2][1]] == [str(round(intact["values"][fi] * 100)), str(round(mild["values"][fi] * 100))]
+    assert [r[2] for r in s[2][1]] == ["%", "%"] or [r[2] for r in s[2][1]] == ["", ""]
     # the verdicts: each worked out from its test, the same way /plato/damage shows them
     def held(t):
         lo, hi = t["ci95"]
@@ -150,21 +157,16 @@ def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
     assert 'href="/plato/damage#diss-h"' in ids["hero-qual"] and 'href="/plato/damage#proto-h"' in ids["hero-qual"]
 
 
-def test_the_picture_is_the_rocking_chair_that_becomes_a_car(client, tmp_path):
-    ids, d, _ = first_screen(client, tmp_path, ("film-rows",))
-    film = ids["film-rows"]
-    sl = d["slider"]
-    kind = next(k for k in sl["kinds"] if "rocking" in k["key"])
-    rows = re.findall(r'<div class="dm-row (\w+)"[^>]*>(.*?)</ol></div>', film, re.S)
-    assert [r for r, _ in rows] == ["lang", "draw"]
-    for (row, html), fam in zip(rows, (sl["methods"]["noise"]["lang"], sl["methods"]["noise"]["draw"])):
-        frames = sl["pictures"][kind["key"]][fam][:4]
-        assert re.findall(r'<img src="([^"]+)"', html) == [f["img"] for f in frames], row
-        assert all((STATIC / f["img"][len("/static/"):]).is_file() for f in frames)
-    lang = sl["pictures"][kind["key"]][sl["methods"]["noise"]["lang"]]
-    last = re.findall(r'<li class="dm-frame last">(.*?)</li>', rows[0][1], re.S)[0]
-    assert lang[3]["name"] == "car" and "“car”" in last  # Glimmer's own word for the most damaged picture shown
-    assert "“rocking chair”" in rows[0][1]  # Glimmer's "rockingchair", spaced like the kind
+def test_the_picture_is_a_carousel_that_starts_on_the_rocking_chair_that_becomes_a_car(client):
+    page = client.get("/damaged").text
+    cfg = json.loads(re.search(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', page, re.S).group(1))
+    first = cfg["slides"][0]
+    assert first["caption"] == "rocking chair \u2192 car" and len(cfg["slides"]) == 4
+    for sl in cfg["slides"]:
+        assert len(sl["caption"].split()) <= 10
+        for im in sl["images"]:
+            assert (STATIC / im["src"][len("/static/"):]).is_file(), im["src"]
+    assert "hc-static" in page and "dense/rocking_6.webp" in page  # the first slide shows without JavaScript
 
 
 # --- the cards ----------------------------------------------------------------------------------------------------
@@ -215,7 +217,7 @@ JARGON = [r"\bSDXL\b", r"\bUNet\b", r"text encoder", r"\bCI\b", r"\bpts\b", r"[P
 
 def test_the_hub_speaks_plain_words(client, tmp_path):
     """No unexplained jargon anywhere a visitor reads on the hub: the first screen as drawn, its alt texts, and the cards."""
-    ids, _, _ = first_screen(client, tmp_path, ("hero-stats", "hero-qual", "film-rows"))
+    ids, _, _ = first_screen(client, tmp_path, ("hero-stats", "hero-qual"))
     main = main_of(client.get("/damaged").text)
     main = re.sub(r'<figure class="epigraph.*?</figure>', "", main, flags=re.S)  # Plato's words stay verbatim
     shown = text(main) + " ".join(text(v) for v in ids.values())
