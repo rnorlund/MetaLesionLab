@@ -73,9 +73,8 @@ def load(path: Path | None = None) -> dict | None:
 STRIP = (
     '<section class="lab-strip" id="lab-strip" aria-labelledby="lab-strip-h" hidden>'
     '<div class="lab-strip-head"><div><h2 id="lab-strip-h">From the lab</h2>'
-    '<p class="lab-strip-sub">Pictures our experiments made. Many show an AI’s drawings falling apart as two AIs copy '
-    'them, or as we damage an image AI on purpose (its words part reads the request; its drawing part paints). '
-    'Drag, swipe or step through, and open one for the story.</p></div>'
+    '<p class="lab-strip-sub">Pictures our experiments made, many of an AI’s drawings falling apart. '
+    'Open one for the story.</p></div>'
     '<div class="lab-strip-ctrl">'
     '<button type="button" class="lab-btn" data-lab-step="-1" aria-label="Previous pictures">'
     '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M7 1L3 5l4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>'

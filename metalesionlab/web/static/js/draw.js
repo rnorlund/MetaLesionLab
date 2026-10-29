@@ -95,24 +95,24 @@
     '    <div class="dw-big"><span class="dw-big-num" data-dw="idea-num">–</span><span class="dw-big-text" data-dw="idea-text"></span></div>' +
     '    <p class="dw-verdict" data-dw="idea-verdict"></p><div class="dw-chart" data-dw="idea-chart"></div>' +
     '    <p class="dw-note" data-dw="idea-note"></p><p class="dw-oops" data-dw="idea-photo-note" hidden></p></article>' +
-    '  <article class="dw-card"><h3>Closest of Muse’s drawings</h3>' +
+    '  <article class="dw-card"><h3>The closest of Muse Image’s drawings</h3>' +
     '    <p class="dw-headline" data-dw="idea-closest"></p><div class="dw-near dw-near-2" data-dw="idea-near"></div>' +
     '    <div class="dw-emblems" data-dw="idea-emblems"></div><p class="dw-note" data-dw="idea-emblem-note"></p>' +
     '    <details class="dw-numbers"><summary>See the numbers</summary><div class="table-wrap"><table class="data" data-dw="idea-numbers"></table></div></details></article>' +
     '</div>' +
     '<div class="dw-tiles" data-dw="people-tiles">' +
-    '  <article class="dw-card dw-orig"><h3>Next to 200 people</h3>' +
+    '  <article class="dw-card dw-orig"><h3>Compared with 200 people</h3>' +
     '    <div class="dw-big"><span class="dw-big-num" data-dw="orig-num">–</span><span class="dw-big-text" data-dw="orig-text"></span></div>' +
     '    <p class="dw-verdict" data-dw="orig-verdict"></p><div class="dw-chart" data-dw="orig-chart"></div>' +
     '    <p class="dw-note" data-dw="orig-note"></p><p class="dw-oops" data-dw="looks-like" hidden></p><p class="dw-oops" data-dw="photo-note" hidden></p></article>' +
-    '  <article class="dw-card dw-vsmuse"><h3>Next to Muse Image</h3>' +
+    '  <article class="dw-card dw-vsmuse"><h3>Compared with Muse Image</h3>' +
     '    <p class="dw-headline" data-dw="muse-text"></p><div class="dw-chart" data-dw="muse-chart"></div><p class="dw-note" data-dw="muse-note"></p></article>' +
     '</div>' +
     '<div class="dw-pair" data-dw="people-pair">' +
     '  <article class="dw-card"><h3>Where your <span data-label>chair</span> lands</h3><div class="dw-legend" data-dw="map-legend"></div>' +
     '    <div class="dw-chart dw-map" data-dw="map-chart"></div><p class="dw-note" data-dw="map-note"></p></article>' +
     '  <article class="dw-card"><h3>Closest drawings</h3><div class="dw-near" data-dw="near"></div>' +
-    '    <p class="dw-note">Closest by DINOv2’s cosine distance, out of all of Muse Image’s doodles and all 200 people’s drawings.</p>' +
+    '    <p class="dw-note">The drawings that look most like yours to DINOv2, a Meta AI that compares pictures.</p>' +
     '    <details class="dw-numbers"><summary>See the numbers</summary><div class="table-wrap"><table class="data" data-dw="numbers"></table></div></details></article>' +
     '</div>' +
     // The clock test (mode "group"): two averages, never anyone's drawing. Which one the clock is closer to, and where
@@ -170,19 +170,19 @@
   function hook(c) {
     var idx = c.stats.index, pl = plural(c.label);
     if (idx < 0.45) return 'Muse Image drew the same ' + c.label + ' ' + c.n_ai + ' times.';
-    if (idx < 0.9) return 'Muse Image drew ' + c.n_ai + ' ' + pl + ', ' + Math.round(100 * (1 - idx)) + '% less varied than people’s.';
+    if (idx < 0.9) return 'Muse Image drew ' + c.n_ai + ' ' + pl + ', ' + Math.round(100 * (1 - idx)) + '% less varied than people’s ' + pl + '.';
     return 'Muse Image drew ' + c.n_ai + ' ' + pl + ', about as varied as people’s.';
   }
   function fair(c) {
     var w = c.stats.when_asked, pl = plural(c.label);
-    if (c.stats.index >= 0.9) return 'Muse Image varies its ' + pl + ' about as much as people do, even with the plain prompt.';
-    var lead = 'That’s Muse Image’s default: the textbook ' + c.label + '. It can vary when asked. ';
-    if (!w) return lead;
-    var how = w.prompt === 'unusual' ? 'Asked for an unusual kind of ' + c.label : 'Given a list of different kinds of ' + c.label + ' to draw';
+    if (c.stats.index >= 0.9) return 'Muse Image varies its ' + pl + ' about as much as people do, even with the plain request.';
+    var lead = 'That’s its habit, the textbook ' + c.label + ', but it can vary: ';
+    if (!w) return lead.replace(/, but it can vary: $/, '; it can vary when asked.');
+    var how = w.prompt === 'unusual' ? 'asked for an unusual kind of ' + c.label : 'given a list of kinds of ' + c.label + ' to draw';
     var ci = w.ratio_vs_people_ci95 || [w.ratio_vs_people, w.ratio_vs_people];
     if (ci[0] > 1) return lead + how + ', its ' + pl + ' were ' + fmt1(w.ratio_vs_people) + ' times as varied as people’s.';
     if (ci[1] >= 1) return lead + how + ', its ' + pl + ' were about as varied as people’s.';
-    return lead + how + ', its ' + pl + ' got ' + fmt1(w.ratio_vs_default) + ' times as varied, though still less varied than people’s.';
+    return lead + how + ', its ' + pl + ' got ' + fmt1(w.ratio_vs_default) + ' times as varied, though still less than people’s.';
   }
   function verdict(p, label) {
     if (p >= 95) return 'One of a kind';
@@ -215,8 +215,7 @@
       : 'Muse Image drew ' + t.emblem + ' in ' + t.n + ' of its ' + n + ' drawings.';
   }
   function ideaFair(c) {
-    return 'No one drew ' + c.phrase + ' for Google’s Quick, Draw! game, so there are no people’s drawings to compare with. ' +
-      'Your drawing is placed among Muse Image’s ' + c.n_ai + ' only, and nothing here is a score against people.';
+    return 'No one drew ' + c.phrase + ' for Google’s Quick, Draw! game, so yours is compared with Muse Image’s ' + c.n_ai + ' only, not with people.';
   }
   function ideaSentence(r, c) {  // "further from Muse’s idea of God than 14 of its 16 drawings"
     var k = r.muse_closer_n, n = r.muse_n, of = 'Muse’s idea of ' + c.phrase;
@@ -531,11 +530,10 @@
   var damageData = null;
   var ROW_NAMES = { language: 'Words part damaged', drawing: 'Drawing part damaged' };
   var ROW_PARTS = { language: 'the part that handles words', drawing: 'the part that draws' };
-  var ROW_WHAT = { language: 'its text encoders', drawing: 'its image-making UNet' };
+  var ROW_WHAT = { language: 'the part that reads the words', drawing: 'the part that paints the picture' };
   var DAMAGE_LEDE = [
-    'Meta’s Muse Image can’t be opened up, so this uses an open image model (Stable Diffusion XL) that we damaged on purpose.',
-    'Top row: damage to the part that handles words, so the idea wanders off.',
-    'Bottom row: damage to the part that draws, so the lines dissolve.'
+    'Meta’s Muse Image can’t be opened up, so we damaged an open image AI, Stable Diffusion XL, adding more noise to its artificial neurons at each step.',
+    'Top: the part that reads the words, so the idea wanders. Bottom: the part that paints, so the lines dissolve.'
   ];
 
   function loadDamage() {
@@ -564,7 +562,7 @@
         cells.appendChild(h('li', { class: 'dw-dmg-intact' }, [damageImg(t.intact, who + ', intact', side), h('span', { text: 'intact' })]));
         t[row].forEach(function (src, i) {
           cells.appendChild(h('li', null, damageImg(src, who + ', ' + ROW_PARTS[row] + ' damaged, step ' + (i + 1) + ' of ' +
-            t[row].length + ' (noise × ' + doses[i] + ')', side)));
+            t[row].length, side)));
         });
         rows.appendChild(h('div', { class: 'dw-dmg-row', role: 'group', 'aria-label': 'Damage to ' + ROW_PARTS[row] }, [
           h('p', { class: 'dw-dmg-name' }, [h('b', { text: ROW_NAMES[row] }), h('span', { text: ROW_WHAT[row] })]), cells
@@ -572,24 +570,24 @@
       });
       rows.appendChild(h('p', { class: 'dw-dmg-axis', 'aria-hidden': 'true' }, [h('span', { text: 'intact' }), h('span', { text: 'more damage →' })]));
       var more = h('p', { class: 'dw-dmg-more' });
-      if (!T.hasPage || T.hasPage('/plato/damage')) more.appendChild(h('a', { href: '/plato/damage', text: 'More: Damage the painter' }));
+      if (!T.hasPage || T.hasPage('/plato/damage')) more.appendChild(h('a', { href: '/plato/damage', text: 'More: Damage the painter, the full experiment' }));
       if (t.group && (!T.hasPage || T.hasPage('/plato/ideas'))) {  // an idea or a word: its trio is on /plato/ideas
         more.appendChild(document.createTextNode(' · '));
         more.appendChild(h('a', { href: '/plato/ideas#damage', text: 'God and the other ideas under damage' }));
       }
       // For an idea, say plainly that these are SDXL's pictures, and what SDXL drew intact (not Muse Image's picture)
       var own = t.what ? h('p', { class: 'dw-dmg-own' }, [h('b', { text: 'These are Stable Diffusion XL’s pictures, not Muse Image’s. ' }),
-        document.createTextNode(t.intact_note ? 'Intact, it drew ' + t.intact_note + '.' : 'Its intact picture is its own, not Muse’s.')]) : null;
+        document.createTextNode(t.intact_note ? 'Undamaged, it drew ' + t.intact_note + '.' : 'Its undamaged picture is its own, not Muse’s.')]) : null;
       box.appendChild(h('div', { class: 'dw-dmg-in' }, [
-        h('p', { class: 'dw-dmg-kicker', text: 'About the AI only' }),
         h('h2', { class: 'dw-dmg-h', id: 'dw-dmg-h', text: 'What damage does to an AI’s ' + what }),
         h('p', { class: 'dw-dmg-lede', text: DAMAGE_LEDE.join(' ') }),
         own,
         rows,
         h('p', { class: 'dw-dmg-note', text: 'This shows what happens to an AI. It says nothing about the person drawing.' }),
         more,
-        h('p', { class: 'dw-dmg-credit', text: 'Every picture has the same prompt (“' + t.prompt + '”) and the same starting noise (seed ' +
-          t.seed + '); only the damage changes: noise added to every neuron of one part, at the doses of the Damage the painter ' +
+        h('p', { class: 'dw-dmg-credit', text: 'Every picture comes from the same request (“' + t.prompt + '”) and the same random starting point (seed ' +
+          t.seed + '); only the damage changes. Random noise is added to every artificial neuron of one part, the text encoders (words) or the UNet ' +
+          '(drawing), in the same steps (noise × ' + d.rows.language.doses.join(', ') + ' and × ' + d.rows.drawing.doses.join(', ') + ') as the Damage the painter ' +
           'experiment. Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M.' })
       ]));
       box.hidden = false;
@@ -680,9 +678,9 @@
         var sec = h('div', { class: 'dw-group' + (g.aiOnly ? ' dw-group-ai' : ''), role: 'group', 'aria-labelledby': hid,
           'data-group': g.id });
         sec.appendChild(h('p', { class: 'dw-group-h', id: hid, text: g.title }));
-        sec.appendChild(h('p', { class: 'dw-group-note', text: g.aiOnly ? 'Next to the AI’s drawings only'
+        sec.appendChild(h('p', { class: 'dw-group-note', text: g.aiOnly ? 'Compared with the AI’s drawings only'
           : g.items.some(isGroup) ? 'Next to ' + (g.items[0].n_people_quantiles || 'adults’') + ' adults’ average clock and the AI’s'
-          : 'Next to ' + (g.items[0].n_human || 200) + ' people’s and the AI’s' }));
+          : 'Compared with ' + (g.items[0].n_human || 200) + ' people’s and the AI’s' }));
         var grid = h('div', { class: 'dw-group-grid' });
         g.items.forEach(function (c) {
           grid.appendChild(h('button', { type: 'button', class: 'dw-pick-btn', 'data-key': c.key, 'aria-pressed': String(c.key === S.key),
@@ -896,7 +894,7 @@
       stopTimer(false);
       updateButtons();
       var c = concept();
-      status(isGroup(c) ? 'Comparing your clock…' : 'Measuring your ' + thingName(c) + ' with DINOv2…', 'busy');
+      status(isGroup(c) ? 'Comparing your clock…' : 'Measuring your ' + thingName(c) + ' with DINOv2, a Meta AI that compares pictures…', 'busy');
       var slow = setTimeout(function () { status('Still measuring your ' + thingName(c) + '…', 'busy'); }, 4000);
       waiting(c);  // Muse Image's drawings right away: something to look at while the score is on its way
       if (o.onSubmit) o.onSubmit({ concept: c, instance: api });
@@ -968,7 +966,7 @@
       var strip = q('strip');
       if (strip) {
         q('reveal-h').textContent = isGroup(c) ? 'Here’s what Meta’s Muse Image drew for the same words, ' + c.n_ai + ' times'
-          : 'Here’s what Meta’s Muse Image drew when asked for ' + nounPhrase(c) + ', ' + c.n_ai + ' times';
+          : 'Here’s what Meta’s image AI, Muse Image, drew when asked for ' + nounPhrase(c) + ', ' + c.n_ai + ' times';
         strip.textContent = '';
         strip.classList.toggle('animate', !reduced());
         strip.style.setProperty('--cols', c.n_ai > 8 ? Math.ceil(c.n_ai / 2) : c.n_ai);  // two full rows: 8 + 8, or 6 + 6
@@ -980,7 +978,7 @@
         }
         strip.setAttribute('aria-label', 'Muse Image’s ' + c.n_ai + ' doodles of ' + nounPhrase(c));
         q('strip-cap').textContent = isGroup(c) ? groupHook(c) + ' The same instruction each time: “' + c.prompt + '”'
-          : (isIdea(c) ? ideaHook(c) : hook(c)) + ' One prompt each time: “a quick simple doodle sketch of ' + nounPhrase(c) + '”.';
+          : (isIdea(c) ? ideaHook(c) : hook(c)).replace(/\.$/, '') + ', from one request: “a quick simple doodle sketch of ' + nounPhrase(c) + '”.';
       }
     }
 
@@ -1083,13 +1081,12 @@
       var v = q('idea-verdict');
       v.textContent = '';
       v.appendChild(h('b', { text: ideaVerdict(r) + '. ' }));
-      v.appendChild(document.createTextNode('Far here means far from the average of Muse Image’s ' + n + ' drawings of ' + c.phrase +
-        ', as Meta’s DINOv2 sees them. It is not a score of how good or how true a drawing is.'));
-      q('idea-note').textContent = 'Each dot is one of Muse’s drawings, placed by its distance from the average of its other ' + (n - 1) +
-        '. Yours is placed by its distance from the average of all ' + n + '. Your quick pad drawing and Muse’s marker sketches also ' +
-        'differ in style, and DINOv2 sees that too, so most visitors’ drawings land further out than Muse’s own.';
+      v.appendChild(document.createTextNode('Far means far from the average of Muse Image’s ' + n + ' drawings, as DINOv2, a Meta AI that compares pictures, sees them; ' +
+        'not how good or true yours is.'));
+      q('idea-note').textContent = 'Each dot is one of Muse’s drawings, placed by how far it is from the average of its other ' + (n - 1) +
+        ' (yours, from all ' + n + '); quick pad drawings land further out because DINOv2 also sees style.';
       q('idea-photo-note').hidden = r.source !== 'upload';
-      q('idea-photo-note').textContent = 'Scored from a photo. Pen, paper and camera change how lines look, and DINOv2 sees that too.';
+      q('idea-photo-note').textContent = 'Scored from a photo: pen, paper and camera change how lines look, and DINOv2 sees that too.';
       ideaCharts(c, r);
       var box = q('idea-near');
       box.textContent = '';
@@ -1102,8 +1099,8 @@
           h('span', { class: 'd', text: 'distance ' + f2(r.d_nearest_ai) })])]));
       q('idea-closest').textContent = 'Yours is closest to Muse’s #' + (r.nearest_ai + 1) + ': ' + r.nearest_emblem + '.';
       renderEmblems(q('idea-emblems'), c, r);
-      q('idea-emblem-note').textContent = 'Muse Glimmer, Meta’s open model, named the main symbol in each of Muse Image’s ' + n +
-        ' drawings, in advance. Your drawing isn’t labeled: it is only measured, by DINOv2, on this server.';
+      q('idea-emblem-note').textContent = 'Meta’s open AI model, Muse Glimmer, named the main symbol in each of Muse Image’s ' + n +
+        ' drawings in advance; yours is only measured, never labeled.';
       renderIdeaNumbers(r, c);
       drawCard().catch(function () {});
       updateShareLinks();
@@ -1140,7 +1137,7 @@
         ['Muse’s drawings that sit closer to its idea than yours', r.muse_closer_n + ' of ' + r.muse_n],
         ['Closest of Muse’s drawings', '#' + (r.nearest_ai + 1) + ', distance ' + f2(r.d_nearest_ai)]
       ];
-      t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Measure' }), h('th', { class: 'num', text: 'Cosine distance or count' })])));
+      t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Measure' }), h('th', { class: 'num', text: 'Distance (0 = identical) or count' })])));
       t.appendChild(h('tbody', null, rows.map(function (row) {
         return h('tr', null, [h('td', { text: row[0] }), h('td', { class: 'num', text: row[1] })]);
       })));
@@ -1155,7 +1152,7 @@
       var v = q('orig-verdict');
       v.textContent = '';
       v.appendChild(h('b', { text: verdict(p, c.label) + '. ' }));
-      v.appendChild(document.createTextNode('Original here means far from the typical person’s ' + c.label + ', as Meta’s DINOv2 sees it.'));
+      v.appendChild(document.createTextNode('Original means far from the typical person’s ' + c.label + ', as DINOv2, a Meta AI that compares pictures, sees it.'));
       var oops = q('looks-like');
       if (r.own_rank && r.own_rank > 3 && r.looks_like && r.looks_like.length) {
         var names = r.looks_like.map(function (x) { return '“' + x.label + '”'; });
@@ -1166,17 +1163,16 @@
         oops.hidden = true;
       }
       q('photo-note').hidden = r.source !== 'upload';
-      q('photo-note').textContent = 'Scored from a photo. Pen, paper and camera change how lines look, and DINOv2 sees that too: in our tests a ' +
-        'photo of a drawing scored about 14 points more original, on average, than the same drawing made here.';
-      q('orig-note').textContent = 'Each dot is one person’s drawing from Google’s Quick, Draw! game, placed by its distance from the average of the other people’s.';
+      q('photo-note').textContent = 'Scored from a photo: in our tests, photos scored about 14 points more original than the same drawing made here.';
+      q('orig-note').textContent = 'Each dot is one person’s drawing from Google’s Quick, Draw! game; the further right, the more it differs from everyone else’s.';
       q('muse-text').textContent = museSentence(r, c);
       charts(c, r);
-      q('muse-note').textContent = 'Muse’s own ' + plural(c.label) + ' sit ' + f2(min(c.ai_loo)) + '–' + f2(max(c.ai_loo)) +
-        ' from its prototype; yours is ' + f2(r.d_ai) + ' away. Everyone’s drawings sit far from Muse’s, partly because DINOv2 also sees style: clean marker sketches against quick mouse or finger doodles.';
+      q('muse-note').textContent = 'Muse Image’s own ' + plural(c.label) + ' sit ' + f2(min(c.ai_loo)) + '–' + f2(max(c.ai_loo)) +
+        ' from their average; yours sits ' + f2(r.d_ai) + ' away, partly because DINOv2 also sees style (marker sketch or quick doodle).';
       var ex = c.map.explained || [];
-      q('map-note').textContent = 'A flat map of DINOv2’s 768 numbers: its two main directions' +
-        (ex.length ? ' (' + Math.round(100 * (ex[0] + ex[1])) + '% of the variation)' : '') +
-        ', so closeness here is approximate. Hover or tap a dot to see the drawing.';
+      q('map-note').textContent = 'A flat map of how DINOv2 sees the drawings, from its two main directions' +
+        (ex.length ? ' (' + Math.round(100 * (ex[0] + ex[1])) + '% of the differences)' : '') +
+        ', so closeness is approximate; hover or tap a dot to see the drawing.';
       renderNear(r, c);
       renderNumbers(r, c);
       drawCard().catch(function () {});
@@ -1190,7 +1186,7 @@
         you: r.d_human
       });
       stripChart(q('muse-chart'), {
-        axis: 'distance from Muse Image’s prototype ' + c.label + ' →',
+        axis: 'distance from Muse Image’s average ' + c.label + ' →',
         rows: [
           { name: 'Muse Image’s ' + c.n_ai + ' ' + plural(c.label), color: BLUE, values: c.ai_loo, sprite: c.sprites.muse, who: 'muse' },
           { name: c.n_human + ' people’s ' + plural(c.label), color: ORANGE, values: c.human_to_ai, sprite: c.sprites.people, who: 'person' }
@@ -1222,12 +1218,12 @@
         ['Your distance from the typical person’s ' + c.label, f2(r.d_human)],
         ['People’s distances from it: median (range)', range(c.human_loo)],
         ['Your originality percentile', Math.round(r.originality) + '%'],
-        ['Your distance from Muse Image’s prototype', f2(r.d_ai)],
+        ['Your distance from Muse Image’s average drawing', f2(r.d_ai)],
         ['Muse’s own doodles: median (range)', range(c.ai_loo)],
         ['People’s drawings: median (range)', range(c.human_to_ai)],
-        ['People’s drawings closer to Muse’s prototype than yours', Math.round(r.people_closer_to_muse) + '%']
+        ['People’s drawings closer to Muse’s average than yours', Math.round(r.people_closer_to_muse) + '%']
       ];
-      t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Measure' }), h('th', { class: 'num', text: 'Cosine distance or share' })])));
+      t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Measure' }), h('th', { class: 'num', text: 'Distance (0 = identical) or share' })])));
       t.appendChild(h('tbody', null, rows.map(function (row) {
         return h('tr', null, [h('td', { text: row[0] }), h('td', { class: 'num', text: row[1] })]);
       })));
@@ -1310,8 +1306,8 @@
         g.font = '400 16px ' + sans;
         g.textAlign = 'right';
         g.fillText(group ? 'Compared with two averages: ' + c.n_people + ' adults’ clocks and Muse Image’s ' + c.n_ai + ' · Meta DINOv2'
-          : idea ? 'Compared with Muse Image’s ' + c.n_ai + ' drawings only · Embeddings: Meta DINOv2'
-          : 'Compared with 200 Quick, Draw! drawings (CC BY 4.0) · Embeddings: Meta DINOv2', W - 48, 650);
+          : idea ? 'Compared with Muse Image’s ' + c.n_ai + ' drawings only · Measured with Meta DINOv2'
+          : 'Compared with 200 Quick, Draw! drawings (CC BY 4.0) · Measured with Meta DINOv2', W - 48, 650);
         g.textAlign = 'left';
       });
     }

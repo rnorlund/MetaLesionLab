@@ -95,13 +95,13 @@
       b.setAttribute('aria-pressed', String(b.getAttribute('data-concept') === S.concept));
     });
     swapImage($('grid-img'), IMG + (S.who === 'ai' ? c.ai_img : c.people_img), ALT[c.key][S.who]);
-    var stand = c.key === 'boat' ? ' Quick, Draw! has no “boat”, so both sides drew sailboats.' :
-      c.key === 'person' ? ' Quick, Draw! has no “person”; its whole-body figure is “yoga”, so the AI was asked for “a person doing yoga”.' : '';
+    // one sentence; Quick, Draw! has no "boat" or "person", so both sides drew a sailboat or a person doing yoga
+    var stand = c.key === 'boat' ? ' (Quick, Draw! has no “boat”, so both drew sailboats)' :
+      c.key === 'person' ? ' (Quick, Draw! has no “person”, so both drew yoga)' : '';
     $('grid-cap').textContent = S.who === 'ai'
-      ? c.n + ' doodles by Meta’s image AI, Muse Image, from the same request every time (“a quick simple doodle sketch of ' +
-        (c.key === 'boat' ? 'a sailboat' : c.key === 'person' ? 'a person doing yoga' : 'a ' + c.key) + '”). How different they are from one another (spread): ' + f2(c.ai_spread) + '.' + stand
-      : c.n + ' drawings by people playing Google’s Quick, Draw! game, 20 seconds per drawing. How different they are from one another (spread): ' + f2(c.human_spread) +
-        ', averaged over random sets of ' + c.n + '. Quick, Draw! dataset, Google Creative Lab, CC BY 4.0.' + stand;
+      ? c.n + ' doodles by Meta’s image AI, Muse Image, from one request, “a quick simple doodle sketch of ' +
+        (c.key === 'boat' ? 'a sailboat' : c.key === 'person' ? 'a person doing yoga' : 'a ' + c.key) + '”' + stand + ': spread ' + f2(c.ai_spread) + '.'
+      : c.n + ' drawings by people playing Google’s Quick, Draw! game, 20 seconds each' + stand + ': spread ' + f2(c.human_spread) + '.';
     var less = pct(1 - c.index);
     $('stat-num').textContent = less + '%';
     $('stat-text').textContent = 'Muse Image’s ' + NOUN[c.key] + ' are ' + less + '% less varied than people’s.';
@@ -164,14 +164,13 @@
   }
   function renderEverything() {
     var core = S.data.core, rows = sortedConcepts(), lo = rows[0], hi = rows[rows.length - 1];
-    $('ev-lede').textContent = 'We did the same for ' + core.n_concepts + ' things, from apples to umbrellas. Meta’s Muse Image drew ' + core.below_1 + ' of them more alike than people did.';
+    $('ev-lede').textContent = 'We asked for ' + core.n_concepts + ' everyday things, from apples to umbrellas.';
     var facts = $('ev-facts');
     facts.innerHTML = '';
-    [[core.below_1 + ' of ' + core.n_concepts, 'things Muse Image drew more alike than people did. For ' + core.ci_below_1 + ', even the top of the likely range stays below people’s level.'],
-     [lo.label.charAt(0).toUpperCase() + lo.label.slice(1), 'is drawn most alike, as DINOv2 sees it: Muse Image’s ' + lo.label + 's are ' + pct(1 - lo.index) + '% less varied than people’s. ' +
-       'Other picture-comparing AIs rank the things differently, but agree on the overall result.'],
-     [hi.label.charAt(0).toUpperCase() + hi.label.slice(1), 'is the only exception (' + f2(hi.index) + ' times people’s variety). Muse Image drew books open, closed, stacked and at an angle, as varied as people’s.'],
-     [f2(core.median_index), 'is the typical share: for a typical thing, Muse Image’s drawings are about half as varied as people’s.']
+    [[core.below_1 + ' of ' + core.n_concepts, 'things drawn more alike than people did (' + core.ci_below_1 + ' beyond chance)'],
+     [lo.label.charAt(0).toUpperCase() + lo.label.slice(1), 'drawn most alike, as DINOv2 sees it: ' + pct(1 - lo.index) + '% less varied'],
+     [hi.label.charAt(0).toUpperCase() + hi.label.slice(1), 'the one exception (' + f2(hi.index) + '): books open, closed and stacked'],
+     [f2(core.median_index), 'typical share: about half as varied as people’s']
     ].forEach(function (f) { facts.appendChild(h('div', { class: 'pc-fact' }, [h('b', { text: f[0] }), h('span', { text: f[1] })])); });
     var t = $('rank-table');
     t.innerHTML = '';
@@ -208,7 +207,7 @@
     t.appendChild(tb);
     var lo = Math.min.apply(null, R.rows.map(function (r) { return r.median; })), hi = Math.max.apply(null, R.rows.map(function (r) { return r.median; }));
     var ranks = R.rows.filter(function (r) { return r.rank_first; }).map(function (r) { return ordinal(r.rank_first) + ' with ' + (r.short || r.name); });
-    var note = 'With every measuring AI, Muse Image draws almost everything more alike than people do (a typical thing has ' + f2(lo) + '–' + f2(hi) + ' of people’s variety). ' +
+    var note = 'Every measuring AI agrees: a typical thing has ' + f2(lo) + '–' + f2(hi) + ' of people’s variety. ' +
       'Which things it draws most alike depends on the measuring AI: ' + R.first + ' is ' +
       (ranks.length > 1 ? ranks.slice(0, -1).join(', ') + ' and ' + ranks[ranks.length - 1] : ranks.join('')) + '. ' + R.last.charAt(0).toUpperCase() + R.last.slice(1) + ' is the least alike with all ' + R.rows.length + '.';
     $('robust-note').textContent = note;
@@ -273,9 +272,8 @@
     $('var-jump').hidden = false;
     var C = v.conditions, chair = (v.focus || {}).chair;
     var best = ['listed', 'unusual', 'any'].filter(function (k) { return C[k]; });
-    $('var-lede').textContent = 'With our plain request, Meta’s image AI, Muse Image, draws the same textbook chair every time. Does it know any other chairs? ' +
-      'We asked three more ways: for “a chair (any kind of chair)”, for “an unusual or different kind” of chair, and for each of 16 kinds that Meta’s chat AI, Muse Spark, listed ' +
-      '(a rocking chair, a beanbag, a wheelchair, a throne…), one doodle each. We did the same for other things too.';
+    $('var-lede').textContent = 'We asked for “a chair (any kind of chair)”, for “an unusual kind”, and for 16 kinds that Meta’s chat AI, Muse Spark, listed. ' +
+      'We did the same for other things too.';
     var fig = (S.data.figures || {}).variety_chair;
     if (fig) {
       $('var-fig').hidden = false;
@@ -283,27 +281,25 @@
       $('var-img').alt = 'Five rows of 16 chair doodles. Plain request: the same slatted wooden chair. “Any kind of chair”: the same slatted chair again. ' +
         '“An unusual kind”: spring chairs, egg chairs and other designer chairs. Named kinds: a rocking chair, armchair, folding chair, office chair, beanbag, wheelchair, throne and more. ' +
         'People: quick line drawings, mostly the same simple chair seen from the side.';
-      $('var-cap').textContent = 'Five rows of 16 chairs: four ways of asking Muse Image, then people’s chairs. Spread: how different the pictures in a row are from one another. ' +
-        'Kinds: how many different kinds of chair Meta’s open AI model, Muse Glimmer, recognized in the row. People’s drawings: Google Quick, Draw! dataset, CC BY 4.0.';
+      $('var-cap').textContent = 'Four ways of asking Muse Image for 16 chairs, then people’s; “kinds” counts the kinds of chair another Meta AI, Muse Glimmer, saw in each row.';
     }
     var facts = $('var-facts');
     facts.innerHTML = '';
     var add = function (big, text) { facts.appendChild(h('div', { class: 'pc-fact' }, [h('b', { text: big }), h('span', { text: text })])); };
     if (C.any) {
-      add(times(C.any.median_ratio), 'Asking for “any kind” didn’t help. A typical thing’s drawings stayed at ' + times(C.any.median_ratio).slice(1) + ' of people’s variety (plain request: ' +
-        times(C.default.median_ratio).slice(1) + '), and the chairs were the same slatted chair.');
+      add(times(C.any.median_ratio), '“Any kind” didn’t help (plain request: ' + times(C.default.median_ratio).slice(1) + '); still the slatted chair');
     }
     if (C.listed) {
-      add(times(C.listed.median_ratio), 'Naming the kinds worked. With one doodle of each kind Muse Spark listed, Muse Image’s drawings were as varied as people’s, or more, for ' +
-        C.listed.above_people + ' of ' + C.listed.n + ' things' + (C.listed.median_vs_default ? ' (' + Number(C.listed.median_vs_default).toFixed(1) + ' times as varied as with the plain request)' : '') + '.');
+      add(times(C.listed.median_ratio), 'Naming kinds worked: as varied as people for ' + C.listed.above_people + ' of ' + C.listed.n + ' things' +
+        (C.listed.median_vs_default ? ' (' + Number(C.listed.median_vs_default).toFixed(1) + '× the plain request)' : ''));
     }
     if (chair && chair.ratio) {
       var r = chair.ratio, top = best.filter(function (k) { return r[k] != null; })[0];
-      add(times(r.default) + ' → ' + times(r[top]), 'Chairs: Muse Image’s variety as a share of people’s (people = 1), first with the plain request, then when ' +
-        (top === 'listed' ? 'asked for named kinds' : top === 'unusual' ? 'asked for an unusual kind' : 'asked for any kind') + '.');
+      add(times(r.default) + ' → ' + times(r[top]), 'chairs, against people’s: plain request, then ' +
+        (top === 'listed' ? 'named kinds' : top === 'unusual' ? 'an unusual kind' : 'any kind'));
     }
     if (C.listed && C.listed.recognized != null && C.default.recognized != null) {
-      add(pct(C.default.recognized) + '% → ' + pct(C.listed.recognized) + '%', 'of the pictures still look most like people’s drawings of the same thing (plain request, then named kinds). Variety has a price: some named kinds come from other meanings of the word (a piano key, a clock face).');
+      add(pct(C.default.recognized) + '% → ' + pct(C.listed.recognized) + '%', 'still look like the thing; some “kinds” meant a piano key or clock face');
     }
     renderVarietyChart();
     var lg = $('var-legend');
@@ -318,12 +314,15 @@
     if (!k || !k.summary || !k.summary.people || !k.summary.default) return;
     var P = k.summary.people, D = k.summary.default, L = k.summary.listed, pv = k.people_vs_default || {};
     box.appendChild(h('h3', { text: 'Do people draw different chairs, or the same chair differently?' }));
-    box.appendChild(h('p', { text: 'Spread measures how different pictures look. People’s quick drawings differ a lot just in how they are drawn. ' +
+    box.appendChild(h('p', { text: 'The same chair differently: people draw the plain kind as often as the AI does.' }));
+    var more = h('details', { class: 'pc-how how-we-know' }, h('summary', { text: 'How we know' }));
+    box.appendChild(more);
+    more.appendChild(h('p', { text: 'Spread measures how different pictures look. People’s quick drawings differ a lot just in how they are drawn. ' +
       'So we also asked which kind of thing each picture shows. Muse Glimmer, Meta’s open AI model, sorted each picture into one of the kinds Muse Spark listed, or “a plain, ordinary one”, or “can’t tell”.' }));
     var same = pv.n_concepts ? pv.same_prototype + ' of ' + pv.n_concepts : null;
     // ALL_35: the same share over all 35 things, labels of every quality (public_data/plato_variety.json,
     // kinds_summary.all: people 0.829, usual prompt 0.828). The landing page and README quote that one.
-    box.appendChild(h('p', { text: 'People mostly draw the textbook version too. On the ' + k.reliable + ' things Glimmer sorts reliably, ' + pct(P.mean_share_plain) +
+    more.appendChild(h('p', { text: 'People mostly draw the textbook version too. On the ' + k.reliable + ' things Glimmer sorts reliably, ' + pct(P.mean_share_plain) +
       '% of people’s recognizable drawings are the plain, ordinary kind, the same as for Muse Image with the plain request (' +
       pct(D.mean_share_plain) + '%)' + (same ? ', and for ' + same + ' things the most common kind is the same for both' : '') + '. ' +
       'Over all ' + k.n_concepts + ' things it is 83% for both. ' +
@@ -331,14 +330,14 @@
       '% for Muse Image with the plain request' + (L ? ', and ' + pct(L.mean_simpson) + '% when it draws the named kinds.' : '.') +
       ' So people draw a few more kinds than Muse Image does by default, and far fewer than it can.' }));
     var noise = k.people_spread_within_prototype;
-    box.appendChild(h('p', { text: chairPeopleText() + (noise && noise.median_share ? 'Across things, if you keep only people’s drawings of the most common kind, they are still ' +
+    more.appendChild(h('p', { text: chairPeopleText() + (noise && noise.median_share ? 'Across things, if you keep only people’s drawings of the most common kind, they are still ' +
       pct(noise.median_share) + '% as varied as all their drawings. So people differ in how they draw a thing far more than in which kind they draw.' : '') }));
     var hat = ((v.focus || {}).hat || {}).kinds;
     if (hat && hat.people && hat.default && hat.default.n) {
-      box.appendChild(h('p', { text: 'The exception is hats: pick two of people’s hats and they are different kinds ' + pct(hat.people.simpson) + '% of the time (brimmed hats, caps, top hats, party hats), while Muse Image drew a baseball cap for ' +
+      more.appendChild(h('p', { text: 'The exception is hats: pick two of people’s hats and they are different kinds ' + pct(hat.people.simpson) + '% of the time (brimmed hats, caps, top hats, party hats), while Muse Image drew a baseball cap for ' +
         Math.round(hat.default.prototype_share * hat.default.n) + ' of its ' + hat.default.n + ' hats.' }));
     }
-    box.appendChild(h('p', { class: 'pc-caveat', text: 'How we checked the labels: on Muse Image’s named-kind doodles, where we know the right answer, Glimmer picked the right kind ' +
+    more.appendChild(h('p', { class: 'pc-caveat', text: 'How we checked the labels: on Muse Image’s named-kind doodles, where we know the right answer, Glimmer picked the right kind ' +
       pct(k.accuracy) + '% of the time (' + k.n_pictures + ' pictures; chance about ' + pct(k.chance) + '%), often choosing “plain” for kinds that look ordinary. ' +
       'The numbers above use the ' + k.reliable + ' of ' + k.n_concepts + ' things where it got at least half right. Glimmer can miss kinds in rough 20-second drawings; ' +
       'a second AI labeler, Muse Spark, sees more kinds in both people’s and Muse Image’s drawings, but puts them in the same order.' }));
@@ -368,8 +367,8 @@
     });
     swapImage($('lang-img'), IMG + 'lang_' + key + '_ai.webp', LANG_ALT[key][0]);
     swapImage($('lang-avg'), IMG + 'lang_' + key + '_average.webp', LANG_ALT[key][1]);
-    $('lang-cap').textContent = '“' + key + '” drawn by Muse Image from the same request in six languages: 4 of 10 doodles per language, picked at random.';
-    $('lang-avg-cap').textContent = 'The average drawing (all of them laid on top of one another): the AI’s by request language (10 each, top) and people’s by country (200 each, bottom). People’s drawings: Google Quick, Draw! dataset, CC BY 4.0.';
+    $('lang-cap').textContent = '“' + key + '” by Muse Image, asked in six languages: 4 of 10 doodles per language, picked at random.';
+    $('lang-avg-cap').textContent = 'All drawings laid on top of one another: the AI’s by language (top), people’s by country (bottom).';
     var box = $('lang-text');
     box.innerHTML = '';
     var ai = pc.share_ai_style_removed, hu = pc.share_human_style_removed;
@@ -378,14 +377,13 @@
       box.appendChild(h('h3', { text: 'The same chair in all six' }));
       box.appendChild(h('p', null, ['All 60 chairs are the same slatted wooden dining chair, whether we asked for ', word('en', 'chair'), ', ', word('es', 'chair'), ', ',
         word('hi', 'chair'), ', ', word('zh', 'chair'), ', ', word('ar', 'chair'), ' or ', word('sw', 'chair'), '. Plato would be pleased.']));
-      box.appendChild(h('p', { text: 'The language of the request makes no measurable difference to the AI’s chairs. Once drawing style is set aside, it explains ' + share(ai) +
-        ' of how they vary (probably between ' + minus((ai[1] * 100).toFixed(1)) + '% and ' + (ai[2] * 100).toFixed(1) + '%). People’s chairs differ more by country (' + share(hu) +
-        '), more than for any other of the 10 things.' }));
+      box.appendChild(h('p', { text: 'The language made no measurable difference: ' + share(ai) + ' of how the chairs vary (probably between ' + minus((ai[1] * 100).toFixed(1)) +
+        '% and ' + (ai[2] * 100).toFixed(1) + '%). People’s chairs differ more by country (' + share(hu) + ').' }));
     } else {
       box.appendChild(h('h3', { text: 'The word changes the hat' }));
       box.appendChild(h('p', null, ['In Hindi (', word('hi', 'hat'), '), Mandarin (', word('zh', 'hat'), '), Arabic (', word('ar', 'hat'), ') and Swahili (', word('sw', 'hat'),
         '), all 10 hats were baseball caps; in English, 7 of 10. Spanish ', word('es', 'hat'), ' gave brimmed hats, 3 of them Mexican sombreros.']));
-      box.appendChild(h('p', { text: 'Even with drawing style set aside, the language explains ' + share(ai) + ' of how the AI’s hats vary. People in all six countries drew a brimmed hat.' }));
+      box.appendChild(h('p', { text: 'The language explains ' + share(ai) + ' of how the AI’s hats vary. People in all six countries drew a brimmed hat.' }));
     }
   }
 
@@ -433,14 +431,12 @@
   function renderInside() {
     var I = S.data.inside, L = I.layer_spread || {}, last = L.L52, r = I.naming;
     if (last) {
-      $('collapse-text').textContent = 'How different a thing’s doodles look to Glimmer at each stage (blue: Muse Image’s, orange: people’s). By about stage 36 of 52 (for a typical thing), ' +
-        'Glimmer treats all of Muse Image’s doodles of a thing as nearly one picture, while people’s stay far apart. At the last stage the spread is ' + f2(last.ai) +
-        ' against ' + f2(last.human) + ', wider for people in ' + last.human_wider + ' of ' + last.n + ' things.';
+      $('collapse-text').textContent = 'By about stage 36 of 52, Glimmer sees all of Muse Image’s doodles of a thing as one picture (blue). ' +
+        'People’s stay apart (orange): spread ' + f2(last.human) + ' against ' + f2(last.ai) + ' at the last stage, for ' + last.human_wider + ' of ' + last.n + ' things.';
     }
     if (r) {
-      $('scatter-text').textContent = 'Each dot is one thing, drawn by people. The more different ways people draw it, the less often Glimmer names it correctly: a moderate link (' +
-        minus(f2(r.rho)) + ' on a scale from −1 to 1; probably between ' + minus(f2(r.ci95[0])) + ' and ' + minus(f2(r.ci95[1])) + '). Glimmer named ' + pct(I.accuracy.ai) + '% of Muse Image’s doodles correctly, but only ' +
-        pct(I.accuracy.human) + '% of people’s.';
+      $('scatter-text').textContent = 'The more ways people draw a thing, the less often Glimmer names it (' + minus(f2(r.rho)) + ' on a −1 to 1 scale; probably ' +
+        minus(f2(r.ci95[0])) + ' to ' + minus(f2(r.ci95[1])) + '). It named ' + pct(I.accuracy.ai) + '% of Muse Image’s doodles, but ' + pct(I.accuracy.human) + '% of people’s.';
     }
     renderScatter();
     renderBench();
@@ -470,8 +466,7 @@
     var peak = b.layers[b.p_name.indexOf(Math.max.apply(null, b.p_name))];
     var hb = S.data.inside.bench_human || {};
     var fewest = S.data.inside.scatter.slice().sort(function (a, c) { return a.accuracy - c.accuracy; })[0];
-    $('bench-text').textContent = 'One person’s drawing of a bench. We read Glimmer’s best guess after each stage. “Bench” wins at stage ' + peak +
-      '. Later stages overwrite it: “sofa”, “стол” (Russian for table), then “table”. Its final answer: “' + b.said + '”.' +
+    $('bench-text').textContent = 'Glimmer’s guess for one person’s bench is “bench” at stage ' + peak + ', then “sofa”, “стол” (Russian for table) and finally “' + b.said + '”.' +
       (hb.n ? ' Glimmer named only ' + Math.round(hb.accuracy * hb.n) + ' of ' + hb.n + ' people’s benches correctly' + (fewest && fewest.key === 'bench' ? ', the fewest of all 35 things.' : '.') : '');
   }
   function renderNull() {
@@ -485,9 +480,9 @@
     });
     t.appendChild(tb);
     var c = I.control_rhos || [];
-    $('null-lede').textContent = 'We damaged Glimmer on purpose, by changing or switching off some of its artificial neurons. Did it lose the things people draw in many ways first? No. ' +
-      'The idea came from people: unusual members of a category are named more slowly, and are thought to be more fragile after brain damage.';
-    $('null-note').textContent = 'Link: how closely two rankings agree (from −1 to 1): how varied people draw a thing, and how many of its names were lost, over 35 things. 0 means no link; every likely range includes 0' +
+    $('null-lede').textContent = 'We damaged Glimmer on purpose, switching off or changing some of its artificial neurons. ' +
+      'It didn’t lose the things people draw in many ways first, though in people unusual examples seem more fragile after brain damage.';
+    $('null-note').textContent = 'Link: how well variety predicts lost names (−1 to 1; 0 is none); every likely range includes 0' +
       (c.length ? ', and random damage of the same size gives ' + minus(f2(Math.min.apply(null, c))) + ' to ' + minus(f2(Math.max.apply(null, c))) : '') + '.';
   }
 
@@ -554,15 +549,19 @@
       text.appendChild(h('p', { class: 'pc-verdict', text: 'No. The sameness is Meta’s Muse Image, not image AIs in general.' }));
       text.appendChild(h('p', { text: 'Given the same request, Stable Diffusion XL, an open image AI from Stability AI, drew far more varied pictures' +
         (times ? ': about ' + times + ' times as varied as Muse Image’s' : '') + ', and more varied for ' + sx.muse_more_uniform + ' of ' + n + ' things.' }));
-      text.appendChild(h('p', { text: 'Unless you ask for something specific, Muse Image draws the textbook version of each object. (When we named kinds to draw, it varied as much as people, or more.) That’s useful for standard test pictures, which need clear, typical drawings that everyone names the same way; it’s why ' + (T.hasPage('/studio') ? 'Test Studio uses it' : 'our sister project’s picture-naming tests use it') + '. But it doesn’t show how differently people picture things.' }));
+      text.appendChild(h('p', { text: 'Muse Image’s textbook drawings suit standard test pictures, but hide how differently people picture things.' }));
     } else {
       text.appendChild(h('p', { text: 'We gave Stable Diffusion XL, an open image AI from Stability AI, the same request. ' +
         (mi < 1 ? 'Its drawings were also more alike than people’s (' + f2(mi) + ' of people’s variety, for a typical thing).' : 'Its drawings were not more alike than people’s (' + f2(mi) + ' times people’s variety, for a typical thing).') +
         ' Muse Image was more uniform for ' + sx.muse_more_uniform + ' of ' + n + ' things.' }));
     }
+    var more = h('details', { class: 'pc-how how-we-know' }, h('summary', { text: 'How we know' }));
+    if (specific) {
+      more.appendChild(h('p', { text: 'Unless you ask for something specific, Muse Image draws the textbook version of each object. (When we named kinds to draw, it varied as much as people, or more.) That’s useful for standard test pictures, which need clear, typical drawings that everyone names the same way; it’s why ' + (T.hasPage('/studio') ? 'Test Studio uses it' : 'our sister project’s picture-naming tests use it') + '.' }));
+    }
     if (sx.full_bleed_share != null) {
       var sc = sx.style_controlled;
-      text.appendChild(h('p', { class: 'pc-caveat', text: 'Part of Stable Diffusion XL’s variety is style, not different objects. It ignored “no shading” and added frames and scenes, with ink reaching the edges in ' +
+      more.appendChild(h('p', { class: 'pc-caveat', text: 'Part of Stable Diffusion XL’s variety is style, not different objects. It ignored “no shading” and added frames and scenes, with ink reaching the edges in ' +
         pct(sx.full_bleed_share) + '% of its pictures. So its comparison with people (' + f2(mi) + ' times as varied, for a typical thing) is at most that, probably less' +
         (sc && sc.median_index != null ? ' (' + f2(sc.median_index) + ' without those pictures)' : '') + '. The solid result is the gap between the two AIs.' }));
     }
@@ -576,10 +575,11 @@
       var varied = c.filter(function (x) { return rm[x.label] >= top && rs[x.label] >= top; }).sort(function (a, b) { return rm[b.label] - rm[a.label]; });
       var shared = [alike.length ? 'both draw ' + listAnd(alike.map(plural)) + ' almost the same way every time' : '',
         varied.length ? 'both vary ' + listAnd(varied.map(plural)) + ' the most' : ''].filter(Boolean);
-      text.appendChild(h('p', { text: 'The two AIs agree only weakly on which things they draw most alike (' + f2(sx.rho_muse_sdxl.rho) + ' on a scale from −1 to 1)' +
+      more.appendChild(h('p', { text: 'The two AIs agree only weakly on which things they draw most alike (' + f2(sx.rho_muse_sdxl.rho) + ' on a scale from −1 to 1)' +
         (shared.length ? ': ' + shared.join(', and ') : '') + '.' }));
     }
     text.appendChild(h('p', null, h('b', { text: 'Plato’s Chair is a way to measure this for any image AI.' })));
+    if (more.childNodes.length > 1) text.appendChild(more);
     box.appendChild(text);
     if (sx.concepts && sx.concepts.length) {
       var key = function (color, label, line) { var i = h('i', { class: line ? 'line' : '' }); i.style.background = color; return h('span', null, [i, label]); };

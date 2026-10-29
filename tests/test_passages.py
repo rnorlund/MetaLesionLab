@@ -111,7 +111,8 @@ def test_aristotles_reply_on_plato_is_a_labelled_framing():
     assert "A philosophical framing, not a finding" in box and "Aristotle’s reply" in box
     assert box.count("<figure class=") == 1 and 'data-passage="metaphysics-981a5"' in box and "tr. W. D. Ross" in box
     prose = re.search(r'<div class="pc-reply-text">.*?<p>(.*?)</p>', box, re.S).group(1)
-    assert 3 <= len(re.findall(r"[.?!](?:\s|$)", prose)) <= 4 and "“" not in prose and '"' not in prose  # no quotes
+    # short (the page's sections lead with at most two sentences) and no quotes
+    assert 1 <= len(re.findall(r"[.?!](?:\s|$)", prose)) <= 2 and "“" not in prose and '"' not in prose
     assert '<a href="#aristotle">' in page and page.index('id="everything"') < page.index('id="aristotle"')
 
 

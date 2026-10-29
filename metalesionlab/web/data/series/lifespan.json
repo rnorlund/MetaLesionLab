@@ -1,1 +1,1 @@
-{"finding": "From age 2 to 10, children’s chairs get easier to recognize and more like adults’. An image AI’s chairs at stages of its training don’t follow that path. A small AI we trained on people’s chairs does, and in all 8 runs ends up drawing chairs more alike than the people it learned from (not so for cats)."}
+{"finding": "Children’s chairs grow more like adults’ from age 2 to 10. A small AI trained on people’s chairs grows that way too; a big image AI doesn’t."}

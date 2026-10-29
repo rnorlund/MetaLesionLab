@@ -186,12 +186,11 @@ def _set_theme(page: str, site: str) -> str:
 SERIES = [
     {"path": "/plato", "slug": "chair", "question": "Is there one ideal chair?", "source": "Republic X · the Forms",
      "title": "Plato’s Chair",
-     "finding": "Meta’s image AI, Muse Image, drew the same chair 16 times, and drew 34 of 35 things more alike than "
-                "people do."},
+     "finding": "Meta’s image AI drew the same chair 16 times, and 34 of 35 things more alike than people do."},
     {"path": "/plato/inside", "slug": "inside", "question": "What happens to a drawing inside the machine?",
      "source": "Republic VII · out of the cave", "title": "Inside the model",
-     "finding": "Meta’s open AI model, Muse Glimmer, reads a picture in 52 stages. By about stage 36, it treats all of "
-                "Muse Image’s doodles of a thing as one. People’s drawings stay about 6 times as spread out."},
+     "finding": "Inside Meta’s open AI model, Muse Image’s doodles of a thing merge into one. People’s stay about 6 "
+                "times as spread out."},
     # its picture would show Muse Image's drawings of God, so it has none: the drawn icon keeps the blind draw
     {"path": "/plato/ideas", "slug": "ideas", "question": "Can an AI draw what no one has seen?",
      "source": "Republic X · God’s bed, Beauty, Justice, the Good", "title": "The invisible Forms", "finding": None},

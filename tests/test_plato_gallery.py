@@ -43,6 +43,7 @@ def test_items_have_every_field_and_short_text():
         assert it["category"] in R.CATEGORIES, it["id"]
         assert len(it["title"].split()) <= 8, it["id"]
         assert len(it["caption"].split()) <= 30, it["id"]
+        assert len(re.findall(r"[.?!](?:\s|$)", it["caption"])) == 1, it["id"]  # one sentence; the detail is in "more"
         assert len(it["alt"]) >= 40, it["id"]  # alt text describes the picture, not just names it
         assert ("image" in it) != ("sequence" in it), it["id"]  # a still or a sequence
         if "sequence" in it:
@@ -59,7 +60,7 @@ def test_items_have_every_field_and_short_text():
 def test_every_number_in_a_caption_or_label_is_in_the_docs():
     number = re.compile(r"\d[\d,]*(?:\.\d+)?%?")
     for it in ITEMS:
-        texts = [it["caption"]] + [f["label"] for f in (it.get("sequence") or {}).get("frames", [])]
+        texts = [it["caption"], it.get("more", "")] + [f["label"] for f in (it.get("sequence") or {}).get("frames", [])]
         for text in texts:
             for n in number.findall(text):
                 n = n.rstrip(",")
