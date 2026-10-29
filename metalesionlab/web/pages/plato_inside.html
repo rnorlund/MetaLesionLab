@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Inside the Model · {{BRAND}}</title>
-<meta name="description" content="Drag through the 52 layers of Meta's open model Muse Glimmer 30B and watch it look at doodles of a chair, then settle on a name. Muse Image's chairs collapse to almost one point by the naming layers (median layer 36 across 35 things). People's chairs stay spread out.">
+<meta name="description" content="Drag through the 52 stages in which Meta's open AI model, Muse Glimmer, reads a drawing of a chair and settles on a name. By the end it files all of Meta's image AI's chairs in one place, as if they were one drawing (typically by stage 36, across 35 things). People's chairs stay far apart.">
 <meta property="og:title" content="Inside the model: where an AI's chairs become one · {{BRAND}}">
-<meta property="og:description" content="Layer by layer inside Muse Glimmer 30B: Muse Image's doodles of a thing collapse to one point by the naming layers. People's doodles never do.">
+<meta property="og:description" content="Stage by stage inside Meta's open AI model, Muse Glimmer: it ends up filing all of Muse Image's drawings of a thing in one place. People's drawings never get there.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,17 +25,17 @@
 
 <section class="fl pi-hero" aria-labelledby="hero-h">
   <div class="title-pair">
-    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to a drawing inside the machine? · <i>Republic</i> VII · <a href="/plato">Plato series</a></span></p>
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">What happens to a drawing inside an AI? · <i>Republic</i> VII · <a href="/plato">Plato series</a></span></p>
     <h1 id="hero-h">Inside the model</h1>
   </div>
   <!--#epigraph:metaphysics-981a28-->
   <div class="fl-ctx">
-    <p class="pi-lede">Plato thought every chair copies one ideal chair. We gave Meta’s open model Muse Glimmer the doodles from <a href="/plato">Plato’s Chair</a>, Muse Image’s and people’s, and read its state after each of its 52 layers. First it sees a drawing. Layer by layer, it settles on a name.</p>
+    <p class="pi-lede">Plato thought every real chair copies one perfect, ideal chair. Meta’s image AI, Muse Image, draws nearly the same chair every time, while people playing Google’s Quick, Draw! game, 20 seconds per drawing, draw many different ones (<a href="/plato">the main experiment</a>). We showed both sets to Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), and asked it to name each drawing. Glimmer reads a picture in 52 stages (layers), one after another, and we looked at what it holds after each one. First it sees a drawing; stage by stage, it settles on a name.</p>
   </div>
-  <p class="fl-answer" id="hero-answer">By the time the model names them, Muse Image’s doodles of a thing sit almost on one point; people’s doodles stay spread out.</p>
+  <p class="fl-answer" id="hero-answer">Meta’s open AI model, Muse Glimmer, ends up filing all of Meta’s image AI’s drawings of a thing in one place, as if they were one drawing; people’s drawings stay far apart.</p>
   <figure class="fl-visual pi-trip-fig">
-    <div class="pi-trip" id="hero-trip" role="img" aria-label="Muse Image’s chairs and people’s chairs inside Muse Glimmer at three layers"></div>
-    <figcaption class="fl-cap" id="hero-trip-cap"><span class="fl-key muse" aria-hidden="true"></span>Muse Image’s chairs and <span class="fl-key people" aria-hidden="true"></span>people’s chairs inside Muse Glimmer as it reads them, from its first layer to its last (52). Chairs it holds alike sit close; the circle is each set’s spread. <a href="#explorer">Drag through every layer, for 35 things</a></figcaption>
+    <div class="pi-trip" id="hero-trip" role="img" aria-label="Muse Image’s chairs and people’s chairs inside Muse Glimmer at three stages"></div>
+    <figcaption class="fl-cap" id="hero-trip-cap"><span class="fl-key muse" aria-hidden="true"></span>Chairs drawn by Meta’s image AI, Muse Image, and <span class="fl-key people" aria-hidden="true"></span>by people playing Google’s Quick, Draw! game, as Glimmer holds them from its first stage to its last (52). Chairs that look alike to Glimmer sit close together; each circle shows how far apart that set is. <a href="#explorer">Drag through every stage, for 35 things</a></figcaption>
   </figure>
   <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
   <p class="fl-note" id="hero-note"></p>
@@ -43,10 +43,10 @@
 
 <section class="pi-explorer" id="explorer" aria-labelledby="explorer-h">
   <div class="pi-explorer-head">
-    <h2 id="explorer-h">Drag through the layers</h2>
+    <h2 id="explorer-h">Drag through Glimmer’s 52 stages</h2>
     <div class="pi-controls">
       <label class="pi-pick"><span>Thing</span><select id="thing" aria-describedby="thing-note"></select></label>
-      <div class="seg pi-view" id="view-seg" role="group" aria-label="Show the doodles as">
+      <div class="seg pi-view" id="view-seg" role="group" aria-label="Show the drawings as">
         <button type="button" data-view="drawings" aria-pressed="true">Drawings</button>
         <button type="button" data-view="dots" aria-pressed="false">Dots</button>
       </div>
@@ -58,11 +58,11 @@
     <div class="pi-mapcol">
       <figure class="pi-mapfig">
         <div class="pi-legend" id="map-legend">
-          <span><i class="key muse" aria-hidden="true"></i>Muse Image’s doodles</span>
-          <span><i class="key people" aria-hidden="true"></i>People’s doodles</span>
-          <span class="pi-legend-halo"><i class="key halo" aria-hidden="true"></i>circle: the group’s spread</span>
+          <span><i class="key muse" aria-hidden="true"></i>Muse Image’s drawings</span>
+          <span><i class="key people" aria-hidden="true"></i>People’s drawings</span>
+          <span class="pi-legend-halo"><i class="key halo" aria-hidden="true"></i>circle: how far apart the group is</span>
         </div>
-        <div class="pi-map" id="map" role="img" aria-label="Map of the doodles inside the model">
+        <div class="pi-map" id="map" role="img" aria-label="Map of the drawings inside the model">
           <svg class="pi-halos" id="halos" aria-hidden="true"></svg>
           <div class="pi-points" id="points" aria-hidden="true"></div>
           <div class="pi-watermark" id="watermark" aria-hidden="true"></div>
@@ -72,41 +72,41 @@
 
       <div class="pi-scrub" id="scrub">
         <div class="pi-scrub-row">
-          <button type="button" class="pi-btn pi-play" id="play" aria-label="Play through the layers">
+          <button type="button" class="pi-btn pi-play" id="play" aria-label="Play through the stages">
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z"/><path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg>
           </button>
-          <button type="button" class="pi-btn" id="prev" aria-label="Previous layer">
+          <button type="button" class="pi-btn" id="prev" aria-label="Previous stage">
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="pi-range">
             <div class="pi-marks" id="marks" aria-hidden="true"></div>
-            <input type="range" id="layer" min="1" max="52" step="1" value="1" aria-label="Layer">
+            <input type="range" id="layer" min="1" max="52" step="1" value="1" aria-label="Stage (layer)">
             <div class="pi-ticks" aria-hidden="true"><span>1</span><span>13</span><span>26</span><span>39</span><span>52</span></div>
           </div>
-          <button type="button" class="pi-btn" id="next" aria-label="Next layer">
+          <button type="button" class="pi-btn" id="next" aria-label="Next stage">
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-        <div class="pi-jumps" id="jumps" role="group" aria-label="Jump to a layer"></div>
+        <div class="pi-jumps" id="jumps" role="group" aria-label="Jump to a stage"></div>
       </div>
     </div>
 
     <div class="pi-side">
       <div class="pi-readout" id="readout">
-        <p class="pi-layerline"><span class="pi-layernum">Layer <b id="layer-num">1</b> of 52</span><span class="pi-phase" id="phase"></span></p>
+        <p class="pi-layerline"><span class="pi-layernum">Stage <b id="layer-num">1</b> of 52</span><span class="pi-phase" id="phase"></span></p>
         <p class="pi-phase-text" id="phase-text"></p>
         <div class="pi-bars" id="bars"></div>
         <p class="pi-lensline" id="lens-line"></p>
       </div>
       <div class="pi-chartbox">
-        <h3 id="chart-h">How spread out each set is, layer by layer</h3>
+        <h3 id="chart-h">How far apart each set is, stage by stage</h3>
         <div class="pi-chart-legend" aria-hidden="true">
           <span><i class="line muse"></i>Muse Image</span><span><i class="line people"></i>People</span>
-          <span><i class="band"></i>Muse’s below half of people’s</span>
+          <span><i class="band"></i>Muse Image’s under half of people’s</span>
         </div>
         <div class="pi-chart" id="spread-chart"></div>
         <details class="pi-numbers">
-          <summary>The numbers for this thing</summary>
+          <summary>See the numbers for this thing</summary>
           <div class="pi-tablewrap"><table class="pi-table" id="spread-table"></table></div>
         </details>
       </div>
@@ -117,20 +117,20 @@
 
 <section class="pi-sec" id="seeing" aria-labelledby="seeing-h">
   <h2 id="seeing-h">What you are seeing</h2>
-  <p class="pi-intro">Each dot or drawing is one doodle, as Glimmer holds it at the point where it is about to answer “Name the object in this picture with exactly one word.” Drawings that Glimmer holds alike sit close together; the circle shows how spread out each set is.</p>
+  <p class="pi-intro">Each dot or small picture is one drawing, placed by what Glimmer holds about it just before it answers our request: “Name the object in this picture with exactly one word.” Drawings that look alike to Glimmer sit close together. Each circle shows how far apart its set is.</p>
   <ol class="pi-steps" id="steps"></ol>
   <div class="pi-why">
-    <h3>Muse’s doodles arrive at one idea. People’s don’t.</h3>
+    <h3>Glimmer ends up treating Muse Image’s drawings as one drawing, but not people’s</h3>
     <p id="why-text"></p>
   </div>
 </section>
 
 <section class="pi-sec" id="every" aria-labelledby="every-h">
-  <h2 id="every-h">First the doodles collapse, then the name appears</h2>
+  <h2 id="every-h">Glimmer files the drawings together first; only then can we read the name</h2>
   <p class="pi-intro" id="every-lede"></p>
   <div class="pi-dumb-legend" aria-hidden="true">
-    <span><i class="dot fill"></i>Muse’s doodles collapse</span>
-    <span><i class="dot ring"></i>word lens reads the name (Muse’s doodles)</span>
+    <span><i class="dot fill"></i>Muse Image’s drawings filed in one place</span>
+    <span><i class="dot ring"></i>word lens reads the name (Muse Image’s drawings)</span>
   </div>
   <div class="pi-dumb" id="dumbbell"></div>
   <p class="pi-caveat" id="every-caveat"></p>
@@ -139,18 +139,18 @@
 <section class="pi-sec pi-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
-    <li><b>Pictures.</b> 35 things from <a href="/plato">Plato’s Chair</a>: every Muse Image doodle (16 for 10 things, 12 for 25) and the same number of people’s doodles from Google’s Quick, Draw! game, 920 pictures in all, each padded to a white square at 448 px.</li>
-    <li><b>States.</b> Muse Glimmer 30B, Meta’s open-weight model on our own GPU, read each picture with the prompt “Name the object in this picture with exactly one word.” We kept its state (6,656 numbers) at the answer position after each of its 52 layers.</li>
-    <li><b>Spread.</b> The average cosine distance between two doodles of a thing from the same source, on states centered over all 920 pictures: 0 would be one point. This is the measure of the main Plato’s Chair experiment, and the chart uses all 6,656 numbers.</li>
-    <li id="cav-threshold"><b>The collapse layer is a convention.</b> It is the first layer from which Muse’s doodles stay less than half as spread out as people’s through layer 52. We chose the 0.5 after seeing the data, not before.</li>
-    <li><b>The word lens reads names, not concepts.</b> It applies Glimmer’s output layer to each layer’s state (a logit lens). The layer where it first reads the name shows when the name becomes readable there, not when the idea of a chair forms. Early layers aren’t tuned to the output layer, so the lens says little about them.</li>
-    <li><b>The answer position.</b> In the middle layers this position carries little about which thing a doodle shows, so spread there is mostly not about the thing. In the last layers it partly is the answer itself.</li>
-    <li><b>Drawing style.</b> Muse Image’s doodles are clean marker sketches; people’s are 20-second mouse or finger drawings, often unfinished. Part of people’s spread is skill and noise.</li>
-    <li><b>Person.</b> Quick, Draw! has no “person”, so both sides drew yoga; Glimmer often answers with pose names (“Tree pose”, “Meditation”).</li>
-    <li><b>Exploratory.</b> 35 things, 12–16 doodles per source, one model, one prompt, one picture size. Nothing here was pre-registered.</li>
+    <li><b>Pictures.</b> 35 things from <a href="/plato">Plato’s Chair</a>: every drawing by Meta’s image AI, Muse Image (16 for 10 things, 12 for 25), and the same number of drawings by people playing Google’s Quick, Draw! game: 920 pictures in all, each padded to a white square 448 pixels wide.</li>
+    <li><b>What Glimmer holds.</b> Muse Glimmer 30B, Meta’s open-weight model (anyone can download it), ran on our own computer. It read each picture with the request “Name the object in this picture with exactly one word.” After each of its 52 layers (stages) we kept its state: the 6,656 numbers that describe the picture at the spot where it writes its answer.</li>
+    <li><b>Spread: how far apart the drawings are.</b> The average cosine distance (a standard measure of how different two lists of numbers are) between two drawings of a thing from the same source, after centring the numbers over all 920 pictures. 0 would mean all in one spot. The main Plato’s Chair experiment uses the same measure, and the chart uses all 6,656 numbers.</li>
+    <li id="cav-threshold"><b>“Filed in one place” is a line we drew.</b> It is the first stage from which Muse Image’s drawings stay less than half as spread out as people’s, all the way to stage 52 (we called it the collapse layer). We chose the 0.5 after seeing the data, not before.</li>
+    <li><b>The word lens reads names, not ideas.</b> It applies Glimmer’s last, word-choosing step to each stage’s numbers, to see which word it is heading towards (a logit lens). The stage where it first reads the name shows when the name becomes readable there, not when the idea of a chair forms. Early stages aren’t tuned to that last step, so the lens says little about them.</li>
+    <li><b>The answer spot.</b> In the middle stages, the spot where Glimmer will write its answer holds little about which thing a drawing shows, so spread there is mostly not about the thing. In the last stages it partly is the answer itself.</li>
+    <li><b>Drawing style.</b> Muse Image’s drawings are clean marker sketches; people’s are 20-second mouse or finger drawings, often unfinished. Part of people’s spread is skill and noise.</li>
+    <li><b>Person.</b> Quick, Draw! has no “person”, so both sides drew people doing yoga; Glimmer often answers with pose names (“Tree pose”, “Meditation”).</li>
+    <li><b>Not planned in advance (exploratory).</b> 35 things, 12–16 drawings per source, one model, one request, one picture size. We didn’t write down predictions before running it (nothing here was pre-registered).</li>
   </ul>
-  <p>Full write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_glimmer.md">Plato’s Chair inside Glimmer</a>. The page’s data come from <code>scripts/plato_inside_web_export.py</code>; the states themselves stay outside the repository.</p>
-  <p class="pi-credit">People’s doodles: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw! dataset</a> (Google Creative Lab), CC BY 4.0, shown small and recolored. AI doodles: Meta Muse Image 1.0. Model read layer by layer: Meta Muse Glimmer 30B (open weights).</p>
+  <p>Full write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_glimmer.md">Plato’s Chair inside Glimmer</a>. The page’s data come from <code>scripts/plato_inside_web_export.py</code>; the raw numbers from inside Glimmer stay outside the repository.</p>
+  <p class="pi-credit">People’s doodles: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw! dataset</a> (Google Creative Lab), CC BY 4.0, shown small and recolored. AI doodles: Meta Muse Image 1.0. Model read stage by stage: Meta Muse Glimmer 30B (open weights).</p>
 </section>
 
 <div class="note note-error" id="load-error" hidden></div>

@@ -16,6 +16,7 @@
   function sgn(x) { return (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(2); }
   function ci(c) { return c ? f2(c[0]) + '–' + f2(c[1]) : ''; }
   function ciS(c) { return c ? sgn(c[0]) + ' to ' + sgn(c[1]) : ''; }
+  function bw(c) { return c ? f2(c[0]) + ' and ' + f2(c[1]) : ''; }  // "probably between 0.20 and 0.28"
   function pct(x) { return Math.round(x * 100); }
   function s(tag, attrs, kids) {
     var el = document.createElementNS(NS, tag);
@@ -57,23 +58,25 @@
   // --- hero: God first ----------------------------------------------------------------------
   function hero() {
     var g = BY.god, S = D.summary, n = g.n, h1 = S.H1, h3 = S.H3_vs_atlas;
-    $('answer').textContent = 'Asked to draw God, Meta’s Muse Image drew the same figure ' + nOf(g.top.n, n) +
+    $('answer').textContent = 'Asked to draw God, Muse Image drew the same figure ' + nOf(g.top.n, n) +
       ' times: a bearded man with long hair, a robe and a halo.';
     var grid = $('god-grid');
     grid.textContent = '';
     for (var i = 0; i < n; i++) grid.appendChild(cell(g.sprite, i));
-    $('god-cap').textContent = 'Muse Image’s ' + n + ' drawings of God, in the order they came. One prompt each time: “' + g.prompt +
-      '” ' + (g.refused ? g.refused + ' calls were refused.' : 'None was refused.') + ' The page describes what the model drew; it makes no claim about God.';
+    $('god-cap').textContent = 'Muse Image’s ' + n + ' drawings of God, in the order they came. We typed the same request each time: “' + g.prompt +
+      '” ' + (g.refused ? g.refused + ' requests were refused.' : 'It never refused.') + ' This page describes what the AI drew; it makes no claim about God.';
     var all = D.ideas.filter(function (x) { return x.top.n === x.n; });
     var tiles = $('tiles');
     tiles.textContent = '';
-    [[g.top.n + ' of ' + n, 'drawings of God show a bearded man with a halo', 'Muse Glimmer and our check by eye agree on all ' + n],
-     [h1.ideas_with_concentration_at_least_half + ' of ' + h1.of, 'ideas drawn as one emblem at least half the time',
-      'pre-registered: at least 7 · passed'],
-     [all.length + ' of ' + D.ideas.length, 'ideas drawn as the same emblem every time',
+    [[g.top.n + ' of ' + n, 'drawings of God show a bearded man with a halo',
+      'A second AI, Meta’s open model Muse Glimmer, and our own eyes agree on all ' + n],
+     [h1.ideas_with_concentration_at_least_half + ' of ' + h1.of, 'ideas drawn with one main symbol (like a heart for love) at least half the time',
+      'We predicted at least 7, before drawing any. Held.'],
+     [all.length + ' of ' + D.ideas.length, 'ideas drawn with the same main symbol every time',
       all.map(function (x) { return x.label; }).join(', ')],
-     [f2(h3.median_ideas) + ' vs ' + f2(h3.median_things), 'median spread: ideas against 135 everyday things',
-      'difference ' + sgn(h3.difference) + ', 95% CI ' + ciS(h3.difference_ci95) + ' · pre-registered “more varied” failed', 'fail']
+     [f2(h3.median_ideas) + ' vs ' + f2(h3.median_things), 'how different the drawings of a typical idea are from one another (spread), against 135 everyday things',
+      'We predicted ideas would vary more. Too close to call: ' + sgn(h3.difference) + ', probably between ' + ciS(h3.difference_ci95).replace(' to ', ' and ') +
+        '. Prediction failed.', 'fail']
     ].forEach(function (t) {
       tiles.appendChild(h('div', { class: 'iv-tile' + (t[3] ? ' ' + t[3] : '') }, [h('b', { text: t[0] }), h('span', { text: t[1] }), h('small', { text: t[2] })]));
     });
@@ -86,12 +89,12 @@
     box.textContent = '';
     box.appendChild(h('h3', { text: 'A human figure, in drawings of god' }));
     [[C.people, 'Children, Swiss sample (' + L.n + ', ages ' + L.ages + ')', (L.anthropomorphic_share * 100).toFixed(1) + '% of god figures', L.anthropomorphic_share],
-     [C.muse, 'Muse Image, plain doodle prompt', Math.round(hl * g.n) + ' of ' + g.n + ' drawings', hl]
+     [C.muse, 'Muse Image, plain doodle request', Math.round(hl * g.n) + ' of ' + g.n + ' drawings', hl]
     ].forEach(function (r) {
       var bar = h('div', { class: 'iv-cmp-bar' }, h('i', { style: { width: (100 * r[3]) + '%', background: r[0] } }));
       box.appendChild(h('div', { class: 'iv-cmp' }, [h('div', { class: 'iv-cmp-top' }, [h('span', { text: r[1] }), h('b', { text: r[2] })]), bar]));
     });
-    box.appendChild(h('p', { class: 'iv-cmp-note', text: 'Muse’s figure has a halo in all ' + g.n + ', one of the marks the study describes ' +
+    box.appendChild(h('p', { class: 'iv-cmp-note', text: 'Muse Image’s figure has a halo in all ' + g.n + ', one of the marks the study describes ' +
       'children adding, more often as they grow older, to show a figure is more than human. Different tasks and different drawings: shown ' +
       'side by side for context, not tested.' }));
   }
@@ -107,7 +110,7 @@
         h('div', { class: 'iv-card-head' }, [h('b', { text: x.label }), h('span', { text: 'spread ' + f2(x.spread) })]),
         strip,
         h('p', { class: 'iv-card-top' }, [h('b', { text: x.top.emblem }), document.createTextNode(' in ' + x.top.n + ' of ' + x.n),
-          h('small', { text: 'spread ' + f2(x.spread) + ' (95% CI ' + ci(x.spread_ci95) + ')' })])
+          h('small', { text: 'spread ' + f2(x.spread) + ', probably between ' + bw(x.spread_ci95) })])
       ]));
     });
   }
@@ -117,14 +120,14 @@
     var S = D.summary, h1 = S.H1, h2 = S.H2, lc = S.label_check;
     var missed = D.ideas.filter(function (x) { return x.top.short !== x.predicted_short; })
       .map(function (x) { return x.label + ' as ' + x.top.emblem + ', not ' + x.predicted; });
-    $('emblems-lede').textContent = 'Before the main run we predicted that for at least 7 of the 11 ideas one emblem would fill at least half ' +
-      'the drawings. It did for ' + h1.ideas_with_concentration_at_least_half + ' of ' + h1.of + ' (the median idea’s top emblem: ' +
-      pct(h1.median_concentration) + '% of its drawings, 95% CI ' + pct(h1.median_concentration_ci95[0]) + '–' + pct(h1.median_concentration_ci95[1]) +
-      '%). We also predicted which emblem, and needed at least 6 right. We got ' + h2.predicted_emblem_on_top + ' of ' + h2.of +
-      ', so that prediction failed. Muse drew ' + missed.join('; ') + '.';
+    $('emblems-lede').textContent = 'Before the main run, we predicted that for at least 7 of the 11 ideas, one main symbol would fill at least half ' +
+      'the drawings. It did for ' + h1.ideas_with_concentration_at_least_half + ' of ' + h1.of + '. For the typical idea, its top symbol filled ' +
+      pct(h1.median_concentration) + '% of the drawings (probably between ' + pct(h1.median_concentration_ci95[0]) + '% and ' + pct(h1.median_concentration_ci95[1]) +
+      '%). We also predicted which symbol, and needed at least 6 right. We got ' + h2.predicted_emblem_on_top + ' of ' + h2.of +
+      ', so that prediction failed. Muse Image drew ' + missed.join('; ') + '.';
     var legend = $('emblem-legend');
     legend.textContent = '';
-    [['top emblem', C.muse], ['other emblems', C.muse2], ['something else, or no clear symbol', C.none]].forEach(function (l) {
+    [['top symbol', C.muse], ['other symbols', C.muse2], ['something else, or no clear symbol', C.none]].forEach(function (l) {
       legend.appendChild(h('span', null, [h('i', { style: { background: l[1] } }), l[0]]));
     });
     legend.appendChild(h('span', null, [h('i', { class: 'line', style: { background: C.ink2 } }), 'half the drawings (8 of 16)']));
@@ -159,14 +162,15 @@
           h('small', { text: hit ? 'as predicted' : 'predicted: ' + x.predicted })])
       ]));
     });
-    $('bars-cap').textContent = 'Labels: Muse Glimmer 30B. Our labels by eye, made before seeing Glimmer’s, agreed on ' + pct(lc.agreement) +
-      '% of the ' + lc.pictures + ' drawings (Cohen’s kappa ' + f2(lc.kappa) + ') and on the top emblem for ' + lc.same_top_emblem + ' of ' + lc.of +
-      ' ideas. The exception is freedom: Glimmer chose broken chains, we chose the bird, and every drawing of freedom has both. By eye, ' +
-      lc.by_eye_H2 + ' of ' + lc.of + ' top emblems were the predicted ones. Glimmer read some of the soul’s ghostly figures as jellyfish.';
+    $('bars-cap').textContent = 'Symbols named by Muse Glimmer. We also labelled every drawing by eye, before seeing Glimmer’s labels. We agreed on ' +
+      pct(lc.agreement) + '% of the ' + lc.pictures + ' drawings (Cohen’s kappa ' + f2(lc.kappa) + ': how often two labelers agree, beyond what chance ' +
+      'would give) and on the top symbol for ' + lc.same_top_emblem + ' of ' + lc.of + ' ideas. The exception is freedom: Glimmer chose broken chains, ' +
+      'we chose the bird, and every drawing of freedom has both. By eye, ' + lc.by_eye_H2 + ' of ' + lc.of +
+      ' top symbols were the predicted ones. Glimmer read some of the soul’s ghostly figures as jellyfish.';
     var t = $('emblem-table');
     t.textContent = '';
-    t.appendChild(h('thead', null, h('tr', null, ['Idea', 'Top emblem (Glimmer)', 'Share, 95% CI', 'Top emblem by eye', 'Labels agree', 'Predicted',
-      'Spread, 95% CI'].map(function (c, i) { return h('th', { class: i === 2 || i === 4 || i === 6 ? 'n' : null, text: c }); }))));
+    t.appendChild(h('thead', null, h('tr', null, ['Idea', 'Top symbol (Glimmer)', 'Share (likely range)', 'Top symbol by eye', 'Labels agree', 'Predicted',
+      'Spread (likely range)'].map(function (c, i) { return h('th', { class: i === 2 || i === 4 || i === 6 ? 'n' : null, text: c }); }))));
     t.appendChild(h('tbody', null, D.ideas.map(function (x) {
       return h('tr', null, [h('td', { text: x.label }), h('td', { text: x.top.emblem + ' (' + x.top.n + '/' + x.n + ')' }),
         h('td', { class: 'n', text: pct(x.top.share) + '% (' + pct(x.top.share_ci95[0]) + '–' + pct(x.top.share_ci95[1]) + '%)' }),
@@ -182,18 +186,20 @@
     var top = D.ideas.slice().sort(function (x, y) { return y.spread - x.spread; });
     var maxThing = Math.max.apply(null, D.things.map(function (t) { return t.spread; }));
     var over = top.filter(function (x) { return x.spread > maxThing; }).map(function (x) { return x.label; });
-    $('spread-lede').textContent = 'We predicted that ideas would be more spread out than things, because an emblem can be drawn in many ways and ' +
-      'with company. Not clearly. The median idea’s spread is ' + f2(a.median_ideas) + ' (95% CI ' + ci(a.median_ideas_ci95) + '), against ' +
-      f2(a.median_things) + ' for ' + a.n_things + ' everyday things (CI ' + ci(a.median_things_ci95) + '). The difference, ' + sgn(a.difference) +
-      ', has a CI of ' + ciS(a.difference_ci95) + ', so the pre-registered test failed. Against the draw pad’s ' + p.n_things +
-      ' things, which are among Muse’s most uniform (median ' + f2(p.median_things) + '), ideas are more spread out (' + sgn(p.difference) +
-      ', CI ' + ciS(p.difference_ci95) + ').';
+    $('spread-lede').textContent = 'We predicted that Muse Image’s drawings of an idea would differ from one another more than its drawings of an ' +
+      'everyday thing, because a symbol can be drawn in many ways, and with company. Not clearly. For the typical idea the spread is ' + f2(a.median_ideas) +
+      ' (probably between ' + bw(a.median_ideas_ci95) + '), against ' + f2(a.median_things) + ' for ' + a.n_things + ' everyday things, from a chair to a cup (probably between ' +
+      bw(a.median_things_ci95) + '). The difference, ' + sgn(a.difference) + ', could be anywhere from ' + ciS(a.difference_ci95) +
+      ': too close to call, so the prediction we wrote down failed. Ideas are clearly more varied than the ' + p.n_things +
+      ' things on our draw page, which are among Muse Image’s most uniform (typical spread ' + f2(p.median_things) + '; difference ' + sgn(p.difference) +
+      ', probably between ' + ciS(p.difference_ci95).replace(' to ', ' and ') + ').';
     var overText = over.join(' and ').replace(/^./, function (ch) { return ch.toUpperCase(); });
-    $('spread-cap').textContent = (over.length ? overText + (over.length > 1 ? ' are' : ' is') + ' more spread out than any of the ' +
+    $('spread-cap').textContent = (over.length ? overText + (over.length > 1 ? ' vary' : ' varies') + ' more than any of the ' +
       a.n_things + ' things: truth mixes scales, an eye, a light and a mirror, and freedom’s bird and chains come in many arrangements. ' : '') +
-      'Love (' + f2(BY.love.spread) + ') is about as uniform as Muse’s chair' + (chair ? ' (' + f2(chair.spread) + ')' : '') + '. Across the 11 ideas, ' +
-      'the more one emblem dominates, the less spread out the drawings (rank correlation ' + f2(e1.rho).replace('-', '−') + ', 95% CI ' + ciS(e1.ci95) +
-      '; exploratory). Spread is DINOv2’s distance, which sees drawing style as well as content. Hover a dot for its name.';
+      'Love (' + f2(BY.love.spread) + ') is about as uniform as Muse Image’s chair' + (chair ? ' (' + f2(chair.spread) + ')' : '') + '. Across the 11 ideas, ' +
+      'the more one symbol dominates, the more alike the drawings: a fairly strong but uncertain link (' + f2(e1.rho).replace('-', '−') +
+      ' on a scale from −1 to 1, probably between ' + ciS(e1.ci95).replace(' to ', ' and ') + '; a rank correlation we didn’t plan in advance). ' +
+      'Spread is measured by a Meta AI that compares pictures (DINOv2), which sees drawing style as well as content. Hover a dot for its name.';
   }
   // One row per idea (its spread and 95% CI) under a strip of the 135 things; dashed lines mark both medians.
   function spreadChart() {
@@ -235,8 +241,8 @@
       root.appendChild(s('line', { x1: x(p.spread_ci95[0]), x2: x(p.spread_ci95[1]), y1: cy, y2: cy, stroke: C.muse2, 'stroke-width': 3,
         'stroke-linecap': 'round' }));
       root.appendChild(s('circle', { cx: cx, cy: cy, r: narrow ? 5.5 : 6.5, fill: C.muse, stroke: C.surface, 'stroke-width': 2 }));
-      hits.push({ x: cx, y: cy, name: p.label, lines: ['idea · spread ' + f2(p.spread), '95% CI ' + ci(p.spread_ci95),
-        'top emblem: ' + p.top.emblem + ' (' + p.top.n + ' of ' + p.n + ')'] });
+      hits.push({ x: cx, y: cy, name: p.label, lines: ['idea · spread ' + f2(p.spread), 'likely range ' + ci(p.spread_ci95),
+        'top symbol: ' + p.top.emblem + ' (' + p.top.n + ' of ' + p.n + ')'] });
     });
     // the medians, as reference lines over everything
     [[a.median_things, C.thing, 'things’ median ' + f2(a.median_things), 'end'], [a.median_ideas, C.muse, 'ideas’ median ' + f2(a.median_ideas), 'start']]
@@ -257,9 +263,9 @@
     root.addEventListener('pointerleave', function () { hideTip(wrap); });
     var legend = $('spread-legend');
     legend.textContent = '';
-    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: C.thing } }), 'Muse Image’s everyday things (the Atlas)']));
-    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: C.muse } }), 'Muse Image’s ideas, with 95% CIs']));
-    legend.appendChild(h('span', null, [h('i', { class: 'line', style: { background: C.ink2 } }), 'medians (dashed)']));
+    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: C.thing } }), 'Muse Image’s ' + D.things.length + ' everyday things']));
+    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: C.muse } }), 'Muse Image’s ideas, with likely ranges (95%)']));
+    legend.appendChild(h('span', null, [h('i', { class: 'line', style: { background: C.ink2 } }), 'typical values (medians, dashed)']));
   }
 
   // --- God under damage (Stable Diffusion XL, an open model; not Muse Image) ------------------------------
@@ -268,16 +274,16 @@
   var DM = { method: 'noise', level: 0 };
   var FEATS = [['person', 'a person', 's-person'], ['beard', 'a beard', 's-beard'], ['halo', 'a halo', 's-halo'],
                ['generic', 'a person with neither', 's-generic']];
-  function verdict(ok) { return ok ? 'supported' : 'not supported'; }
+  function verdict(ok) { return ok ? 'yes' : 'no'; }
   function pts1(x) { var v = Math.round(Math.abs(x) * 1000) / 10; return (x >= 0 ? '+' : '−') + v.toFixed(1); }  // share → ±points, half away from 0
   function share(v) { return v == null ? '–' : pct(v) + '%'; }
   function fams() { var m = D.damage.methods[DM.method]; return [m.lang, m.draw]; }
   function readout(lv, f) {
     var bits = [];
     if (lv.cond !== 'intact') bits.push(lv.label);
-    bits.push('Glimmer: ' + f.emblem);
+    bits.push('Muse Glimmer sees ' + f.emblem);
     var has = ['person', 'beard', 'halo'].filter(function (k) { return f[k]; });
-    bits.push(has.length ? 'shows ' + has.join(', ') : 'no person');
+    bits.push(has.length ? 'with ' + has.map(function (k) { return 'a ' + k; }).join(', ') : 'no person');
     return bits.join(' · ');
   }
   function renderDamageSlider() {
@@ -370,7 +376,7 @@
     $('damage').hidden = false;
     var T1 = X.tests, d1 = T1.D1, nn = X.n_seeds;
     $('dmg-n').textContent = String(nn);
-    $('dmg-answer').textContent = X.answer || '';
+    $('dmg-answer').textContent = damageAnswer(X) || X.answer || '';
     var lv = $('dmg-legend');
     lv.textContent = '';
     FEATS.forEach(function (ft) {
@@ -378,21 +384,25 @@
     });
     // the pre-registered predictions, with what Glimmer (primary) and our eye found
     var rows = [
-      ['Intact, SDXL draws a person (≥ 12 of ' + nn + '), a beard (≥ 8) and a halo less often than Muse (≤ 12)',
-       d1.person + ', ' + d1.beard + ' and ' + d1.halo + ' of ' + nn + (T1.D1_eye ? ' (by eye ' + T1.D1_eye.person + ', ' + T1.D1_eye.beard + ', ' + T1.D1_eye.halo + ')' : ''),
+      ['Undamaged, it draws a person (at least 12 of ' + nn + ') and a beard (at least 8), and a halo less often than Muse Image does (at most 12)',
+       'Found: ' + d1.person + ', ' + d1.beard + ' and ' + d1.halo + ' of ' + nn +
+         (T1.D1_eye ? ' (by eye: ' + T1.D1_eye.person + ', ' + T1.D1_eye.beard + ', ' + T1.D1_eye.halo + ')' : ''),
        d1.passes.a_person_ge_12 && d1.passes.b_beard_ge_8 && d1.passes.c_halo_le_12],
-      ['Words damage takes the beard or halo before the figure', T1.D2_eye ? 'Glimmer: ' + verdict(T1.D2.primary) + '; by eye: ' + verdict(T1.D2_eye.primary) : verdict(T1.D2.primary), T1.D2.primary],
-      ['…and God drifts toward an ordinary person (≥ 4 of ' + nn + ' more), more than under drawing damage',
-       '+' + Math.round(T1.D3.language_rise * nn) + ' vs +' + Math.round(T1.D3.drawing_rise * nn) + ' of ' + nn + (T1.D3_eye ? ' (by eye +' + Math.round(T1.D3_eye.language_rise * nn) + ' vs +' + Math.round(T1.D3_eye.drawing_rise * nn) + ')' : ''), T1.D3.passes],
-      ['All 15 ideas and words: words damage changes the emblem more than drawing damage, at equal picture change',
-       pts1(T1.D4.difference) + ' points, 95% CI ' + pts1(T1.D4.ci95[0]) + ' to ' + pts1(T1.D4.ci95[1]), T1.D4.passes],
-      ['…and drawing damage costs more of the clean line drawing', sgn(T1.D5.difference) + ', CI ' + ciS(T1.D5.ci95), T1.D5.passes],
-      ['…and people appear where there were none, more under words damage', pts1(T1.D6.difference) + ' points, CI ' +
-        pts1(T1.D6.ci95[0]) + ' to ' + pts1(T1.D6.ci95[1]), T1.D6.passes]
+      ['Damage to the words part removes the beard or halo before the figure', T1.D2_eye ? 'Muse Glimmer: ' + verdict(T1.D2.primary) + '; by eye: ' +
+        verdict(T1.D2_eye.primary) : verdict(T1.D2.primary), T1.D2.primary],
+      ['…and God turns into an ordinary person (in at least 4 more of ' + nn + '), more than when the drawing part is damaged',
+       '+' + Math.round(T1.D3.language_rise * nn) + ' against +' + Math.round(T1.D3.drawing_rise * nn) + ' of ' + nn +
+         (T1.D3_eye ? ' (by eye: +' + Math.round(T1.D3_eye.language_rise * nn) + ' against +' + Math.round(T1.D3_eye.drawing_rise * nn) + ')' : ''), T1.D3.passes],
+      ['Across all 15 ideas, actions and qualities: words damage loses the main symbol more often than drawing damage, when both change the picture by the same amount',
+       pts1(T1.D4.difference) + ' points (probably between ' + pts1(T1.D4.ci95[0]) + ' and ' + pts1(T1.D4.ci95[1]) + ')', T1.D4.passes],
+      ['…and drawing damage spoils the clean line drawing more', sgn(T1.D5.difference) + ' (probably between ' + ciS(T1.D5.ci95).replace(' to ', ' and ') +
+        '): no clear difference', T1.D5.passes],
+      ['…and people appear where there were none, more under words damage', pts1(T1.D6.difference) + ' points (probably between ' +
+        pts1(T1.D6.ci95[0]) + ' and ' + pts1(T1.D6.ci95[1]) + ')', T1.D6.passes]
     ];
     var vb = $('dmg-verdicts');
     vb.textContent = '';
-    vb.appendChild(h('h3', { class: 'iv-h3', text: 'Predicted before the run' }));
+    vb.appendChild(h('h3', { class: 'iv-h3', text: 'What we predicted before the run, and how it came out' }));
     var ul = h('ul', { class: 'iv-dmg-list' });
     rows.forEach(function (r) {
       ul.appendChild(h('li', { class: r[2] ? 'ok' : 'no' }, [h('b', { text: r[2] ? 'Held' : 'Failed' }), h('span', { text: r[0] }), h('small', { text: r[1] })]));
@@ -411,33 +421,96 @@
     Object.keys(X.frames).forEach(function (f) { X.frames[f].forEach(function (p) { (new Image()).src = p.img; }); });
     renderDamageSlider();
     renderDamageCharts();
-    $('dmg-charts-cap').textContent = X.charts_note || '';
+    $('dmg-charts-cap').textContent = chartsNote(X) || X.charts_note || '';
     // every other idea and word: intact, the most words damage, the most drawing damage (one seed each)
-    $('dmg-others-lede').textContent = X.others_note || '';
+    $('dmg-others-lede').textContent = othersNote(X) || X.others_note || '';
     var ob = $('dmg-others');
     ob.textContent = '';
     X.others.forEach(function (o) {
       ob.appendChild(h('figure', { class: 'iv-dmg-other' }, [
-        h('img', { src: o.trio, alt: 'Stable Diffusion XL’s drawing of ' + o.phrase + ': intact, with the most words-part damage, and with the most drawing-part damage',
-          width: 528, height: 176, loading: 'lazy', decoding: 'async' }),
+        h('img', { src: o.trio, alt: 'Stable Diffusion XL’s drawing of ' + o.phrase + ': undamaged, with the heaviest damage to the words part, and with the ' +
+          'heaviest damage to the drawing part', width: 528, height: 176, loading: 'lazy', decoding: 'async' }),
         h('figcaption', null, [h('b', { text: o.label }),
-          h('span', { text: o.same_emblem_lang_top == null ? 'no listed emblem when intact'
-            : 'emblem kept: words ' + share(o.same_emblem_lang_top) + ' · drawing ' + share(o.same_emblem_draw_top) }),
-          h('span', { text: 'a person: intact ' + share(o.person_intact) + ' · words ' + share(o.person_lang_top) + ' · drawing ' + share(o.person_draw_top) })])
+          h('span', { text: o.same_emblem_lang_top == null ? 'no main symbol when undamaged'
+            : 'main symbol kept: words damage ' + share(o.same_emblem_lang_top) + ' · drawing damage ' + share(o.same_emblem_draw_top) }),
+          h('span', { text: 'has a person: undamaged ' + share(o.person_intact) + ' · words damage ' + share(o.person_lang_top) + ' · drawing damage ' +
+            share(o.person_draw_top) })])
       ]));
     });
-    $('dmg-others-cap').textContent = 'Each strip: intact · most damage to the words part · most damage to the drawing part, one seed (the intact ' +
-      'picture closest to the others). Percentages are over all 8 seeds at the most damage, by Muse Glimmer: the share still showing ' +
-      'its intact emblem, and the share with a person in it. All pictures ' +
-      'Stable Diffusion XL’s. ' + X.credit + '. Each idea’s full strip is on the draw pad, after you draw it.';
+    $('dmg-others-cap').textContent = 'Each strip shows one picture three ways: undamaged, with the heaviest damage to the words part, and with the heaviest ' +
+      'damage to the drawing part. We show the random starting point whose undamaged picture is most like the others. Percentages cover all ' + OTHER_SEEDS +
+      ' starting points at the heaviest damage, as judged by Muse Glimmer: the share still showing the original main symbol, and the share with a person in it. ' +
+      'All pictures are Stable Diffusion XL’s (' + X.credit + '). Each idea’s full set of damage steps is on the draw page, after you draw it.';
+  }
+
+  // The section's plain answer, from the counts behind it: noise in the words part, at its heaviest step, against undamaged.
+  function damageAnswer(X) {
+    var d1 = X.tests && X.tests.D1, tn = X.rates && X.rates['text-noise'], te = X.rates_eye && X.rates_eye['text-noise'], nn = X.n_seeds;
+    if (!d1 || !tn || !tn.generic) return '';
+    var k = function (v) { return Math.round(v * nn); }, last = tn.generic.length - 1;
+    return 'Undamaged, Stable Diffusion XL draws God as ornate, icon-like line art, mostly a bearded man (a beard in ' + d1.beard + ' of ' + nn +
+      ' drawings). Damage the part that reads the words, and the beard and halo go first. A human figure stays, and turns into an ordinary person: ' +
+      'at the heaviest damage, ' + k(tn.generic[last]) + ' of ' + nn + ' show a person with neither beard nor halo, against ' + k(tn.generic[0]) + ' undamaged' +
+      (te && te.generic ? ' (' + k(te.generic[te.generic.length - 1]) + ' against ' + k(te.generic[0]) + ', by our eye)' : '') +
+      '. Damage the part that paints the picture, and the same face dissolves into scribbles.';
+  }
+  // How the feature lines were counted, and how far our eye agrees with Glimmer's.
+  function chartsNote(X) {
+    var ag = X.tests && X.tests.agreement;
+    if (!ag || !ag.beard || !ag.person || !ag.halo) return '';
+    return 'Each line counts Muse Glimmer’s yes-or-no answers for all ' + X.n_seeds + ' of Stable Diffusion XL’s drawings of God at each step: a feature ' +
+      'counts when Glimmer thinks yes is more likely than no. The steps are the same damage levels shown on our draw page. Before seeing Glimmer’s answers, ' +
+      'we labelled the pictures by eye too. We agreed on the beard for ' + pct(ag.beard.agreement) + '% of the ' + ag.beard.n + ' pictures, the person for ' +
+      pct(ag.person.agreement) + '% and the halo for ' + pct(ag.halo.agreement) + '%. The halo is the least certain, because Stable Diffusion XL’s ' +
+      'ornaments put rings and arches near heads. Glimmer counts a face alone as “a person” less often than we did. Hover a step for its counts.';
+  }
+  // The other ideas and words: people appear under words damage, from the per-idea shares and the matched tests D4 and D6.
+  var OTHER_SEEDS = 8;  // each other idea and word: 8 random starting points at every damage step
+  function othersNote(X) {
+    var by = {}, T1 = X.tests || {};
+    (X.others || []).forEach(function (o) { by[o.key] = o; });
+    var de = by.death, ti = by.time;
+    if (!de || !ti || !T1.D4 || !T1.D6) return '';
+    var k = function (v) { return Math.round(v * OTHER_SEEDS); }, abs = function (v) { return pts1(v).slice(1); };
+    return 'Damage to the words part turns nearly every idea into people. (On our page Damage the painter, the same damage turned chairs into cafés and cars.) ' +
+      'At the heaviest words damage, Glimmer sees a person in ' + k(de.person_lang_top) + ' of ' + OTHER_SEEDS + ' of death’s pictures and ' +
+      k(ti.person_lang_top) + ' of ' + OTHER_SEEDS + ' of time’s' + (de.person_intact === 0 && ti.person_intact === 0 ? '; there were none undamaged' : '') + '. ' +
+      (de.person_draw_top === 0 && ti.person_draw_top === 0 ? 'The heaviest drawing damage dissolves the same pictures and adds no one. ' : '') +
+      'Across all 11 ideas and 4 actions and qualities, we compared the two kinds of damage where they changed the pictures by the same amount. ' +
+      'Words damage lost the original main symbol ' + abs(T1.D4.difference) + ' points more often (probably between ' + abs(T1.D4.ci95[1]) + ' and ' +
+      abs(T1.D4.ci95[0]) + '), and put a person into ' + abs(T1.D6.difference) + ' points more of the pictures that had none (probably between ' +
+      abs(T1.D6.ci95[0]) + ' and ' + abs(T1.D6.ci95[1]) + ').';
   }
 
   // --- beyond nouns: two verbs and two adjectives ---------------------------------------------------
+  // The section's opening, from the four words' own counts.
+  function wordsLede(W8) {
+    var by = {};
+    W8.words.forEach(function (x) { by[x.key] = x; });
+    var r = by.running, th = by.thinking, fa = by.something_fast, he = by.something_heavy;
+    if (!r || !th || !fa || !he) return '';
+    return 'Plato’s Forms were nouns: things and ideas. We also asked Muse Image for two actions and two qualities, ' + r.n + ' times each, with the same ' +
+      'request: running, thinking, something fast and something heavy. (Not “quick”: the request already says “a quick simple doodle”.) Each action came ' +
+      'out as one stock figure: a stick figure running in ' + r.top.n + ' of ' + r.n + ', and a person pondering under a thought bubble. The qualities left ' +
+      'Muse Image to choose a thing, and it chose few: ' + fa.top.emblem + ' in ' + fa.top.n + ' of ' + fa.n + ' for fast, ' + he.top.emblem + ' in ' +
+      he.top.n + ' of ' + he.n + ' for heavy.';
+  }
+  // The caption's numbers stay as written; a few words change to everyday ones.
+  var WORDS_PLAIN = [['Predicted before the run:', 'What we predicted before the run:'],
+    ['The emblem predictions failed: ', 'The symbol predictions failed. Right: '], [', and 3 were needed.', ', when 3 were needed.'],
+    ['the verbs are as uniform as most ideas', 'the actions are drawn as alike as most ideas'],
+    ['the adjectives vary more than the verbs, more than the median idea', 'the qualities vary more than the actions, more than the typical idea'],
+    ['as point estimates', 'taken at face value'], ['; their 95% CIs are wide', ', though their likely ranges are wide'],
+    ['No call was refused', 'Muse Image refused nothing']];
+  function plainCaption(s) {
+    WORDS_PLAIN.forEach(function (p) { s = s.split(p[0]).join(p[1]); });
+    return s;
+  }
   function words() {
     var W8 = D.words;
     if (!W8) return;
     $('words').hidden = false;
-    $('words-lede').textContent = W8.lede || '';
+    $('words-lede').textContent = wordsLede(W8) || W8.lede || '';
     var box = $('words-grid');
     box.textContent = '';
     W8.words.forEach(function (x) {
@@ -448,10 +521,10 @@
         h('div', { class: 'iv-card-head' }, [h('b', { text: x.label }), h('span', { text: x.kind.toLowerCase() })]),
         strip,
         h('p', { class: 'iv-card-top' }, [h('b', { text: x.top.emblem }), document.createTextNode(' in ' + x.top.n + ' of ' + x.n),
-          h('small', { text: (hit ? 'as predicted' : 'predicted: ' + x.predicted) + ' · spread ' + f2(x.spread) + ' (95% CI ' + ci(x.spread_ci95) + ')' })])
+          h('small', { text: (hit ? 'as predicted' : 'predicted: ' + x.predicted) + ' · spread ' + f2(x.spread) + ', probably between ' + bw(x.spread_ci95) })])
       ]));
     });
-    $('words-cap').textContent = W8.caption || '';
+    $('words-cap').textContent = plainCaption(W8.caption || '');
   }
 
   // --- draw one, and the method notes -------------------------------------------------------------
@@ -465,10 +538,10 @@
   }
   function method() {
     var S = D.summary, lc = S.label_check;
-    $('refusals').textContent = S.refused_attempts ? S.refused_attempts + ' of ' + S.attempts + ' calls were refused.'
-      : 'None of the ' + S.attempts + ' calls was refused or came back short, God’s included. No drawing has written words in it.';
+    $('refusals').textContent = S.refused_attempts ? S.refused_attempts + ' of ' + S.attempts + ' requests were refused.'
+      : 'None of the ' + S.attempts + ' requests was refused or came back short, God’s included. No drawing has written words in it.';
     $('agree').textContent = 'We agreed on ' + pct(lc.agreement) + '% of the ' + lc.pictures + ' drawings (Cohen’s kappa ' + f2(lc.kappa) +
-      '), least on freedom and the soul, where a drawing shows several symbols or none Glimmer could name.';
+      ', which corrects for agreement by chance), least on freedom and the soul, where a drawing shows several symbols or none Glimmer could name.';
   }
 
   function render() {

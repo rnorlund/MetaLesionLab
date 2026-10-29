@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seven meanings · {{BRAND}}</title>
-<meta name="description" content="“I never said she stole my money” means seven different things, depending on which word you stress. Written down, the seven are one sentence. We spoke all seven to Meta’s Voice Transcribe and asked Muse Spark which meaning was meant. Listen, then try it with your own voice.">
+<meta name="description" content="“I never said she stole my money” means seven different things, depending on which word you stress. Written down, the seven look the same. We played all seven to Meta’s speech-to-text AI, Voice Transcribe, then asked Meta’s chat AI, Muse Spark, which meaning was meant. Listen, then try it with your own voice.">
 <meta property="og:title" content="Seven meanings: what an AI that only reads can’t hear · {{BRAND}}">
 <meta property="og:description" content="Say “I never said she stole my money” seven ways and you say seven things. Write it down and they become one. Listen to all seven, see what a text-only AI receives, then try your own voice.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
@@ -28,7 +28,7 @@
         <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Can an AI that only reads hear what you meant? · <i>Phaedrus</i> · <a href="/plato">Plato series</a></span></p>
         <h1 id="hero-h">Seven meanings</h1>
       </div>
-      <p class="ph-lede">In the <i>Phaedrus</i>, writing is only an image of the living, spoken word. An AI that learns from text alone lives with the image, in a cave of text. This sentence means seven different things, depending on which word you stress. Press each one.</p>
+      <p class="ph-lede">In Plato’s <i>Phaedrus</i>, writing is only an image of the living, spoken word. An AI that learns from text alone gets only that image, like the prisoners in Plato’s cave who see only shadows. “I never said she stole my money” means seven different things, depending on which word you stress. Press each version to hear it.</p>
     </div>
     <div class="ph-hero-quote"><!--#epigraph:phaedrus-276a--></div>
   </div>
@@ -47,15 +47,15 @@
 </section>
 
 <nav class="ph-jump" aria-label="On this page">
-  <a href="#results">What the AIs made of it</a>
-  <a href="#reader">What the prosody reader hears</a>
+  <a href="#results">Who got the meaning right?</a>
+  <a href="#reader">What the sound reader hears</a>
   <a href="#try">Try it with your voice</a>
   <a href="#method">How we did it</a>
 </nav>
 
 <section class="ph-sec" id="results" aria-labelledby="results-h">
   <div class="ph-sec-head">
-    <h2 id="results-h">What the AIs made of it</h2>
+    <h2 id="results-h">Who got the meaning right: reading the words, or listening to the sound?</h2>
     <p class="ph-sec-lede" id="results-lede">…</p>
   </div>
   <figure class="ph-fig">
@@ -65,12 +65,12 @@
   <p class="ph-cap" id="v2-note" hidden></p>
   <div class="ph-grids">
     <figure class="ph-fig">
-      <h3>Muse Spark, reading the transcripts</h3>
+      <h3>Muse Spark, reading the words alone</h3>
       <div class="ph-grid" id="grid-spark"></div>
       <figcaption class="ph-cap" id="grid-spark-cap"></figcaption>
     </figure>
     <figure class="ph-fig">
-      <h3>The prosody reader, listening</h3>
+      <h3>The sound reader, listening</h3>
       <div class="ph-grid" id="grid-reader"></div>
       <figcaption class="ph-cap" id="grid-reader-cap"></figcaption>
     </figure>
@@ -79,8 +79,8 @@
 
 <section class="ph-sec" id="reader" aria-labelledby="reader-h">
   <div class="ph-sec-head">
-    <h2 id="reader-h">What the prosody reader hears</h2>
-    <p class="ph-sec-lede">The stress the transcript loses is still in the sound: the stressed word is higher, louder and longer. A plain reader, with no AI in it, measures those three things for each word and picks the one that stands out most. Press a recording above to see it here.</p>
+    <h2 id="reader-h">The sound reader hears the stressed word: higher, louder and longer</h2>
+    <p class="ph-sec-lede">The stress that writing loses is still in the sound: the stressed word is higher, louder and longer. Our sound reader, a small program with no AI in it, measures those three things for each word and picks the word that stands out most. Press a recording at the top of the page to see it here.</p>
   </div>
   <div class="ph-contour" id="contour-demo"></div>
 </section>
@@ -88,14 +88,14 @@
 <section class="ph-sec ph-try" id="try" aria-labelledby="try-h">
   <div class="ph-sec-head">
     <h2 id="try-h">Try it with your voice</h2>
-    <p class="ph-sec-lede">Say “I never said she stole my money”, stressing any one word. Voice Transcribe writes it down, Muse Spark guesses your meaning from the writing alone, and the prosody reader guesses from your voice. Then tell us which word you meant.</p>
+    <p class="ph-sec-lede">Say “I never said she stole my money”, stressing any one word. Voice Transcribe writes it down, Muse Spark guesses your meaning from the writing alone, and the sound reader guesses from your voice. Then tell us which word you meant.</p>
   </div>
   <div class="ph-rec">
     <button type="button" class="ph-rec-btn" id="rec" aria-describedby="rec-note">Record</button>
     <div class="ph-rec-meter" aria-hidden="true"><i id="meter"></i></div>
     <p class="ph-rec-status" id="rec-status" role="status" aria-live="polite">Press Record, say the sentence, then press Stop. 10 seconds at most.</p>
   </div>
-  <p class="ph-privacy" id="rec-note">Your recording is processed in memory and never stored or logged. To write it down and ask Muse Spark, it is sent to Meta’s API (about a third of a cent a try, under the site’s daily budget). The prosody reader runs on our own server.</p>
+  <p class="ph-privacy" id="rec-note">Your recording is processed in memory and never stored or logged. To write it down and ask Muse Spark, it is sent to Meta’s API, Meta’s online service for its AIs (about a third of a cent a try, paid from the site’s daily budget). The sound reader runs on our own server.</p>
   <div class="ph-try-out" id="try-out" hidden>
     <div class="ph-try-cols">
       <div class="ph-try-box">
@@ -104,7 +104,7 @@
         <p class="ph-try-guess" id="try-spark">…</p>
       </div>
       <div class="ph-try-box">
-        <h3>What the prosody reader hears</h3>
+        <h3>What the sound reader hears</h3>
         <p class="ph-try-guess" id="try-reader">…</p>
       </div>
     </div>
@@ -120,12 +120,12 @@
 <section class="ph-sec ph-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">How we did it, and what it can’t show</h2>
   <ul id="method-list">
-    <li><b>The recordings.</b> Thirteen synthetic voices said the sentence eight ways: neutral, and with each word stressed. The four you can play are Kokoro-82M, an open voice that can’t stress a word by itself, so we added the stress the way English speakers mark it: the word higher, louder and longer, and the words after it lower and flatter. Six macOS voices stressed the word with their own pitch, volume and rate commands (their emphasis command did nothing at all). Three eSpeak NG voices used their own emphasis. No recording of a person was used. The macOS and eSpeak clips stay on our computer.</li>
-    <li><b>The shadow.</b> Every recording went through Meta’s Voice Transcribe (<code>muse-voice-transcribe-1.0</code>) once. <span id="m-shadow">…</span></li>
-    <li><b>Text only.</b> Muse Spark (<code>muse-spark-1.3</code>) got one fixed question: “Someone said one sentence out loud and stressed one word to give it a particular meaning. Here is the sentence, written down: … Which meaning did the speaker intend?”, with the seven meanings as options in a shuffled order. It saw each transcript, and, as a control, the sentence with the stressed word in CAPITALS or in *italics*.</li>
-    <li><b>The prosody reader.</b> No AI. It lines the recording up with neutral readings of the sentence to find each word, then measures each word’s pitch peak, loudness peak and length against the rest of the sentence. The most prominent word is its guess. Its settings were fixed before it heard any test recording.</li>
-    <li><b>Pre-registered.</b> The predictions were committed before the main run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_phaedrus_plan.md">plan</a>). <span id="m-verdicts">…</span></li>
-    <li><b>Limits.</b> The voices are synthetic, and in two of the three families we built the stress ourselves, from the very cues the reader measures, so its success there mostly shows that the stress survives in the sound. eSpeak’s own emphasis, and your voice, are fairer tests. One sentence, seven meanings, our wording of them.</li>
+    <li><b>The recordings.</b> Thirteen synthetic (computer) voices said the sentence eight ways: neutral, and with each word stressed. The four you can play are Kokoro-82M, an open voice that can’t stress a word by itself, so we added the stress the way English speakers mark it: the word higher, louder and longer, and the words after it lower and flatter. Six macOS voices stressed the word with their own pitch, volume and rate commands (their emphasis command did nothing at all). Three eSpeak NG voices used their own emphasis. No recording of a person was used. The macOS and eSpeak clips stay on our computer.</li>
+    <li><b>The written-down words (the “shadow” of the voice).</b> Every recording went through Meta’s speech-to-text AI, Voice Transcribe (<code>muse-voice-transcribe-1.0</code>), once. <span id="m-shadow">…</span></li>
+    <li><b>Text only.</b> Muse Spark (<code>muse-spark-1.3</code>) got one fixed question: “Someone said one sentence out loud and stressed one word to give it a particular meaning. Here is the sentence, written down: … Which meaning did the speaker intend?”, with the seven meanings as options in a shuffled order. It saw each written-down version (each transcript), and, as a check, the sentence with the stressed word in CAPITALS or in *italics*.</li>
+    <li><b>The sound reader.</b> No AI. It reads prosody, the tune of the voice: pitch, pace and loudness. It lines the recording up with neutral readings of the sentence to find each word, then measures each word’s highest pitch, loudest moment and length against the rest of the sentence. The word that stands out most is its guess. Its settings were fixed before it heard any test recording.</li>
+    <li><b>Planned in advance (pre-registered).</b> We wrote down our predictions and saved them publicly before the main run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_phaedrus_plan.md">plan</a>). <span id="m-verdicts">…</span></li>
+    <li><b>Limits.</b> The voices are synthetic, and for two of the three kinds of voice we built the stress ourselves, from the very cues the sound reader measures, so its success there mostly shows that the stress survives in the sound. eSpeak’s own emphasis, and your voice, are fairer tests. One sentence, seven meanings, our wording of them.</li>
   </ul>
   <p class="ph-credit">Voices: Kokoro-82M (hexgrad, Apache-2.0). We made the stress stronger by changing the timing, pitch and loudness Kokoro plans for the stressed word (version 2; the first version used the WORLD voice-editing software, pyworld, MIT). Transcripts: Meta Voice Transcribe. Guesses: Meta Muse Spark. Plato’s <cite>Phaedrus</cite>: Benjamin Jowett’s translation, public domain. Data: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/public_data/plato_phaedrus.json">public_data/plato_phaedrus.json</a>; write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_phaedrus.md">docs/plato_phaedrus.md</a>.</p>
 </section>

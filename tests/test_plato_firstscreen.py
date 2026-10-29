@@ -136,11 +136,13 @@ def test_cave_first_screen(client, tmp_path):
     assert s[1][:2] == (str(m["just_shadow"]), f"of {e['n_errors']}") and "Shadow" in s[1][2]
     assert s[2][0] == f"{round(hs['ai_accuracy_on_shared'] * 100)}%" and s[2][1] == f"vs {round(hs['people_mean_on_shared'] * 100)}%"
     assert ids["hero-stats"].count('class="sv-on sv-ink"') == named  # one filled dot per shadow it named
-    assert f"It named {named} of {sh['n']} shadows" in text(ids["hero-answer"])
+    # the answer names the AI in full: it is read before the introduction that would otherwise say who "it" is
+    assert f"Meta’s open AI model, Muse Glimmer, named {named} of {sh['n']} shadows" in text(ids["hero-answer"])
     pairs = ids["hero-pairs"]  # shadows beside the drawings that cast them, with what the AI said
     assert pairs.count('class="cv-pair ') == 6 and pairs.count("/static/img/plato_cave/shadow_") == 6
     assert pairs.count("/static/img/plato_cave/original_") == 6 and "“" not in pairs.split("Glimmer: ")[0]
-    assert "rank correlation" in text(ids["hero-stats"]) and "Muse Spark" in text(ids["hero-qual"])  # qualifiers, from the data
+    rho = hs["rho_correct"]["rho"]  # the link between people's and the AI's hard shapes, in plain words, from the data
+    assert f"{rho:.2f} on a scale from −1 to 1" in text(ids["hero-stats"]) and "Muse Spark" in text(ids["hero-qual"])  # qualifiers, from the data
 
 
 def test_cratylus_first_screen(client, tmp_path):
@@ -160,7 +162,8 @@ def test_cratylus_first_screen(client, tmp_path):
     assert v[0] == ("yes", "As predicted")
     assert v[1] == (("yes", "As predicted") if d["contrasts"]["spiky_vs_round_class"]["solidity"]["diff_ci"][0] > 0
                     else ("no", "Prediction failed"))
-    assert v[2] == ("part", "Partly: Glimmer no")
+    assert v[2] == ("part", "Partly as predicted")  # Muse Spark matched both words as often as people; Glimmer didn't
+    assert "Muse Spark, did. Meta’s open AI model, Glimmer, didn’t" in text(ids["hero-stats"])
 
 
 def test_bird_first_screen(client, tmp_path):
@@ -174,7 +177,10 @@ def test_bird_first_screen(client, tmp_path):
     glim = d["summary"]["glimmer_T1.0"]["dominance"]  # Glimmer is not as narrow, and the verdict says so
     assert f'{round(glim["ai_mean"]["mean"] * 100)}</span>' in ids["hero-stats"]
     if dom["diff"]["ci95"][0] > 0 and glim["diff"]["ci95"][0] <= 0:
-        assert verdicts(ids["hero-stats"])[0] == ("part", "Partly: Glimmer no")
+        assert verdicts(ids["hero-stats"])[0] == ("part", "Partly as predicted")
+        # the sentence beside the verdict says what was predicted and which half held
+        assert "We predicted both AIs would stick to one favourite more than people do. Muse Spark did." in text(ids["hero-stats"])
+        assert "Muse Glimmer, at its standard randomness setting, was as varied as people." in text(ids["hero-stats"])
     assert s[1][:2] == (str(dom["n_ai_higher"]), f"of {dom['n']}")
     assert s[2][:2] == (str(pic["top_count"]), f"of {len(pic['labels'])}")
     top = bird["tables"]["spark"][0]
@@ -241,6 +247,12 @@ def test_lifespan_first_screen(client, tmp_path):
     words = {True: ("yes", "As predicted"), False: ("no", "Prediction failed")}
     assert verdicts(ids["hero-stats"]) == [words[d["children"]["predictions"]["C1_recognizability_rises"]],
                                            words[ai["predictions"]["A3_d_adult_changes"]]]
+    # beside each verdict, in plain words, what was predicted; the yearly gain with its range in words
+    slope = d["children"]["tests"]["recog"]["linear"]
+    hs = text(ids["hero-stats"])
+    assert "We predicted children’s drawings would get easier to recognize with age" in hs
+    assert f"up {slope['mean_slope'] * 100:.1f} points a year (probably between {slope['ci95'][0] * 100:.1f} and {slope['ci95'][1] * 100:.1f})" in hs
+    assert "We predicted more training would change how far its pictures are from people’s drawings" in hs
     # still never a child's drawing on the first screen
     src = (web.HERE / "pages" / "plato_lifespan.html").read_text()
     hero = re.search(r'<section class="fl fl-side ls-hero".*?</section>', src, re.S).group(0)

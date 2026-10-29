@@ -24,7 +24,22 @@
   function f2(v) { return v == null ? '–' : v.toFixed(2); }
   function f3(v) { return v == null ? '–' : v.toFixed(3); }
   function ci(c, f) { return c && c[0] != null ? '[' + f(c[0]) + ', ' + f(c[1]) + ']' : ''; }
-  function sizeText(m) { return m.kind === 'api' ? 'size undisclosed' : m.params_b.toFixed(1) + 'B parameters'; }
+  function sizeText(m) { return m.kind === 'api' ? 'size not published' : m.params_b.toFixed(1) + ' billion parameters'; }
+  // the wall's group headings (written by scripts/plato_scale_figures.py) and failure labels, in plain words; anything unknown shows as it is
+  var GROUP = {
+    'Qwen2.5-Instruct (Alibaba) · primary family': 'Qwen2.5: open AIs from Alibaba · our main family',
+    'OLMo 2 Instruct (AI2)': 'OLMo 2: open AIs from the Allen Institute for AI',
+    'Qwen3 (Alibaba), thinking off': 'Qwen3: open AIs from Alibaba, step-by-step thinking off',
+    'Meta open weights': 'Meta’s open AI model (anyone can download it)',
+    'Meta API models · size undisclosed': 'Meta’s online AIs · size not published'
+  };
+  var FAIL = { 'no SVG': 'no drawing code', "didn't render": 'code broken', 'all ink': 'all ink', 'blank': 'blank' };
+  function failText(f) { return FAIL[f] || f; }
+  // the data wall's lines, e.g. "recognizable 59% (3 seeds)", reworded with their numbers untouched
+  function dataLine(l) {
+    return l.replace(/^recognizable (\S+) \((\d+) seeds\)$/, 'named correctly: $1 ($2 training runs)')
+      .replace(/^spread (\S+) · its data (\S+)$/, 'spread $1 · the chairs it learned from: $2');
+  }
 
   // ---------- walls ----------
   function tiles(row, nRows, sprite, label) {
@@ -32,8 +47,8 @@
     row.tiles.forEach(function (fail, i) {
       var t = el('div', { 'class': 'sc-tile' + (fail ? ' fail' : ''), role: 'img' });
       if (fail) {
-        t.setAttribute('aria-label', label + ', sample ' + (i + 1) + ': failed (' + fail + ')');
-        t.appendChild(el('span', {}, '<em>' + esc(fail) + '</em>'));
+        t.setAttribute('aria-label', label + ', answer ' + (i + 1) + ': failed (' + failText(fail) + ')');
+        t.appendChild(el('span', {}, '<em>' + esc(failText(fail)) + '</em>'));
       } else {
         t.setAttribute('aria-label', label + ', drawing ' + (i + 1) + ' of 12');
         var m = el('i', { 'aria-hidden': 'true' });
@@ -57,10 +72,10 @@
     w.models.forEach(function (m) {
       var fam = m.kind === 'api' || m.family === 'Muse' ? 'Meta' : m.family;
       if (filter !== 'all' && filter !== fam) return;
-      if (m.group !== last) { host.appendChild(el('div', { 'class': 'sc-group' }, esc(m.group))); last = m.group; }
+      if (m.group !== last) { host.appendChild(el('div', { 'class': 'sc-group' }, esc(GROUP[m.group] || m.group))); last = m.group; }
       var row = el('div', { 'class': 'sc-row' });
-      var spread = m.spread_ratio == null ? 'too few drawings for a spread' : 'spread ' + f2(m.spread_ratio) + '× people’s';
-      var read = m.recog_siglip == null ? '' : '<span>read as a chair: ' + Math.round(m.recog_siglip * 12) + ' of 12</span>';
+      var spread = m.spread_ratio == null ? 'too few drawings to compare' : f2(m.spread_ratio) + '× as varied as people’s';
+      var read = m.recog_siglip == null ? '' : '<span>another AI saw a chair: ' + Math.round(m.recog_siglip * 12) + ' of 12</span>';
       row.appendChild(el('div', { 'class': 'sc-row-head' },
         '<b><i class="sw" style="background:' + COLOR[m.family] + '"></i>' + esc(m.label) + '</b>' +
         '<span>' + esc(sizeText(m)) + ' · failed ' + m.failed + ' of 12</span><span>' + spread + '</span>' + read));
@@ -75,7 +90,7 @@
     w.data.forEach(function (r) {
       var row = el('div', { 'class': 'sc-row' });
       row.appendChild(el('div', { 'class': 'sc-row-head' }, '<b>' + r.size.toLocaleString('en-US') + ' chairs</b>' +
-        r.lines.map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('')));
+        r.lines.map(function (l) { return '<span>' + esc(dataLine(l)) + '</span>'; }).join('')));
       row.appendChild(tiles(r, w.data.length, SPRITES.data, r.size + ' chairs'));
       host.appendChild(row);
     });
@@ -148,8 +163,8 @@
     if (cfg.side) {  // the API models: their own column, named under the axis, never placed on the size scale
       var x0 = W - sideW + 4, cw = sideW - 12;
       s('rect', { x: x0, y: T, width: cw, height: ph, fill: 'var(--sc-band)', rx: 4 }, svg);
-      s('text', { x: x0 + cw / 2, y: T - 16, 'text-anchor': 'middle', 'font-size': 11 }, svg).textContent = 'API models,';
-      s('text', { x: x0 + cw / 2, y: T - 4, 'text-anchor': 'middle', 'font-size': 11 }, svg).textContent = 'size undisclosed';
+      s('text', { x: x0 + cw / 2, y: T - 16, 'text-anchor': 'middle', 'font-size': 11 }, svg).textContent = 'Meta online,';
+      s('text', { x: x0 + cw / 2, y: T - 4, 'text-anchor': 'middle', 'font-size': 11 }, svg).textContent = 'size unknown';
       cfg.side.forEach(function (m, i) {
         var x = x0 + cw * (i + 1) / (cfg.side.length + 1);
         s('text', { x: x, y: H - B + 17, 'text-anchor': 'middle', 'font-size': 12, 'class': 'lab' }, svg).textContent = m.name;
@@ -169,7 +184,7 @@
     return box;
   }
 
-  var X_B = { min: 0.38, max: 45, title: 'parameters (log scale)', ticks: [[0.5, '0.5B'], [1, '1B'], [2, '2B'], [5, '5B'], [10, '10B'], [30, '30B']] };
+  var X_B = { min: 0.38, max: 45, title: 'size, in billions of parameters (log scale)', ticks: [[0.5, '0.5B'], [1, '1B'], [2, '2B'], [5, '5B'], [10, '10B'], [30, '30B']] };
   var X_A = { min: 70, max: 28000, title: 'people’s chairs it learned from (log scale)', ticks: [[100, '100'], [300, '300'], [1000, '1k'], [3000, '3k'], [10000, '10k'], [20000, '20k']] };
   var Y_P = { min: 0, max: 1, ticks: [0, 0.25, 0.5, 0.75, 1], fmt: function (v) { return Math.round(v * 100) + '%'; } };
   var Y_S = { min: 0, max: 0.7, ticks: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7], fmt: function (v) { return v.toFixed(1); } };
@@ -181,20 +196,21 @@
     var by = {}; rows.forEach(function (r) { by[r.key] = r; });
     var host = $('charts-b');
     var defs = [
-      ['spread', 'Spread', 'How varied its chairs are (mean pairwise DINOv2 distance). Lower: more alike.', Y_S, 'spread_ci95', f3,
+      ['spread', 'How varied its chairs are (spread)', 'The average difference between two of its chairs, as DINOv2, a Meta AI that compares pictures, sees them. Lower: more alike.',
+        Y_S, 'spread_ci95', f3,
         [{ y: d.anchors.people.spread_n12, label: 'people’s chairs' }, { y: d.anchors.muse_image.spread, label: 'Muse Image’s chairs', dash: '2 3' }]],
-      ['recog_all', 'Recognizable', 'Share of all 12 whose nearest of 35 people’s-drawing centroids is the chair.', Y_P, 'recog_all_ci95', pct,
+      ['recog_all', 'Named correctly', 'Share of its 12 drawings that look more like people’s chairs than like people’s drawings of 34 other things.', Y_P, 'recog_all_ci95', pct,
         [{ y: d.anchors.people.recog, label: 'people’s chairs' }]],
-      ['recog_siglip', 'Read as a chair (check)', 'Google SigLIP 2, zero-shot among the same 35 names. Added after the plan.', Y_P, null, pct,
-        d.reader_check ? [{ y: d.reader_check.people, label: 'people’s chairs' }] : []],
-      ['failure_rate', 'Failed to draw', 'No SVG, didn’t render, blank or all ink, out of 12.', Y_P, 'failure_ci95', pct, []]
+      ['recog_siglip', 'Seen as a chair by a second AI (a check)', 'Google’s SigLIP 2, an AI that matches pictures to words, choosing among the same 35 names. Added after we wrote our plan.',
+        Y_P, null, pct, d.reader_check ? [{ y: d.reader_check.people, label: 'people’s chairs' }] : []],
+      ['failure_rate', 'Failed to draw', 'No drawing code, code that didn’t work, a blank canvas or all ink, out of 12.', Y_P, 'failure_ci95', pct, []]
     ];
     defs.forEach(function (def) {
       var col = def[0], fmt = def[5];
       var tipOf = function (r) { return r.label + ': ' + fmt(r[col]) + (def[4] && r[def[4]] ? ' ' + ci(r[def[4]], fmt) : ''); };
       var box = chartBox(host, def[1], def[2]);
       chart(box, {
-        aria: def[1] + ' by model size', x: X_B, y: def[3], refs: def[6],
+        aria: def[1] + ', by AI size', x: X_B, y: def[3], refs: def[6],
         series: FAMILIES.map(function (f) {
           return { name: f, color: COLOR[f], pts: rows.filter(function (r) { return r.family === f && r.kind === 'open'; }).sort(function (a, b) { return a.params_b - b.params_b; })
             .map(function (r) { var c = def[4] ? r[def[4]] : null; return { x: r.params_b, y: r[col], lo: c ? c[0] : null, hi: c ? c[1] : null, tip: tipOf(r) }; }) };
@@ -213,14 +229,14 @@
     var read = (d.reader_check || {}).arm_a || {};
     var rowsOf = function (ck) { return d.arm_a.rows.filter(function (r) { return r.checkpoint === ck && r.temp === 1; }).sort(function (a, b) { return a.size - b.size; }); };
     var defs = [
-      ['spread', 'Spread', 'Mean pairwise DINOv2 distance of 200 drawings (matched n = 16).', Y_S, f3],
-      ['recog', 'Recognizable', 'Share of 200 drawings nearest the chair centroid among 35.', Y_P, pct],
-      ['siglip', 'Read as a chair (check)', 'SigLIP 2, zero-shot. Added after the plan.', Y_P, pct],
-      ['fail', 'Failed to draw', 'Samples that were only a dot.', Y_P, pct]
+      ['spread', 'How varied its chairs are (spread)', 'The average difference between two of its 200 drawings, as DINOv2 sees them (measured 16 at a time).', Y_S, f3],
+      ['recog', 'Named correctly', 'Share of 200 drawings that look more like people’s chairs than like people’s drawings of 34 other things.', Y_P, pct],
+      ['siglip', 'Seen as a chair by a second AI (a check)', 'Google’s SigLIP 2. Added after we wrote our plan.', Y_P, pct],
+      ['fail', 'Failed to draw', 'Drawings that were only a dot.', Y_P, pct]
     ];
     defs.forEach(function (def) {
       var col = def[0], fmt = def[4];
-      var series = [['final', 'last step (same compute)', 'none'], ['best', 'best held-out step', '6 4']].map(function (c) {
+      var series = [['final', 'end of training', 'none'], ['best', 'stopped early, at its best', '6 4']].map(function (c) {
         return { name: c[1], color: COLOR['Qwen2.5'], dash: c[2], band: true, pts: rowsOf(c[0]).map(function (r) {
           var v = col === 'siglip' ? read[r.size + '|' + c[0]] : r[col];
           var y = v == null ? null : (typeof v === 'object' ? v.mean : v);
@@ -235,7 +251,7 @@
       }
       if (col === 'recog') refs.push({ y: d.anchors.people.recog, label: 'people’s chairs' });
       if (col === 'siglip' && d.reader_check) refs.push({ y: d.reader_check.people, label: 'people’s chairs' });
-      chart(chartBox(host, def[1], def[2]), { aria: def[1] + ' by data size', x: X_A, y: def[3], series: series, refs: refs });
+      chart(chartBox(host, def[1], def[2]), { aria: def[1] + ', by how many chairs it learned from', x: X_A, y: def[3], series: series, refs: refs });
     });
   }
 
@@ -252,27 +268,29 @@
   function tables(d) {
     var read = (d.reader_check || {}).arm_b || {};
     [1, 0.7].forEach(function (temp) {
-      table($('table-b-' + (temp === 1 ? '10' : '07')), ['Model', 'Size', 'Failed', 'Recognizable', 'Read as chair', 'Spread [95% CI]', '× people’s', 'To people’s chair', 'To Muse’s chair'],
+      table($('table-b-' + (temp === 1 ? '10' : '07')), ['AI', 'Size (parameters)', 'Failed', 'Named correctly', 'Seen as a chair (check)', 'Spread [likely range]',
+        '× as varied as people’s', 'Distance to people’s average chair', 'Distance to Muse Image’s average chair'],
         d.arm_b.rows.filter(function (r) { return r.temp === temp; }).map(function (r) {
-          return [esc(r.label), r.kind === 'api' ? 'undisclosed' : r.params_b.toFixed(1) + 'B', r.failed + '/12', pct(r.recog_all),
+          return [esc(r.label), r.kind === 'api' ? 'not published' : r.params_b.toFixed(1) + 'B', r.failed + '/12', pct(r.recog_all),
             pct(read[r.key + '|' + temp.toFixed(1)]), r.spread == null ? '–' : f3(r.spread) + ' ' + ci(r.spread_ci95, f3), f2(r.spread_ratio), f3(r.d_people), f3(r.d_muse)];
         }));
     });
-    table($('table-a'), ['Chairs', 'Step', 'Recognizable [95% CI]', 'Spread [95% CI]', 'Its data’s spread', 'Difference', 'To people’s chair', 'Copying gap'],
+    table($('table-a'), ['Chairs learned from', 'When stopped', 'Named correctly [likely range]', 'Spread [likely range]', 'Spread of the chairs it learned from',
+      'Difference', 'Distance to people’s average chair', 'Copying gap (above 0: not copying)'],
       d.arm_a.rows.filter(function (r) { return r.temp === 1; }).map(function (r) {
-        return [r.size.toLocaleString('en-US'), r.checkpoint === 'final' ? 'last' : 'best (' + r.best_steps.join(', ') + ')',
+        return [r.size.toLocaleString('en-US'), r.checkpoint === 'final' ? 'end of training' : 'at its best (steps ' + r.best_steps.join(', ') + ')',
           pct(r.recog.mean) + ' ' + ci(r.recog.ci95, pct), f3(r.spread.mean) + ' ' + ci(r.spread.ci95, f3), f3(r.train_spread),
           f3(r.spread_minus_train.mean) + ' ' + ci(r.spread_minus_train.ci95, f3), f3(r.d_people.mean), f3(r.copy_gap.mean)];
       }));
     var e1 = (d.arm_b.cross_family || {})['1.0'] || {};
-    table($('table-e1'), ['Size band', 'Pairs of models from different makers', 'Gap between their chairs [95% CI]'],
+    table($('table-e1'), ['Size group (parameters)', 'Pairs of AIs from different makers', 'Gap between their chairs [likely range]'],
       ['<=2B', '4-8B', '13-15B', '30-33B'].filter(function (b) { return e1[b]; }).map(function (b) {
         return [b.replace('<=', '≤ ').replace('-', '–'), e1[b].pairs.length, f3(e1[b].energy) + ' ' + ci(e1[b].energy_ci95, f3)];
       }));
   }
 
   // ---------- the first look: a few rows of the wall, and three numbers drawn as graphics ----------
-  var LEAD = [['qwen25_0.5b', 'Bigger open model'], ['qwen25_7b'], ['qwen25_32b'], ['spark', 'Meta’s models'], ['wonder']];
+  var LEAD = [['qwen25_0.5b', 'One open AI family (Qwen2.5, from Alibaba), small to big'], ['qwen25_7b'], ['qwen25_32b'], ['spark', 'Meta’s AIs'], ['wonder']];
 
   function leadWall(w) {
     var host = $('lead-wall'), by = {}, said = [];
@@ -284,14 +302,14 @@
       if (l[1]) host.appendChild(el('p', { 'class': 'sc-lead-group' }, esc(l[1])));
       var row = el('div', { 'class': 'sc-lead-row' });
       row.appendChild(el('p', { 'class': 'sc-lead-head' }, '<b>' + esc(m.label) + '</b><span>' +
-        (m.kind === 'api' ? 'size undisclosed' : 'failed ' + m.failed + ' of 12') + '</span>'));
+        (m.kind === 'api' ? 'size not published' : 'failed ' + m.failed + ' of 12') + '</span>'));
       row.appendChild(tiles(m, w.models.length, SPRITES.models, m.label));
       host.appendChild(row);
       said.push(m.label + (m.kind === 'api' ? '' : ', ' + m.failed + ' of 12 failed') +
-        (m.spread_ratio == null ? '' : ', spread ' + f2(m.spread_ratio) + ' times people’s'));
+        (m.spread_ratio == null ? '' : ', ' + f2(m.spread_ratio) + ' times as varied as people’s chairs'));
     });
     host.setAttribute('role', 'img');  // one description for the rows; each tile's own label stays for the full wall below
-    host.setAttribute('aria-label', 'Twelve chairs drawn by each of ' + said.length + ' models: ' + said.join('; ') + '.');
+    host.setAttribute('aria-label', 'Twelve chairs drawn by each of ' + said.length + ' AIs: ' + said.join('; ') + '.');
   }
 
   function leadStats(d) {
@@ -307,7 +325,7 @@
     wallModels(d.wall, 'all');
     var chips = $('wall-filter');
     ['all', 'Qwen2.5', 'OLMo 2', 'Qwen3', 'Meta'].forEach(function (f) {
-      var b = el('button', { type: 'button', 'aria-pressed': f === 'all' ? 'true' : 'false' }, f === 'all' ? 'All models' : esc(f));
+      var b = el('button', { type: 'button', 'aria-pressed': f === 'all' ? 'true' : 'false' }, f === 'all' ? 'All AIs' : esc(f));
       b.addEventListener('click', function () {
         chips.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
         wallModels(d.wall, f);

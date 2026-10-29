@@ -126,11 +126,11 @@
     var same = D.voices[voice].clips.filter(function (c) {
       return String(c.transcript || '').toLowerCase().replace(/[^a-z' ]/g, '').trim().split(/\s+/).join(' ') === canon().join(' ');
     }).length;
-    $('shadow-sub').textContent = 'Meta’s Voice Transcribe wrote down each recording. ' +
+    $('shadow-sub').textContent = 'Meta’s speech-to-text AI, Voice Transcribe, wrote down each recording. ' +
       (same === 7 ? 'In this voice all seven came back as the same words: the stress is gone.' :
         'In this voice ' + same + ' of 7 came back as exactly the sentence’s words; the others have a doubled or stray ' +
         'word (marked), a slip that turned up in the neutral readings too. The stress itself is gone.') +
-      ' Press a recording to see what Muse Spark and the prosody reader made of it.';
+      ' Press a recording to see what Meta’s chat AI, Muse Spark, and our sound reader made of it.';
   }
 
   function stop() {
@@ -174,21 +174,21 @@
     var chance = Math.round(D.chance * tr.n);
     $('answer').innerHTML = '';
     $('answer').appendChild(document.createTextNode('Reading these, Muse Spark picked the meaning the speaker intended ' +
-      tr.k + ' times in ' + tr.n + ' (' + pct(tr.acc) + '): no better than guessing (' + chance + '). With the stressed word in '));
+      tr.k + ' times in ' + tr.n + ' (' + pct(tr.acc) + '): no better than guessing, which would get about ' + chance + '. When we wrote the stressed word in '));
     $('answer').appendChild(h('i', { text: 'italics' }));
-    $('answer').appendChild(document.createTextNode(', ' + it.k + ' of ' + it.n + '.'));
-    $('answer').appendChild(h('small', { text: 'A plain prosody reader, listening to the sound instead, found the stressed word ' +
-      rd.k + ' times in ' + rd.n + ' (' + pct(rd.acc) + '). Thirteen voices, seven stressed words each.' }));
-    $('results-lede').textContent = 'Every recording of every voice, 91 in all. Chance is 1 in 7 (14%). The bars show each ' +
-      'reader’s accuracy with its exact 95% confidence interval.';
+    $('answer').appendChild(document.createTextNode(', it got ' + it.k + ' of ' + it.n + '.'));
+    $('answer').appendChild(h('small', { text: 'A simple sound reader with no AI in it, listening to the recording instead, found the stressed word ' +
+      rd.k + ' times in ' + rd.n + ' (' + pct(rd.acc) + '). Thirteen computer voices, seven stressed words each.' }));
+    $('results-lede').textContent = 'Every recording of every voice, 91 in all. Guessing would be right 1 time in 7 (14%). Each bar shows how ' +
+      'often a reader got the meaning right; the thin line across it shows the likely range (exact 95% confidence interval).';
   }
 
   function bars() {
     var rows = [
-      { label: 'Muse Spark, reading the transcript', b: D.spark.transcript, color: 'var(--text)' },
+      { label: 'Muse Spark, reading the words alone', b: D.spark.transcript, color: 'var(--text)' },
       { label: 'Muse Spark, stressed word in CAPITALS', b: D.spark.caps, color: 'var(--text)' },
       { label: 'Muse Spark, stressed word in *italics*', b: D.spark.italics, color: 'var(--text)' },
-      { label: 'Prosody reader, listening to the sound', b: D.reader, color: 'var(--sound)' }
+      { label: 'Sound reader, listening to the recording', b: D.reader, color: 'var(--sound)' }
     ];
     // drawn at the container's own width, so text stays at its stated size; narrow: labels above the bars
     var W = Math.min(1100, widthOf($('bars'))), narrow = W < 640;
@@ -215,14 +215,15 @@
     });
     svg.appendChild(s('line', { x1: x(D.chance), x2: x(D.chance), y1: top - 12, y2: H - 26,
       style: 'stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4' }));
-    svg.appendChild(s('text', { x: x(D.chance) + 6, y: top - 12, style: 'fill: var(--ink-2); font-size: 13px' }, 'chance, 1 in 7'));
+    svg.appendChild(s('text', { x: x(D.chance) + 6, y: top - 12, style: 'fill: var(--ink-2); font-size: 13px' }, 'guessing, 1 in 7'));
     $('bars').innerHTML = '';
     $('bars').appendChild(svg);
     $('bars').setAttribute('aria-label', rows.map(function (r) { return r.label + ': ' + r.b.k + ' of ' + r.b.n + ' (' + pct(r.b.acc) +
-      ', 95% CI ' + pct(r.b.ci[0]) + ' to ' + pct(r.b.ci[1]) + ')'; }).join('; ') + '. Chance is 14%.');
+      ', likely range ' + pct(r.b.ci[0]) + ' to ' + pct(r.b.ci[1]) + ')'; }).join('; ') + '. Guessing gets 14%.');
     var capsI = D.spark.caps.confusion[0][0];
-    $('bars-cap').textContent = 'Bars: share right; whiskers: exact 95% CI; dashed line: chance. Spark from transcripts: 91 recordings ' +
-      '(13 voices × 7). CAPITALS and italics: each word 5 times, options shuffled. Prosody reader: the same 91 recordings.' +
+    $('bars-cap').textContent = 'Bars: share right. Thin lines: the likely range (exact 95% confidence interval). Dashed line: guessing. ' +
+      'Muse Spark reading the words: 91 recordings (13 voices × 7 stressed words). CAPITALS and italics: each word 5 times, with the options ' +
+      'shuffled. Sound reader: the same 91 recordings.' +
       (capsI === 0 ? ' CAPITALS missed only “I”, which is always written in capitals: there, writing can’t show the stress.' : '');
   }
 
@@ -269,7 +270,7 @@
     var hardest = D.words.map(function (w, i) { return { w: w, k: D.reader.confusion[i][i] }; })
       .sort(function (a, b) { return a.k - b.k; })[0];
     $('grid-reader-cap').textContent = 'The same 91 recordings, heard instead of read: ' + rd.diag + ' of ' + rd.total +
-      ' on the diagonal. Hardest: “' + hardest.w + '” (' + hardest.k + ' of 13), often heard as “I”.';
+      ' right, on the outlined diagonal. Hardest: “' + hardest.w + '” (' + hardest.k + ' of 13), often heard as “I”.';
   }
 
   // --- the reader's contour -------------------------------------------------------------------------------------
@@ -337,14 +338,14 @@
       svg.appendChild(s('rect', { x: mid - 10, y: w.total >= 0 ? labY + 32 - bh : labY + 32, width: 20, height: bh, rx: 2,
         style: 'fill: ' + (win ? 'var(--sound)' : 'var(--line-2)') }));
     });
-    svg.setAttribute('aria-label', 'Pitch and loudness over the sentence. The reader’s prominence per word: ' +
+    svg.setAttribute('aria-label', 'Pitch and loudness over the sentence. How much each word stands out to the sound reader: ' +
       c.words.map(function (w) { return w.word + ' ' + w.total.toFixed(1); }).join(', ') + '. It picked “' + D.words[g] + '”.');
     el.appendChild(svg);
     el.appendChild(h('div', { class: 'ph-legend' }, [
-      h('span', {}, [h('i', { class: 'line', style: 'background: var(--sound)' }), 'pitch (semitones from the speaker’s middle)']),
+      h('span', {}, [h('i', { class: 'line', style: 'background: var(--sound)' }), 'pitch: how high the voice is (semitones from the speaker’s middle)']),
       h('span', {}, [h('i', { style: 'background: var(--ink-2); opacity: 0.3' }), 'loudness']),
-      h('span', {}, [h('i', { style: 'background: var(--sound-soft); border: 1px solid var(--sound)' }), 'the reader’s pick']),
-      h('span', {}, [h('i', { style: 'background: var(--line-2)' }), 'small bars: prominence, pitch + loudness + length'])]));
+      h('span', {}, [h('i', { style: 'background: var(--sound-soft); border: 1px solid var(--sound)' }), 'the sound reader’s pick']),
+      h('span', {}, [h('i', { style: 'background: var(--line-2)' }), 'small bars: how much each word stands out (pitch + loudness + length)'])]));
   }
 
   // --- try it with your voice ------------------------------------------------------------------------------------
@@ -525,7 +526,7 @@
     if (!lastTry || lastTry.picked == null) { v.textContent = ''; return; }
     var k = lastTry.picked, parts = ['You stressed “' + D.words[k] + '”: ' + D.meanings[k].gloss];
     if (lastTry.spark != null) parts.push('Muse Spark, reading, was ' + (lastTry.spark === k ? 'right.' : 'wrong (it guessed “' + D.words[lastTry.spark] + '”).'));
-    if (lastTry.reader != null) parts.push('The prosody reader, listening, was ' + (lastTry.reader === k ? 'right.' : 'wrong (it heard “' + D.words[lastTry.reader] + '”).'));
+    if (lastTry.reader != null) parts.push('The sound reader, listening, was ' + (lastTry.reader === k ? 'right.' : 'wrong (it heard “' + D.words[lastTry.reader] + '”).'));
     v.textContent = parts.join(' ');
   }
 
@@ -538,7 +539,7 @@
     }
     btn.addEventListener('click', function () { if (rec) stopRec(); else start(); });
     T.api('/api/phaedrus/status').then(function (st) {
-      if (!st.enabled) status('Writing down and Muse Spark’s guess are off on this server; the prosody reader still works. Press Record.');
+      if (!st.enabled) status('Writing down and Muse Spark’s guess are off on this server; the sound reader still works. Press Record.');
     }).catch(function () {});
   }
 
@@ -549,11 +550,11 @@
     if (!r || !el) return;
     var k2 = r.v2_kokoro, k1 = r.v1, f = r.focus;
     el.textContent = 'Version 2 of the recordings. One of us listened with his eyes closed and couldn’t tell which word ' +
-      'the first Kokoro recordings stressed. So we remade those four computer voices with much stronger stress. ' +
+      'the first recordings of Kokoro, an open computer voice, stressed. So we remade those four voices with much stronger stress. ' +
       'Now the stressed word stands out clearly: much higher (about ' + Math.round(f.pitch_st) + ' semitones' +
       (f.pitch_st >= 12 ? ', more than an octave' : '') + '), much louder (' + Math.round(f.loudness_db) + ' decibels) and ' +
       f.length.toFixed(1) + ' times as long as the other words. The results above use the remade Kokoro recordings and the ' +
-      'first recordings of the macOS and eSpeak voices. The simple program that measures pitch, loudness and length found ' +
+      'first recordings of the other computer voices (from macOS and eSpeak). The sound reader, which measures pitch, loudness and length, found ' +
       'the stressed word in ' + (k2.reader.k === k2.reader.n ? 'all ' + k2.reader.n : k2.reader.k + ' of the ' + k2.reader.n) +
       ' remade Kokoro recordings (' + k1.reader_kokoro.k + ' before). Muse Spark, reading only what Meta’s speech-to-text AI ' +
       'wrote down, still did no better than guessing: ' + k2.spark.k + ' of ' + k2.spark.n + ' (' + k1.spark_kokoro.k +
@@ -567,21 +568,21 @@
   function method() {
     var sh = D.shadow;
     var rt = sh.retest;
-    $('m-shadow').textContent = sh.exact + ' of ' + sh.clips + ' transcripts were exactly “' + D.sentence + '”, and ' + sh.same_words +
+    $('m-shadow').textContent = sh.exact + ' of ' + sh.clips + ' written-down versions (transcripts) were exactly “' + D.sentence + '”, and ' + sh.same_words +
       ' had exactly its words. The rest repeated a word (“I never never said…”, “II never said…”) or dropped a capital or the full stop. ' +
       'Those slips came with every stressed word and with the neutral readings too.' + (rt ? ' Transcribed a second time, the first ' +
       'recordings came out differently: ' + rt.identical_to_first + ' of ' + rt.clips + ' transcripts matched the first exactly, and a ' +
       'repeated word came back on the same recording only ' + rt.word_changes[2] + ' times in ' + rt.word_changes[0] + '. They are the ' +
-      'transcriber’s noise, not traces of the stress.' : '');
+      'speech-to-text AI’s random slips, not traces of the stress.' : '');
     var v = [];
-    v.push('The shadow: ' + (sh.passes ? 'passed.' : 'failed as written: we predicted the same words for nearly every voice, and stray words broke that in ' +
+    v.push('The written-down words: ' + (sh.passes ? 'passed.' : 'failed as written. We predicted the same words for nearly every voice, and stray words broke that in ' +
       (sh.voices - sh.voices_same_words) + ' of ' + sh.voices + ' voices.'));
-    v.push('Spark at chance from transcripts: ' + (D.spark.transcript.passes ? 'passed.' : 'failed.'));
-    v.push('Spark with CAPITALS and italics at 80% or more: ' + (D.spark.caps.acc >= 0.8 && D.spark.italics.acc >= 0.8 ? 'passed.' : 'failed.'));
-    v.push('The prosody reader: ' + (D.reader.passes ? 'passed.' : 'failed.') + ' After the main run a test found its pitch tracker ' +
-      'could read a steady high voice an octave low; we fixed that, and it changed one guess (79 of 91 right before, 80 after).');
+    v.push('Muse Spark no better than guessing from the written words: ' + (D.spark.transcript.passes ? 'passed.' : 'failed.'));
+    v.push('Muse Spark right 80% of the time or more with CAPITALS and italics: ' + (D.spark.caps.acc >= 0.8 && D.spark.italics.acc >= 0.8 ? 'passed.' : 'failed.'));
+    v.push('The sound reader: ' + (D.reader.passes ? 'passed.' : 'failed.') + ' After the main run, a test found its pitch tracker ' +
+      'could read a steady high voice an octave too low; we fixed that, and it changed one guess (79 of 91 right before, 80 after).');
     if (D.revision) v.push('We wrote these predictions down before the first recordings. Each verdict is the same with the ' +
-      'remade Kokoro recordings, and the numbers on this page use them. With the first recordings, the simple program found ' +
+      'remade Kokoro recordings, and the numbers on this page use them. With the first recordings, the sound reader found ' +
       D.revision.v1.reader.k + ' of 91 and Muse Spark got ' + D.revision.v1.spark_transcript.k + ' of 91.');
     $('m-verdicts').textContent = v.join(' ');
   }

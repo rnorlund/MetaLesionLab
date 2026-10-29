@@ -147,7 +147,7 @@
     var times = ms.people[last] / ms.muse[last], never = quoted(sm.never_collapse);
     var per = d.concepts.map(function (c) { return c.n.muse; });
     var lo = Math.min.apply(null, per), hi = Math.max.apply(null, per);
-    var isAre = sm.never_collapse.length === 1 ? ' is' : ' are';
+    var isAre = ' are';  // "Drawings of “person” are ...": the subject is the drawings
     return {
       stats: [
         { kind: 'lrange', o: { at: sm.median_collapse_layer, lo: sm.earliest_collapse, hi: sm.latest_collapse, n: n,
@@ -201,7 +201,7 @@
             ' (95% confidence interval). 1 would mean just as varied as people.' },
         { kind: 'dots', o: { k: nw.below_1, n: nw.n, cols: 33, tone: 'blue',
             label: 'new things, picked at random, that Muse Image also draws more alike than people do. We wrote this prediction down before drawing them.' },
-          q: 'For these ' + nw.n + ', Muse Image’s drawings are typically ' + f2(nw.median) + ' as varied as people’s, probably between ' + f2(nw.median_ci95[0]) +
+          q: 'For these ' + nw.n + ', Muse Image’s drawings are typically ' + f2(nw.median) + ' times as varied as people’s, probably between ' + f2(nw.median_ci95[0]) +
             ' and ' + f2(nw.median_ci95[1]) + ' (95% confidence interval).' }
       ],
       note: 'Not every AI does this. Stable Diffusion XL, an open image AI from Stability AI, given the same request, was typically ' +

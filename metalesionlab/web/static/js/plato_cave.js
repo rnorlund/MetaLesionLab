@@ -64,7 +64,7 @@
   function hero() {
     var a = D.accuracy, m = D.medium_answers.shadow, e = D.errors.shadow, hs = D.human.silhouette, sh = a.shadow;
     var named = Math.round(sh.accuracy * sh.n);
-    $('hero-answer').textContent = 'It named ' + named + ' of ' + sh.n + ' shadows, and when it failed, its favorite answer was simply the word “Shadow”.';
+    $('hero-answer').textContent = 'Meta’s open AI model, Muse Glimmer, named ' + named + ' of ' + sh.n + ' shadows; when it failed, its favorite answer was simply the word “Shadow”.';
     heroPairs();
     if (!window.FirstLook) return;
     // planned: drawing > outline ≈ silhouette > shadow, the silhouette at least 15 points below the drawing
@@ -74,23 +74,25 @@
     var ai = pct(hs.ai_accuracy_on_shared), pp = pct(hs.people_mean_on_shared);
     window.FirstLook.render($('hero-stats'), { stats: [
       { kind: 'dots', verdict: order && gap >= 15 ? { tone: 'yes', text: 'As predicted' } : order ? { tone: 'part', text: 'Partly as predicted' } : { tone: 'no', text: 'Prediction failed' },
-        o: { k: named, n: sh.n, cols: 10, tone: 'ink', label: 'cast shadows named correctly',
+        o: { k: named, n: sh.n, cols: 10, tone: 'ink', label: 'soft cast shadows named correctly',
           alt: 'Muse Glimmer named ' + named + ' of ' + sh.n + ' cast shadows correctly, and ' + pct(a.original.accuracy) + '% of the drawings.' },
-        q: 'Drawings ' + pct(a.original.accuracy) + '%, silhouettes ' + pct(a.silhouette.accuracy) + '%: ' + (!order ? 'not the planned order.' :
-          gap >= 15 ? 'the planned order.' : 'the planned order, but ' + gap + ' points down, not 15.') },
+        q: 'Predicted: drawings easiest, silhouettes (solid black shapes) at least 15 points lower, shadows hardest. ' + (!order ? 'Not that order' :
+          gap >= 15 ? 'That order' : 'That order, but silhouettes only ' + gap + ' points lower') + ' (' + pct(a.original.accuracy) + '%, ' +
+          pct(a.silhouette.accuracy) + '%, ' + pct(sh.accuracy) + '%).' },
       { kind: 'dots',
-        o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'of its wrong answers were just “Shadow”',
+        o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'of its wrong answers for shadows were just the word “Shadow”',
           alt: m.just_shadow + ' of its ' + e.n_errors + ' wrong answers to cast shadows were just the word Shadow, and ' + m.ufo + ' were UFO.' },
-        q: m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' Never “Shadow” for a sharp silhouette.' : '') },
+        q: m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' It never said “Shadow” for a sharp black silhouette.' : '') },
       { kind: 'bars', verdict: r.ci95[0] > 0 ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
         o: { values: [ai, pp], labels: ['Glimmer', 'people'], tones: ['ink', 'orange'], max: 100, value: ai + '%', unit: 'vs ' + pp + '%',
-          label: 'silhouettes named, the same ' + D.human.n_shared_concepts + ' objects',
+          label: 'of silhouettes named, by Glimmer and by people, for the same ' + D.human.n_shared_concepts + ' objects',
           alt: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects: Muse Glimmer named ' + ai + '%, people ' + pp + '% (published, other drawings).' },
-        q: 'Hard for people, harder for the AI: rank correlation ' + r.rho.toFixed(2) + ' [' + r.ci95[0].toFixed(2) + ', ' + r.ci95[1].toFixed(2) + '].' }
+        q: 'Predicted: shapes people find hard are hard for the AI too. They were, a modest link (' + r.rho.toFixed(2) +
+          ' on a scale from −1 to 1; likely ' + r.ci95[0].toFixed(2) + ' to ' + r.ci95[1].toFixed(2) + ').' }
     ] });
-    $('hero-qual').textContent = 'People saw different drawings (Wagemans et al., 2008), so that comparison is by concept. One drawing per object, one prompt, ' +
-      'one way of casting the shadow' + (D.spark && D.spark.accuracy ? '; Muse Spark, a second model, named ' + pct(D.spark.accuracy.shadow.accuracy) + '% of its ' +
-      D.spark.n_items + ' shadows.' : '.');
+    $('hero-qual').textContent = 'The people, from a published study (Wagemans et al., 2008), saw different drawings of the same objects, so that comparison is by object, ' +
+      'not by picture. One drawing per object, one request, one way of casting the shadow.' + (D.spark && D.spark.accuracy ? ' A second AI, Meta’s chat AI Muse Spark, named ' +
+      pct(D.spark.accuracy.shadow.accuracy) + '% of its ' + D.spark.n_items + ' shadows.' : '');
   }
 
   // --- the game ------------------------------------------------------------------------------
@@ -169,7 +171,7 @@
     var W = 640, H = 300, L = 46, R = 16, Tp = 14, B = 34;
     var x = function (i) { return L + (i + 0.5) * (W - L - R) / VERSIONS.length; };
     var y = function (v) { return Tp + (1 - v) * (H - Tp - B); };
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Share named correctly by version, with 95% intervals' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Share named correctly in each version, with the likely range (95% interval)' });
     [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
       svg.appendChild(s('line', { x1: L, x2: W - R, y1: y(t), y2: y(t), stroke: C.grid, 'stroke-width': 1 }));
       svg.appendChild(s('text', { x: L - 8, y: y(t) + 4, 'text-anchor': 'end', class: 'lbl' }, pct(t) + '%'));
@@ -191,7 +193,7 @@
         if (se.key === 'glimmer') svg.appendChild(s('text', { x: pts[i][0] - 10, y: pts[i][1] + 4, 'text-anchor': 'end', class: 'lbl em' }, pct(e.accuracy) + '%'));
         var hit = s('rect', { x: pts[i][0] - 12, y: Tp, width: 24, height: H - Tp - B, class: 'hit' });
         hit.addEventListener('mousemove', function (evt) {
-          showTip(wrap, evt, [se.name, LABEL[v] + ': ' + pct(e.accuracy) + '% named correctly', e.ci95 ? '95% CI ' + pctCi(e.ci95) : '']);
+          showTip(wrap, evt, [se.name, LABEL[v] + ': ' + pct(e.accuracy) + '% named correctly', e.ci95 ? 'likely range ' + pctCi(e.ci95) : '']);
         });
         hit.addEventListener('mouseleave', function () { hideTip(wrap); });
         svg.appendChild(hit);
@@ -213,8 +215,8 @@
     leg.appendChild(h('span', {}, [h('i', { class: 'd', style: { background: C.people } }), 'People, other drawings (published)']));
     var tb = $('acc-table');
     tb.innerHTML = '';
-    tb.appendChild(h('tr', {}, [h('th', { text: 'Version' }), h('th', { class: 'num', text: 'Glimmer' }), h('th', { class: 'num', text: '95% CI' }),
-      h('th', { class: 'num', text: 'vs. original' }), h('th', { class: 'num', text: 'Spark' })]));
+    tb.appendChild(h('tr', {}, [h('th', { text: 'Version' }), h('th', { class: 'num', text: 'Glimmer' }), h('th', { class: 'num', text: 'Likely range (95% CI)' }),
+      h('th', { class: 'num', text: 'Change from the original' }), h('th', { class: 'num', text: 'Muse Spark' })]));
     VERSIONS.forEach(function (v) {
       var a = D.accuracy[v], sp = D.spark.accuracy[v];
       tb.appendChild(h('tr', {}, [h('td', { text: LABEL[v] }), h('td', { class: 'num', text: pct(a.accuracy) + '%' }), h('td', { class: 'num', text: pctCi(a.ci95) }),
@@ -222,10 +224,11 @@
         h('td', { class: 'num', text: sp ? pct(sp.accuracy) + '%' : '' })]));
     });
     var a = D.accuracy;
-    $('survive-lede').textContent = 'Each of 100 checked drawings was shown four ways. Muse Glimmer named every drawing, ' + pct(a.outline.accuracy) +
+    $('survive-lede').textContent = 'We showed each of 100 drawings four ways: the line drawing, its outline only, a solid black silhouette, and a soft, slanted shadow, ' +
+      'as if cast on a wall. Muse Glimmer named every drawing, ' + pct(a.outline.accuracy) +
       '% of the outlines, ' + pct(a.silhouette.accuracy) + '% of the silhouettes and ' + pct(a.shadow.accuracy) +
-      '% of the cast shadows. Losing the inside detail cost little; the soft, slanted shadow cost a third. ' +
-      D.survival.all_four.length + ' objects survived all four versions.';
+      '% of the cast shadows. Losing the inside detail cost little; the soft shadow cost a third. ' +
+      D.survival.all_four.length + ' objects were named in all four versions.';
   }
 
   // --- what it says instead ----------------------------------------------------------------
@@ -239,22 +242,23 @@
     box.appendChild(fact('“Shadow” ×' + m.just_shadow, 'for ' + listAnd(m.just_shadow_words.map(article)) + '.'));
     box.appendChild(fact('“UFO” ×' + m.ufo, 'for ' + listAnd(m.ufo_words.map(article)) + '.'));
     if (D.spark.medium_answers && D.spark.medium_answers.shadow != null) {
-      box.appendChild(fact('Spark too', 'Muse Spark, a different Meta model, answered “shadow” for ' + D.spark.medium_answers.shadow + ' of its ' + D.spark.n_items + ' shadows.'));
+      box.appendChild(fact('Muse Spark too', 'Muse Spark, Meta’s chat AI, answered “shadow” for ' + D.spark.medium_answers.shadow + ' of its ' + D.spark.n_items + ' shadows.'));
     }
     var ef = $('error-facts');
     ef.innerHTML = '';
     var parts = ['outline', 'silhouette', 'shadow'].filter(function (v) { return D.errors[v].rated; }).map(function (v) {
       return D.errors[v].visual + ' of ' + D.errors[v].rated + ' for ' + LABEL[v].toLowerCase() + 's';
     });
-    ef.appendChild(fact('Shape errors', 'Many of its other mistakes name something with the same outline: “leaf” for a feather, “submarine” for a whistle, “pumpkin” for a watermelon. A second rater (Muse Spark, looking at the same picture) called these “visual” errors, counting wrong real-word answers: ' + listAnd(parts) + '. The original drawings had no errors at all.'));
+    ef.appendChild(fact('Shape mistakes', 'Many of its other mistakes name something with the same outline: “leaf” for a feather, “submarine” for a whistle, “pumpkin” for a watermelon. A second AI, Muse Spark, looked at the same pictures and marked these as shape (“visual”) mistakes. Of the wrong answers that were real words: ' + listAnd(parts) + '. The original drawings had no mistakes at all.'));
   }
 
   // --- people ------------------------------------------------------------------------------
   function people() {
     var hs = D.human.silhouette, pub = D.human.published;
     var r = hs.rho_correct, rp = hs.rho_p_name;
-    $('people-lede').textContent = 'Partly. For the ' + D.human.n_shared_concepts + ' of our objects that also appear in a classic picture set, we compared the AI with published silhouette results from 356 students (Wagemans et al., 2008). Objects people found hard as silhouettes were harder for the AI too (rank correlation ' +
-      r.rho.toFixed(2) + ', 95% CI ' + r.ci95[0].toFixed(2) + ' to ' + r.ci95[1].toFixed(2) + '; with the AI’s confidence in the right name, ' + rp.rho.toFixed(2) + '). But the AI named far more of them: ' +
+    $('people-lede').textContent = 'Partly. ' + D.human.n_shared_concepts + ' of our objects also appear in a classic set of pictures, so we compared the AI with a published study of 356 students naming silhouettes (Wagemans et al., 2008). ' +
+      'Objects people found hard as silhouettes were harder for the AI too, with a modest link (rank correlation ' + r.rho.toFixed(2) + ' on a scale from −1 to 1, likely between ' +
+      r.ci95[0].toFixed(2) + ' and ' + r.ci95[1].toFixed(2) + '; using how sure the AI was of the right name instead, ' + rp.rho.toFixed(2) + '). But the AI named far more of them: ' +
       pct(hs.ai_accuracy_on_shared) + '% of the silhouettes, where people managed ' + pct(hs.people_mean_on_shared) + '% of those objects.';
     var g = $('people-groups');
     g.innerHTML = '';
@@ -268,7 +272,7 @@
       return it ? 'the ' + w + ' “' + it.silhouette.said + '”' : w;
     });
     g.appendChild(group('The AI lost, people named', hs.ai_fails_people_name, 'Few objects that people named as silhouettes defeated the AI. It called ' + listAnd(said) + '.'));
-    $('people-note').textContent = 'People: ' + pub.participants + '; ' + pub.scoring + '. The drawings differ from ours, so this compares concepts, not pictures. Item-level human rates carry no licence and are not shipped here.';
+    $('people-note').textContent = 'People: ' + pub.participants + '; ' + pub.scoring + '. The drawings differ from ours, so this compares objects, not pictures. The study’s per-object results carry no licence, so we don’t publish them here.';
   }
 
   // --- word lens ---------------------------------------------------------------------------
@@ -278,12 +282,12 @@
     var W = 640, H = 290, L = 46, R = 90, Tp = 12, B = 34, first = 30, last = D.word_lens_n_layers;
     var x = function (l) { return L + (l - first) / (last - first) * (W - L - R); };
     var y = function (v) { return Tp + (1 - v) * (H - Tp - B); };
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Mean probability of the correct name after each decoder layer, by version' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'How sure Glimmer is of the right name (0 to 1, averaged over objects) at each stage, from stage 30 to 52, for each version' });
     [0, 0.2, 0.4, 0.6, 0.8].forEach(function (t) {
       svg.appendChild(s('line', { x1: L, x2: W - R, y1: y(t), y2: y(t), stroke: C.grid }));
       svg.appendChild(s('text', { x: L - 8, y: y(t) + 4, 'text-anchor': 'end', class: 'lbl' }, t.toFixed(1)));
     });
-    [30, 35, 40, 45, 50].forEach(function (l) { svg.appendChild(s('text', { x: x(l), y: H - 12, 'text-anchor': 'middle', class: 'lbl' }, 'L' + l)); });
+    [30, 35, 40, 45, 50].forEach(function (l) { svg.appendChild(s('text', { x: x(l), y: H - 12, 'text-anchor': 'middle', class: 'lbl' }, 'stage ' + l)); });
     var ends = [];
     VERSIONS.forEach(function (v) {
       var ys = D.word_lens[v].mean_p_name_by_layer;
@@ -302,7 +306,7 @@
       var r = svg.getBoundingClientRect(), px = (evt.clientX - r.left) * W / r.width;
       var l = Math.max(first, Math.min(last, Math.round(first + (px - L) / (W - L - R) * (last - first))));
       guide.setAttribute('x1', x(l)); guide.setAttribute('x2', x(l)); guide.setAttribute('visibility', 'visible');
-      showTip(wrap, evt, ['Layer ' + l].concat(VERSIONS.map(function (v) { return LABEL[v] + ': ' + D.word_lens[v].mean_p_name_by_layer[l - 1].toFixed(2); })));
+      showTip(wrap, evt, ['Stage ' + l].concat(VERSIONS.map(function (v) { return LABEL[v] + ': ' + D.word_lens[v].mean_p_name_by_layer[l - 1].toFixed(2); })));
     });
     hit.addEventListener('mouseleave', function () { guide.setAttribute('visibility', 'hidden'); hideTip(wrap); });
     svg.appendChild(hit);
@@ -311,12 +315,13 @@
     leg.innerHTML = '';
     VERSIONS.forEach(function (v) { leg.appendChild(h('span', {}, [h('i', { style: { background: C[v] } }), LABEL[v]])); });
     var sh = D.word_lens.shadow, si = D.word_lens.silhouette;
-    $('lens-lede').textContent = 'The word lens reads the model’s best guess after each of its 52 layers. For every version, the right name appears only in the last dozen layers. For cast shadows it arrives a little later, and even at the end the model is less sure.';
+    $('lens-lede').textContent = 'Glimmer reads a picture in 52 stages (layers), one after another. A word lens, a tool that reads which word the model is heading towards at each stage, shows when the right name appears. ' +
+      'The lines show how sure Glimmer is of the right name, from 0 to 1. For every version the name appears only in the last dozen stages. For cast shadows it arrives a little later, and even at the end the model is less sure.';
     var f = $('lens-facts');
     f.innerHTML = '';
-    f.appendChild(fact('+' + sh.first_layer_diff.toFixed(1) + ' layers', 'Later first appearance of the right name for shadows than for the same drawings (95% CI ' + sh.first_layer_diff_ci95[0].toFixed(1) + ' to ' + sh.first_layer_diff_ci95[1].toFixed(1) + ', ' + sh.first_layer_pairs + ' objects named in both).'));
+    f.appendChild(fact('+' + sh.first_layer_diff.toFixed(1) + ' stages', 'On average, the right name first appears this much later for shadows than for the same drawings (likely between ' + sh.first_layer_diff_ci95[0].toFixed(1) + ' and ' + sh.first_layer_diff_ci95[1].toFixed(1) + '; ' + sh.first_layer_pairs + ' objects named in both).'));
     var sd = Math.abs(si.first_layer_diff) < 0.05 ? '0.0' : (si.first_layer_diff > 0 ? '+' : '−') + Math.abs(si.first_layer_diff).toFixed(1);
-    f.appendChild(fact(sd + ' layers', 'For sharp silhouettes: no delay (95% CI ' + si.first_layer_diff_ci95[0].toFixed(1).replace('-', '−') + ' to ' + si.first_layer_diff_ci95[1].toFixed(1) + '). The shape alone is enough; the soft, slanted cast shadow is what slows it.'));
+    f.appendChild(fact(sd + ' stages', 'For sharp silhouettes: no delay (likely between ' + si.first_layer_diff_ci95[0].toFixed(1).replace('-', '−') + ' and ' + si.first_layer_diff_ci95[1].toFixed(1) + '). The shape alone is enough; the soft, slanted cast shadow is what slows it.'));
   }
 
   function credits() {

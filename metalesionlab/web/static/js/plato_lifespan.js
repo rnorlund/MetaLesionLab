@@ -16,13 +16,15 @@
   var LABEL = { sailboat: 'boat (sailboat)', bicycle: 'bicycle' };
   var MEASURES = [
     { key: 'recog', name: 'Recognizable', fmt: pct, lo: 0, hi: 1,
-      sub: 'How often a drawing sits closest to its own thing’s adult average, out of 21 things (chance 5%). Higher is more recognizable.' },
-    { key: 'd_adult', name: 'Distance to the adult Form', fmt: f2, lo: 0.1, hi: 0.7,
-      sub: 'How far a typical drawing is from the average of 200 adults’ drawings (cosine distance in Meta’s DINOv2). Lower is closer.' },
+      sub: 'How often a Meta AI that compares pictures (DINOv2) can tell what a drawing shows: it picks whichever of 21 things’ average adult drawing ' +
+        'looks most like it. Guessing would score 5%. Higher is more recognizable.' },
+    { key: 'd_adult', name: 'Distance from the adults’ average', fmt: f2, lo: 0.1, hi: 0.7,
+      sub: 'How different a typical drawing looks from the average of 200 adults’ drawings of the same thing, to a Meta AI that compares pictures ' +
+        '(DINOv2). 0 would be identical; lower is closer.' },
     { key: 'spread', name: 'Variety', fmt: f2, lo: 0.1, hi: 0.6,
-      sub: 'How far apart drawings of the same thing are from each other, in sets of 16. Lower is more alike.' },
-    { key: 'd_muse', name: 'Distance to Muse’s Form', fmt: f2, lo: 0.05, hi: 0.9,
-      sub: 'How far a typical drawing is from the average of Muse Image’s doodles. Lower is closer to the AI’s chair.' }
+      sub: 'How different the drawings of one thing are from one another, compared in sets of 16. Lower means more alike.' },
+    { key: 'd_muse', name: 'Distance from Muse Image’s average', fmt: f2, lo: 0.05, hi: 0.9,
+      sub: 'How different a typical drawing looks from the average of the doodles by Meta’s image AI, Muse Image. Lower is closer to the AI’s chair.' }
   ];
   var D = null, thing = 'chair', stop = 0, measure = 'recog';
   var STOPS = AGES.map(function (a) { return { kind: 'kid', age: a, tick: String(a), cls: 'kid' }; })
@@ -36,6 +38,9 @@
   function signed(x, fmt) { return (x > 0 ? '+' : x < 0 ? '−' : '') + fmt(Math.abs(x)); }
   function pts(x) { return (x > 0 ? '+' : x < 0 ? '−' : '') + Math.round(Math.abs(100 * x)) + ' points'; }
   function ciTxt(c, fmt) { return c ? '[' + fmt(c[0]) + ', ' + fmt(c[1]) + ']' : ''; }
+  function num(x, fmt) { return (x < 0 ? '−' : '') + fmt(Math.abs(x)); }
+  // a 95% interval in words: "probably between 3.7 and 5.3"
+  function between(c, fmt) { return c ? 'probably between ' + num(c[0], fmt) + ' and ' + num(c[1], fmt) : ''; }
   function ciPts(c) { return c ? '[' + signed(100 * c[0], function (v) { return v.toFixed(0); }) + ', ' +
     signed(100 * c[1], function (v) { return v.toFixed(0); }) + ']' : ''; }
   function svg(tag, attrs, parent) {
@@ -110,7 +115,7 @@
   // ---------- the timeline ----------
   function thingSelect() {
     var sel = document.getElementById('thing');
-    sel.appendChild(h('option', { value: 'mean' }, 'All 20 things (mean)'));
+    sel.appendChild(h('option', { value: 'mean' }, 'All 20 things (average)'));
     things().forEach(function (k) { sel.appendChild(h('option', { value: k }, label(k))); });
     sel.value = thing;
     sel.addEventListener('change', function () { thing = sel.value; renderAll(); });
@@ -137,10 +142,10 @@
   function stopWho(s) {
     var n = nFor(s);
     if (s.kind === 'kid') return (n ? n + ' drawings by ' : 'Drawings by ') + s.age + '-year-olds at a museum kiosk';
-    if (s.kind === 'adult') return '200 Quick, Draw! players, 20 seconds each. Their average is the adult Form.';
-    if (s.kind === 'muse') return 'Meta’s Muse Image, asked for a quick doodle';
-    if (s.kind === 'sd') return '16 pictures from the same 16 seeds at every stage; ' + KSTEPS[s.ck].toFixed(2) +
-      ' million training steps' + (s.ck === 'v1.1' ? '' : s.ck === 'v1.2' ? ', resumed from v1.1' : ', resumed from v1.2');
+    if (s.kind === 'adult') return '200 people playing Google’s Quick, Draw! game, 20 seconds per drawing. Their average drawing is our “adult Form”.';
+    if (s.kind === 'muse') return 'Meta’s image AI, Muse Image, asked for a quick doodle';
+    if (s.kind === 'sd') return 'An open image AI. 16 pictures from the same 16 random starting points at every version; trained for ' + KSTEPS[s.ck].toFixed(2) +
+      ' million steps' + (s.ck === 'v1.1' ? '' : s.ck === 'v1.2' ? ', continuing from v1.1' : ', continuing from v1.2');
     return 'The end of the lifespan, by analogy only';
   }
 
@@ -174,8 +179,11 @@
     read.innerHTML = '';
     var r = value(s, 'recog');
     if (s.kind === 'damage') {
-      pic.appendChild(h('p', { class: 'ls-damage' }, ['Plato’s lifespan doesn’t end at the top. What happens to the chair when the AI is damaged? ',
-        h('a', { href: '/plato/damage' }, 'Damage the painter'), ' shows it. Damage to the image model’s language part made the chair wander into other things (a room, a car, a person), never back to the plain chair; damage to its drawing part dissolved the lines and kept the asked kind of chair more often. This is an analogy, not a claim about people.']));
+      pic.appendChild(h('p', { class: 'ls-damage' }, ['Plato’s lifespan doesn’t end at the top. What happens to the chair when an image AI is damaged? On another page, ',
+        h('a', { href: '/plato/damage' }, 'Damage the painter'), ', we damaged one on purpose (Stable Diffusion XL, an open image AI from Stability AI): we added random ' +
+        'noise to its artificial neurons, or switched some off. Damage to the part that reads the words made the chair wander into other things (a room, a car, ' +
+        'a person), never back to the plain chair. Damage to the part that paints the picture dissolved the lines, but kept the kind of chair asked for more often. ' +
+        'This is an analogy, not a claim about people.']));
     } else {
       var src = null;
       if (thing === 'chair') {
@@ -185,16 +193,16 @@
       }
       if (src) {
         pic.appendChild(h('img', { src: '/static/img/plato_lifespan/' + src + '.webp', width: 812, height: 132,
-          alt: s.kind === 'adult' ? 'Six adults’ chairs from Quick, Draw!, the most typical first' :
-               s.kind === 'muse' ? 'Six of Muse Image’s chair doodles: the same slat-back chair' :
-               'Six chairs drawn by Stable Diffusion ' + s.ck + ' from the same six seeds as every other stage' }));
+          alt: s.kind === 'adult' ? 'Six adults’ chairs from Google’s Quick, Draw! game, the most typical first' :
+               s.kind === 'muse' ? 'Six of Muse Image’s chair doodles: the same plain wooden chair with a slatted back' :
+               'Six chairs drawn by Stable Diffusion ' + s.ck + ' from the same six random starting points as every other version' }));
       }
       pic.appendChild(iconArray(r, color(s), Math.round(10 * r) + ' in 10 drawings are recognizable'));
       var who = s.kind === 'kid' ? s.age + '-year-olds’' : s.kind === 'adult' ? 'adults’' : 'its';
       var noun = thing === 'mean' ? 'thing' : label(thing);
       var cap = [h('b', null, Math.round(10 * r) + ' in 10'), ' of ' + who + ' drawings ' +
-        (thing === 'mean' ? 'are recognizable to the machine as what was asked for.' : 'look like a ' + noun + ' to the machine.')];
-      if (s.kind === 'kid') cap.push(' Children’s drawings aren’t shown: they are licensed for non-commercial use, and they are children’s. These chairs stand for the numbers.');
+        (thing === 'mean' ? 'can be recognized as what was asked for, by the AI that judges them.' : 'look like a ' + noun + ' to the AI that judges them.')];
+      if (s.kind === 'kid') cap.push(' We don’t show children’s drawings: they are children’s, and their licence allows non-commercial use only. These little chairs stand for the numbers.');
       if (!src && s.kind !== 'kid' && thing !== 'chair') cap.push(' Pictures are shown for the chair only.');
       pic.appendChild(h('p', { class: 'ls-pic-cap' }, cap));
     }
@@ -216,22 +224,24 @@
     var ul = document.getElementById('answer-list');
     ul.innerHTML = '';
     var r = t.recog, da = t.d_adult, sp = t.spread;
-    ul.appendChild(h('li', null, [h('b', null, 'Children walk toward the Form. '),
-      'From age 2 to 10, drawings of 20 things become more recognizable (' + pct(c.curves.recog.mean[0]) + ' → ' +
-      pct(c.curves.recog.mean[8]) + ', +' + (100 * r.linear.mean_slope).toFixed(1) + ' points a year [' +
-      (100 * r.linear.ci95[0]).toFixed(1) + ', ' + (100 * r.linear.ci95[1]).toFixed(1) + ']' +
-      ', for all 20 things) and closer to the adults’ average (' + f2(c.curves.d_adult.mean[0]) + ' → ' +
+    var one = function (v) { return (100 * v).toFixed(1); }, whole = function (v) { return (100 * v).toFixed(0); };
+    var gain = at.recog.last_minus_first;
+    ul.appendChild(h('li', null, [h('b', null, 'Children move toward the adult chair as they grow. '),
+      'From age 2 to 10, their drawings of 20 things get easier to recognize (' + pct(c.curves.recog.mean[0]) + ' → ' +
+      pct(c.curves.recog.mean[8]) + ': up ' + one(r.linear.mean_slope) + ' points a year, ' + between(r.linear.ci95, one) + '). ' +
+      'They also get closer to the adults’ average drawing (distance ' + f2(c.curves.d_adult.mean[0]) + ' → ' +
       f2(c.curves.d_adult.mean[8]) + '; adults ' + f2(D.adults.mean_over_children_things.d_adult) +
-      '). Their variety narrows too, mostly before age 6. It doesn’t rise first, as we predicted.']));
-    ul.appendChild(h('li', null, [h('b', null, 'They aren’t there at 10. '),
-      '10-year-olds are still less recognizable than adults (' + pct(c.curves.recog.mean[8]) + ' vs ' +
-      pct(D.adults.mean_over_children_things.recog) + ') and farther from the adult Form. By 10 they sit about as close to ' +
-      'Muse Image’s chair as adults do.']));
-    ul.appendChild(h('li', null, [h('b', null, 'Stable Diffusion doesn’t grow up the same way. '),
-      'Its first public checkpoint, v1.1, is already as recognizable as a 10-year-old (' + pct(ai.curves.recog.mean[0]) +
-      ' over 21 things). It gains ' + pts(at.recog.last_minus_first.mean) + ' by v1.5 ' +
-      ciPts(at.recog.last_minus_first.ci95) + ', mostly at v1.2, and its variety narrows a little. But its pictures stay as far from people’s drawings at v1.5 as at v1.1 (' +
-      f2(ai.curves.d_adult.mean[0]) + ' and ' + f2(ai.curves.d_adult.mean[4]) + '). For the 10 main things, and at a lower guidance setting, nothing changes clearly.']));
+      '). And they become more alike, mostly before age 6. We predicted their variety would first rise, then fall. It didn’t.']));
+    ul.appendChild(h('li', null, [h('b', null, 'At 10, they aren’t there yet. '),
+      '10-year-olds’ drawings are still harder to recognize than adults’ (' + pct(c.curves.recog.mean[8]) + ' against ' +
+      pct(D.adults.mean_over_children_things.recog) + ') and further from the adults’ average. But by 10, they are about as close to ' +
+      'Muse Image’s chair as adults are.']));
+    ul.appendChild(h('li', null, [h('b', null, 'The image AI doesn’t grow up the same way. '),
+      'Stable Diffusion’s first public version, v1.1, is already as recognizable as a 10-year-old’s drawing (' + pct(ai.curves.recog.mean[0]) +
+      ', over 21 things). By v1.5 it ' + (gain.mean < 0 ? 'loses ' : 'gains ') + whole(Math.abs(gain.mean)) + ' points (' + between(gain.ci95, whole) +
+      '), mostly at v1.2, and its pictures become a little more alike. But they stay just as far from people’s drawings (distance ' +
+      f2(ai.curves.d_adult.mean[0]) + ' at v1.1 and ' + f2(ai.curves.d_adult.mean[4]) + ' at v1.5). For the 10 main things, and when it follows the ' +
+      'request less strictly (a lower “guidance” setting), nothing changes clearly.']));
     var ssd = D.sketch_seeds, sbd = D.sketch_big;
     if (sbd && sbd.concepts && sbd.concepts.chair) {
       var bc = sbd.concepts.chair, b1 = bc.tests['t1.0'].last, brc = bc.curves['t1.0'].recog.mean;
@@ -239,39 +249,43 @@
       var smallTxt = sm1 ? 'A smaller model we trained first (' + ssd.concepts.chair.seeds.length + ' runs on 20,000 chairs) ' +
         (sm1.verdict === 'narrower' ? 'ended ' + lessPct(sm1) + ' less varied.' : sm1.verdict === 'wider' ? 'ended more varied.' : 'showed no clear difference.') : '';
       var at = sbd.animation.temp, ta = bc.tests['t' + tName(at)] && bc.tests['t' + tName(at)].last;
-      var animTxt = ta && at !== 1 && ta.verdict !== b1.verdict ? ' At the cautious temperature the animation uses (' + tName(at) + '), the difference is not clear (' +
-        deltaTxt(ta) + ').' : '';
+      var animTxt = ta && at !== 1 && ta.verdict !== b1.verdict ? ' At the more cautious randomness setting the animation uses (' + tName(at) +
+        '), the difference is too close to call (' + deltaTxt(ta) + ').' : '';
       ul.appendChild(h('li', null, [h('b', null, 'An AI that learns only from people’s chairs does grow up like a child. '),
-        'A sketch model trained from scratch on ' + nTrain(bc) + ' people’s chairs starts at scribbles (' + pct(brc[0]) + ' recognizable) and ends at ' +
-        pct(brc[brc.length - 1]) + ' (mean of ' + bc.seeds.length + ' runs, temperature 1). ' +
+        'We trained a small AI that learns to draw from people’s sketches (Sketch-RNN), from nothing, on ' + nTrain(bc) + ' people’s chairs. ' +
+        'It starts with scribbles (' + pct(brc[0]) + ' recognizable) and ends at ' + pct(brc[brc.length - 1]) + ' (average of ' + bc.seeds.length +
+        ' training runs, at its normal randomness setting, 1). ' +
         (b1.verdict === 'narrower'
-          ? 'In ' + (b1.n_below_0 === b1.n_seeds ? 'all ' + runsWord(b1, bc) : b1.n_below_0 + ' of ' + runsWord(b1, bc)) + ' it ends less varied than the chairs it learned from (' +
-            lessPct(b1) + ' less, ' + deltaTxt(b1) + '): like Muse Image, it narrows toward the typical chair.'
+          ? 'In ' + (b1.n_below_0 === b1.n_seeds ? 'all ' : b1.n_below_0 + ' of ') + b1.n_seeds +
+            (freshRuns(bc) ? ' runs we trained after writing this test down' : ' runs') + ', its chairs end up less varied than the chairs it learned from (' + lessPct(b1) + ' less; difference ' + deltaTxt(b1) +
+            '). Like Muse Image, it narrows toward the typical chair.'
           : b1.verdict === 'wider'
-            ? 'It ends more varied than the chairs it learned from (' + deltaTxt(b1) + ').'
-            : 'Whether it ends narrower than the chairs it learned from is not clear (' + deltaTxt(b1) + ', ' + runsWord(b1, bc) + ').') +
+            ? 'Its chairs end up more varied than the chairs it learned from (difference ' + deltaTxt(b1) + ').'
+            : 'Whether its chairs end up less varied than the chairs it learned from is too close to call (difference ' + deltaTxt(b1) + ', ' +
+              runsWord(b1, bc) + ').') +
         animTxt + (smallTxt ? ' ' + smallTxt : '')]));
     } else if (ssd && ssd.concepts && ssd.concepts.chair) {
       var sc = ssd.concepts.chair, t1 = sc.tests['t1.0'].last, rc = sc.curves['t1.0'].recog.mean, nr = sc.seeds.length;
       var allTemps = ssd.temps.every(function (tp) { return sc.tests['t' + tp.toFixed(1)].last.verdict === 'narrower'; });
       ul.appendChild(h('li', null, [h('b', null, 'An AI that learns only from people’s chairs does grow up like a child. '),
-        'A small sketch model trained from scratch ' + nr + ' times starts at scribbles (' + pct(rc[0]) + ' recognizable) and ends at ' +
-        pct(rc[rc.length - 1]) + ' (mean of ' + nr + ' runs). ' +
+        'A small AI that learns to draw from people’s sketches (Sketch-RNN), trained from nothing ' + nr + ' times, starts with scribbles (' + pct(rc[0]) +
+        ' recognizable) and ends at ' + pct(rc[rc.length - 1]) + ' (average of ' + nr + ' runs). ' +
         (t1.verdict === 'narrower'
-          ? 'In ' + (t1.n_below_0 === t1.n_seeds ? 'all ' + nr : t1.n_below_0 + ' of ' + nr) + ' runs it ends less varied than the chairs it learned from (' +
-            lessPct(t1) + ' less, ' + deltaTxt(t1) + ')' + (allTemps ? ', at every sampling temperature we tried' : '') + ': like Muse Image, it narrows toward the typical chair.'
-          : 'Whether it ends narrower than the chairs it learned from does not hold up across runs (' + deltaTxt(t1) + ').') +
+          ? 'In ' + (t1.n_below_0 === t1.n_seeds ? 'all ' + nr : t1.n_below_0 + ' of ' + nr) + ' runs its chairs end up less varied than the chairs it learned from (' +
+            lessPct(t1) + ' less; difference ' + deltaTxt(t1) + ')' + (allTemps ? ', at every randomness setting we tried' : '') +
+            '. Like Muse Image, it narrows toward the typical chair.'
+          : 'Whether its chairs end up less varied than the chairs it learned from does not hold up across runs (difference ' + deltaTxt(t1) + ').') +
         (ssd.concepts.cat && ssd.concepts.cat.tests['t1.0'].last.verdict !== 'narrower'
-          ? ' Not so for cats, which the same model learns much less well: its cats end ' +
-            (ssd.concepts.cat.tests['t1.0'].last.verdict === 'wider' ? 'more varied than the ones it learned from.' : 'neither clearly narrower nor wider.')
+          ? ' Not so for cats, which the same model learns much less well: its cats end up ' +
+            (ssd.concepts.cat.tests['t1.0'].last.verdict === 'wider' ? 'more varied than the ones it learned from.' : 'neither clearly more alike nor more varied.')
           : '')]));
     } else if (sk) {
       var st = sk.steps['t1.0'], last = st[String(Math.max.apply(null, Object.keys(st).map(Number)))];
       ul.appendChild(h('li', null, [h('b', null, 'An AI that learns only from people’s chairs does grow up like a child. '),
-        'A small sketch model trained from scratch starts at scribbles (' + pct(st['0'].recog) + ' recognizable), ' +
-        'passes ' + pct(st['200'].recog) + ' after 200 steps, and ends at ' + pct(last.recog) + '. It ends ' +
+        'A small AI that learns to draw from people’s sketches, trained from nothing, starts with scribbles (' + pct(st['0'].recog) + ' recognizable), ' +
+        'passes ' + pct(st['200'].recog) + ' after 200 training steps, and ends at ' + pct(last.recog) + '. It ends ' +
         Math.round(100 * (1 - last.spread / sk.training_drawings.spread)) +
-        '% less varied than the chairs it learned from (' + f2(last.spread) + ' vs ' + f2(sk.training_drawings.spread) +
+        '% less varied than the chairs it learned from (' + f2(last.spread) + ' against ' + f2(sk.training_drawings.spread) +
         '): like Muse Image, it settles on the common chair.']));
     }
   }
@@ -284,7 +298,8 @@
     var xs = function (v) { return L + (W - L - R) * (v - 0.3) / 0.7; };
     var ys = function (v) { return T + (H - T - B) * (0.7 - v) / 0.55; };
     var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
-      'aria-label': 'Recognizability against distance to the adult Form for children by age, adults, Muse Image and Stable Diffusion’s training stages' }, box);
+      'aria-label': 'How recognizable the drawings are, against how far they are from the average adult drawing, for children by age, adults, ' +
+        'Muse Image and Stable Diffusion’s versions' }, box);
     var tip = tipper(box);
     [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].forEach(function (v) {
       svg('line', { x1: xs(v), x2: xs(v), y1: T, y2: H - B, stroke: C.grid }, s);
@@ -294,8 +309,8 @@
       svg('line', { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: C.grid }, s);
       text(s, L - 8, ys(v) + 4, v.toFixed(1), { 'text-anchor': 'end' });
     });
-    text(s, (L + W - R) / 2, H - 6, 'recognizable (share closest to its own thing, of 21)', { 'text-anchor': 'middle', class: 'lbl' });
-    text(s, 14, (T + H - B) / 2, 'distance to the adult Form (lower = closer)', { transform: 'rotate(-90 14 ' + (T + H - B) / 2 + ')', 'text-anchor': 'middle', class: 'lbl' });
+    text(s, (L + W - R) / 2, H - 6, 'recognizable: an AI tells which of 21 things it is', { 'text-anchor': 'middle', class: 'lbl' });
+    text(s, 14, (T + H - B) / 2, 'distance from the adults’ average (lower = closer)', { transform: 'rotate(-90 14 ' + (T + H - B) / 2 + ')', 'text-anchor': 'middle', class: 'lbl' });
     function dot(st, shape, labelText, anchor, dx, dy) {
       var x = xs(value(st, 'recog')), y = ys(value(st, 'd_adult'));
       if (isNaN(x) || isNaN(y)) return;
@@ -306,7 +321,7 @@
       if (labelText) text(s, x + (dx || 8), y + (dy || 4), labelText, { class: 'lbl', 'text-anchor': anchor || 'start' });
       var hit = svg('circle', { cx: x, cy: y, r: 12, fill: 'transparent' }, s);
       hit.addEventListener('mousemove', function (e) {
-        tip.show(e, '<b>' + stopName(st) + '</b><br>recognizable ' + pct(value(st, 'recog')) + '<br>distance to the adult Form ' +
+        tip.show(e, '<b>' + stopName(st) + '</b><br>recognizable ' + pct(value(st, 'recog')) + '<br>distance from the adults’ average ' +
           f3(value(st, 'd_adult')) + '<br>variety ' + f3(value(st, 'spread')));
       });
       hit.addEventListener('mouseleave', tip.hide);
@@ -318,17 +333,18 @@
     function seg(a, b) { svg('line', { x1: xs(value(a, 'recog')), y1: ys(value(a, 'd_adult')), x2: xs(value(b, 'recog')), y2: ys(value(b, 'd_adult')), stroke: C.sd, 'stroke-width': 2 }, s); }
     seg(sd[0], sd[1]); seg(sd[1], sd[2]); seg(sd[1], sd[3]); seg(sd[1], sd[4]);
     kid.forEach(function (o) { dot(o, 'dot', [2, 6, 10].indexOf(o.age) >= 0 ? 'age ' + o.age : '', 'start', 6, -8); });
-    sd.forEach(function (o, i) { dot(o, 'dot', i === 0 ? 'SD v1.1' : i === 4 ? 'SD v1.2–v1.5' : '', i === 0 ? 'end' : 'start', i === 0 ? -8 : 9, i === 0 ? 20 : -10); });
+    sd.forEach(function (o, i) { dot(o, 'dot', i === 0 ? 'Stable Diffusion v1.1' : i === 4 ? 'v1.2–v1.5' : '', i === 0 ? 'end' : 'start', i === 0 ? -8 : 9, i === 0 ? 20 : -10); });
     dot(STOPS[9], 'sq', 'adults', 'start', 10, 4);
     dot(STOPS[10], 'dia', 'Muse Image', 'start', 11, 4);
     var leg = document.getElementById('paths-legend');
     leg.innerHTML = '';
     [['Children, ages 2–10', C.people, ''], ['Adults (Quick, Draw!)', C.people, 'sq'], ['Muse Image', C.muse, 'sq'],
-     ['Stable Diffusion v1.1–v1.5', C.sd, '']].forEach(function (x) {
+     ['Stable Diffusion, versions 1.1–1.5', C.sd, '']].forEach(function (x) {
       leg.appendChild(h('span', null, [h('i', { class: x[2], style: 'background:' + x[1] }), x[0]]));
     });
-    document.getElementById('paths-note').textContent = (thing === 'mean' ? 'Means over the 20 things both drew.' :
-      'One thing: ' + label(thing) + '.') + ' Stable Diffusion v1.3, v1.4 and v1.5 each continue from v1.2. Its distance is mostly drawing style (it draws marker sketches on paper; people draw thin lines), so watch how it moves, not where it sits.';
+    document.getElementById('paths-note').textContent = (thing === 'mean' ? 'Averages over the 20 things both drew.' :
+      'One thing: ' + label(thing) + '.') + ' Stable Diffusion’s versions 1.3, 1.4 and 1.5 each continue training from version 1.2. Its distance is mostly ' +
+      'drawing style (it draws marker sketches on paper; people draw thin lines), so watch how it moves, not where it sits.';
   }
 
   // ---------- curves: children vs. Stable Diffusion, one measure at a time ----------
@@ -346,7 +362,7 @@
   function panel(boxId, series, xdom, xticks, xfmt, yd, isAI, md, refs) {
     var box = document.getElementById(boxId);
     box.innerHTML = '';
-    var W = 400, H = 280, L = 44, R = 54, T = 26, B = 34;
+    var W = 400, H = 280, L = 44, R = 74, T = 26, B = 34;
     var xs = function (v) { return L + (W - L - R) * (v - xdom[0]) / (xdom[1] - xdom[0]); };
     var ys = function (v) { return T + (H - T - B) * (yd[1] - v) / (yd[1] - yd[0]); };
     var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': md.name + (isAI ? ' by training stage' : ' by age') }, box);
@@ -358,7 +374,7 @@
     });
     xticks.forEach(function (v) { text(s, xs(v), H - B + 16, xfmt(v), { 'text-anchor': 'middle' }); });
     text(s, (L + W - R) / 2, H - 4, isAI ? 'training steps (millions)' : 'age (years)', { 'text-anchor': 'middle', class: 'lbl' });
-    [['adults', refs.adult, C.people], ['Muse', refs.muse, C.muse]].forEach(function (r) {
+    [['adults', refs.adult, C.people], ['Muse Image', refs.muse, C.muse]].forEach(function (r) {
       if (r[1] == null || r[1] < yd[0] || r[1] > yd[1]) return;
       svg('line', { x1: L, x2: W - R, y1: ys(r[1]), y2: ys(r[1]), stroke: r[2], 'stroke-width': 1.2, opacity: 0.85 }, s);
       text(s, W - R + 4, ys(r[1]) + 4, r[0], { class: 'lbl' });
@@ -380,7 +396,7 @@
       var hit = svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 12, fill: 'transparent' }, s);
       hit.addEventListener('mousemove', function (e) {
         tip.show(e, '<b>' + (isAI ? 'Stable Diffusion ' + p.ck : 'Age ' + p.x) + '</b><br>' + md.name + ': ' + md.fmt(p.v) +
-          '<br>95% CI ' + ciTxt(p.ci, md.key === 'recog' ? pct : f2));
+          '<br>likely range (95% CI) ' + ciTxt(p.ci, md.key === 'recog' ? pct : f2));
       });
       hit.addEventListener('mouseleave', tip.hide);
     });
@@ -413,11 +429,11 @@
     panel('kid-chart', cd.kid, [1.6, 10.4], AGES, String, yd, false, md, cd);
     panel('ai-chart', cd.ai, [0.3, 1.65], [0.5, 1.0, 1.5], function (v) { return v.toFixed(1); }, yd, true, md, cd);
     var t = D.children.tests[md.key].linear, a = D.ai.all.tests[md.key];
-    var fmtS = md.key === 'recog' ? function (v) { return (100 * v).toFixed(1) + ' pts'; } : f3;
-    document.getElementById('curves-note').textContent = (thing === 'mean' ? 'Means over 20 things (children) and 21 things (Stable Diffusion: the 20 and an umbrella). ' :
-      'One thing: ' + label(thing) + '. ') + 'Children, all 20 things: ' + signed(t.mean_slope, fmtS) + ' a year, 95% CI ' +
-      ciTxt(t.ci95, fmtS) + '. Stable Diffusion, 21 things, v1.5 minus v1.1: ' + signed(a.last_minus_first.mean, fmtS) +
-      ', 95% CI ' + ciTxt(a.last_minus_first.ci95, fmtS) + '. Bands and bars are 95% bootstrap CIs.';
+    var fmtS = md.key === 'recog' ? function (v) { return (100 * v).toFixed(1); } : f3, unit = md.key === 'recog' ? ' points' : '';
+    document.getElementById('curves-note').textContent = (thing === 'mean' ? 'Averages over 20 things for children, and 21 for Stable Diffusion (the 20 and an umbrella). ' :
+      'Charts: one thing, ' + label(thing) + '. ') + 'Over all 20 things, children change by ' + signed(t.mean_slope, fmtS) + unit + ' a year (' +
+      between(t.ci95, fmtS) + '). Over 21 things, Stable Diffusion changes by ' + signed(a.last_minus_first.mean, fmtS) + unit + ' from v1.1 to v1.5 (' +
+      between(a.last_minus_first.ci95, fmtS) + '). The shaded bands and bars show the likely range (95% confidence intervals, by resampling).';
     // table view
     var rows = STOPS.filter(function (o) { return o.kind !== 'damage'; }).map(function (o) {
       return h('tr', null, [h('td', null, stopName(o))].concat(MEASURES.map(function (m) {
@@ -426,7 +442,7 @@
     });
     var tb = document.getElementById('curves-table');
     tb.innerHTML = '';
-    tb.appendChild(h('table', null, [h('thead', null, h('tr', null, [h('th', null, 'Stage (' + (thing === 'mean' ? 'mean of 20 things' : label(thing)) + ')')]
+    tb.appendChild(h('table', null, [h('thead', null, h('tr', null, [h('th', null, 'Stage of life (' + (thing === 'mean' ? 'average of 20 things' : label(thing)) + ')')]
       .concat(MEASURES.map(function (m) { return h('th', { class: 'num' }, m.name); })))), h('tbody', null, rows)]));
   }
 
@@ -476,7 +492,7 @@
       bar(a.spread[k]);
       range.value = String(k);
       range.setAttribute('aria-valuetext', 'Step ' + fmtStep(steps[k]));
-      document.getElementById('learn-frames').setAttribute('aria-label', '16 chairs drawn by the sketch model at training step ' +
+      document.getElementById('learn-frames').setAttribute('aria-label', '16 chairs drawn by the sketching AI at training step ' +
         fmtStep(steps[k]) + '; ' + pct(a.recog[k]) + ' of its drawings are recognizable as chairs');
     }
     function show(k, fade) {
@@ -510,8 +526,9 @@
     range.addEventListener('input', function () { touched = true; play(false); show(+range.value, false); });
     show(REDUCED ? steps.length - 1 : 0, false);
     var nr = B.concepts.chair.seeds.length;
-    document.getElementById('learn-cap').textContent = 'One run (seed ' + a.seed + ' of ' + nr + ') at sampling temperature ' + tName(a.temp) + '. ' +
-      (isBig() ? 'We chose the temperature by eye from this first run, before the other ' + (nr - 1) + ' runs were trained: at lower temperatures it draws cleaner chairs. '
+    document.getElementById('learn-cap').textContent = 'Training run ' + a.seed + ' of ' + nr + ', at a randomness setting of ' + tName(a.temp) +
+      ' (lower is more cautious; its normal setting is 1). ' +
+      (isBig() ? 'We chose that setting by eye from this first run, before training the other ' + (nr - 1) + ': lower settings draw cleaner chairs. '
         : 'Chosen in the plan before any training. ') +
       'A blank tile is a drawing that was only a dot. The numbers come from all 200 of this run’s drawings at each step; the 16 tiles are its first 16.';
     if (!REDUCED && 'IntersectionObserver' in window) {
@@ -553,9 +570,9 @@
         });
       }
       document.getElementById('stroke-replay').addEventListener('click', draw);
-      document.getElementById('stroke-note').textContent = 'Seed ' + d.seed + ' at step ' + fmtStep(d.step) +
-        (d.temp !== 1 ? ', temperature ' + tName(d.temp) : '') + ': tile ' + (d.index + 1) +
-        ' of the 16 above, the first one that the measure calls a chair (the rule was set in the plan). ' +
+      document.getElementById('stroke-note').textContent = 'Training run ' + d.seed + ' at step ' + fmtStep(d.step) +
+        (d.temp !== 1 ? ', randomness setting ' + tName(d.temp) : '') + ': tile ' + (d.index + 1) +
+        ' of the 16 above, the first one our measure recognizes as a chair (a rule we set in the plan, before training). ' +
         strokes.length + (strokes.length === 1 ? ' stroke.' : ' strokes.');
       if (REDUCED || !('IntersectionObserver' in window)) return;
       var seen = false;
@@ -565,26 +582,32 @@
     }).catch(function () { box.closest('.ls-stroke').hidden = true; });
   }
 
+  // the plan's verdicts, in words: "narrower" means its chairs end up more alike than the ones it learned from
   function verdictWords(t) {
-    return t.verdict === 'narrower' ? 'narrower' : t.verdict === 'wider' ? 'wider' : 'no clear difference';
+    return t.verdict === 'narrower' ? 'more alike' : t.verdict === 'wider' ? 'more varied' : 'no clear difference';
   }
-  function deltaTxt(t) { return signed(t.mean_delta, f3) + ' ' + ciTxt(t.t_ci95, function (v) { return signed(v, f3); }); }
+  // "−0.048, probably between −0.062 and −0.034" (the 95% interval across runs)
+  function deltaTxt(t) {
+    var sg = function (v) { return signed(v, f3); };
+    return sg(t.mean_delta) + (t.t_ci95 ? ', probably between ' + sg(t.t_ci95[0]) + ' and ' + sg(t.t_ci95[1]) : '');
+  }
   function moreLess(t) { return t.mean_delta < 0 ? lessPct(t) + ' less varied' : Math.round(100 * t.mean_delta / t.ref_spread) + '% more varied'; }
 
-  // The test's headline for one model's chairs at temperature 1, in each of the plan's three outcomes.
+  // The test's headline for one model's chairs at its normal randomness setting (1), in each of the plan's three outcomes.
   function verdictHead(b, t1, who) {
     var all = t1.n_below_0 === t1.n_seeds, runs = runsWord(t1, b);
     if (t1.verdict === 'narrower') {
-      return [h('b', null, who + ' ends narrower than the chairs it learned from' + (all ? ', in all ' + runs + '. ' : ' (' + t1.n_below_0 + ' of ' + runs + '). ')),
-        'At its own temperature (1.0) its chairs are ' + lessPct(t1) + ' less varied than the people’s chairs it learned from (' + f2(t1.model_spread) + ' vs ' +
-        f2(t1.ref_spread) + '; difference ' + deltaTxt(t1) + ', 95% CI across runs). Like Muse Image, it narrows toward the typical chair.'];
+      return [h('b', null, who + ' ends up drawing chairs more alike than the people’s chairs it learned from' +
+          (all ? ', in all ' + runs + '. ' : ' (' + t1.n_below_0 + ' of ' + runs + '). ')),
+        'At its normal randomness setting (1.0), its chairs are ' + lessPct(t1) + ' less varied than the chairs it learned from (variety ' +
+        f2(t1.model_spread) + ' against ' + f2(t1.ref_spread) + '; difference ' + deltaTxt(t1) + ', across runs). Like Muse Image, it narrows toward the typical chair.'];
     }
     if (t1.verdict === 'wider') {
-      return [h('b', null, who + ' ends more varied than the chairs it learned from. '), 'At its own temperature (1.0) the difference is ' + deltaTxt(t1) +
-        ' (95% CI across ' + runs + '), and ' + t1.n_below_0 + ' of ' + runs + ' end narrower.'];
+      return [h('b', null, who + ' ends up drawing chairs more varied than the ones it learned from. '), 'At its normal randomness setting (1.0), the difference is ' +
+        deltaTxt(t1) + ' across ' + runs + ', and ' + t1.n_below_0 + ' of ' + runs + ' end up more alike.'];
     }
-    return [h('b', null, who + ' does not clearly end narrower than the chairs it learned from. '), 'At its own temperature (1.0) the difference is ' +
-      deltaTxt(t1) + ' (95% CI across ' + runs + '), and ' + t1.n_below_0 + ' of ' + runs + ' end narrower.'];
+    return [h('b', null, who + ' does not clearly end up drawing chairs more alike than the ones it learned from. '), 'At its normal randomness setting (1.0), ' +
+      'the difference is ' + deltaTxt(t1) + ' across ' + runs + ', and ' + t1.n_below_0 + ' of ' + runs + ' end up more alike.'];
   }
 
   function renderVerdict() {
@@ -592,38 +615,42 @@
     box.innerHTML = '';
     var head = verdictHead(ch, t1, isBig() ? 'The larger model' : 'It');
     if (freshRuns(ch) && ch.tests_all_seeds) {
-      head.push(' The test uses the ' + t1.n_seeds + ' runs trained after we wrote down the test; with the first run too, the difference is ' +
+      head.push(' The test uses the ' + t1.n_seeds + ' runs we trained after writing the test down; with the first run included, the difference is ' +
         deltaTxt(ch.tests_all_seeds['t1.0'].last) + '.');
     }
     box.appendChild(h('p', null, head));
     var tiles = h('div', { class: 'ls-tiles' });
     B.temps.forEach(function (tp) {
       var t = ch.tests['t' + tName(tp)].last;
-      var tag = tp === 1 ? ' (its own)' : tp === B.animation.temp ? ' (the animation’s)' : '';
-      tiles.appendChild(h('div', { class: 'ls-tile' }, [h('span', null, 'Temperature ' + tName(tp) + tag),
+      var tag = tp === 1 ? ' (its normal setting)' : tp === B.animation.temp ? ' (the animation’s)' : '';
+      tiles.appendChild(h('div', { class: 'ls-tile' }, [h('span', null, 'Randomness ' + tName(tp) + tag),
         h('b', null, t.verdict === 'null' ? 'No clear difference' : moreLess(t)),
-        h('small', null, (t.verdict === 'null' ? moreLess(t) + ' on average; ' : '') + 'difference ' + deltaTxt(t) + '; ' + t.n_below_0 + ' of ' + t.n_seeds + ' runs narrower')]));
+        h('small', null, (t.verdict === 'null' ? moreLess(t) + ' on average; ' : '') + 'difference ' + deltaTxt(t) + '; ' + t.n_below_0 + ' of ' + t.n_seeds +
+          ' runs more alike')]));
     });
     box.appendChild(tiles);
     var allT = B.temps.every(function (tp) { return ch.tests['t' + tName(tp)].last.verdict === 'narrower'; });
     var ta = ch.tests['t' + tName(B.animation.temp)].last;
-    box.appendChild(h('p', null, allT ? 'It holds at every sampling temperature we tried.' : [
-      'By temperature: ' + B.temps.map(function (tp) { return tName(tp) + ': ' + verdictWords(ch.tests['t' + tName(tp)].last); }).join('; ') + '. ',
+    box.appendChild(h('p', null, allT ? 'It holds at every randomness setting we tried.' : [
+      'By randomness setting: ' + B.temps.map(function (tp) { return tName(tp) + ': ' + verdictWords(ch.tests['t' + tName(tp)].last); }).join('; ') + '. ',
       B.animation.temp !== 1 && ta.verdict !== t1.verdict
-        ? h('b', null, 'At the animation’s temperature (' + tName(B.animation.temp) + ') it is not clearly narrower: ') : '',
+        ? h('b', null, 'At the animation’s setting (' + tName(B.animation.temp) + '), its chairs are not clearly more alike: ') : '',
       B.animation.temp !== 1 && ta.verdict !== t1.verdict
-        ? deltaTxt(ta) + ', ' + ta.n_below_0 + ' of ' + runsWord(ta, ch) + ' narrower. When it draws cautiously its runs disagree more, so the cleaner chairs above are not clearly less varied than people’s.'
+        ? 'the difference is ' + deltaTxt(ta) + ', and ' + ta.n_below_0 + ' of ' + runsWord(ta, ch) + ' end up more alike. When it draws cautiously, its runs ' +
+          'disagree more, so the cleaner chairs above are not clearly less varied than people’s.'
         : '']));
     var sm = D.sketch_seeds;
     if (isBig() && sm && sm.concepts && sm.concepts.chair) {
       var s1 = sm.concepts.chair.tests['t1.0'].last, sr = sm.concepts.chair.curves['t1.0'].recog.mean;
-      box.appendChild(h('p', null, [h('b', null, 'The first, smaller model. '), 'Before this one we trained a small sketch model (512 units instead of 2,048) on 20,000 chairs, ' +
-        sm.concepts.chair.seeds.length + ' times. Its chairs were recognizable to the measure (' + pct(sr[sr.length - 1]) + ') but rough to the eye. ' +
-        (s1.verdict === 'narrower' ? 'It ended narrower than the chairs it learned from in ' + (s1.n_below_0 === s1.n_seeds ? 'all ' + s1.n_seeds : s1.n_below_0 + ' of ' + s1.n_seeds) +
-          ' runs (' + lessPct(s1) + ' less varied, ' + deltaTxt(s1) + ').'
-          : 'Whether it ended narrower did not hold up (' + deltaTxt(s1) + ').') + ' Its first run, on a Mac, found −0.048 [−0.076, −0.022].']));
+      box.appendChild(h('p', null, [h('b', null, 'The first, smaller model. '), 'Before this one, we trained a smaller version (512 artificial neurons, or units, ' +
+        'instead of 2,048) on 20,000 chairs, ' + sm.concepts.chair.seeds.length + ' times. Our measure recognized its chairs (' + pct(sr[sr.length - 1]) +
+        '), but they looked rough to the eye. ' +
+        (s1.verdict === 'narrower' ? 'In ' + (s1.n_below_0 === s1.n_seeds ? 'all ' + s1.n_seeds : s1.n_below_0 + ' of ' + s1.n_seeds) +
+          ' runs, it ended up less varied than the chairs it learned from (' + lessPct(s1) + ' less; difference ' + deltaTxt(s1) + ').'
+          : 'Whether it ended up more alike did not hold up (difference ' + deltaTxt(s1) + ').') +
+        ' Its very first run, on a Mac, found −0.048 (probably between −0.076 and −0.022).']));
     } else {
-      box.appendChild(h('p', null, 'The first run, on a Mac, found −0.048 [−0.076, −0.022].'));
+      box.appendChild(h('p', null, 'The first run, on a Mac, found −0.048 (probably between −0.076 and −0.022).'));
     }
     var cat = sm && sm.concepts.cat;
     if (cat) {
@@ -632,11 +659,12 @@
       var learned = 'learns them much less well (' + pct(crl) + ' of its cats are recognizable at the end, against ' + pct(cat.reference.recog) +
         ' of the cats it learned from)';
       box.appendChild(h('p', null, c1.verdict === 'narrower'
-        ? [h('b', null, 'Cats too. '), how + 'also ends narrower than what it learned from (' + lessPct(c1) + ' less varied, ' + deltaTxt(c1) + ').']
+        ? [h('b', null, 'Cats too. '), how + 'also ends up less varied than what it learned from (' + lessPct(c1) + ' less; difference ' + deltaTxt(c1) + ').']
         : c1.verdict === 'wider'
-          ? [h('b', null, 'But not for cats. '), how + learned + ', and its cats end more varied than theirs, not less (' + deltaTxt(c1) +
+          ? [h('b', null, 'But not for cats. '), how + learned + ', and its cats end up more varied than theirs, not less (difference ' + deltaTxt(c1) +
             '). The narrowing shows up once a model has learned a thing well; before that, its drawings are still scattered.']
-          : [h('b', null, 'Not clearly for cats. '), how + learned + ', and its cats end neither clearly narrower nor wider (' + deltaTxt(c1) + ').']));
+          : [h('b', null, 'Not clearly for cats. '), how + learned + ', and its cats end up neither clearly more alike nor more varied (difference ' +
+            deltaTxt(c1) + ').']));
     }
   }
 
@@ -669,7 +697,7 @@
         if (!D[LEARN.key].temps.some(function (tp) { return 't' + tName(tp) === LEARN.temp; })) LEARN.temp = 't1.0';
         renderLearnCurves();
       });
-    tabs(document.getElementById('learn-temp'), D[LEARN.key].temps.map(function (tp) { var k = 't' + tName(tp); return [k, 'Temperature ' + tName(tp)]; }),
+    tabs(document.getElementById('learn-temp'), D[LEARN.key].temps.map(function (tp) { var k = 't' + tName(tp); return [k, 'Randomness ' + tName(tp)]; }),
       LEARN.temp, function (v) { LEARN.temp = v; renderLearnCurves(); });
   }
 
@@ -739,22 +767,23 @@
         hit.addEventListener('mousemove', function (e) {
           cross.setAttribute('x1', xs(steps[k])); cross.setAttribute('x2', xs(steps[k])); cross.setAttribute('opacity', 0.5);
           var fm = md.key === 'recog' ? pct : f3;
-          tip.show(e, '<b>Step ' + fmtStep(steps[k]) + '</b><br>' + md.name + ': ' + fm(c.mean[k]) + ' (mean of ' + c.n_seeds[k] + ' runs)<br>95% CI ' +
+          tip.show(e, '<b>Step ' + fmtStep(steps[k]) + '</b><br>' + md.name + ': ' + fm(c.mean[k]) + ' (average of ' + c.n_seeds[k] + ' runs)<br>likely range (95% CI) ' +
             ciTxt(c.ci95[k], fm) + '<br>What it learned from: ' + fm(ref[md.key]));
         });
         hit.addEventListener('mouseleave', function () { tip.hide(); cross.setAttribute('opacity', 0); });
       });
     });
     var nm = LEARN.thing, tl = b.tests[LEARN.temp].last;
-    document.getElementById('learn-curves-sub').textContent = (LEARN.key === 'sketch_big' ? 'The larger model (2,048 units). ' : D.sketch_big ? 'The first, smaller model (512 units). ' : '') +
-      'Each panel: the mean of the ' + b.seeds.length + ' runs (thick line), a 95% band across runs, and each run on its own (thin lines). ' +
-      '200 drawings per run and step, at temperature ' + LEARN.temp.slice(1) + '. Dashed: the 1,000 ' + nm + 's it learned from (a random sample of its ' + nTrain(b) + ').' +
-      (kids['2'] ? ' Orange: children’s ' + nm + 's at 2 and at 10.' : '');
-    document.getElementById('learn-curves-note').textContent = 'At the last step its variety is ' + f2(tl.model_spread) + ' against ' + f2(tl.ref_spread) +
-      ' for what it learned from: difference ' + deltaTxt(tl) + ' (95% CI across ' + runsWord(tl, b) + '; resampling runs and drawings gives ' +
-      ciTxt(tl.boot_ci95, function (v) { return signed(v, f3); }) + '). ' + tl.n_below_0 + ' of ' + runsWord(tl, b) + ' end narrower.' +
-      (freshRuns(b) ? ' The test leaves out the first run, which we had seen before writing it down; the curves include it.' : '') +
-      ' Single-dot drawings don’t count, so the first steps have fewer drawings.';
+    document.getElementById('learn-curves-sub').textContent = (LEARN.key === 'sketch_big' ? 'The larger model (2,048 artificial neurons). ' :
+      D.sketch_big ? 'The first, smaller model (512 artificial neurons). ' : '') +
+      'Each panel: the average of the ' + b.seeds.length + ' training runs (thick line), the likely range across runs (shaded band, 95%), and each run on its ' +
+      'own (thin lines). 200 drawings per run and step, at randomness setting ' + LEARN.temp.slice(1) + '. Dashed line: 1,000 of the ' + nm +
+      's it learned from (a random sample of its ' + nTrain(b) + ').' + (kids['2'] ? ' Orange: children’s ' + nm + 's at ages 2 and 10.' : '');
+    document.getElementById('learn-curves-note').textContent = 'At the last step, its variety is ' + f2(tl.model_spread) + ', against ' + f2(tl.ref_spread) +
+      ' for the ' + nm + 's it learned from: a difference of ' + deltaTxt(tl) + ' across ' + runsWord(tl, b) + ' (resampling runs and drawings gives ' +
+      between(tl.boot_ci95, f3) + '). ' + tl.n_below_0 + ' of ' + runsWord(tl, b) + ' end up more alike.' +
+      (freshRuns(b) ? ' The test leaves out the first run, which we had seen before writing the test down; the curves include it.' : '') +
+      ' Drawings that are a single dot don’t count, so the first steps have fewer drawings.';
     renderLearnTable();
   }
 
@@ -773,11 +802,12 @@
     });
     var tb = document.getElementById('learn-table');
     tb.innerHTML = '';
-    tb.appendChild(h('table', null, [h('thead', null, h('tr', null, [two ? 'Model and thing' : 'Thing', 'Last step', 'Temperature', 'Its variety', 'Learned from', 'Difference',
-      '95% CI across runs', '95% CI, runs and drawings', 'Runs narrower', 'Verdict'].map(function (x, k) { return h('th', { class: k && k < 9 ? 'num' : null }, x); }))),
+    tb.appendChild(h('table', null, [h('thead', null, h('tr', null, [two ? 'Model and thing' : 'Thing', 'Last step', 'Randomness', 'Its variety', 'Learned from', 'Difference',
+      'Likely range, across runs', 'Likely range, runs and drawings', 'Runs more alike', 'Verdict'].map(function (x, k) { return h('th', { class: k && k < 9 ? 'num' : null }, x); }))),
       h('tbody', null, rows)]));
-    tb.appendChild(h('p', { class: 'ls-note' }, 'At the last step. Variety: mean pairwise distance in sets of 16. The plan’s rule: narrower only if both CIs lie below 0.' +
-      (two ? ' For the larger model, the runs trained after the test was written down (the first run is left out).' : '')));
+    tb.appendChild(h('p', { class: 'ls-note' }, 'At the last step. Variety: the average difference between two drawings, in sets of 16. Likely ranges are 95% ' +
+      'confidence intervals. Our rule, written down before training: “more alike” only if both likely ranges lie entirely below 0.' +
+      (two ? ' For the larger model, only the runs trained after the test was written down (the first run is left out).' : '')));
   }
 
   function renderLearn() {
