@@ -116,24 +116,25 @@ The slider follows one answer per thing through every step: the thing's **undama
 
 ## Pilot
 
-4 answers per thing at 25 settings (about 0.5 GPU-hour). Per setting, drawings that came out / named right (SigLIP top 3) of 4, summed over the three things:
+4 answers per thing at 25 settings (about 0.5 GPU-hour). Per setting, summed over the three things:
 
-| Type | Share off | Drew | Named | What happened |
-|---|---|---|---|---|
-| all | 10% | 10/12 | 6/12 | words mostly fine, drawing code gets typos |
-| all | 20% | 4/12 | 4/12 | drawings failing, sentences start to ramble |
-| all | 30% | 1/12 | 1/12 | gibberish |
-| early | 40% | 10/12 | 9/12 | near intact |
-| early | 50% | 10/12 | 10/12 | still drawing, some code failures |
-| early | 60% | 0/12 | 2/12 | cliff: nothing drawn |
-| late | 20% | 12/12 | 12/12 | intact |
-| late | 40% | 4/12 | 10/12 | drawings fail, answers still named |
-| late | 60% | 0/12 | 6/12 | nothing drawn |
-| heads | 10% | 12/12 | 12/12 | intact |
-| heads | 20% | 10/12 | 9/12 | mixed |
-| heads | 30% | 0/12 | 4/12 | broken |
+| Setting | Drawings named right (of 12) | Descriptions correct (of 12) | Fluent (of 12) |
+|---|---|---|---|
+| undamaged | 10 | 12 | 12 |
+| all 10% | 6 | 8 | 8 |
+| all 20% | 0 | 5 | 9 |
+| all 30% | 0 | 2 | 2 |
+| early 40% | 5 | 12 | 11 |
+| early 50% | 0 | 5 | 6 |
+| early 60% | 0 | 0 | 1 |
+| late 20% | 8 | 12 | 12 |
+| late 40% | 0 | 9 | 10 |
+| late 60%, 80%, 100% | 0 | 0 | 0 |
+| heads 10% | 9 | 10 | 11 |
+| heads 20% | 1 | 6 | 7 |
+| heads 30%, 40% | 0 | 0 | 1 |
 
-Ladders were set so each step is a visible change: the heaviest step breaks most drawings, the lightest is mild. Early damage has a cliff between 50% and 60%, so its ladder is dense there. The "named" counts in the pilot were rough (the reader's rule was fixed at "top three" as above after seeing pilot drawings, on the pilot only; the main run's undamaged drawings were not seen).
+(The pilot's own scoring: named = SigLIP 2 top three; correct and fluent from the rubric before the short-answer condition was added; 4 answers per thing, three things.) The pilot already shows the question's pattern: with the last third of stages damaged, drawings are gone at 40% while 9 of 12 descriptions are still correct. Ladders were set so each step is a visible change: the heaviest step breaks most drawings, the lightest is mild. Early damage has a cliff between 50% and 60%, so its ladder is dense there.
 
 ## Cost
 
