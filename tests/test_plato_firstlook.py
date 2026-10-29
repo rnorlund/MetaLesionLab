@@ -2,6 +2,7 @@
 /plato/forms, /plato/atlas and /plato/scale. Each page leads with its question, one picture of its own material, a
 one-sentence answer and at most three numbers drawn as small graphics. The graphics are rendered here under node
 from the JSON each page's /api route returns, so a number on the page can't drift from the data. Offline."""
+import html
 import json
 import re
 import shutil
@@ -25,15 +26,17 @@ def client():
 
 
 def lead(client, page: str, tmp_path) -> tuple[dict, dict, list[str]]:
-    """The page's API data, FirstLook's {stats, note} for it, and each stat's rendered <figure>."""
+    """The page's API data, FirstLook's {stats, note} for it (with "how": the "How we know" list FirstLook.how builds
+    from it), and each stat's rendered <figure>."""
     data = client.get(f"/api/plato/{page}").json()
     src = tmp_path / f"{page}.json"
     src.write_text(json.dumps(data))
     code = (f"const F = require({json.dumps(str(JS))}); const d = JSON.parse(require('fs').readFileSync({json.dumps(str(src))}, 'utf8'));"
-            f"const L = F[{json.dumps(page)}](d); console.log(JSON.stringify({{lead: L, html: L.stats.map(F.figure)}}));")
+            f"const L = F[{json.dumps(page)}](d); console.log(JSON.stringify({{lead: L, how: F.how(L), html: L.stats.map(F.figure)}}));")
     run = subprocess.run([NODE, "-e", code], capture_output=True, text=True, timeout=30)
     assert run.returncode == 0, run.stderr
     out = json.loads(run.stdout)
+    out["lead"]["how"] = out["how"]
     return data, out["lead"], out["html"]
 
 
@@ -41,13 +44,30 @@ def num(fig: str) -> str:
     return "".join(re.findall(r'<span class="sv-(?:num|unit)">([^<]*)</span>', fig))
 
 
+def plain(h: str) -> str:
+    return html.unescape(re.sub(r"<[^>]+>", "", h))
+
+
+def words(s: str) -> int:
+    return len(re.findall(r"[A-Za-z][\w’'-]*", s))
+
+
 def check_common(out: dict, figs: list[str]):
     assert 1 <= len(out["stats"]) <= 3  # at most three headline numbers
+    how = plain(out["how"])
     for spec, fig in zip(out["stats"], figs):
-        assert spec["q"] and '<figcaption class="fl-q">' in fig  # each with its qualifier in a smaller line
         assert re.search(r'<svg[^>]+role="img" aria-label="[^"]+"|class="sv-(?:bars|pair)" role="img" aria-label="[^"]+"', fig), spec["kind"]
         assert '<p class="sv-cap">' in fig and "ERROR" not in fig
-    assert out["note"]
+        # the first screen is short: a label of at most ten words under the number, and at most one verdict after it
+        cap = plain(re.search(r'<p class="sv-cap">(.*?)</p>', fig, re.S).group(1))
+        assert words(cap) <= 10, cap
+        if spec.get("verdict"):
+            assert re.search(r'<figcaption class="fl-q"><span class="fl-verdict (yes|no|part)">[^<]{1,24}</span></figcaption>', fig), fig
+        else:
+            assert "fl-q" not in fig
+        # every qualifier is kept, in the "How we know" disclosure under the numbers
+        assert spec["q"] and spec["q"] in how, spec["q"]
+    assert out["note"] and out["note"] in how
 
 
 # --- each page's numbers, from its data ---------------------------------------------------------------------

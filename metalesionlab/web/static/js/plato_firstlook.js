@@ -124,15 +124,65 @@
     return frame(o.value != null ? o.value : (o.k != null ? o.k + ' of ' + o.n : ''), '', '', o.label);
   }
 
-  // spec.verdict (optional, {tone: 'yes' | 'no' | 'part', text}) leads the qualifier: how a planned prediction came out.
+  // One number on the first screen: the graphic with its short label, and, for a planned prediction, how it came out
+  // (spec.verdict, {tone: 'yes' | 'no' | 'part', text}) in a few words after it. The qualifier (spec.q) is not shown
+  // here: it goes into the "How we know" disclosure below the numbers (how()), so the first screen stays short.
   function figure(spec) {
-    var v = spec.verdict ? '<span class="fl-verdict ' + esc(spec.verdict.tone) + '">' + esc(spec.verdict.text) + '</span> ' : '';
-    return '<figure class="fl-stat"><div class="sv sv-' + spec.kind + '" data-sv-done="1">' + html(spec) + '</div>' +
-      '<figcaption class="fl-q">' + v + esc(spec.q) + '</figcaption></figure>';
+    var v = spec.verdict ? '<figcaption class="fl-q"><span class="fl-verdict ' + esc(spec.verdict.tone) + '">' + esc(spec.verdict.text) +
+      '</span></figcaption>' : '';
+    return '<figure class="fl-stat"><div class="sv sv-' + spec.kind + '" data-sv-done="1">' + html(spec) + '</div>' + v + '</figure>';
+  }
+
+  // The number as the graphic shows it ("13 of 16", "6×", "59% → 73%"), to lead its qualifier in the disclosure.
+  function headline(spec) {
+    var h = html(spec), num = /<span class="sv-num">([^<]*)<\/span>/.exec(h), unit = /<span class="sv-unit">([^<]*)<\/span>/.exec(h);
+    var un = unit ? unit[1].trim() : '';
+    return ((num ? num[1] : '') + (un ? (/^[a-z]/i.test(un) ? ' ' : '') + un : '')).replace(/&amp;/g, '&');
+  }
+
+  // "How we know": the disclosure under the numbers. Its summary carries Aristotle, who checks the evidence; inside,
+  // the page's own introduction (.fl-ctx), each number with its qualifier and verdict, then the notes and caveats.
+  var HOW_SUMMARY = '<summary><span class="fl-how-t">How we know</span><span class="pt-badge pt-aristotle">' +
+    '<img src="/static/img/portraits/aristotle-neutral.webp" alt="" width="40" height="40" decoding="async">Aristotle checks the evidence</span></summary>';
+
+  // The list of qualifiers, one per number (pure: the tests read it under node).
+  function how(page) {
+    var items = page.stats.filter(function (s) { return s.q; }).map(function (s) {
+      var label = String((s.o && s.o.label) || '').replace(/[.:;,\s]+$/, '');
+      return '<li><b>' + esc(headline(s)) + '</b> ' + esc(label) + '. ' +
+        (s.verdict ? '<span class="fl-how-v ' + esc(s.verdict.tone) + '">' + esc(s.verdict.text) + '.</span> ' : '') + esc(s.q) + '</li>';
+    });
+    return (items.length ? '<ul class="fl-how-q">' + items.join('') + '</ul>' : '') + (page.note ? '<p class="fl-how-note">' + esc(page.note) + '</p>' : '');
+  }
+
+  // Put the disclosure in place: after the numbers, closed. The page's introduction and note paragraphs move inside it.
+  function disclose(box, page) {
+    var doc = (root && root.document) || box.ownerDocument;
+    if (!doc || !box.parentNode) return null;
+    var hero = (box.closest && box.closest('section')) || null, scope = hero || doc;
+    var d = scope.querySelector('details.fl-how');
+    if (!d) {
+      d = doc.createElement('details');
+      d.className = 'fl-how';
+      d.setAttribute('id', 'hero-how');
+      d.innerHTML = HOW_SUMMARY;
+      box.parentNode.insertBefore(d, box.nextSibling);
+    }
+    var body = d.querySelector('.fl-how-body');
+    if (!body) { body = doc.createElement('div'); body.className = 'fl-how-body'; d.appendChild(body); }
+    var nums = body.querySelector('.fl-how-nums');
+    if (!nums) { nums = doc.createElement('div'); nums.className = 'fl-how-nums'; body.appendChild(nums); }
+    // a page that fills its own note element (.fl-note) says the note there, not twice
+    var notes = [].slice.call(scope.querySelectorAll('.fl-note'));
+    nums.innerHTML = how(notes.length ? { stats: page.stats } : page);
+    [].slice.call(scope.querySelectorAll('.fl-ctx')).forEach(function (c) { if (c.parentNode !== body) body.insertBefore(c, nums); });
+    notes.forEach(function (n) { if (n.parentNode !== body) body.appendChild(n); });
+    return d;
   }
 
   function render(box, page) {
     box.innerHTML = page.stats.map(figure).join('');
+    disclose(box, page);
     return box;
   }
 
@@ -388,7 +438,7 @@
   }
 
   var api = { inside: inside, forms: forms, atlas: atlas, scale: scale, damage: damage, damaged: damaged,
-    html: html, figure: figure, render: render };
+    html: html, figure: figure, how: how, render: render };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root && root.document) root.FirstLook = api;
 })(typeof window !== 'undefined' ? window : this);
