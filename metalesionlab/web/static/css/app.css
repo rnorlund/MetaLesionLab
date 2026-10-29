@@ -350,6 +350,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .topbar:has(.nav-btn) .topnav .ext { color: var(--faint); }
 .topbar:has(.nav-btn) .nav-more.is-current > summary { color: var(--ink); box-shadow: inset 0 -2px 0 var(--orange); }
 .topnav > a.nav-btn .nav-ico, .topnav > a.nav-btn[href="/"] { display: none; }
+/* Take-homes: a star in the accent, the label in ink and one weight heavier than the muted links */
+.topnav > a.nav-star .nav-ico { display: block; width: 15px; height: 15px; fill: var(--orange); stroke: var(--orange); }
+.topbar:has(.nav-btn) .topnav > a.nav-star { color: var(--ink); font-weight: 600; gap: 5px; }
 .nav-ico { width: 16px; height: 16px; flex: none; }
 .nav-panel .nav-btn { display: flex; align-items: center; gap: 10px; }
 .topbar:has(.nav-btn) .theme-toggle { border-color: var(--line-2); color: var(--muted); }

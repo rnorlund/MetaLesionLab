@@ -1,0 +1,41 @@
+/* Take-homes: three big panels, one picture each. Big and quiet: tokens only, line art on paper cards. */
+.th-head { padding: clamp(24px, 3vw, 64px) 0 clamp(8px, 1vw, 20px); }
+.th-head h1 { font-size: var(--fs-display); line-height: 1.05; margin: 12px 0 0; }
+.th-lead { font-size: var(--fs-lead); color: var(--ink-2); margin: 14px 0 0; }
+
+.th-panel { display: flex; flex-direction: column; gap: clamp(16px, 1.6vw, 32px); padding: clamp(28px, 3.5vw, 72px) 0; border-top: 1px solid var(--line); }
+.th-panel:first-of-type { margin-top: clamp(16px, 2vw, 40px); }
+.th-pic { width: 100%; min-width: 0; }
+.th-card { background: var(--paper-mat); border: 1px solid var(--line); border-radius: 14px; padding: clamp(12px, 1.2vw, 28px); }
+.takehomes .pc-chairs { max-width: none; order: 0; }
+.takehomes .pc-chairs-pair { gap: 8px clamp(16px, 2vw, 48px); }
+
+.th-text { display: grid; gap: 10px; max-width: 56em; }
+.th-num { margin: 0; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
+.th-text h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.12; }
+.th-support { margin: 0; font-size: var(--fs-lead); color: var(--ink-2); }
+.th-fig { margin: 0; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
+.th-link { justify-self: start; margin-top: 6px; font-size: var(--fs-body); font-weight: 600; color: var(--ink); text-decoration: underline; text-decoration-color: var(--orange); text-underline-offset: 4px; }
+.th-link:hover { color: var(--orange); }
+
+/* 2: seven steps, evenly spaced, undamaged at the left */
+.th-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(4px, 0.8vw, 20px); }
+.th-row li { display: grid; gap: 6px; min-width: 0; }
+.th-tile { display: block; aspect-ratio: 1; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 8px; overflow: hidden; }
+.th-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.th-lbl { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); text-align: center; }
+
+/* 3: covered until drawn */
+.th-god-pic { position: relative; min-height: clamp(200px, 22vw, 420px); display: grid; }
+.th-cover { display: grid; place-content: center; justify-items: center; gap: 18px; text-align: center; padding: clamp(24px, 4vw, 80px); border-radius: 10px;
+  background: var(--soft); border: 1px dashed var(--line-2); }
+.th-cover[hidden], .th-god-grid[hidden] { display: none; }
+.th-cover-text { margin: 0; font-size: var(--fs-h2); line-height: 1.15; color: var(--ink-2); }
+.th-cover-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.th-cover-btns .btn { font-size: var(--fs-body); padding: 12px 22px; }
+.th-god-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: clamp(3px, 0.4vw, 10px); }
+.th-god-grid span { aspect-ratio: 1; display: block; background-color: var(--paper); border: 1px solid var(--paper-line); border-radius: 6px;
+  background-image: var(--sprite); background-repeat: no-repeat; background-size: calc(var(--cols) * 100%) calc(var(--rows) * 100%);
+  background-position: calc(var(--c) * 100% / (var(--cols) - 1)) calc(var(--r) * 100% / (var(--rows) - 1)); }
+
+@media (max-width: 700px) { .th-row li:not(:first-child):not(:last-child) .th-lbl { visibility: hidden; } }

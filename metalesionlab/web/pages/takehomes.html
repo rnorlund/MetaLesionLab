@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three things to take home · {{BRAND}}</title>
+<meta name="description" content="What we learned by asking AI the questions Plato asked about ideas: Meta’s image AI has one idea of a chair, damaging the part that reads words makes it forget what it is drawing, and asked to draw God it draws the same figure every time.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato.css">
+<link rel="stylesheet" href="/static/css/takehomes.css">
+</head>
+<body class="takehomes">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><!-- the site header (web/site.py) --></header>
+
+<main id="main" tabindex="-1">
+
+<section class="th-head" aria-labelledby="th-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Take-homes: what did we learn?</span></p>
+    <h1 id="th-h">Three things to take home</h1>
+  </div>
+  <p class="th-lead">What we learned by asking AI the questions Plato asked about ideas.</p>
+</section>
+
+<!-- 1. one chair -->
+<section class="th-panel" id="one-chair" aria-labelledby="th1-h">
+  <figure class="pc-chairs th-pic" id="chairs">
+    <div class="pc-chairs-pair">
+      <div class="pc-chairs-side" data-side="ai">
+        <p class="pc-chairs-label"><i class="pc-sw" aria-hidden="true"></i>Meta’s image AI, Muse Image <span>{{TH_N}} chairs</span></p>
+        <div class="pc-chairs-grid" role="img" aria-label="16 chair doodles by Meta’s image AI, Muse Image: nearly the same wooden chair with a slatted back, from the same angle, every time. Stacked on top of each other, they make one sharp chair.">
+          <span style="--c:0;--r:0"></span><span style="--c:1;--r:0"></span><span style="--c:2;--r:0"></span><span style="--c:3;--r:0"></span>
+          <span style="--c:0;--r:1"></span><span style="--c:1;--r:1"></span><span style="--c:2;--r:1"></span><span style="--c:3;--r:1"></span>
+          <span style="--c:0;--r:2"></span><span style="--c:1;--r:2"></span><span style="--c:2;--r:2"></span><span style="--c:3;--r:2"></span>
+          <span style="--c:0;--r:3"></span><span style="--c:1;--r:3"></span><span style="--c:2;--r:3"></span><span style="--c:3;--r:3"></span>
+        </div>
+        <p class="pc-chairs-stat"><span class="when-grid">Spread of the drawings: <b>{{TH_AI}}</b></span><span class="when-stacked">stacked: <b>one chair</b></span></p>
+      </div>
+      <div class="pc-chairs-side" data-side="people">
+        <p class="pc-chairs-label"><i class="pc-sw" aria-hidden="true"></i>People <span>{{TH_N}} chairs</span></p>
+        <div class="pc-chairs-grid" role="img" aria-label="16 chairs drawn by people in 20 seconds each: mostly the same simple chair seen from the side, each drawn differently. Stacked on top of each other, they make a cloud of lines.">
+          <span style="--c:0;--r:0"></span><span style="--c:1;--r:0"></span><span style="--c:2;--r:0"></span><span style="--c:3;--r:0"></span>
+          <span style="--c:0;--r:1"></span><span style="--c:1;--r:1"></span><span style="--c:2;--r:1"></span><span style="--c:3;--r:1"></span>
+          <span style="--c:0;--r:2"></span><span style="--c:1;--r:2"></span><span style="--c:2;--r:2"></span><span style="--c:3;--r:2"></span>
+          <span style="--c:0;--r:3"></span><span style="--c:1;--r:3"></span><span style="--c:2;--r:3"></span><span style="--c:3;--r:3"></span>
+        </div>
+        <p class="pc-chairs-stat"><span class="when-grid">Spread of the drawings: <b>{{TH_PEOPLE}}</b></span><span class="when-stacked">stacked: <b>a cloud</b></span></p>
+      </div>
+    </div>
+    <div class="pc-chairs-foot">
+      <button type="button" class="pc-stack-btn" id="stack-btn" aria-pressed="false"><span class="when-grid">Stack them</span><span class="when-stacked">Spread them out again</span></button>
+    </div>
+  </figure>
+  <div class="th-text">
+    <p class="th-num">1</p>
+    <h2 id="th1-h">Meta’s AI has one idea of a chair.</h2>
+    <p class="th-support">Asked 16 times, it drew the same chair. Sixteen people drew sixteen different ones.</p>
+    <p class="th-fig">Spread is how different the drawings are from each other, 0 for identical drawings: Muse Image {{TH_AI}}, people {{TH_PEOPLE}}.</p>
+    <a class="th-link" href="/plato">See the experiment →</a>
+  </div>
+</section>
+
+<!-- 2. words go first -->
+<section class="th-panel" id="words-first" aria-labelledby="th2-h">
+  <div class="th-pic th-card">
+    <ol class="th-row" aria-label="A rocking chair, with more and more noise added to the part of the AI that reads words, from left to right">{{TH_ROW}}</ol>
+  </div>
+  <div class="th-text">
+    <p class="th-num">2</p>
+    <h2 id="th2-h">Damage the part of an AI that reads words, and it forgets what it’s drawing.</h2>
+    <p class="th-support">The words go first: a rocking chair becomes a car.</p>
+    <p class="th-fig">Stable Diffusion XL, an open image AI. Left to right: more random noise added to its words part, from none to × 1.</p>
+    <a class="th-link" href="/damaged">See the experiment →</a>
+  </div>
+</section>
+
+<!-- 3. God: covered until the visitor has drawn (the draw pad's "seen" flag) or asks to see -->
+<section class="th-panel" id="god" data-state="covered" aria-labelledby="th3-h">
+  <div class="th-pic th-card th-god-pic">
+    <div class="th-cover" id="god-cover">
+      <p class="th-cover-text">Draw yours first, then see Meta’s AI’s</p>
+      <div class="th-cover-btns">
+        <a class="btn btn-dark" href="/draw?thing=god">Draw God</a>
+        <button type="button" class="btn" id="god-show">Show me now</button>
+      </div>
+    </div>
+    <div class="th-god-grid" id="god-grid" hidden role="img" aria-label="Muse Image’s 16 drawings of God" style="--cols:{{TH_COLS}};--rows:{{TH_ROWS}};--sprite:url({{TH_SPRITE}})">{{TH_GOD_CELLS}}</div>
+  </div>
+  <div class="th-text">
+    <p class="th-num">3</p>
+    <h2 id="th3-h">Ask Meta’s AI to draw God.</h2>
+    <p class="th-support th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}}: the same bearded man with long hair and a halo, as in Western religious art.</p>
+    <p class="th-fig th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}} drawings by Muse Image show the same figure.</p>
+    <a class="th-link" href="/plato/ideas">See the experiment →</a>
+  </div>
+</section>
+
+</main>
+</div>
+<script src="/static/js/takehomes.js"></script>
+</body>
+</html>
