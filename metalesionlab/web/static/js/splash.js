@@ -235,6 +235,20 @@
     });
     return chain.then(function () { return wait(180, id); });
   }
+  // Under a long hold: step through the chairs (people's and the named kinds), cross-fading, one per ~0.9 s.
+  function cycle(id, until) {
+    actor.classList.add('fade');
+    var i = frames.length - 1;
+    function next() {
+      var left = until - performance.now();
+      if (left <= 0) return Promise.resolve();
+      return wait(Math.min(900, left), id).then(function () {
+        if (until - performance.now() > 150) show(i = (i + 5) % frames.length);
+        return next();
+      });
+    }
+    return next().then(function () { actor.classList.remove('fade'); });
+  }
   function drawForm() {  // the Form draws itself
     show(-1);
     if (!form) return;
@@ -254,8 +268,9 @@
       .then(function () { unsay(); return focus(id); })
       .then(function () { still(id); say(Q596); return wait(1000, id); })  // the caption is up first, then the chair moves
       .then(function () {
-        return Promise.all([flip(id), wait(300 + readMs(Q596) - 1000, id)]);
-      }).then(function () { drawForm(); return hold(id, ONE); })
+        var until = performance.now() + 300 + readMs(Q596) - 1000;  // the caption's reading time is unchanged
+        return flip(id).then(function () { return cycle(id, until); });  // ...and the pictures keep changing under it
+      }).then(function () { drawForm(); return hold(id, ONE, 'short'); })
       .then(function () { return end(id); });
   }
   function playB(id) {  // words first: each caption alone, big, then small at the top while the scene plays
