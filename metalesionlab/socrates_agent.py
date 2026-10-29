@@ -162,7 +162,10 @@ SHORT_ANSWERS = {
                 "missing every \"I\", which is always a capital. A plain prosody reader (pitch, loudness and length per word, "
                 "no AI) found the stressed word in 80 of 91 recordings (88%), though in two of the three voice families we "
                 "built the stress from those same cues. Pre-registered; the prediction that every voice's transcripts would "
-                "share the same words failed because of the stray words.",
+                "share the same words failed because of the stray words. Afterwards a listener couldn't hear the stress in "
+                "the four Kokoro voices, so their clips were remade with much stronger stress (not pre-registered): the "
+                "stressed word now 13 semitones higher, 13 dB louder and 1.6 times as long as the rest of the sentence. With "
+                "them, Spark read 10 of 91 transcripts right (still chance) and the reader heard 82 of 91.",
     "ideas": "Asked for a quick doodle of God, Muse Image drew the same figure in all 16 drawings: a bearded man with "
              "long hair, a robe and a halo. Love was a heart and death a hooded figure with a scythe, every time. For 10 "
              "of 11 abstract ideas one emblem filled at least half of the 16 drawings (pre-registered; passed). Our "

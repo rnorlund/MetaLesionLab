@@ -542,6 +542,26 @@
     }).catch(function () {});
   }
 
+  // --- version 2: the Kokoro recordings were remade with stronger stress after a listener couldn't hear it --------
+
+  function renderRevision() {
+    var r = D.revision, el = $('v2-note');
+    if (!r || !el) return;
+    var k2 = r.v2_kokoro, k1 = r.v1, f = r.focus;
+    el.textContent = 'Version 2 of the recordings. One of us listened with his eyes closed and couldn’t tell which word ' +
+      'the first Kokoro recordings stressed. So we remade those four computer voices with much stronger stress. ' +
+      'Now the stressed word stands out clearly: much higher (about ' + Math.round(f.pitch_st) + ' semitones' +
+      (f.pitch_st >= 12 ? ', more than an octave' : '') + '), much louder (' + Math.round(f.loudness_db) + ' decibels) and ' +
+      f.length.toFixed(1) + ' times as long as the other words. The results above use the remade Kokoro recordings and the ' +
+      'first recordings of the macOS and eSpeak voices. The simple program that measures pitch, loudness and length found ' +
+      'the stressed word in ' + (k2.reader.k === k2.reader.n ? 'all ' + k2.reader.n : k2.reader.k + ' of the ' + k2.reader.n) +
+      ' remade Kokoro recordings (' + k1.reader_kokoro.k + ' before). Muse Spark, reading only what Meta’s speech-to-text AI ' +
+      'wrote down, still did no better than guessing: ' + k2.spark.k + ' of ' + k2.spark.n + ' (' + k1.spark_kokoro.k +
+      ' before; guessing gets 1 in 7, about ' + Math.round(k2.spark.n / 7) + '). We remade the recordings after the ' +
+      'experiment. That change was not part of the predictions we wrote down beforehand.';
+    el.hidden = false;
+  }
+
   // --- method notes --------------------------------------------------------------------------------------------
 
   function method() {
@@ -549,7 +569,7 @@
     var rt = sh.retest;
     $('m-shadow').textContent = sh.exact + ' of ' + sh.clips + ' transcripts were exactly “' + D.sentence + '”, and ' + sh.same_words +
       ' had exactly its words. The rest repeated a word (“I never never said…”, “II never said…”) or dropped a capital or the full stop. ' +
-      'Those slips came with every stressed word and with the neutral readings too.' + (rt ? ' Transcribed a second time, the same ' +
+      'Those slips came with every stressed word and with the neutral readings too.' + (rt ? ' Transcribed a second time, the first ' +
       'recordings came out differently: ' + rt.identical_to_first + ' of ' + rt.clips + ' transcripts matched the first exactly, and a ' +
       'repeated word came back on the same recording only ' + rt.word_changes[2] + ' times in ' + rt.word_changes[0] + '. They are the ' +
       'transcriber’s noise, not traces of the stress.' : '');
@@ -560,6 +580,9 @@
     v.push('Spark with CAPITALS and italics at 80% or more: ' + (D.spark.caps.acc >= 0.8 && D.spark.italics.acc >= 0.8 ? 'passed.' : 'failed.'));
     v.push('The prosody reader: ' + (D.reader.passes ? 'passed.' : 'failed.') + ' After the main run a test found its pitch tracker ' +
       'could read a steady high voice an octave low; we fixed that, and it changed one guess (79 of 91 right before, 80 after).');
+    if (D.revision) v.push('We wrote these predictions down before the first recordings. Each verdict is the same with the ' +
+      'remade Kokoro recordings, and the numbers on this page use them. With the first recordings, the simple program found ' +
+      D.revision.v1.reader.k + ' of 91 and Muse Spark got ' + D.revision.v1.spark_transcript.k + ' of 91.');
     $('m-verdicts').textContent = v.join(' ');
   }
 
@@ -571,6 +594,7 @@
     renderAnswer();
     bars();
     grids();
+    renderRevision();
     drawContour($('contour-demo'), D.voices[0].clips[0].contour, { truth: 0, title: titleFor(0) });
     method();
     setupRecorder();

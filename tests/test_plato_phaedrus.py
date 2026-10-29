@@ -208,6 +208,87 @@ def test_data_api_has_four_voices_of_seven_clips_and_the_results(client):
     assert sum(map(sum, d["reader"]["confusion"])) == 91
 
 
+def test_the_page_shows_v2_and_keeps_the_first_run_beside_it(client):
+    """The Kokoro clips were remade with stronger stress after a listener couldn't hear v1's (not pre-registered).
+    The page's numbers are v2's; the first run's stay in the data, and the other families are labelled as its."""
+    d = client.get("/api/plato/phaedrus").json()
+    r = d["revision"]
+    assert r["version"] == "v2" and r["candidate"] == "D2"
+    assert r["v1"]["spark_transcript"]["k"] == 9 and r["v1"]["reader"]["k"] == 80  # as pre-registered
+    assert r["v1"]["spark_transcript"]["n"] == r["v1"]["reader"]["n"] == 91
+    assert r["v1"]["reader_kokoro"]["k"] == 26 and r["v1"]["spark_kokoro"]["k"] == 4
+    fam = d["reader"]["by_family"]
+    assert "version 2" in fam["kokoro"]["label"]
+    assert "first recordings" in fam["say"]["label"] and "first recordings" in fam["espeak"]["label"]
+    assert (fam["say"]["k"], fam["say"]["n"], fam["espeak"]["k"], fam["espeak"]["n"]) == (37, 42, 17, 21)  # unchanged
+    assert r["v2_kokoro"]["reader"] == {k: fam["kokoro"][k] for k in r["v2_kokoro"]["reader"]}
+    assert (r["v2_kokoro"]["reader"]["k"], r["v2_kokoro"]["spark"]["k"]) == (28, 5)  # v2, Kokoro alone
+    assert (d["reader"]["k"], d["spark"]["transcript"]["k"]) == (82, 10)  # v2 pooled with the first run's other voices
+    assert 'id="v2-note"' in client.get("/plato/phaedrus").text
+    # the stressed word stands out from the rest of the sentence by a clear margin
+    assert r["focus"]["pitch_st"] >= 8 and r["focus"]["loudness_db"] >= 8 and r["focus"]["length"] >= 1.5
+
+
+def test_public_data_keeps_v1_beside_v2():
+    pub = json.loads((REPO / "public_data" / "plato_phaedrus.json").read_text())
+    assert pub["stimulus_version"] == "v2" and "not pre-registered" in pub["revision"]
+    assert pub["v1"]["h4"]["k"] == 80 and pub["v1"]["h2"]["k"] == 9
+    assert len(pub["v1"]["kokoro_transcripts"]) == 32 and len(pub["v1"]["kokoro_spark_trials"]) == 28
+    assert len(pub["v1"]["kokoro_reader"]) == 28 and set(pub["focus"]) == {"v1", "v2"}
+    m = pub["manipulation_v2"]
+    assert m["clips"] == 28 and m["summary"]["rel_st"]["median"] >= 8 and m["summary"]["rel_db"]["median"] >= 8
+    assert m["highest"] == m["loudest"] == m["longest_vs_neutral"] == 28  # the stressed word stands out in every clip
+    assert m["onset"]["rise_excess_db"]["median"] < 3  # no jump into the word (round 2's cut-in pause: about +20 dB)
+
+
+def test_v2_focus_shapes_the_pitch_track_and_cuts_in_a_pause():
+    import sys
+    sys.path.insert(0, str(REPO / "scripts"))
+    from plato_phaedrus_stimuli import V2_CANDIDATES, focus_f0, insert_pause
+    FOCUS_V2 = V2_CANDIDATES["D"]  # the accent's shape, before the smoothing (test_smooth_focus_glides_into_the_word)
+    t = np.arange(0, 2.0, 0.0125)
+    f0 = np.full_like(t, 200.0)
+    f0[(t > 0.30) & (t < 0.34)] = 0.0  # an unvoiced stretch stays unvoiced
+    spans = [(0.1 + 0.25 * i, 0.3 + 0.25 * i) for i in range(7)]
+    a, b = spans[3]
+    peak = a + 0.12
+    st = 12 * np.log2(np.maximum(focus_f0(t, f0, spans, 3, peak, FOCUS_V2), 1e-9) / 200)
+    assert abs(st[np.argmin(np.abs(t - peak))] - FOCUS_V2["accent_st"]) < 0.3       # the accent's peak
+    assert abs(st[np.argmin(np.abs(t - b))] - FOCUS_V2["fall_to"]) < 0.3           # it falls by the word's end
+    assert np.allclose(st[t > b + 0.1], FOCUS_V2["post_st"], atol=0.01)             # lower after the word
+    assert np.allclose(st[(t < a - 0.05) & (f0 > 0)], 0, atol=0.01)                 # a flat track before it stays flat
+    assert (f0 == 0).sum() == (focus_f0(t, f0, spans, 3, peak, FOCUS_V2) == 0).sum()
+    y = np.ones(24000)
+    out, cut = insert_pause(y, 24000, 0.5, 0.15)
+    assert len(out) == 24000 + 3600 and abs(cut - 0.5) <= 0.04
+    i = int(round(cut * 24000))
+    assert not out[i:i + 3600].any() and out[0] == 1 and out[-1] == 1
+
+
+def test_smooth_focus_glides_into_the_word():
+    """Round 2 of the listening test heard a hiccup at the start of the stressed word. The smooth candidates have no
+    inserted silence, a gain that rises before the word and a pitch edit with no step at its onset."""
+    import sys
+    sys.path.insert(0, str(REPO / "scripts"))
+    from plato_phaedrus_stimuli import V2_CANDIDATES, focus_f0, gain_db_at
+    t = np.arange(0, 2.0, 0.0125)
+    f0 = 180 * 2 ** (2 * np.sin(2 * np.pi * 1.3 * t) / 12)  # a moving melody
+    spans = [(0.1 + 0.25 * i, 0.3 + 0.25 * i) for i in range(7)]
+    a, b = spans[3]
+    for name in ("B2", "D2", "E2"):
+        p = V2_CANDIDATES[name]
+        assert p["pause_s"] == 0 and p["onset_stretch"] < p["cons_stretch"] < p["vowel_stretch"]
+        edit = 12 * np.log2(focus_f0(t, f0, spans, 3, a + 0.1, p) / f0)
+        near = (t > a - 0.15) & (t < a + 0.05)
+        assert np.abs(np.diff(edit[near])).max() < 1.2, name  # semitones per 12.5 ms around the onset
+        assert edit[np.argmin(np.abs(t - (a - 0.15)))] < 0.5 * p["accent_st"]  # the rise starts before the word
+        ts = np.arange(0, 2.0, 0.005)
+        g = gain_db_at(ts, spans, 3, p)
+        assert np.abs(np.diff(g[ts < a + 0.05])).max() < 1.0, name  # dB per 5 ms into the word: no step
+        assert np.abs(np.diff(g)).max() < 1.5, name  # nor out of it
+        assert abs(g[np.argmin(np.abs(ts - a))] - p["gain_db"]) < 0.05 and abs(g[np.argmin(np.abs(ts - (a - p["gain_ramp_s"])))]) < 0.05
+
+
 def test_clips_are_served_and_nothing_else(client):
     r = client.get("/api/plato/phaedrus/audio/af_heart/3_she.mp3")
     assert r.status_code == 200 and r.headers["content-type"] == "audio/mpeg" and r.content[:3] in (b"ID3", b"\xff\xfb", b"\xff\xf3")

@@ -86,3 +86,7 @@ Chance is 1/7 (14.3%). Accuracies get exact (Clopper–Pearson) 95% CIs. A secon
 - One sentence, seven meanings, our wording of them. Another sentence could be harder or easier.
 - The reader's success on clips whose stress we built from its own cues shows only that the cue survives in the audio and a simple measure can find it. It doesn't show that the reader hears stress as people do. eSpeak's clips, and visitors' own voices on the page, are the fairer tests.
 - Spark at chance from a transcript says nothing about what Spark knows. The transcript holds nothing to know.
+
+## Addendum, Oct 28, 2026, after the run: the Kokoro clips remade (v2)
+
+Not part of the plan above, and not pre-registered. Listening with his eyes closed, one of us couldn't tell which word the Kokoro clips stressed. So the four Kokoro voices' 32 clips were remade with much stronger stress, chosen in a blind listening test, then transcribed and read again. Nothing else changed: the prompt, the option orders, the reader, its templates and the statistics are the same. The pre-registered verdicts stay the first run's. The v2 numbers are reported beside them in `docs/plato_phaedrus.md` (Deviation 6, and "The Kokoro clips remade (v2)").

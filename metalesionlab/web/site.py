@@ -270,7 +270,7 @@ HUB_ANSWERS = {
     "atlas": "Muse Image drew 131 of 135 everyday things more alike than people did.",
     "telephone": "Copied ten times, chairs drift apart instead of back to the textbook chair.",
     "scale": "Bigger open models break fewer drawings, but up to 33 billion parameters their chairs don’t become one.",
-    "phaedrus": "From the transcript, Muse Spark got 9 of 91 stresses right; a simple listener got 80.",
+    "phaedrus": "From the transcript, Muse Spark got 10 of 91 stresses right; a simple listener got 82.",
 }
 
 
