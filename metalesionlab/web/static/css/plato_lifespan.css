@@ -5,6 +5,8 @@
   --gridline: var(--chart-grid); --axis: var(--chart-axis);
   --ls-off: #E5E3DC;        /* an icon not filled in (plato_lifespan.js) */
   --ls-paper-hot: #C2410C;  /* the stroke being drawn, on paper in every theme */
+  /* line art always sits on a light card, in light and dark themes alike */
+  --art-paper: var(--paper); --art-ink: var(--paper-ink); --art-pen: var(--ls-paper-hot);
   background: var(--ground-warm);
 }
 :root[data-theme="dark"] .ls { --ls-off: #2C3442; }
@@ -107,7 +109,8 @@
 .ls-numbers td.num, .ls-numbers th.num { font-family: var(--mono); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .ls-numbers div { overflow-x: auto; }
 
-/* watch an AI learn: the time-lapse player (a 5 x 4 sprite of 20 checkpoints), the stroke-by-stroke chair, the verdict */
+/* watch an AI learn: the time-lapse player (a sprite of the checkpoints in 4 rows; plato_lifespan.js sets its size),
+   the stroke-by-stroke chair, the verdict */
 .ls-h3 { margin: 8px 0 0; font-size: var(--fs-h3); }
 .ls-learn { display: grid; grid-template-columns: minmax(0, 3fr) minmax(min(100%, 300px), 2fr); gap: clamp(16px, 2vw, 40px); align-items: center; }
 .ls-learn-pic { background: var(--paper-mat); border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-width: 0; }
@@ -121,6 +124,7 @@
 .ls-learn-step span { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .ls-learn-step b { font-family: var(--mono); font-weight: 500; font-size: clamp(40px, 5vw, 96px); line-height: 1; color: var(--ink);
   font-variant-numeric: tabular-nums; }
+.ls-learn-step small { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; }
 .ls-learn-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: var(--fs-body); color: var(--ink-2); }
 .ls-learn-row b { font-size: clamp(22px, 1.6vw, 32px); color: var(--ink); font-variant-numeric: tabular-nums; }
 .ls-learn-bar svg { width: 100%; height: auto; max-height: 72px; display: block; overflow: visible; font-family: var(--sans); }

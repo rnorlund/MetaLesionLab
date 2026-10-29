@@ -7,13 +7,14 @@ import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
+from metalesionlab import plato_ideas as I
 from metalesionlab.plato import BY_KEY as PLATO, STYLES, prompt_for
 from metalesionlab.web import app as web
 
 IMG = web.HERE / "static" / "img" / "draw_damage"
 DATA = IMG / "draw_damage.json"
 JS = web.HERE / "static" / "js" / "draw.js"
-BUDGET = 1_500_000
+BUDGET = 2_500_000  # the 10 things and the 15 ideas and words (docs/plato_ideas_damage_plan.md)
 STRIP_START, STRIP_END = "// ---------- what damage does to an AI", "// ---------- the component"
 
 
@@ -57,7 +58,9 @@ def test_schema(dmg):
     seeds = [t["seed"] for t in dmg["things"]]
     assert all(isinstance(s, int) for s in seeds) and len(set(seeds)) == len(seeds)
     for t in dmg["things"]:
-        assert t["prompt"] == prompt_for(PLATO[t["key"]], "doodle")  # the doodle prompt Muse Image was given
+        # the doodle prompt Muse Image was given, for a thing or for an idea or word
+        want = I.prompt_for(I.ANY[t["key"]]) if t["key"] in I.ANY else prompt_for(PLATO[t["key"]], "doodle")
+        assert t["prompt"] == want
         assert isinstance(t["intact"], str)
         for row in rows:
             assert len(t[row]) == len(rows[row]["doses"])
@@ -76,7 +79,8 @@ def test_levels_match_the_damage_page(dmg):
 
 def test_every_thing_has_its_pictures(dmg):
     concepts = json.loads((web.HERE / "data" / "draw.json").read_text())["concepts"]
-    assert [t["key"] for t in dmg["things"]] == [c["key"] for c in concepts]  # all 10 things, same order
+    concepts += json.loads((web.HERE / "data" / "draw_ideas.json").read_text())["concepts"]  # the ideas and words too
+    assert [t["key"] for t in dmg["things"]] == [c["key"] for c in concepts]  # every thing, idea and word, pad order
     labels = {c["key"]: c["label"] for c in concepts}
     used = set()
     for t in dmg["things"]:
@@ -134,3 +138,23 @@ def test_blind_until_the_reveal():
     landing = c.get("/").text
     assert "draw_damage" not in landing
     assert c.get("/static/img/draw_damage/draw_damage.json").status_code == 200
+
+
+def test_ideas_strips_are_sdxls_and_use_the_pads_pipeline(dmg):
+    """The ideas' and words' strips (docs/plato_ideas_damage_plan.md): same template, doses and seed formula as the
+    things', a seed from the pre-registered medoid rule, and the page says they are SDXL's pictures, not Muse's."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("dds", web.HERE.parents[1] / "scripts" / "draw_damage_sdxl.py")
+    dds = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(dds)
+    ideas = [t for t in dmg["things"] if t["key"] in I.ANY]
+    assert [t["key"] for t in ideas][0] == "god" and len(ideas) == 15
+    for t in ideas:
+        assert t["what"] == "drawing of " + I.ANY[t["key"]].phrase and t["group"] in ("ideas", "words")
+        assert t["seed"] - dds.seed_for(t["key"], 0) in range(16)  # picture i of the key, the pad's formula
+        assert t.get("intact_note")  # what SDXL itself drew intact, said on the pad
+    for t in dmg["things"]:
+        if t["key"] not in I.ANY:
+            assert "what" not in t and "group" not in t  # the things' entries are as they were
+    assert "not Muse Image’s" in strip_code() and "not Muse Image's" in dmg["about"]

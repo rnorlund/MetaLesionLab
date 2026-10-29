@@ -645,12 +645,14 @@ class Reference:
 
     def public(self) -> dict:
         """What the page needs: labels, statistics, map points, distances and sprites (no 768-d vectors).
-        Abstract ideas come after the things, marked mode "ai_only" and group "ideas"."""
+        Abstract ideas come after the things, marked mode "ai_only" and group "ideas"; the actions and qualities
+        (running, something fast…) follow as group "words"."""
         out = {**{k: v for k, v in self.index.items() if k not in ("concepts", "centroids")},
                "concepts": [{k: v for k, v in c.items() if k != "vectors"} for c in self.index["concepts"]]}
         if self.ideas.get("concepts"):
-            out["concepts"] += [{**{k: v for k, v in c.items() if k != "vectors"}, "mode": AI_ONLY, "group": "ideas"}
-                                for c in self.ideas["concepts"]]
+            # group: "ideas" (Draw the invisible), or the entry's own ("words": an action or a quality)
+            out["concepts"] += [{**{k: v for k, v in c.items() if k != "vectors"}, "mode": AI_ONLY,
+                                 "group": c.get("group", "ideas")} for c in self.ideas["concepts"]]
             out["groups"] = self.ideas.get("groups", [])
             out["ideas_credits"] = self.ideas.get("credits", [])
         if self.groups.get("concepts"):  # the clock test: labels, quantiles and the two averages' pictures only

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damaged AI · {{BRAND}}</title>
+<meta name="description" content="What happens to an AI’s idea of a thing when we damage it? We damaged image AIs on purpose: we switched off some of their artificial neurons, or added random noise to them. Damage the part that reads the words and a rocking chair becomes a car, and God becomes an ordinary person. Damage the part that paints the picture and it mostly forgets how to draw. Every damage experiment on one page.">
+<meta property="og:title" content="Damaged AI: what happens to an AI’s idea of a thing when we damage it? · {{BRAND}}">
+<meta property="og:description" content="Damage the part of an image AI that reads the words and a rocking chair turns into a car, and God into an ordinary person. Damage the part that paints the picture and it mostly forgets how to draw.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
+<link rel="stylesheet" href="/static/css/plato_firstscreen.css">
+<link rel="stylesheet" href="/static/css/plato_hub.css">
+<link rel="stylesheet" href="/static/css/plato_damaged.css">
+</head>
+<body class="plato-damaged">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><!-- the site header (web/site.py) --></header>
+
+<main id="main" tabindex="-1">
+
+<!-- The first screen: the question, the rocking chair that language damage turns into a car, the answer in one sentence
+     and three numbers drawn (FirstLook.damaged, from /api/plato/damage and /api/plato/ideas; plato_damaged.js). -->
+<section class="fl fl-side dm-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Damaged AI: we damaged AIs on purpose. We switched off some of their artificial neurons, or added random noise to them.</span></p>
+    <h1 id="hero-h">What happens to an AI’s idea of a thing when we damage it?</h1>
+  </div>
+  <!--#epigraph:republic-596a-->
+  <div class="fl-ctx">
+    <p>Plato thought every real chair copies one perfect, ideal chair, which he called its Form. An image AI seems to hold an idea like that too: ask it for a rocking chair and it knows what to draw. So we damaged image AIs on purpose, one part at a time, to see what that idea is made of.</p>
+    <p class="fl-small">Brain science learned much of what each part of the brain does by studying people whose brains were damaged in one place. Our damage is to an AI, and we can undo it. It is a comparison, not a claim about people.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Damage the part of an image AI that reads the words and it forgets <b>what</b> it is drawing: a rocking chair becomes a car, and God becomes an ordinary person. Damage the part that paints the picture and it mostly forgets <b>how</b> to draw.</p>
+  <figure class="fl-visual dm-film" id="film" aria-labelledby="film-cap">
+    <div class="dm-film-rows" id="film-rows"></div>
+    <figcaption class="fl-cap" id="film-cap">Stable Diffusion XL, an open image AI from Stability AI, was asked for a rocking chair every time, with the same random starting point. Each step adds more random noise to the artificial neurons of one part (steps 1 to 3 of 4 shown). Under each picture is the word that Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), used for it. <a href="/plato/damage">Try it with a slider</a></figcaption>
+  </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the damage experiments"></div>
+  <p class="fl-note" id="hero-qual">Our predictions held only in part: see <a href="/plato/damage#diss-h">what we predicted</a>. It is a comparison, not a claim about people.</p>
+</section>
+
+<!-- Every damage result as one even grid (damaged_routes.py: CARDS; site.py: render_hub). -->
+<section class="dm-sec dm-hub" id="results" aria-labelledby="results-h">
+  <div class="dm-sec-head">
+    <p class="dm-kicker">Damaged AI</p>
+    <h2 id="results-h">Every damage experiment</h2>
+    <p class="dm-lede">We damaged three AIs on purpose: one that draws pictures, one that looks at pictures and names them, and one that does both. Damage here means we switched off some of an AI’s artificial neurons, or added random noise to them. Each card opens one result.</p>
+  </div>
+  <!--#damaged:hub-->
+  <!--#if /plato--><p class="dm-more">Plato’s other questions, put to undamaged AIs and to people: <a href="/plato#experiments">every other experiment</a>.</p><!--#endif-->
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. Nothing here is medical advice. AIs that drew: Stable Diffusion XL (Stability AI), CreativeML OpenRAIL++-M; Janus-Pro-7B (DeepSeek), MIT; Meta’s Muse Image (the doodles of chairs on the card about naming). AIs that judged the pictures: Meta’s Muse Glimmer and Muse Spark.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
+<script src="/static/js/plato_damaged.js"></script>
+</body>
+</html>

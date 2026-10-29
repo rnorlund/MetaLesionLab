@@ -39,6 +39,9 @@ PAPER = (236, 234, 228)  # the gaps between tiles
 WHITE = (255, 255, 255)
 FILL, EMPTY = (194, 65, 12), (214, 211, 204)  # icon arrays: the site's people orange, and a quiet gray
 THUMB_H, FULL_W, FRAME, SPRITE_H = 320, 1200, 400, 200
+# The Draw page's damage strips of ideas (docs/plato_ideas_damage.md) that the gallery shows: God's, chosen because
+# none of its frames could read as mocking a religious figure (the rule in docs/plato_ideas_damage_plan.md).
+GALLERY_IDEAS = ("god",)
 
 
 # ---------- reading and writing ----------
@@ -306,6 +309,9 @@ def build() -> dict:
     #    not name that folder: tests/test_draw_damage.py keeps the damage pictures away from any scoring) --
     dd = json.loads((WEB / "draw_damage" / "draw_damage.json").read_text())
     for t in dd["things"]:
+        if t.get("group") and t["key"] not in GALLERY_IDEAS:  # of the ideas and words, only the ones the gallery shows
+            continue
+
         def strip(t=t):
             item_id = f"draw-damage-{t['key']}"
             files = lambda u: WEB / u.removeprefix("/static/img/")  # noqa: E731

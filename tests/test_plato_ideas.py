@@ -41,6 +41,19 @@ def test_no_option_or_prompt_names_a_religion():
         assert not re.search(rf"\b{name}\b", words), name
 
 
+def test_four_words_beyond_nouns_fit_the_template_and_avoid_quick():
+    """docs/plato_ideas_damage_plan.md: two verbs and two adjectives, apart from the 11 ideas, with the same prompt."""
+    assert [w.key for w in I.WORDS] == ["running", "thinking", "something_fast", "something_heavy"]
+    assert len(I.BY_KEY) == 11 and set(I.ANY) == set(I.BY_KEY) | set(I.WORDS_BY_KEY)
+    for w in I.WORDS:
+        assert I.prompt_for(w) == plato.STYLES["doodle"].format(phrase=w.phrase)
+        assert w.predicted in [s for s, _ in w.emblems] and w.group in I.WORD_GROUPS
+        assert "quick" not in w.phrase  # the template already says "a quick simple doodle"
+    assert I.prompt_for(I.WORDS_BY_KEY["something_fast"]) == ("A quick simple doodle sketch of something fast, black marker on "
+                                                              "plain white, like a 20-second drawing, no text, no shading.")
+    assert I.WORDS_BUDGET_USD <= 2.0
+
+
 def test_options_keep_something_else_and_cant_tell_last():
     god = I.BY_KEY["god"]
     fwd, rev = I.options(god), I.options(god, reverse=True)
@@ -86,9 +99,11 @@ def ref():
 
 
 def test_ideas_join_the_pad_as_ai_only(ref):
-    ideas = [k for k in ref.entries if ref.ai_only(k)]
+    ai_only = [k for k in ref.entries if ref.ai_only(k)]
+    ideas = [k for k in ai_only if k in I.BY_KEY]
     assert ideas[0] == "god" and len(ideas) == 11 and not ref.ai_only("chair")
-    for k in ideas:
+    assert ai_only[11:] == [w.key for w in I.WORDS]  # the four words follow the ideas, AI only as well
+    for k in ai_only:
         e = ref.entries[k]
         assert e["n_ai"] == 16 and len(e["ai_loo"]) == len(e["emblems"]) == e["sprites"]["muse"]["n"] == 16
         assert not {"n_human", "human_loo", "human_to_ai", "map", "stats"} & set(e)
@@ -119,9 +134,13 @@ def test_further_than_k_of_16(ref):
 
 def test_public_data_marks_ideas_and_keeps_vectors_server_side(ref):
     pub = ref.public()
-    ideas = [c for c in pub["concepts"] if c.get("mode") == "ai_only"]
+    ai_only = [c for c in pub["concepts"] if c.get("mode") == "ai_only"]
+    ideas = [c for c in ai_only if c["key"] in I.BY_KEY]
+    words = [c for c in ai_only if c["key"] in I.WORDS_BY_KEY]
     assert len(ideas) == 11 and all(c["group"] == "ideas" and "vectors" not in c for c in ideas)
-    assert [g["id"] for g in pub["groups"]] == ["things", "ideas"] and pub["groups"][1]["label"] == "Draw the invisible:"
+    assert len(words) == 4 and all(c["group"] == "words" and "vectors" not in c and c["kicker"] for c in words)
+    assert [g["id"] for g in pub["groups"]] == ["things", "ideas", "words"] and pub["groups"][1]["label"] == "Draw the invisible:"
+    assert pub["groups"][2]["label"] == "Draw an action or a quality:"
     assert len(json.dumps(pub)) < 250_000
 
 
@@ -222,6 +241,11 @@ def test_page_and_api_render():
     assert r.text.count('<header class="topbar site-head">') == 1 and "{{BRAND}}" not in r.text
     assert 'data-passage="republic-597b"' in r.text  # a verified epigraph
     assert r.text.index('id="god-grid"') < r.text.index('id="grid"')  # God first
+    # God under damage comes right after Muse's 16, and says whose pictures they are
+    assert r.text.index('id="god-grid"') < r.text.index('id="damage"') < r.text.index('id="people"')
+    sec = r.text[r.text.index('id="damage"'):r.text.index('id="people"')]
+    assert "not Muse Image" in sec and "Stable Diffusion XL" in sec
+    assert r.text.index('id="spread"') < r.text.index('id="words"') < r.text.index('id="try"')
     assert "makes no claim about God" in r.text and "We show none of their drawings" in r.text
     a = client.get("/api/plato/ideas").json()
     assert [x["key"] for x in a["ideas"]][0] == "god" and len(a["ideas"]) == 11
@@ -253,6 +277,33 @@ def test_series_card_leads_with_god():
     assert json.loads((DATA / "series" / "ideas.json").read_text())["finding"] == card["finding"]
     landing = TestClient(web.app).get("/").text
     assert 'href="/plato/ideas"' in landing and "The invisible Forms" in landing
+
+
+def test_damage_and_words_data_on_the_page():
+    """God under damage (SDXL) and Beyond nouns: shipped data, pictures on this server, AI only, neutral wording."""
+    plato_ideas_routes_cache_clear()
+    a = TestClient(web.app).get("/api/plato/ideas").json()
+    X, W = a["damage"], a["words"]
+    assert X["model"] == "stabilityai/stable-diffusion-xl-base-1.0" and "Stability AI" in X["credit"]
+    assert "not Muse Image" in X["about"]
+    assert set(X["frames"]) == {"text-noise", "unet-noise", "text-zero", "unet-zero"}
+    for fam, frames in X["frames"].items():
+        assert len(frames) == len(X["levels"][fam]) and X["levels"][fam][0]["cond"] == "intact"
+        for f in frames:
+            path = web.HERE / f["img"].removeprefix("/")
+            assert path.is_file() and path.stat().st_size < 60 * 1024, f["img"]
+    assert len(X["others"]) == 14 and all((web.HERE / o["trio"].removeprefix("/")).is_file() for o in X["others"])
+    for k in ("D1", "D2", "D3", "D4", "D5", "D6"):
+        assert k in X["tests"]
+    text = (json.dumps(X) + json.dumps(W)).lower()
+    for word in ("devil", "demon", "satan", "evil", "monster", "jesus", "christ", "allah"):
+        assert word not in text, word
+    assert [w["key"] for w in W["words"]] == ["running", "thinking", "something_fast", "something_heavy"]
+    for w in W["words"]:
+        assert w["n"] == 16 and w["sprite"]["n"] == 16 and (web.HERE / w["sprite"]["src"].removeprefix("/")).is_file()
+    assert set(W["tests"]) >= {"W1", "W2", "W3", "W4"}
+    total = sum(p.stat().st_size for p in (web.HERE / "static" / "img" / "plato_ideas").glob("**/*.webp"))
+    assert total < 2_500_000, total
 
 
 def test_public_data_is_statistics_only():

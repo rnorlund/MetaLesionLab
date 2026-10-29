@@ -15,6 +15,7 @@ A second pass asks for the main symbol or figure in at most five words (plato_id
 most 16 new tokens. It names the "something else" pictures and gives the draw pad a short label; it changes no count.
 
 Output: <out>/<key>.json, one file per idea (resumable). Copy them back to $PLATO_IDEAS_DIR/labels/.
+The four words beyond nouns (plato_ideas.WORDS) are labelled the same way: pass --keys running thinking ...
 """
 import argparse
 import json
@@ -27,8 +28,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np  # noqa: E402
 
 from metalesionlab.plato import load_dir  # noqa: E402
-from metalesionlab.plato_ideas import (BY_KEY, IDEAS, IDEAS_DIR, folder, labeling_prompt, naming_prompt,  # noqa: E402
-                                       options, reverse_index, short_names)
+from metalesionlab.plato_ideas import (ANY as BY_KEY, IDEAS, IDEAS_DIR, folder, labeling_prompt,  # noqa: E402
+                                       naming_prompt, options, reverse_index, short_names)
 
 SIDE = 448  # 32 x 32 patches of 14 px -> 256 image tokens, as in the kinds labeling
 

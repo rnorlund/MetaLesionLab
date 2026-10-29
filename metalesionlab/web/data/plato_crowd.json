@@ -1,0 +1,507 @@
+{
+ "about": "Ask it to be a crowd: 16 Muse Image doodles per concept, each prompt prefixed with one stated age (20 to 80), against the same prompt with no age and people's Quick, Draw! drawings. Written by scripts/plato_crowd_web_export.py from PlatosChair/crowd/results.json.",
+ "plan": "docs/plato_crowd_plan.md",
+ "doc": "docs/plato_crowd.md",
+ "ages": [
+  20,
+  24,
+  28,
+  32,
+  36,
+  40,
+  44,
+  48,
+  52,
+  56,
+  60,
+  64,
+  68,
+  72,
+  76,
+  80
+ ],
+ "prompt_example": "Drawn by a 34-year-old: a quick simple doodle sketch of a chair, black marker on plain white, like a 20-second drawing, no text, no shading.",
+ "model": "facebook/dinov2-base",
+ "verdict": "no_change",
+ "answer": "A stated age changes nothing, like “any kind of chair”.",
+ "h1": {
+  "mean_diff": 0.0014,
+  "ci95": [
+   -0.024,
+   0.0266
+  ],
+  "p": 0.4388,
+  "passes": false,
+  "n_things": 10,
+  "n_up": 5,
+  "median_ratio_vs_default": 1.0,
+  "mean_default": 0.1554,
+  "mean_persona": 0.1568,
+  "mean_people": 0.3357
+ },
+ "h2": {
+  "n_reach": 1,
+  "reach": [
+   "book"
+  ],
+  "n_clearly_below": 9,
+  "median_persona_vs_people": 0.4,
+  "default_n_reach": 1,
+  "median_default_vs_people": 0.41
+ },
+ "h3": {
+  "mean_rho": -0.07,
+  "ci95": [
+   -0.18,
+   0.05
+  ],
+  "p": 0.4115
+ },
+ "things": [
+  {
+   "key": "chair",
+   "label": "chair",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.1338,
+   "default_ci95": [
+    0.0895,
+    0.1962
+   ],
+   "persona": 0.0929,
+   "persona_ci95": [
+    0.0747,
+    0.1118
+   ],
+   "people": 0.3668,
+   "people_ci95": [
+    0.3469,
+    0.3824
+   ],
+   "persona_vs_default": 0.69,
+   "persona_vs_default_ci95": [
+    0.46,
+    1.11
+   ],
+   "persona_vs_people": 0.25,
+   "persona_vs_people_ci95": [
+    0.2,
+    0.31
+   ],
+   "reaches_people": false,
+   "age_rho": -0.36
+  },
+  {
+   "key": "umbrella",
+   "label": "umbrella",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.0546,
+   "default_ci95": [
+    0.0418,
+    0.0695
+   ],
+   "persona": 0.1072,
+   "persona_ci95": [
+    0.0614,
+    0.1658
+   ],
+   "people": 0.3924,
+   "people_ci95": [
+    0.3758,
+    0.404
+   ],
+   "persona_vs_default": 1.96,
+   "persona_vs_default_ci95": [
+    1.04,
+    3.36
+   ],
+   "persona_vs_people": 0.27,
+   "persona_vs_people_ci95": [
+    0.15,
+    0.43
+   ],
+   "reaches_people": false,
+   "age_rho": -0.23
+  },
+  {
+   "key": "bicycle",
+   "label": "bicycle",
+   "n_default": 12,
+   "n_persona": 16,
+   "default": 0.0624,
+   "default_ci95": [
+    0.0469,
+    0.0768
+   ],
+   "persona": 0.0932,
+   "persona_ci95": [
+    0.0782,
+    0.109
+   ],
+   "people": 0.3427,
+   "people_ci95": [
+    0.3316,
+    0.3546
+   ],
+   "persona_vs_default": 1.49,
+   "persona_vs_default_ci95": [
+    1.14,
+    2.06
+   ],
+   "persona_vs_people": 0.27,
+   "persona_vs_people_ci95": [
+    0.23,
+    0.32
+   ],
+   "reaches_people": false,
+   "age_rho": 0.32
+  },
+  {
+   "key": "house",
+   "label": "house",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.1227,
+   "default_ci95": [
+    0.1022,
+    0.145
+   ],
+   "persona": 0.1211,
+   "persona_ci95": [
+    0.0984,
+    0.1483
+   ],
+   "people": 0.3011,
+   "people_ci95": [
+    0.2848,
+    0.3079
+   ],
+   "persona_vs_default": 0.99,
+   "persona_vs_default_ci95": [
+    0.75,
+    1.3
+   ],
+   "persona_vs_people": 0.4,
+   "persona_vs_people_ci95": [
+    0.34,
+    0.5
+   ],
+   "reaches_people": false,
+   "age_rho": -0.12
+  },
+  {
+   "key": "cat",
+   "label": "cat",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.1218,
+   "default_ci95": [
+    0.1016,
+    0.1433
+   ],
+   "persona": 0.1399,
+   "persona_ci95": [
+    0.1121,
+    0.1727
+   ],
+   "people": 0.3008,
+   "people_ci95": [
+    0.2865,
+    0.317
+   ],
+   "persona_vs_default": 1.15,
+   "persona_vs_default_ci95": [
+    0.88,
+    1.51
+   ],
+   "persona_vs_people": 0.47,
+   "persona_vs_people_ci95": [
+    0.37,
+    0.57
+   ],
+   "reaches_people": false,
+   "age_rho": -0.25
+  },
+  {
+   "key": "tree",
+   "label": "tree",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.2613,
+   "default_ci95": [
+    0.235,
+    0.2846
+   ],
+   "persona": 0.2755,
+   "persona_ci95": [
+    0.2314,
+    0.3203
+   ],
+   "people": 0.3476,
+   "people_ci95": [
+    0.3318,
+    0.3674
+   ],
+   "persona_vs_default": 1.05,
+   "persona_vs_default_ci95": [
+    0.88,
+    1.26
+   ],
+   "persona_vs_people": 0.79,
+   "persona_vs_people_ci95": [
+    0.67,
+    0.94
+   ],
+   "reaches_people": false,
+   "age_rho": -0.03
+  },
+  {
+   "key": "face",
+   "label": "face",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.1158,
+   "default_ci95": [
+    0.0995,
+    0.1326
+   ],
+   "persona": 0.1048,
+   "persona_ci95": [
+    0.0862,
+    0.1251
+   ],
+   "people": 0.2634,
+   "people_ci95": [
+    0.248,
+    0.2794
+   ],
+   "persona_vs_default": 0.91,
+   "persona_vs_default_ci95": [
+    0.71,
+    1.14
+   ],
+   "persona_vs_people": 0.4,
+   "persona_vs_people_ci95": [
+    0.33,
+    0.48
+   ],
+   "reaches_people": false,
+   "age_rho": -0.12
+  },
+  {
+   "key": "sailboat",
+   "label": "boat",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.195,
+   "default_ci95": [
+    0.1534,
+    0.2404
+   ],
+   "persona": 0.1501,
+   "persona_ci95": [
+    0.1261,
+    0.1727
+   ],
+   "people": 0.3119,
+   "people_ci95": [
+    0.2994,
+    0.3259
+   ],
+   "persona_vs_default": 0.77,
+   "persona_vs_default_ci95": [
+    0.58,
+    1.02
+   ],
+   "persona_vs_people": 0.48,
+   "persona_vs_people_ci95": [
+    0.4,
+    0.56
+   ],
+   "reaches_people": false,
+   "age_rho": 0.06
+  },
+  {
+   "key": "cup",
+   "label": "cup",
+   "n_default": 16,
+   "n_persona": 16,
+   "default": 0.1228,
+   "default_ci95": [
+    0.0891,
+    0.1605
+   ],
+   "persona": 0.1236,
+   "persona_ci95": [
+    0.0539,
+    0.2355
+   ],
+   "people": 0.3822,
+   "people_ci95": [
+    0.3698,
+    0.3949
+   ],
+   "persona_vs_default": 1.01,
+   "persona_vs_default_ci95": [
+    0.41,
+    2.11
+   ],
+   "persona_vs_people": 0.32,
+   "persona_vs_people_ci95": [
+    0.14,
+    0.62
+   ],
+   "reaches_people": false,
+   "age_rho": 0.12
+  },
+  {
+   "key": "book",
+   "label": "book",
+   "n_default": 12,
+   "n_persona": 16,
+   "default": 0.3637,
+   "default_ci95": [
+    0.3034,
+    0.4208
+   ],
+   "persona": 0.3598,
+   "persona_ci95": [
+    0.325,
+    0.3925
+   ],
+   "people": 0.3486,
+   "people_ci95": [
+    0.3336,
+    0.3609
+   ],
+   "persona_vs_default": 0.99,
+   "persona_vs_default_ci95": [
+    0.83,
+    1.21
+   ],
+   "persona_vs_people": 1.03,
+   "persona_vs_people_ci95": [
+    0.93,
+    1.13
+   ],
+   "reaches_people": true,
+   "age_rho": -0.08
+  }
+ ],
+ "sprites": {
+  "chair": {
+   "src": "/static/img/draw/chair_crowd_muse.webp",
+   "cell": 112,
+   "cols": 8,
+   "n": 16,
+   "bytes": 24596,
+   "ages": [
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48,
+    52,
+    56,
+    60,
+    64,
+    68,
+    72,
+    76,
+    80
+   ],
+   "default": "/static/img/draw/chair_muse.webp"
+  },
+  "god": {
+   "src": "/static/img/draw/god_crowd_muse.webp",
+   "cell": 112,
+   "cols": 8,
+   "n": 16,
+   "bytes": 39252,
+   "ages": [
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48,
+    52,
+    56,
+    60,
+    64,
+    68,
+    72,
+    76,
+    80
+   ],
+   "default": "/static/img/draw/god_muse.webp"
+  }
+ },
+ "god": {
+  "label": "God",
+  "n_default": 16,
+  "n_persona": 16,
+  "default": 0.2375,
+  "default_ci95": [
+   0.1978,
+   0.2803
+  ],
+  "persona": 0.2678,
+  "persona_ci95": [
+   0.2228,
+   0.3099
+  ],
+  "persona_vs_default": 1.13,
+  "persona_vs_default_ci95": [
+   0.89,
+   1.43
+  ],
+  "age_rho": -0.04,
+  "default_by_eye": {
+   "n": 16,
+   "bearded_man": 16,
+   "halo": 16,
+   "source": "docs/plato_ideas.md"
+  },
+  "persona_by_eye": {
+   "n": 16,
+   "bearded_man": 16,
+   "halo": 16,
+   "bearded_man_with_halo": 16,
+   "emblems": {
+    "bearded man": 16
+   },
+   "by_age": {
+    "20": "bearded man with a halo",
+    "24": "bearded man with a halo",
+    "28": "bearded man with a halo",
+    "32": "bearded man with a halo",
+    "36": "bearded man with a halo",
+    "40": "bearded man with a halo",
+    "44": "bearded man with a halo",
+    "48": "bearded man with a halo",
+    "52": "bearded man with a halo",
+    "56": "bearded man with a halo",
+    "60": "bearded man with a halo",
+    "64": "bearded man with a halo",
+    "68": "bearded man with a halo",
+    "72": "bearded man with a halo",
+    "76": "bearded man with a halo",
+    "80": "bearded man with a halo"
+   }
+  },
+  "how": "Labelled by eye, blind to the stated age (a shuffled contact sheet), with the invisible Forms' God options; Muse Glimmer was busy. AI only: there are no people's drawings of God here.",
+  "sentence": "Given 16 different ages, Muse Image still drew God as a bearded man with a halo, 16 of 16 times."
+ },
+ "credits": [
+  "AI drawings: Meta Muse Image 1.0",
+  "Similarity: Meta DINOv2 (facebook/dinov2-base)",
+  "Human drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0, https://github.com/googlecreativelab/quickdraw-dataset"
+ ]
+}

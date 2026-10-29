@@ -1,7 +1,10 @@
-"""What damage does to an AI's chair (/draw): SDXL doodles of the 10 drawing-game things, intact and with
-its language part or its drawing part damaged (GPU part; run on a lab GPU, never the Mac).
+"""What damage does to an AI's chair (/draw): SDXL doodles of the 10 drawing-game things, and of the 11 ideas and
+4 words of "Draw the invisible" (docs/plato_ideas_damage_plan.md), intact and with its language part or its drawing
+part damaged (GPU part; run on a lab GPU, never the Mac).
 
   run --out DIR --conditions intact text-noise@0.5 ... [--keys chair cup] [--seeds 0 1 2 | --pick chair=3 ...]
+  run --out DIR --ideas                     every idea and word with its pre-registered seeds and conditions
+                                            (plato_ideas_damage.conditions / n_seeds)
 
 Pictures: <out>/<condition>/<key>/s<i>.png (512 px). Picture i of a thing has seed seed_for(key, i) in every
 condition, so it is paired across damage levels. Prompt, settings and lesion engine are the damage
@@ -23,22 +26,28 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from metalesionlab import plato_ideas as I  # noqa: E402
+from metalesionlab import plato_ideas_damage as ID  # noqa: E402
 from metalesionlab.plato import BY_KEY as PLATO, prompt_for  # noqa: E402
 from metalesionlab.plato_damage import NEGATIVE, family_spec, parse_condition  # noqa: E402
 from metalesionlab.sdxl_lesions import DamageSpec, SDXLDamage  # noqa: E402
 
 MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
-# The drawing game's things (web/data/draw.json), in its order. "sailboat" is shown as "boat".
-THINGS = ["chair", "umbrella", "bicycle", "house", "cat", "tree", "face", "sailboat", "cup", "book"]
+# The drawing game's things (web/data/draw.json), in its order. "sailboat" is shown as "boat". Then the ideas and
+# words, after the things so that the things' seeds are unchanged.
+THINGS = ID.THINGS
+KEYS = ID.KEYS
 SEED_BASE = 20261100  # not the damage experiment's base, so these are new pictures
 
 
 def seed_for(key: str, i: int) -> int:
-    return SEED_BASE + 1000 * THINGS.index(key) + i
+    return SEED_BASE + 1000 * KEYS.index(key) + i
 
 
 def prompt(key: str) -> str:
-    """The doodle prompt Muse Image was given for this thing (plato.STYLES["doodle"])."""
+    """The doodle prompt Muse Image was given for this thing or idea (plato.STYLES["doodle"] either way)."""
+    if key in I.ANY:
+        return I.prompt_for(I.ANY[key])
     return prompt_for(PLATO[key], "doodle")
 
 
@@ -62,24 +71,37 @@ def spec_for(condition: str) -> DamageSpec:
 
 
 def cmd_run(args):
-    import torch
-
+    if args.ideas:  # the ideas' and words' pre-registered plan: per key, its seeds under its conditions
+        keys = args.keys or ID.IDEA_KEYS + ID.WORD_KEYS
+        jobs = {}
+        for k in keys:
+            for c in ID.conditions(k):
+                jobs.setdefault(c, {})[k] = list(range(ID.n_seeds(k)))
+        return run_jobs(args, jobs)
     if args.pick:  # per-thing picture indices
         picks = {}
         for p in args.pick:
             key, _, idx = p.partition("=")
-            if key not in THINGS:
+            if key not in KEYS:
                 raise SystemExit(f"unknown thing {key!r}")
             picks[key] = [int(i) for i in idx.split(",")]
-        keys = [k for k in THINGS if k in picks]
+        keys = [k for k in KEYS if k in picks]
     else:
         keys = args.keys or THINGS
         picks = {k: list(args.seeds) for k in keys}
+    return run_jobs(args, {c: {k: picks[k] for k in keys} for c in args.conditions})
+
+
+def run_jobs(args, jobs: dict[str, dict[str, list[int]]]):
+    """jobs: condition -> key -> picture indices. Resumable: pictures already on disk are skipped."""
+    import torch
+
     pipe = load_pipe()
     stats = torch.load(args.stats) if args.stats and args.stats.exists() else None
     engine = SDXLDamage(pipe, stats=stats)
     t0, made = time.time(), 0
-    for cond in args.conditions:
+    for cond, picks in jobs.items():
+        keys = list(picks)
         spec = spec_for(cond)
         folder = args.out / cond
         folder.mkdir(parents=True, exist_ok=True)
@@ -118,8 +140,9 @@ def main():
     p = sub.add_parser("run")
     p.set_defaults(fn=cmd_run)
     p.add_argument("--out", type=Path, default=Path("draw_damage"))
-    p.add_argument("--conditions", nargs="+", required=True)
-    p.add_argument("--keys", nargs="*", choices=THINGS)
+    p.add_argument("--conditions", nargs="+")
+    p.add_argument("--ideas", action="store_true", help="the ideas and words with their pre-registered plan")
+    p.add_argument("--keys", nargs="*", choices=KEYS)
     p.add_argument("--seeds", nargs="*", type=int, default=list(range(12)), help="picture indices for every thing")
     p.add_argument("--pick", nargs="*", help="per-thing picture indices instead, e.g. chair=3 cup=1,5")
     p.add_argument("--stats", type=Path, help="the damage experiment's unit_stats.pt (needed for noise)")
