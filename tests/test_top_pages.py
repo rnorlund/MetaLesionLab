@@ -116,9 +116,14 @@ def test_plato_numbers_match_the_data(client):
 def test_hub_is_one_even_grid_of_real_pictures(client):
     main = main_of(client.get("/plato").text)
     hub = main[main.index('id="experiments"'):main.index('id="hero"')]
-    served = [s for s in client.get("/api/site").json()["series"] if s["path"] != "/plato"]
+    served = [s for s in client.get("/api/site").json()["series"] if s["path"] not in ("/plato", *site.DAMAGED_PAGES)]
     cards = re.findall(r'<a class="hub-card" href="([^"]+)">(.*?)</a></li>', hub, re.S)
     assert [href for href, _ in cards] == [s["path"] for s in served] and hub.count('class="hub-grid"') == 1
+    # the damage experiments moved to the Damaged AI hub; /plato/ideas (God under damage is one of its sections) stays,
+    # and so does /plato/inside, which also has its own nav button: this hub lists every non-damage question
+    assert "/plato/damage" not in [href for href, _ in cards] and 'href="/plato/damage"' not in hub
+    assert {"/plato/ideas", "/plato/inside"} <= {href for href, _ in cards}
+    assert 'href="/damaged">Damaged AI</a>' in hub  # one line pointing to them
     for (href, card), s in zip(cards, served):
         img = re.search(r'<img src="([^"]+)"', card)
         assert img and local(img.group(1)).is_file(), href  # a real picture on every card
@@ -163,8 +168,8 @@ def test_nav_buttons_are_even_and_socrates_is_the_accent(client):
     nav = re.search(r'<nav class="topnav" aria-label="Main">(.*?)<details', client.get("/plato").text, re.S).group(1)
     links = re.findall(r'<a ([^>]*)>(.*?)</a>', nav, re.S)
     buttons = [(a, body) for a, body in links if "nav-btn" in a]
-    assert [re.sub(r"<[^>]+>", "", body) for _, body in buttons] == ["Home", "Draw", "Experiments", "Gallery",
-                                                                       "Inside the model", "Ask Socrates"]
+    assert [re.sub(r"<[^>]+>", "", body) for _, body in buttons] == ["Home", "Draw", "Damaged AI", "Inside the model",
+                                                                       "Experiments", "Gallery", "Ask Socrates"]
     assert all('<svg class="nav-ico"' in body and 'aria-hidden="true"' in body for _, body in buttons)
     assert [a for a, _ in links if "nav-accent" in a] == ['href="/socrates" class="nav-accent nav-btn"']
     assert all("nav-btn" not in a for a, body in links if "Code" in body)  # the external link stays plain

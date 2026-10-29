@@ -11,7 +11,8 @@ it) passes through it, and it:
   from the site's NAV and MORE below, so the nav is the same on every page of a site (model chips such
   as #sample-chip are kept). The Plato site's brand slot holds its logo, the Form chair (FORM_CHAIR);
 - fills <!--#series--> (every Plato series card) and <!--#series:sub--> (the series without /plato), and
-  <!--#series:hub--> (the Experiments hub on /plato: one even grid, picture, question and one-line answer);
+  <!--#series:hub--> (the Experiments hub on /plato: one even grid, picture, question and one-line answer; the damage
+  experiments, DAMAGED_PAGES, have their own hub at /damaged);
 - fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py), with its speaker's face;
 - on the Plato site, adds the portraits (portraits.py): Plato beside "What would Plato ask an AI?" and Socrates
   as a floating guide on the series pages, and the "drawn by Meta's Muse Image" credit wherever one is shown;
@@ -52,17 +53,23 @@ TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # "needs": shown only when the app serves that path ("unless": hidden when it serves this one). "current": path
 # prefixes that mark it as the page ("not_current": paths it is not current on)
 # ("exact": the path itself only). Everything else the site has goes under "More" (MORE, and the series).
+# The series pages about damaging an AI belong to Damaged AI (/damaged, damaged_routes.py), not to Experiments (/plato):
+# they mark Damaged AI as the current page, have their own group under More, and appear on the Damaged AI hub's cards
+# instead of the Experiments hub on /plato.
+DAMAGED_PAGES = ["/plato/damage"]
 NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"], "icon": "home"},
         {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"], "icon": "draw"},
-        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside", "/plato/gallery"],
-         "icon": "experiments"},
-        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"], "icon": "gallery"},
+        # the damage experiments: their hub, and the current item on each of their pages
+        {"href": "/damaged", "label": "Damaged AI", "needs": "/damaged", "current": ["/damaged", *DAMAGED_PAGES], "icon": "damaged"},
         # its own page once /plato/inside is served, else the section on /plato
         {"href": "/plato/inside", "label": "Inside the model", "needs": "/plato/inside", "current": ["/plato/inside"],
          "icon": "inside"},
         {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato", "unless": "/plato/inside", "icon": "inside"},
+        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"],
+         "not_current": ["/plato/inside", "/plato/gallery", *DAMAGED_PAGES], "icon": "experiments"},
+        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"], "icon": "gallery"},
         {"href": "/socrates", "label": "Ask Socrates", "needs": "/socrates", "current": ["/socrates"], "accent": True,
          "icon": "socrates"},
         {"href": GITHUB, "label": "Code", "external": True},
@@ -96,6 +103,9 @@ SHARE_IMAGE = {"plato": "/static/img/og-plato-chair.png", "lingua": "/static/img
 NAV_ICONS = {
     "home": '<path d="M2.5 7.5L8 3l5.5 4.5M4 6.5V13h8V6.5"/>',
     "draw": '<path d="M10.5 2.5l3 3L6 13H3v-3z"/><path d="M9 4l3 3"/>',
+    # a chip with a crack through it
+    "damaged": '<rect x="3.5" y="3.5" width="9" height="9" rx="1.5"/><path d="M6 1.5v2M10 1.5v2M6 12.5v2M10 12.5v2M1.5 6h2'
+               'M1.5 10h2M12.5 6h2M12.5 10h2"/><path d="M8.6 3.5L7 7l2 1.6-1.4 3.9"/>',
     "experiments": '<rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/>'
                    '<rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/>',
     "gallery": '<rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2.5 11.5l3.5-3.5 2.5 2.5 2-2 3 3"/>'
@@ -416,11 +426,13 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
 
     def more_list() -> str:
         parts = []
-        if subs:
-            parts.append('<p class="nav-group">The Plato series</p>')
-            parts += [_link({"href": s["path"], "label": s["title"]}, path) for s in subs]
-            if more:
-                parts.append('<p class="nav-group">More from the lab</p>')
+        for group, items in (("The Plato series", [s for s in subs if s["path"] not in DAMAGED_PAGES]),
+                             ("Damaged AI", [s for s in subs if s["path"] in DAMAGED_PAGES])):
+            if items:
+                parts.append(f'<p class="nav-group">{group}</p>')
+                parts += [_link({"href": s["path"], "label": s["title"]}, path) for s in items]
+        if subs and more:
+            parts.append('<p class="nav-group">More from the lab</p>')
         parts += [_link(m, path) for m in more]  # exact match only: /lab is not current on /lab/cut
         return "".join(parts)
 
@@ -542,7 +554,7 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     page = _HEADER.sub(header, page, count=1)
     if "<!--#series" in page:
         items = series(app)
-        page = page.replace("<!--#series:hub-->", render_hub([s for s in items if s["path"] != "/plato"]))
+        page = page.replace("<!--#series:hub-->", render_hub([s for s in items if s["path"] not in ("/plato", *DAMAGED_PAGES)]))
         page = page.replace("<!--#series:sub-->", render_series([s for s in items if s["path"] != "/plato"]))
         page = page.replace("<!--#series-->", render_series(items))
     if "<!--#epigraph:" in page:
