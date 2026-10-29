@@ -1,0 +1,71 @@
+/* Prisoners of the cave (a section of /plato/scale): twins that only read against twins that have also seen
+   pictures. Colours are the site's tokens only. Drawings are ink on paper cards in both themes, as everywhere on
+   the site. Fluid: at wide windows each pair's two walls sit side by side and the two pairs side by side too;
+   on a phone everything stacks. Prose keeps a readable measure. */
+.tw { --tw-text: var(--muted); --tw-vision: var(--green); }
+#twins-body { display: flex; flex-direction: column; gap: 14px; }
+.tw-lede, .tw-answer, .tw-note { margin: 0; max-width: var(--measure); }
+.tw-lede { font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
+.tw-answer { font-size: var(--fs-lede); line-height: 1.45; font-weight: 600; color: var(--ink); }
+.tw-note { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
+
+.tw-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tw-chips button { font: inherit; font-size: 14px; min-height: 40px; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-2); background: var(--panel); color: var(--ink); cursor: pointer; }
+.tw-chips button:hover { border-color: var(--ink); }
+.tw-chips button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--on-ink); font-weight: 600; }
+.tw-chips button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* the two pairs */
+.tw-pairs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 560px), 1fr)); gap: 18px; }
+.tw-pair { border: 1px solid var(--line); border-radius: 14px; background: var(--soft);
+  padding: clamp(12px, 1.4vw, 24px); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.tw-pair h3 { margin: 0; font-size: var(--fs-h3); line-height: 1.25; }
+.tw-pair h3 span { display: block; font-size: var(--fs-sm); font-weight: 400; color: var(--muted); margin-top: 2px; }
+.tw-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 22px); }
+.tw-arm { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tw-arm-h { margin: 0; display: flex; flex-direction: column; gap: 1px; line-height: 1.25; padding-left: 10px;
+  border-left: 4px solid var(--tw-text); }
+.tw-arm.vision .tw-arm-h { border-left-color: var(--tw-vision); }
+.tw-arm-h b { font-size: var(--fs-body); }
+.tw-arm-h span { font-size: var(--fs-sm); color: var(--muted); }
+
+/* the drawings: ink on paper, masks over one sprite per request */
+.tw-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(3px, 0.35vw, 7px); }
+@media (max-width: 520px) { .tw-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }  /* a phone: the twins stay side by side */
+.tw-tile { position: relative; aspect-ratio: 1; background: var(--paper); border: 1px solid var(--paper-line);
+  border-radius: 6px; overflow: hidden; }
+.tw-tile i { position: absolute; inset: 7%; background: var(--paper-ink); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.tw-tile.fail { background: var(--paper-mat); }
+.tw-tile.fail span { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 2px;
+  font: 500 clamp(9px, calc(6px + 0.25vw), 12px)/1.15 var(--mono); color: var(--paper-muted); }
+.tw-tile.read::after { content: ""; position: absolute; right: 5%; top: 5%; width: 18%; height: 18%; border-radius: 50%;
+  background: var(--tw-vision); box-shadow: 0 0 0 2px var(--paper); }
+.tw-key { margin: 0; display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--muted); }
+.tw-key i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--tw-vision);
+  flex: none; }
+
+/* the count under each wall */
+.tw-count { display: flex; flex-direction: column; gap: 2px; }
+.tw-count .sv { margin: 0; }
+.tw-sub { margin: 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.4; }
+
+/* it knows the word */
+.tw-words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 22px); }
+@media (max-width: 520px) { .tw-words { grid-template-columns: minmax(0, 1fr); } }
+.tw-words-h { margin: 0; font-size: var(--fs-sm); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--orange); }
+.tw-quote { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tw-quote q { font-size: var(--fs-body); line-height: 1.5; color: var(--ink); quotes: "“" "”"; }
+.tw-quote span { font-size: var(--fs-sm); color: var(--muted); line-height: 1.4; }
+
+.tw .sc-numbers summary { cursor: pointer; font-size: var(--fs-sm); color: var(--ink-2); }
+.tw-table-wrap { overflow-x: auto; }
+.tw table { border-collapse: collapse; font-size: var(--fs-sm); font-variant-numeric: tabular-nums; min-width: 100%; }
+.tw th, .tw td { text-align: right; padding: 5px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tw th:first-child, .tw td:first-child { text-align: left; }
+.tw th { font-weight: 600; color: var(--ink-2); }
+.tw thead th { white-space: normal; vertical-align: bottom; min-width: 7em; max-width: 16em; }
+.tw-method { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+.tw-method li { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }

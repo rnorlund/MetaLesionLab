@@ -1,0 +1,1040 @@
+{
+ "about": "Prisoners of the cave (docs/plato_cave_twins_plan.md): Qwen2.5 Instruct (text only) against Qwen2.5-VL Instruct (also trained on pictures), 7B and 32B, text-only requests, 12 answers each.",
+ "credits": [
+  "Language models: Qwen2.5-7B-Instruct, Qwen2.5-32B-Instruct, Qwen2.5-VL-7B-Instruct and Qwen2.5-VL-32B-Instruct (Alibaba Cloud, Qwen team), Apache-2.0",
+  "Reader: Google SigLIP 2 (google/siglip2-so400m-patch14-384), Apache-2.0",
+  "Similarity: Meta DINOv2 (facebook/dinov2-base), Apache-2.0",
+  "Human drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0 (statistics only; no drawing is included)",
+  "Qwen2.5-VL: Bai, S. et al. (2025), Qwen2.5-VL Technical Report, arXiv:2502.13923"
+ ],
+ "models": [
+  {
+   "key": "qwen25_7b",
+   "label": "Qwen2.5 7B",
+   "size": "7B",
+   "arm": "text",
+   "hf": "Qwen/Qwen2.5-7B-Instruct",
+   "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+   "params_b": 7.616,
+   "licence": "Apache-2.0",
+   "precision": "bf16",
+   "chair_reused_from_scale": true
+  },
+  {
+   "key": "qwen25vl_7b",
+   "label": "Qwen2.5-VL 7B",
+   "size": "7B",
+   "arm": "vision",
+   "hf": "Qwen/Qwen2.5-VL-7B-Instruct",
+   "revision": "cc594898137f460bfe9f0759e9844b3ce807cfb5",
+   "params_b": 8.292,
+   "licence": "Apache-2.0",
+   "precision": "bf16",
+   "chair_reused_from_scale": false
+  },
+  {
+   "key": "qwen25_32b",
+   "label": "Qwen2.5 32B",
+   "size": "32B",
+   "arm": "text",
+   "hf": "Qwen/Qwen2.5-32B-Instruct",
+   "revision": "5ede1c97bbab6ce5cda5812749b4c0bdf79b18dd",
+   "params_b": 32.76,
+   "licence": "Apache-2.0",
+   "precision": "fp8 weights",
+   "chair_reused_from_scale": true
+  },
+  {
+   "key": "qwen25vl_32b",
+   "label": "Qwen2.5-VL 32B",
+   "size": "32B",
+   "arm": "vision",
+   "hf": "Qwen/Qwen2.5-VL-32B-Instruct",
+   "revision": "7cfb30d71a1f4f49a57592323337a4a4727301da",
+   "params_b": 33.45,
+   "licence": "Apache-2.0",
+   "precision": "fp8 weights",
+   "chair_reused_from_scale": false
+  }
+ ],
+ "tasks": {
+  "chair": {
+   "prompt": "Draw a simple chair as an SVG drawing: black strokes only on a white background, 256 by 256 pixels, no text, no colour fill. Output only the SVG code.",
+   "temps": [
+    1.0,
+    0.7
+   ]
+  },
+  "clock": {
+   "prompt": "Draw a clock showing 10 past 11 as an SVG drawing: black strokes only on a white background, 256 by 256 pixels, no colour fill. Output only the SVG code.",
+   "temps": [
+    1.0
+   ]
+  },
+  "describe": {
+   "prompt": "Describe what a chair looks like in two sentences.",
+   "temps": [
+    1.0
+   ]
+  }
+ },
+ "rows": [
+  {
+   "key": "qwen25_7b",
+   "label": "Qwen2.5 7B",
+   "size": "7B",
+   "arm": "text",
+   "task": "chair",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 0,
+   "read_as_ci95": [
+    0.0,
+    0.0
+   ],
+   "read_labels": {
+    "key": 5,
+    "book": 2,
+    "shoe": 2,
+    "cactus": 1,
+    "hat": 1,
+    "lamp": 1
+   },
+   "dino_recog": 4,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 244.0,
+   "reused": true,
+   "spread": 0.3335,
+   "spread_ci95": [
+    0.2265,
+    0.4077
+   ],
+   "spread_ratio": 0.9107,
+   "human_spread": 0.3662,
+   "eye_chair": 0
+  },
+  {
+   "key": "qwen25_7b",
+   "label": "Qwen2.5 7B",
+   "size": "7B",
+   "arm": "text",
+   "task": "chair",
+   "temp": 0.7,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 0,
+   "read_as_ci95": [
+    0.0,
+    0.0
+   ],
+   "read_labels": {
+    "house": 3,
+    "key": 2,
+    "ladder": 2,
+    "book": 1,
+    "shoe": 1,
+    "candle": 1,
+    "hat": 1,
+    "lamp": 1
+   },
+   "dino_recog": 4,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 249.6667,
+   "reused": true,
+   "spread": 0.3394,
+   "spread_ci95": [
+    0.2701,
+    0.412
+   ],
+   "spread_ratio": 0.9269,
+   "human_spread": 0.3662
+  },
+  {
+   "key": "qwen25_7b",
+   "label": "Qwen2.5 7B",
+   "size": "7B",
+   "arm": "text",
+   "task": "clock",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 9,
+   "failed": 3,
+   "failures": {
+    "no_svg": 2,
+    "render_error": 1,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 9,
+   "read_as_ci95": [
+    0.5,
+    0.9167
+   ],
+   "read_labels": {
+    "clock": 9
+   },
+   "dino_recog": 9,
+   "with_text": 2,
+   "unfinished": 2,
+   "mean_tokens": 1092.0,
+   "reused": false,
+   "spread": null,
+   "spread_ci95": null,
+   "spread_ratio": null,
+   "eye_face": 9,
+   "eye_hands": 0,
+   "eye_1110": 0,
+   "eye_other_time": 0
+  },
+  {
+   "key": "qwen25vl_7b",
+   "label": "Qwen2.5-VL 7B",
+   "size": "7B",
+   "arm": "vision",
+   "task": "chair",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 0,
+   "read_as_ci95": [
+    0.0,
+    0.0
+   ],
+   "read_labels": {
+    "book": 3,
+    "bench": 2,
+    "ladder": 2,
+    "house": 2,
+    "shoe": 1,
+    "key": 1,
+    "saw": 1
+   },
+   "dino_recog": 1,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 260.5,
+   "reused": false,
+   "spread": 0.4755,
+   "spread_ci95": [
+    0.3926,
+    0.5572
+   ],
+   "spread_ratio": 1.2984,
+   "human_spread": 0.3662,
+   "eye_chair": 1
+  },
+  {
+   "key": "qwen25vl_7b",
+   "label": "Qwen2.5-VL 7B",
+   "size": "7B",
+   "arm": "vision",
+   "task": "chair",
+   "temp": 0.7,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 0,
+   "read_as_ci95": [
+    0.0,
+    0.0
+   ],
+   "read_labels": {
+    "hat": 4,
+    "ladder": 2,
+    "book": 1,
+    "shoe": 1,
+    "key": 1,
+    "saw": 1,
+    "bench": 1,
+    "house": 1
+   },
+   "dino_recog": 1,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 238.0833,
+   "reused": false,
+   "spread": 0.498,
+   "spread_ci95": [
+    0.4281,
+    0.5657
+   ],
+   "spread_ratio": 1.3599,
+   "human_spread": 0.3662
+  },
+  {
+   "key": "qwen25vl_7b",
+   "label": "Qwen2.5-VL 7B",
+   "size": "7B",
+   "arm": "vision",
+   "task": "clock",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 8,
+   "read_as_ci95": [
+    0.4167,
+    0.9167
+   ],
+   "read_labels": {
+    "clock": 8,
+    "apple": 1,
+    "harp": 1,
+    "lamp": 1,
+    "ladder": 1
+   },
+   "dino_recog": 7,
+   "with_text": 2,
+   "unfinished": 0,
+   "mean_tokens": 635.3333,
+   "reused": false,
+   "spread": null,
+   "spread_ci95": null,
+   "spread_ratio": null,
+   "eye_face": 11,
+   "eye_hands": 0,
+   "eye_1110": 0,
+   "eye_other_time": 0
+  },
+  {
+   "key": "qwen25_32b",
+   "label": "Qwen2.5 32B",
+   "size": "32B",
+   "arm": "text",
+   "task": "chair",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 1,
+   "read_as_ci95": [
+    0.0,
+    0.25
+   ],
+   "read_labels": {
+    "book": 3,
+    "key": 2,
+    "ladder": 2,
+    "chair": 1,
+    "hat": 1,
+    "bench": 1,
+    "clock": 1,
+    "cup": 1
+   },
+   "dino_recog": 0,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 257.3333,
+   "reused": true,
+   "spread": 0.4928,
+   "spread_ci95": [
+    0.4102,
+    0.56
+   ],
+   "spread_ratio": 1.3457,
+   "human_spread": 0.3662,
+   "eye_chair": 0
+  },
+  {
+   "key": "qwen25_32b",
+   "label": "Qwen2.5 32B",
+   "size": "32B",
+   "arm": "text",
+   "task": "chair",
+   "temp": 0.7,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 0,
+   "read_as_ci95": [
+    0.0,
+    0.0
+   ],
+   "read_labels": {
+    "ladder": 4,
+    "hat": 3,
+    "key": 2,
+    "bench": 2,
+    "lamp": 1
+   },
+   "dino_recog": 0,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 201.0,
+   "reused": true,
+   "spread": 0.3788,
+   "spread_ci95": [
+    0.3046,
+    0.4493
+   ],
+   "spread_ratio": 1.0345,
+   "human_spread": 0.3662
+  },
+  {
+   "key": "qwen25_32b",
+   "label": "Qwen2.5 32B",
+   "size": "32B",
+   "arm": "text",
+   "task": "clock",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 12,
+   "read_as_ci95": [
+    1.0,
+    1.0
+   ],
+   "read_labels": {
+    "clock": 12
+   },
+   "dino_recog": 12,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 196.6667,
+   "reused": false,
+   "spread": null,
+   "spread_ci95": null,
+   "spread_ratio": null,
+   "eye_face": 12,
+   "eye_hands": 11,
+   "eye_1110": 1,
+   "eye_other_time": 10
+  },
+  {
+   "key": "qwen25vl_32b",
+   "label": "Qwen2.5-VL 32B",
+   "size": "32B",
+   "arm": "vision",
+   "task": "chair",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 1,
+   "read_as_ci95": [
+    0.0,
+    0.25
+   ],
+   "read_labels": {
+    "bench": 4,
+    "hat": 2,
+    "ladder": 2,
+    "house": 2,
+    "chair": 1,
+    "face": 1
+   },
+   "dino_recog": 2,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 533.25,
+   "reused": false,
+   "spread": 0.4778,
+   "spread_ci95": [
+    0.3715,
+    0.579
+   ],
+   "spread_ratio": 1.3047,
+   "human_spread": 0.3662,
+   "eye_chair": 2
+  },
+  {
+   "key": "qwen25vl_32b",
+   "label": "Qwen2.5-VL 32B",
+   "size": "32B",
+   "arm": "vision",
+   "task": "chair",
+   "temp": 0.7,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 0,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 3,
+   "read_as_ci95": [
+    0.0,
+    0.5
+   ],
+   "read_labels": {
+    "bench": 6,
+    "chair": 3,
+    "book": 1,
+    "saw": 1,
+    "cup": 1
+   },
+   "dino_recog": 1,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 534.25,
+   "reused": false,
+   "spread": 0.4584,
+   "spread_ci95": [
+    0.3706,
+    0.5442
+   ],
+   "spread_ratio": 1.2518,
+   "human_spread": 0.3662
+  },
+  {
+   "key": "qwen25vl_32b",
+   "label": "Qwen2.5-VL 32B",
+   "size": "32B",
+   "arm": "vision",
+   "task": "clock",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 11,
+   "failed": 1,
+   "failures": {
+    "no_svg": 0,
+    "render_error": 1,
+    "blank": 0,
+    "flooded": 0
+   },
+   "read_as": 11,
+   "read_as_ci95": [
+    0.75,
+    1.0
+   ],
+   "read_labels": {
+    "clock": 11
+   },
+   "dino_recog": 11,
+   "with_text": 0,
+   "unfinished": 0,
+   "mean_tokens": 993.4167,
+   "reused": false,
+   "spread": null,
+   "spread_ci95": null,
+   "spread_ratio": null,
+   "eye_face": 11,
+   "eye_hands": 10,
+   "eye_1110": 0,
+   "eye_other_time": 10
+  },
+  {
+   "key": "qwen25_7b",
+   "label": "Qwen2.5 7B",
+   "size": "7B",
+   "arm": "text",
+   "task": "describe",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "read_as": null,
+   "read_as_ci95": null,
+   "score": 2.9167,
+   "score_ci95": [
+    2.75,
+    3.0
+   ],
+   "all_three": 11,
+   "parts": {
+    "seat": 12,
+    "legs": 11,
+    "back": 12
+   },
+   "keyword_parts": {
+    "seat": 10,
+    "legs": 10,
+    "back": 11
+   },
+   "keyword_score": 2.5833,
+   "mean_words": 29.5,
+   "unfinished": 0
+  },
+  {
+   "key": "qwen25vl_7b",
+   "label": "Qwen2.5-VL 7B",
+   "size": "7B",
+   "arm": "vision",
+   "task": "describe",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "read_as": null,
+   "read_as_ci95": null,
+   "score": 2.9167,
+   "score_ci95": [
+    2.75,
+    3.0
+   ],
+   "all_three": 11,
+   "parts": {
+    "seat": 12,
+    "legs": 11,
+    "back": 12
+   },
+   "keyword_parts": {
+    "seat": 12,
+    "legs": 11,
+    "back": 12
+   },
+   "keyword_score": 2.9167,
+   "mean_words": 47.0833,
+   "unfinished": 0
+  },
+  {
+   "key": "qwen25_32b",
+   "label": "Qwen2.5 32B",
+   "size": "32B",
+   "arm": "text",
+   "task": "describe",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "read_as": null,
+   "read_as_ci95": null,
+   "score": 2.9167,
+   "score_ci95": [
+    2.75,
+    3.0
+   ],
+   "all_three": 11,
+   "parts": {
+    "seat": 12,
+    "legs": 12,
+    "back": 11
+   },
+   "keyword_parts": {
+    "seat": 12,
+    "legs": 12,
+    "back": 12
+   },
+   "keyword_score": 3.0,
+   "mean_words": 35.25,
+   "unfinished": 0
+  },
+  {
+   "key": "qwen25vl_32b",
+   "label": "Qwen2.5-VL 32B",
+   "size": "32B",
+   "arm": "vision",
+   "task": "describe",
+   "temp": 1.0,
+   "n": 12,
+   "valid": 12,
+   "failed": 0,
+   "read_as": null,
+   "read_as_ci95": null,
+   "score": 3.0,
+   "score_ci95": [
+    3.0,
+    3.0
+   ],
+   "all_three": 12,
+   "parts": {
+    "seat": 12,
+    "legs": 12,
+    "back": 12
+   },
+   "keyword_parts": {
+    "seat": 12,
+    "legs": 12,
+    "back": 12
+   },
+   "keyword_score": 3.0,
+   "mean_words": 41.0,
+   "unfinished": 0
+  }
+ ],
+ "pairs": {
+  "7B": {
+   "chair_t1.0": {
+    "read_as": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "valid": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "dino_recog": {
+     "diff": -0.25,
+     "ci95": [
+      -0.5833,
+      0.0833
+     ]
+    },
+    "fisher_p_read": 1.0,
+    "eye": {
+     "diff": 0.0833,
+     "ci95": [
+      0.0,
+      0.25
+     ]
+    },
+    "spread": {
+     "diff": 0.1419,
+     "ci95": [
+      0.0296,
+      0.2752
+     ]
+    }
+   },
+   "chair_t0.7": {
+    "read_as": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "valid": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "dino_recog": {
+     "diff": -0.25,
+     "ci95": [
+      -0.5833,
+      0.0833
+     ]
+    },
+    "fisher_p_read": 1.0,
+    "spread": {
+     "diff": 0.1586,
+     "ci95": [
+      0.058,
+      0.2564
+     ]
+    }
+   },
+   "clock_t1.0": {
+    "read_as": {
+     "diff": -0.0833,
+     "ci95": [
+      -0.4167,
+      0.2521
+     ]
+    },
+    "valid": {
+     "diff": 0.25,
+     "ci95": [
+      0.0,
+      0.5
+     ]
+    },
+    "dino_recog": {
+     "diff": -0.1667,
+     "ci95": [
+      -0.5,
+      0.25
+     ]
+    },
+    "fisher_p_read": 0.8146,
+    "eye": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "describe": {
+    "diff": 0.0,
+    "ci95": [
+     -0.25,
+     0.25
+    ]
+   }
+  },
+  "32B": {
+   "chair_t1.0": {
+    "read_as": {
+     "diff": 0.0,
+     "ci95": [
+      -0.25,
+      0.25
+     ]
+    },
+    "valid": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "dino_recog": {
+     "diff": 0.1667,
+     "ci95": [
+      0.0,
+      0.4167
+     ]
+    },
+    "fisher_p_read": 0.7609,
+    "eye": {
+     "diff": 0.1667,
+     "ci95": [
+      0.0,
+      0.4167
+     ]
+    },
+    "spread": {
+     "diff": -0.015,
+     "ci95": [
+      -0.1429,
+      0.1182
+     ]
+    }
+   },
+   "chair_t0.7": {
+    "read_as": {
+     "diff": 0.25,
+     "ci95": [
+      0.0,
+      0.5
+     ]
+    },
+    "valid": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "dino_recog": {
+     "diff": 0.0833,
+     "ci95": [
+      0.0,
+      0.25
+     ]
+    },
+    "fisher_p_read": 0.1087,
+    "spread": {
+     "diff": 0.0796,
+     "ci95": [
+      -0.0343,
+      0.1894
+     ]
+    }
+   },
+   "clock_t1.0": {
+    "read_as": {
+     "diff": -0.0833,
+     "ci95": [
+      -0.25,
+      0.0
+     ]
+    },
+    "valid": {
+     "diff": -0.0833,
+     "ci95": [
+      -0.25,
+      0.0
+     ]
+    },
+    "dino_recog": {
+     "diff": -0.0833,
+     "ci95": [
+      -0.25,
+      0.0
+     ]
+    },
+    "fisher_p_read": 1.0,
+    "eye": {
+     "diff": -0.0833,
+     "ci95": [
+      -0.25,
+      0.0
+     ]
+    }
+   },
+   "describe": {
+    "diff": 0.0833,
+    "ci95": [
+     0.0,
+     0.25
+    ]
+   }
+  }
+ },
+ "predictions": {
+  "P1": {
+   "text": "The twin that has seen pictures draws chairs that are read as chairs more often than its text-only twin, at both sizes.",
+   "by_size": {
+    "7B": "unclear",
+    "32B": "unclear"
+   },
+   "verdict": "unclear",
+   "check_t0.7": {
+    "by_size": {
+     "7B": "unclear",
+     "32B": "unclear"
+    },
+    "verdict": "unclear"
+   }
+  },
+  "P2": {
+   "text": "Both twins describe a chair equally well in words.",
+   "by_size": {
+    "7B": "supported",
+    "32B": "supported"
+   },
+   "verdict": "supported"
+  }
+ },
+ "describe_agreement": {
+  "seat": {
+   "percent": 0.9583,
+   "kappa": 0.0,
+   "eye_yes": 48,
+   "keyword_yes": 46
+  },
+  "legs": {
+   "percent": 0.9792,
+   "kappa": 0.7895,
+   "eye_yes": 46,
+   "keyword_yes": 45
+  },
+  "back": {
+   "percent": 0.9583,
+   "kappa": -0.0213,
+   "eye_yes": 47,
+   "keyword_yes": 47
+  }
+ },
+ "quotes": [
+  {
+   "key": "qwen25_7b",
+   "label": "Qwen2.5 7B",
+   "size": "7B",
+   "arm": "text",
+   "sentence": "A chair typically features a seated surface supported by legs and often includes a backrest, designed to provide support while someone sits."
+  },
+  {
+   "key": "qwen25vl_7b",
+   "label": "Qwen2.5-VL 7B",
+   "size": "7B",
+   "arm": "vision",
+   "sentence": "A chair typically consists of a seat, a backrest, and four legs, supporting a design that provides both comfort and practicality for sitting."
+  },
+  {
+   "key": "qwen25_32b",
+   "label": "Qwen2.5 32B",
+   "size": "32B",
+   "arm": "text",
+   "sentence": "A chair typically consists of a sturdy seat, supported by four legs, with a backrest for comfort and support."
+  },
+  {
+   "key": "qwen25vl_32b",
+   "label": "Qwen2.5-VL 32B",
+   "size": "32B",
+   "arm": "vision",
+   "sentence": "A chair typically consists of a sturdy seat, often padded or cushioned, supported by four legs that ensure stability."
+  }
+ ],
+ "hashes": [
+  "ea09cee351c22b74c5066e3934a29359d2bebcbe12ab6b7fd6c66fe60ddb287c  codes_describe.json  (48 items)",
+  "e7183f27d6de0eb94802222734d75eb7e6edc9e78914a09e51d510fa20d72e4b  notes_describe.json",
+  "26e24d614dda5291d565d2db69db39523d136f1ddd242d27b7d8fa274a3565da  codes_chair.json  (48 items)",
+  "1182f0b56f989403aeb095a7206b7bf69b36c54e865cc0b22f8aa38038ed78af  notes_chair.json",
+  "ea447047744a5a7fa74007b9ad38bebd98a9da4a4503408b6d28e7fe44802af7  codes_clock.json  (48 items)",
+  "1ce0bc322fb82d3436ecee2fa72dfdd5f7a291fda8c72864d7e447e0e1419b0a  notes_clock.json"
+ ],
+ "anchors": {
+  "people_read_as_chair": 0.86,
+  "people_spread_n12": 0.3662
+ },
+ "skipped": [
+  {
+   "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+   "reason": "Qwen Research licence (not Apache-2.0)"
+  },
+  {
+   "model": "Qwen/Qwen2.5-VL-72B-Instruct",
+   "reason": "Qwen licence (not Apache-2.0); too big for one card"
+  }
+ ],
+ "posthoc": {
+  "clock_hour_marks": {
+   "qwen25_7b": 1,
+   "qwen25vl_7b": 0,
+   "qwen25_32b": 0,
+   "qwen25vl_32b": 8
+  },
+  "eye_chair_lenient": {
+   "qwen25_7b": 0,
+   "qwen25vl_7b": 1,
+   "qwen25_32b": 1,
+   "qwen25vl_32b": 5
+  },
+  "note": "Not planned. clock_hour_marks: clocks with hour marks around the dial, counted by eye after the analysis. eye_chair_lenient: the by-eye chair counts with the coder's sealed 'borderline' drawings counted as chairs."
+ }
+}
