@@ -11,7 +11,8 @@ it) passes through it, and it:
   from the site's NAV and MORE below, so the nav is the same on every page of a site (model chips such
   as #sample-chip are kept). The Plato site's brand slot holds its logo, the Form chair (FORM_CHAIR);
 - fills <!--#series--> (every Plato series card) and <!--#series:sub--> (the series without /plato), and
-  <!--#series:hub--> (the Experiments hub on /plato: one even grid, picture, question and one-line answer);
+  <!--#series:hub--> (the Experiments hub on /plato: one even grid, picture, question and one-line answer; the damage
+  experiments, DAMAGED_PAGES, have their own hub at /damaged);
 - fills <!--#epigraph:ID--> with that verified passage as an epigraph (epigraph.py), with its speaker's face;
 - on the Plato site, adds the portraits (portraits.py): Plato beside "What would Plato ask an AI?" and Socrates
   as a floating guide on the series pages, and the "drawn by Meta's Muse Image" credit wherever one is shown;
@@ -53,17 +54,23 @@ TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # "needs": shown only when the app serves that path ("unless": hidden when it serves this one). "current": path
 # prefixes that mark it as the page ("not_current": paths it is not current on)
 # ("exact": the path itself only). Everything else the site has goes under "More" (MORE, and the series).
+# The series pages about damaging an AI belong to Damaged AI (/damaged, damaged_routes.py), not to Experiments (/plato):
+# they mark Damaged AI as the current page, have their own group under More, and appear on the Damaged AI hub's cards
+# instead of the Experiments hub on /plato.
+DAMAGED_PAGES = ["/plato/damage"]
 NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"], "icon": "home"},
         {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"], "icon": "draw"},
-        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"], "not_current": ["/plato/inside", "/plato/gallery"],
-         "icon": "experiments"},
-        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"], "icon": "gallery"},
+        # the damage experiments: their hub, and the current item on each of their pages
+        {"href": "/damaged", "label": "Damaged AI", "needs": "/damaged", "current": ["/damaged", *DAMAGED_PAGES], "icon": "damaged"},
         # its own page once /plato/inside is served, else the section on /plato
         {"href": "/plato/inside", "label": "Inside the model", "needs": "/plato/inside", "current": ["/plato/inside"],
          "icon": "inside"},
         {"href": "/plato#inside", "label": "Inside the model", "needs": "/plato", "unless": "/plato/inside", "icon": "inside"},
+        {"href": "/plato", "label": "Experiments", "needs": "/plato", "current": ["/plato"],
+         "not_current": ["/plato/inside", "/plato/gallery", *DAMAGED_PAGES], "icon": "experiments"},
+        {"href": "/plato/gallery", "label": "Gallery", "needs": "/plato/gallery", "current": ["/plato/gallery"], "icon": "gallery"},
         {"href": "/socrates", "label": "Ask Socrates", "needs": "/socrates", "current": ["/socrates"], "accent": True,
          "icon": "socrates"},
         {"href": GITHUB, "label": "Code", "external": True},
@@ -97,6 +104,9 @@ SHARE_IMAGE = {"plato": "/static/img/og-plato-chair.png", "lingua": "/static/img
 NAV_ICONS = {
     "home": '<path d="M2.5 7.5L8 3l5.5 4.5M4 6.5V13h8V6.5"/>',
     "draw": '<path d="M10.5 2.5l3 3L6 13H3v-3z"/><path d="M9 4l3 3"/>',
+    # a chip with a crack through it
+    "damaged": '<rect x="3.5" y="3.5" width="9" height="9" rx="1.5"/><path d="M6 1.5v2M10 1.5v2M6 12.5v2M10 12.5v2M1.5 6h2'
+               'M1.5 10h2M12.5 6h2M12.5 10h2"/><path d="M8.6 3.5L7 7l2 1.6-1.4 3.9"/>',
     "experiments": '<rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/>'
                    '<rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/>',
     "gallery": '<rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2.5 11.5l3.5-3.5 2.5 2.5 2-2 3 3"/>'
@@ -189,6 +199,8 @@ SERIES = [
      "source": "Phaedrus · the living word and its image", "title": "Seven meanings", "finding": None},
     {"path": "/plato/forms", "slug": "forms", "question": "Is there one ideal clock, bed or table?",
      "source": "Republic X · Plato’s own bed and table", "title": "The Platonic clock", "finding": None},
+    {"path": "/plato/clock", "slug": "clock", "question": "Would an AI pass the clock test?",
+     "source": "Republic X · a copy of a copy", "title": "The clock test", "finding": None},
     {"path": "/plato/cave", "slug": "cave", "question": "Can you know a thing from its shadow?",
      "source": "Republic VII · the Cave", "title": "Name the shadow", "finding": None},
     {"path": "/plato/cratylus", "slug": "cratylus", "question": "Do names fit things by nature?",
@@ -215,6 +227,10 @@ _ART = {
     "chair": '<path d="M44 14v40M76 14v40M44 16h32M44 26h32M44 36h32M40 54h44l-4 8H44zM44 62v18M80 62v18M48 62l-2 14M76 62l2 14"/>',
     "forms": '<circle cx="60" cy="45" r="30"/><path d="M60 45l-13-9M60 45l13-9"/><circle cx="60" cy="45" r="2.5" fill="currentColor"/>'
              '<path d="M60 19v5M60 66v5M34 45h5M81 45h5"/>',
+    # a clock at 10 past 11, its twelve number marks
+    "clock": '<circle cx="60" cy="45" r="32"/><path d="M60 45l-9-15M60 45l15-8"/><circle cx="60" cy="45" r="2.5" fill="currentColor"/>'
+             '<path d="M60 17v4M76 21l-2 3.5M88 29l-3.5 2M92 45h-4M88 61l-3.5-2M76 69l-2-3.5M60 73v-4M44 69l2-3.5'
+             'M32 61l3.5-2M28 45h4M32 29l3.5 2M44 21l2 3.5"/>',
     "cave": '<path d="M8 84C10 36 32 8 60 8s50 28 52 76M8 84h104"/>'
             '<path d="M40 28v28M58 28v28M40 32h18M40 41h18M37 56h24v5H37zM40 61v13M58 61v13" stroke-opacity="0.35" stroke-width="4"/>'
             '<path d="M88 82c-7-3-8-12-1-19c0 6 6 7 4 13c4-2 5-6 4-9c5 6 3 13-4 15"/>',
@@ -271,7 +287,8 @@ HUB_ANSWERS = {
     "atlas": "Muse Image drew 131 of 135 everyday things more alike than people did.",
     "telephone": "Copied ten times, chairs drift apart instead of back to the textbook chair.",
     "scale": "Bigger open models break fewer drawings, but up to 33 billion parameters their chairs don’t become one.",
-    "phaedrus": "From the transcript, Muse Spark got 9 of 91 stresses right; a simple listener got 80.",
+    "phaedrus": "From the transcript, Muse Spark got 10 of 91 stresses right; a simple listener got 82.",
+    "clock": "Asked for a clock at 10 past 11, Meta’s image AI drew it on 13 of 16; 315 adults’ average clock shows it too.",
 }
 
 
@@ -417,11 +434,13 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
 
     def more_list() -> str:
         parts = []
-        if subs:
-            parts.append('<p class="nav-group">The Plato series</p>')
-            parts += [_link({"href": s["path"], "label": s["title"]}, path) for s in subs]
-            if more:
-                parts.append('<p class="nav-group">More from the lab</p>')
+        for group, items in (("The Plato series", [s for s in subs if s["path"] not in DAMAGED_PAGES]),
+                             ("Damaged AI", [s for s in subs if s["path"] in DAMAGED_PAGES])):
+            if items:
+                parts.append(f'<p class="nav-group">{group}</p>')
+                parts += [_link({"href": s["path"], "label": s["title"]}, path) for s in items]
+        if subs and more:
+            parts.append('<p class="nav-group">More from the lab</p>')
         parts += [_link(m, path) for m in more]  # exact match only: /lab is not current on /lab/cut
         return "".join(parts)
 
@@ -543,7 +562,7 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     page = _HEADER.sub(header, page, count=1)
     if "<!--#series" in page:
         items = series(app)
-        page = page.replace("<!--#series:hub-->", render_hub([s for s in items if s["path"] != "/plato"]))
+        page = page.replace("<!--#series:hub-->", render_hub([s for s in items if s["path"] not in ("/plato", *DAMAGED_PAGES)]))
         page = page.replace("<!--#series:sub-->", render_series([s for s in items if s["path"] != "/plato"]))
         page = page.replace("<!--#series-->", render_series(items))
     if "<!--#epigraph:" in page:

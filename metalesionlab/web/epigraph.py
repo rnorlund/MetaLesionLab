@@ -11,6 +11,10 @@ scripts/verify_passages.py checks word for word against its public-domain source
 drift from the verified text, and links the stylesheet (static/css/epigraph.css) and the serif it uses. An
 unknown id renders nothing: the site never shows a quotation that isn't in the file.
 
+A page with a quote band (band markers inside <div class="epigraph-band">) also gets the quote carousel
+(static/js/quote-carousel.js and static/css/quote-carousel.css): with two or more quotes the band shows one at a
+time, large, and moves through them. Without JavaScript every quote stays visible, in a row that wraps.
+
 The words are the passage's, exactly. The renderer only adds quotation marks, and an ellipsis where the
 passage starts or ends mid-sentence. The citation names the speaker when it is Socrates ("Socrates, in
 Plato's Theaetetus 155d"), otherwise the author ("Plato, Timaeus 28a"; "Aristotle, Metaphysics I.1,
@@ -33,6 +37,8 @@ MARKER = re.compile(r"<!--#epigraph:([\w-]+?)(?:\s+(\w+))?\s*-->")
 FONT = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@1,300;1,400'
         '&display=swap">')
 STYLESHEET = '<link rel="stylesheet" href="/static/css/epigraph.css">'
+CAROUSEL = ('<link rel="stylesheet" href="/static/css/quote-carousel.css">'
+            '<script src="/static/js/quote-carousel.js" defer></script>')  # a quote band, one quote at a time
 TRANSLATOR = {"Plato": "Jowett", "Aristotle": "W. D. Ross"}
 _cache: dict = {}
 
@@ -106,7 +112,7 @@ def render(pid: str, variant: str | None = None) -> str:
 
 
 def fill(page: str) -> str:
-    """Every epigraph marker in a page rendered, and the stylesheet and font linked once."""
+    """Every epigraph marker in a page rendered, and the stylesheet and font linked once (and a band's carousel)."""
     if "<!--#epigraph:" not in page:
         return page
     page = MARKER.sub(lambda m: render(m.group(1), m.group(2)), page)
@@ -114,6 +120,10 @@ def fill(page: str) -> str:
         head = page.find("</head>")
         if head >= 0:
             page = page[:head] + FONT + STYLESHEET + page[head:]
+    if 'class="epigraph epigraph--band"' in page and CAROUSEL not in page:
+        head = page.find("</head>")
+        if head >= 0:
+            page = page[:head] + CAROUSEL + page[head:]
     if 'class="epigraph-face"' in page:  # the faces' styles (and their colours) live with the other portraits
         page = portraits.link_css(page)
     return page

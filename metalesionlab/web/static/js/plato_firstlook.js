@@ -4,6 +4,8 @@
 
    The other six series pages (cave, cratylus, bird, damage, telephone, lifespan) build their own {stats, note} in their
    page scripts and draw them with FirstLook.render, so all ten first screens share one look (plato_firstscreen.css).
+   The damage numbers live here too (FirstLook.damage), because the Damaged AI hub (/damaged) draws the same ones
+   (FirstLook.damaged, with Stable Diffusion XL's God from /plato/ideas).
 
    FirstLook.inside(data), .forms(data), .atlas(data) and .scale(data) return {stats: [{kind, o, q}], note}: kind is a
    statviz kind (dots, spread, bars) or one drawn here, o its options, q the qualifier. FirstLook.html(spec) is one
@@ -239,7 +241,133 @@
     };
   }
 
-  var api = { inside: inside, forms: forms, atlas: atlas, scale: scale, html: html, figure: figure, render: render };
+  // ---------- damage: the first screens of /plato/damage and of the Damaged AI hub (/damaged) ----------
+  // d is what /api/plato/damage returns, ideas what /api/plato/ideas returns (its "damage": Stable Diffusion XL's God
+  // under damage). The numbers and each planned prediction's verdict are worked out once, here, from the data (never
+  // typed in); /plato/damage words them for its own readers, the hub in plain words for anyone.
+
+  function pts(x) { return (x < 0 ? '−' : '+') + Math.abs(Math.round(x * 100)) + ' pts'; }
+  function ciPts(c) { return '95% CI ' + pts(c[0]) + ' to ' + pts(c[1]); }
+  function excludesZero(c) { return !!c && (c[0] > 0 || c[1] < 0); }
+  function plus(v) { return (v < 0 ? '−' : '+') + Math.abs(v); }
+  // A matched test {difference, ci95, predicted_sign}: {tone, text} for figure()'s verdict.
+  function verdictOf(t) {
+    var held = excludesZero(t.ci95) && Math.sign(t.difference) === t.predicted_sign;
+    var rev = excludesZero(t.ci95) && Math.sign(t.difference) === -t.predicted_sign;
+    return held ? { tone: 'yes', text: 'As predicted' } : rev ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not distinguishable at this n' };
+  }
+  function plainVerdict(v) { return v.tone === 'part' ? { tone: 'part', text: 'Too close to call' } : v; }
+  function primary(d) { return (d.matched || {})['text-zero vs unet-zero'] || {}; }  // the pre-registered contrast
+
+  // The numbers. What: the asked kind, lost faster after language damage (the pre-registered primary test).
+  function kindNumbers(d) {
+    var kc = primary(d).delta_correct;
+    return kc ? { kc: kc, lang: Math.round(-kc.language * 100), draw: Math.round(-kc.drawing * 100) } : null;
+  }
+  // Back to the plain chair, as in semantic dementia? Farther from it, not closer.
+  function protoNumbers(d) {
+    var pooled = d.pooled || {}, pz = (pooled['text-zero'] || {}).delta_d_proto, pd = (pooled['unet-zero'] || {}).delta_d_proto;
+    var h2 = primary(d).delta_d_proto;
+    if (!pz || !pd) return null;
+    return { pz: pz, pd: pd, farther: pz.ci95[0] > 0,
+      verdict: h2 ? (verdictOf(h2).tone === 'yes' ? verdictOf(h2) : { tone: 'no', text: 'Prediction failed' }) : null };
+  }
+  // Clocks: the mildest drawing damage strips the numbers first.
+  function clockNumbers(d) {
+    var c = d.clocks, fi = c && c.feature_names ? c.feature_names.indexOf('12 numbers in order') : -1;
+    if (fi < 0) return null;
+    var intact = c.features.filter(function (r) { return r.cond === 'intact'; })[0];
+    var mild = c.features.filter(function (r) { return r.cond.indexOf('unet-zero@') === 0; })
+      .sort(function (x, y) { return parseFloat(x.cond.split('@')[1]) - parseFloat(y.cond.split('@')[1]); })[0];
+    return intact && mild ? { a: Math.round(intact.values[fi] * 100), b: Math.round(mild.values[fi] * 100), mild: mild } : null;
+  }
+  // How the planned split ("what" vs "how") came out.
+  function splitParts(d) {
+    var m = primary(d), kc = m.delta_correct, clean = m.delta_p_clean, cn = ((d.matched || {})['text-noise vs unet-noise'] || {}).delta_p_clean;
+    if (!kc || !clean || !cn) return null;
+    var p = { what: verdictOf(kc).tone === 'yes', noise: verdictOf(cn).tone === 'yes', off: verdictOf(clean).tone === 'yes',
+      offReversed: verdictOf(clean).tone === 'no' };
+    p.head = p.what && p.noise && p.off ? 'Supported.' : p.what || p.noise || p.off ? 'Partly supported.' : 'Not supported.';
+    return p;
+  }
+  // God: more of Stable Diffusion XL's drawings of God become an ordinary person (a person with neither beard nor halo)
+  // under language damage than under drawing damage (the pre-registered D3, by Muse Glimmer; by eye as a check).
+  function godNumbers(ideas) {
+    var x = ideas && ideas.damage, t = x && x.tests, d3 = t && t.D3, n = x && x.n_seeds;
+    if (!d3 || !n) return null;
+    var eye = t.D3_eye;
+    return { n: n, a: Math.round(d3.language_rise * n), b: Math.round(d3.drawing_rise * n),
+      eye: eye ? [Math.round(eye.language_rise * n), Math.round(eye.drawing_rise * n)] : null,
+      verdict: d3.passes ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' } };
+  }
+
+  // /plato/damage: the asked kind, the plain chair, the clocks; and how the split came out.
+  function damage(d) {
+    var k = kindNumbers(d), pr = protoNumbers(d), c = clockNumbers(d), sp = splitParts(d), stats = [];
+    if (k) {
+      stats.push({ kind: 'bars', verdict: verdictOf(k.kc),
+        o: { values: [k.lang, k.draw], labels: ['language', 'drawing'], tones: ['blue', 'orange'], max: 100, value: k.lang + ' vs ' + k.draw, unit: ' pts',
+          label: 'fewer chairs still the asked kind, at equal picture change',
+          alt: 'Language part damaged: ' + k.lang + ' points fewer chairs still read as the asked kind; drawing part damaged: ' + k.draw +
+            ' points fewer, at the same amount of picture change (neurons switched off).' },
+        q: 'Pre-registered test: ' + pts(k.kc.difference) + ', ' + ciPts(k.kc.ci95) + '.' });
+    }
+    if (pr) {
+      stats.push({ kind: 'bars', verdict: pr.verdict,
+        o: { values: [pr.pz.mean, pr.pd.mean], labels: ['language', 'drawing'], tones: ['blue', 'orange'], digits: 2,
+          value: pr.farther ? 'Farther' : 'No closer', unit: '', label: 'from the plain chair, not back to it (change in distance)',
+          alt: 'Back to the plain chair? No. Distance to the plain chair grew by ' + pr.pz.mean.toFixed(2) + ' after language damage and by ' +
+            pr.pd.mean.toFixed(2) + ' after drawing damage (neurons switched off, averaged over the damage levels).' },
+        q: 'Predicted: back toward the plain chair, as in semantic dementia.' });
+    }
+    if (c) {
+      stats.push({ kind: 'bars',
+        o: { values: [c.a, c.b], labels: ['intact', 'drawing'], tones: ['ink', 'orange'], max: 100, value: c.a + '% → ' + c.b + '%', unit: '',
+          label: 'clocks with all 12 numbers in order: drawing damage strips them first',
+          alt: 'Clocks with all 12 numbers in order: ' + c.a + '% intact, ' + c.b + '% after the mildest drawing damage (' + c.mild.label + ').' },
+        q: 'The mildest drawing damage. Language damage removes the whole clock instead.' });
+    }
+    return { stats: stats, split: sp && { head: sp.head, text: 'The “what” half ' + (sp.what ? 'held' : 'did not hold') + '; the “how” half ' +
+      (sp.noise ? 'held for noise' : 'did not hold for noise') + (sp.offReversed ? ' but reversed for neurons switched off' : '') } };
+  }
+
+  // /damaged, in plain words: the asked kind, God, the clocks (either API may be missing), each number's meaning first;
+  // then, for the note, how the planned split came out and whether the chairs went back to the plain chair.
+  function damaged(d, ideas) {
+    var k = d && kindNumbers(d), g = godNumbers(ideas), c = d && clockNumbers(d), stats = [];
+    var parts = ['words part', 'drawing part'];
+    if (k) {
+      var kv = plainVerdict(verdictOf(k.kc));
+      stats.push({ kind: 'bars', verdict: kv,
+        o: { values: [k.lang, k.draw], labels: parts, tones: ['blue', 'orange'], max: 100, value: k.lang + ' vs ' + k.draw, unit: ' in 100',
+          label: 'chairs stopped being the kind we asked for, such as a rocking chair: damage to the words part, against the drawing part',
+          alt: 'After damage to the part that reads the words, ' + k.lang + ' in every 100 chairs stopped being the kind asked for. After the same ' +
+            'amount of damage to the part that paints the picture, ' + k.draw + ' in 100 did.' },
+        q: 'Both kinds of damage changed the pictures by the same amount. We wrote this prediction down before we made any pictures' +
+          (kv.tone === 'yes' ? ', and the gap is too big to be chance.' : '.') });
+    }
+    if (g) {
+      stats.push({ kind: 'bars', verdict: g.verdict,
+        o: { values: [g.a, g.b], labels: parts, tones: ['blue', 'orange'], max: g.n, value: plus(g.a) + ' vs ' + plus(g.b), unit: ' of ' + g.n,
+          label: 'more of Stable Diffusion XL’s ' + g.n + ' drawings of God became an ordinary person, with no beard and no halo',
+          alt: 'Of Stable Diffusion XL’s ' + g.n + ' drawings of God, ' + g.a + ' more showed an ordinary person, with no beard and no halo, after the ' +
+            'most damage to the part that reads the words. After the most damage to the part that paints the picture, ' + g.b + ' more did.' },
+        q: 'At the heaviest damage. We wrote this prediction down before we made any pictures. Meta’s open AI model, Muse Glimmer, judged ' +
+          'the drawings.' + (g.eye ? ' Counted by eye instead: ' + plus(g.eye[0]) + ' vs ' + plus(g.eye[1]) + '.' : '') });
+    }
+    if (c) {
+      stats.push({ kind: 'bars',
+        o: { values: [c.a, c.b], labels: ['undamaged', 'drawing part'], tones: ['ink', 'orange'], max: 100, value: c.a + '% → ' + c.b + '%', unit: '',
+          label: 'of clocks had all 12 numbers in order: undamaged, then after the lightest damage to the drawing part',
+          alt: 'Clocks with all 12 numbers in order: ' + c.a + '% undamaged, ' + c.b + '% after the lightest damage to the part that paints the picture.' },
+        q: 'Clocks drawn by Stable Diffusion XL. Damage to the words part takes away the whole clock instead.' });
+    }
+    var pr = d ? protoNumbers(d) : null;
+    return { stats: stats, split: d ? splitParts(d) : null, proto: pr && pr.verdict ? { verdict: pr.verdict, farther: pr.farther } : null };
+  }
+
+  var api = { inside: inside, forms: forms, atlas: atlas, scale: scale, damage: damage, damaged: damaged,
+    html: html, figure: figure, render: render };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root && root.document) root.FirstLook = api;
 })(typeof window !== 'undefined' ? window : this);
