@@ -269,9 +269,9 @@ def outcomes(run: str, byeye: bool = True) -> dict:
                     o[m][s["i"]] = s[m]
             if t.key == "clock":
                 o["all_numbers"] = np.array([len(r.get("clock_numbers") or []) == 12 for r in strict[cond][t.key]], float)
-            if coded:
-                o["byeye_correct"] = np.array([coded[(cond, t.key, i)]["correct"] for i in range(n)], float)
-                o["byeye_fluent"] = np.array([coded[(cond, t.key, i)]["fluent"] for i in range(n)], float)
+            if coded:  # the by-eye sample: NaN where a description wasn't sampled
+                o["byeye_correct"] = np.array([coded.get((cond, t.key, i), {}).get("correct", np.nan) for i in range(n)], float)
+                o["byeye_fluent"] = np.array([coded.get((cond, t.key, i), {}).get("fluent", np.nan) for i in range(n)], float)
             out[cond][t.key] = o
     # similarity to the undamaged drawings: each thing's undamaged average, leaving the drawing itself out when it is
     # one of them
@@ -334,11 +334,6 @@ def type_result(out: dict, dtype: str, things: list[str]) -> dict:
                            "named_vs_fluent": (PICTURE, "fluent")}.items():
         bb = gl.boot_gap(stack(out, conds, things, pm), stack(out, conds, things, wm), seed=7)
         sec[name] = {"gap": bb["gap"], "ci95": bb["ci95"], "verdict": gl.gap_verdict(bb["ci95"])}
-    if "byeye_correct" in out["intact"][things[0]]:
-        bb = gl.boot_gap(pic, stack(out, conds, things, "byeye_correct"), seed=8)
-        by = curve(out, conds, things, "byeye_correct")
-        sec["named_vs_byeye_correct"] = {"gap": bb["gap"], "ci95": bb["ci95"], "verdict": gl.gap_verdict(bb["ci95"]),
-                                         "order": gl.order_verdict(sp, gl.first_below_half(by[1:], 1.0)), "curve": by}
     res["secondary"] = sec
     per = {}
     for t in things:
@@ -377,6 +372,21 @@ def cmd_analyze(args):
                                 "verdict": "different" if (ci[0] > 0 or ci[1] < 0) else "too close to call"}
     for v in res["types"].values():
         v.pop("_boot", None)
+    agree = {}
+    for m, e in (("correct", "byeye_correct"), ("fluent", "byeye_fluent")):
+        a_, b_ = [], []
+        for cond in out:
+            for t in out[cond]:
+                o = out[cond][t]
+                if e in o:
+                    ok = np.isfinite(o[e])
+                    a_ += list(o[m][ok])
+                    b_ += list(o[e][ok])
+        if a_:
+            a_, b_ = np.array(a_), np.array(b_)
+            agree[m] = {"n": len(a_), "agreement": float((a_ == b_).mean()), "rubric_yes": float(a_.mean()), "eye_yes": float(b_.mean())}
+    res["byeye_agreement"] = agree
+    print("rubric vs eye:", agree)
     res["featured"] = {t.key: medoid("raw", t.key) for t in gl.THINGS}
     (D / "results.json").write_text(json.dumps(res, indent=1, default=float))
     print(f"included: {included}")
