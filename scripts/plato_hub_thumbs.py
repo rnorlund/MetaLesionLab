@@ -2,7 +2,7 @@
 put together from pictures the site already ships (static/img/...). Writes static/img/plato/hub/<slug>.webp.
 
     python scripts/plato_hub_thumbs.py                    every card
-    python scripts/plato_hub_thumbs.py damaged-god ...    only these
+    python scripts/plato_hub_thumbs.py damaged-ideas ...  only these
 
 The hub prefers these over static/img/plato/series/<slug>.webp (site.py: hub_image). They live in their own folder
 because the landing page's series cards read static/img/plato/series/ before the blind draw, and some of these
@@ -12,8 +12,8 @@ the God drawn on /draw stays blind.
 The Damaged AI hub (/damaged, damaged_routes.py) has its own cards, one per damage result: DAMAGED below writes
 static/img/plato/hub/damaged-<card>.webp. Each puts the undamaged picture beside its damaged versions, blue under the
 words part's (the part that reads the words) and orange under the drawing part's (the part that paints the picture),
-in the site's plain words (docs/style_plain_language.md). The God card is Stable Diffusion XL's God (as in the
-gallery), never Muse Image's.
+in the site's plain words (docs/style_plain_language.md). No card shows any AI's God: the ideas card shows death,
+so the blind "Draw God" on /draw (its first drawing) stays blind.
 """
 from __future__ import annotations
 
@@ -199,11 +199,10 @@ def damaged_painter() -> Image.Image:
                   ("plato_damage/wheelchair_unet-zero_3.webp", "drawing part", ORANGE)])
 
 
-def damaged_god() -> Image.Image:
-    """Stable Diffusion XL's God (not Muse Image's): crowned and bearded; an ordinary man; scribbles."""
-    return strip([("plato_ideas/dmg/god_intact.webp", "undamaged", INK),
-                  ("plato_ideas/dmg/god_text-noise_0.75.webp", "words part", BLUE),
-                  ("plato_ideas/dmg/god_unet-noise_1.1.webp", "drawing part", ORANGE)])
+def damaged_ideas() -> Image.Image:
+    """Stable Diffusion XL's death (the trio /plato/ideas shows): a skull; people; scribbles. Never a God."""
+    undamaged, words, drawing = cells(Image.open(IMG / "plato_ideas" / "dmg" / "death_trio.webp"), 3, 1)
+    return strip([(undamaged, "undamaged", INK), (words, "words part", BLUE), (drawing, "drawing part", ORANGE)])
 
 
 def damaged_clocks() -> Image.Image:
@@ -259,7 +258,7 @@ def damaged_yourself() -> Image.Image:
                   ("draw_damage/chair_drawing_3.webp", "drawing part", ORANGE)], side=200, gap=26, arrows=(0,))
 
 
-DAMAGED = {"damaged-painter": damaged_painter, "damaged-god": damaged_god, "damaged-clocks": damaged_clocks,
+DAMAGED = {"damaged-painter": damaged_painter, "damaged-ideas": damaged_ideas, "damaged-clocks": damaged_clocks,
            "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-yourself": damaged_yourself}
 
 

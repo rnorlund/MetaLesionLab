@@ -223,3 +223,12 @@ def test_the_hub_speaks_plain_words(client, tmp_path):
     for full in ("Stable Diffusion XL, an open image AI from Stability AI", "Meta’s open AI model, Muse Glimmer",
                  "Janus-Pro, an open AI from DeepSeek"):
         assert full in shown, full
+
+
+def test_no_god_picture_on_either_hub(client):
+    """/draw starts on a blind "Draw God", so neither hub shows any AI's picture of God (the ideas card shows death)."""
+    for path in ("/damaged", "/plato"):
+        pics = re.findall(r'<img src="([^"]+)"', main_of(client.get(path).text))
+        assert pics and not [p for p in pics if "god" in p.lower()], path
+    card = dict(hub_cards(main_of(client.get("/damaged").text)))["/plato/ideas#damage"]
+    assert '<img src="/static/img/plato/hub/damaged-ideas.webp"' in card and "death" in card

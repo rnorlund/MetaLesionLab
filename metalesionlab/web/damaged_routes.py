@@ -24,15 +24,15 @@ router = APIRouter()
 PAGE = Path(__file__).resolve().parent / "pages" / "damaged.html"
 
 # One card per damage result, in the order a visitor meets them: the question, a one-line answer, and the section it
-# opens. The picture is static/img/plato/hub/<slug>.webp (site.render_hub). The God card shows Stable Diffusion XL's
-# God, as the gallery does, never Muse Image's.
+# opens. The picture is static/img/plato/hub/<slug>.webp (site.render_hub). No card shows any AI's God, so the blind
+# "Draw God" on /draw stays blind: the ideas card shows death.
 CARDS = [
     {"slug": "damaged-painter", "path": "/plato/damage", "title": "Damage the painter",
      "question": "What happens to a drawing when we damage the AI that draws it?",
      "answer": "Damage the part that reads the words: a wheelchair becomes a bicycle. Damage the part that paints the picture: it breaks up."},
-    {"slug": "damaged-god", "path": "/plato/ideas#damage", "title": "God under damage",
-     "question": "What happens to God when we damage the AI drawing him?",
-     "answer": "Damage the part that reads the words and God loses his beard or halo first, then becomes an ordinary person."},
+    {"slug": "damaged-ideas", "path": "/plato/ideas#damage", "title": "God, death and other ideas under damage",
+     "question": "What happens to an AI’s idea of death when we damage it?",
+     "answer": "Damage the part that reads the words: skulls turn into people, and God loses his beard or halo, then becomes an ordinary person."},
     {"slug": "damaged-clocks", "path": "/plato/damage#clock-h", "title": "Clocks under damage",
      "question": "Can a damaged AI still draw a clock?",
      "answer": "Damage the part that paints the picture and the numbers go first. Damage the part that reads the words and the clock goes."},
