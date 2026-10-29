@@ -1,4 +1,4 @@
-/* Plato's Chair's opening animation, "the cave", on the landing page (about 8 seconds).
+/* Plato's Chair's opening animation, "the cave", on the landing page, in three styles.
 
    Firelight and drifting shadows, with Republic 515c. The chair's shadow slows to the centre and comes
    into focus, the wall turns to paper, and the chair comes closer while flipping through the 16 kinds
@@ -6,17 +6,27 @@
    geometric "Form" chair, which draws itself and glides into the header's brand slot to become the logo,
    while the page fades in under it.
 
-   When it plays is decided by a small script in the page's <head>, before the first paint, which adds
-   html.splash-on: once per browser session (sessionStorage "pc-splash-seen"), never with reduced motion,
-   during the guided tour, on a deep link (#…) or with ?nosplash=1; ?splash=1 plays it again. Skip it
-   with the Skip button or any key. It never shows Muse Image's own chairs (the 16 alike ones), so the
-   drawing that follows stays blind. Its pictures (static/img/splash/, about 110 KB) and stylesheet
-   load only when it plays. The Form chair is the header's own logo (web/site.py FORM_CHAIR), cloned. */
+   Styles (?splash=1&style=a|b|c; DEFAULT_STYLE below plays when there is no style param):
+     a  Readable: the same sequence; every caption stays up for its reading time and the visuals wait for it.
+     b  Words first: each caption alone, large and centred, held for its reading time, then it shrinks to
+        the top while the scene plays beneath it.
+     c  Short and bold: three short lines in big type, held 2.5-3 s each (the long quotes are dropped, not cut).
+   Reading time = max(2.5 s, 0.4 s per word + 1.2 s). window.PCSplash.log lists every caption's on-screen time.
+
+   When it plays is decided by a small script in the page's <head>, before the first paint: once per browser
+   session (sessionStorage "pc-splash-seen"), never with reduced motion (Replay then shows a still page with
+   the text), during the guided tour, on a deep link (#...) or with ?nosplash=1; ?splash=1 plays it again.
+   Skip it with the Skip button, Esc or a click. It never shows Muse Image's own chairs (the 16 alike ones),
+   so the drawing that follows stays blind. The Form chair is the header's own logo (web/site.py FORM_CHAIR). */
 (function () {
   'use strict';
   var root = document.documentElement;
   if (!root.classList.contains('splash-on')) return;
   try { window.sessionStorage.setItem('pc-splash-seen', '1'); } catch (e) { /* storage off: the head script won't play it */ }
+
+  var DEFAULT_STYLE = 'a';  // the style that plays without ?style= (a, b or c): the one place to change it
+  var STYLE = (/[?&]style=([abc])(&|$)/.exec(location.search) || [0, DEFAULT_STYLE])[1];
+  var STATIC = root.classList.contains('splash-static');  // reduced motion: a still page with the text
 
   var IMG = '/static/img/splash/';
   var SHADOWS = ['umbrella', 'cup', 'cat', 'bicycle', 'tree', 'house', 'key'];
@@ -25,12 +35,17 @@
     '<cite>Plato, Republic 515c · Jowett</cite>';
   var Q596 = '“Whenever a number of individuals have a common name, we assume them to have also a corresponding idea or form.”' +
     '<cite>Plato, Republic 596a · Jowett</cite>';
+  var ONE = 'One ideal chair?';
+  var C1 = 'Plato said every chair is a copy of one ideal chair.', C2 = 'We only ever see the shadows.', C3 = 'What would Plato ask an AI?';
   var NAVY = '#141a26', WHITE = '#F9FAFB', ORANGE = '#C2410C';
-  var MAX_MS = 14000;  // whatever happens, the page is back by then
-  var TIME = 0.8;  // the whole sequence plays at 80% of its designed length (Roger, Oct 27)
+  var MAX_MS = { a: 34000, b: 38000, c: 22000 }[STYLE];  // whatever happens, the page is back by then
 
-  var run = 0, done = false, anims = [], timers = [];
+  var run = 0, done = false, anims = [], timers = [], log = [], cur = null;
   var stage, actor, shadowEl, caption, credit, skipBtn, form, frames = [], shadowPic, L = {};
+
+  // Reading time of a caption (the citation line is not counted).
+  function words(html) { var t = html.replace(/<cite>.*?<\/cite>/g, '').replace(/<[^>]+>/g, ' ').trim(); return t ? t.split(/\s+/).length : 0; }
+  function readMs(html) { return Math.max(2500, 400 * words(html) + 1200); }
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -39,28 +54,42 @@
     return e;
   }
   function img(src) { var i = new Image(); i.src = src; i.alt = ''; i.decoding = 'async'; return i; }
-  function later(fn, ms) { timers.push(setTimeout(fn, ms * TIME)); }
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
   function wait(ms, id) {
     return new Promise(function (resolve, reject) {
       later(function () { if (id === run && !done) resolve(); else reject(new Error('stopped')); }, ms);
     });
   }
   function anim(target, frames_, opts) {
-    var o = Object.assign({ fill: 'forwards' }, opts);
-    if (o.duration) o.duration *= TIME;
-    if (o.delay) o.delay *= TIME;
-    var a = target.animate(frames_, o);
+    var a = target.animate(frames_, Object.assign({ fill: 'forwards' }, opts));
     anims.push(a);
     return a;
   }
-  function say(html) {
-    caption.classList.remove('on');
-    later(function () { caption.innerHTML = html || ''; if (html) caption.classList.add('on'); }, 250);
+
+  // --- captions ---------------------------------------------------------------------------------
+  // mode: '' (bottom, small), 'big' (large, centred), 'high' (large, near the top). veil: dim the scene behind it.
+  function say(html, mode, veil) {
+    unsay();
+    caption.className = 'sp-caption' + (mode ? ' ' + mode : '') + (/<cite>/.test(html || '') ? ' q' : '');
+    stage.classList.toggle('veil', !!veil);
+    if (!html) return;
+    later(function () {
+      caption.innerHTML = html;
+      caption.classList.add('on');
+      cur = { text: caption.textContent, need: readMs(html), shown: performance.now() };
+      log.push(cur);
+    }, 250);
   }
+  function endLog() { if (cur && cur.hidden == null) { cur.hidden = performance.now(); cur.held = Math.round(cur.hidden - cur.shown); } cur = null; }
+  function unsay() { caption.classList.remove('on'); endLog(); }
+  // Shows a caption and resolves once it has been fully up for `ms` (its reading time unless given).
+  function hold(id, html, mode, veil, ms) { say(html, mode, veil); return wait(300 + (ms || readMs(html)), id); }
+  // Words-first: the held caption shrinks to the top and the scene plays beneath it.
+  function demote() { endLog(); caption.classList.remove('big', 'high'); caption.classList.add('top'); stage.classList.remove('veil'); }
 
   // --- the stage --------------------------------------------------------------------------------
   function build() {
-    stage = el('div', 'splash');
+    stage = el('div', 'splash s-' + STYLE);
     var scene = el('div', 'sp-scene');
     scene.setAttribute('aria-hidden', 'true');
     scene.appendChild(el('div', 'sp-bg sp-wall'));
@@ -82,16 +111,34 @@
       form = logo.cloneNode(true);
       actor.appendChild(form);
     }
+    scene.appendChild(el('div', 'sp-bg sp-veil'));
     caption = scene.appendChild(el('p', 'sp-caption'));
     credit = scene.appendChild(el('p', 'sp-credit',
       'Chairs: 16 kinds named by Muse Spark and drawn by Muse Image, and people’s drawings (Google Quick, Draw!, CC BY 4.0)'));
     stage.appendChild(scene);
-    skipBtn = el('button', 'sp-skip', 'Skip <small>· any key</small>');
+    skipBtn = el('button', 'sp-skip', 'Skip intro <span aria-hidden="true">→</span>');
     skipBtn.type = 'button';
-    skipBtn.setAttribute('aria-label', 'Skip the opening animation');
-    skipBtn.addEventListener('click', function () { finish(); });
+    skipBtn.setAttribute('aria-label', 'Skip the opening animation (Esc)');
+    skipBtn.addEventListener('click', function (e) { e.stopPropagation(); finish(); });
     stage.appendChild(skipBtn);
+    stage.addEventListener('click', function () { finish(); });
     document.body.appendChild(stage);
+  }
+
+  // Reduced motion: no animation at all; the words on one still page, and a button to go on.
+  function buildStatic() {
+    stage = el('div', 'splash static');
+    var box = el('div', 'sp-still');
+    box.appendChild(el('p', 'sp-still-h', 'Plato’s Chair'));
+    [Q515, Q596].forEach(function (q) { box.appendChild(el('p', 'sp-still-q', q)); });
+    box.appendChild(el('p', 'sp-still-big', ONE));
+    skipBtn = el('button', 'sp-continue', 'Continue to the page <span aria-hidden="true">→</span>');
+    skipBtn.type = 'button';
+    skipBtn.addEventListener('click', function () { finish(); });
+    box.appendChild(skipBtn);
+    stage.appendChild(box);
+    document.body.appendChild(stage);
+    skipBtn.focus({ preventScroll: true });
   }
 
   // The chair's size and place follow the stage's height, so it never grows into the caption.
@@ -122,9 +169,9 @@
     frames.forEach(function (f, j) { f.classList.toggle('on', j === i); });
   }
 
-  // --- the cave ---------------------------------------------------------------------------------
-  function play() {
-    var id = ++run, W = L.W, H = L.H;
+  // --- the scenes (each style strings them together with its own captions) ----------------------
+  function cave(slide) {  // firelight, drifting shadows, the chair's shadow sliding in
+    var W = L.W, H = L.H;
     SHADOWS.forEach(function (name, i) {
       var s = img(IMG + 'shadow_' + name + '.webp');
       shadowEl.appendChild(s);
@@ -132,57 +179,86 @@
       var from = dir > 0 ? -0.25 * W : 1.05 * W, to = dir > 0 ? 1.05 * W : -0.25 * W;
       anim(s, [{ transform: 'translate(' + from + 'px,' + y + 'px) skewX(-14deg) scale(' + scale + ')' },
                { transform: 'translate(' + to + 'px,' + (y + (i % 2 ? -10 : 10)) + 'px) skewX(-14deg) scale(' + scale + ')' }],
-           { duration: 3600 + i * 420, delay: i * 260 - 300, easing: 'linear', fill: 'both' });
+           { duration: 4500 + i * 520, delay: i * 320 - 400, easing: 'linear', fill: 'both', iterations: Infinity });  // loops, so the wall is never empty
     });
     shadowPic.classList.add('on');
     shadowPic.style.filter = 'blur(3px)';
     anim(actor, [{ transform: 'translateX(-' + (0.62 * W) + 'px) skewX(-14deg) scale(.62)', opacity: 0.6 },
-                 { transform: 'translateX(0) skewX(-14deg) scale(.62)', opacity: 0.6 }], { duration: 2600, easing: 'cubic-bezier(.2,.7,.25,1)' });
-    return wait(400, id).then(function () {
-      say(Q515);
-      return wait(2200, id);
-    }).then(function () {
-      // the fire goes out, the wall turns to paper, the shadow comes into focus
-      shadowEl.style.opacity = 0;
-      stage.classList.add('lit');
-      say('');
-      anim(actor, [{ transform: 'translateX(0) skewX(-14deg) scale(.62)', opacity: 0.6 },
-                   { transform: 'translateX(0) skewX(0deg) scale(.66)', opacity: 1 }], { duration: 600, easing: 'ease-out' });
-      anim(shadowPic, [{ filter: 'blur(3px)' }, { filter: 'blur(0px)' }], { duration: 600 });
-      return wait(600, id);
-    }).then(function () {
-      // it comes closer, flipping through the named kinds and people's chairs
-      shadowPic.classList.remove('on');
-      show(0);
-      say(Q596);
-      credit.classList.add('on');
-      anim(actor, [{ transform: 'translateX(0) scale(.66)' }, { transform: 'translateX(0) scale(' + L.smax + ')' }],
-           { duration: 2500, easing: 'cubic-bezier(.45,0,.3,1)' });
-      var chain = Promise.resolve();
-      frames.forEach(function (_, i) {
-        if (!i) return;
-        var t = i / frames.length, gap = 55 + Math.pow(t, 2.2) * 210;
-        chain = chain.then(function () { return wait(gap, id); }).then(function () { show(i); });
-      });
-      return chain.then(function () { return wait(180, id); });
-    }).then(function () {
-      // the Form draws itself
-      show(-1);
-      credit.classList.remove('on');
-      if (form) {
-        form.style.opacity = 1;
-        [].slice.call(form.querySelectorAll('path')).forEach(function (path, j) {
-          var len = path.getTotalLength();
-          path.style.strokeDasharray = len;
-          anim(path, [{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 420, delay: 90 * j, easing: 'ease-out', fill: 'both' });
-        });
-      }
-      say('One ideal chair?');
-      return wait(1250, id);
-    }).then(function () {
-      say('');
-      return glide(id);
+                 { transform: 'translateX(0) skewX(-14deg) scale(.62)', opacity: 0.6 }], { duration: slide || 3200, easing: 'cubic-bezier(.2,.7,.25,1)' });
+  }
+  function focus(id) {  // the fire goes out, the wall turns to paper, the shadow comes into focus
+    shadowEl.style.opacity = 0;
+    stage.classList.add('lit');
+    anim(actor, [{ transform: 'translateX(0) skewX(-14deg) scale(.62)', opacity: 0.6 },
+                 { transform: 'translateX(0) skewX(0deg) scale(.66)', opacity: 1 }], { duration: 700, easing: 'ease-out' });
+    anim(shadowPic, [{ filter: 'blur(3px)' }, { filter: 'blur(0px)' }], { duration: 700 });
+    return wait(700, id);
+  }
+  function still(id) {  // the chair as a plain frame, ready to come closer
+    shadowPic.classList.remove('on');
+    show(0);
+    credit.classList.add('on');
+  }
+  function flip(id, speed) {  // it comes closer, flipping through the named kinds and people's chairs
+    var sp = speed || 1;
+    anim(actor, [{ transform: 'translateX(0) scale(.66)' }, { transform: 'translateX(0) scale(' + L.smax + ')' }],
+         { duration: 2500 * sp, easing: 'cubic-bezier(.45,0,.3,1)' });
+    var chain = Promise.resolve();
+    frames.forEach(function (_, i) {
+      if (!i) return;
+      var t = i / frames.length, gap = (55 + Math.pow(t, 2.2) * 210) * sp;
+      chain = chain.then(function () { return wait(gap, id); }).then(function () { show(i); });
     });
+    return chain.then(function () { return wait(180, id); });
+  }
+  function drawForm() {  // the Form draws itself
+    show(-1);
+    credit.classList.remove('on');
+    if (!form) return;
+    form.style.opacity = 1;
+    [].slice.call(form.querySelectorAll('path')).forEach(function (path, j) {
+      var len = path.getTotalLength();
+      path.style.strokeDasharray = len;
+      anim(path, [{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 420, delay: 90 * j, easing: 'ease-out', fill: 'both' });
+    });
+  }
+  function end(id) { unsay(); return glide(id); }
+
+  // --- the three styles -------------------------------------------------------------------------
+  function playA(id) {  // the same sequence, every caption held for its reading time
+    cave();
+    return wait(400, id).then(function () { return hold(id, Q515); })
+      .then(function () { unsay(); return focus(id); })
+      .then(function () { still(id); say(Q596); return wait(1000, id); })  // the caption is up first, then the chair moves
+      .then(function () {
+        return Promise.all([flip(id), wait(300 + readMs(Q596) - 1000, id)]);
+      }).then(function () { drawForm(); return hold(id, ONE); })
+      .then(function () { return end(id); });
+  }
+  function playB(id) {  // words first: each caption alone, big, then small at the top while the scene plays
+    cave(2400);
+    return wait(300, id).then(function () { return hold(id, Q515, 'big', true); })
+      .then(function () { demote(); return focus(id); })
+      .then(function () { return wait(1500, id); })
+      .then(function () { unsay(); still(id); return wait(500, id); })
+      .then(function () { return hold(id, Q596, 'big', true); })
+      .then(function () { demote(); return flip(id); })
+      .then(function () { unsay(); drawForm(); return wait(900, id); })
+      .then(function () { return hold(id, ONE, 'high'); })
+      .then(function () { return end(id); });
+  }
+  function playC(id) {  // short and bold: three lines
+    cave(2600);
+    return wait(300, id).then(function () { return hold(id, C1, 'big', true, 3000); })
+      .then(function () { return hold(id, C2, 'big', false, 2800); })
+      .then(function () { unsay(); return focus(id); })
+      .then(function () { still(id); return flip(id, 0.5); })
+      .then(function () { drawForm(); return hold(id, C3, 'high', false, 3000); })
+      .then(function () { return end(id); });
+  }
+  function play() {
+    var id = ++run;
+    return (STYLE === 'b' ? playB : STYLE === 'c' ? playC : playA)(id);
   }
 
   // --- into the header --------------------------------------------------------------------------
@@ -205,28 +281,35 @@
     if (done) return;
     done = true;
     run++;
+    endLog();
     timers.forEach(clearTimeout);
     anims.forEach(function (a) { try { a.cancel(); } catch (e) { /* already gone */ } });
     document.removeEventListener('keydown', onKey, true);
     window.removeEventListener('resize', finish);
     if (stage && stage.parentNode) stage.parentNode.removeChild(stage);
-    root.classList.remove('splash-on', 'splash-fade');
+    root.classList.remove('splash-on', 'splash-fade', 'splash-static');
+    window.PCSplash.done = true;
   }
-  function onKey(e) {
-    if (e.repeat) return;
-    if (e.key === ' ' || e.key === 'Enter') e.preventDefault();  // skipping shouldn't also scroll or click
-    finish();
-  }
+  function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); finish(); } }
 
   // --- start: once the stylesheet and pictures are in (or not at all) ----------------------------
-  setTimeout(finish, MAX_MS);
+  window.PCSplash = { skip: finish, log: log, style: STYLE, done: false, readMs: readMs };
   document.addEventListener('keydown', onKey, true);
-  window.addEventListener('resize', finish);
   var sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = '/static/css/splash.css';
+  var serif = document.createElement('link');  // the epigraphs' serif, for the quotes
+  serif.rel = 'stylesheet';
+  serif.href = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@1,300;1,400&display=swap';
+  document.head.appendChild(serif);
   var sheetReady = new Promise(function (resolve, reject) { sheet.onload = resolve; sheet.onerror = reject; });
   document.head.appendChild(sheet);
+  if (STATIC) {  // no pictures, no timers, no resize listener: it stays until Continue or Esc
+    sheetReady.then(function () { if (!done) buildStatic(); }).catch(finish);
+    return;
+  }
+  setTimeout(finish, MAX_MS);
+  window.addEventListener('resize', finish);
   var names = ['shadow_chair'].concat(SHADOWS.map(function (n) { return 'shadow_' + n; }));
   for (var k = 1; k <= N_KINDS; k++) names.push('kind_' + (k < 10 ? '0' : '') + k);
   for (var p = 1; p <= N_PEOPLE; p++) names.push('people_' + p);
@@ -249,6 +332,4 @@
       go();
     }
   }).catch(finish);  // couldn't load in time: just show the page
-
-  window.PCSplash = { skip: finish };
 })();

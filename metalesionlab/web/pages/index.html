@@ -11,8 +11,10 @@
 (function () {
   try {
     var q = location.search, s = window.sessionStorage;
-    if (/[?&]nosplash=1(&|$)/.test(q) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (!/[?&]splash=1(&|$)/.test(q) && (location.hash || s.getItem('pc-splash-seen') || s.getItem('tot-tour-step') != null)) return;
+    var asked = /[?&]splash=1(&|$)/.test(q), still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (/[?&]nosplash=1(&|$)/.test(q) || (still && !asked)) return;  // reduced motion never autoplays; Replay shows a still version
+    if (still) document.documentElement.classList.add('splash-static');
+    if (!asked && (location.hash || s.getItem('pc-splash-seen') || s.getItem('tot-tour-step') != null)) return;
     document.documentElement.classList.add('splash-on');
     setTimeout(function () {  // if splash.js never ran, show the page anyway
       if (!document.querySelector('.splash') && !window.PCSplash) document.documentElement.classList.remove('splash-on');
@@ -50,6 +52,8 @@
 
 <main id="main" tabindex="-1">
 
+<div class="wrap replay-bar"><a class="replay-intro" href="/?splash=1" data-replay><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Replay intro</a></div>
+
 <!--#if /draw-->
 <!-- Blind first: the pad, and only Plato's question, until the visitor draws or skips. -->
 <section class="hero hero-draw" aria-labelledby="hero-h">
@@ -71,7 +75,6 @@
       <div class="hero-links">
       <a class="hero-skip" href="#reveal" id="skip-link">Skip, just show me what the AI drew</a>
       <button type="button" class="hero-tour" data-tour-start><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>Take the 90-second tour</button>
-      <a class="hero-tour hero-replay" href="/?splash=1"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1a4 4 0 1 1-3.6 2.3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M0 1.2l2 2.6 2.4-1.9z" fill="currentColor"/></svg>Replay the intro</a>
       </div>
       <p class="hero-ideas">Or draw something no one has seen: <a href="/draw?thing=god">God</a>, <a href="/draw?thing=love">love</a>, <a href="/draw?thing=time">time</a>…</p>
     </div>
