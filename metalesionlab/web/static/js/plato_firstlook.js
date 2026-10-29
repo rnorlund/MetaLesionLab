@@ -166,7 +166,8 @@
   function how(page) {
     var items = page.stats.filter(function (s) { return s.q; }).map(function (s) {
       var label = String((s.o && s.o.label) || '').replace(/[.:;,\s]+$/, '');
-      return '<li><b>' + esc(headline(s)) + '</b> ' + esc(label) + '. ' +
+      var hd = /<span class="sv-num">/.test(html(s)) ? headline(s) : '';  // bar pairs are drawn right above: no repeated bold line
+      return '<li>' + (hd ? '<b>' + esc(hd) + '</b> ' : '') + esc(label) + '. ' +
         (s.verdict ? '<span class="fl-how-v ' + esc(s.verdict.tone) + '">' + esc(s.verdict.text) + '.</span> ' : '') + esc(s.q) + '</li>';
     });
     return (items.length ? '<ul class="fl-how-q">' + items.join('') + '</ul>' : '') + (page.note ? '<p class="fl-how-note">' + esc(page.note) + '</p>' : '');
