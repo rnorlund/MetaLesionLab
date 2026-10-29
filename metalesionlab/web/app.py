@@ -953,6 +953,7 @@ def lab_human():
 SITE_ROUTERS = {
     "plato": [
         "app:plato_home",  # the landing page: draw first, then the reveal (/)
+        "plato_takehomes_routes",  # Three things to take home (/takehomes)
         "plato_routes",  # Plato's Chair (/plato)
         "plato_forms_routes",  # Plato's Forms (/plato/forms)
         "plato_cave_routes",  # Plato's Cave (/plato/cave)

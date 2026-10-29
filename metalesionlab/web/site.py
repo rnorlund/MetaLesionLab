@@ -63,6 +63,9 @@ DAMAGED_TITLES = {"/plato/glimmer": "What a damaged AI forgets first"}
 NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"], "icon": "home"},
+        # the three messages to take home, starred so it stands out from the quiet links
+        {"href": "/takehomes", "label": "Take-homes", "needs": "/takehomes", "current": ["/takehomes"], "icon": "star",
+         "star": True},
         {"href": "/draw", "label": "Draw", "needs": "/draw", "current": ["/draw"], "icon": "draw"},
         # the damage experiments: their hub, and the current item on each of their pages
         {"href": "/damaged", "label": "Damaged AI", "needs": "/damaged", "current": ["/damaged", *DAMAGED_PAGES], "icon": "damaged"},
@@ -104,6 +107,7 @@ SHARE_IMAGE = {"plato": "/static/img/og-plato-chair.png", "lingua": "/static/img
 # Nav icons: an item with "icon" is drawn as an even-weighted button, a small line icon then its label (16-unit
 # box, stroke = currentColor). Items without one (Code, More, the Lingua site's) stay plain links.
 NAV_ICONS = {
+    "star": '<path d="M8 1.8l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.4l-3.9 2.2.9-4.3-3.2-3 4.3-.5z"/>',
     "home": '<path d="M2.5 7.5L8 3l5.5 4.5M4 6.5V13h8V6.5"/>',
     "draw": '<path d="M10.5 2.5l3 3L6 13H3v-3z"/><path d="M9 4l3 3"/>',
     # a chip with a crack through it
@@ -449,7 +453,7 @@ def render_header(app, path: str, chips: str = "", tour: bool = False) -> str:
         parts += [_link(m, path) for m in more]  # exact match only: /lab is not current on /lab/cut
         return "".join(parts)
 
-    inline = "".join(_link(n, path, "nav-accent" if n.get("accent") else "") for n in main)
+    inline = "".join(_link(n, path, "nav-accent" if n.get("accent") else ("nav-star" if n.get("star") else "")) for n in main)
     extra = more_list()
     more_current = any(path == m["href"] for m in more) or any(path == s["path"] for s in subs)
     more_menu = (f'<details class="nav-more{" is-current" if more_current else ""}"><summary>More</summary>'

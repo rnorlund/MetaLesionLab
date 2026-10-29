@@ -20,7 +20,7 @@ from metalesionlab.web import site
 
 REPO = Path(web.__file__).resolve().parents[2]
 PAGES = {
-    "plato": ["/", "/draw", "/damaged", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird",
+    "plato": ["/", "/takehomes", "/draw", "/damaged", "/plato", "/plato/inside", "/plato/forms", "/plato/cave", "/plato/cratylus", "/plato/bird",
               "/plato/damage", "/plato/lifespan", "/plato/gallery", "/socrates"],
     "lingua": ["/", "/take", "/assess", "/scorer", "/studio", "/lab", "/lab/cut", "/lab/bilingual", "/ask", "/challenge"],
 }
@@ -33,7 +33,7 @@ APIS = {  # GET endpoints that answer without data (200, or 503 while a data fil
 }
 NAV = {
     # the Plato question first (Draw), damage second (Damaged AI, then Inside the model), the other experiments, the gallery last
-    "plato": ["Home", "Draw", "Damaged AI", "Inside the model", "Experiments", "Gallery", "Ask Socrates", "Code"],
+    "plato": ["Home", "Take-homes", "Draw", "Damaged AI", "Inside the model", "Experiments", "Gallery", "Ask Socrates", "Code"],
     "lingua": ["Home", "Take the test", "Scorer", "Test Studio", "Model Lab", "Ask the Lab", "Code"],
 }
 OTHER = {"plato": "lingua", "lingua": "plato"}
@@ -337,7 +337,7 @@ def test_calls_to_action_follow_the_routes(client):
     assert re.search(r'<a href="/socrates" class="nav-accent nav-btn"', header(client.get("/plato").text))
     assert "<!--#" not in landing and "{{" not in landing  # every template mark is filled in
     for path in ("/lab", "/take", "/ask", "/challenge", "/studio", "/scorer", "/assess"):  # nothing of the sister site's
-        assert f'href="{path}' not in landing, path
+        assert f'href="{path}"' not in landing and f'href="{path}/' not in landing, path
 
 
 def test_share_tags_and_card(client):

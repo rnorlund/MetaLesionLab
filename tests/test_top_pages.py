@@ -168,7 +168,7 @@ def test_nav_buttons_are_even_and_socrates_is_the_accent(client):
     nav = re.search(r'<nav class="topnav" aria-label="Main">(.*?)<details', client.get("/plato").text, re.S).group(1)
     links = re.findall(r'<a ([^>]*)>(.*?)</a>', nav, re.S)
     buttons = [(a, body) for a, body in links if "nav-btn" in a]
-    assert [re.sub(r"<[^>]+>", "", body) for _, body in buttons] == ["Home", "Draw", "Damaged AI", "Inside the model",
+    assert [re.sub(r"<[^>]+>", "", body) for _, body in buttons] == ["Home", "Take-homes", "Draw", "Damaged AI", "Inside the model",
                                                                        "Experiments", "Gallery", "Ask Socrates"]
     assert all('<svg class="nav-ico"' in body and 'aria-hidden="true"' in body for _, body in buttons)
     assert [a for a, _ in links if "nav-accent" in a] == ['href="/socrates" class="nav-accent nav-btn"']

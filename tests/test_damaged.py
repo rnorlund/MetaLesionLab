@@ -37,12 +37,12 @@ def hub_cards(html: str) -> list[tuple[str, str]]:
 
 # --- the nav ------------------------------------------------------------------------------------------------------
 
-def test_nav_puts_damaged_ai_second_after_draw(client):
+def test_nav_puts_damaged_ai_after_take_homes_and_draw(client):
     nav = re.search(r'<nav class="topnav" aria-label="Main">(.*?)<details', client.get("/damaged").text, re.S).group(1)
     links = re.findall(r'<a ([^>]*)>(.*?)</a>', nav, re.S)
     labels = [re.sub(r"<[^>]+>|↗", "", body).strip() for _, body in links]
-    assert labels == ["Home", "Draw", "Damaged AI", "Inside the model", "Experiments", "Gallery", "Ask Socrates", "Code"]
-    attrs, body = links[2]
+    assert labels == ["Home", "Take-homes", "Draw", "Damaged AI", "Inside the model", "Experiments", "Gallery", "Ask Socrates", "Code"]
+    attrs, body = links[3]
     assert 'href="/damaged"' in attrs and "nav-btn" in attrs and 'aria-current="page"' in attrs
     assert '<svg class="nav-ico"' in body and site.NAV_ICONS["damaged"] in body  # its own line icon, a cracked chip
     assert sum('aria-current="page"' in a for a, _ in links) == 1
