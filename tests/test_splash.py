@@ -84,3 +84,14 @@ def test_the_head_script_never_autoplays_with_reduced_motion(home):
     head = home[:home.index("</head>")]
     assert "(still && !asked)) return" in head
     assert "splash-static" in head
+
+
+@pytest.mark.skipif(not NODE, reason="node is not installed")
+def test_shadow_projection_leans_away_from_the_light():
+    code = re.search(r"  function projectShadow\(.*?\n  \}\n", JS, re.S).group(0)
+    out = subprocess.run([NODE, "-e", code + "const W=1000,lx=920,d=600,f=x=>projectShadow(x,lx,d,W);"
+                          "console.log(JSON.stringify([f(lx),f(800),f(500),f(-250),f(lx+80)]))"], capture_output=True, text=True, check=True)
+    at, mid, far, edge, right = json.loads(out.stdout)
+    assert at["skew"] == 0 and at["blur"] > far["blur"] and at["scale"] > far["scale"]
+    assert 0 < mid["skew"] < far["skew"] <= 25 and edge["skew"] <= 25 and right["skew"] < 0
+    assert abs(far["x"] - 920) > abs(500 - 920)  # the shadow runs faster than its object

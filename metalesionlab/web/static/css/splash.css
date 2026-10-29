@@ -5,7 +5,7 @@
      is light paper in either theme: the landing page's paper in light, the drawings' paper in dark. */
   --sp-wall-1: #2a1d12; --sp-wall-2: #17110c; --sp-paper: var(--ground-warm);
   --sp-fire-1: rgba(242, 163, 58, 0.38); --sp-fire-1-out: rgba(242, 163, 58, 0); --sp-fire-2: rgba(255, 190, 90, 0.30); --sp-fire-2-out: rgba(255, 190, 90, 0);
-  --sp-caption: #e9dccb; --sp-caption-lit: #3d4250; --sp-credit: #6b7180; --sp-chair: #141a26; --sp-seat: #C2410C;
+  --sp-caption: #e9dccb; --sp-caption-lit: #3d4250; --sp-chair: #141a26; --sp-seat: #C2410C;
   --sp-veil: rgba(23, 17, 12, 0.9); --sp-veil-lit: rgba(247, 246, 241, 0.94); --sp-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
   --sp-ink: #171a22; --sp-cream: #f4efe6; --sp-white: #fff; --sp-mute: #6b7180; --sp-mute-2: #4b5160;
   --sp-skip: #f4efe6; --sp-skip-lit: #171a22; --sp-skip-bg-lit: rgba(255, 255, 255, 0.75); --sp-skip-line-lit: #c9c6bc; --sp-focus: #60A5FA; }
@@ -16,10 +16,13 @@
 .sp-paper { background: var(--sp-paper); opacity: 0; }  /* the landing page's paper */
 .splash.lit .sp-paper { opacity: 1; }
 .splash.lit .sp-wall { opacity: 0; transition: opacity 0s linear 950ms; }  /* gone once the paper covers it, so the hand-off fades paper only */
-.sp-fire { position: absolute; inset: -10%; background: radial-gradient(45% 55% at 50% 100%, var(--sp-fire-1), var(--sp-fire-1-out) 70%);
+.sp-fire { position: absolute; inset: -10%; background: radial-gradient(45% 55% at 88% 100%, var(--sp-fire-1), var(--sp-fire-1-out) 70%);
   mix-blend-mode: screen; animation: sp-flicker 2.2s infinite steps(1, end); transition: opacity 700ms ease; }
-.sp-fire.b { animation-duration: 1.7s; animation-delay: -0.6s; background: radial-gradient(35% 45% at 42% 100%, var(--sp-fire-2), var(--sp-fire-2-out) 70%); }
+.sp-fire.b { animation-duration: 1.7s; animation-delay: -0.6s; background: radial-gradient(35% 45% at 78% 100%, var(--sp-fire-2), var(--sp-fire-2-out) 70%); }
 .splash.lit .sp-fire { opacity: 0; }
+.sp-lamp { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(22% 30% at 96% 104%, var(--sp-fire-1), var(--sp-fire-1-out) 70%);
+  mix-blend-mode: screen; animation: sp-flicker 1.3s infinite steps(1, end); transition: opacity 700ms ease; }
+.splash.lit .sp-lamp { opacity: 0; }
 @keyframes sp-flicker {
   0% { opacity: 0.85; transform: translateY(0) scale(1); }
   13% { opacity: 0.62; transform: translateY(1.5%) scale(1.02); }
@@ -54,13 +57,9 @@
 .sp-veil { z-index: 3; background: var(--sp-veil); opacity: 0; pointer-events: none; transition: opacity 600ms ease; }
 .splash.veil .sp-veil { opacity: 1; }
 .splash.lit .sp-veil { background: var(--sp-veil-lit); }
-.sp-credit { z-index: 4; }
 .splash.s-c .sp-caption.big, .splash.s-c .sp-caption.high { font-weight: 600; font-size: var(--fs-display); line-height: 1.12; letter-spacing: var(--ls-display); }
 .splash.s-c .sp-caption.big { text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55); }
 .splash.lit.s-c .sp-caption.big { text-shadow: none; }
-.sp-credit { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: max(18px, env(safe-area-inset-top, 0px)); margin: 0; max-width: 60%;
-  font: 400 var(--fs-label)/1.4 var(--mono); color: var(--sp-credit); opacity: 0; transition: opacity 400ms ease; }
-.sp-credit.on { opacity: 1; }
 .sp-actor { position: absolute; left: 0; top: 0; z-index: 2; will-change: transform; }
 .sp-actor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
 .sp-actor img.on { opacity: 1; }
@@ -76,7 +75,7 @@
 @media (hover: none) { .sp-skip small { display: none; } }
 
 /* the hand-off: the stage fades away and the page fades in under the gliding chair */
-.splash.out .sp-bg, .splash.out .sp-caption, .splash.out .sp-credit, .splash.out .sp-skip { opacity: 0; transition: opacity 700ms ease; }
+.splash.out .sp-bg, .splash.out .sp-caption, .splash.out .sp-skip { opacity: 0; transition: opacity 700ms ease; }
 .splash.out .sp-skip { pointer-events: none; }
 html.splash-fade body > *:not(.splash) { animation: sp-pagein 800ms ease both; }
 html.splash-fade .site-head .brand-logo { visibility: hidden; }  /* the flying chair lands here, then this shows */

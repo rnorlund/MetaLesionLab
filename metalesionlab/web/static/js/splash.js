@@ -40,8 +40,8 @@
   var NAVY = '#141a26', WHITE = '#F9FAFB', ORANGE = '#C2410C';
   var MAX_MS = { a: 34000, b: 38000, c: 22000 }[STYLE];  // whatever happens, the page is back by then
 
-  var run = 0, done = false, anims = [], timers = [], log = [], cur = null;
-  var stage, actor, shadowEl, caption, credit, skipBtn, form, frames = [], shadowPic, L = {};
+  var raf = 0, run = 0, done = false, anims = [], timers = [], log = [], cur = null;
+  var stage, actor, shadowEl, caption, skipBtn, form, frames = [], shadowPic, L = {};
 
   // Reading time of a caption (the citation line is not counted).
   function words(html) { var t = html.replace(/<cite>.*?<\/cite>/g, '').replace(/<[^>]+>/g, ' ').trim(); return t ? t.split(/\s+/).length : 0; }
@@ -87,6 +87,16 @@
   // Words-first: the held caption shrinks to the top and the scene plays beneath it.
   function demote() { endLog(); caption.classList.remove('big', 'high'); caption.classList.add('top'); stage.classList.remove('veil'); }
 
+  // The fire is at the front right, between us and the wall. An object at xo (px) crossing in front of it casts a
+  // shadow that leans away from the fire (skew = -atan((xo - lightX) / depth), upright right under it), is bigger
+  // and softer the nearer the fire, and moves faster than its object: x = lightX + (xo - lightX) * MAG.
+  function projectShadow(xo, lightX, depth, W) {
+    var dx = xo - lightX, MAG = 1.25;
+    var skew = Math.max(-25, Math.min(25, -Math.atan(dx / depth) * 180 / Math.PI));
+    var near = 1 - Math.min(1, Math.abs(dx) / W);  // 1 beside the fire, 0 across the wall
+    return { x: lightX + dx * MAG, skew: skew, scale: 0.85 + 0.35 * near, blur: 1.5 + 2.5 * near, near: near };
+  }
+
   // --- the stage --------------------------------------------------------------------------------
   function build() {
     stage = el('div', 'splash s-' + STYLE);
@@ -96,6 +106,7 @@
     scene.appendChild(el('div', 'sp-bg sp-paper'));
     scene.appendChild(el('div', 'sp-bg sp-fire'));
     scene.appendChild(el('div', 'sp-bg sp-fire b'));
+    scene.appendChild(el('div', 'sp-lamp'));
     shadowEl = scene.appendChild(el('div', 'sp-shadows'));
     actor = scene.appendChild(el('div', 'sp-actor'));
     shadowPic = actor.appendChild(img(IMG + 'shadow_chair.webp'));
@@ -113,8 +124,6 @@
     }
     scene.appendChild(el('div', 'sp-bg sp-veil'));
     caption = scene.appendChild(el('p', 'sp-caption'));
-    credit = scene.appendChild(el('p', 'sp-credit',
-      'Chairs: 16 kinds named by Muse Spark and drawn by Muse Image, and people’s drawings (Google Quick, Draw!, CC BY 4.0)'));
     stage.appendChild(scene);
     skipBtn = el('button', 'sp-skip', 'Skip intro <span aria-hidden="true">→</span>');
     skipBtn.type = 'button';
@@ -144,7 +153,7 @@
   // The chair's size and place follow the stage's height, so it never grows into the caption.
   function layout() {
     var W = window.innerWidth, H = window.innerHeight, portrait = W < H;
-    L.W = W; L.H = H;
+    L.W = W; L.H = H; L.lightX = W * 0.92; L.depth = W * 0.6;
     L.base = Math.round(portrait ? Math.min(W * 0.42, H * 0.3) : Math.min(W * 0.22, H * 0.34));
     L.x = W / 2 - L.base / 2;
     L.y = H * 0.42 - L.base / 2;
@@ -172,24 +181,40 @@
   // --- the scenes (each style strings them together with its own captions) ----------------------
   function cave(slide) {  // firelight, drifting shadows, the chair's shadow sliding in
     var W = L.W, H = L.H;
-    SHADOWS.forEach(function (name, i) {
+    var items = SHADOWS.map(function (name, i) {
       var s = img(IMG + 'shadow_' + name + '.webp');
       shadowEl.appendChild(s);
-      var scale = 0.65 + (i % 3) * 0.22, y = H * (0.14 + (i * 0.37 % 0.5)), dir = i % 2 ? -1 : 1;
-      var from = dir > 0 ? -0.25 * W : 1.05 * W, to = dir > 0 ? 1.05 * W : -0.25 * W;
-      anim(s, [{ transform: 'translate(' + from + 'px,' + y + 'px) skewX(-14deg) scale(' + scale + ')' },
-               { transform: 'translate(' + to + 'px,' + (y + (i % 2 ? -10 : 10)) + 'px) skewX(-14deg) scale(' + scale + ')' }],
-           { duration: 4500 + i * 520, delay: i * 320 - 400, easing: 'linear', fill: 'both', iterations: Infinity });  // loops, so the wall is never empty
+      var dir = i % 2 ? -1 : 1;
+      return { el: s, scale: 0.65 + (i % 3) * 0.22, y: H * (0.14 + (i * 0.37 % 0.5)), dir: dir, period: 4500 + i * 520, delay: i * 320 - 400, blur: -1 };
     });
+    var t0 = performance.now();
+    (function tick(now) {  // one loop: each object's place gives its shadow's lean, size, softness and place
+      if (done || stage.classList.contains('lit')) return;
+      var w = shadowEl.firstChild ? shadowEl.firstChild.offsetWidth || W * 0.15 : W * 0.15;
+      items.forEach(function (o) {
+        var f = (((now - t0 - o.delay) / o.period) % 1 + 1) % 1;
+        var xo = (o.dir > 0 ? -0.25 + 1.3 * f : 1.05 - 1.3 * f) * W;  // the object's centre, on its way across
+        var p = projectShadow(xo, L.lightX, L.depth, W);
+        var flick = 1 + 0.015 * Math.sin(now / 90 + o.period) + 0.01 * Math.sin(now / 37 + o.delay);
+        var sc = o.scale * p.scale * flick;
+        o.el.style.transform = 'translate(' + (p.x - w / 2) + 'px,' + (o.y + (o.dir > 0 ? 10 : -10) * f) + 'px) skewX(' + p.skew.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+        var b = Math.round(p.blur * 2) / 2;
+        if (b !== o.blur) { o.blur = b; o.el.style.filter = 'blur(' + b + 'px)'; }
+        o.el.style.opacity = (0.5 + 0.08 * p.near + 0.02 * Math.sin(now / 53 + o.delay)).toFixed(3);
+      });
+      raf = requestAnimationFrame(tick);
+    })(t0);
     shadowPic.classList.add('on');
     shadowPic.style.filter = 'blur(3px)';
-    anim(actor, [{ transform: 'translateX(-' + (0.62 * W) + 'px) skewX(-14deg) scale(.62)', opacity: 0.6 },
-                 { transform: 'translateX(0) skewX(-14deg) scale(.62)', opacity: 0.6 }], { duration: slide || 3200, easing: 'cubic-bezier(.2,.7,.25,1)' });
+    var lean = projectShadow(W / 2, L.lightX, L.depth, W).skew.toFixed(1);  // the chair stops at the centre, leaning away from the fire
+    L.lean = lean;
+    anim(actor, [{ transform: 'translateX(-' + (0.62 * W) + 'px) skewX(' + (+lean + 8) + 'deg) scale(.62)', opacity: 0.6 },
+                 { transform: 'translateX(0) skewX(' + lean + 'deg) scale(.62)', opacity: 0.6 }], { duration: slide || 3200, easing: 'cubic-bezier(.2,.7,.25,1)' });
   }
   function focus(id) {  // the fire goes out, the wall turns to paper, the shadow comes into focus
     shadowEl.style.opacity = 0;
     stage.classList.add('lit');
-    anim(actor, [{ transform: 'translateX(0) skewX(-14deg) scale(.62)', opacity: 0.6 },
+    anim(actor, [{ transform: 'translateX(0) skewX(' + (L.lean || 0) + 'deg) scale(.62)', opacity: 0.6 },
                  { transform: 'translateX(0) skewX(0deg) scale(.66)', opacity: 1 }], { duration: 700, easing: 'ease-out' });
     anim(shadowPic, [{ filter: 'blur(3px)' }, { filter: 'blur(0px)' }], { duration: 700 });
     return wait(700, id);
@@ -197,7 +222,6 @@
   function still(id) {  // the chair as a plain frame, ready to come closer
     shadowPic.classList.remove('on');
     show(0);
-    credit.classList.add('on');
   }
   function flip(id, speed) {  // it comes closer, flipping through the named kinds and people's chairs
     var sp = speed || 1;
@@ -213,7 +237,6 @@
   }
   function drawForm() {  // the Form draws itself
     show(-1);
-    credit.classList.remove('on');
     if (!form) return;
     form.style.opacity = 1;
     [].slice.call(form.querySelectorAll('path')).forEach(function (path, j) {
@@ -282,6 +305,7 @@
     done = true;
     run++;
     endLog();
+    cancelAnimationFrame(raf);
     timers.forEach(clearTimeout);
     anims.forEach(function (a) { try { a.cancel(); } catch (e) { /* already gone */ } });
     document.removeEventListener('keydown', onKey, true);
@@ -313,15 +337,16 @@
   var names = ['shadow_chair'].concat(SHADOWS.map(function (n) { return 'shadow_' + n; }));
   for (var k = 1; k <= N_KINDS; k++) names.push('kind_' + (k < 10 ? '0' : '') + k);
   for (var p = 1; p <= N_PEOPLE; p++) names.push('people_' + p);
+  // Every picture gets 1.5 s at most; one that fails or is slow is simply left out, and the intro goes on without it.
   var picsReady = Promise.all(names.map(function (n) {
-    return new Promise(function (resolve, reject) { var i = new Image(); i.onload = resolve; i.onerror = reject; i.src = IMG + n + '.webp'; });
+    return new Promise(function (resolve) { var i = new Image(); i.onload = i.onerror = resolve; i.src = IMG + n + '.webp'; setTimeout(resolve, 1500); });
   }));
   var slow = new Promise(function (_, reject) { setTimeout(function () { reject(new Error('slow')); }, 3500); });
-  Promise.race([Promise.all([sheetReady, picsReady]), slow]).then(function () {
+  Promise.race([Promise.all([sheetReady.catch(function () {}), picsReady]), slow]).then(function () {
     if (done) return;
     build();
     layout();
-    var go = function () { play().catch(function () { /* skipped */ }); };
+    var go = function () { play().catch(function (e) { if (!done && !(e && e.message === 'stopped')) finish(); }); };  // a scene that fails never leaves the stage frozen: the page opens
     if (document.hidden) {  // opened in a background tab: start when it's looked at
       document.addEventListener('visibilitychange', function onVis() {
         if (document.hidden) return;
