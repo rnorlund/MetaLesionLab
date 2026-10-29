@@ -62,7 +62,7 @@ def test_inside_numbers_render_from_the_data(client, tmp_path):
     # 52 segments, filled from the median collapse layer to the last, the range as a band, a marker
     assert layers.count('class="sv-on sv-blue"') == 52 - at + 1 and layers.count('class="sv-off-fill"') == at - 1
     assert 'class="fl-band"' in layers and f">{lo}–{hi}</span>" in layers and 'class="sv-mark"' in layers
-    assert num(layers) == f"{at}of 52 layers"
+    assert num(layers) == f"{at}of 52 stages"  # "stage", the plain word for a layer
     # people's doodles against Muse's at the last layer: two clusters and the rounded ratio
     ratio = ms["people"][-1] / ms["muse"][-1]
     assert num(spread) == f"{round(ratio)}×" and f"Muse Image <b>{ms['muse'][-1]:.2f}</b>" in spread
@@ -70,7 +70,7 @@ def test_inside_numbers_render_from_the_data(client, tmp_path):
     # things that collapse at or before the name: one filled dot each
     assert dots.count("sv-on sv-blue") == sm["collapse_at_or_before_name"]
     assert dots.count('class="sv-off"') == sm["n_with_both"] - sm["collapse_at_or_before_name"]
-    assert "never collapses" in out["stats"][0]["q"] and "chose after seeing the data" in out["note"]
+    assert "never filed in one place" in out["stats"][0]["q"] and "chose after seeing the data" in out["note"]
 
 
 @needs_node
@@ -112,13 +112,20 @@ def test_scale_numbers_render_from_the_data(client, tmp_path):
     assert num(fails) == f"{small['failed']} → {big['failed']}failures in 12"
     assert fails.count("sv-on sv-muted") == small["failed"] + big["failed"] and fails.count("<rect") == 24
     wonder = next(r for r in d["arm_b"]["rows"] if r["key"] == "wonder" and r["temp"] == 1)
-    assert num(ratio) == f"{wonder['spread_ratio']:.2f}×people’s spread" and 'class="fl-rs-people"' in ratio
+    assert num(ratio) == f"{wonder['spread_ratio']:.2f}×as varied as people’s" and 'class="fl-rs-people"' in ratio
     assert ratio.count('class="sv-on sv-muted"') == 3 and 'class="fl-rs-ring"' in ratio  # the three 32B open models, Muse Image's mark
     final = sorted((r for r in d["arm_a"]["rows"] if r["temp"] == 1 and r["checkpoint"] == "final"), key=lambda r: r["size"])
     assert num(bars) == f"{round(final[0]['recog']['mean'] * 100)}% → {round(final[-1]['recog']['mean'] * 100)}%"
     p3 = d["predictions"]["P3"]["model_size"]
-    assert f"−{round(-p3['contrast'] * 12)} of 12" in out["stats"][0]["q"] and "supported" in out["stats"][0]["q"]
-    assert "unclear" in out["stats"][1]["q"]  # no convergence: the planned verdict, as it came out
+    lo, hi = round(-p3["ci95"][1] * 12), round(-p3["ci95"][0] * 12)
+    assert f"{round(-p3['contrast'] * 12)} fewer failures in 12 (probably between {lo} and {hi} fewer)" in out["stats"][0]["q"]
+    # each planned prediction's verdict, as it came out, in the chip beside it
+    assert p3["primary"] == "supported" and '<span class="fl-verdict yes">As predicted</span>' in fails
+    assert d["predictions"]["P2"]["model_size"]["primary"] == "unclear" and '<span class="fl-verdict part">Unclear</span>' in ratio
+    assert "Too close to call" in out["stats"][1]["q"]  # no convergence with size
+    p1 = d["predictions"]["P1"]["data_size"]
+    assert p1["primary"] == "supported" and '<span class="fl-verdict yes">As predicted</span>' in bars
+    assert f"up {round(p1['contrast'] * 100)} points" in out["stats"][2]["q"]
 
 
 # --- the pages ----------------------------------------------------------------------------------------------
