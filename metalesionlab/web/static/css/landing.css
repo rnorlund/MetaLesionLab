@@ -43,6 +43,12 @@ body.landing { background: var(--l-white); --l-white: var(--panel); --ai: var(--
 .hero-tour svg { width: 10px; height: 10px; color: var(--orange); }
 .hero-tour:hover { color: var(--ink); }
 
+/* Replay intro: a quiet text button at the very top of the page, above the fold at any width */
+.replay-bar { background: var(--ground-warm); padding-top: 4px; padding-bottom: 0; display: flex; justify-content: flex-start; }
+.replay-intro { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-body); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.replay-intro svg { width: 10px; height: 10px; color: var(--orange); }
+.replay-intro:hover { color: var(--ink); }
+
 /* draw first: the pad (draw.js) and Plato's question, before anything about the AI's chairs */
 .hero-draw { padding: clamp(32px, 2.6vw, 64px) 0 clamp(52px, 3.6vw, 90px); }
 .draw-grid { display: grid; grid-template-columns: minmax(0, clamp(460px, 32vw, 682px)) minmax(0, 1fr); gap: 32px clamp(56px, 6vw, 160px); align-items: center; }
