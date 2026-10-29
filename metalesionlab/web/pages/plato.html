@@ -26,6 +26,7 @@
 <link rel="stylesheet" href="/static/css/tour.css">
 <link rel="stylesheet" href="/static/css/statviz.css">
 <link rel="stylesheet" href="/static/css/plato.css">
+<link rel="stylesheet" href="/static/css/plato_hub.css">
 </head>
 <body class="plato">
 <a class="skip" href="#main">Skip to content</a>
@@ -86,7 +87,8 @@
   </figure>
 </section>
 
-<!-- The Experiments hub: every question in the series as one even grid (site.py: render_hub). -->
+<!-- The Experiments hub: every question in the series as one even grid (site.py: render_hub), except the damage
+     experiments, which have their own hub (/damaged). -->
 <!--#if series-->
 <section class="pc-sec pc-hub" id="experiments" aria-labelledby="experiments-h">
   <div class="pc-sec-head">
@@ -94,6 +96,8 @@
     <h2 id="experiments-h">More of Plato’s questions, put to an AI and to people</h2>
   </div>
   <!--#series:hub-->
+  <!-- no #if here: the series' #if around this section can't hold another; /damaged is served wherever the series is -->
+  <p class="pc-hub-more">What happens to an AI’s idea of a thing when we damage it? The damage experiments have their own page: <a href="/damaged">Damaged AI</a>.</p>
 </section>
 <!--#endif-->
 

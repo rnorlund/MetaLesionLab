@@ -61,7 +61,8 @@ _SHOWN = {  # a portrait's file -> whose it is (for the credit line)
 
 
 def is_series(path: str) -> bool:
-    return path == "/plato" or path.startswith("/plato/")
+    """The series pages, and the Damaged AI hub (/damaged), which asks the series' damage question."""
+    return path in ("/plato", "/damaged") or path.startswith("/plato/")
 
 
 def kicker_face(page: str) -> str:

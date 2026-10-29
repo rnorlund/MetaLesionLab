@@ -38,6 +38,7 @@ body.plato-damage { background: var(--ground-warm); }
 .pd-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.2vw, 56px) clamp(32px, 2.5vw, 64px);
   display: flex; flex-direction: column; gap: 18px; }
 .pd-sec h2 { margin: 0; font-size: clamp(26px, calc(14px + 1.1vw), 44px); letter-spacing: -0.01em; }
+.pd-sec h2[id] { scroll-margin-top: clamp(28px, 2.2vw, 56px); }  /* a link from the Damaged AI hub lands with the section's top in view */
 .pd-sec h3 { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 24px); }
 .pd-intro { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
 .pd-caveat { margin: 0; font-size: var(--fs-sm); line-height: 1.55; color: var(--muted); border-left: 3px solid var(--line-2); padding-left: 12px; max-width: var(--measure); }
