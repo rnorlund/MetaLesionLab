@@ -155,6 +155,19 @@ Janus-Pro-7B reads pictures and draws them with the same language model, so one 
 - **Small n where noted.** 8 seeds per prompt; hats and birds 3 kinds each; Janus 4 seeds and 40 reading items.
 - **Exploratory parts.** Glimmer's one-word names, the steady-answer rule, the matched-loss comparison in the Glimmer arm, "numbers among clocks" and the Janus arm were not in the plan.
 
+## Denser rows (display only)
+
+The hero rows on `/damaged` and `/plato/damage` show ten pictures each: undamaged plus nine doses, left to right, from none to the strongest dose the page already used. A display upgrade: same pipeline, prompt, seed and settings (SDXL, 768 px, 25 steps, guidance 5, the same negative prompt and unit statistics); only the dose ladder is denser. Undamaged and the strongest dose reproduce the earlier pictures. No statistics change.
+
+| Row | Damage | Seed (picture) | Doses (noise ×) |
+|---|---|---|---|
+| Rocking chair | words part, noise | picture 1 of the experiment's rocking chair | 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 |
+| Throne | words part, noise | picture 0 of the throne | 0.2 to 1.0, same steps |
+| God | words part, noise | ideas-damage picture 13 (the page's medoid pick) | 0.2 to 1.0, same steps |
+| Clock "a simple clock face showing 8:45" | drawing part, noise | picture 0 | 0.70, 0.75, ..., 1.10 |
+
+Run with `scripts/plato_damage_dense.py` on a lab GPU (axon-server01, one L40S, 40 pictures, about 2 minutes; the device is written to each row's `meta.json`); `scripts/plato_damage_dense_web.py` makes the small WebP tiles in `static/img/plato_damage/dense/` and the hero slides. Raw pictures and contact sheets: `PlatosChair/damage_dense/out/`. The "Pictures in a row" control (5, 7, 10) shows evenly spaced steps and always keeps the first and the last. No God picture was grotesque or mocking, so the seed stayed.
+
 ## Cost
 
 Muse Spark clock scoring: 624 calls, $1.61. SDXL, Glimmer and Janus ran on lab GPUs at $0. Total for this experiment: $1.61.

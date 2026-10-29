@@ -17,7 +17,8 @@
       Slide: {caption, images:[{src, alt, label?}], href? (the caption becomes a link)}. Keep every slide to the same
       number of pictures so the area never changes height (the area is always as tall as the tallest slide anyway).
    2b. ROW LAYOUT: add data-layout="row" to the figure (or {layout:'row'} to mount()) and each slide is one horizontal
-      row of equal square tiles, left to right, filling the width (a tile is 1/6 of the row, so 4-6 steps all fit and
+      row of equal square tiles (a "Pictures in a row" control, 5 / 7 / 10, thins a long row to evenly spaced steps,
+      always keeping the first and the last), left to right, filling the width (a tile is 1/6 of the row, so 4-6 steps all fit and
       every slide reserves the same height); up to 640px it is a horizontal scroll strip. Put it under the text, full
       width (/damaged and /plato/damage use it with .fl-wide in plato_firstscreen.css). Without it: the 2x2 grid.
    3. Pictures sit on paper (--paper). Colours are the site's tokens. Timing: --hc-interval (7 s) is set from `interval`.
@@ -59,6 +60,17 @@
       ' of ' + n + '"><div class="hc-strip" style="--n:' + (s.images || []).length + '">' + imgs + '</div><figcaption class="hc-cap">' + cap + '</figcaption></figure>';
   }
 
+  // Row layout: which of `n` steps show when `k` are wanted. Evenly spaced, always the first (least damage, at the
+  // left) and the last (most damage, at the right). Pure: tests read it.
+  function pick(n, k) {
+    if (k >= n) { var all = []; for (var a = 0; a < n; a++) all.push(a); return all; }
+    if (k < 2) return [0];
+    var out = [];
+    for (var j = 0; j < k; j++) out.push(Math.round(j * (n - 1) / (k - 1)));
+    return out;
+  }
+  var COUNTS = [5, 7, 10];
+
   function mount(root, cfg) {
     var slides = (cfg && cfg.slides) || [], n = slides.length;
     if (!n) return null;
@@ -77,6 +89,33 @@
     var els = [].slice.call(view.children), dots = [];
     function btn(cls, html, label) {
       var b = document.createElement('button'); b.type = 'button'; b.className = cls; b.innerHTML = html; b.setAttribute('aria-label', label); return b;
+    }
+    var rowMode = root.getAttribute('data-layout') === 'row';
+    var most = slides.reduce(function (m, s) { return Math.max(m, (s.images || []).length); }, 0);
+    var shown = 0;
+    function setCount(k) {
+      shown = Math.min(k, most);
+      root.style.setProperty('--hc-cols', shown);
+      els.forEach(function (e) {
+        var pics = [].slice.call(e.querySelectorAll('.hc-pic')), keep = pick(pics.length, shown);
+        pics.forEach(function (p, i) { p.classList.toggle('hc-off', keep.indexOf(i) < 0); });
+      });
+      [].forEach.call(root.querySelectorAll('.hc-count button'), function (b) {
+        b.setAttribute('aria-pressed', String(+b.getAttribute('data-n') === k));
+      });
+    }
+    if (rowMode) {
+      view.insertAdjacentHTML('afterend', '<p class="hc-more" aria-hidden="true"><span>undamaged</span><span class="hc-rule"></span><span>more damage \u2192</span></p>');
+      if (most > COUNTS[0]) {
+        var box = document.createElement('div'); box.className = 'hc-count'; box.setAttribute('role', 'group');
+        box.setAttribute('aria-label', 'Pictures in a row');
+        box.innerHTML = '<span class="hc-count-l">Pictures in a row</span>' + COUNTS.map(function (c) {
+          return '<button type="button" data-n="' + c + '" aria-label="Show ' + c + ' pictures in a row" aria-pressed="false">' + c + '</button>';
+        }).join('');
+        box.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b) setCount(+b.getAttribute('data-n')); });
+        ctl.appendChild(box);
+      }
+      setCount(COUNTS[COUNTS.length - 1]);
     }
     var toggle = btn('hc-btn hc-toggle', ICON.pause + ICON.play, 'Pause');
     toggle.setAttribute('aria-controls', view.id);
@@ -156,6 +195,6 @@
       mount(root, cfg);
     });
   }
-  window.HeroCarousel = { mount: mount, slideHtml: slideHtml, auto: auto };
+  window.HeroCarousel = { mount: mount, pick: pick, slideHtml: slideHtml, auto: auto };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto); else auto();
 })();
