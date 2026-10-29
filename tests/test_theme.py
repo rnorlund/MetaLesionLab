@@ -14,7 +14,7 @@ STATIC = Path(web.__file__).resolve().parent / "static"
 CSS = STATIC / "css"
 JS = STATIC / "js"
 
-PLATO_PAGES = ["/", "/draw", "/plato", "/plato/inside", "/plato/damage", "/plato/cave", "/plato/gallery", "/socrates"]
+PLATO_PAGES = ["/", "/draw", "/damaged", "/plato", "/plato/inside", "/plato/damage", "/plato/cave", "/plato/gallery", "/socrates"]
 LINGUA_PAGES = ["/", "/take", "/scorer", "/lab", "/ask"]
 
 # Every stylesheet the Plato site uses besides the shared app.css (which holds the token definitions).

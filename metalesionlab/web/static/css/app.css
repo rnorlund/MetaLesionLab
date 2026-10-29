@@ -316,10 +316,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .topnav > a.nav-btn[aria-current="page"], .topnav > a.nav-btn.nav-accent { box-shadow: none; }
 .nav-ico { width: 16px; height: 16px; flex: none; }
 .nav-panel .nav-btn { display: flex; align-items: center; gap: 10px; }
-@media (min-width: 861px) and (max-width: 1500px) {  /* one row with the Tour button: Home becomes its icon, the tagline goes */
+@media (min-width: 861px) and (max-width: 1600px) {  /* one row with the Tour button: Home becomes its icon, the tagline goes */
   .topbar:has(.nav-btn) .brand-tag { display: none; }
   .topnav > a.nav-btn[href="/"] { gap: 0; }
   .topnav > a.nav-btn[href="/"] .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (min-width: 861px) and (max-width: 1500px) {  /* still one row at 1280 with every button: a little tighter, the same buttons */
+  .topbar:has(.nav-btn) { column-gap: 12px; }
+  .topbar:has(.nav-btn) .brand { margin-right: 0; }
+  .topnav:has(> a.nav-btn) { gap: 3px; }
+  .topnav:has(> a.nav-btn) > a, .topbar:has(.nav-btn) .nav-more > summary { padding-left: 7px; padding-right: 7px; font-size: 13px; }
+  .topnav > a.nav-btn { gap: 5px; }
+}
+@media (min-width: 861px) and (max-width: 1279px) {  /* too narrow for one row: logo, Tour and theme on top, the buttons below */
+  .topbar:has(.nav-btn) .brand { order: 1; }
+  .topbar:has(.nav-btn) .demo-btn { order: 2; margin-left: auto; }
+  .topbar:has(.nav-btn) .theme-toggle { order: 3; }
+  .topbar:has(.nav-btn) .topnav { order: 4; flex-basis: 100%; }
+  .topbar:has(.nav-btn):not(:has(.demo-btn)) .theme-toggle { margin-left: auto; }
+}
+@media (min-width: 861px) and (max-width: 1000px) {  /* the buttons' row, still one line on a small tablet */
+  .topnav:has(> a.nav-btn) { gap: 2px; }
+  .topnav:has(> a.nav-btn) > a, .topbar:has(.nav-btn) .nav-more > summary { padding-left: 6px; padding-right: 6px; }
+  .topnav > a.nav-btn { gap: 4px; }
 }
 @media (max-width: 860px) {
   .topnav { display: none; }
