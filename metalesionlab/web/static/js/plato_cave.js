@@ -79,12 +79,12 @@
         q: 'Predicted: drawings easiest, silhouettes (solid black shapes) at least 15 points lower, shadows hardest. ' + (!order ? 'Not that order' :
           gap >= 15 ? 'That order' : 'That order, but silhouettes only ' + gap + ' points lower') + ' (' + pct(a.original.accuracy) + '%, ' +
           pct(a.silhouette.accuracy) + '%, ' + pct(sh.accuracy) + '%).' },
-      { kind: 'dots',
+      { kind: 'dots', ask: 'Wrong answers that were just “Shadow”',
         o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'wrong answers were just “Shadow”',
           alt: m.just_shadow + ' of its ' + e.n_errors + ' wrong answers to cast shadows were just the word Shadow, and ' + m.ufo + ' were UFO.' },
         q: 'Of its ' + e.n_errors + ' wrong answers for shadows, ' + m.just_shadow + ' were just the word “Shadow”. ' + m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' It never said “Shadow” for a sharp black silhouette.' : '') },
-      { kind: 'bars', verdict: r.ci95[0] > 0 ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
-        o: { values: [ai, pp], labels: ['Glimmer', 'people'], tones: ['ink', 'orange'], max: 100, value: ai + '%', unit: 'vs ' + pp + '%',
+      { kind: 'bars', ask: 'Silhouettes named correctly', verdict: r.ci95[0] > 0 ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
+        o: { values: [ai, pp], labels: ['Glimmer', 'People'], tones: ['ink', 'orange'], max: 100, suffix: '%',
           label: 'of silhouettes named: Glimmer, then people',
           alt: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects: Muse Glimmer named ' + ai + '%, people ' + pp + '% (published, other drawings).' },
         q: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects. Predicted: shapes people find hard are hard for the AI too. They were, a modest link (' + r.rho.toFixed(2) +

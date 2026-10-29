@@ -82,3 +82,17 @@
   .sv .sv-on, .sv .sv-mark { fill: CanvasText; }
   .sv-fill { background: CanvasText; }
 }
+
+/* The label comes first, then the numbers. A comparison has one row per group: its name, a bar, and its value with
+   units, large enough to read at a glance. A single number never wraps: it scales down to fit its column. */
+.sv-val { flex-wrap: nowrap; white-space: nowrap; }
+.sv-bars { gap: 12px; width: 100%; }
+.sv-bar { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; font-size: var(--fs-body); }
+.sv-bar-l { grid-column: 1 / -1; color: var(--ink-2); }
+.sv-bar .sv-track { grid-column: 1; grid-row: 2; }
+.sv-bar-v { grid-column: 2; grid-row: 2; font-family: var(--sans); font-size: var(--fs-h2); font-weight: var(--fw-number); line-height: 1; white-space: nowrap; }
+.sv-bar-u { font-size: var(--fs-body); font-weight: 400; color: var(--muted); }
+/* the label leads: it is the first thing in a graphic */
+.sv > .sv-cap { color: var(--ink); font-weight: 500; max-width: 30ch; margin-bottom: 8px; }
+.sv-take { margin: 8px 0 0; font-size: var(--fs-body); line-height: 1.35; color: var(--ink-2); max-width: 34ch; }
+.sv-s .sv-bar-v { font-size: var(--fs-h3); }  /* small graphics (static pages): values a step down, still large */

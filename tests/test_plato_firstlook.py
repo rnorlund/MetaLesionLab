@@ -44,6 +44,11 @@ def num(fig: str) -> str:
     return "".join(re.findall(r'<span class="sv-(?:num|unit)">([^<]*)</span>', fig))
 
 
+def brows(fig: str) -> list[tuple[str, str]]:
+    """A comparison's rows: (group name, value with units)."""
+    return [(n, plain(v)) for n, v in re.findall(r'<span class="sv-bar-l">([^<]*)</span>.*?<span class="sv-bar-v">(.*?)</span></div>', fig, re.S)]
+
+
 def plain(h: str) -> str:
     return html.unescape(re.sub(r"<[^>]+>", "", h))
 
@@ -57,14 +62,17 @@ def check_common(out: dict, figs: list[str]):
     how = plain(out["how"])
     for spec, fig in zip(out["stats"], figs):
         assert re.search(r'<svg[^>]+role="img" aria-label="[^"]+"|class="sv-(?:bars|pair)" role="img" aria-label="[^"]+"', fig), spec["kind"]
-        assert '<p class="sv-cap">' in fig and "ERROR" not in fig
-        # the first screen is short: a label of at most ten words under the number, and at most one verdict after it
-        cap = plain(re.search(r'<p class="sv-cap">(.*?)</p>', fig, re.S).group(1))
-        assert words(cap) <= 10, cap
+        assert '<p class="fl-ask">' in fig and "ERROR" not in fig
+        # the label comes first: a phrase of at most ten words, before any number, bar or dot; no combined "a vs b" headline
+        ask = plain(re.search(r'<p class="fl-ask">(.*?)</p>', fig, re.S).group(1))
+        assert words(ask) <= 10, ask
+        first_value = min(fig.index(m) for m in ('class="sv-num"', 'class="sv-bar-v"', "<svg", "fl-fail-v") if m in fig)
+        assert fig.index('class="fl-ask"') < first_value
+        assert " vs " not in plain(fig) and "→" not in plain(fig), plain(fig)
         if spec.get("verdict"):
-            assert re.search(r'<figcaption class="fl-q"><span class="fl-verdict (yes|no|part)">[^<]{1,24}</span></figcaption>', fig), fig
-        else:
-            assert "fl-q" not in fig
+            assert re.search(r'<figcaption class="fl-q">(?:<span class="fl-take">[^<]{1,90}</span>)?<span class="fl-verdict (yes|no|part)">[^<]{1,24}</span></figcaption>', fig), fig
+        if spec.get("take"):
+            assert words(spec["take"]) <= 12, spec["take"]
         # every qualifier is kept, in the "How we know" disclosure under the numbers
         assert spec["q"] and spec["q"] in how, spec["q"]
     assert out["note"] and out["note"] in how
@@ -78,15 +86,15 @@ def test_inside_numbers_render_from_the_data(client, tmp_path):
     check_common(out, figs)
     sm, ms = d["summary"], d["summary"]["mean_spread"]
     at, lo, hi = int(sm["median_collapse_layer"]), sm["earliest_collapse"], sm["latest_collapse"]
-    layers, spread, dots = figs
+    layers, bars, dots = figs
     # 52 segments, filled from the median collapse layer to the last, the range as a band, a marker
     assert layers.count('class="sv-on sv-blue"') == 52 - at + 1 and layers.count('class="sv-off-fill"') == at - 1
     assert 'class="fl-band"' in layers and f">{lo}–{hi}</span>" in layers and 'class="sv-mark"' in layers
     assert num(layers) == f"{at}of 52 stages"  # "stage", the plain word for a layer
     # people's doodles against Muse's at the last layer: two clusters and the rounded ratio
     ratio = ms["people"][-1] / ms["muse"][-1]
-    assert num(spread) == f"{round(ratio)}×" and f"Muse Image <b>{ms['muse'][-1]:.2f}</b>" in spread
-    assert f"People <b>{ms['people'][-1]:.2f}</b>" in spread
+    assert brows(bars) == [("Muse Image", f"{ms['muse'][-1]:.2f}"), ("People", f"{ms['people'][-1]:.2f}")]
+    assert f"People’s drawings differ about {round(ratio)} times as much." in bars
     # things that collapse at or before the name: one filled dot each
     assert dots.count("sv-on sv-blue") == sm["collapse_at_or_before_name"]
     assert dots.count('class="sv-off"') == sm["n_with_both"] - sm["collapse_at_or_before_name"]
@@ -117,7 +125,7 @@ def test_atlas_numbers_render_from_the_data(client, tmp_path):
     below, bars, test = figs
     assert below.count("sv-on sv-blue") == a["below_1"] and below.count("<circle") == d["summary"]["n_concepts"]
     assert re.findall(r'style="width:([\d.]+)%', bars) == [str(round(a["median"] * 100, 1)), "100"]
-    assert num(bars) == f"{round(a['median'] * 100)}%"
+    assert brows(bars) == [("Muse Image", f"{a['median']:.2f}"), ("People", "1.00")]
     assert test.count("sv-on sv-blue") == new["below_1"] and test.count("<circle") == new["n"]
     assert f"{sdxl['median']:.2f}" in out["note"] and f"{sdxl['below_1']} of {sdxl['n']}" in out["note"]  # SDXL's numbers kept
 
@@ -129,13 +137,13 @@ def test_scale_numbers_render_from_the_data(client, tmp_path):
     wall = {m["key"]: m for m in d["wall"]["models"]}
     small, big = wall["qwen25_0.5b"], wall["qwen25_32b"]
     fails, ratio, bars = figs
-    assert num(fails) == f"{small['failed']} → {big['failed']}failures in 12"
+    assert plain(" ".join(re.findall(r'fl-fail-v">(.*?)</span></div>', fails))) == f"{small['failed']} of 12 {big['failed']} of 12"
     assert fails.count("sv-on sv-muted") == small["failed"] + big["failed"] and fails.count("<rect") == 24
     wonder = next(r for r in d["arm_b"]["rows"] if r["key"] == "wonder" and r["temp"] == 1)
-    assert num(ratio) == f"{wonder['spread_ratio']:.2f}×as varied as people’s" and 'class="fl-rs-people"' in ratio
+    assert num(ratio) == f"{wonder['spread_ratio']:.2f}×" and 'class="fl-rs-people"' in ratio
     assert ratio.count('class="sv-on sv-muted"') == 3 and 'class="fl-rs-ring"' in ratio  # the three 32B open models, Muse Image's mark
     final = sorted((r for r in d["arm_a"]["rows"] if r["temp"] == 1 and r["checkpoint"] == "final"), key=lambda r: r["size"])
-    assert num(bars) == f"{round(final[0]['recog']['mean'] * 100)}% → {round(final[-1]['recog']['mean'] * 100)}%"
+    assert [v for _, v in brows(bars)] == [f"{round(final[0]['recog']['mean'] * 100)}%", f"{round(final[-1]['recog']['mean'] * 100)}%"]
     p3 = d["predictions"]["P3"]["model_size"]
     lo, hi = round(-p3["ci95"][1] * 12), round(-p3["ci95"][0] * 12)
     assert f"{round(-p3['contrast'] * 12)} fewer failures in 12 (probably between {lo} and {hi} fewer)" in out["stats"][0]["q"]

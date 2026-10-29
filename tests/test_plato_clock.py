@@ -413,7 +413,7 @@ def test_first_screen_numbers_come_from_the_data(data):
     people, muse, points = fl["stats"]
     assert (people["o"]["k"], people["o"]["n"]) == (full["k"], full["n"]) and people["o"]["value"] == f"{round(100 * full['k'] / full['n'])}%"
     assert (muse["o"]["k"], muse["o"]["n"]) == (M["eye"]["times"].get("11:10", 0), M["n"])
-    assert points["o"]["value"] == f"{M['eye']['contour']['k']} · {M['eye']['numbers']['k']} · {M['eye']['hands']['k']}"
+    assert [r["k"] for r in points["o"]["rows"]] == [M["eye"]["contour"]["k"], M["eye"]["numbers"]["k"], M["eye"]["hands"]["k"]]
     assert f"on {M['eye']['all_three']} of its {M['n']} clocks" in fl["answer"]
     # the 10:10 count moved from the one-sentence answer to the second number's qualifier ("How we know")
     ten = M["eye"]["times"].get("10:10")

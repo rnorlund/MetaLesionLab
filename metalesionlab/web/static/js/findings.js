@@ -14,7 +14,7 @@
               <div class="fd-text">
                 <h3>Words part or painting part?</h3>
                 <p>Sentence one.</p> <p>Sentence two.</p>
-                <div class="fd-number"><p class="fd-num-v">29 pts</p><p class="fd-num-l">what it measures</p>
+                <div class="fd-number"><p class="fd-num-l">what it measures</p><p class="fd-num-v">29 pts</p>
                   <p class="fd-verdict yes">As predicted</p></div>          <!-- optional; tone: yes | no | part -->
               </div>
             </div>
@@ -53,7 +53,7 @@
       '" data-img="' + esc(it.img) + '" data-alt="' + esc(it.alt || '') + '"><div class="fd-main">' +
       (it.media ? '<div class="fd-media">' + it.media + '</div>' : '') +
       '<div class="fd-text"><h3>' + esc(it.h3 || it.title) + '</h3>' + (it.text || []).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
-      (n ? '<div class="fd-number"><p class="fd-num-v">' + esc(n.value) + '</p><p class="fd-num-l">' + esc(n.label) + '</p>' +
+      (n ? '<div class="fd-number"><p class="fd-num-l">' + esc(n.label) + '</p><p class="fd-num-v">' + esc(n.value) + '</p>' +
         (n.verdict ? '<p class="fd-verdict ' + esc(n.verdict.tone || '') + '">' + esc(n.verdict.text) + '</p>' : '') + '</div>' : '') +
       '</div></div>' + (it.extra ? '<div class="fd-extra">' + it.extra + '</div>' : '') +
       (it.more ? '<details class="how-we-know fd-more"><summary>More detail</summary>' + it.more + '</details>' : '') + '</article>';

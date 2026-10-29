@@ -14,7 +14,9 @@
 .fd-text p { margin: 0; max-width: 40ch; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: var(--lh-lead); color: var(--ink-2); }
 .fd-text .fd-number { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
 .fd-text .fd-num-v { font-size: var(--fs-number); font-weight: var(--fw-number); letter-spacing: var(--ls-number); line-height: var(--lh-number); color: var(--ink); max-width: none; }
-.fd-text .fd-num-l { font-size: var(--fs-body); font-weight: 400; line-height: 1.4; color: var(--ink-2); }
+.fd-text .fd-num-l { font-size: var(--fs-h3); font-weight: 500; line-height: 1.25; color: var(--ink); max-width: 30ch; }  /* the label comes first */
+.fd-text .fd-num-v { white-space: nowrap; }
+.fd-text .fd-num-v.sv { font-size: var(--fs-body); white-space: normal; }
 .fd-text .fd-verdict { display: flex; align-items: center; gap: 0.45em; font-size: var(--fs-label); font-weight: 500; line-height: 1.4; color: var(--ink-2); }
 .fd-verdict::before { content: ""; flex: none; width: 0.55em; height: 0.55em; border-radius: 50%; background: currentColor; }
 .fd-verdict.yes { color: var(--green); }

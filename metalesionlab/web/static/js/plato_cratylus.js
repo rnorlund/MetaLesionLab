@@ -71,8 +71,8 @@
         q: '“Keti” and “tepi” are made-up words with kiki’s hard sounds. Predicted: made-up words with kiki’s hard sounds come out spikier. Keti and tepi came out as blobs (solidity ' + f2(word('keti').solidity.mean) +
           ' and ' + f2(word('tepi').solidity.mean) + '; 1 is a smooth blob).' },
       // planned: both AIs match both words at least as often as people do
-      { kind: 'bars', verdict: sp >= pe && gl >= pe ? verdict(true) : sp >= pe ? { tone: 'part', text: 'Partly as predicted' } : verdict(false),
-        o: { values: [sp, pe, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100, value: sp + '%', unit: 'vs ' + pe + '%',
+      { kind: 'bars', ask: 'Both words matched to the right shape', verdict: sp >= pe && gl >= pe ? verdict(true) : sp >= pe ? { tone: 'part', text: 'Partly as predicted' } : verdict(false),
+        o: { values: [sp, pe, gl], labels: ['Spark', 'People', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100, suffix: '%',
           label: 'matched “bouba” to round, “kiki” to spiky',
           alt: 'Matched both words: Muse Spark ' + sp + '% of its answers, people ' + pe + '% (' + D.people.n_people + ' people, ' + D.people.n_languages +
             ' languages), Muse Glimmer ' + gl + '%.' },

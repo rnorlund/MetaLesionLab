@@ -115,7 +115,9 @@ with sync_playwright() as p:
     # the numbers
     out["hero_stats"] = pg.inner_text("#hero-stats")
     out["card_nums"] = pg.evaluate("""() => ['diss','proto','clocks'].map(k => { const h = document.getElementById('fd-num-' + k);
-      return [h.hidden, h.querySelector('.fd-num-v').textContent, h.querySelector('.fd-verdict').textContent]; })""")
+      const l = h.querySelector('.fd-num-l'), v = h.querySelector('.fd-num-v');
+      return [h.hidden, v.textContent, h.querySelector('.fd-verdict').textContent, l.textContent,
+        !!(l.compareDocumentPosition(v) & Node.DOCUMENT_POSITION_FOLLOWING)]; })""")
     # pause on hover, and play/pause
     pg.hover(".hc"); out["held"] = pg.evaluate("document.querySelector('.hc').classList.contains('is-held')")
     pg.mouse.move(2, 2); pg.click(".hc-toggle"); out["stopped"] = pg.evaluate("document.querySelector('.hc').classList.contains('is-stopped')")
@@ -224,14 +226,15 @@ def test_browser_no_console_errors_and_the_hub_has_the_carousel_and_its_cards(br
 
 def test_browser_the_key_numbers_from_the_data_are_on_the_page(browser_run):
     kc = DATA["matched"]["text-zero vs unet-zero"]["delta_correct"]
-    want = f"{round(-kc['language'] * 100)} vs {round(-kc['drawing'] * 100)}"
-    assert want in browser_run["hero_stats"]
+    want = f"{round(-kc['language'] * 100)} pts"
+    assert want in browser_run["hero_stats"] and f"{round(-kc['drawing'] * 100)} pts" in browser_run["hero_stats"]
     diss, proto, clocks = browser_run["card_nums"]
-    assert diss[0] is False and diss[1].startswith(want) and diss[2] == "As predicted"
+    assert diss[0] is False and want in diss[1] and diss[2] == "As predicted"
+    assert all(c[3] and c[4] for c in (diss, proto, clocks)), "each card names what was measured before its value"
     pz = DATA["pooled"]["text-zero"]["delta_d_proto"]
-    assert proto[1] == ("Farther" if pz["ci95"][0] > 0 else "No closer")
+    assert f"{DATA['pooled']['text-zero']['delta_d_proto']['mean']:.2f}" in proto[1]
     c = DATA["clocks"]
     fi = c["feature_names"].index("12 numbers in order")
     intact = next(r for r in c["features"] if r["cond"] == "intact")
     mild = min((r for r in c["features"] if r["cond"].startswith("unet-zero@")), key=lambda r: float(r["cond"].split("@")[1]))
-    assert clocks[1] == f"{round(intact['values'][fi] * 100)}% → {round(mild['values'][fi] * 100)}%"
+    assert f"{round(intact['values'][fi] * 100)}%" in clocks[1] and f"{round(mild['values'][fi] * 100)}%" in clocks[1]

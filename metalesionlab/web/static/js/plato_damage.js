@@ -451,8 +451,8 @@
     Object.keys(ids).forEach(function (k) {
       var host = $('fd-num-' + k), st = (lead.stats || []).filter(function (x) { return ids[k].test(x.o.label); })[0];
       if (!host || !st) return;
-      host.querySelector('.fd-num-v').textContent = st.o.value + (st.o.unit || '');
-      host.querySelector('.fd-num-l').textContent = st.o.label;
+      host.querySelector('.fd-num-v').innerHTML = window.FirstLook.html({ kind: st.kind, o: Object.assign({}, st.o, { nocap: true, value: undefined, unit: undefined }) });
+      host.querySelector('.fd-num-l').textContent = (st.ask || st.o.label).replace(/^./, function (c) { return c.toUpperCase(); });
       var v = host.querySelector('.fd-verdict');
       if (st.verdict) { v.textContent = st.verdict.text; v.className = 'fd-verdict ' + st.verdict.tone; } else v.hidden = true;
       host.hidden = false;

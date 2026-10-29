@@ -101,11 +101,15 @@ def first_screen(client, tmp_path, ids):
 
 
 def stats(html):
+    """Each number block: its label (before any value) and its rows (name, value, units)."""
     out = []
     for it in re.findall(r'<figure class="fl-stat">(.*?)</figure>', html, re.S):
-        num = re.search(r'<span class="sv-num">(.*?)</span>', it).group(1)
-        unit = re.search(r'<span class="sv-unit">(.*?)</span>', it)
-        out.append((num, unit.group(1).strip() if unit else "", re.search(r'<p class="sv-cap">(.*?)</p>', it).group(1)))
+        ask = re.search(r'<p class="fl-ask">(.*?)</p>', it).group(1)
+        assert it.index('class="fl-ask"') < it.index("sv-bar-v"), "the label comes before the values"
+        assert len(ask.split()) <= 10
+        rows = [(m[0], m[1], m[2].strip()) for m in re.findall(
+            r'<span class="sv-bar-l">(.*?)</span>.*?<span class="sv-bar-v">([^<]*)(?:<span class="sv-bar-u">(.*?)</span>)?</span>', it, re.S)]
+        out.append((ask, rows))
     return out
 
 
@@ -119,12 +123,13 @@ def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
     assert len(s) == 3
     # 1. language damage loses the asked kind faster (the pre-registered primary test of /plato/damage)
     kc = d["matched"]["text-zero vs unet-zero"]["delta_correct"]
-    assert s[0][:2] == (f"{round(-kc['language'] * 100)} vs {round(-kc['drawing'] * 100)}", "in 100")
+    assert [r[1:] for r in s[0][1]] == [(str(round(-kc["language"] * 100)), "of 100"), (str(round(-kc["drawing"] * 100)), "of 100")]
+    assert [r[0] for r in s[0][1]] == ["Damaged the words part", "Damaged the painting part"]
     # 2. Stable Diffusion XL's God turns into an ordinary person under language damage, not drawing damage (D3)
     x = ideas["damage"]
     d3, n = x["tests"]["D3"], x["n_seeds"]
     lang, draw = round(d3["language_rise"] * n), round(d3["drawing_rise"] * n)
-    assert s[1][:2] == (f"+{lang} vs +{draw}", f"of {n}") and "ordinary person" in s[1][2]
+    assert [r[1:] for r in s[1][1]] == [(str(lang), f"of {n}"), (str(draw), f"of {n}")] and "ordinary person" in s[1][0]
     eye = x["tests"]["D3_eye"]
     assert f"Counted by eye instead: +{round(eye['language_rise'] * n)} vs +{round(eye['drawing_rise'] * n)}." in ids["hero-stats"]
     # 3. clocks with all 12 numbers in order: intact against the mildest drawing damage
@@ -132,7 +137,8 @@ def test_numbers_and_verdicts_come_from_the_data(client, tmp_path):
     fi = c["feature_names"].index("12 numbers in order")
     intact = next(r for r in c["features"] if r["cond"] == "intact")
     mild = min((r for r in c["features"] if r["cond"].startswith("unet-zero@")), key=lambda r: float(r["cond"].split("@")[1]))
-    assert s[2][0] == f"{round(intact['values'][fi] * 100)}% → {round(mild['values'][fi] * 100)}%"
+    assert [r[1] for r in s[2][1]] == [str(round(intact["values"][fi] * 100)), str(round(mild["values"][fi] * 100))]
+    assert [r[2] for r in s[2][1]] == ["%", "%"] or [r[2] for r in s[2][1]] == ["", ""]
     # the verdicts: each worked out from its test, the same way /plato/damage shows them
     def held(t):
         lo, hi = t["ci95"]
