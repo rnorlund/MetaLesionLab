@@ -20,11 +20,12 @@ LINGUA_PAGES = ["/", "/take", "/scorer", "/lab", "/ask"]
 # Every stylesheet the Plato site uses besides the shared app.css (which holds the token definitions).
 PLATO_CSS = sorted({p.name for p in CSS.glob("plato*.css")} | {
     "landing.css", "draw.css", "tour.css", "splash.css", "portraits.css", "epigraph.css", "gallery-strip.css", "socrates.css",
-    "statviz.css"} & {p.name for p in CSS.glob("*.css")})
+    "statviz.css", "quote-carousel.css"} & {p.name for p in CSS.glob("*.css")})
 # Charts and pictures drawn by the Plato site's scripts. Hex colours are allowed only where a picture is
 # meant to look the same in every theme: the drawing pad and the share card (paper and ink, draw.js) and the
 # opening animation's chair (splash.js), which is drawn on paper.
-PLATO_JS = sorted({p.name for p in JS.glob("plato*.js")} | {"draw.js", "landing.js", "gallery-strip.js", "splash.js", "statviz.js"}
+PLATO_JS = sorted({p.name for p in JS.glob("plato*.js")} | {"draw.js", "landing.js", "gallery-strip.js", "splash.js", "statviz.js",
+                                                             "quote-carousel.js"}
                   & {p.name for p in JS.glob("*.js")})
 JS_ALLOW = {
     "draw.js": {"#FFFFFF", "#111827", "#374151", "#4B5563", "#F7F6F1", "#9A3412", "#C2410C", "#1D4ED8", "#0D9488"},
