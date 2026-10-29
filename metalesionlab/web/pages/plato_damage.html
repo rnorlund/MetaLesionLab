@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 <link rel="stylesheet" href="/static/css/hero-carousel.css">
 <link rel="stylesheet" href="/static/css/findings.css">
+<link rel="stylesheet" href="/static/css/damage-schematic.css">
 </head>
 <body class="plato-damage">
 <a class="skip" href="#main">Skip to content</a>
@@ -272,6 +273,23 @@
 
 <section class="fd" data-findings aria-label="Five findings, each with its charts">
   <article class="fd-item" id="finding-words-or-painting" data-title="Words part or painting part?" data-line="Each part forgets in its own way." data-img="/static/img/plato_damage/rocking_chair_text-noise_3.webp" data-alt="A rocking chair turned into a car by damage to the words part">
+<figure class="ds" id="damage-schematic" data-damage-schematic>
+  <div class="ds-flow">
+    <div class="ds-req ds-req-big"><span class="ds-lab">you type</span>a rocking chair</div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="ds-part ds-p1"><span class="ds-name">Part 1: reads your words</span><span class="ds-sub">turns your words into an idea</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="ds-part ds-p2"><span class="ds-name">Part 2: paints the picture</span><span class="ds-sub">turns the idea into an image</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="ds-out"><span class="ds-pic"><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair drawn by the AI" width="512" height="512" loading="lazy" decoding="async"></span><span class="ds-lab">the picture</span></div>
+  </div>
+  <div class="ds-vers">
+    <div class="ds-ver"><h3>No damage</h3><div class="ds-mini"><span class="ds-req">a rocking chair</span><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-part ds-p1"><span class="ds-name">Part 1</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-part ds-p2"><span class="ds-name">Part 2</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ds-pic"><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="The undamaged rocking chair" width="512" height="512" loading="lazy" decoding="async"></span></div><p>Both parts work: a rocking chair.</p></div>
+    <div class="ds-ver"><h3>Damage Part 1</h3><div class="ds-mini"><span class="ds-req">a rocking chair</span><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-part ds-p1 is-cracked"><svg class="ds-crack" viewBox="0 0 24 48" aria-hidden="true" focusable="false"><path d="M14 0 L7 18 L16 22 L5 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ds-name">Part 1</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-part ds-p2"><span class="ds-name">Part 2</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ds-pic"><img src="/static/img/plato_damage/rocking_chair_text-noise_4.webp" alt="A car, drawn instead of the rocking chair" width="512" height="512" loading="lazy" decoding="async"></span></div><p>The idea gets garbled: it paints the wrong thing.</p></div>
+    <div class="ds-ver"><h3>Damage Part 2</h3><div class="ds-mini"><span class="ds-req">a rocking chair</span><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-part ds-p1"><span class="ds-name">Part 1</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="ds-part ds-p2 is-cracked"><svg class="ds-crack" viewBox="0 0 24 48" aria-hidden="true" focusable="false"><path d="M14 0 L7 18 L16 22 L5 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ds-name">Part 2</span></div><svg class="ds-arrow" viewBox="0 0 40 16" aria-hidden="true" focusable="false"><path d="M1 8h36M30 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ds-pic"><img src="/static/img/plato_damage/rocking_chair_unet-noise_4.webp" alt="A smudged, shaky rocking chair" width="512" height="512" loading="lazy" decoding="async"></span></div><p>The idea survives, but the brush shakes: a smudged chair.</p></div>
+  </div>
+  <figcaption class="ds-cap">
+    <p class="ds-line">Damage the part that reads your words, and the AI forgets <em>what</em> to draw. Damage the part that paints, and it forgets <em>how</em>.</p>
+    <p class="ds-small">The AI is Stable Diffusion XL, an open image AI. &lsquo;Damage&rsquo; means we switched off some of its artificial neurons, or added random noise to them.</p>
+  </figcaption>
+</figure>
     <div class="fd-main">
       <div class="fd-media"><figure><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair, undamaged"><figcaption>undamaged</figcaption></figure><figure><img src="/static/img/plato_damage/rocking_chair_text-noise_3.webp" alt="The rocking chair with the words part damaged: a car"><figcaption>words part</figcaption></figure><figure><img src="/static/img/plato_damage/rocking_chair_unet-noise_3.webp" alt="The rocking chair with the drawing part damaged"><figcaption>drawing part</figcaption></figure></div>
       <div class="fd-text">
@@ -436,6 +454,7 @@
 <script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato_firstlook.js"></script>
 <script src="/static/js/hero-carousel.js"></script>
+<script src="/static/js/damage-schematic.js"></script>
 <script src="/static/js/findings.js"></script>
 <script src="/static/js/plato_damage.js"></script>
 </body>

@@ -160,7 +160,7 @@
   .fl.fl-side.fl-wide {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
-    grid-template-areas: "title" "answer" "visual" "stats" "note" "quote" "ctx";
+    grid-template-areas: "title" "answer" "visual" "schem" "stats" "note" "quote" "ctx";
   }
   .fl.fl-wide .fl-visual { align-self: stretch; }
   .fl.fl-wide .pd-visual { grid-template-columns: minmax(0, 1fr); }

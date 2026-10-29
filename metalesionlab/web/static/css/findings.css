@@ -23,7 +23,6 @@
 .fd-verdict.no { color: var(--orange); }
 .fd-extra { margin-top: clamp(18px, 2.4vw, 48px); min-width: 0; }
 .fd-more { margin-top: clamp(14px, 1.6vw, 28px); }
-.fd-more > summary { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; }
 .fd-more-t { font-weight: 500; }
 
 /* the script is on: a row of cards, the open panel under it */

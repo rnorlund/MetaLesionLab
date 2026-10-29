@@ -69,7 +69,7 @@
     for (var j = 0; j < k; j++) out.push(Math.round(j * (n - 1) / (k - 1)));
     return out;
   }
-  var COUNTS = [5, 7, 10];
+  var COUNTS = [5, 7, 10], DEFAULT_COUNT = 7;
 
   function mount(root, cfg) {
     var slides = (cfg && cfg.slides) || [], n = slides.length;
@@ -115,7 +115,7 @@
         box.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b) setCount(+b.getAttribute('data-n')); });
         ctl.appendChild(box);
       }
-      setCount(COUNTS[COUNTS.length - 1]);
+      setCount(DEFAULT_COUNT);
     }
     var toggle = btn('hc-btn hc-toggle', ICON.pause + ICON.play, 'Pause');
     toggle.setAttribute('aria-controls', view.id);

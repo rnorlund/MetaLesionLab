@@ -1,0 +1,62 @@
+/* Damage schematic (static/js/damage-schematic.js, markup written into the page): input -> Part 1 (reads your words,
+   blue) -> Part 2 (paints the picture, orange) -> picture; then three small versions. Left to right; wraps, keeping order.
+   Theme tokens only. */
+.ds { grid-area: schem; margin: clamp(8px, 1.5vw, 24px) 0; display: flex; flex-direction: column; gap: clamp(22px, 2.6vw, 44px); min-width: 0; color: var(--ink); }
+.ds * { box-sizing: border-box; }
+.ds-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 14px clamp(10px, 1.6vw, 26px); }
+.ds-arrow { flex: none; width: clamp(28px, 3vw, 52px); height: 16px; color: var(--muted); }
+.ds-lab { display: block; font-size: var(--fs-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.ds-req { font-style: italic; color: var(--ink-2); }
+.ds-req-big { display: flex; flex-direction: column; gap: 4px; padding: 16px 22px; background: var(--paper); border: 1px solid var(--paper-line, var(--line-2)); border-radius: 14px;
+  font-size: var(--fs-h3); color: var(--ink); }
+.ds-req-big .ds-lab { font-style: normal; }
+.ds-part { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 16px 22px; border-radius: 14px; border: 1.5px solid; background: var(--paper); }
+.ds-p1 { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 10%, var(--paper)); }
+.ds-p2 { border-color: var(--orange); background: color-mix(in srgb, var(--orange) 10%, var(--paper)); }
+.ds-name { font-weight: 600; font-size: var(--fs-body); line-height: 1.2; color: var(--paper-ink); }
+.ds-sub { font-size: var(--fs-small); color: var(--ink-2); }
+.ds-part .ds-name, .ds-part .ds-sub { color: var(--ink-2); }
+.ds-flow .ds-part .ds-name { color: var(--ink); }
+.ds-p1 .ds-name { color: var(--blue); } .ds-p2 .ds-name { color: var(--orange); }
+.ds-out { display: flex; flex-direction: column; gap: 6px; }
+.ds-pic { display: block; background: var(--paper); border: 1px solid var(--paper-line, var(--line-2)); border-radius: 12px; padding: 4px; overflow: hidden; }
+.ds-pic img { display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: 8px; }
+.ds-out .ds-pic { width: clamp(96px, 11vw, 180px); }
+.ds-crack { position: absolute; right: 10px; top: -10px; height: calc(100% + 20px); width: auto; max-height: 64px; color: var(--ink); filter: drop-shadow(0 0 0 var(--paper)); }
+.ds-vers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 32px); }
+.ds-ver { display: flex; flex-direction: column; gap: 10px; padding: clamp(12px, 1.4vw, 22px); background: var(--paper-mat, var(--paper)); border: 1px solid var(--paper-line, var(--line-2)); border-radius: 16px; min-width: 0; }
+.ds-ver h3 { margin: 0; font-size: var(--fs-body); font-weight: 600; color: var(--ink); }
+.ds-ver p { margin: 0; font-size: var(--fs-small); line-height: 1.45; color: var(--ink-2); }
+.ds-mini { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.ds-mini .ds-arrow { width: auto; flex: 1 1 8px; min-width: 8px; max-width: 24px; height: 10px; }
+.ds-mini .ds-req { flex: 0 1 auto; font-size: var(--fs-label); line-height: 1.15; max-width: 4.6em; }
+.ds-mini .ds-part { flex: none; padding: 6px 9px; border-radius: 10px; gap: 0; }
+.ds-mini .ds-name { font-size: var(--fs-label); white-space: nowrap; }
+.ds-mini .ds-pic { flex: 1 1 56px; min-width: 56px; max-width: 120px; padding: 3px; border-radius: 10px; }
+.ds-mini .ds-crack { right: 2px; top: -6px; max-height: 36px; }
+.ds-mini .is-cracked { border-style: dashed; }
+.ds-cap { display: flex; flex-direction: column; gap: 8px; }
+.ds-line { margin: 0; font-size: var(--fs-lead); line-height: 1.35; max-width: 48ch; color: var(--ink); }
+.ds-line em { font-style: italic; font-weight: 600; }
+.ds-small { margin: 0; font-size: var(--fs-small); color: var(--muted); max-width: 70ch; }
+@media (max-width: 900px) { .ds-vers { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) {
+  .ds-flow { gap: 10px 8px; }
+  .ds-req-big, .ds-part { padding: 12px 14px; }
+  .ds-out .ds-pic { width: 84px; }
+  .ds-arrow { width: 22px; }
+  .ds-mini .ds-req { max-width: 3.6em; }
+}
+@media (prefers-reduced-motion: no-preference) { .ds-ver { transition: border-color .15s; } .ds-ver:hover { border-color: var(--muted); } }
+.ds-hot { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 25%, transparent); }
+/* text on paper cards uses the paper inks (paper is never inverted) */
+.ds-req-big, .ds-part, .ds-ver, .ds-ver h3 { color: var(--paper-ink); }
+.ds-req-big .ds-lab, .ds-ver .ds-arrow { color: var(--paper-muted); }
+.ds-ver p, .ds-sub, .ds-ver .ds-req { color: var(--paper-ink-2); }
+.ds-flow .ds-part .ds-name, .ds-part .ds-name, .ds-part .ds-sub { color: var(--paper-ink); }
+.ds-p1 .ds-name { color: var(--blue-dark); } .ds-p2 .ds-name { color: var(--orange-dark); }
+.ds-crack { color: var(--paper-ink); }
+.ds-p1 .ds-name, .ds-p2 .ds-name, .ds-mini .ds-name { color: var(--paper-ink); }
+.ds-crack { right: -7px; }
+.ds-mini .ds-crack { right: -6px; top: -7px; }
+.ds-mini .ds-req { max-width: 5.6em; }
