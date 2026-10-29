@@ -30,6 +30,11 @@
 
 <!-- 1. one chair -->
 <section class="th-panel" id="one-chair" aria-labelledby="th1-h">
+  <div class="th-text th-top">
+    <p class="th-num">1</p>
+    <h2 id="th1-h">Meta’s AI has one idea of a chair.</h2>
+    <p class="th-support">Asked 16 times, it drew the same chair. Sixteen people drew sixteen different ones.</p>
+  </div>
   <figure class="pc-chairs th-pic" id="chairs">
     <div class="pc-chairs-pair">
       <div class="pc-chairs-side" data-side="ai">
@@ -57,10 +62,7 @@
       <button type="button" class="pc-stack-btn" id="stack-btn" aria-pressed="false"><span class="when-grid">Stack them</span><span class="when-stacked">Spread them out again</span></button>
     </div>
   </figure>
-  <div class="th-text">
-    <p class="th-num">1</p>
-    <h2 id="th1-h">Meta’s AI has one idea of a chair.</h2>
-    <p class="th-support">Asked 16 times, it drew the same chair. Sixteen people drew sixteen different ones.</p>
+  <div class="th-text th-bottom">
     <p class="th-fig">Spread is how different the drawings are from each other, 0 for identical drawings: Muse Image {{TH_AI}}, people {{TH_PEOPLE}}.</p>
     <a class="th-link" href="/plato">See the experiment →</a>
   </div>
@@ -68,13 +70,15 @@
 
 <!-- 2. words go first -->
 <section class="th-panel" id="words-first" aria-labelledby="th2-h">
-  <div class="th-pic th-card">
-    <ol class="th-row" aria-label="A rocking chair, with more and more noise added to the part of the AI that reads words, from left to right">{{TH_ROW}}</ol>
-  </div>
-  <div class="th-text">
+  <div class="th-text th-top">
     <p class="th-num">2</p>
     <h2 id="th2-h">Damage the part of an AI that reads words, and it forgets what it’s drawing.</h2>
     <p class="th-support">The words go first: a rocking chair becomes a car.</p>
+  </div>
+  <div class="th-pic th-card">
+    <ol class="th-row" aria-label="A rocking chair, with more and more noise added to the part of the AI that reads words, from left to right">{{TH_ROW}}</ol>
+  </div>
+  <div class="th-text th-bottom">
     <p class="th-fig">Stable Diffusion XL, an open image AI. Left to right: more random noise added to its words part, from none to × 1.</p>
     <a class="th-link" href="/damaged">See the experiment →</a>
   </div>
@@ -82,6 +86,11 @@
 
 <!-- 3. God: covered until the visitor has drawn (the draw pad's "seen" flag) or asks to see -->
 <section class="th-panel" id="god" data-state="covered" aria-labelledby="th3-h">
+  <div class="th-text th-top">
+    <p class="th-num">3</p>
+    <h2 id="th3-h">Ask Meta’s AI to draw God.</h2>
+    <p class="th-support th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}}: the same bearded man with long hair and a halo, as in Western religious art.</p>
+  </div>
   <div class="th-pic th-card th-god-pic">
     <div class="th-cover" id="god-cover">
       <p class="th-cover-text">Draw yours first, then see Meta’s AI’s</p>
@@ -92,10 +101,7 @@
     </div>
     <div class="th-god-grid" id="god-grid" hidden role="img" aria-label="Muse Image’s 16 drawings of God" style="--cols:{{TH_COLS}};--rows:{{TH_ROWS}};--sprite:url({{TH_SPRITE}})">{{TH_GOD_CELLS}}</div>
   </div>
-  <div class="th-text">
-    <p class="th-num">3</p>
-    <h2 id="th3-h">Ask Meta’s AI to draw God.</h2>
-    <p class="th-support th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}}: the same bearded man with long hair and a halo, as in Western religious art.</p>
+  <div class="th-text th-bottom">
     <p class="th-fig th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}} drawings by Muse Image show the same figure.</p>
     <a class="th-link" href="/plato/ideas">See the experiment →</a>
   </div>

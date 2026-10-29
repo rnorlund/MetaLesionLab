@@ -11,6 +11,9 @@
 .takehomes .pc-chairs-pair { gap: 8px clamp(16px, 2vw, 48px); }
 
 .th-text { display: grid; gap: 10px; max-width: 56em; }
+/* The message first, then the picture, then the source line and link. */
+.th-top { gap: 12px; }
+.th-bottom { gap: 6px; }
 .th-num { margin: 0; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .th-text h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.12; }
 .th-support { margin: 0; font-size: var(--fs-lead); color: var(--ink-2); }
