@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plato’s Bird · {{BRAND}}</title>
-<meta name="description" content="Ask 20 people to name a bird and you get 11 different birds. Ask Meta’s Muse Spark 50 times and you get a sparrow 49 times. Across 117 categories, the AI is far more stuck on one textbook answer than people are.">
+<meta name="description" content="Ask 20 people to name a bird and you get 11 different birds. Ask Meta’s chat AI, Muse Spark, 50 times and it says “sparrow” 49 times. Across 117 categories, the AI sticks to one favourite answer far more than people do.">
 <meta property="og:title" content="Plato’s Bird · {{BRAND}}">
-<meta property="og:description" content="Name a bird. 20 people gave 11 different birds; Muse Spark said “sparrow” 49 times out of 50.">
+<meta property="og:description" content="Name a bird. 20 people gave 11 different birds; Meta’s chat AI, Muse Spark, said “sparrow” 49 times out of 50.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,40 +35,41 @@
 
 <section class="fl fl-side pb-hero" aria-labelledby="hero-h">
   <div class="title-pair">
-    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one best example of a kind? · the Forms, Wittgenstein, Rosch · <a href="/plato">Plato series</a></span></p>
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Is there one best example of each kind of thing? · Plato’s Forms, Wittgenstein, Rosch · <a href="/plato">Plato series</a></span></p>
     <h1 id="hero-h">Plato’s Bird</h1>
   </div>
   <!--#epigraph:theaetetus-155d-->
   <div class="fl-ctx">
-    <p>Is there one best example of a kind? We asked the same question for 117 categories: name one member. People’s first answers come from the Banks &amp; Connell (2023) norms, 20 UK adults per category; Meta’s Muse Spark answered 50 times per category, and Muse Glimmer, Meta’s open model, was sampled 50 times.</p>
+    <p>Plato thought each kind of thing has one perfect, ideal version (his Form), which every real one copies. Is there one best example of a bird, then, or a fruit, or a game? We asked people and AIs the same question for 117 kinds of thing: “Name one member of the category bird” (or fruit, or game).</p>
+    <p>People’s answers come from a published study of 20 UK adults per category (Banks &amp; Connell, 2023). We asked Meta’s chat AI, Muse Spark, 50 times per category. We asked Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), 50 times too.</p>
   </div>
-  <p class="fl-answer" id="hero-answer">Ask Meta’s Muse Spark to name a bird and it says “sparrow” 49 times out of 50; ask 20 people and you get 11 different birds.</p>
+  <p class="fl-answer" id="hero-answer">Meta’s chat AI, Muse Spark, says “sparrow” 49 times in 50; 20 people named 11 different birds.</p>
   <figure class="fl-visual pb-hero-fig" aria-labelledby="hero-cap">
     <p class="pb-q">“Name one member of the category <b>bird</b>.”</p>
     <div class="pb-shares" id="hero-shares"></div>
     <div class="pb-drawn">
-      <img src="/static/img/plato_bird/bird.webp" width="620" height="196" alt="12 doodles Muse Image drew for “a bird”: the same small songbird, side view, facing right, every time.">
-      <p class="pb-cap" id="hero-drawn-cap">And when Muse Image draws “a bird”, 12 times: the same little songbird.</p>
+      <img src="/static/img/plato_bird/bird.webp" width="620" height="196" alt="12 quick drawings Meta’s image AI, Muse Image, made of “a bird”: the same small songbird, side view, facing right, every time.">
+      <p class="pb-cap" id="hero-drawn-cap">Meta’s image AI, Muse Image, drew the same little songbird all 12 times.</p>
     </div>
-    <figcaption id="hero-cap" class="pb-cap">Each bar is everyone’s answers; each piece is one bird, as wide as its share. People: the first bird each of 20 UK adults named aloud (Banks &amp; Connell, 2023). Muse Spark: 50 separate calls. Muse Glimmer: 50 samples at temperature 1.</figcaption>
+    <figcaption id="hero-cap" class="pb-cap">Each bar is one group’s answers; each piece is one bird, as wide as its share of the answers. (Details under “How we know”.)</figcaption>
   </figure>
   <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
-  <p class="fl-note" id="hero-qual">The 117-category shares are measured at people’s sample size. The AI answered once per call at its default settings; people named birds aloud for a minute and we kept their first.</p>
+  <p class="fl-note" id="hero-qual">Shares across the 117 categories compare equal numbers of answers from people and AI. The AI answered once each time we asked, at its usual settings. People named as many as they could aloud for a minute, and we kept the first.</p>
 </section>
 
 <nav class="pb-jump" aria-label="On this page">
   <a href="#pick">Pick a category</a>
   <a href="#all">All 117 categories</a>
   <a href="#draw">Does it draw what it names?</a>
-  <a href="#temp">Is it the temperature?</a>
-  <a href="#game">You vs. the AI</a>
+  <a href="#temp">Is it the randomness setting?</a>
+  <a href="#game">Try it yourself</a>
   <a href="#method">Method</a>
 </nav>
 
 <section class="pb-sec" id="pick" aria-labelledby="pick-h">
   <div class="pb-sec-head">
-    <h2 id="pick-h">Pick a category</h2>
-    <p class="pb-sub">Wittgenstein said categories like “game” have no definition, only family resemblances; Eleanor Rosch showed they still have best examples. People’s first answer shows that pull toward the best example. Is the AI’s pull stronger?</p>
+    <h2 id="pick-h">Pick a category and compare the answers</h2>
+    <p class="pb-sub">The philosopher Ludwig Wittgenstein said some categories, like “game”, have no definition: their members only share a family likeness. The psychologist Eleanor Rosch showed that such categories still have best examples: a robin feels more like a bird than a penguin does. People’s first answer shows that pull toward the best example. Is the AI’s pull stronger?</p>
   </div>
   <div class="pb-pickrow">
     <label class="field pb-select"><span>Category</span>
@@ -79,17 +80,17 @@
   <p class="pb-q" id="pick-q"></p>
   <div class="pb-trio" id="pick-trio"></div>
   <dl class="pb-facts" id="pick-facts"></dl>
-  <p class="pb-note" id="cat-hint">Each bar is one answer; its length is the share of answers. People: the first answer each UK adult named aloud (Banks &amp; Connell, 2023); Muse Spark: 50 separate calls. Shares at people’s sample size: the AI’s 50 answers are subsampled to the number of people (13–20) so both sides are measured alike. Answers are lower-cased, singular, and merged only when they name the same thing (“eggplant” = “aubergine”).</p>
+  <p class="pb-note" id="cat-hint">Each bar is one answer; its length is the share of answers it got. People: the first answer each UK adult said aloud (Banks &amp; Connell, 2023). Muse Spark: asked 50 separate times. A fair comparison needs equal numbers, so the shares use as many AI answers as there were people (13 to 20), drawn at random from its 50. We merge answers only when they name the same thing (“eggplant” = “aubergine”), ignoring capitals and plurals.</p>
 </section>
 
 <section class="pb-sec" id="all" aria-labelledby="all-h">
   <div class="pb-sec-head">
-    <h2 id="all-h">All 117 categories</h2>
+    <h2 id="all-h">In all 117 categories, who sticks to one favourite answer?</h2>
     <p class="pb-sub" id="all-sub"></p>
   </div>
   <div class="seg pb-who" id="who-seg" role="group" aria-label="Which AI">
-    <button type="button" data-src="spark" aria-pressed="true">Muse Spark (50 calls)</button>
-    <button type="button" data-src="glimmer_T1.0" aria-pressed="false">Muse Glimmer (50 samples, temperature 1)</button>
+    <button type="button" data-src="spark" aria-pressed="true">Muse Spark (asked 50 times)</button>
+    <button type="button" data-src="glimmer_T1.0" aria-pressed="false">Muse Glimmer (asked 50 times)</button>
   </div>
   <div class="pb-scatter-wrap">
     <div class="pb-scatter" id="scatter" role="img" aria-labelledby="all-h all-sub"></div>
@@ -100,23 +101,23 @@
   <details class="pb-table">
     <summary>Show every category as a table</summary>
     <div class="pb-table-scroll"><table id="all-table"><thead><tr>
-      <th scope="col">Category</th><th scope="col">Kind</th><th scope="col">People’s top first answer</th>
-      <th scope="col">Muse Spark’s top answer</th><th scope="col">Muse Glimmer’s top answer (T = 1)</th>
+      <th scope="col">Category</th><th scope="col">Kind</th><th scope="col">People’s favourite first answer</th>
+      <th scope="col">Muse Spark’s favourite</th><th scope="col">Muse Glimmer’s favourite</th>
     </tr></thead><tbody></tbody></table></div>
   </details>
 </section>
 
 <section class="pb-sec" id="draw" aria-labelledby="draw-h">
   <div class="pb-sec-head">
-    <h2 id="draw-h">Does it draw what it names?</h2>
-    <p class="pb-sub" id="draw-sub">Plato’s Chair found that Muse Image draws the textbook chair. We asked it for 12 doodles each of 12 categories and had Muse Spark (vision) say which member each doodle shows.</p>
+    <h2 id="draw-h">Does Meta’s image AI draw the favourite its chat AI names?</h2>
+    <p class="pb-sub" id="draw-sub">Asked for “a chair”, Meta’s image AI, Muse Image, draws the same plain chair nearly every time. Does it draw the same favourite that Muse Spark names? We asked Muse Image for 12 quick drawings of each of 12 categories. Then Muse Spark looked at each drawing and said which member it shows.</p>
   </div>
   <div class="pb-draw-grid" id="draw-grid"></div>
 </section>
 
 <section class="pb-sec" id="temp" aria-labelledby="temp-h">
   <div class="pb-sec-head">
-    <h2 id="temp-h">Is it just the temperature?</h2>
+    <h2 id="temp-h">Is it just the AI’s randomness setting?</h2>
     <p class="pb-sub" id="temp-sub"></p>
   </div>
   <div class="pb-temp" id="temp-chart" role="img" aria-labelledby="temp-h temp-sub"></div>
@@ -126,7 +127,7 @@
 
 <section class="pb-sec pb-game" id="game" aria-labelledby="game-h">
   <div class="pb-sec-head">
-    <h2 id="game-h">You vs. the AI</h2>
+    <h2 id="game-h">Try it: is your first answer the AI’s?</h2>
     <p class="pb-sub">Say the first one that comes to mind. Nothing you type leaves this page.</p>
   </div>
   <form class="pb-game-form" id="game-form" autocomplete="off">
@@ -142,11 +143,11 @@
 <section class="pb-sec pb-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
-    <li><b>People.</b> The Banks &amp; Connell (2023) category production norms: 117 categories (67 concrete, 50 abstract), 20 UK adults per category, each naming aloud as many members as they could in 60 seconds. We use each person’s first answer. Production frequency is how many of the 20 named a member at all; typicality ratings (1–5) came from separate raters.</li>
-    <li><b>AI.</b> The same question for every category: “Name one member of the category bird. Answer with one word or a short name only.” Muse Spark 1.3: 50 separate calls, default settings, minimal reasoning. Muse Glimmer 30B (open weights, run on our own GPU): its probabilities for the first word of the answer, and 50 samples at temperatures 0.7, 1 and 1.5.</li>
-    <li><b>Fair comparison.</b> 20 answers look more varied than 50 only by chance, so every share and count is measured at people’s sample size. The plan, measures and predictions were written down and committed before any AI answers were collected.</li>
-    <li><b>Not the same task.</b> People named members aloud for a minute and we kept their first; the AI answered once per call. People are 20 UK adults, and the AI was likely tuned on American English (it says “soccer”, people say “football”; we merge such pairs).</li>
-    <li><b>Defaults are defaults.</b> The AI’s narrowness here is what it does when asked once, at its usual settings. Glimmer’s own probabilities are about as spread as people’s answers; how varied its answers look depends on the sampling temperature (see above).</li>
+    <li><b>People.</b> The Banks &amp; Connell (2023) study of how people name members of categories (their “category production norms”): 117 categories (67 concrete, like fruit; 50 abstract, like emotion), 20 UK adults per category, each naming aloud as many members as they could in 60 seconds. We use each person’s first answer. “People who said it at all” counts how many of the 20 named a member at any point; the typicality ratings (1 to 5) came from a separate group of raters.</li>
+    <li><b>AI.</b> The same question for every category: “Name one member of the category bird. Answer with one word or a short name only.” Muse Spark 1.3: asked 50 separate times, at its usual settings, with minimal reasoning. Muse Glimmer 30B (open weights: anyone can download it, and we ran it on our own computer): its own odds for the first word of the answer, and 50 answers at each of three randomness settings (temperatures 0.7, 1 and 1.5).</li>
+    <li><b>Fair comparison.</b> A short list of answers looks more varied than a long one by chance alone (20 against 50), so every share and count uses the same number of answers as people gave. We wrote down our plan, measures and predictions, and saved them in the project’s public history, before collecting any AI answers.</li>
+    <li><b>Not the same task.</b> People named members aloud for a minute and we kept their first; the AI answered once each time we asked. People are 20 UK adults, and the AI probably learned mostly from American English (it says “soccer”, people say “football”; we merge such pairs).</li>
+    <li><b>Usual settings.</b> The AI’s narrowness here is what it does when asked once, at its usual settings. Glimmer’s own odds are about as varied as people’s answers; how varied its answers look depends on its randomness setting (see “Is it just the AI’s randomness setting?”).</li>
   </ul>
   <p class="pb-credit" id="credit">People’s answers: Banks, B., &amp; Connell, L. (2023). Category production norms for 117 concrete and abstract categories. <i>Behavior Research Methods</i>, 55(3), 1292–1313. <a href="https://doi.org/10.3758/s13428-021-01787-z">doi:10.3758/s13428-021-01787-z</a>. Data: <a href="https://osf.io/jgcu6/">osf.io/jgcu6</a>, licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; we show aggregate counts after our own normalization. AI: Meta Muse Spark 1.3, Muse Glimmer 30B and Muse Image 1.0. Full write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_bird.md">docs/plato_bird.md</a>.</p>
 </section>

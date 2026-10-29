@@ -71,7 +71,7 @@
       box.appendChild(h('figure', { class: 'at-hf' }, [
         h('img', { class: 'm', src: IMG + c.form_muse, width: 152, height: 152, alt: 'The average of Muse Image’s 12 ' + plural(c.label) + ': crisp lines.' }),
         h('img', { class: 'p', src: IMG + c.form_people, width: 152, height: 152, alt: 'The average of 12 people’s ' + plural(c.label) + ': a blurred cloud.' }),
-        h('span', null, [c.label, h('small', { text: 'ratio ' + f2(c.ratio) })])
+        h('span', null, [c.label, h('small', { text: f2(c.ratio) + '× as varied' })])
       ]));
     });
   }
@@ -123,7 +123,8 @@
 
   function card(c, i) {
     var el = h('button', { type: 'button', class: 'at-card' + (c.ratio >= 1 ? ' over' : ''),
-      'aria-label': c.label + ': Muse ÷ people ' + f2(c.ratio) + ', rank ' + c.rank + ' of ' + D.concepts.length + '. Open the drawings.' }, [
+      'aria-label': c.label + ': Muse Image’s drawings are ' + f2(c.ratio) + ' times as varied as people’s, rank ' + c.rank + ' of ' + D.concepts.length +
+        '. Open the drawings.' }, [
       h('span', { class: 'at-pair' }, [
         h('figure', null, [h('img', { src: IMG + c.form_muse, width: 152, height: 152, loading: 'lazy', decoding: 'async', alt: '' }), h('figcaption', { text: 'Muse' })]),
         h('figure', null, [h('img', { src: IMG + c.form_people, width: 152, height: 152, loading: 'lazy', decoding: 'async', alt: '' }), h('figcaption', { text: 'people' })])
@@ -155,19 +156,20 @@
     more.textContent = 'Show all ' + shown.length + ' things';
     var below = shown.filter(function (c) { return c.ratio < 1; }).length;
     $('count').textContent = shown.length === D.concepts.length
-      ? 'All ' + shown.length + ' things · Muse below people for ' + below
-      : shown.length + ' of ' + D.concepts.length + ' things · Muse below people for ' + below + ' of them';
+      ? 'All ' + shown.length + ' things · Muse Image draws ' + below + ' of them more alike than people do'
+      : shown.length + ' of ' + D.concepts.length + ' things · Muse Image draws ' + below + ' of these more alike than people do';
   }
 
   // --- the detail view -----------------------------------------------------------------------
   function verdict(c) {
     var things = plural(c.label);
+    var range = f2(c.ratio) + ' times as varied; probably between ' + f2(c.ci[0]) + ' and ' + f2(c.ci[1]) + ', a 95% confidence interval';
     if (c.ratio < 1) {
-      return 'Muse Image’s ' + things + ' are ' + pct(1 - c.ratio) + '% less varied than people’s (spread ratio ' + f2(c.ratio) +
-        ', 95% CI ' + ci(c.ci) + ').' + (c.ci[1] >= 1 ? ' The CI reaches 1, so people may vary them as little.' : '');
+      return 'Muse Image’s ' + things + ' are ' + pct(1 - c.ratio) + '% less varied than people’s (' + range + ').' +
+        (c.ci[1] >= 1 ? ' That range reaches 1 (just as varied), so people may vary them as little.' : '');
     }
     return 'Muse Image varies its ' + things + (c.ci[0] > 1 ? ' more than people do' : ' about as much as people do') +
-      ' (spread ratio ' + f2(c.ratio) + ', 95% CI ' + ci(c.ci) + ').' + (c.ci[0] > 1 ? '' : ' The CI includes 1.');
+      ' (' + range + ').' + (c.ci[0] > 1 ? '' : ' That range includes 1 (just as varied).');
   }
 
   function stat(dt, dd) { return h('div', null, [h('dt', { text: dt }), h('dd', { text: dd })]); }
@@ -176,10 +178,11 @@
     if (i < 0 || i >= shown.length) return;
     cur = i;
     var c = shown[i], n = D.concepts.length;
-    $('d-rank').textContent = 'Rank ' + c.rank + ' of ' + n + ' · ' + domainName(c.domain) + (c.origin === 'new' ? ' · new in the Atlas' : c.origin === 'forms' ? ' · Plato’s own example' : ' · from Plato’s Chair');
+    $('d-rank').textContent = 'Rank ' + c.rank + ' of ' + n + ' (1 = drawn most alike) · ' + domainName(c.domain) +
+      (c.origin === 'new' ? ' · new in the Atlas' : c.origin === 'forms' ? ' · Plato’s own example' : ' · one of the 35 things of our first experiment');
     $('d-title').textContent = c.label;
     $('d-verdict').textContent = verdict(c);
-    $('d-muse-n').textContent = c.n_ai > 12 ? 'its first 12 of ' + c.n_ai + ' (the ratio uses all ' + c.n_ai + ')' : 'one prompt, 3 calls of 4';
+    $('d-muse-n').textContent = c.n_ai > 12 ? 'its first 12 of ' + c.n_ai + ' (the numbers use all ' + c.n_ai + ')' : 'the same request, in 3 batches of 4';
     [['m', 'muse'], ['p', 'people']].forEach(function (p) {
       var who = p[1] === 'muse' ? 'Muse Image’s' : 'people’s';
       $('d-form-' + p[0]).src = IMG + c['form_' + p[1]];
@@ -189,12 +192,12 @@
     });
     var dl = $('d-stats');
     dl.innerHTML = '';
-    dl.appendChild(stat('Muse’s spread', f2(c.muse_spread)));
-    dl.appendChild(stat('People’s spread (same n)', f2(c.human_spread)));
-    if (c.sdxl_ratio != null) dl.appendChild(stat('SDXL ÷ people', f2(c.sdxl_ratio) + ' (' + ci(c.sdxl_ci) + ')'));
-    if (c.pixel_ratio != null) dl.appendChild(stat('Pixel spread, Muse ÷ people', f2(c.pixel_ratio)));
-    dl.appendChild(stat('Word frequency (Zipf)', c.zipf.toFixed(1)));
-    dl.appendChild(stat('Muse doodles nearest people’s ' + c.label + ' (of 135 things)', pct(c.recognized) + '%'));
+    dl.appendChild(stat('Muse Image’s spread (how different its drawings are; 0 = identical)', f2(c.muse_spread)));
+    dl.appendChild(stat('People’s spread (same number of drawings)', f2(c.human_spread)));
+    if (c.sdxl_ratio != null) dl.appendChild(stat('Stable Diffusion XL (an open image AI), compared with people', f2(c.sdxl_ratio) + '× as varied (' + ci(c.sdxl_ci) + ')'));
+    if (c.pixel_ratio != null) dl.appendChild(stat('Muse Image compared with people, measured on raw pixels', f2(c.pixel_ratio) + '× as varied'));
+    dl.appendChild(stat('How common the word is (Zipf scale: 4 = once per 100,000 words)', c.zipf.toFixed(1)));
+    dl.appendChild(stat('Muse Image’s drawings that look closer to people’s ' + plural(c.label) + ' than to any of the other ' + (n - 1) + ' things', pct(c.recognized) + '%'));
     $('d-prev').disabled = i === 0;
     $('d-next').disabled = i === shown.length - 1;
     var dlg = $('detail');
@@ -244,7 +247,8 @@
     var y = function (v) { return m.t + (H - m.t - m.b) * (1 - v / ymax); };
     var x = function (i) { return m.l + band * i; };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
-      'aria-label': 'Columns: Muse Image’s spread ratio for all ' + n + ' things, sorted from most Platonic to least; dots: SDXL’s ratio for the same thing. A line marks people’s level, 1. The table below has every number.' });
+      'aria-label': 'Columns: how varied Muse Image’s drawings are compared with people’s, for all ' + n + ' things, from the most alike to the most varied; ' +
+        'dots: the same for Stable Diffusion XL. A line marks people’s level, 1. The table below has every number.' });
     for (var t = 0; t <= ymax + 1e-9; t += 0.5) {
       svg.appendChild(s('line', { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: t === 1 ? C.ink2 : C.grid, 'stroke-width': t === 1 ? 1.5 : 1 }));
       svg.appendChild(s('text', { x: m.l - 6, y: y(t) + 4, 'text-anchor': 'end', 'font-size': 11, fill: C.muted }, t.toFixed(1)));
@@ -267,8 +271,8 @@
     svg.appendChild(dots);
     // direct labels: the two ends
     var first = rows[0], last = rows[n - 1];
-    svg.appendChild(s('text', { x: x(0), y: m.t - 8, 'font-size': 11.5, fill: C.ink2 }, '← most Platonic: ' + first.label));
-    svg.appendChild(s('text', { x: W - m.r, y: m.t - 8, 'text-anchor': 'end', 'font-size': 11.5, fill: C.ink2 }, 'least: ' + last.label + ' →'));
+    svg.appendChild(s('text', { x: x(0), y: m.t - 8, 'font-size': 11.5, fill: C.ink2 }, '← most alike: ' + first.label));
+    svg.appendChild(s('text', { x: W - m.r, y: m.t - 8, 'text-anchor': 'end', 'font-size': 11.5, fill: C.ink2 }, 'most varied: ' + last.label + ' →'));
     var hit = s('rect', { x: m.l, y: 0, width: W - m.l - m.r, height: H, fill: 'transparent', tabindex: 0,
       'aria-label': 'Ranking chart. Use the left and right arrow keys to step through the things; Enter opens one.', style: 'cursor:pointer;outline:none' });
     svg.appendChild(hit);
@@ -282,8 +286,8 @@
       hl.setAttribute('visibility', 'visible');
       showTip(wrap, px == null ? x(at) * wrap.clientWidth / W : px, py == null ? y(Math.max(r.ratio, r.sdxl_ratio || 0)) * wrap.clientWidth / W : py, [
         '#' + r.rank + ' ' + r.label,
-        { text: 'Muse ÷ people ' + f2(r.ratio) + ' (' + ci(r.ci) + ')', color: C.muse },
-        r.sdxl_ratio != null ? { text: 'SDXL ÷ people ' + f2(r.sdxl_ratio), color: C.sdxl } : '',
+        { text: 'Muse Image: ' + f2(r.ratio) + '× as varied as people (' + ci(r.ci) + ')', color: C.muse },
+        r.sdxl_ratio != null ? { text: 'Stable Diffusion XL: ' + f2(r.sdxl_ratio) + '×', color: C.sdxl } : '',
         'Click to see the drawings'].filter(Boolean));
     }
     hit.addEventListener('pointermove', function (e) {
@@ -297,27 +301,30 @@
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { point(at + (e.key === 'ArrowRight' ? 1 : -1)); e.preventDefault(); }
       if (e.key === 'Enter' && at >= 0) openByKey(rows[at].key);
     });
-    legend($('rank-legend'), [{ color: C.muse, label: 'Muse Image' }, { color: C.sdxl, label: 'Stable Diffusion XL (open model, same prompt)', shape: 'dot' }]);
+    legend($('rank-legend'), [{ color: C.muse, label: 'Muse Image' }, { color: C.sdxl, label: 'Stable Diffusion XL (an open image AI, same request)', shape: 'dot' }]);
   }
 
   function rankText() {
     var a = D.summary.all, sd = D.summary.sdxl.all, mv = D.summary.muse_vs_sdxl.all;
     var over = D.summary.above_1;
-    $('ranking-lede').textContent = 'Each column is one thing: Muse’s spread divided by people’s. Below the line, Muse draws the thing more alike than people. ' +
-      'Only ' + (over.length ? over.length + ' (' + over.join(', ') + ')' : 'none') + ' reach' + (over.length === 1 ? 'es' : '') + ' it. ' +
-      'The dots are Stable Diffusion XL, an open model, given the same prompt: it is more varied than Muse for ' + mv.muse_more_uniform + ' of ' + mv.n +
-      ' things, with a median of ' + f2(sd.median) + '. So the uniformity is Muse’s default, not something every image model does.';
-    $('rank-cap').textContent = 'Muse’s median ' + f2(a.median) + ' (95% CI ' + ci(a.median_ci95) + '). Hover or tap a column for its numbers; click to see the drawings. ' +
-      'Single ranks are noisy (12 pictures each): the table has every CI.';
+    $('ranking-lede').textContent = 'Each column is one thing: how varied Muse Image’s drawings of it are, compared with people’s. Below the line at 1, ' +
+      'Muse Image draws the thing more alike than people do. Only ' + (over.length ? over.length + ' things (' + over.join(', ') + ')' : 'none') +
+      ' reach' + (over.length === 1 ? 'es' : '') + ' the line. ' +
+      'The dots are Stable Diffusion XL, an open image AI from Stability AI, given the same request. It draws ' + mv.muse_more_uniform + ' of the ' + mv.n +
+      ' things more varied than Muse Image does, and a typical thing ' + f2(sd.median) + ' times as varied as people. So drawing everything the same way is ' +
+      'Muse Image’s habit, not something every image AI does.';
+    $('rank-cap').textContent = 'For a typical thing, Muse Image’s drawings are ' + f2(a.median) + ' times as varied as people’s (probably between ' +
+      f2(a.median_ci95[0]) + ' and ' + f2(a.median_ci95[1]) + '). Hover or tap a column for its numbers; click to see the drawings. ' +
+      'With only 12 pictures per thing, one thing’s exact rank is uncertain: the table gives each one’s likely range.';
     var tb = $('rank-table');
     tb.innerHTML = '';
-    tb.appendChild(h('thead', null, h('tr', null, ['Rank', 'Thing', 'Kind', 'Muse ÷ people', '95% CI', 'SDXL ÷ people', 'Muse spread', 'People’s spread', 'Set'].map(function (t) { return h('th', { scope: 'col', text: t }); }))));
+    tb.appendChild(h('thead', null, h('tr', null, ['Rank', 'Thing', 'Kind', 'Muse Image ÷ people', 'Likely range (95% CI)', 'Stable Diffusion XL ÷ people', 'Muse Image’s spread', 'People’s spread', 'From'].map(function (t) { return h('th', { scope: 'col', text: t }); }))));
     var body = h('tbody');
     D.concepts.slice().sort(function (a, b) { return a.rank - b.rank; }).forEach(function (c) {
       body.appendChild(h('tr', null, [h('td', { class: 'n', text: String(c.rank) }), h('td', { text: c.label }), h('td', { text: domainName(c.domain) }),
         h('td', { class: 'n', text: f2(c.ratio) }), h('td', { class: 'n', text: ci(c.ci) }), h('td', { class: 'n', text: f2(c.sdxl_ratio) }),
         h('td', { class: 'n', text: f2(c.muse_spread) }), h('td', { class: 'n', text: f2(c.human_spread) }),
-        h('td', { text: c.origin === 'new' ? 'new' : c.origin === 'forms' ? 'Plato’s Forms' : 'Plato’s Chair' })]));
+        h('td', { text: c.origin === 'new' ? 'new' : c.origin === 'forms' ? 'Plato’s own example' : 'our first 35' })]));
     });
     tb.appendChild(body);
   }
@@ -377,7 +384,8 @@
     svg.addEventListener('click', function () { if (near) openByKey(near.c.key); });
   }
 
-  function rhoText(r) { return 'rho ' + f2(r.rho) + ' (95% CI ' + ci(r.ci95) + ')'; }
+  // a rank correlation in words: "0.26 on a scale from −1 to 1 (probably between 0.08 and 0.42)"
+  function rhoText(r) { return f2(r.rho) + ' on a scale from −1 to 1 (probably between ' + f2(r.ci95[0]) + ' and ' + f2(r.ci95[1]) + ')'; }
   function clear(r) { return r.ci95[0] > 0 || r.ci95[1] < 0; }
 
   function predictors() {
@@ -386,9 +394,9 @@
     var p1 = P.P1_muse_spread_vs_human_spread;
     var under = cs.filter(function (c) { return c.muse_spread < c.human_spread; }).length;
     $('p1-text').textContent = (clear(p1) && p1.rho > 0
-      ? 'Things people draw in more ways are somewhat more likely to be ones Muse varies too, but the link is loose: '
-      : 'No clear link between how varied people’s drawings are and how varied Muse’s are: ') + rhoText(p1) +
-      '. ' + under + ' of ' + cs.length + ' dots sit below the line, where Muse is narrower than people.';
+      ? 'A little. Things people draw in more ways are somewhat more likely to be ones Muse Image varies too, but the link is weak: '
+      : 'No clear link between how varied people’s drawings are and how varied Muse Image’s are: ') + rhoText(p1) +
+      '. ' + under + ' of ' + cs.length + ' dots sit below the line, where Muse Image is less varied than people.';
     legend($('p1-legend'), [{ color: C.natural, label: 'natural', shape: 'dot' }, { color: C.artifact, label: 'made by people', shape: 'dot' }]);
     var hs = cs.map(function (c) { return c.human_spread; }), ms = cs.map(function (c) { return c.muse_spread; });
     var top = Math.ceil(Math.max(Math.max.apply(null, hs), Math.max.apply(null, ms)) * 10) / 10;
@@ -396,28 +404,30 @@
     scatter($('p1-chart'), cs.map(function (c) { return { x: c.human_spread, y: c.muse_spread, color: col(c), c: c }; }), {
       x0: left, x1: top, y0: 0, y1: top, xticks: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6].filter(function (t) { return t >= left - 1e-9 && t <= top; }),
       yticks: [0, 0.1, 0.2, 0.3, 0.4, 0.5].filter(function (t) { return t <= top; }), xfmt: function (t) { return t.toFixed(1); }, yfmt: function (t) { return t.toFixed(1); },
-      diag: 'as varied as people', xlabel: 'People’s spread →', ylabel: '↑ Muse’s spread',
-      aria: 'Scatter of Muse’s spread against people’s spread for ' + cs.length + ' things; nearly all lie below the diagonal.',
-      tip: function (c) { return [c.label, { text: 'Muse ' + f2(c.muse_spread), color: C.muse }, { text: 'people ' + f2(c.human_spread), color: C.people }, c.natural ? 'natural' : 'made by people']; } });
+      diag: 'as varied as people', xlabel: 'How varied people’s drawings are (spread) →', ylabel: '↑ Muse Image’s spread',
+      aria: 'Each dot is one of ' + cs.length + ' things: how varied people’s drawings of it are (across) against how varied Muse Image’s are (up). ' +
+        'Nearly all lie below the diagonal, where Muse Image is less varied.',
+      tip: function (c) { return [c.label, { text: 'Muse Image’s spread ' + f2(c.muse_spread), color: C.muse }, { text: 'people’s spread ' + f2(c.human_spread), color: C.people }, c.natural ? 'natural' : 'made by people']; } });
 
     var p2 = P.P2_ratio_vs_zipf;
     $('p2-text').textContent = (clear(p2)
-      ? (p2.rho < 0 ? 'Common words are a little more Platonic than rare ones: ' : 'Rare words are a little more Platonic than common ones: ')
-      : 'No clear link: common words (cat, house) and rare ones (anvil, hedgehog) are about equally Platonic: ') + rhoText(p2) + '.';
+      ? (p2.rho < 0 ? 'A little: Muse Image draws things with common names a little more alike than things with rare ones: '
+        : 'A little: Muse Image draws things with rare names a little more alike than things with common ones: ')
+      : 'No clear link: Muse Image draws things with common names (cat, house) and rare ones (anvil, hedgehog) about equally alike: ') + rhoText(p2) + '.';
     var zs = cs.map(function (c) { return c.zipf; }), rmax = Math.max(1.2, Math.ceil(Math.max.apply(null, cs.map(function (c) { return c.ratio; })) * 5) / 5);
     var zt = [];
     for (var z = Math.ceil(Math.min.apply(null, zs)); z <= Math.max.apply(null, zs); z++) zt.push(z);
     scatter($('p2-chart'), cs.map(function (c) { return { x: c.zipf, y: c.ratio, color: C.muse, c: c }; }), {
       y0: 0, y1: rmax, xticks: zt, yticks: [0, 0.5, 1].concat(rmax >= 1.5 ? [1.5] : []), yfmt: function (t) { return t.toFixed(1); },
-      hline: 1, hlabel: 'people = 1', xlabel: 'Word frequency (Zipf; 4 = once per 100,000 words) →', ylabel: '↑ Muse ÷ people',
-      aria: 'Scatter of the spread ratio against word frequency; no clear trend.',
-      tip: function (c) { return [c.label, { text: 'Muse ÷ people ' + f2(c.ratio), color: C.muse }, 'Zipf frequency ' + c.zipf.toFixed(1)]; } });
+      hline: 1, hlabel: 'people = 1', xlabel: 'How common the word is (4 = once per 100,000 words) →', ylabel: '↑ Muse Image, × as varied as people',
+      aria: 'Each dot is one thing: how common its name is (across) against how varied Muse Image’s drawings are compared with people’s (up); no clear trend.',
+      tip: function (c) { return [c.label, { text: 'Muse Image: ' + f2(c.ratio) + '× as varied as people', color: C.muse }, 'word frequency ' + c.zipf.toFixed(1) + ' (Zipf scale)']; } });
 
     var p3 = P.P3_natural_minus_artifact_log_ratio, med = P.P3_median_ratio;
     var rel = Math.exp(p3.diff) - 1, sameish = !clear(p3);
-    $('p3-text').textContent = (sameish ? 'No clear difference. ' : '') + 'Natural things: median ' + f2(med.natural) + ' (' + med.n_natural +
-      ' things). Made by people: ' + f2(med.artifact) + ' (' + med.n_artifact + '). On average the ratio is ' +
-      (rel >= 0 ? pct(rel) + '% higher' : pct(-rel) + '% lower') + ' for natural things (95% CI ' +
+    $('p3-text').textContent = (sameish ? 'No clear difference. ' : '') + 'For a typical natural thing, Muse Image’s drawings are ' + f2(med.natural) +
+      ' times as varied as people’s (' + med.n_natural + ' things); for a typical thing made by people, ' + f2(med.artifact) + ' (' + med.n_artifact +
+      ' things). On average the number is ' + (rel >= 0 ? pct(rel) + '% higher' : pct(-rel) + '% lower') + ' for natural things (likely range ' +
       pct(Math.exp(p3.ci95[0]) - 1) + '% to ' + pct(Math.exp(p3.ci95[1]) - 1) + '%).';
     strip($('p3-chart'), cs, rmax);
   }
@@ -427,12 +437,13 @@
     var X = function (v) { return m.l + (W - m.l - m.r) * v / rmax; };
     var groups = [{ name: 'Natural', key: true, color: C.natural }, { name: 'Made by people', key: false, color: C.artifact }];
     var rowH = (H - m.t - m.b) / 2;
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img', 'aria-label': 'Spread ratios of natural things and of things made by people, one dot each, with each group’s median.' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
+      'aria-label': 'How varied Muse Image’s drawings are compared with people’s, for natural things and for things made by people, one dot each, with each group’s middle value.' });
     [0, 0.5, 1, 1.5].filter(function (t) { return t <= rmax; }).forEach(function (t) {
       svg.appendChild(s('line', { x1: X(t), x2: X(t), y1: m.t, y2: H - m.b, stroke: t === 1 ? C.ink2 : C.grid, 'stroke-width': t === 1 ? 1.5 : 1 }));
       svg.appendChild(s('text', { x: X(t), y: H - m.b + 16, 'text-anchor': 'middle', 'font-size': 11, fill: C.muted }, t.toFixed(1)));
     });
-    svg.appendChild(s('text', { x: m.l + (W - m.l - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 12, fill: C.ink2 }, 'Muse ÷ people →'));
+    svg.appendChild(s('text', { x: m.l + (W - m.l - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 12, fill: C.ink2 }, 'Muse Image, × as varied as people →'));
     var pts = [];
     groups.forEach(function (g, gi) {
       var cy = m.t + rowH * (gi + 0.5);
@@ -459,7 +470,7 @@
       pts.forEach(function (p) { var d = (p.sx - mx) * (p.sx - mx) + (p.sy - my) * (p.sy - my); if (d < best) { best = d; near = p; } });
       if (!near) { ring.setAttribute('visibility', 'hidden'); hideTip(wrap); return; }
       ring.setAttribute('cx', near.sx); ring.setAttribute('cy', near.sy); ring.setAttribute('visibility', 'visible');
-      showTip(wrap, near.sx / sc, near.sy / sc, [near.c.label, { text: 'Muse ÷ people ' + f2(near.c.ratio), color: C.muse }]);
+      showTip(wrap, near.sx / sc, near.sy / sc, [near.c.label, { text: 'Muse Image: ' + f2(near.c.ratio) + '× as varied as people', color: C.muse }]);
     });
     svg.addEventListener('pointerleave', function () { ring.setAttribute('visibility', 'hidden'); hideTip(wrap); });
     svg.addEventListener('click', function () { if (near) openByKey(near.c.key); });
@@ -467,12 +478,13 @@
 
   function whyCaption() {
     var ols = D.predictors.P4_ols_log_muse_spread, b = ols.coefficients;
-    $('why-cap').textContent = 'All three together (a regression of log Muse spread on log people’s spread, word frequency and natural): people’s spread ' +
-      f2(b.log_human_spread.b) + ' (95% CI ' + ci(b.log_human_spread.ci95) + '), word frequency ' + f2(b.zipf.b) + ' (' + ci(b.zipf.ci95) + '), natural ' +
-      f2(b.natural.b) + ' (' + ci(b.natural.ci95) + '). Together they explain ' + pct(ols.r2) + '% of the variation in Muse’s spread: most of what makes a thing ' +
-      'Platonic for Muse is something else. Hover a dot for its name; click it to see the drawings.';
+    $('why-cap').textContent = 'Taken together, the three guesses explain only ' + pct(ols.r2) + '% of the differences in how varied Muse Image’s drawings are: ' +
+      'most of why it draws one thing more alike than another is something else. (In detail: a regression of log Muse Image spread on log people’s spread, ' +
+      'word frequency and natural; people’s spread ' + f2(b.log_human_spread.b) + ' [95% CI ' + ci(b.log_human_spread.ci95) + '], word frequency ' +
+      f2(b.zipf.b) + ' [' + ci(b.zipf.ci95) + '], natural ' + f2(b.natural.b) + ' [' + ci(b.natural.ci95) + '].) ' +
+      'Hover a dot for its name; click it to see the drawings.';
     var px = D.summary.robustness.pixel.all;
-    $('pixel-agree').textContent = 'median pixel ratio ' + f2(px.median) + ', below 1 for ' + px.below_1 + ' of ' + px.n;
+    $('pixel-agree').textContent = 'typically ' + f2(px.median) + ' times as varied as people, and less varied for ' + px.below_1 + ' of ' + px.n + ' things';
   }
 
   // --- start ---------------------------------------------------------------------------------

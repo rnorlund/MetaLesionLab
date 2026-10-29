@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The invisible Forms · {{BRAND}}</title>
-<meta name="description" content="Plato’s highest Forms were Beauty, Justice and the Good, and in Republic X God makes the one true bed. We asked Meta’s image model, Muse Image, to doodle God and 10 other abstract ideas, 16 times each. It drew God the same way all 16 times, and drew most ideas as one stock emblem.">
-<meta property="og:title" content="Asked to draw God, Meta’s image model drew the same figure 16 times · {{BRAND}}">
-<meta property="og:description" content="We asked Meta’s Muse Image to draw God, love, death, justice and 7 other ideas no one has ever seen, 16 times each. Most came out as one stock emblem.">
+<meta name="description" content="Plato’s highest Forms were Beauty, Justice and the Good, and in Republic X God makes the one true bed. We asked Meta’s image AI, Muse Image, to doodle God and 10 other ideas no one has seen, 16 times each. It drew God the same way all 16 times, and drew most ideas as one stock symbol.">
+<meta property="og:title" content="Asked to draw God, Meta’s image AI drew the same figure 16 times · {{BRAND}}">
+<meta property="og:description" content="We asked Meta’s image AI, Muse Image, to draw God, love, death, justice and 7 other ideas no one has ever seen, 16 times each. Most came out as one stock symbol.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,8 +28,8 @@
       <h1 id="hero-h">The invisible Forms</h1>
     </div>
     <!--#epigraph:republic-597b-->
-    <p class="iv-lede">Plato’s highest Forms weren’t chairs. They were Beauty, Justice and the Good. In <i>Republic</i> X, God makes the one true bed, the carpenter copies it, and the painter copies the copy. An image model is Plato’s painter: it learned from pictures, copies of copies. So we asked it to draw what no one has ever seen.</p>
     <p class="iv-answer" id="answer">…</p>
+    <details class="how-we-know"><summary>The idea behind this test <span class="pt-badge pt-aristotle"><img class="pt-badge-face" src="/static/img/portraits/aristotle-neutral.webp" width="256" height="256" alt="" loading="lazy"><span class="pt-badge-text">Aristotle checks the evidence</span></span></summary><p class="iv-lede">Plato believed every thing has a Form: one perfect, ideal version, which every real one copies. His highest Forms weren’t chairs, but Beauty, Justice and the Good. In <i>Republic</i> X, God makes the one true bed, a carpenter copies it, and a painter copies the copy. An image AI is like Plato’s painter, who copies how a thing looks instead of what it is: it learned from pictures, copies of copies. So we asked Meta’s image AI, Muse Image, to draw things no one has ever seen: God, love, death and eight other ideas.</p></details>
   </div>
   <figure class="iv-god" aria-labelledby="god-cap">
     <div class="iv-god-grid" id="god-grid" role="img" aria-label="Muse Image’s 16 drawings of God"></div>
@@ -39,12 +39,12 @@
 </section>
 
 <nav class="iv-jump" aria-label="On this page">
-  <a href="#damage">God under damage</a>
+  <a href="#damage">God in a damaged AI</a>
   <a href="#people">How people picture God</a>
   <a href="#ideas">Eleven ideas</a>
-  <a href="#emblems">One emblem each?</a>
-  <a href="#spread">Ideas against things</a>
-  <a href="#words">Beyond nouns</a>
+  <a href="#emblems">One symbol each</a>
+  <a href="#spread">Ideas against everyday things</a>
+  <a href="#words">Actions and qualities</a>
   <a href="#try">Draw one yourself</a>
   <a href="#method">How we measured</a>
 </nav>
@@ -52,9 +52,9 @@
 <!-- God under damage: Stable Diffusion XL (open), not Muse Image (closed, can't be damaged). docs/plato_ideas_damage.md -->
 <section class="iv-sec iv-dmg" id="damage" aria-labelledby="damage-h" hidden>
   <div class="iv-sec-head">
-    <p class="iv-kicker">Stable Diffusion XL, an open model · not Muse Image</p>
-    <h2 id="damage-h">God under damage</h2>
-    <p class="iv-sec-lede" id="damage-lede">Muse Image is closed, so it can’t be damaged. To see how an AI’s idea of God changes when the AI is damaged, we used an open image model, Stable Diffusion XL, gave it the same prompt, and damaged it step by step, as we did for the chair. These pictures are Stable Diffusion XL’s, not Muse Image’s.</p>
+    <p class="iv-kicker">Stable Diffusion XL, an open image AI from Stability AI · not Muse Image</p>
+    <h2 id="damage-h">Damage an AI’s grasp of words, and its God turns into an ordinary person</h2>
+    <p class="iv-sec-lede" id="damage-lede">Meta keeps Muse Image’s insides private, so we can’t damage it. Instead we used Stable Diffusion XL, an open image AI from Stability AI that anyone can download, and gave it the same request for God. Then we damaged it on purpose, step by step: we added random noise to its artificial neurons, or switched some of them off. We damaged one part at a time: the part that reads the words, or the part that paints the picture. All the pictures in this section are Stable Diffusion XL’s, not Muse Image’s.</p>
   </div>
   <div class="iv-dmg-top">
     <figure class="iv-dmg-fig" aria-labelledby="dmg-cap">
@@ -65,13 +65,13 @@
       <div class="iv-dmg-pair">
         <div class="iv-dmg-panel lang">
           <h3>Words part damaged</h3>
-          <p class="iv-dmg-sub">its two text encoders</p>
+          <p class="iv-dmg-sub">the part that reads the words (its two text encoders)</p>
           <div class="iv-dmg-frame"><img id="dmg-img-lang" alt="" width="320" height="320"></div>
           <p class="iv-dmg-read" id="dmg-read-lang"></p>
         </div>
         <div class="iv-dmg-panel draw">
           <h3>Drawing part damaged</h3>
-          <p class="iv-dmg-sub">its image-making UNet</p>
+          <p class="iv-dmg-sub">the part that paints the picture (its UNet)</p>
           <div class="iv-dmg-frame"><img id="dmg-img-draw" alt="" width="320" height="320"></div>
           <p class="iv-dmg-read" id="dmg-read-draw"></p>
         </div>
@@ -81,7 +81,7 @@
         <input type="range" id="dmg-level" min="0" max="5" step="1" value="0" aria-valuetext="intact">
         <output id="dmg-level-out" for="dmg-level">intact</output>
       </div>
-      <figcaption class="iv-cap" id="dmg-cap">Stable Diffusion XL (Stability AI), not Muse Image. The same prompt and the same starting noise at every level, so each step shows what the damage did to this one picture.</figcaption>
+      <figcaption class="iv-cap" id="dmg-cap">Stable Diffusion XL, not Muse Image. Every step uses the same request and the same random starting point, so you see what the damage did to this one picture.</figcaption>
     </figure>
     <div class="iv-dmg-side">
       <p class="iv-dmg-answer" id="dmg-answer"></p>
@@ -96,7 +96,7 @@
   <p class="iv-cap" id="dmg-charts-cap"></p>
   <details class="iv-numbers"><summary>The numbers</summary><div class="iv-table-wrap"><table id="dmg-table"></table></div></details>
   <div class="iv-sec-head">
-    <h3 class="iv-h3">The other ideas, and the words</h3>
+    <h3 class="iv-h3">The other ideas, actions and qualities turn into people too</h3>
     <p class="iv-dmg-note" id="dmg-others-lede"></p>
   </div>
   <div class="iv-dmg-others" id="dmg-others"></div>
@@ -106,7 +106,7 @@
 <section class="iv-sec iv-people" id="people" aria-labelledby="people-h">
   <div class="iv-sec-head">
     <h2 id="people-h">How people picture God</h2>
-    <p class="iv-sec-lede">This page asks how an AI pictures God, and how people have. It makes no claim about God or about any faith. We asked for “God” and nothing more: no prompt or label named a religion or its figures.</p>
+    <p class="iv-sec-lede">This page asks how an AI pictures God, and how people have. It makes no claim about God or about any faith. We asked for “God” and nothing more: no request or label named a religion or its figures.</p>
   </div>
   <div class="iv-people-grid">
     <div class="iv-prose">
@@ -116,20 +116,20 @@
     </div>
     <div class="iv-compare" id="compare"></div>
   </div>
-  <p class="iv-cap">Context, not a comparison. Those are children’s colour drawings made with time to think; these are an AI’s 20-second doodle prompts. We found no collection of people’s quick doodles of God, or of the other ideas here, so nothing on this page scores the AI against people.</p>
+  <p class="iv-cap">Context, not a comparison. Those are children’s colour drawings, made with time to think; these are an AI’s doodles, made from a request for a 20-second drawing. We found no collection of people’s quick doodles of God, or of the other ideas here, so nothing on this page scores the AI against people.</p>
 </section>
 
 <section class="iv-sec" id="ideas" aria-labelledby="ideas-h">
   <div class="iv-sec-head">
     <h2 id="ideas-h">Eleven ideas, sixteen drawings each</h2>
-    <p class="iv-sec-lede">God; Plato’s own highest Forms, beauty, justice and the Good; and seven ideas everyone lives with. Each got exactly the prompt the chair got, 16 times. Under each set: the emblem Muse Glimmer, Meta’s open model, found most often, and how spread out the drawings are.</p>
+    <p class="iv-sec-lede">God; Plato’s own highest Forms, beauty, justice and the Good; and seven ideas everyone lives with. Muse Image drew each one 16 times, from the same request we use for a chair: “A quick simple doodle sketch of …”. Under each set you see two things. First, the main symbol (emblem) that Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), found most often. Second, how different the drawings are from one another (we call this spread; 0 would mean 16 identical copies).</p>
   </div>
   <div class="iv-grid" id="grid"></div>
 </section>
 
 <section class="iv-sec" id="emblems" aria-labelledby="emblems-h">
   <div class="iv-sec-head">
-    <h2 id="emblems-h">One emblem each?</h2>
+    <h2 id="emblems-h">Most ideas come out as one main symbol</h2>
     <p class="iv-sec-lede" id="emblems-lede">…</p>
   </div>
   <div class="iv-legend" id="emblem-legend"></div>
@@ -140,7 +140,7 @@
 
 <section class="iv-sec" id="spread" aria-labelledby="spread-h">
   <div class="iv-sec-head">
-    <h2 id="spread-h">Are ideas drawn more variously than things?</h2>
+    <h2 id="spread-h">Ideas aren’t clearly more varied than everyday things</h2>
     <p class="iv-sec-lede" id="spread-lede">…</p>
   </div>
   <div class="iv-legend" id="spread-legend"></div>
@@ -150,7 +150,7 @@
 
 <section class="iv-sec" id="words" aria-labelledby="words-h" hidden>
   <div class="iv-sec-head">
-    <h2 id="words-h">Beyond nouns</h2>
+    <h2 id="words-h">Actions get one stock figure; qualities get a few favourite things</h2>
     <p class="iv-sec-lede" id="words-lede">…</p>
   </div>
   <div class="iv-grid" id="words-grid"></div>
@@ -160,7 +160,7 @@
 <section class="iv-sec iv-try" id="try" aria-labelledby="try-h">
   <div class="iv-sec-head">
     <h2 id="try-h">Draw one yourself</h2>
-    <p class="iv-sec-lede">Draw any of the eleven in 20 seconds, before you look too long at Muse’s. The pad shows where your drawing lands among Muse Image’s 16 and which of them it is closest to. It is measured on our server with DINOv2 and never stored.</p>
+    <p class="iv-sec-lede">Draw any of these yourself in 20 seconds, before you look too long at Muse Image’s. The drawing pad shows where your drawing lands among Muse Image’s 16, and which one it is closest to. A Meta AI that compares pictures (DINOv2) measures it on our server, and nothing is stored.</p>
   </div>
   <div class="iv-try-links" id="try-links"></div>
 </section>
@@ -168,13 +168,13 @@
 <section class="iv-sec iv-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">How we measured, and what it doesn’t show</h2>
   <ul id="method-list">
-    <li><b>Ideas.</b> Eleven: God; beauty, justice and the Good; love, time, death, the soul, freedom, happiness and truth. We left out infinity, because its stock emblem is a written sign and the prompt says “no text”, and “an idea”, a light bulb by cartoon convention. The list, the predictions and the tests were committed before the main run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_ideas_plan.md">pre-registration</a>).</li>
-    <li><b>Drawings.</b> Muse Image (<code>muse-image-1.0</code>) got the chair’s prompt word for word: “A quick simple doodle sketch of God, black marker on plain white, like a 20-second drawing, no text, no shading.” 16 per idea, in 4 separate calls of 4. <span id="refusals">…</span></li>
-    <li><b>Emblems.</b> Muse Glimmer 30B, run on our own GPU, picked the main symbol in each drawing from a fixed list per idea, asked twice with the list in opposite orders. Before seeing its answers, we labeled every drawing by eye. <span id="agree">…</span></li>
+    <li><b>Ideas.</b> Eleven: God; beauty, justice and the Good; love, time, death, the soul, freedom, happiness and truth. We left out infinity, because its stock symbol is a written sign and the request says “no text”, and “an idea”, a light bulb by cartoon convention. We wrote down the list, the predictions and the tests before the main run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_ideas_plan.md">pre-registration</a>).</li>
+    <li><b>Drawings.</b> Muse Image (<code>muse-image-1.0</code>) got the chair’s request word for word: “A quick simple doodle sketch of God, black marker on plain white, like a 20-second drawing, no text, no shading.” 16 per idea, in 4 separate requests of 4. <span id="refusals">…</span></li>
+    <li><b>Main symbols (emblems).</b> Muse Glimmer 30B, run on our own graphics card (GPU), picked the main symbol in each drawing from a fixed list per idea. We asked twice, with the list in opposite orders. Before seeing its answers, we labelled every drawing by eye. <span id="agree">…</span></li>
     <li><b>One main symbol hides company.</b> Every drawing of time has both a clock and an hourglass; every drawing of justice has scales and a blindfold; every drawing of freedom has a bird and broken chains. The bars count only the main one.</li>
-    <li><b>Spread.</b> Every drawing is cropped to its ink and embedded with Meta’s DINOv2. A set’s spread is the average distance between its drawings, the measure used everywhere on this site; 95% CIs come from resampling drawings. The things are Muse’s first-run doodles of the Atlas’s 135 everyday things and the draw pad’s 10.</li>
-    <li><b>AI only.</b> Google’s Quick, Draw! has no category for any of these ideas, and we found no open collection of people’s doodles of them. The Lausanne collection covers god only, as children’s colour drawings; we cite its group-level findings and use none of its pictures.</li>
-    <li><b>Limits.</b> One prompt, one model, 16 drawings per idea. These are Muse’s defaults for a plain prompt. Asked for named kinds of chair, it drew far more varied chairs (<a href="/plato">Plato’s Chair</a>); we did not try that here. The emblem lists were ours, written before the main run, and a drawing’s main symbol is a judgment call when it shows several.</li>
+    <li><b>Spread.</b> Every drawing is cropped to its ink and turned into a list of numbers that describes how it looks (an embedding), by Meta’s DINOv2. A set’s spread is the average difference between two of its drawings, the measure used everywhere on this site. Likely ranges (95% confidence intervals, CIs) come from resampling drawings. The everyday things are Muse Image’s first-run doodles of 135 things (from our <a href="/plato/atlas">Atlas of Forms</a>) and the 10 things on the draw page.</li>
+    <li><b>AI only.</b> Google’s Quick, Draw! game has no category for any of these ideas, and we found no open collection of people’s doodles of them. The Lausanne collection covers god only, as children’s colour drawings; we cite its group-level findings and use none of its pictures.</li>
+    <li><b>Limits.</b> One request, one AI, 16 drawings per idea. These are what Muse Image draws when you ask for nothing special. When Meta’s chat AI, Muse Spark, listed 16 kinds of chair (a rocking chair, a beanbag, a throne…) and Muse Image drew one of each, its chairs became far more varied (<a href="/plato">Plato’s Chair</a>); we did not try that here. The symbol lists were ours, written before the main run, and a drawing’s main symbol is a judgment call when it shows several.</li>
   </ul>
   <p class="iv-credit">AI drawings: Meta Muse Image. Emblem labels: Meta Muse Glimmer 30B. Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0). Plato’s <cite>Republic</cite>: Benjamin Jowett’s translation, public domain. Statistics: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/public_data/plato_ideas.json">public_data/plato_ideas.json</a>; write-up: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_ideas.md">docs/plato_ideas.md</a>.</p>
 </section>

@@ -172,13 +172,8 @@
     }[P1] || '';
     answer += P2 === 'supported' ? ' Yet all four described a chair well in words. They know the word, but none of them could draw the thing in code.' : '';
     return {
-      lede: 'In Plato’s cave, prisoners see only shadows of things on a wall, never the things themselves. ' +
-        'An AI trained only on text is a little like them: it knows chairs only from words. ' +
-        'Earlier on this page, AIs like that drew boxes and tables when asked for a chair. ' +
-        'Would an AI that has also seen pictures do better? ' +
-        'We tested two pairs of twins from Alibaba’s Qwen team. In each pair, one twin was trained only on text. ' +
-        'The other started from the same AI and was then also trained on pictures. ' +
-        'Both twins got exactly the same typed requests, 12 times each, and no picture.',
+      lede: 'An AI trained only on text knows chairs only from words, like the prisoners in Plato’s cave who see only shadows. ' +
+        'We tested two pairs of twins from Alibaba’s Qwen team: one trained on text only, one also trained on pictures. Both got the same typed requests, 12 times each.',
       answer: answer,
       key: {
         chair: 'A green dot marks a drawing that another AI, one that reads pictures (Google’s SigLIP 2), named a chair.',

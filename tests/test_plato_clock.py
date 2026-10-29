@@ -415,7 +415,10 @@ def test_first_screen_numbers_come_from_the_data(data):
     assert (muse["o"]["k"], muse["o"]["n"]) == (M["eye"]["times"].get("11:10", 0), M["n"])
     assert points["o"]["value"] == f"{M['eye']['contour']['k']} · {M['eye']['numbers']['k']} · {M['eye']['hands']['k']}"
     assert f"on {M['eye']['all_three']} of its {M['n']} clocks" in fl["answer"]
-    assert "never the 10:10 of watch adverts" in fl["answer"] if not M["eye"]["times"].get("10:10") else "10:10 of watch adverts on" in fl["answer"]
+    # the 10:10 count moved from the one-sentence answer to the second number's qualifier ("How we know")
+    ten = M["eye"]["times"].get("10:10")
+    assert ("None shows 10:10." in muse["q"]) if not ten else (f"{ten} show 10:10, the watch-advert time." in muse["q"])
+    assert len(fl["answer"].split()) <= 22
     # plain language: what a visitor reads on the first screen carries no unexplained jargon
     shown = " ".join([fl["answer"], fl["note"]] + [s["q"] + " " + s["o"]["label"] for s in fl["stats"]])
     for word in JARGON:

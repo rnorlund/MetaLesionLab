@@ -46,6 +46,25 @@
 .fl-stat.plain .fl-lab { margin: 0; font-size: var(--fs-body); color: var(--ink-2); }
 .fl-note { grid-area: note; margin: 0; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); max-width: 110ch; }
 
+/* "How we know": one closed disclosure under the numbers (plato_firstlook.js puts it there, and moves the page's
+   introduction and notes inside it), so the first screen is the question, the answer, a picture and the numbers. */
+.fl-how { grid-area: note; min-width: 0; border-top: 1px solid var(--line); padding-top: var(--fl-gap); }
+.fl-how > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; cursor: pointer; list-style: none;
+  font-size: var(--fs-sm); font-weight: 600; color: var(--ink-2); }
+.fl-how > summary::-webkit-details-marker { display: none; }
+.fl-how > summary::before { content: "▸"; color: var(--muted); transition: transform 0.15s; }
+.fl-how[open] > summary::before { transform: rotate(90deg); }
+.fl-how > summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-radius: 4px; }
+.fl-how-body { display: flex; flex-direction: column; gap: 12px; padding-top: 12px; max-width: var(--measure); }
+.fl-how-body > .fl-ctx { grid-area: auto; padding-top: 0; border-top: 0; }
+.fl-how-body > .fl-ctx p { font-size: var(--fs-body); }
+.fl-how-q { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 8px; font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
+.fl-how-q b { color: var(--ink); }
+.fl-how-v.yes { color: var(--green); }
+.fl-how-v.no { color: var(--orange); }
+.fl-how-note, .fl-how-body > .fl-note { margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .fl-how > summary::before { transition: none; } }
+
 /* the graphics statviz has no kind for (plato_firstlook.js draws them in statviz's classes) */
 .sv .fl-band { fill: var(--blue); fill-opacity: 0.14; }  /* lrange: the range over all things, behind the segments */
 .fl-lticks { position: relative; }

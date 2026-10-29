@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plato’s Cave · {{BRAND}}</title>
-<meta name="description" content="Plato's prisoners see only shadows. We showed Meta's open model Muse Glimmer 100 everyday objects as outlines, silhouettes and cast shadows. It named 67 of the shadows, and its most common wrong answer was the word “Shadow”. Try the shadows yourself.">
+<meta name="description" content="Plato's prisoners see only shadows. We showed Meta's open AI model, Muse Glimmer, 100 everyday objects as outlines, solid black silhouettes and soft cast shadows. It named 67 of the shadows, and its most common wrong answer was the word “Shadow”. Try the shadows yourself.">
 <meta property="og:title" content="Plato’s Cave: name the shadow · {{BRAND}}">
 <meta property="og:description" content="Can you name these shadows? An AI named 67 of 100, and often just said “Shadow”.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
@@ -31,15 +31,15 @@
   </div>
   <!--#epigraph:republic-518b-->
   <div class="fl-ctx">
-    <p>Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed Meta’s open model Muse Glimmer 100 everyday objects as bare shadows. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
+    <p>Plato’s prisoners see only shadows on the cave wall and take them for the things themselves. We showed Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), 100 everyday objects as bare shadows, and asked it to name each one. How much of a thing survives as a shadow, and does the AI lose the same things people do?</p>
   </div>
-  <p class="fl-answer" id="hero-answer">It named most of the shadows, and when it failed, its favorite answer was simply the word “Shadow”.</p>
+  <p class="fl-answer" id="hero-answer">Meta’s open AI model, Muse Glimmer, named most of the shadows; when it failed, its favorite answer was simply the word “Shadow”.</p>
   <figure class="fl-visual cv-pairs" aria-labelledby="pairs-cap">
     <div class="cv-pairs-grid" id="hero-pairs"></div>
-    <figcaption class="fl-cap" id="pairs-cap">Six of the 100 shadows Meta’s open model Muse Glimmer was shown, each beside the drawing that cast it, with the one word it answered.</figcaption>
+    <figcaption class="fl-cap" id="pairs-cap">Six of the 100 shadows we showed Muse Glimmer, each beside the drawing that cast it, with the one word Glimmer answered.</figcaption>
   </figure>
   <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
-  <p class="fl-note" id="hero-qual">One drawing per object, one prompt, one way of casting the shadow. People saw different drawings, so that comparison is by concept.</p>
+  <p class="fl-note" id="hero-qual">One drawing per object, one request, one way of casting the shadow. People in a published study saw different drawings of the same objects, so that comparison is by object, not by picture.</p>
 </section>
 <p class="fl-note">See also: <a href="/plato/scale#twins">models that only read vs models that have seen pictures</a></p>
 
@@ -55,26 +55,26 @@
 
 <section class="cv-sec" id="survive" aria-labelledby="survive-h">
   <div class="cv-sec-head">
-    <h2 id="survive-h">How much of a thing survives as a shadow?</h2>
-    <p class="cv-sec-lede" id="survive-lede">Each of 100 checked drawings was shown four ways: the drawing, its outline only, a filled black silhouette, and a soft shadow cast on a wall. Taking away the inside detail cost little. The cast shadow cost the most.</p>
+    <h2 id="survive-h">Outlines and silhouettes cost little; a soft shadow costs a third</h2>
+    <p class="cv-sec-lede" id="survive-lede">We showed each of 100 drawings four ways: the line drawing, its outline only, a solid black silhouette, and a soft shadow, as if cast on a wall. Taking away the inside detail cost little. The cast shadow cost the most.</p>
   </div>
   <div class="cv-two">
     <div>
       <p class="cv-legend" id="acc-legend"></p>
       <div class="cv-chart" id="acc-chart"></div>
-      <details class="cv-numbers"><summary>The numbers</summary><table id="acc-table"></table></details>
+      <details class="cv-numbers"><summary>See the numbers</summary><table id="acc-table"></table></details>
     </div>
     <figure style="margin:0">
       <img class="cv-strip" src="/static/img/plato_cave/versions.webp" width="900" height="949" loading="lazy"
            alt="Four versions of a cat, scissors, a bicycle and a clock: the line drawing, the outline only, a black silhouette and a blurred gray shadow.">
-      <figcaption class="cv-cap">The four versions, made by code from the same drawing.</figcaption>
+      <figcaption class="cv-cap">The four versions, each made by a computer program from the same drawing.</figcaption>
     </figure>
   </div>
 </section>
 
 <section class="cv-sec" id="medium" aria-labelledby="medium-h">
   <div class="cv-sec-head">
-    <h2 id="medium-h">It knows it is looking at a shadow</h2>
+    <h2 id="medium-h">Glimmer often knows it is looking at a shadow</h2>
     <p class="cv-sec-lede" id="medium-lede"></p>
   </div>
   <div class="cv-two">
@@ -92,7 +92,7 @@
 
 <section class="cv-sec" id="people" aria-labelledby="people-h">
   <div class="cv-sec-head">
-    <h2 id="people-h">Do people lose the same shadows?</h2>
+    <h2 id="people-h">People and the AI find some of the same shapes hard</h2>
     <p class="cv-sec-lede" id="people-lede"></p>
   </div>
   <div class="cv-groups" id="people-groups"></div>
@@ -101,7 +101,7 @@
 
 <section class="cv-sec" id="lens" aria-labelledby="lens-h">
   <div class="cv-sec-head">
-    <h2 id="lens-h">Inside the model: the name arrives later for shadows</h2>
+    <h2 id="lens-h">Inside the model, the right name arrives a little later for shadows</h2>
     <p class="cv-sec-lede" id="lens-lede"></p>
   </div>
   <div class="cv-two">
@@ -116,11 +116,11 @@
 <section class="cv-sec cv-method" id="method" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
-    <li><b>Pictures.</b> The project’s 100 checked line drawings (each named correctly by Muse Spark when it was made). Outlines, silhouettes and shadows were made by code: the background is flooded from the picture’s edge, so whatever it can’t reach is the object. Holes are filled, as in the human study. Three open drawings (foot, ear, nose) were closed across their biggest opening.</li>
-    <li><b>Naming.</b> Muse Glimmer 30B, Meta’s open-weight model, running on our own GPU, was asked “Name the object in this picture with exactly one word.” Its answers were scored with the project’s standard naming coder. Muse Spark named a random half of the pictures as a second model. Muse Spark also rated each wrong real-word answer, flagging the ones that look like the picture but mean something else (“visual” errors).</li>
-    <li><b>People.</b> Published silhouette and outline identification rates for 260 classic drawings (Snodgrass and Vanderwart) from 356 Flemish students (Wagemans et al., 2008). Their drawings are not ours, so the comparison is by concept. Those data carry no licence, so we quote only published means and our own summary.</li>
-    <li><b>Pre-registered.</b> Predictions were committed before any model saw a picture (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cave_plan.md">plan</a>). Not every prediction held: see <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cave.md">the write-up</a>.</li>
-    <li><b>Limits.</b> One drawing per object, one prompt, one way of casting the shadow. 100 objects, so single-object results are anecdotes. Answers are capped at 8 tokens, so some descriptions are cut off.</li>
+    <li><b>Pictures.</b> Our 100 checked line drawings, drawn by Meta’s image AI, Muse Image (each named correctly by Meta’s chat AI, Muse Spark, when it was made). Outlines, silhouettes and shadows were made by a computer program: the background is flooded from the picture’s edge, so whatever it can’t reach is the object. Holes are filled, as in the human study. Three open drawings (foot, ear, nose) were closed across their biggest opening.</li>
+    <li><b>Naming.</b> Muse Glimmer 30B, Meta’s open-weight model (anyone can download it), running on our own computer, was asked “Name the object in this picture with exactly one word.” Our standard scoring program marked each answer right or wrong. Muse Spark named a random half of the pictures as a second AI. Muse Spark also rated each wrong real-word answer, flagging the ones that look like the picture but mean something else (“visual” errors).</li>
+    <li><b>People.</b> Published silhouette and outline identification rates for 260 classic drawings (Snodgrass and Vanderwart) from 356 Flemish students (Wagemans et al., 2008). Their drawings are not ours, so the comparison is by object, not by picture. Those data carry no licence, so we quote only published averages and our own summary.</li>
+    <li><b>Planned in advance.</b> We wrote down our predictions before any AI saw a picture (pre-registered: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cave_plan.md">the plan</a>). Not every prediction held: see <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_cave.md">the write-up</a>.</li>
+    <li><b>Limits.</b> One drawing per object, one request, one way of casting the shadow. 100 objects, so single-object results are anecdotes. Answers are capped at 8 tokens (word pieces), so some descriptions are cut off.</li>
   </ul>
   <p class="cv-credit" id="credits"></p>
 </section>
