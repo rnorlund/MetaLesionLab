@@ -269,3 +269,20 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
   .dw-solo .dw-pick-b { order: 9; }
   .dw-solo .dw-stakes { order: 10; }
 }
+
+/* The clock test (mode "group"): the drawing beside two averages, people's and the AI's; the nearer one is outlined */
+.dw-avgs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dw-avgs img { width: 100%; height: auto; aspect-ratio: 1; display: block; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); }
+.dw-avg-near img { outline: 3px solid var(--teal); outline-offset: 2px; }
+.dw-group-key { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 6px 0 0; font-size: 12px; color: var(--ink-2); }
+.dw-group-key span { display: inline-flex; align-items: center; gap: 6px; }
+.dw-group-key i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; }
+.dw-gk-mid { background: color-mix(in srgb, var(--orange) 42%, transparent); }
+.dw-gk-90 { background: color-mix(in srgb, var(--orange) 18%, transparent); }
+.dw-gk-ai { background: var(--blue); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.dw-gk-you { background: var(--teal); }
+.dw-group-key i.dw-gk-you { width: 10px; border-radius: 50%; }
+@media (min-width: 1800px) {  /* the results' four-column row: the clock's two cards take half each */
+  .dw-results > .dw-group-tiles .dw-card { grid-column: span 2; }
+}

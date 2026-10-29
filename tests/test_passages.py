@@ -93,7 +93,7 @@ PLACED = {  # each series page: one epigraph, just below its shared title header
     "plato_lifespan.html": "meno-85c", "plato_telephone.html": "republic-597e", "plato_cave.html": "republic-518b",
     "plato_cratylus.html": "cratylus-439b", "plato_atlas.html": "metaphysics-980a21",
     "plato_inside.html": "metaphysics-981a28", "plato_damage.html": "timaeus-28a", "plato_bird.html": "theaetetus-155d",
-    "plato_forms.html": "republic-596a",
+    "plato_forms.html": "republic-596a", "plato_clock.html": "republic-597c",
 }
 
 
@@ -120,8 +120,8 @@ def test_landing_quote_band_sits_below_the_reveal():
     band = re.search(r'<section class="band quote-band" id="quotes".*?</section>', page, re.S).group(0)
     assert page.index('id="reveal"') < page.index('id="quotes"') < page.index('id="findings"')
     ids = re.findall(r'data-passage="([^"]+)"', band)
-    assert len(ids) == 3 and {P[i]["author"] for i in ids} == {"Plato", "Aristotle"}
-    assert band.count('class="epigraph epigraph--band"') == 3 and 'class="epigraph-band"' in band
+    assert len(ids) == 7 and {P[i]["author"] for i in ids} == {"Plato", "Aristotle"}  # a carousel (test_quote_carousel)
+    assert band.count('class="epigraph epigraph--band"') == 7 and 'class="epigraph-band"' in band
 
 
 def test_epigraph_css_keeps_the_layout_tokens():

@@ -1,0 +1,135 @@
+/* motion (static/js/motion.js): the Plato site's shared motion layer, on every Plato page (site.py adds it with the
+   script). Movement that shows the science where it can (dots filling, chairs dealt from one point, a cloud of
+   people's chairs), and otherwise only a calm entrance and a lift under the pointer.
+
+   The rules for every effect here:
+   - Nothing is hidden unless a script has said motion is welcome: site.py's boot script puts "mo" on <html> (and
+     "mo-boot" until motion.js takes over), never with prefers-reduced-motion, and takes both away again if motion.js
+     never runs. Without script, or with reduced motion, every page looks exactly as it did.
+   - Transforms and opacity only (the separate translate and scale properties, so a block's own transform is kept),
+     so nothing reflows while it moves.
+   - Colours are the site's tokens only. */
+
+/* --- the first screen, before motion.js has run: hidden only for the moment the boot script and motion.js need --- */
+html.mo-boot main > section:first-of-type { opacity: 0; }
+
+/* --- scroll reveal: a block (.mo-r) rises into view once (.mo-in); --mo-delay staggers a row of cards ---------- */
+html.mo .mo-r:not(.mo-in) { opacity: 0; }
+html.mo .mo-r.mo-in { animation: mo-rise 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) var(--mo-delay, 0ms) backwards; }
+html.mo .mo-r.mo-fade.mo-in { animation-name: mo-fade; }
+@keyframes mo-rise { from { opacity: 0; translate: 0 22px; } to { opacity: 1; translate: none; } }
+@keyframes mo-fade { from { opacity: 0; } to { opacity: 1; } }
+/* the guided tour measures what it points at, and a printout shows everything */
+html.tour-on .mo-r { opacity: 1 !important; animation: none !important; }
+@media print { .mo-r { opacity: 1 !important; animation: none !important; } }
+
+/* --- cards: a lift under the pointer or the keyboard, the picture slowly closer, an accent edge ----------------- */
+.hub-card, .series-card, .gx-card { position: relative; }
+.hub-art, .series-art { position: relative; overflow: hidden; }
+.hub-card::before, .series-card::before, .gx-card::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; z-index: 2; pointer-events: none;
+  background: linear-gradient(90deg, var(--blue), var(--orange)); transform: scaleX(0); transform-origin: left; }
+@media (prefers-reduced-motion: no-preference) {
+  .hub-card, .series-card, .gx-card {
+    transition: border-color 0.2s ease, box-shadow 0.35s ease, translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .hub-card::before, .series-card::before, .gx-card::before { transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .hub-art img, .series-art img, .gx-card .lab-pic img { transition: scale 1.6s cubic-bezier(0.2, 0.6, 0.2, 1); }
+  .hub-card:hover, .hub-card:focus-visible, .series-card:hover, .series-card:focus-visible, .gx-card:hover, .gx-card:focus-within {
+    transform: none; translate: 0 -4px; box-shadow: 0 18px 40px var(--shadow); }
+  .hub-card:hover::before, .hub-card:focus-visible::before, .series-card:hover::before, .series-card:focus-visible::before,
+  .gx-card:hover::before, .gx-card:focus-within::before { transform: scaleX(1); }
+  .hub-card:hover .hub-art img, .hub-card:focus-visible .hub-art img, .series-card:hover .series-art img,
+  .series-card:focus-visible .series-art img, .gx-card:hover .lab-pic img { scale: 1.07; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-card:hover::before, .hub-card:focus-visible::before, .series-card:hover::before, .series-card:focus-visible::before,
+  .gx-card:hover::before, .gx-card:focus-within::before { transform: scaleX(1); }  /* the edge still marks the card */
+}
+
+/* --- a card's picture plays a short preview under the pointer, where its experiment has a sequence ------------
+   A horizontal strip of --mo-n 16:9 frames on paper (scripts/plato_hub_previews.py, from the gallery's own sequences),
+   stepped by background-position in a 16:9 box centred on the picture; paper fills the rest of a wider picture. It
+   loads once the card has come into view (.mo-in) and plays only while the card is hovered or focused. On the landing
+   page it waits for the blind draw (body.revealed), like the series pictures themselves (landing.css). */
+.hub-card[href="/plato/damage"], .series-card[href="/plato/damage"] { --mo-strip: url(/static/img/plato/hub/preview-damage.webp); --mo-n: 4; }
+.hub-card[href="/plato/telephone"], .series-card[href="/plato/telephone"] { --mo-strip: url(/static/img/plato/hub/preview-telephone.webp); --mo-n: 5; }
+.hub-card[href="/plato/cave"], .series-card[href="/plato/cave"] { --mo-strip: url(/static/img/plato/hub/preview-cave.webp); --mo-n: 4; }
+@media (prefers-reduced-motion: no-preference) {
+  html.mo :is(body:not(.landing), body.revealed) :is(.mo-in > .hub-card, .series-card.mo-in):is([href="/plato/damage"],
+    [href="/plato/telephone"], [href="/plato/cave"]) :is(.hub-art, .series-art)::after {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 50%; aspect-ratio: 16 / 9; translate: -50% 0; z-index: 1; pointer-events: none;
+    background: var(--mo-strip) 0 0 / calc(var(--mo-n) * 100%) 100% no-repeat var(--paper); box-shadow: 0 0 0 100vmax var(--paper);
+    opacity: 0; transition: opacity 0.3s ease; }
+  html.mo :is(body:not(.landing), body.revealed) :is(.mo-in > .hub-card, .series-card.mo-in):is(:hover, :focus-visible)
+    :is(.hub-art, .series-art)::after {
+    opacity: 1; animation: mo-strip calc(var(--mo-n) * 0.8s) steps(var(--mo-n), jump-none) 0.2s infinite; }
+}
+@keyframes mo-strip { from { background-position: 0 0; } to { background-position: 100% 0; } }
+
+/* --- the chairs (home and /plato): Muse Image's 16 are dealt from one point, people's 16 drift in from a cloud -- */
+/* (stacked, or during the tour, they are simply there) */
+html.mo:not(.tour-on) .mo-prefly:not(.stacked) :is(.chairs-grid, .pc-chairs-grid) span { opacity: 0; }
+html.mo:not(.tour-on) .mo-fly:not(.stacked) [data-side="ai"] :is(.chairs-grid, .pc-chairs-grid) span {
+  animation: mo-deal 0.8s cubic-bezier(0.2, 0.8, 0.25, 1) backwards; animation-delay: calc((var(--c) + var(--r) * 4) * 55ms + 120ms); }
+html.mo:not(.tour-on) .mo-fly:not(.stacked) [data-side="people"] :is(.chairs-grid, .pc-chairs-grid) span {
+  animation: mo-cloud var(--fd, 1.5s) cubic-bezier(0.25, 0.75, 0.25, 1) backwards; animation-delay: var(--fw, 0ms); }
+@keyframes mo-deal {
+  from { opacity: 0; transform: translate(calc((1.5 - var(--c)) * (100% + var(--gap))), calc((1.5 - var(--r)) * (100% + var(--gap)))) scale(0.8); }
+  25% { opacity: 1; }
+  to { opacity: 1; transform: none; } }
+html.mo .mo-fly [data-side="people"] :is(.chairs-grid, .pc-chairs-grid) { overflow: clip; overflow-clip-margin: 6px; }
+@keyframes mo-cloud { from { opacity: 0; transform: translate(var(--fx, 0px), var(--fy, 0px)) rotate(var(--fr, 0deg)) scale(0.85); } to { opacity: 1; transform: none; } }
+/* the spread under each side counts up meanwhile (motion.js); its digits keep their width */
+.chairs-stat b, .pc-chairs-stat b { font-variant-numeric: tabular-nums; }
+
+/* --- the home hero: Plato follows the pointer a little, slowly (the separate translate property keeps his own
+   centring transform) ----------------------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) and (pointer: fine) {
+    .mo-hero > .hero-plato { translate: calc(var(--mo-px, 0) * -26px) calc(var(--mo-py, 0) * -16px);
+      transition: translate 1.1s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  }
+  @media (hover: none) {  /* a phone: no pointer to follow, so Plato sways a little by himself */
+    .mo-hero > .hero-plato { animation: mo-sway 11s ease-in-out 1.5s infinite alternate; }
+  }
+}
+@keyframes mo-sway { from { translate: 0 0; } to { translate: 0 -5px; } }
+
+/* --- the draw pad: a wet-ink glow follows the pen (a canvas over the pad, motion.js), then a scan while measuring - */
+.mo-ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .dw-panel:has(.dw-status .spinner) .dw-canvas-wrap::after {
+    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(100deg, transparent 32%, color-mix(in srgb, var(--blue-fill) 26%, transparent) 50%, transparent 68%);
+    transform: translateX(-100%); animation: mo-scan 1.5s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+  .dw-results.dw-waiting > .dw-wait, .hero-invite.busy { position: relative; overflow: hidden; }
+  .dw-results.dw-waiting > .dw-wait::after, .hero-invite.busy::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--blue) 22%, transparent) 50%, transparent 70%);
+    transform: translateX(-100%); animation: mo-scan 1.8s ease-in-out infinite; }
+}
+@keyframes mo-scan { to { transform: translateX(100%); } }
+
+/* --- a Play button that hasn't been pressed yet breathes a few times when it comes into view -------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  :is(.pi-play:not(.playing), .tp-play[aria-pressed="false"], #learn-play[aria-pressed="false"], [data-breathe]).mo-breathe { position: relative; }
+  :is(.pi-play:not(.playing), .tp-play[aria-pressed="false"], #learn-play[aria-pressed="false"], [data-breathe]).mo-breathe::after {
+    content: ""; position: absolute; inset: -3px; border-radius: inherit; pointer-events: none;
+    border: 2px solid var(--blue); opacity: 0; animation: mo-breathe 3.2s ease-out 0.6s 3; }
+}
+@keyframes mo-breathe { from { opacity: 0.7; transform: scale(1); } to { opacity: 0; transform: scale(1.35); } }
+
+/* --- Ken Burns: a framed picture ([data-kenburns], the frame clips) drifts slowly closer while it is in view ----- */
+[data-kenburns] { overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  html.mo [data-kenburns].mo-kb > img { animation: mo-kb 26s ease-in-out infinite alternate; }
+}
+@keyframes mo-kb { from { scale: 1; translate: 0 0; } to { scale: 1.09; translate: -1.5% -1%; } }
+
+/* --- reduced motion: none of the above moves (the script adds nothing either) ----------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .mo-r, .mo-ink, :is(.chairs-grid, .pc-chairs-grid) span, .hero-plato, [data-kenburns] > img, .mo-breathe::after {
+    animation: none !important; }
+  .mo-r { opacity: 1 !important; }
+  .mo-ink { display: none; }
+}

@@ -151,8 +151,32 @@ def phaedrus() -> Image.Image:
     return out
 
 
+def clock() -> Image.Image:
+    """The clock test: the average clock of 315 adults (left, a group average from the study's public export) and of
+    Muse Image's 16 clocks for the same words (right), on paper, each with a line saying whose it is."""
+    from matplotlib import get_data_path
+    from PIL import ImageDraw, ImageFont
+
+    fonts = Path(get_data_path()) / "fonts" / "ttf"
+    bold = ImageFont.truetype(str(fonts / "DejaVuSans-Bold.ttf"), 24)
+    sans = ImageFont.truetype(str(fonts / "DejaVuSans.ttf"), 22)
+    out = canvas()
+    d = ImageDraw.Draw(out)
+    side = 400
+    for i, (src, who, what, colour) in enumerate((
+            ("plato_clock/abc/form_315.webp", "315 adults", "their average clock", (194, 65, 12)),
+            ("plato_clock/muse_avg.webp", "Meta’s AI", "its 16 clocks, averaged", (29, 78, 216)))):
+        x = 60 + i * 450
+        im = Image.open(IMG / src).convert("RGBA").resize((side, side), Image.LANCZOS)
+        out.paste(im, (x, 22), im)
+        d.text((x + 20, 444), who, font=bold, fill=(17, 24, 39))
+        d.text((x + 20 + d.textlength(who + " ", font=bold), 446), what, font=sans, fill=(75, 85, 99))
+        d.line((x + 20, 482, x + 120, 482), fill=colour, width=4)
+    return out
+
+
 MAKERS = {"inside": inside, "ideas": ideas, "bird": bird, "atlas": atlas, "telephone": telephone,
-          "scale": scale, "phaedrus": phaedrus}
+          "scale": scale, "phaedrus": phaedrus, "clock": clock}
 
 
 # --- the Damaged AI hub ------------------------------------------------------------------------------------------

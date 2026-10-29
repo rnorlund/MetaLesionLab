@@ -54,13 +54,28 @@
 .sv-track { height: clamp(10px, calc(6px + 0.4vw), 16px); background: var(--line); border-radius: 4px; overflow: hidden; }
 .sv-fill { display: block; height: 100%; border-radius: 0 4px 4px 0; }
 
-/* a gentle entrance, only when motion is welcome */
+/* The entrance, only when motion is welcome. statviz.js holds it at its first frame (.sv-wait, paused) until the graphic
+   is in view, then lets it play: the dots fill one by one, the two clusters drift in from one wide cloud (--dx, --dy)
+   into their own spread, the layer marker slides from layer 1 (--mx) before its layers light up, and bars grow.
+   Without the script's hook (or with reduced motion, or in print) every graphic is simply drawn, complete. */
 @media (prefers-reduced-motion: no-preference) {
-  .sv-dots .sv-on, .sv-pair .sv-on, .sv-layers .sv-on { animation: sv-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); transform-box: fill-box; transform-origin: center; }
-  .sv-fill { animation: sv-grow 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); transform-origin: left; }
+  .sv-dots .sv-on, .sv-layers .sv-on, .sv-lrange .sv-on, .sv-fails .sv-on, .fl-rs .sv-on {
+    animation: sv-in 0.7s cubic-bezier(0.3, 1.2, 0.5, 1) both; animation-delay: var(--d, 0ms); transform-box: fill-box; transform-origin: center; }
+  .sv-layers .sv-on, .sv-lrange .sv-on { animation-delay: calc(var(--d, 0ms) + 900ms); }  /* after the marker arrives */
+  .sv-pair .sv-on { animation: sv-drift 1.9s cubic-bezier(0.25, 0.8, 0.25, 1) both; animation-delay: var(--d, 0ms); }
+  .sv-pair .sv-ring { animation: sv-fade 0.8s ease-out 1.4s both; }
+  .sv .sv-mark { animation: sv-slide 1.2s cubic-bezier(0.5, 0, 0.2, 1) both; }
+  .sv-fill { animation: sv-grow 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--d, 0ms); transform-origin: left; }
+  .sv.sv-wait .sv-on, .sv.sv-wait .sv-ring, .sv.sv-wait .sv-mark, .sv.sv-wait .sv-fill { animation-play-state: paused; }
 }
-@keyframes sv-in { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: none; } }
+@keyframes sv-in { from { opacity: 0; transform: scale(0.2); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes sv-drift { from { opacity: 0; transform: translate(var(--dx, 0px), var(--dy, 0px)); } 25% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes sv-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sv-slide { from { transform: translateX(var(--mx, 0px)); } to { transform: none; } }
 @keyframes sv-grow { from { transform: scaleX(0); } to { transform: none; } }
+@media print {
+  .sv .sv-on, .sv .sv-ring, .sv .sv-mark, .sv .sv-fill { animation: none !important; }
+}
 @media (forced-colors: active) {
   .sv .sv-on, .sv .sv-mark { fill: CanvasText; }
   .sv-fill { background: CanvasText; }
