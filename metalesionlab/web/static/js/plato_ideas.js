@@ -59,7 +59,7 @@
   function hero() {
     var g = BY.god, S = D.summary, n = g.n, h1 = S.H1, h3 = S.H3_vs_atlas;
     $('answer').textContent = 'Asked to draw God, Meta’s Muse Image drew the same figure ' + nOf(g.top.n, n) +
-      ' times: a bearded man in a robe, with a halo.';
+      ' times: a bearded man in a robe, with a halo, as in Western religious art.';
     var grid = $('god-grid');
     grid.textContent = '';
     for (var i = 0; i < n; i++) grid.appendChild(cell(g.sprite, i));
