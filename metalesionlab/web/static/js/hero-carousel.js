@@ -16,6 +16,10 @@
    2. Or from code:  HeroCarousel.mount(element, {slides:[…], label:'…', interval:7000})  -> {go(i), play(), pause(), destroy()}
       Slide: {caption, images:[{src, alt, label?}], href? (the caption becomes a link)}. Keep every slide to the same
       number of pictures so the area never changes height (the area is always as tall as the tallest slide anyway).
+   2b. ROW LAYOUT: add data-layout="row" to the figure (or {layout:'row'} to mount()) and each slide is one horizontal
+      row of equal square tiles, left to right, filling the width (a tile is 1/6 of the row, so 4-6 steps all fit and
+      every slide reserves the same height); up to 640px it is a horizontal scroll strip. Put it under the text, full
+      width (/damaged and /plato/damage use it with .fl-wide in plato_firstscreen.css). Without it: the 2x2 grid.
    3. Pictures sit on paper (--paper). Colours are the site's tokens. Timing: --hc-interval (7 s) is set from `interval`.
 
    BEHAVIOUR
@@ -62,6 +66,7 @@
     var stopped = !!(REDUCE && REDUCE.matches);
     var hold = { hover: false, focus: false, hidden: !!document.hidden, away: false };
     root.classList.add('hc');
+    if (cfg.layout === 'row') root.setAttribute('data-layout', 'row');
     root.setAttribute('role', 'region');
     root.setAttribute('aria-roledescription', 'carousel');
     root.setAttribute('aria-label', cfg.label || root.getAttribute('aria-label') || 'Pictures');

@@ -89,7 +89,7 @@ def verdicts(html):
 @pytest.mark.parametrize("page", sorted(PAGES))
 def test_first_screen_leads_with_question_picture_answer_and_numbers(client, page):
     src = (web.HERE / "pages" / f"plato_{page}.html").read_text()
-    hero = re.search(r'<section class="fl fl-side [\w-]+".*?</section>', src, re.S)
+    hero = re.search(r'<section class="fl fl-side (?:fl-wide )?[\w-]+".*?</section>', src, re.S)
     assert hero, page
     h = hero.group(0)
     # the question, as before: the kicker and the page's question, then the verified epigraph right under it

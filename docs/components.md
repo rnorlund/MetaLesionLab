@@ -19,7 +19,9 @@ The picture area of a first screen: slides, each a picture or a strip of picture
 API: `HeroCarousel.mount(el, {slides, label, interval})` returns `{go(i), play(), pause(), destroy()}`;
 `HeroCarousel.slideHtml(slide, i, n)` is the pure markup. Auto-advance 7 s; holds on hover, focus, hidden tab and
 off screen; Pause/Play, arrows, dots, arrow keys; `prefers-reduced-motion` means no motion and no auto-advance.
-Keep every slide to the same number of pictures. WAI-ARIA carousel pattern (like `quote-carousel.js`).
+Keep every slide to the same number of pictures (in the row layout, up to six: a tile is a sixth of the row).
+Row layout: `data-layout="row"` on the figure (or `{layout:'row'}` to `mount`): one horizontal row of equal square tiles per slide, left to right,
+full width under the text (`.fl-wide` in `plato_firstscreen.css`); a scroll strip up to 640px. Used by `/damaged` and `/plato/damage` only. WAI-ARIA carousel pattern (like `quote-carousel.js`).
 
 ## Findings (`static/js/findings.js`, `static/css/findings.css`)
 

@@ -54,3 +54,19 @@
   .hc-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hc-strip[style*="--n: 1"], .hc-strip[style*="--n:1"], .hc-strip[style*="--n: 2"], .hc-strip[style*="--n:2"] { grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
 }
+
+/* Row layout (data-layout="row"): one slide is ONE horizontal row of equal square tiles, left to right through the
+   steps, each with its small label; the figure spans the full content width, under the text. Every tile is one sixth
+   of the row (--hc-cols, the most steps any slide has), so a slide of four or five starts at the text's left edge, tiles never change size
+   between slides, and every slide reserves the same height. Phones (up to 640px): a horizontal scroll strip, a little
+   more than two tiles showing, snapping to a tile. */
+[data-layout="row"] .hc-static { width: 100%; max-width: none; margin-inline: 0; }
+[data-layout="row"] { --hc-cols: 6; --hc-gap: clamp(8px, 1vw, 20px); width: 100%; max-width: none; margin-inline: 0; }
+[data-layout="row"] .hc-strip { display: flex; justify-content: flex-start; gap: var(--hc-gap); }
+[data-layout="row"] .hc-pic { flex: 0 0 calc((100% - (var(--hc-cols) - 1) * var(--hc-gap)) / var(--hc-cols)); }
+[data-layout="row"] .hc-slides { align-items: start; }
+@media (max-width: 640px) {
+  [data-layout="row"] .hc-strip { justify-content: flex-start; overflow-x: auto; scroll-snap-type: x proximity; touch-action: pan-x pan-y;
+    padding-bottom: 4px; scrollbar-width: thin; }
+  [data-layout="row"] .hc-pic { flex-basis: 42%; scroll-snap-align: start; }
+}
