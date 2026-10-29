@@ -30,7 +30,7 @@
     <p class="dw-stakes-h">Hidden until you draw</p>
     <div class="dw-stake">
       <span class="dw-cards" data-stake-cards aria-hidden="true"></span>
-      <p><b data-stake-ai>16</b> drawings by Meta’s image model, shown when you’re done</p>
+      <p><b data-stake-ai>16</b> drawings by Meta’s image AI, shown when you’re done</p>
     </div>
     <div class="dw-stake" data-stake-people hidden>
       <span class="dw-crowd" aria-hidden="true"></span>
@@ -45,18 +45,18 @@
   <h2 id="how-h">How it works</h2>
   <ol class="dw-steps">
     <li><b>Your drawing becomes a picture</b> exactly the way the 200 people’s drawings did: lines rescaled like Google’s Quick, Draw! game, drawn black on white, then cropped to the ink. A photo of a drawing on paper is treated like Muse Image’s pictures: the paper is flattened to white, then cropped to the ink.</li>
-    <li><b>Meta’s DINOv2 vision model</b> turns the picture into 768 numbers. Pictures that look alike get similar numbers; we compare them by cosine distance.</li>
+    <li><b>DINOv2, a Meta AI that compares pictures,</b> turns it into 768 numbers that describe how it looks. Pictures that look alike get similar numbers; their distance is 0 when identical.</li>
     <li><b>Originality</b> is how far your drawing sits from the typical person’s drawing (the average of 200), compared with how far each of those 200 people’s drawings sits from the average of the others.</li>
-    <li><b>Next to Muse Image</b> is your distance from Muse’s prototype, the average of its own doodles, compared with people’s.</li>
+    <li><b>Compared with Muse Image</b> is how far your drawing sits from the average of Muse Image’s doodles, against how far people’s sit.</li>
   </ol>
   <ul class="dw-caveats">
     <li><b>Drawn blind, like Quick, Draw!.</b> The 200 people only saw the word and had 20 seconds. If you had already seen Muse’s chairs (say, on the home page or in an earlier round here), your drawing may be more deliberate than a Quick, Draw! player’s.</li>
     <li><b>DINOv2 sees style too.</b> Muse Image draws clean marker sketches; people (and you) draw quick mouse or finger doodles. That is why everyone’s drawings sit far from Muse’s, and why originality only compares you with people.</li>
-    <li><b>Photos score higher.</b> Pen, paper and camera change how lines look. On test photos of people’s drawings redrawn on paper, a photo scored about 14 points more original, on average, than the same drawing made on the pad, and the two scores agreed only moderately (rank correlation 0.5).</li>
+    <li><b>Photos score higher.</b> Pen, paper and camera change how lines look. On test photos of people’s drawings redrawn on paper, a photo scored about 14 points more original, on average, than the same drawing made on the pad, and the two scores agreed only moderately (0.5, where 1 is perfect agreement).</li>
     <li><b>It measures looks, not ideas, and it’s touchy.</b> A messy scribble can score as very original, and nudging a line by a pixel can move the score by about 10 points. If your drawing looks more like another thing, the page says so.</li>
-    <li><b>Muse Image can vary when asked.</b> These are its doodles for the plain prompt. <a href="/plato#variety">Asked for different kinds</a>, its drawings get far more varied, often more than people’s.</li>
+    <li><b>Muse Image can vary when asked.</b> These are its doodles for the plain request. <a href="/plato#variety">Asked for different kinds</a>, its drawings get far more varied, often more than people’s.</li>
   </ul>
-  <p class="dw-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw!</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image. The damaged drawings: Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M, made in advance and only shown, never compared with yours. Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. <span data-privacy-line>Drawings are processed in memory and never stored or logged.</span></p>
+  <p class="dw-credit">People’s drawings: <a href="https://github.com/googlecreativelab/quickdraw-dataset">Google Quick, Draw!</a> (Google Creative Lab), CC BY 4.0. AI drawings: Meta Muse Image. The damaged drawings: Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M, made in advance and only shown, never compared with yours. Picture comparison: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. <span data-privacy-line>Drawings are processed in memory and never stored or logged.</span></p>
 </section>
 
 <!-- Draw the invisible (God, love, time…): AI only, so its own "How it works". -->
@@ -64,7 +64,7 @@
   <h2 id="how-ideas-h">How it works for the invisible ideas</h2>
   <ol class="dw-steps">
     <li><b>Your drawing becomes a picture</b> the same way as for the things: lines rescaled, drawn black on white, then cropped to the ink.</li>
-    <li><b>Meta’s DINOv2 vision model</b> turns the picture into 768 numbers, and we compare them with the numbers for Muse Image’s 16 drawings of the same idea.</li>
+    <li><b>DINOv2, a Meta AI that compares pictures,</b> turns it into 768 numbers that describe how it looks, and we compare them with Muse Image’s 16 drawings of the same idea.</li>
     <li><b>Muse’s idea</b> is the average of its 16 drawings. We count how many of Muse’s own drawings sit closer to it than yours does.</li>
     <li><b>The emblems</b>, the main symbol in each of Muse’s drawings, were named in advance by Muse Glimmer, Meta’s open model, for Muse’s drawings only. Your drawing isn’t labeled, and no AI is asked about it.</li>
   </ol>
@@ -72,9 +72,9 @@
     <li><b>AI only.</b> People never drew God, love or time for Google’s Quick, Draw! game, and we found no open collection of people’s drawings of these ideas. So there is no comparison with people here.</li>
     <li><b>Far isn’t wrong.</b> Far from Muse’s picture says how your drawing differs from the AI’s habit. It says nothing about whether your idea is right, or good.</li>
     <li><b>DINOv2 sees style too.</b> Muse draws clean marker sketches, and a drawing on the pad is a quick line, so most drawings land further out than all of Muse’s own.</li>
-    <li><b>One prompt, one model.</b> These are Muse Image’s drawings for the plain doodle prompt, the same one it got for the chair.<!--#if /plato/ideas--> The experiment is <a href="/plato/ideas">The invisible Forms</a>.<!--#endif--></li>
+    <li><b>One request, one AI.</b> These are Muse Image’s drawings for the plain doodle request, the same one it got for the chair.<!--#if /plato/ideas--> The experiment is <a href="/plato/ideas">The invisible Forms</a>.<!--#endif--></li>
   </ul>
-  <p class="dw-credit">AI drawings: Meta Muse Image. Emblem labels: Meta Muse Glimmer 30B, run on our own GPU. Embeddings: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. <span data-privacy-line>Drawings are processed in memory and never stored or logged.</span></p>
+  <p class="dw-credit">AI drawings: Meta Muse Image. Emblem labels: Meta Muse Glimmer 30B, run on our own GPU. Picture comparison: Meta DINOv2 (facebook/dinov2-base, Apache-2.0), run on this server’s CPU. <span data-privacy-line>Drawings are processed in memory and never stored or logged.</span></p>
 </section>
 
 </main>
@@ -113,7 +113,8 @@
     results: document.getElementById('draw-results'),
     onReveal: function (e) {
       var idea = !!(e && e.concept && e.concept.mode === 'ai_only');
-      how.hidden = idea;
+      var group = !!(e && e.concept && e.concept.mode === 'group');  // the clock test explains itself on /plato/clock
+      how.hidden = idea || group;
       howIdeas.hidden = !idea;
       stakes.hidden = true;  // the cards are face up now, just below
     },

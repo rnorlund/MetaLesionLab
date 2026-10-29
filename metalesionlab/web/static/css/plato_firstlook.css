@@ -9,11 +9,12 @@
 .fl {
   --fl-paper: var(--paper, #fbfaf5);
   --fl-paper-ink: var(--paper-ink, #1f2328);  /* ink on paper: stays dark when the page is dark */
-  --fl-gap: clamp(14px, 1.3vw, 34px);
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: clamp(18px, 2.2vw, 56px);
+  --fl-gap: clamp(18px, calc(6px + 1.7vw), 40px);
+  /* Big and quiet: no box; the first screen sits on the page's ground */
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: clamp(8px, 1vw, 24px) 0 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "title" "answer" "visual" "stats" "note" "quote" "ctx";
@@ -21,11 +22,12 @@
   align-items: start;
 }
 .fl > .title-pair { grid-area: title; min-width: 0; }
-.fl > .title-pair h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
-.fl-answer { grid-area: answer; margin: 0; max-width: 40ch; font-size: clamp(20px, calc(12px + 0.78vw), 36px); font-weight: 650;
-  line-height: 1.3; letter-spacing: -0.012em; color: var(--ink); text-wrap: pretty; }
+.fl > .title-pair h1 { margin: 0; max-width: 15ch; font-size: var(--fs-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: var(--lh-display); text-wrap: balance; }
+.fl-answer { grid-area: answer; margin: 0; max-width: 40ch; font-size: var(--fs-lead); font-weight: var(--fw-lead);
+  line-height: var(--lh-lead); color: var(--ink-2); text-wrap: pretty; }
+.fl-answer b, .fl-answer strong { font-weight: 500; color: var(--ink); }
 .fl-visual { grid-area: visual; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.fl-cap { margin: 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); max-width: var(--measure); }
+.fl-cap { margin: 0; font-size: var(--fs-small); line-height: 1.45; color: var(--muted); max-width: var(--measure); }
 .fl-cap a { color: inherit; }
 .fl-key { display: inline-block; width: 0.62em; height: 0.62em; border-radius: 50%; margin: 0 0.3em 0 0.1em; vertical-align: 0.05em; }
 .fl-key.muse { background: var(--blue); }
@@ -34,15 +36,34 @@
 
 /* the numbers: a row of up to three, each a statviz graphic with its qualifier under it */
 .fl-stats { grid-area: stats; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-  gap: var(--fl-gap) clamp(20px, 2.4vw, 64px); padding-top: var(--fl-gap); border-top: 1px solid var(--line); min-width: 0; }
-.fl-stat { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.fl-stat .sv-cap { max-width: 46ch; color: var(--ink-2); }
+  gap: var(--fl-gap) var(--space-grid); margin-top: calc(var(--space-block) - var(--fl-gap)); min-width: 0; }
+.fl-stat { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.fl-stat .sv-cap { max-width: 46ch; font-size: var(--fs-body); color: var(--ink-2); }
 .fl-stat .sv-pair { width: min(100%, max(18rem, var(--sv-w))); }  /* the two clusters: small enough to sit in a row of numbers */
 .fl-stat .sv-side .sv-svg { width: 74%; }
-.fl-q { margin: 0; font-size: max(12px, calc(var(--fs-sm) * 0.92)); line-height: 1.45; color: var(--muted); max-width: 52ch; }
-.fl-stat.plain .fl-num { margin: 0; font-weight: 700; font-size: clamp(30px, calc(18px + 1.5vw), 60px); line-height: 1; letter-spacing: -0.02em; }
-.fl-stat.plain .fl-lab { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); }
-.fl-note { grid-area: note; margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); max-width: 110ch; }
+.fl-q { margin: 0; font-size: var(--fs-small); line-height: 1.45; color: var(--muted); max-width: 52ch; }
+.fl-stat.plain .fl-num { margin: 0; font-weight: var(--fw-number); font-size: var(--fs-number); line-height: var(--lh-number); letter-spacing: var(--ls-number); }
+.fl-stat.plain .fl-lab { margin: 0; font-size: var(--fs-body); color: var(--ink-2); }
+.fl-note { grid-area: note; margin: 0; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); max-width: 110ch; }
+
+/* "How we know": one closed disclosure under the numbers (plato_firstlook.js puts it there, and moves the page's
+   introduction and notes inside it), so the first screen is the question, the answer, a picture and the numbers. */
+.fl-how { grid-area: note; min-width: 0; border-top: 1px solid var(--line); padding-top: var(--fl-gap); }
+.fl-how > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; cursor: pointer; list-style: none;
+  font-size: var(--fs-sm); font-weight: 600; color: var(--ink-2); }
+.fl-how > summary::-webkit-details-marker { display: none; }
+.fl-how > summary::before { content: "▸"; color: var(--muted); transition: transform 0.15s; }
+.fl-how[open] > summary::before { transform: rotate(90deg); }
+.fl-how > summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-radius: 4px; }
+.fl-how-body { display: flex; flex-direction: column; gap: 12px; padding-top: 12px; max-width: var(--measure); }
+.fl-how-body > .fl-ctx { grid-area: auto; padding-top: 0; border-top: 0; }
+.fl-how-body > .fl-ctx p { font-size: var(--fs-body); }
+.fl-how-q { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 8px; font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
+.fl-how-q b { color: var(--ink); }
+.fl-how-v.yes { color: var(--green); }
+.fl-how-v.no { color: var(--orange); }
+.fl-how-note, .fl-how-body > .fl-note { margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .fl-how > summary::before { transition: none; } }
 
 /* the graphics statviz has no kind for (plato_firstlook.js draws them in statviz's classes) */
 .sv .fl-band { fill: var(--blue); fill-opacity: 0.14; }  /* lrange: the range over all things, behind the segments */
@@ -50,7 +71,7 @@
 .fl-lband { position: absolute; top: 0; transform: translateX(-50%); color: var(--blue); white-space: nowrap; }
 .fl-fails { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: repeat(2, auto); column-gap: 8px; align-items: center;
   width: min(100%, var(--sv-w, 16rem)); }
-.fl-fails > span { grid-column: 1; font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--muted); }
+.fl-fails > span { grid-column: 1; font-family: var(--mono); font-size: var(--fs-label); line-height: 1; color: var(--muted); }
 .fl-fails > svg { grid-column: 2; grid-row: 1 / span 2; }
 .fl-rs { width: min(100%, calc(var(--sv-w, 18rem) * 1.25)); }
 .fl-rs-axis { stroke: var(--line-2); stroke-width: 1; }
@@ -59,7 +80,7 @@
 .fl-rs-tick { font-family: var(--mono); font-size: 8.5px; fill: var(--muted); }
 .fl-rs-ring { fill: none; stroke: var(--blue); stroke-width: 2; }
 .fl-rs .sv-on { stroke: var(--panel); stroke-width: 1.5; }
-.fl-rs-key { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: max(11px, calc(var(--fs-sm) * 0.85)); color: var(--ink-2); }
+.fl-rs-key { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: var(--fs-label); color: var(--ink-2); }
 .fl-rs-key span { display: inline-flex; align-items: center; gap: 5px; }
 .fl-ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--blue); }
 
@@ -67,8 +88,10 @@
 .fl > figure.epigraph { grid-area: quote; margin: 0; padding-top: var(--fl-gap); border-top: 1px solid var(--line); align-self: stretch; }
 .fl-ctx { grid-area: ctx; display: flex; flex-direction: column; gap: 12px; min-width: 0; padding-top: var(--fl-gap);
   border-top: 1px solid var(--line); }
-.fl-ctx p { margin: 0; font-size: var(--fs-lede); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
-.fl-ctx p.fl-small { font-size: var(--fs-body); }
+.fl-ctx p { margin: 0; font-size: var(--fs-intro); font-weight: var(--fw-lead); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.fl-ctx p.fl-small { font-size: var(--fs-body); font-weight: 400; color: var(--muted); }
+/* "How we know" (plato_firstlook.js) under the numbers: app.css styles the disclosure; here it takes its row */
+.fl > details.how-we-know, .fl-stats + details.how-we-know { grid-column: 1 / -1; }
 
 @media (min-width: 960px) {
   .fl { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr auto auto auto;

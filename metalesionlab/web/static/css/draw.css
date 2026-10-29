@@ -2,8 +2,10 @@
    Paper #F7F6F1 like Plato's Chair; blue is Muse Image, orange is people, teal is you. */
 body.draw { background: var(--ground-warm); }
 .draw main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
-.dw-kicker { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--orange-dark); letter-spacing: 0.02em; }
-.dw-cap, .dw-note { font-size: 13px; line-height: 1.5; color: var(--muted); margin: 0; }
+.dw-kicker { margin: 0; display: flex; align-items: center; gap: 12px; font-size: var(--fs-small); color: var(--muted); }
+.dw-kicker::before { content: ""; flex: none; width: 32px; height: 1px; background: var(--orange); }
+.dw-kicker[hidden] { display: none; }
+.dw-cap, .dw-note { font-size: var(--fs-small); line-height: 1.5; color: var(--muted); margin: 0; }
 
 body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitation would cover its buttons; the header has Tour */
 
@@ -13,8 +15,8 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 /* the component */
 .dw-panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .dw-ask { display: flex; flex-direction: column; gap: 8px; }
-.dw-title { margin: 0; font-size: clamp(30px, calc(14px + 2.4vw), 72px); line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; }
-.dw-instr { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 24px); line-height: 1.45; color: var(--ink-2); }
+.dw-title { margin: 0; font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); font-weight: var(--fw-display); }
+.dw-instr { margin: 0; font-size: var(--fs-intro); line-height: 1.45; color: var(--ink-2); }
 
 /* The pad is paper in every theme: what sits on it (the placeholder, the timer, a dropped photo) keeps paper colours. */
 .dw-canvas-wrap { --pad-faint: var(--faint); --pad-muted: var(--muted); --pad-soft: var(--soft); --pad-line: var(--line);
@@ -23,29 +25,29 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
   --pad-line: var(--paper-line); --pad-drop-ink: #1E3A8A; --pad-drop-line: #1D4ED8; }
 .dw-canvas-wrap { position: relative; width: 100%; aspect-ratio: 1; background: var(--paper); border: 2px solid var(--ink); border-radius: 14px; overflow: hidden; }
 .dw-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; display: block; }
-.dw-placeholder { position: absolute; inset: 0; margin: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--pad-faint); pointer-events: none; text-align: center; padding: 20px; }
-.dw-timer { position: absolute; top: 10px; right: 12px; font-family: var(--mono); font-size: 13px; color: var(--pad-muted); background: var(--pad-soft); border: 1px solid var(--pad-line); border-radius: 999px; padding: 3px 10px; pointer-events: none; }
+.dw-placeholder { position: absolute; inset: 0; margin: 0; display: flex; align-items: center; justify-content: center; font-size: var(--fs-intro); color: var(--pad-faint); pointer-events: none; text-align: center; padding: 20px; }
+.dw-timer { position: absolute; top: 10px; right: 12px; font-family: var(--mono); font-size: var(--fs-label); color: var(--pad-muted); background: var(--pad-soft); border: 1px solid var(--pad-line); border-radius: 999px; padding: 3px 10px; pointer-events: none; }
 .dw-timer.up { color: var(--orange-dark); border-color: var(--orange); background: var(--orange-soft); }
-.dw-drop { position: absolute; inset: 8px; border: 3px dashed var(--pad-drop-line); border-radius: 10px; background: var(--pad-drop); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--pad-drop-ink); pointer-events: none; }
+.dw-drop { position: absolute; inset: 8px; border: 3px dashed var(--pad-drop-line); border-radius: 10px; background: var(--pad-drop); display: flex; align-items: center; justify-content: center; font-size: var(--fs-intro); font-weight: 600; color: var(--pad-drop-ink); pointer-events: none; }
 .dw-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .dw-panel .dw-go { margin-left: auto; }
 .dw-upload { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
-.dw-upload-btn { display: inline-flex; align-items: center; gap: 8px; font-size: clamp(14px, calc(10px + 0.25vw), 17px); font-weight: 600; color: var(--blue); cursor: pointer; padding: 6px 0; min-height: 36px; }
+.dw-upload-btn { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-small); font-weight: 600; color: var(--blue); cursor: pointer; padding: 6px 0; min-height: 36px; }
 .dw-upload-btn svg { width: 16px; height: 16px; }
 .dw-upload-btn:hover { color: var(--blue-dark); text-decoration: underline; }
 .dw-upload-btn:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
-.dw-upload-hint { font-size: clamp(12px, calc(9px + 0.2vw), 14px); line-height: 1.45; color: var(--muted); flex: 1 1 240px; }
-.dw-status { margin: 0; font-size: 14px; color: var(--ink-2); min-height: 1.4em; }
+.dw-upload-hint { font-size: var(--fs-small); line-height: 1.45; color: var(--muted); flex: 1 1 240px; }
+.dw-status { margin: 0; font-size: var(--fs-small); color: var(--ink-2); min-height: 1.4em; }
 .dw-status.error { color: var(--red); }
-.dw-privacy { margin: 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+.dw-privacy { margin: 0; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
 .dw-privacy svg { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--green); }
 .dw-donate { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; background: var(--soft); }
-.dw-donate .check { font-size: 14px; }
-.dw-consent summary { cursor: pointer; font-size: 13px; color: var(--blue); }
-.dw-consent dl { margin: 6px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 13px; line-height: 1.45; }
+.dw-donate .check { font-size: var(--fs-small); }
+.dw-consent summary { cursor: pointer; font-size: var(--fs-small); color: var(--blue); }
+.dw-consent dl { margin: 6px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: var(--fs-small); line-height: 1.45; }
 .dw-consent dt { font-weight: 600; }
 .dw-consent dd { margin: 0; color: var(--ink-2); }
-.dw-irb { margin: 6px 0 0; font-size: 12px; color: var(--muted); }
+.dw-irb { margin: 6px 0 0; font-size: var(--fs-small); color: var(--muted); }
 
 /* results */
 .dw-results { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 12px; }
@@ -57,7 +59,7 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 @keyframes dw-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .dw-results.dw-waiting > .dw-wait::before { animation: none; } }
 .dw-reveal { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(22px, 1.6vw, 40px) clamp(24px, 1.8vw, 44px); display: flex; flex-direction: column; gap: 12px; }
-.dw-reveal-h { margin: 0; font-size: clamp(22px, calc(8px + 1.7vw), 48px); letter-spacing: -0.015em; line-height: 1.2; }
+.dw-reveal-h { margin: 0; font-size: var(--fs-h2); font-weight: var(--fw-h2); letter-spacing: var(--ls-h2); line-height: var(--lh-h2); }
 .dw-muse-strip { display: grid; grid-template-columns: repeat(var(--cols, 8), minmax(0, 1fr)); gap: 4px; background: var(--paper-mat); border: 1px solid var(--paper-line); border-radius: 12px; padding: 8px; }
 .dw-cell { aspect-ratio: 1; background-repeat: no-repeat; background-color: var(--paper); border-radius: 4px; }
 .dw-muse-strip.animate .dw-cell { animation: dw-in 0.45s cubic-bezier(0.2, 0.75, 0.2, 1) both; }
@@ -66,14 +68,14 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 .dw-fair:empty { display: none; }
 .dw-tiles, .dw-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .dw-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(22px, 1.6vw, 36px) clamp(24px, 1.8vw, 40px); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.dw-card h3 { margin: 0; font-size: 14px; font-weight: 600; color: var(--muted); font-family: var(--mono); letter-spacing: 0.01em; }
+.dw-card h3 { margin: 0; font-size: var(--fs-label); font-weight: 600; color: var(--muted); font-family: var(--mono); letter-spacing: 0.01em; }
 .dw-big { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-.dw-big-num { font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
-.dw-big-text { font-size: 20px; font-weight: 600; line-height: 1.3; flex: 1 1 200px; }
+.dw-big-num { font-size: var(--fs-number); font-weight: var(--fw-number); line-height: var(--lh-number); letter-spacing: var(--ls-number); }
+.dw-big-text { font-size: var(--fs-body); font-weight: 600; line-height: 1.3; flex: 1 1 200px; }
 .dw-verdict { margin: 0; font-size: var(--fs-body); color: var(--ink-2); }
 .dw-verdict b { color: var(--ink); }
-.dw-headline { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.35; }
-.dw-oops { margin: 0; font-size: 14px; line-height: 1.5; background: var(--amber-soft); border: 1px solid var(--amber-line); border-radius: 8px; padding: 10px 12px; }
+.dw-headline { margin: 0; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: var(--lh-lead); }
+.dw-oops { margin: 0; font-size: var(--fs-small); line-height: 1.5; background: var(--amber-soft); border: 1px solid var(--amber-line); border-radius: 8px; padding: 10px 12px; }
 
 .dw-chart { position: relative; }
 .dw-chart svg { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--sans); }
@@ -83,65 +85,65 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 .dw-map svg { touch-action: pan-y; }
 /* people's dots are see-through so overlaps show; on a dark ground that turns the orange brown, so less so */
 :root[data-theme="dark"] .dw-chart circle[fill-opacity^="0.5"] { fill-opacity: 0.8; }
-.dw-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.dw-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-small); color: var(--ink-2); }
 .dw-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .dw-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
 .dw-legend i.you { width: 12px; height: 12px; box-shadow: 0 0 0 2px var(--chart-halo), 0 0 0 3px var(--ink); }
 
-.dw-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 10px; padding: 8px; font-size: 12px; line-height: 1.4; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); width: 132px; display: flex; flex-direction: column; gap: 6px; }
+.dw-tip { position: absolute; pointer-events: none; background: var(--tip); color: var(--tip-ink); border-radius: 10px; padding: 8px; font-size: var(--fs-small); line-height: 1.4; z-index: 3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2); width: 132px; display: flex; flex-direction: column; gap: 6px; }
 .dw-tip .dw-cell { width: 116px; border-radius: 6px; }
-.dw-tip b { font-size: 13px; }
+.dw-tip b { font-size: var(--fs-small); }
 .dw-tip .key { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
 
 .dw-near { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .dw-near figure { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dw-near .dw-cell, .dw-near canvas { width: 100%; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 10px; background-color: var(--paper); display: block; }
-.dw-near figcaption { font-size: 13px; line-height: 1.35; color: var(--ink-2); }
-.dw-near figcaption .d { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.dw-near figcaption { font-size: var(--fs-small); line-height: 1.35; color: var(--ink-2); }
+.dw-near figcaption .d { display: block; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .dw-near .k { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
-.dw-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 4px 0; font-size: 14px; }
+.dw-numbers summary { cursor: pointer; font-weight: 600; color: var(--blue); padding: 4px 0; font-size: var(--fs-small); }
 .dw-numbers td.num, .dw-numbers th.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
 
 .dw-share { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 20px 28px; align-items: center; }
 .dw-share-text { display: flex; flex-direction: column; gap: 10px; }
-.dw-share-text h3 { font-family: var(--sans); font-size: 22px; color: var(--ink); letter-spacing: -0.01em; }
+.dw-share-text h3 { font-family: var(--sans); font-size: var(--fs-h3); font-weight: var(--fw-h3); color: var(--ink); letter-spacing: var(--ls-h3); }
 .dw-share-text p { margin: 0; font-size: var(--fs-body); color: var(--ink-2); line-height: 1.5; }
 .dw-card-preview { width: 100%; max-width: 1200px; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); }  /* drawn at 1200 x 675 */
 
 /* how it works (shown after the reveal) */
-.dw-sec { background: var(--soft); border: 1px solid var(--line); border-radius: 16px; padding: clamp(26px, 2vw, 52px) clamp(32px, 2.6vw, 72px); display: flex; flex-direction: column; gap: 14px; }
-.dw-sec h2 { margin: 0; font-size: clamp(22px, calc(14px + 0.65vw), 32px); }
+.dw-sec { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: var(--space-sec) 0 0; margin-top: clamp(8px, 1.4vw, 28px); display: flex; flex-direction: column; gap: 14px; }
+.dw-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: var(--ls-h2); font-weight: var(--fw-h2); }
 .dw-steps, .dw-caveats { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
-.dw-credit { margin: 0; font-size: var(--fs-sm); max-width: 120ch; line-height: 1.55; color: var(--muted); }
+.dw-credit { margin: 0; font-size: var(--fs-small); max-width: 120ch; line-height: 1.55; color: var(--muted); }
 
 /* What damage does to an AI: SDXL, damaged on purpose. Set apart from the visitor's results. */
 .dw-damage { margin-top: 16px; scroll-margin-top: 12px; }
 .dw-damage::before { content: ""; display: block; border-top: 2px dashed var(--line-2); margin-bottom: 24px; }
 .dw-damage.wrap { margin-top: 40px; }  /* the landing page: after the reveal band */
 .dw-dmg-in { background: var(--soft); border: 1px solid var(--line); border-radius: 16px; padding: clamp(22px, 1.6vw, 40px) clamp(24px, 1.8vw, 44px); display: flex; flex-direction: column; gap: 12px; }
-.dw-dmg-kicker { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em; color: var(--muted); text-transform: uppercase; }
-.dw-dmg-h { margin: 0; font-size: clamp(20px, calc(10px + 1vw), 36px); letter-spacing: -0.01em; line-height: 1.2; }
+.dw-dmg-kicker { display: none;  /* Big and quiet: no section eyebrows; the h2 leads */ }
+.dw-dmg-h { margin: 0; font-size: var(--fs-h3); font-weight: var(--fw-h3); letter-spacing: var(--ls-h3); line-height: var(--lh-h3); }
 .dw-dmg-lede { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .dw-dmg-own { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); padding-left: 12px; border-left: 3px solid var(--line-2); }
 .dw-dmg-own b { color: var(--ink); font-weight: 600; }
 .dw-dmg-rows { display: flex; flex-direction: column; gap: 10px; max-width: 1300px; }
 .dw-dmg-row { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 14px; align-items: center; }
-.dw-dmg-name { margin: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 1.3; }
+.dw-dmg-name { margin: 0; display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-small); line-height: 1.3; }
 .dw-dmg-name b { color: var(--ink); }
-.dw-dmg-name span { font-size: 12px; color: var(--muted); }
+.dw-dmg-name span { font-size: var(--fs-small); color: var(--muted); }
 .dw-dmg-cells { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .dw-dmg-cells li { margin: 0; position: relative; }
 .dw-dmg-cells img { display: block; width: 100%; height: auto; aspect-ratio: 1; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; }
 .dw-dmg-intact::after { content: ""; position: absolute; top: 8%; bottom: 8%; right: -5px; width: 2px; border-radius: 1px; background: var(--line-2); }
 .dw-dmg-intact img { border-color: var(--ink-2); }
-.dw-dmg-intact span { position: absolute; left: 4px; bottom: 4px; font-family: var(--mono); font-size: 11px; line-height: 1; padding: 3px 5px; border-radius: 4px; background: rgba(255, 255, 255, 0.92); color: var(--paper-ink-2); }
-.dw-dmg-axis { margin: 0 0 0 182px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.dw-dmg-intact span { position: absolute; left: 4px; bottom: 4px; font-family: var(--mono); font-size: var(--fs-label); line-height: 1; padding: 3px 5px; border-radius: 4px; background: rgba(255, 255, 255, 0.92); color: var(--paper-ink-2); }
+.dw-dmg-axis { margin: 0 0 0 182px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .dw-dmg-axis span:last-child { grid-column: 2 / -1; }
 .dw-dmg-note { margin: 4px 0 0; font-size: var(--fs-body); max-width: var(--measure); line-height: 1.5; color: var(--ink); font-weight: 600; }
 .dw-dmg-more { margin: 0; font-size: var(--fs-body); }
 .dw-dmg-more:empty { display: none; }
 .dw-dmg-more a { font-weight: 600; }
-.dw-dmg-credit { margin: 0; font-size: 12px; line-height: 1.5; color: var(--muted); max-width: var(--measure); }
+.dw-dmg-credit { margin: 0; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); max-width: var(--measure); }
 @media (max-width: 720px) {
   .dw-damage::before { margin-bottom: 18px; }
   .dw-damage.wrap { margin-top: 28px; }
@@ -152,7 +154,7 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
   .dw-dmg-cells { gap: 5px; }
   .dw-dmg-intact::after { right: -4px; width: 1.5px; }
   .dw-dmg-intact span { display: none; }
-  .dw-dmg-axis { margin-left: 0; gap: 5px; font-size: 11px; }
+  .dw-dmg-axis { margin-left: 0; gap: 5px; font-size: var(--fs-label); }
 }
 
 /* Wide windows: the strip of Muse Image's doodles goes on one row; the four result cards share one row; the damage
@@ -179,12 +181,12 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 @media (max-width: 720px) {
   .draw .page { padding: 12px 16px 32px; }
   .dw-hero { padding: 18px; }
-  .dw-instr { font-size: 16px; }
+  .dw-instr { font-size: var(--fs-intro); }
   .dw-muse-strip { padding: 6px; gap: 3px; }
   .dw-reveal, .dw-card { padding: 18px; }
-  .dw-big-num { font-size: 52px; }
-  .dw-big-text, .dw-headline { font-size: 18px; }
-  .dw-sec { padding: 20px 18px; }
+  .dw-big-num { font-size: var(--fs-number); letter-spacing: var(--ls-number); font-weight: var(--fw-number); }
+  .dw-big-text, .dw-headline { font-size: var(--fs-body); }
+  .dw-sec { padding: var(--space-sec) 0 0; }
   .dw-near { gap: 8px; }
   .dw-panel .dw-go { margin-left: 0; flex: 1 1 100%; }
   .dw-consent dl { grid-template-columns: minmax(0, 1fr); }
@@ -196,19 +198,19 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 /* Draw the invisible: the AI-only results. */
 .dw-near-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: clamp(480px, 34vw, 900px); }
 .dw-emblems { display: flex; flex-direction: column; gap: 6px; }
-.dw-emblems-h { margin: 4px 0 2px; font-size: 14px; font-weight: 600; color: var(--ink); }
-.dw-emblem { display: grid; grid-template-columns: minmax(0, 15em) minmax(48px, 1fr) auto; gap: 10px; align-items: center; font-size: 14px; color: var(--ink-2); }
+.dw-emblems-h { margin: 4px 0 2px; font-size: var(--fs-small); font-weight: 600; color: var(--ink); }
+.dw-emblem { display: grid; grid-template-columns: minmax(0, 15em) minmax(48px, 1fr) auto; gap: 10px; align-items: center; font-size: var(--fs-small); color: var(--ink-2); }
 .dw-emblem-name { overflow-wrap: anywhere; }
 .dw-emblem-bar { height: 10px; background: var(--blue-soft); border-radius: 5px; overflow: hidden; }
 .dw-emblem-bar i { display: block; height: 100%; background: var(--blue); border-radius: 5px; }
-.dw-emblem-n { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.dw-emblem-n { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); white-space: nowrap; }
 .dw-emblem.is-near .dw-emblem-name { font-weight: 700; color: var(--ink); }
 .dw-emblem.is-near .dw-emblem-name::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); margin-right: 6px; vertical-align: 1px; }
 @media (min-width: 1800px) {
   .dw-results > [data-dw="idea-tiles"] .dw-card { grid-column: span 2; }
 }
 @media (max-width: 720px) {
-  .dw-emblem { grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) auto; font-size: 13px; }
+  .dw-emblem { grid-template-columns: minmax(0, 1fr) minmax(40px, 0.8fr) auto; font-size: var(--fs-small); }
 }
 
 /* Draw anything (/draw): the picker as large buttons in two even groups, things on one side of the pad and the
@@ -217,20 +219,20 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 .dw-loading .dw-title, .dw-loading .dw-instr { visibility: hidden; }
 .dw-pick { display: flex; flex-direction: column; gap: clamp(16px, 1.3vw, 28px); min-width: 0; }
 .dw-group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.dw-group-h { margin: 0; font-size: clamp(17px, calc(11px + 0.45vw), 26px); font-weight: 700; letter-spacing: -0.01em; }
-.dw-group-note { margin: 0 0 6px; font-size: var(--fs-sm); line-height: 1.35; color: var(--muted); }
+.dw-group-h { margin: 0; font-size: var(--fs-h3); font-weight: var(--fw-h3); letter-spacing: var(--ls-h3); }
+.dw-group-note { margin: 0 0 6px; font-size: var(--fs-small); line-height: 1.35; color: var(--muted); }
 .dw-group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(84px, 6.2vw, 150px), 1fr)); gap: clamp(6px, 0.5vw, 10px); }
-.dw-pick-btn { min-height: clamp(44px, calc(30px + 1vw), 60px); padding: 6px 8px; font: inherit; font-size: clamp(15px, calc(10px + 0.36vw), 20px); font-weight: 600;
+.dw-pick-btn { min-height: clamp(44px, calc(30px + 1vw), 60px); padding: 6px 8px; font: inherit; font-size: var(--fs-body); font-weight: 600;
   line-height: 1.15; text-align: center; color: var(--ink); background: var(--panel); border: 1.5px solid var(--line-2); border-radius: 10px; cursor: pointer; }
 .dw-pick-btn:hover { border-color: var(--ink); }
 .dw-group-ai .dw-pick-btn { border-style: dashed; border-color: color-mix(in srgb, var(--blue) 55%, var(--line-2)); }
 .dw-pick-btn[aria-pressed="true"] { background: var(--ink); border: 1.5px solid var(--ink); color: var(--panel); }
-.dw-pick-jump { font-size: var(--fs-sm); font-weight: 600; }
+.dw-pick-jump { font-size: var(--fs-small); font-weight: 600; }
 .dw-stakes { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px dashed var(--line-2); min-width: 0; }
-.dw-stakes-h { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.dw-stakes-h { margin: 0; font-family: var(--mono); font-size: var(--fs-label); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .dw-stake { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; }
 .dw-stake[hidden] { display: none; }
-.dw-stake p { margin: 0; font-size: var(--fs-sm); line-height: 1.35; color: var(--ink-2); }
+.dw-stake p { margin: 0; font-size: var(--fs-small); line-height: 1.35; color: var(--ink-2); }
 .dw-stake b { font-size: 1.3em; color: var(--ink); }
 .dw-cards { display: grid; grid-template-columns: repeat(8, 11px); gap: 3px; }
 .dw-cards i { display: block; width: 11px; height: 15px; border-radius: 2px; border: 1px solid var(--blue);
@@ -254,7 +256,7 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
   .dw-solo .dw-privacy { grid-area: priv; }
   .dw-solo .dw-stakes { grid-area: st; align-self: end; }
   .dw-solo .dw-pick-jump { display: none; }
-  .dw-solo .dw-title { font-size: clamp(34px, calc(10px + 2.6vw), 80px); }
+  .dw-solo .dw-title { font-size: var(--fs-display); letter-spacing: var(--ls-display); font-weight: var(--fw-display); }
 }
 @media (max-width: 1099px) {
   .dw-solo .dw-panel { max-width: 720px; margin: 0 auto; }
@@ -268,4 +270,21 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
   .dw-solo .dw-pick-a { order: 8; margin-top: 12px; scroll-margin-top: 12px; }
   .dw-solo .dw-pick-b { order: 9; }
   .dw-solo .dw-stakes { order: 10; }
+}
+
+/* The clock test (mode "group"): the drawing beside two averages, people's and the AI's; the nearer one is outlined */
+.dw-avgs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dw-avgs img { width: 100%; height: auto; aspect-ratio: 1; display: block; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); }
+.dw-avg-near img { outline: 3px solid var(--teal); outline-offset: 2px; }
+.dw-group-key { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 6px 0 0; font-size: var(--fs-small); color: var(--ink-2); }
+.dw-group-key span { display: inline-flex; align-items: center; gap: 6px; }
+.dw-group-key i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; }
+.dw-gk-mid { background: color-mix(in srgb, var(--orange) 42%, transparent); }
+.dw-gk-90 { background: color-mix(in srgb, var(--orange) 18%, transparent); }
+.dw-gk-ai { background: var(--blue); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.dw-gk-you { background: var(--teal); }
+.dw-group-key i.dw-gk-you { width: 10px; border-radius: 50%; }
+@media (min-width: 1800px) {  /* the results' four-column row: the clock's two cards take half each */
+  .dw-results > .dw-group-tiles .dw-card { grid-column: span 2; }
 }

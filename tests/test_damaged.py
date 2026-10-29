@@ -60,7 +60,7 @@ def test_first_screen_asks_the_question(client):
     main = main_of(page)
     hero = main[:main.index('id="results"')]
     assert "<h1" in hero and "What happens to an AI’s idea of a thing when we damage it?" in hero
-    assert "What would Plato ask an AI?" in hero
+    assert "Plato would ask:" in hero  # the series kicker (portraits.kicker_face): his face and these words
     # plain words: damage is said in full the first time, before the page uses the word on its own
     first = text(hero).index("damage")
     assert "switched off some of their artificial neurons, or added random noise to them" in text(hero)[:first + 200]
@@ -86,13 +86,16 @@ def first_screen(client, tmp_path, ids):
     html = client.get("/damaged").text
     (tmp_path / "page.html").write_text(html)
     scripts = [str(STATIC / "js" / s) for s in re.findall(r'<script src="/static/js/([\w.-]+?\.js)', html)]
-    cfg = {"html": str(tmp_path / "page.html"), "scripts": scripts, "ids": list(ids),
+    cfg = {"html": str(tmp_path / "page.html"), "scripts": scripts, "ids": list(ids) + ["hero-how"],
            "api": {api: str(tmp_path / f"{api.rsplit('/', 1)[1]}.json") for api in APIS}}
     (tmp_path / "cfg.json").write_text(json.dumps(cfg))
     run = subprocess.run([NODE, str(HARNESS), str(tmp_path / "cfg.json")], capture_output=True, text=True, timeout=60)
     assert run.returncode == 0, run.stderr
     out = json.loads(run.stdout)
     assert not out["errors"], out["errors"]
+    # the qualifiers live in the closed "How we know" disclosure under the numbers: read with them
+    if "hero-stats" in ids and out["ids"].get("hero-how"):
+        out["ids"]["hero-stats"] += out["ids"]["hero-how"]
     return out["ids"], data["/api/plato/damage"], data["/api/plato/ideas"]
 
 

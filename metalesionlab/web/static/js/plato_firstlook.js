@@ -58,10 +58,11 @@
         '" height="' + hh + '" rx="1.5"' + (i >= at ? ' style="--d:' + (i - at) * 24 + 'ms"' : '') + '/>');
     }
     var mx = (at - 1) * step + w / 2, mid = ((o.lo + o.hi) / 2 - 1) * step + w / 2;
-    var alt = o.alt || ('Layer ' + at + ' of ' + n + ', range ' + o.lo + ' to ' + o.hi);
-    return frame(String(at), 'of ' + n + ' layers',
+    var alt = o.alt || ('Stage ' + at + ' of ' + n + ', range ' + o.lo + ' to ' + o.hi);
+    return frame(String(at), 'of ' + n + ' stages',
       '<div class="sv-lay" style="--n:' + n + '"><svg class="sv-svg" viewBox="-4 0 ' + (W + 8) + ' ' + (top + hh + 4) + '" role="img" aria-label="' +
-      esc(alt) + '"><title>' + esc(alt) + '</title>' + out.join('') + '<path class="sv-mark" d="M' + (mx - 5) + ' 1h10l-5 8z"/></svg>' +
+      esc(alt) + '"><title>' + esc(alt) + '</title>' + out.join('') + '<path class="sv-mark" d="M' + (mx - 5) + ' 1h10l-5 8z" style="--mx:' +
+      (1 - at) * step + 'px"/></svg>' +
       '<span class="sv-ticks fl-lticks" aria-hidden="true"><span>1</span><span class="fl-lband" style="left:' + (100 * (mid + 4) / (W + 8)).toFixed(1) + '%">' +
       o.lo + '–' + o.hi + '</span><span>' + n + '</span></span></div>', o.label);
   }
@@ -95,7 +96,8 @@
       out.push(p.ring ? '<circle class="fl-rs-ring" cx="' + X(p.x) + '" cy="24" r="6"/>'
         : '<circle class="sv-on sv-' + p.tone + '" cx="' + X(p.x) + '" cy="24" r="' + (p.big ? 7 : 5) + '" style="--d:' + i * 80 + 'ms"/>');
     });
-    var alt = o.pts.map(function (p) { return p.label + ' ' + f2(p.x) + '×'; }).join(', ') + ' people’s spread';
+    var alt = 'How varied each model’s chairs are, as a multiple of people’s (people = 1): ' +
+      o.pts.map(function (p) { return p.label + ' ' + f2(p.x) + '×'; }).join(', ');
     var key = o.pts.filter(function (p) { return p.key; }).map(function (p) {
       return '<span><i class="' + (p.ring ? 'fl-ring' : 'sv-sw sv-' + p.tone) + '"></i>' + esc(p.key) + '</span>';
     }).join('');
@@ -123,41 +125,103 @@
     return frame(o.value != null ? o.value : (o.k != null ? o.k + ' of ' + o.n : ''), '', '', o.label);
   }
 
-  // spec.verdict (optional, {tone: 'yes' | 'no' | 'part', text}) leads the qualifier: how a planned prediction came out.
+  // One number on the first screen: the graphic with its short label, and, for a planned prediction, how it came out
+  // (spec.verdict, {tone: 'yes' | 'no' | 'part', text}) in a few words after it. The qualifier (spec.q) is not shown
+  // here: it goes into the "How we know" disclosure below the numbers (how()), so the first screen stays short.
   function figure(spec) {
-    var v = spec.verdict ? '<span class="fl-verdict ' + esc(spec.verdict.tone) + '">' + esc(spec.verdict.text) + '</span> ' : '';
-    return '<figure class="fl-stat"><div class="sv sv-' + spec.kind + '" data-sv-done="1">' + html(spec) + '</div>' +
-      '<figcaption class="fl-q">' + v + esc(spec.q) + '</figcaption></figure>';
+    var v = spec.verdict ? '<figcaption class="fl-q"><span class="fl-verdict ' + esc(spec.verdict.tone) + '">' + esc(spec.verdict.text) +
+      '</span></figcaption>' : '';
+    return '<figure class="fl-stat"><div class="sv sv-' + spec.kind + '" data-sv-done="1">' + html(spec) + '</div>' + v + '</figure>';
   }
 
+  // The number as the graphic shows it ("13 of 16", "6×", "59% → 73%"), to lead its qualifier in the disclosure.
+  function headline(spec) {
+    var h = html(spec), num = /<span class="sv-num">([^<]*)<\/span>/.exec(h), unit = /<span class="sv-unit">([^<]*)<\/span>/.exec(h);
+    var un = unit ? unit[1].trim() : '';
+    return ((num ? num[1] : '') + (un ? (/^[a-z]/i.test(un) ? ' ' : '') + un : '')).replace(/&amp;/g, '&');
+  }
+
+  // "How we know": the disclosure under the numbers. Its summary carries Aristotle, who checks the evidence; inside,
+  // the page's own introduction (.fl-ctx), each number with its qualifier and verdict, then the notes and caveats.
+  var HOW_SUMMARY = '<summary><span class="fl-how-t">How we know</span> <span class="pt-badge pt-aristotle">' +
+    '<img class="pt-badge-face" src="/static/img/portraits/aristotle-neutral.webp" width="256" height="256" alt="" loading="lazy">' +
+    '<span class="pt-badge-text">Aristotle checks the evidence</span></span></summary>';
+
+  // The list of qualifiers, one per number (pure: the tests read it under node).
+  function how(page) {
+    var items = page.stats.filter(function (s) { return s.q; }).map(function (s) {
+      var label = String((s.o && s.o.label) || '').replace(/[.:;,\s]+$/, '');
+      return '<li><b>' + esc(headline(s)) + '</b> ' + esc(label) + '. ' +
+        (s.verdict ? '<span class="fl-how-v ' + esc(s.verdict.tone) + '">' + esc(s.verdict.text) + '.</span> ' : '') + esc(s.q) + '</li>';
+    });
+    return (items.length ? '<ul class="fl-how-q">' + items.join('') + '</ul>' : '') + (page.note ? '<p class="fl-how-note">' + esc(page.note) + '</p>' : '');
+  }
+
+  // Put the disclosure in place: after the numbers, closed. The page's introduction and note paragraphs move inside it.
+  function disclose(box, page) {
+    var doc = (root && root.document) || box.ownerDocument;
+    if (!doc || !box.parentNode) return null;
+    var hero = (box.closest && box.closest('section')) || null, scope = hero || doc;
+    var d = scope.querySelector('details.fl-how');
+    if (!d) {
+      d = doc.createElement('details');
+      d.className = 'fl-how how-we-know';
+      d.setAttribute('id', 'hero-how');
+      d.innerHTML = HOW_SUMMARY;
+      box.parentNode.insertBefore(d, box.nextSibling);
+    }
+    var body = d.querySelector('.fl-how-body');
+    if (!body) { body = doc.createElement('div'); body.className = 'fl-how-body'; d.appendChild(body); }
+    var nums = body.querySelector('.fl-how-nums');
+    if (!nums) { nums = doc.createElement('div'); nums.className = 'fl-how-nums'; body.appendChild(nums); }
+    // a page that fills its own note element (.fl-note) says the note there, not twice
+    var notes = [].slice.call(scope.querySelectorAll('.fl-note'));
+    nums.innerHTML = how(notes.length ? { stats: page.stats } : page);
+    [].slice.call(scope.querySelectorAll('.fl-ctx')).forEach(function (c) { if (c.parentNode !== body) body.insertBefore(c, nums); });
+    notes.forEach(function (n) { if (n.parentNode !== body) body.appendChild(n); });
+    return d;
+  }
+
+  // The graphics play when they come into view, like statviz's own (StatViz.watchAll: count up, fill, drift, slide).
   function render(box, page) {
     box.innerHTML = page.stats.map(figure).join('');
+    disclose(box, page);
+    try { if (SV && SV.watchAll) SV.watchAll(box); } catch (e) { /* drawn, just not animated */ }
     return box;
   }
 
   // ---------- each page's three numbers, from its data ----------
+
+  // How a planned prediction came out, as the verdict chip FirstLook.figure draws ({tone, text}).
+  function verdict(primary) {
+    return primary === 'supported' ? { tone: 'yes', text: 'As predicted' } : primary === 'contradicted' ? { tone: 'no', text: 'Prediction failed' }
+      : { tone: 'part', text: 'Unclear' };
+  }
 
   function inside(d) {
     var sm = d.summary, ms = sm.mean_spread, n = d.n_layers || ms.muse.length, last = n - 1;
     var times = ms.people[last] / ms.muse[last], never = quoted(sm.never_collapse);
     var per = d.concepts.map(function (c) { return c.n.muse; });
     var lo = Math.min.apply(null, per), hi = Math.max.apply(null, per);
+    var isAre = ' are';  // "Drawings of “person” are ...": the subject is the drawings
     return {
       stats: [
         { kind: 'lrange', o: { at: sm.median_collapse_layer, lo: sm.earliest_collapse, hi: sm.latest_collapse, n: n,
-            label: 'the median layer where Muse’s doodles of a thing collapse',
-            alt: 'Median layer ' + sm.median_collapse_layer + ' of ' + n + ' where Muse Image’s doodles of a thing collapse; the band is the range, ' +
-              sm.earliest_collapse + ' to ' + sm.latest_collapse + ', over ' + sm.n_concepts + ' things.' },
-          q: 'Range ' + sm.earliest_collapse + '–' + sm.latest_collapse + ' over ' + sm.n_concepts + ' things (the band). ' + never + ' never collapses.' },
+            label: 'stage where its drawings of a thing merge into one',
+            alt: 'Stage ' + sm.median_collapse_layer + ' of ' + n + ', the middle of ' + sm.n_concepts + ' things: where Glimmer files Muse Image’s drawings ' +
+              'of a thing in one place. The band is the range, stages ' + sm.earliest_collapse + ' to ' + sm.latest_collapse + '.' },
+          q: 'The typical stage (the middle of ' + sm.n_concepts + ' things) at which Glimmer files all of Muse Image’s drawings of a thing in one place, as if they were one drawing. The band shows the range: stages ' + sm.earliest_collapse + ' to ' + sm.latest_collapse + '. ' +
+            'Drawings of ' + never + isAre + ' never filed in one place.' },
         { kind: 'spread', o: { a: ms.muse[last], b: ms.people[last], aLabel: 'Muse Image', bLabel: 'People', value: Math.round(times) + '×',
-            label: 'more spread out: people’s doodles of a thing against Muse’s, at the last layer' },
-          q: f2(ms.people[last]) + ' against ' + f2(ms.muse[last]) + ' at layer ' + n + ', the mean of ' + sm.n_concepts + ' things. 0 would be one point.' },
+            label: 'times more different from one another: people’s drawings' },
+          q: 'At Glimmer’s last stage, people’s drawings of a thing differ from one another about ' + Math.round(times) + ' times as much as Muse Image’s. How different the drawings are from one another (we call this spread; 0 would mean identical): ' + f2(ms.people[last]) + ' for people, ' +
+            f2(ms.muse[last]) + ' for Muse Image, at stage ' + n + ', averaged over ' + sm.n_concepts + ' things.' },
         { kind: 'dots', o: { k: sm.collapse_at_or_before_name, n: sm.n_with_both, cols: Math.min(sm.n_with_both, 12), tone: 'blue',
-            label: 'things whose doodles collapse at or before the layer where the word lens can read the name' },
-          q: 'A median ' + sm.median_layers_between + ' layers earlier. ' + never + ' never collapses, so it isn’t counted.' }
+            label: 'things merged before Glimmer’s answer can be read' },
+          q: 'Things whose drawings Glimmer files in one place before, or at, the stage where we can first read the name it is heading for. Typically ' + sm.median_layers_between + ' stages before the name. Drawings of ' + never + isAre + ' never filed in one place, so they aren’t counted.' }
       ],
-      note: 'Exploratory: one model, one prompt, ' + sm.n_concepts + ' things, ' + (lo === hi ? lo : lo + '–' + hi) + ' doodles each. “Collapse” means ' +
-        'Muse’s spread stays under half of people’s through the last layer, a line we chose after seeing the data.'
+      note: 'We didn’t plan this test in advance (exploratory): one model, one request, ' + sm.n_concepts + ' things, ' + (lo === hi ? lo : lo + '–' + hi) +
+        ' drawings each. “Filed in one place” means Muse Image’s spread stays under half of people’s through the last stage, a line we chose after seeing the data.'
     };
   }
 
@@ -165,34 +229,40 @@
     var c = d.clock, G = c.groups, p = G.people, m = G.muse_doodle_default, a = G.muse_doodle_asked;
     var e = (c.byeye_no_time || {}).muse_doodle_default, chance = Math.round(c.chance_ten_ten * 1000) / 10;
     var stats = [
-      { kind: 'dots', o: { k: e ? e.sure : m.ten_ten.k, n: e ? e.n : m.n, cols: 8, tone: 'blue', label: 'of Muse Image’s clocks show 10:10 when no time is asked' },
-        q: e ? 'Counted by eye. Our automatic reader, which often put the hour one too high, counted ' + m.ten_ten.k + ' and read most of the others as 11:10.'
-          : 'Read by our automatic reader.' },
+      { kind: 'dots', o: { k: e ? e.sure : m.ten_ten.k, n: e ? e.n : m.n, cols: 8, tone: 'blue',
+          label: 'of Muse Image’s clocks show 10:10 (no time asked)' },
+        q: e ? '10:10 is the time on watch adverts. We asked for a clock without naming a time. We counted these by eye. Our automatic clock reader counted ' + m.ten_ten.k + ': it often read the hour one too high, so it saw most of the others as 11:10.'
+          : 'Read by our automatic clock reader.' },
       { kind: 'dots', o: { k: p.ten_ten.k, n: p.n, cols: 40, tone: 'orange', value: pct(p.ten_ten.share), unit: '',
-          label: 'of people’s clocks show about 10:10: ' + p.ten_ten.k + ' of ' + p.n },
-        q: '“About 10:10”: within 10 minutes, hands either way round. If drawn times were random, ' + chance + '% would count.' }
+          label: 'of people’s clocks show about 10:10 (' + p.ten_ten.k + ' of ' + p.n + ')' },
+        q: '“About 10:10” means within 10 minutes, with the two hands either way round. If people drew times at random, ' + chance + '% would count.' }
     ];
     if (a) {
-      stats.push({ kind: 'dots', o: { k: a.ten_ten.k, n: a.n, cols: 24, tone: 'blue', label: 'of Muse Image’s clocks show 10:10 when we ask for a time' },
-        q: 'A default, not a limit: it draws the time asked. ' + pct(a.minute_correct) + ' have the minute hand right.' });
+      stats.push({ kind: 'dots', o: { k: a.ten_ten.k, n: a.n, cols: 24, tone: 'blue', label: 'show 10:10 when a time is asked for' },
+        q: 'Muse Image clocks, asked for a particular time. So 10:10 is its habit, not its limit: ask for a time and it draws that time. ' + pct(a.minute_correct) + ' of these have the minute hand right.' });
     }
-    return { stats: stats, note: 'Pre-registered: the plan and its predictions were written before any picture was drawn. The count by eye came after.' };
+    return { stats: stats, note: 'We wrote down our predictions before we made any pictures. The count by eye came afterwards.' };
   }
 
   function atlas(d) {
     var a = d.summary.all, n = d.summary.n_concepts, nw = d.summary.new, sd = d.summary.sdxl.all;
     return {
       stats: [
-        { kind: 'dots', o: { k: a.below_1, n: n, cols: 45, tone: 'blue', label: 'things Muse Image draws more alike than people do' },
-          q: 'Its 95% CI is entirely below 1 for ' + a.ci_entirely_below_1 + ' of them, and entirely above 1 for ' + a.ci_entirely_above_1 + '.' },
+        { kind: 'dots', o: { k: a.below_1, n: n, cols: 45, tone: 'blue', label: 'things drawn more alike than people draw them' },
+          q: 'Everyday things that Muse Image draws more alike than people do. For ' + a.ci_entirely_below_1 + ' of them the gap is too big to be chance (the whole 95% confidence range is below 1). ' +
+            'Only ' + a.ci_entirely_above_1 + ' is clearly the other way round.' },
         { kind: 'bars', o: { values: [a.median, 1], labels: ['Muse Image', 'People'], tones: ['blue', 'orange'], max: 1, digits: 2, value: pct(a.median),
-            label: 'as varied as people: Muse Image’s spread over people’s, the median of ' + n + ' things' },
-          q: 'Median ratio ' + f2(a.median) + ' (95% CI ' + ci(a.median_ci95) + '); 1 would be as varied as people.' },
-        { kind: 'dots', o: { k: nw.below_1, n: nw.n, cols: 33, tone: 'blue', label: 'of the ' + nw.n + ' new things, picked at random, below 1: the pre-registered test' },
-          q: 'Their median ratio is ' + f2(nw.median) + ' (95% CI ' + ci(nw.median_ci95) + ').' }
+            label: 'as varied as people’s (a typical thing)' },
+          q: 'How much Muse Image’s drawings of a typical thing differ from one another, compared with people’s. The middle value of ' + n + ' things is ' + f2(a.median) + ', probably between ' + f2(a.median_ci95[0]) + ' and ' + f2(a.median_ci95[1]) +
+            ' (95% confidence interval). 1 would mean just as varied as people.' },
+        { kind: 'dots', o: { k: nw.below_1, n: nw.n, cols: 33, tone: 'blue',
+            label: 'new random things also drawn more alike' },
+          q: 'We wrote this prediction down before drawing them. For these ' + nw.n + ', Muse Image’s drawings are typically ' + f2(nw.median) + ' times as varied as people’s, probably between ' + f2(nw.median_ci95[0]) +
+            ' and ' + f2(nw.median_ci95[1]) + ' (95% confidence interval).' }
       ],
-      note: 'An open model, Stable Diffusion XL, given the same prompt: median ratio ' + f2(sd.median) + ', below 1 for ' + sd.below_1 + ' of ' + sd.n +
-        '. One prompt and one drawing style; people’s extra spread is partly their wobbly 20-second lines.'
+      note: 'Not every AI does this. Stable Diffusion XL, an open image AI from Stability AI, given the same request, was typically ' +
+        (sd.median > 1 ? 'more' : 'less') + ' varied than people (' + f2(sd.median) + ' times as varied) and drew only ' + sd.below_1 + ' of ' + sd.n +
+        ' things more alike than people. Caveats: one request, one drawing style, and part of people’s variety is just wobbly 20-second lines.'
     };
   }
 
@@ -211,30 +281,38 @@
     var first = arm[0], last = arm[arm.length - 1], learned = arm.map(function (r) { return r.train_spread; });
     var size = function (r) { return r.size.toLocaleString('en-US'); };
     var params = function (m) { return m.label.split(' ').pop(); };
+    var billions = function (m) { return params(m).replace(/B$/, ' billion'); };
+    // "8 fewer failures in 12 (probably between 5 and 11 fewer)"; the signed form if the change went the other way
+    var fewer = P3.contrast < 0 && P3.ci95[1] <= 0
+      ? Math.round(-P3.contrast * 12) + ' fewer failures in 12 (probably between ' + Math.round(-P3.ci95[1] * 12) + ' and ' + Math.round(-P3.ci95[0] * 12) + ' fewer)'
+      : 'a change of ' + of12(P3.contrast) + ' failures in 12 (probably between ' + of12(P3.ci95[0]) + ' and ' + of12(P3.ci95[1]) + ')';
     return {
       stats: [
-        { kind: 'fails', o: { value: small.failed + ' → ' + big.failed, unit: 'failures in 12',
+        { kind: 'fails', verdict: verdict(P3.primary), o: { value: small.failed + ' → ' + big.failed, unit: 'failures in 12',
             rows: [{ label: params(small), tiles: small.tiles }, { label: params(big), tiles: big.tiles }],
-            label: 'drawings that failed, ' + small.family + ' at ' + params(small) + ' and at ' + params(big) + ' parameters' },
-          q: 'Planned prediction P3, fewer failures: supported, ' + of12(P3.contrast) + ' of 12 [' + of12(P3.ci95[0]) + ', ' + of12(P3.ci95[1]) + '], and in ' +
-            held + ' of ' + checks.length + ' checks across the three families.' },
-        { kind: 'ratio', o: { value: f2(wonder.spread_ratio) + '×', unit: 'people’s spread', hi: 1.7,
-            pts: top.map(function (r, i) { return { x: r.spread_ratio, label: r.label, tone: 'muted', key: i ? null : 'open models at 32B' }; }).concat([
+            label: 'chairs failed: smallest to biggest AI' },
+          q: 'Chair drawings that failed (broken code, or a blank or inked-over canvas), from the smallest and largest ' + small.family +
+              ', an open AI family: ' + billions(small) + ' and ' + billions(big) + ' parameters, the adjustable numbers inside an AI. We predicted bigger models would fail less often (prediction P3): ' + fewer + '. It held in ' + held + ' of ' + checks.length +
+            ' checks across the three families.' },
+        { kind: 'ratio', verdict: verdict(P2.primary), o: { value: f2(wonder.spread_ratio) + '×', unit: 'as varied as people’s', hi: 1.7,
+            pts: top.map(function (r, i) { return { x: r.spread_ratio, label: r.label, tone: 'muted', key: i ? null : 'biggest open models' }; }).concat([
               { x: museImage, label: 'Muse Image', ring: true, key: 'Muse Image' },
               { x: wonder.spread_ratio, label: wonder.label, tone: 'ink', big: true, key: 'Muse Wonder' }]),
-            label: 'Muse Wonder’s chairs, as narrow as Muse Image’s; the open models at 32B: ' + f2(Math.min.apply(null, spreads)) + ' to ' +
-              Math.max.apply(null, spreads).toFixed(1) + '×' },
-          q: 'No convergence with size: P2 unclear, ' + signed(P2.contrast, 3) + ' [' + signed(P2.ci95[0], 3) + ', ' + signed(P2.ci95[1], 3) + '] for ' +
-            small.family + '. Meta doesn’t publish Wonder’s size, so it says nothing about scale.' },
-        { kind: 'pbars', o: { value: pct(first.recog.mean) + ' → ' + pct(last.recog.mean), unit: '',
+            label: 'Muse Wonder’s chairs, as varied as people’s' },
+          q: 'Meta’s Muse Wonder draws its chairs as alike as Meta’s image AI, Muse Image, does. The biggest open models (about 32 billion parameters) are ' +
+              f2(Math.min.apply(null, spreads)) + ' to ' + Math.max.apply(null, spreads).toFixed(1) + ' times as varied as people. We predicted bigger models would draw more alike (prediction P2). Too close to call: from the smallest to the largest ' + small.family +
+            ', the change was ' + signed(P2.contrast, 3) + ' (probably between ' + signed(P2.ci95[0], 3) + ' and ' + signed(P2.ci95[1], 3) + '). ' +
+            'Meta doesn’t publish Muse Wonder’s size, so it tells us nothing about growing.' },
+        { kind: 'pbars', verdict: verdict(P1.primary), o: { value: pct(first.recog.mean) + ' → ' + pct(last.recog.mean), unit: '',
             rows: [{ label: size(first) + ' chairs', v: first.recog.mean, tone: 'muted' }, { label: size(last) + ' chairs', v: last.recog.mean, tone: 'blue' }],
-            label: 'of the sketch model’s chairs recognizable, as its training grows from ' + size(first) + ' to ' + size(last) + ' people’s chairs' },
-          q: 'P1 supported: ' + signed(Math.round(P1.contrast * 100)) + ' points [' + signed(Math.round(P1.ci95[0] * 100)) + ', ' +
-            signed(Math.round(P1.ci95[1] * 100)) + ']. Not more alike: their spread stays about ' + f2(median(arm.map(function (r) { return r.spread.mean; }))) +
-            ', below the chairs it learned from (' + f2(Math.min.apply(null, learned)) + ' to ' + f2(Math.max.apply(null, learned)) + ').' }
+            label: 'of its chairs named correctly, with more training' },
+          q: 'A small sketching AI, trained on ' + size(first) + ', then ' + size(last) + ', of people’s chairs. We predicted more training would make its chairs easier to name (prediction P1): up ' + Math.round(P1.contrast * 100) + ' points (probably between ' +
+            Math.round(P1.ci95[0] * 100) + ' and ' + Math.round(P1.ci95[1] * 100) + '). But they didn’t become more alike: their spread stays about ' +
+            f2(median(arm.map(function (r) { return r.spread.mean; }))) + ', below that of the people’s chairs it learned from (' +
+            f2(Math.min.apply(null, learned)) + ' to ' + f2(Math.max.apply(null, learned)) + ').' }
       ],
-      note: 'Every prediction was planned before any run and is reported whichever way it came out. 12 drawings per model, one prompt, and one vision ' +
-        'model (DINOv2) to measure spread.'
+      note: 'We wrote down every prediction before running anything, and report each one however it came out. 12 drawings per model, one request, ' +
+        'and spread (how different the drawings are from one another) measured by a Meta AI that compares pictures (DINOv2).'
     };
   }
 
@@ -312,7 +390,7 @@
     if (pr) {
       stats.push({ kind: 'bars', verdict: pr.verdict,
         o: { values: [pr.pz.mean, pr.pd.mean], labels: ['language', 'drawing'], tones: ['blue', 'orange'], digits: 2,
-          value: pr.farther ? 'Farther' : 'No closer', unit: '', label: 'from the plain chair, not back to it (change in distance)',
+          value: pr.farther ? 'Farther' : 'No closer', unit: '', label: 'from the plain chair, not back to it',
           alt: 'Back to the plain chair? No. Distance to the plain chair grew by ' + pr.pz.mean.toFixed(2) + ' after language damage and by ' +
             pr.pd.mean.toFixed(2) + ' after drawing damage (neurons switched off, averaged over the damage levels).' },
         q: 'Predicted: back toward the plain chair, as in semantic dementia.' });
@@ -320,7 +398,7 @@
     if (c) {
       stats.push({ kind: 'bars',
         o: { values: [c.a, c.b], labels: ['intact', 'drawing'], tones: ['ink', 'orange'], max: 100, value: c.a + '% → ' + c.b + '%', unit: '',
-          label: 'clocks with all 12 numbers in order: drawing damage strips them first',
+          label: 'of clocks keep all 12 numbers',
           alt: 'Clocks with all 12 numbers in order: ' + c.a + '% intact, ' + c.b + '% after the mildest drawing damage (' + c.mild.label + ').' },
         q: 'The mildest drawing damage. Language damage removes the whole clock instead.' });
     }
@@ -337,34 +415,32 @@
       var kv = plainVerdict(verdictOf(k.kc));
       stats.push({ kind: 'bars', verdict: kv,
         o: { values: [k.lang, k.draw], labels: parts, tones: ['blue', 'orange'], max: 100, value: k.lang + ' vs ' + k.draw, unit: ' in 100',
-          label: 'chairs stopped being the kind we asked for, such as a rocking chair: damage to the words part, against the drawing part',
+          label: 'chairs stopped being the kind we asked for',
           alt: 'After damage to the part that reads the words, ' + k.lang + ' in every 100 chairs stopped being the kind asked for. After the same ' +
             'amount of damage to the part that paints the picture, ' + k.draw + ' in 100 did.' },
-        q: 'Both kinds of damage changed the pictures by the same amount. We wrote this prediction down before we made any pictures' +
-          (kv.tone === 'yes' ? ', and the gap is too big to be chance.' : '.') });
+        q: 'Equal damage to each part' + (kv.tone === 'yes' ? '; too big a gap for chance.' : '.') });
     }
     if (g) {
       stats.push({ kind: 'bars', verdict: g.verdict,
         o: { values: [g.a, g.b], labels: parts, tones: ['blue', 'orange'], max: g.n, value: plus(g.a) + ' vs ' + plus(g.b), unit: ' of ' + g.n,
-          label: 'more of Stable Diffusion XL’s ' + g.n + ' drawings of God became an ordinary person, with no beard and no halo',
+          label: 'more drawings of God became an ordinary person',
           alt: 'Of Stable Diffusion XL’s ' + g.n + ' drawings of God, ' + g.a + ' more showed an ordinary person, with no beard and no halo, after the ' +
             'most damage to the part that reads the words. After the most damage to the part that paints the picture, ' + g.b + ' more did.' },
-        q: 'At the heaviest damage. We wrote this prediction down before we made any pictures. Meta’s open AI model, Muse Glimmer, judged ' +
-          'the drawings.' + (g.eye ? ' Counted by eye instead: ' + plus(g.eye[0]) + ' vs ' + plus(g.eye[1]) + '.' : '') });
+        q: 'Heaviest damage.' + (g.eye ? ' Counted by eye instead: ' + plus(g.eye[0]) + ' vs ' + plus(g.eye[1]) + '.' : '') });
     }
     if (c) {
       stats.push({ kind: 'bars',
         o: { values: [c.a, c.b], labels: ['undamaged', 'drawing part'], tones: ['ink', 'orange'], max: 100, value: c.a + '% → ' + c.b + '%', unit: '',
-          label: 'of clocks had all 12 numbers in order: undamaged, then after the lightest damage to the drawing part',
+          label: 'of clocks had all 12 numbers: undamaged, then lightly damaged',
           alt: 'Clocks with all 12 numbers in order: ' + c.a + '% undamaged, ' + c.b + '% after the lightest damage to the part that paints the picture.' },
-        q: 'Clocks drawn by Stable Diffusion XL. Damage to the words part takes away the whole clock instead.' });
+        q: 'Words-part damage erases the whole clock instead.' });
     }
     var pr = d ? protoNumbers(d) : null;
     return { stats: stats, split: d ? splitParts(d) : null, proto: pr && pr.verdict ? { verdict: pr.verdict, farther: pr.farther } : null };
   }
 
   var api = { inside: inside, forms: forms, atlas: atlas, scale: scale, damage: damage, damaged: damaged,
-    html: html, figure: figure, render: render };
+    html: html, figure: figure, how: how, render: render };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root && root.document) root.FirstLook = api;
 })(typeof window !== 'undefined' ? window : this);

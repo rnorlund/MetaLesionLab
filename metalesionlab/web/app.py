@@ -966,8 +966,10 @@ SITE_ROUTERS = {
         "plato_telephone_routes",  # Plato's Telephone (/plato/telephone)
         "plato_atlas_routes",  # The Atlas of Forms (/plato/atlas)
         "plato_scale_routes",  # An AI growing up (/plato/scale)
+        "plato_twins_routes",  # Prisoners of the cave, a section of /plato/scale (/api/plato/twins)
         "plato_ideas_routes",  # The invisible Forms (/plato/ideas)
         "plato_phaedrus_routes",  # Seven meanings (/plato/phaedrus): its voice test is paid
+        "plato_clock_routes",  # The clock test (/plato/clock)
         "plato_gallery_routes",  # the gallery (/plato/gallery) and the "From the lab" band on every Plato page
         "draw_routes",  # Draw a chair (/draw)
         "socrates_routes",  # Ask Socrates (/socrates): paid

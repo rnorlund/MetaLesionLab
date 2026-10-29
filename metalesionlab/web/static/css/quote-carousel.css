@@ -1,0 +1,127 @@
+/* Quote carousel (static/js/quote-carousel.js): a quote band (.epigraph-band, epigraph.css) shown one quote at a
+   time. Everything here is scoped to .qc, the class the script adds, so without the script the band stays a row of
+   every quote that wraps. The band spans its section; the quote keeps a readable measure (about 30 of its own ems)
+   and is centred in it, the speaker's face beside it (above it on a phone) and the citation under it.
+
+   Every quote sits in the same grid cell: the cell is as tall as the tallest, so changing quotes never moves the
+   page. --qc-interval is how long a quote stays (the current dot fills over it; the script moves on when it is
+   full). Motion only with prefers-reduced-motion: no-preference. Colours are the site's tokens (app.css). */
+.epigraph-band.qc {
+  --qc-interval: 8.5s;
+  --qc-speed: 700ms;
+  --qc-shift: clamp(18px, 1.6vw, 40px);
+  --qc-size: clamp(20px, calc(12px + 0.95vw), 42px);
+  --qc-face: clamp(72px, calc(36px + 3.4vw), 160px);
+  --qc-gap: clamp(18px, 1.8vw, 44px);
+  --qc-measure: calc(var(--qc-size) * 30);
+  --qc-box: calc(var(--qc-face) + var(--qc-gap) + var(--qc-measure));
+  --qc-btn: clamp(40px, calc(32px + 0.55vw), 50px);
+  --qc-pip: clamp(9px, calc(4px + 0.36vw), 14px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 1.8vw, 44px);
+  border-radius: 14px;
+}
+.epigraph-band.qc:focus { outline: none; }
+.epigraph-band.qc:focus-visible { outline: 3px solid var(--focus); outline-offset: clamp(10px, 1vw, 20px); }
+
+/* the quotes, stacked in one cell */
+.qc-slides { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; width: 100%;
+  max-width: var(--qc-box); touch-action: pan-y; }
+.epigraph-band.qc > .qc-slides > figure.epigraph--band {
+  --ep-size: var(--qc-size);
+  --ep-face: var(--qc-face);
+  --ep-gap: var(--qc-gap);
+  grid-area: 1 / 1;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+.epigraph-band.qc > .qc-slides > figure.epigraph--band.is-active { opacity: 1; visibility: visible; }
+
+/* the face beside the words */
+.epigraph-band.qc figure.epigraph--band[data-speaker] {
+  grid-template-columns: var(--ep-face) minmax(0, 1fr); column-gap: var(--ep-gap); row-gap: 0; }
+.epigraph-band.qc figure.epigraph--band[data-speaker] > blockquote,
+.epigraph-band.qc figure.epigraph--band[data-speaker] > figcaption { grid-column: 2; }
+.epigraph-band.qc figure.epigraph--band .epigraph-face { grid-column: 1; grid-row: 1 / span 2; width: 100%; margin: 0.12em 0 0; }
+.epigraph-band.qc figure.epigraph--band blockquote p { line-height: 1.38; }
+.epigraph-band.qc figure.epigraph--band figcaption { margin-top: 0.9em; }
+
+/* the controls: Pause/Play, previous, a dot per quote, next */
+.qc-controls { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px clamp(6px, 0.6vw, 14px);
+  width: 100%; max-width: var(--qc-box); }
+.qc-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-width: var(--qc-btn); height: var(--qc-btn); padding: 0; box-sizing: border-box;
+  border: 1px solid var(--line-3); border-radius: 999px; background: transparent; color: var(--ink-2);
+  font: inherit; font-size: var(--fs-small); cursor: pointer;
+}
+.qc-btn:hover { color: var(--ink); border-color: var(--ink-2); background: var(--tint); }
+.qc-btn:focus-visible, .qc-dot:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.qc-btn svg { width: 15px; height: 15px; flex: none; }
+.qc-play { min-width: 6.4em; padding: 0 clamp(14px, 1vw, 20px) 0 clamp(12px, 0.9vw, 17px);  /* Pause or Play: same width */
+  margin-right: clamp(4px, 1vw, 22px); }
+.qc-play svg { width: 12px; height: 12px; }
+.qc-play[hidden] { display: none; }
+.qc-play[data-shows="pause"] .qc-i-play, .qc-play[data-shows="play"] .qc-i-pause { display: none; }
+.qc-btn > *, .qc-dot > * { pointer-events: none; }  /* the pointer is always on the button itself */
+
+.qc-dots { display: flex; align-items: center; }
+.qc-dot { display: inline-flex; align-items: center; justify-content: center; min-width: calc(var(--qc-pip) + 17px);
+  height: var(--qc-btn); padding: 0 4px; border: 0; border-radius: 999px; background: transparent; cursor: pointer; }
+.qc-pip { position: relative; display: block; width: var(--qc-pip); height: var(--qc-pip); box-sizing: border-box; border-radius: 999px;
+  border: 1.5px solid var(--faint); overflow: hidden; }
+.qc-dot:hover .qc-pip { background: var(--faint); }
+.qc-dot[aria-current="true"] .qc-pip { width: calc(var(--qc-pip) * 3.7); border-color: var(--faint); background: transparent; }
+.qc-fill { position: absolute; inset: 0; background: var(--orange); transform-origin: 0 50%; transform: scaleX(0); }
+.qc-dot[aria-current="true"] .qc-fill { transform: none; }  /* not moving by itself: the current dot is full */
+.epigraph-band.qc:not(.is-stopped) .qc-dot[aria-current="true"] .qc-fill { animation: qc-fill var(--qc-interval) linear both; }
+.epigraph-band.qc.is-held .qc-dot[aria-current="true"] .qc-fill { animation-play-state: paused; }
+@keyframes qc-fill { from { transform: scaleX(0); } to { transform: none; } }
+
+/* motion: a cross-fade with a short slide, in from the side the reader is heading to */
+@media (prefers-reduced-motion: no-preference) {
+  .epigraph-band.qc > .qc-slides > figure.epigraph--band {
+    transform: translateX(calc(var(--qc-dir, 1) * var(--qc-shift)));
+    transition: opacity var(--qc-speed) ease, transform var(--qc-speed) cubic-bezier(0.22, 0.7, 0.2, 1),
+      visibility 0s linear var(--qc-speed);
+  }
+  .epigraph-band.qc > .qc-slides > figure.epigraph--band.is-leaving {
+    transform: translateX(calc(var(--qc-dir, 1) * -1 * var(--qc-shift)));
+    transition-duration: calc(var(--qc-speed) * 0.45), var(--qc-speed), 0s;
+    transition-delay: 0s, 0s, var(--qc-speed);
+  }
+  .epigraph-band.qc > .qc-slides > figure.epigraph--band.is-active {  /* the old quote mostly gone before this one shows */
+    transform: none; transition-duration: calc(var(--qc-speed) * 0.7), var(--qc-speed), 0s;
+    transition-delay: calc(var(--qc-speed) * 0.3), 0s, 0s; }
+  .epigraph-band.qc > .qc-slides > figure.epigraph--band.qc-pre { transition: none; }
+  .qc-pip { transition: width 0.3s ease, background-color 0.2s; }
+}
+
+/* a phone: the face above the words, the words the full width */
+@media (max-width: 599px) {
+  .epigraph-band.qc { --qc-face: 60px; --qc-gap: 14px; --qc-size: clamp(18px, calc(14px + 1vw), 21px); }
+  .epigraph-band.qc figure.epigraph--band[data-speaker] { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
+  .epigraph-band.qc figure.epigraph--band[data-speaker] > blockquote,
+  .epigraph-band.qc figure.epigraph--band[data-speaker] > figcaption { grid-column: 1; }
+  .epigraph-band.qc figure.epigraph--band .epigraph-face { grid-row: auto; width: var(--ep-face); margin: 0; }
+  .qc-play { margin-right: 2px; }
+  .qc-dot { min-width: 22px; padding: 0 3px; }
+  .qc-dot[aria-current="true"] .qc-pip { width: 27px; }
+}
+
+@media (forced-colors: active) {
+  .qc-pip { border-color: ButtonText; }
+  .qc-fill { background: Highlight; }
+}
+
+/* printed: every quote, no controls */
+@media print {
+  .epigraph-band.qc > .qc-slides { display: flex; flex-direction: column; gap: 24px; }
+  .epigraph-band.qc > .qc-slides > figure.epigraph--band { opacity: 1; visibility: visible; transform: none; }
+  .qc-controls { display: none; }
+}

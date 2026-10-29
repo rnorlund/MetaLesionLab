@@ -1,0 +1,643 @@
+{
+ "_about": "The clock test (docs/plato_clock_plan.md): every AI picture scored by eye on the MoCA's three clock points by the analyst (Claude), before Muse Spark read any picture of its set. Each picture was viewed at 512 px, then as a 2x crop of its centre with a 10-px grid, on which the centre and both hand tips were read off. hour_to / minute_to are the numbers the shorter / longer hand points to. The MoCA's 'clearly shorter' was applied as: the hour hand at most 90% of the minute hand's length (ratio = hour / minute length, measured on the crop). Numbers outside the contour are allowed (MoCA). Keys are <set>/<file> in the study's data folder. The persona set was scored blind to the stated ages: its pictures were copied under shuffled code names, scored, and only then matched back to their ages.",
+ "default/c0_0.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.82,
+  "note": ""
+ },
+ "default/c0_1.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.8,
+  "note": ""
+ },
+ "default/c0_2.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.84,
+  "note": ""
+ },
+ "default/c0_3.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.85,
+  "note": ""
+ },
+ "default/c1_0.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.88,
+  "note": "tick marks; borderline on 'clearly shorter' (0.88)"
+ },
+ "default/c1_1.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.81,
+  "note": "tick marks"
+ },
+ "default/c1_2.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 3,
+  "hour_to": 10,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "three hands, at the 10, the 11 and the 2"
+ },
+ "default/c1_3.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.85,
+  "note": "writes '10 past 11' under the clock"
+ },
+ "default/c2_0.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.86,
+  "note": "tick marks"
+ },
+ "default/c2_1.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 2,
+  "minute_to": 11,
+  "ratio": 1.11,
+  "note": "the hand at the 11 is the longer one: about 1:55"
+ },
+ "default/c2_2.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.77,
+  "note": ""
+ },
+ "default/c2_3.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.82,
+  "note": ""
+ },
+ "default/c3_0.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.88,
+  "note": "numbers outside the contour (allowed); borderline on 'clearly shorter' (0.88)"
+ },
+ "default/c3_1.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.75,
+  "note": ""
+ },
+ "default/c3_2.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.85,
+  "note": ""
+ },
+ "default/c3_3.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 2,
+  "minute_to": 11,
+  "ratio": 1.27,
+  "note": "the longer hand points between the 10 and the 11 (about 10.6): about 1:53"
+ },
+ "persona/age20.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.87,
+  "note": "writes '11:10 ~ ten past eleven' under the clock"
+ },
+ "persona/age24.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.88,
+  "note": ""
+ },
+ "persona/age28.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.79,
+  "note": ""
+ },
+ "persona/age32.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.82,
+  "note": "hour hand between the 10 and the 11, nearer the 11 (10.65); writes '10 past 11' under the clock"
+ },
+ "persona/age36.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.87,
+  "note": ""
+ },
+ "persona/age40.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.95,
+  "note": "hands at 11 and 2 but about the same length (0.95)"
+ },
+ "persona/age44.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.91,
+  "note": "hands at 11 and 2 but about the same length (0.91)"
+ },
+ "persona/age48.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.8,
+  "note": ""
+ },
+ "persona/age52.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.93,
+  "note": "hands at 11 and 2 but about the same length (0.93)"
+ },
+ "persona/age56.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.8,
+  "note": "writes '10 past 11' under the clock"
+ },
+ "persona/age60.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.82,
+  "note": "numbers outside a small contour (allowed); hour hand nearer the 11 (10.7)"
+ },
+ "persona/age64.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.91,
+  "note": "hands at 11 and 2 but about the same length (0.91)"
+ },
+ "persona/age68.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.86,
+  "note": "hour hand between the 10 and the 11, nearer the 11 (10.56): borderline; writes '10 past 11'"
+ },
+ "persona/age72.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.84,
+  "note": "writes '10 past 11' under the clock"
+ },
+ "persona/age76.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.81,
+  "note": "writes '11:10 10 past 11' under the clock"
+ },
+ "persona/age80.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": 0.91,
+  "note": "hands at 11 and 2 but about the same length (0.91); two stray dots"
+ },
+ "svg_spark/s0.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": false,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 1,
+  "ratio": null,
+  "note": "the minute hand points to the 1: about 11:05"
+ },
+ "svg_wonder/s0.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s1.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s1.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s2.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11; a square frame around the round face"
+ },
+ "svg_wonder/s2.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s3.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s3.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s4.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s4.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s5.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s5.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s6.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s6.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s7.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s7.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s8.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s8.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s9.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11; a square frame around the round face"
+ },
+ "svg_wonder/s9.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s10.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s10.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s11.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11; a square frame around the round face"
+ },
+ "svg_wonder/s11.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s12.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s12.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s13.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s13.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s14.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s14.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_spark/s15.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ },
+ "svg_wonder/s15.png": {
+  "contour": true,
+  "numbers": true,
+  "hands": true,
+  "hands_n": 2,
+  "hour_to": 11,
+  "minute_to": 2,
+  "ratio": null,
+  "note": "the hour hand clearly shorter, just past the 11"
+ }
+}

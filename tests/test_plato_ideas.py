@@ -306,6 +306,57 @@ def test_damage_and_words_data_on_the_page():
     assert total < 2_500_000, total
 
 
+def test_plain_damage_and_words_text_is_built_from_the_data(tmp_path):
+    """The page tells God under damage and the four words in plain words, built in plato_ideas.js from the data's own
+    counts and tests (the data file's prose is the fallback). Run the page's scripts under node and check each number
+    against the data, so the plain wording can't drift from the results."""
+    import shutil
+    import subprocess
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("node is not installed")
+    plato_ideas_routes_cache_clear()
+    client = TestClient(web.app)
+    a = client.get("/api/plato/ideas").json()
+    html = client.get("/plato/ideas").text
+    scripts = [web.HERE / "static" / "js" / s for s in re.findall(r'<script src="/static/js/([\w.-]+?\.js)', html)]
+    ids = ["dmg-answer", "dmg-charts-cap", "dmg-others-lede", "words-lede", "words-cap"]
+    (tmp_path / "page.html").write_text(html)
+    (tmp_path / "api.json").write_text(json.dumps(a))
+    (tmp_path / "cfg.json").write_text(json.dumps({"html": str(tmp_path / "page.html"), "scripts": [str(s) for s in scripts],
+                                                   "api": {"/api/plato/ideas": str(tmp_path / "api.json")}, "ids": ids}))
+    run = subprocess.run([node, str(web.HERE.parents[1] / "tests" / "firstscreen_dom.js"), str(tmp_path / "cfg.json")],
+                         capture_output=True, text=True, timeout=60)
+    assert run.returncode == 0, run.stderr
+    out = {k: re.sub(r"<[^>]+>", "", v or "") for k, v in json.loads(run.stdout)["ids"].items()}
+    X, W, n = a["damage"], a["words"], a["damage"]["n_seeds"]
+    T = X["tests"]
+    gen, eye = X["rates"]["text-noise"]["generic"], X["rates_eye"]["text-noise"]["generic"]
+    k = lambda v, m=n: round(v * m)
+    ans = out["dmg-answer"]
+    assert f"a beard in {T['D1']['beard']} of {n} drawings" in ans
+    assert f"{k(gen[-1])} of {n} show a person with neither beard nor halo, against {k(gen[0])} undamaged" in ans
+    assert f"({k(eye[-1])} against {k(eye[0])}, by our eye)" in ans
+    cap, ag = out["dmg-charts-cap"], T["agreement"]
+    assert f"beard for {round(ag['beard']['agreement'] * 100)}% of the {ag['beard']['n']} pictures" in cap
+    assert f"person for {round(ag['person']['agreement'] * 100)}% and the halo for {round(ag['halo']['agreement'] * 100)}%" in cap
+    others, by = out["dmg-others-lede"], {o["key"]: o for o in X["others"]}
+    assert f"a person in {k(by['death']['person_lang_top'], 8)} of 8 of death’s pictures and {k(by['time']['person_lang_top'], 8)} of 8 of time’s" in others
+    pts = lambda v: f"{abs(v) * 100:.1f}"
+    assert f"lost the original main symbol {pts(T['D4']['difference'])} points more often" in others
+    assert f"probably between {pts(T['D4']['ci95'][1])} and {pts(T['D4']['ci95'][0])}" in others
+    assert f"{pts(T['D6']['difference'])} points more of the pictures that had none" in others
+    words = {w["key"]: w for w in W["words"]}
+    lede = out["words-lede"]
+    assert f"a stick figure running in {words['running']['top']['n']} of 16" in lede
+    for key, what in (("something_fast", "fast"), ("something_heavy", "heavy")):
+        t = words[key]["top"]
+        assert f"{t['emblem']} in {t['n']} of 16 for {what}" in lede
+    # the caption keeps every result the data's caption has ("95% CIs" becomes "likely ranges")
+    nums = lambda s: re.findall(r"\d+(?:\.\d+)?", s)
+    assert nums(out["words-cap"]) == nums(W["caption"].replace("95% CIs", "")) and "likely ranges are wide" in out["words-cap"]
+
+
 def test_public_data_is_statistics_only():
     pub = json.loads((web.HERE.parents[1] / "public_data" / "plato_ideas.json").read_text())
     assert len(pub["ideas"]) == 11 and "statistics only" in pub["license"]

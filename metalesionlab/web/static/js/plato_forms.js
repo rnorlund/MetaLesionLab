@@ -9,7 +9,7 @@
   var HALO = 'var(--chart-halo)';
   var NS = 'http://www.w3.org/2000/svg';
   var S = { d: null, ai: 'muse', asked: 'doodle', dial: 'doodle', k: 'bed', who: 'ai' };
-  var NAME = { muse: 'Muse Image', sdxl: 'SDXL', people: 'People' };
+  var NAME = { muse: 'Muse Image', sdxl: 'Stable Diffusion XL', people: 'People' };
   var COLOR = { muse: BLUE, sdxl: TEAL, people: ORANGE };
 
   function $(id) { return document.getElementById(id); }
@@ -86,12 +86,13 @@
 
   function hero() {
     var wall = g(S.ai + '_doodle_default'), e = eye(S.ai + '_doodle_default');
+    var who = NAME[S.ai] + (S.ai === 'sdxl' ? ', an open image AI from Stability AI,' : ',');
     if (e) {
       $('wall-ai-stat').textContent = eyeCount(e) + ' of ' + e.n + ' show 10:10';
-      $('wall-ai-sub').textContent = NAME[S.ai] + ', “a clock”, no time asked; read by eye (our automatic reader counted ' + wall.ten_ten.k + ').';
+      $('wall-ai-sub').textContent = who + ' asked for “a clock” with no time. Counted by eye (our automatic clock reader counted ' + wall.ten_ten.k + ').';
     } else {
       $('wall-ai-stat').textContent = wall.ten_ten.k + ' of ' + wall.ten_ten.n + ' show about 10:10';
-      $('wall-ai-sub').textContent = NAME[S.ai] + ', “a clock”, no time asked.';
+      $('wall-ai-sub').textContent = who + ' asked for “a clock” with no time.';
     }
     swapImg($('wall-ai'), IMG + 'wall_' + S.ai + '.webp', WALL_ALT[S.ai]);
   }
@@ -100,8 +101,8 @@
     var p = g('people');
     var l = twelveThree(p);
     $('wall-people-stat').textContent = p.ten_ten.k + ' of ' + p.n + ' show about 10:10';
-    html($('wall-people-sub'), '(' + pct(p.ten_ten.share) + '%). Their favourite: hands on the 12 and the 3 (' + l + ' of ' + p.n +
-      '). 16 drawings shown. <span class="credit">Google Quick, Draw! (CC BY 4.0)</span>');
+    html($('wall-people-sub'), '(' + pct(p.ten_ten.share) + '%). Their favourite: hands on the 12 and the 3, as in 3:00 (' + l + ' of ' + p.n +
+      '). 16 of their drawings shown. <span class="credit">Google Quick, Draw! (CC BY 4.0)</span>');
     var lead = window.FirstLook.forms(S.d);
     window.FirstLook.render($('hero-stats'), lead);
     $('hero-note').textContent = lead.note;
@@ -116,7 +117,7 @@
     var W = 560, H = 380, m = { l: 46, r: 12, t: 12, b: 42 };
     var x = function (v) { return m.l + (v + 0.5) / 13 * (W - m.l - m.r); };
     var y = function (v) { return H - m.b - (v + 1.2) / 13.5 * (H - m.t - m.b); };
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Time asked for against the time drawn, for Muse Image and SDXL' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Time asked for against the time drawn, for Muse Image and Stable Diffusion XL' });
     svg.appendChild(s('rect', { x: m.l, y: y(10 + 1 / 3), width: W - m.l - m.r, height: y(10) - y(10 + 1 / 3), fill: 'var(--pf-ten)', opacity: 0.7 }));
     svg.appendChild(s('text', { x: W - m.r - 4, y: y(10 + 1 / 3) - 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--amber-ink)' }, 'about 10:10'));
     [0, 3, 6, 9, 12].forEach(function (v) {
@@ -164,7 +165,7 @@
 
   function askedFacts() {
     var m = g('muse_doodle_asked'), x = g('sdxl_doodle_asked'), mp = g('muse_photo_asked'), xp = g('sdxl_photo_asked');
-    var ci = function (c) { return c ? ' (95% CI ' + pct(c[0]) + '–' + pct(c[1]) + '%)' : ''; };
+    var ci = function (c) { return c ? ' (probably between ' + pct(c[0]) + '% and ' + pct(c[1]) + '%)' : ''; };
     var out = [];
     if (m) {
       out.push('<div class="pf-fact muse"><b>' + m.ten_ten.k + ' of ' + m.n + '</b><span>of Muse Image’s doodles with a time asked for show 10:10.</span></div>');
@@ -172,12 +173,12 @@
         pct(m.accuracy) + '% are right to within 5 minutes' + ci(m.accuracy_ci95_cluster) + ', and ' + pct(m.accuracy_hour_slack) +
         '% if the hour may be one off. The hour hand often sits a number too far, as in 7:30 for 6:30.</span></div>');
     }
-    if (x) out.push('<div class="pf-fact sdxl"><b>' + pct(x.accuracy) + '%</b><span>of SDXL’s doodles show the time asked for' + ci(x.accuracy_ci95_cluster) +
-      '. ' + pct(x.ten_ten.share) + '% show 10:10 instead' + (xp ? ', and ' + pct(xp.ten_ten.share) + '% of its photos' : '') + '.</span></div>');
+    if (x) out.push('<div class="pf-fact sdxl"><b>' + pct(x.accuracy) + '%</b><span>of Stable Diffusion XL’s doodles show the time asked for' + ci(x.accuracy_ci95_cluster) +
+      '. ' + pct(x.ten_ten.share) + '% show 10:10 instead' + (xp ? ', and so do ' + pct(xp.ten_ten.share) + '% of its photos' : '') + '.</span></div>');
     html($('asked-facts'), out.join(''));
-    html($('asked-lede'), 'So for Muse Image, 10:10 is a default, not a limit. Asked for 3:00 or 7:50, it drew 3:00 or 7:50, and it never drew 10:10. ' +
+    html($('asked-lede'), 'So for Muse Image, 10:10 is a habit, not a limit. Asked for 3:00 or 7:50, it drew 3:00 or 7:50, and it never drew 10:10. ' +
       (mp ? 'Its realistic photos were the same: ' + pct(mp.accuracy) + '% right to within 5 minutes, ' + mp.ten_ten.k + ' of ' + mp.n + ' at 10:10. ' : '') +
-      (x ? 'The open model SDXL is different: it mostly ignored the time asked for and often fell back on 10:10, the classic finding.' : ''));
+      (x ? 'Stable Diffusion XL, an open image AI from Stability AI, is different: it mostly ignored the time asked for and often fell back on 10:10, as others have found with image AIs.' : ''));
   }
 
   // ---- dials: every read time as a pair of hands ----
@@ -236,7 +237,7 @@
     var box = $('dials-box');
     box.innerHTML = '';
     box.appendChild(dial('muse_' + S.dial + '_default', 'Muse Image', 'muse'));
-    box.appendChild(dial('sdxl_' + S.dial + '_default', 'SDXL', 'sdxl'));
+    box.appendChild(dial('sdxl_' + S.dial + '_default', 'Stable Diffusion XL', 'sdxl'));
     box.appendChild(dial('people', S.dial === 'photo' ? 'People (drawings)' : 'People', 'people'));
   }
 
@@ -249,23 +250,26 @@
     var it = S.d.concepts.items[S.k];
     if (!it) return;
     swapImg($('bt-img'), IMG + 'grid_' + S.k + '_' + S.who + '.webp', (S.d.concepts.alt && S.d.concepts.alt[S.k] && S.d.concepts.alt[S.k][S.who]) || BT_ALT[S.k][S.who]);
-    $('bt-cap').textContent = S.who === 'ai' ? '16 doodles by Meta’s Muse Image, “a ' + S.k + '”, one prompt each time.'
+    $('bt-cap').textContent = S.who === 'ai' ? '16 doodles by Meta’s Muse Image, each from the same request: “a ' + S.k + '”.'
       : '16 of 200 drawings by people, at random. Google Quick, Draw! (CC BY 4.0).';
     var idx = it.homogenization_index, rk = it.ranks_among_core.homogenization_index;
     var less = Math.round((1 - idx) * 100);
     html($('bt-stat'), '<span class="num">' + (less > 0 ? less + '%' : '×' + f2(idx)) + '</span><p>' +
       (less > 0 ? 'Muse Image’s ' + S.k + 's are ' + less + '% less varied than people’s.' : 'Muse Image’s ' + S.k + 's vary as much as people’s.') +
-      '</p><p class="sub">Spread ' + f2(it.ai_spread) + ' against ' + f2(it.human_spread) + ' for people; ratio ' + f2(idx) +
-      ' (95% CI ' + f2(it.homogenization_index_ci95[0]) + '–' + f2(it.homogenization_index_ci95[1]) + ').</p>');
+      '</p><p class="sub">How different the drawings are from one another (we call this spread): ' + f2(it.ai_spread) + ' for Muse Image, ' + f2(it.human_spread) +
+      ' for people. Muse Image’s spread is ' + f2(idx) + ' of people’s (probably between ' + f2(it.homogenization_index_ci95[0]) + ' and ' +
+      f2(it.homogenization_index_ci95[1]) + ').</p>');
     var c = it.conditions || {}, facts = [];
-    facts.push('<div class="pf-fact muse"><b>' + ordinal(rk.rank) + ' of ' + rk.of + '</b><span>Added to the 35 everyday things of Plato’s Chair, the ' + S.k +
-      ' ranks ' + ordinal(rk.rank) + ' (1st = drawn most alike, compared with people). The chair is ' +
-      ordinal(S.d.concepts.core_reference.chair_index_rank) + '; the umbrella is 1st. That ranking is DINOv2’s: with other vision models ' +
+    facts.push('<div class="pf-fact muse"><b>' + ordinal(rk.rank) + ' of ' + rk.of + '</b><span>Added to the 35 everyday things of the main Plato’s Chair test, the ' + S.k +
+      ' ranks ' + ordinal(rk.rank) + ' (1st = the thing Muse Image draws most alike, compared with people). The chair is ' +
+      ordinal(S.d.concepts.core_reference.chair_index_rank) + '; the umbrella is 1st. The ranking comes from one picture-comparing AI (DINOv2): with others ' +
       'the order shifts, while the overall result holds.</span></div>');
-    if (c.any) facts.push('<div class="pf-fact muse"><b>×' + f2(c.any.ratio_vs_default) + '</b><span>“Any kind of ' + S.k + '” adds no clear variety: ' +
-      f2(c.any.ratio_vs_default) + ' times the usual spread (95% CI ' + f2(c.any.ratio_vs_default_ci95[0]) + '–' + f2(c.any.ratio_vs_default_ci95[1]) + ').</span></div>');
-    if (c.listed) facts.push('<div class="pf-fact muse"><b>' + f2(c.listed.ratio_vs_people) + '×</b><span>people’s spread when Muse Spark names 16 kinds and Muse Image draws one of each.</span></div>');
-    if (c.sdxl_default) facts.push('<div class="pf-fact sdxl"><b>' + f2(c.sdxl_default.ratio_vs_people) + '×</b><span>people’s spread for SDXL with the usual prompt.</span></div>');
+    if (c.any) facts.push('<div class="pf-fact muse"><b>×' + f2(c.any.ratio_vs_default) + '</b><span>Asking for “any kind of ' + S.k + '” adds no clear variety: ' +
+      f2(c.any.ratio_vs_default) + ' times as varied as with our plain request, “a ' + S.k + '” (probably between ' + f2(c.any.ratio_vs_default_ci95[0]) + ' and ' +
+      f2(c.any.ratio_vs_default_ci95[1]) + ').</span></div>');
+    if (c.listed) facts.push('<div class="pf-fact muse"><b>' + f2(c.listed.ratio_vs_people) + '×</b><span>as varied as people’s, when Meta’s chat AI, Muse Spark, listed 16 kinds of ' +
+      S.k + ' and Muse Image drew one of each.</span></div>');
+    if (c.sdxl_default) facts.push('<div class="pf-fact sdxl"><b>' + f2(c.sdxl_default.ratio_vs_people) + '×</b><span>as varied as people’s: Stable Diffusion XL, an open image AI, from our plain request.</span></div>');
     html($('bt-facts'), facts.join(''));
     if (it.listed_kinds) {
       $('bt-kinds').hidden = false;
@@ -293,7 +297,7 @@
       svg.appendChild(s('text', { x: x(t), y: H - m.b + 18, 'text-anchor': 'middle', 'font-size': 12, fill: MUTED }, String(t)));
     });
     svg.appendChild(s('text', { x: x(1) + 5, y: m.t - 6, 'font-size': 11, fill: MUTED }, 'as varied as people'));
-    svg.appendChild(s('text', { x: m.l + (W - m.l - m.r) / 2, y: H - 2, 'text-anchor': 'middle', 'font-size': 12, fill: INK }, 'Muse Image’s spread ÷ people’s spread'));
+    svg.appendChild(s('text', { x: m.l + (W - m.l - m.r) / 2, y: H - 2, 'text-anchor': 'middle', 'font-size': 12, fill: INK }, 'Muse Image’s spread ÷ people’s (1 = just as varied)'));
     rows.forEach(function (r, i) {
       var y = m.t + i * rowH + rowH / 2, em = r.isNew || r.label === 'chair';
       var gEl = s('g', {});
@@ -301,7 +305,7 @@
       gEl.appendChild(s('line', { x1: x(r.ci[0]), x2: x(Math.min(r.ci[1], hi)), y1: y, y2: y, stroke: r.isNew ? INK : 'var(--blue-mid)', 'stroke-width': r.isNew ? 2 : 1.5 }));
       gEl.appendChild(s('circle', { cx: x(r.v), cy: y, r: r.isNew ? 5.5 : 4, fill: r.isNew ? INK : BLUE, stroke: HALO, 'stroke-width': 1.5 }));
       gEl.appendChild(s('text', { x: m.l - 8, y: y + 4, 'text-anchor': 'end', 'font-size': em ? 12 : 11, 'font-weight': em ? 700 : 400, fill: em ? INK : MUTED }, r.label));
-      hoverable(gEl, '<b>' + r.label + '</b>' + (r.isNew ? ' (Plato’s example)' : '') + '<br>ratio ' + f2(r.v) + ' (95% CI ' + f2(r.ci[0]) + '–' + f2(r.ci[1]) + ')<br>' + (i + 1) + ' of ' + rows.length + ', most alike first');
+      hoverable(gEl, '<b>' + r.label + '</b>' + (r.isNew ? ' (Plato’s example)' : '') + '<br>Muse Image ÷ people ' + f2(r.v) + ' (likely range ' + f2(r.ci[0]) + '–' + f2(r.ci[1]) + ')<br>' + (i + 1) + ' of ' + rows.length + ', most alike first');
       svg.appendChild(gEl);
     });
     box.innerHTML = '';
@@ -324,7 +328,7 @@
     var p = S.d.clock.predictions || {};
     var held = Object.keys(p).filter(function (k) { return p[k]; }).length;
     $('pred-line').textContent = held + ' of ' + Object.keys(p).length + ' clock predictions held. We were wrong that Muse Image ignores the time asked for ' +
-      '(it doesn’t), and that SDXL’s plain doodles would show 10:10 clearly more often than chance (its photos do). ' +
+      '(it doesn’t), and that Stable Diffusion XL’s plain doodles would show 10:10 clearly more often than chance (its photos do). ' +
       'The four bed-and-table predictions held.';
   }
 

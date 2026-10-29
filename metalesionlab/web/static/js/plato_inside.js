@@ -36,8 +36,8 @@
   // --- per-layer text -----------------------------------------------------------------------------
   function phase(c, L) {
     var cl = c.collapse_layer, nl = nameLayer(c);
-    if (nl && L >= nl) return { key: 'named', label: 'The name is readable' };
-    if (cl && L >= cl) return { key: 'collapsed', label: 'Muse’s doodles have collapsed' };
+    if (nl && L >= nl) return { key: 'named', label: 'The name can be read' };
+    if (cl && L >= cl) return { key: 'collapsed', label: 'Muse Image’s drawings in one place' };
     if (L <= 12) return { key: 'seeing', label: 'Seeing the drawing' };
     if (L <= 30) return { key: 'middle', label: 'In the middle' };
     return { key: 'settling', label: 'Settling on a name' };
@@ -53,28 +53,29 @@
     var nb = S.data.summary.same_thing_neighbour, t = c.label, ph = phase(c, L), nl = nameLayer(c);
     var nm = pct(nb.muse[L - 1]), np = pct(nb.people[L - 1]);
     if (ph.key === 'seeing') {
-      return 'Glimmer has just taken in the picture. Doodles of the same thing still sit near each other: at this layer ' + nm +
-        ' of Muse’s doodles and ' + np + ' of people’s have a doodle of the same thing as their nearest neighbour (all 35 things).';
+      return 'Glimmer has just taken in the picture. Drawings of the same thing still sit near each other: at this stage, for ' + nm +
+        ' of Muse Image’s drawings and ' + np + ' of people’s, the closest drawing is another drawing of the same thing (all 35 things).';
     }
     if (ph.key === 'middle') {
-      return 'Here, where Glimmer will answer, its state carries little about which thing a doodle shows: only ' + np +
-        ' of people’s doodles (and ' + nm + ' of Muse’s) sit nearest a doodle of the same thing. Both sets are spread out.';
+      return 'At the spot where Glimmer will write its answer, it holds little here about which thing a drawing shows: only ' + np +
+        ' of people’s drawings (and ' + nm + ' of Muse Image’s) sit closest to a drawing of the same thing. Both sets are spread out.';
     }
     if (ph.key === 'settling') {
-      return 'Which thing it is comes back into the state (nearest neighbour the same thing: ' + nm + ' of Muse’s doodles, ' + np +
-        ' of people’s). ' + (c.collapse_layer ? 'Muse’s doodles of ' + aThing(t) + ' collapse at layer ' + c.collapse_layer + '.'
-          : 'Muse’s doodles of ' + aThing(t) + ' never collapse.');
+      return 'Which thing it is comes back (the closest drawing shows the same thing for ' + nm + ' of Muse Image’s drawings and ' + np +
+        ' of people’s). ' + (c.collapse_layer ? 'Glimmer files Muse Image’s drawings of ' + aThing(t) + ' in one place from stage ' + c.collapse_layer + '.'
+          : 'Glimmer never files Muse Image’s drawings of ' + aThing(t) + ' in one place.');
     }
     if (ph.key === 'collapsed') {
-      return 'From here to the last layer, Muse’s doodles of ' + aThing(t) + ' stay less than half as spread out as people’s. ' +
-        'The word lens can’t read “' + t + '” yet; that comes at layer ' + nl + '.';
+      return 'From here to the last stage, Muse Image’s drawings of ' + aThing(t) + ' stay less than half as far apart as people’s: Glimmer files them in one place. ' +
+        'The word lens can’t read “' + t + '” yet; that comes at stage ' + nl + '.';
     }
     var k = lensCounts(c, L);
-    var lead = 'The word lens can now read “' + t + '” for ' + k[0] + ' of ' + c.n.muse + ' Muse doodles and ' + k[1] + ' of ' + c.n.people + ' people’s. ';
+    var lead = 'The word lens (a tool that reads which word Glimmer is heading towards) can now read “' + t + '” for ' + k[0] + ' of ' + c.n.muse +
+      ' of Muse Image’s drawings and ' + k[1] + ' of ' + c.n.people + ' of people’s. ';
     if (!c.collapse_layer) {
-      return lead + 'But Muse’s doodles never stay below half of people’s spread: ' + t + ' is the one thing of 35 that never collapses.';
+      return lead + 'But Muse Image’s drawings never stay under half of people’s spread: ' + t + ' is the one thing of 35 that Glimmer never files in one place.';
     }
-    return lead + 'Muse’s doodles sit close to one point; people’s are still spread out.';
+    return lead + 'Muse Image’s drawings sit almost on one point; people’s are still spread out.';
   }
 
   // --- the map ---------------------------------------------------------------------------------------
@@ -161,9 +162,9 @@
 
   function mapLabel(c, L) {
     var m = c.spread.muse[L - 1], p = c.spread.people[L - 1];
-    return 'Map of ' + c.pictures.length + ' doodles of ' + aThing(c.label) + ' inside Muse Glimmer at layer ' + L + ' of 52: Muse Image’s ' +
-      c.n.muse + ' doodles have a spread of ' + f2(m) + ', people’s ' + c.n.people + ' have ' + f2(p) +
-      (m < 0.5 * p ? '. Muse’s sit in a tight cluster; people’s are spread out.' : '. Both sets are spread out.');
+    return 'Map of ' + c.pictures.length + ' drawings of ' + aThing(c.label) + ' inside Muse Glimmer at stage ' + L + ' of 52: Muse Image’s ' +
+      c.n.muse + ' drawings have a spread of ' + f2(m) + ', people’s ' + c.n.people + ' have ' + f2(p) + ' (0 would mean all in one spot)' +
+      (m < 0.5 * p ? '. Muse Image’s sit in a tight cluster; people’s are spread out.' : '. Both sets are spread out.');
   }
 
   // --- tooltip on the map ------------------------------------------------------------------------------
@@ -190,9 +191,9 @@
     var said = p.said || '(no answer)';
     tip.appendChild(thumb);
     tip.appendChild(h('div', { class: 'tip-body' }, [
-      h('b', { text: (muse ? 'Muse Image’s doodle ' + (i + 1) : 'A person’s doodle ' + (i - n + 1)) }),
+      h('b', { text: (muse ? 'Muse Image’s drawing ' + (i + 1) : 'A person’s drawing ' + (i - n + 1)) }),
       h('span', { text: 'Glimmer said “' + said + '”' + (p.ok ? '' : ' (not counted as ' + c.label + ')') }),
-      h('span', { class: 'tip-lens', text: p.lens ? 'Word lens reads the name from layer ' + p.lens : 'Word lens never settles on the name' })
+      h('span', { class: 'tip-lens', text: p.lens ? 'Word lens reads the name from stage ' + p.lens : 'Word lens never settles on the name' })
     ]));
     tip.hidden = false;
     var W = S.geom.W, left = hit.x + 14, top = hit.y + 14;
@@ -243,7 +244,7 @@
     });
     var ratio = m / p;
     box.appendChild(h('p', { class: 'bar-note' }, [
-      'Spread: 0 would be one point. Muse’s ÷ people’s: ', h('b', { text: f2(ratio) }),
+      'Spread, how far apart the drawings are: 0 would mean all in one spot. Muse Image’s ÷ people’s: ', h('b', { text: f2(ratio) }),
       ratio < 0.5 ? ' (left of the tick: under half)' : ' (the tick marks half of people’s)'
     ]));
   }
@@ -257,15 +258,15 @@
     $('phase-text').textContent = phaseText(c, L);
     renderBars(c, L);
     var k = lensCounts(c, L);
-    $('lens-line').textContent = 'Word lens reads “' + c.label + '” at this layer: ' + k[0] + ' of ' + c.n.muse + ' Muse doodles · ' +
+    $('lens-line').textContent = 'Word lens reads “' + c.label + '” at this stage: ' + k[0] + ' of ' + c.n.muse + ' Muse Image drawings · ' +
       k[1] + ' of ' + c.n.people + ' people’s.';
     $('watermark').innerHTML = '';
-    $('watermark').appendChild(h('span', { text: 'layer' }));
+    $('watermark').appendChild(h('span', { text: 'stage' }));
     $('watermark').appendChild(h('b', { text: String(L) }));
     $('map').setAttribute('aria-label', mapLabel(c, L));
     var r = $('layer');
     r.value = String(L);
-    r.setAttribute('aria-valuetext', 'Layer ' + L + ' of 52: ' + ph.label.toLowerCase() + '. Spread: Muse ' + f2(c.spread.muse[L - 1]) +
+    r.setAttribute('aria-valuetext', 'Stage ' + L + ' of 52: ' + ph.label.toLowerCase() + '. Spread: Muse Image ' + f2(c.spread.muse[L - 1]) +
       ', people ' + f2(c.spread.people[L - 1]) + '.');
     $('prev').disabled = L <= 1;
     $('next').disabled = L >= N_LAYERS;
@@ -299,11 +300,11 @@
       jumps.appendChild(h('button', { type: 'button', class: 'pi-jump' + (cls ? ' ' + cls : ''), onclick: function () { stop(); S.touched = true; go(L); } },
         [cls ? h('i', { 'aria-hidden': 'true' }) : null, label]));
     }
-    jump('Layer 1', 1);
-    if (cl) jump('Muse’s collapse · ' + cl, cl, 'collapse');
-    else jumps.appendChild(h('span', { class: 'pi-jump-note', text: 'Muse’s doodles never collapse' }));
+    jump('Stage 1', 1);
+    if (cl) jump('In one place · ' + cl, cl, 'collapse');
+    else jumps.appendChild(h('span', { class: 'pi-jump-note', text: 'Muse Image’s drawings are never filed in one place' }));
     if (nl) jump('Name readable · ' + nl, nl, 'name');
-    jump('Layer 52', N_LAYERS);
+    jump('Stage 52', N_LAYERS);
   }
 
   // --- the spread chart ---------------------------------------------------------------------------------
@@ -317,10 +318,10 @@
     var x = function (L) { return m.l + (L - 1) / (N_LAYERS - 1) * (W - m.l - m.r); };
     var y = function (v) { return m.t + (1 - v / ymax) * (H - m.t - m.b); };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
-      'aria-label': 'Line chart of spread by layer for ' + aThing(c.label) + '. Muse Image’s doodles: ' + f2(c.spread.muse[0]) + ' at layer 1, ' +
-        f2(Math.max.apply(null, c.spread.muse)) + ' at most, ' + f2(c.spread.muse[N_LAYERS - 1]) + ' at layer 52. People’s: ' + f2(c.spread.people[0]) +
-        ', ' + f2(Math.max.apply(null, c.spread.people)) + ' at most, ' + f2(c.spread.people[N_LAYERS - 1]) + ' at layer 52.' +
-        (c.collapse_layer ? ' Muse’s collapse at layer ' + c.collapse_layer + '.' : ' Muse’s never collapse.') });
+      'aria-label': 'Line chart of how far apart the drawings of ' + aThing(c.label) + ' are, stage by stage. Muse Image’s drawings: ' + f2(c.spread.muse[0]) + ' at stage 1, ' +
+        f2(Math.max.apply(null, c.spread.muse)) + ' at most, ' + f2(c.spread.muse[N_LAYERS - 1]) + ' at stage 52. People’s: ' + f2(c.spread.people[0]) +
+        ', ' + f2(Math.max.apply(null, c.spread.people)) + ' at most, ' + f2(c.spread.people[N_LAYERS - 1]) + ' at stage 52.' +
+        (c.collapse_layer ? ' Muse Image’s filed in one place from stage ' + c.collapse_layer + '.' : ' Muse Image’s never filed in one place.') });
     var cl = c.collapse_layer, nl = nameLayer(c);
     if (cl) {
       svg.appendChild(s('rect', { x: x(cl), y: m.t, width: x(N_LAYERS) - x(cl), height: H - m.t - m.b, fill: C.ink, 'fill-opacity': 0.045 }));
@@ -332,12 +333,12 @@
     [1, 13, 26, 39, 52].forEach(function (L) {
       svg.appendChild(s('text', { x: x(L), y: H - m.b + 16, 'text-anchor': 'middle', class: 'tick' }, String(L)));
     });
-    svg.appendChild(s('text', { x: x(N_LAYERS) + 8, y: H - m.b + 16, class: 'tick' }, 'layer'));
+    svg.appendChild(s('text', { x: x(N_LAYERS) + 8, y: H - m.b + 16, class: 'tick' }, 'stage'));
     // event markers: collapse (with the shaded band) and the word lens; one label when they sit close
     var labels = [];
     if (cl) {
       svg.appendChild(s('line', { x1: x(cl), x2: x(cl), y1: m.t - 4, y2: H - m.b, stroke: C.ink, 'stroke-opacity': 0.55, 'stroke-width': 1 }));
-      labels.push({ x: x(cl), text: 'collapse ' + cl });
+      labels.push({ x: x(cl), text: 'one place ' + cl });
     }
     if (nl) {
       svg.appendChild(s('line', { x1: x(nl), x2: x(nl), y1: m.t - 4, y2: H - m.b, stroke: C.axis, 'stroke-width': 1 }));
@@ -414,11 +415,11 @@
     if (!tip) { tip = h('div', { class: 'pi-ctip', role: 'presentation' }); wrap.appendChild(tip); }
     var c = S.c, m = c.spread.muse[L - 1], p = c.spread.people[L - 1];
     tip.innerHTML = '';
-    tip.appendChild(h('div', { class: 'tl' }, 'Layer ' + L + (L === c.collapse_layer ? ' · collapse' : '') + (L === nameLayer(c) ? ' · name readable' : '')));
+    tip.appendChild(h('div', { class: 'tl' }, 'Stage ' + L + (L === c.collapse_layer ? ' · in one place' : '') + (L === nameLayer(c) ? ' · name readable' : '')));
     [['muse', 'Muse Image', m], ['people', 'People', p]].forEach(function (r) {
       tip.appendChild(h('div', { class: 'tr' }, [h('i', { class: 'lk ' + r[0] }), h('b', { text: f2(r[2]) }), h('span', { text: r[1] })]));
     });
-    tip.appendChild(h('div', { class: 'tn', text: 'ratio ' + f2(m / p) }));
+    tip.appendChild(h('div', { class: 'tn', text: 'Muse Image ÷ people ' + f2(m / p) }));
     tip.hidden = false;
     var r = wrap.getBoundingClientRect(), left = evt.clientX - r.left + 14, top = evt.clientY - r.top - 10;
     if (left + tip.offsetWidth > r.width) left = evt.clientX - r.left - tip.offsetWidth - 14;
@@ -430,15 +431,15 @@
   function renderTable() {
     var c = S.c, t = $('spread-table'), nl = nameLayer(c), np = c.name_layer.people == null ? null : Math.ceil(c.name_layer.people);
     t.innerHTML = '';
-    t.appendChild(h('caption', { class: 'sr-only', text: 'Spread of ' + aThing(c.label) + '’s doodles at each layer' }));
-    t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Layer' }), h('th', { class: 'num', text: 'Muse Image' }),
-      h('th', { class: 'num', text: 'People' }), h('th', { class: 'num', text: 'Muse ÷ people' }), h('th', { text: 'Note' })])));
+    t.appendChild(h('caption', { class: 'sr-only', text: 'Spread of the drawings of ' + aThing(c.label) + ' at each stage' }));
+    t.appendChild(h('thead', null, h('tr', null, [h('th', { text: 'Stage' }), h('th', { class: 'num', text: 'Muse Image' }),
+      h('th', { class: 'num', text: 'People' }), h('th', { class: 'num', text: 'Muse Image ÷ people' }), h('th', { text: 'Note' })])));
     var tb = h('tbody');
     for (var L = 1; L <= N_LAYERS; L++) {
       var m = c.spread.muse[L - 1], p = c.spread.people[L - 1], notes = [];
-      if (L === c.collapse_layer) notes.push('Muse’s collapse');
-      if (L === nl) notes.push('name readable, Muse’s (median)');
-      if (L === np) notes.push('name readable, people’s (median)');
+      if (L === c.collapse_layer) notes.push('Muse Image’s drawings filed in one place');
+      if (L === nl) notes.push('name readable, Muse Image’s (typical)');
+      if (L === np) notes.push('name readable, people’s (typical)');
       tb.appendChild(h('tr', { class: c.collapse_layer && L >= c.collapse_layer ? 'after' : '' }, [h('td', { text: String(L) }),
         h('td', { class: 'num', text: f2(m) }), h('td', { class: 'num', text: f2(p) }), h('td', { class: 'num', text: f2(m / p) }),
         h('td', { text: notes.join('; ') })]));
@@ -459,14 +460,14 @@
       tk.style.left = dpos(L);
       axis.children[1].appendChild(tk);
     });
-    axis.children[1].appendChild(h('span', { class: 'd-unit', text: 'layer' }));
+    axis.children[1].appendChild(h('span', { class: 'd-unit', text: 'stage' }));
     box.appendChild(axis);
     var rows = D.concepts.slice().sort(function (a, b) {
       var ca = a.collapse_layer || 99, cb = b.collapse_layer || 99;
       return ca - cb || (a.name_layer.muse || 0) - (b.name_layer.muse || 0) || a.label.localeCompare(b.label);
     });
     var list = h('div', { class: 'd-rows', role: 'group', 'aria-label': 'Choose a thing to explore above' });
-    var med = h('span', { class: 'd-median', 'aria-hidden': 'true' }, h('span', { text: 'median ' + D.summary.median_collapse_layer }));
+    var med = h('span', { class: 'd-median', 'aria-hidden': 'true' }, h('span', { text: 'typical ' + D.summary.median_collapse_layer }));
     med.style.left = dpos(D.summary.median_collapse_layer);
     var overlay = h('div', { class: 'd-overlay', 'aria-hidden': 'true' }, [h('span'), h('span', { class: 'd-ov-track' }, med), h('span')]);
     rows.forEach(function (c) {
@@ -478,7 +479,7 @@
       if (nl && nl === cl) svg.appendChild(s('circle', { cx: dpos(nl), cy: 9, r: 8, fill: 'none', stroke: C.muse, 'stroke-width': 2 }));  // same layer: a ring around the dot
       var val = cl ? cl + ' → ' + layerWord(nl) : 'never · ' + layerWord(nl);
       var b = h('button', { type: 'button', class: 'd-row', 'data-key': c.key, 'aria-pressed': c === S.c ? 'true' : 'false',
-        'aria-label': cap(c.label) + ': ' + (cl ? 'collapses at layer ' + cl : 'never collapses') + ', name readable at layer ' + layerWord(nl),
+        'aria-label': cap(c.label) + ': ' + (cl ? 'filed in one place at stage ' + cl : 'never filed in one place') + ', name readable at stage ' + layerWord(nl),
         onclick: function () { stop(); S.touched = true; choose(c.key, true); } }, [
         h('span', { class: 'd-lab', text: c.label }), h('span', { class: 'd-track' }, svg), h('span', { class: 'd-val', text: val })]);
       list.appendChild(b);
@@ -514,7 +515,7 @@
     var ph = phase(c, L);
     return h('div', { class: 'pi-trip-p' }, [
       h('div', { class: 'pi-trip-paper' }, svg),
-      h('p', { class: 'pi-trip-lab' }, [h('b', { text: 'Layer ' + L }), h('span', { text: ph.label })])
+      h('p', { class: 'pi-trip-lab' }, [h('b', { text: 'Stage ' + L }), h('span', { text: ph.label })])
     ]);
   }
 
@@ -524,9 +525,9 @@
     box.innerHTML = '';
     TRIP.forEach(function (L) { box.appendChild(tripPanel(c, L)); });
     var m0 = c.spread.muse[0], p0 = c.spread.people[0], m1 = c.spread.muse[last - 1], p1 = c.spread.people[last - 1];
-    box.setAttribute('aria-label', c.n.muse + ' of Muse Image’s doodles of ' + aThing(c.label) + ' and ' + c.n.people + ' of people’s, mapped inside Muse Glimmer at layers ' +
-      TRIP.join(', ') + ' of ' + N_LAYERS + '. At layer 1 both sets are spread out (spread ' + f2(m0) + ' and ' + f2(p0) + '). At layer ' + last +
-      ' Muse’s doodles sit in a tight pile (' + f2(m1) + ') while people’s stay spread out (' + f2(p1) + ').');
+    box.setAttribute('aria-label', c.n.muse + ' of Muse Image’s drawings of ' + aThing(c.label) + ' and ' + c.n.people + ' of people’s, mapped inside Muse Glimmer at stages ' +
+      TRIP.join(', ') + ' of ' + N_LAYERS + '. At stage 1 both sets are spread out (spread ' + f2(m0) + ' and ' + f2(p0) + '). At stage ' + last +
+      ' Muse Image’s drawings sit in a tight pile (' + f2(m1) + ') while people’s stay spread out (' + f2(p1) + ').');
     var img = new Image();
     img.onerror = function () { box.classList.add('no-sprite'); };
     img.src = SPRITES + c.sprite;
@@ -549,54 +550,56 @@
     var steps = $('steps');
     steps.innerHTML = '';
     var L39 = 38;
-    [[1, 'Seeing the drawing', 'Layers 1–12', 'Glimmer takes in the picture. Doodles of the same thing sit near each other: at layer 1, ' + pct(nb.muse[0]) +
-      ' of Muse’s doodles and ' + pct(nb.people[0]) + ' of people’s have a doodle of the same thing as their nearest neighbour.'],
-     [20, 'In the middle', 'Layers 13–30', 'At the point where Glimmer will answer, its state now carries little about which thing a doodle shows: at layer 26, only ' +
-      pct(nb.people[mid]) + ' of people’s doodles and ' + pct(nb.muse[mid]) + ' of Muse’s sit nearest a doodle of the same thing. Both sets are spread out (' +
-      f2(ms.muse[mid]) + ' and ' + f2(ms.people[mid]) + ', mean of 35 things).'],
-     [44, 'Settling on a name', 'Layers 31–52', 'Which thing it is comes back: from layer 39, ' + pct(nb.muse[L39]) + ' of Muse’s doodles and ' + pct(nb.people[L39]) +
-      ' of people’s sit nearest one of the same thing. Muse’s doodles of a thing collapse (median layer ' + sm.median_collapse_layer + '), and a few layers later ' +
-      'the word lens can read the name.']
+    [[1, 'Seeing the drawing', 'Stages 1–12', 'Glimmer takes in the picture. Drawings of the same thing sit near each other: at stage 1, for ' + pct(nb.muse[0]) +
+      ' of Muse Image’s drawings and ' + pct(nb.people[0]) + ' of people’s, the closest drawing shows the same thing.'],
+     [20, 'In the middle', 'Stages 13–30', 'At the spot where Glimmer will write its answer, it now holds little about which thing a drawing shows. At stage 26, only ' +
+      pct(nb.people[mid]) + ' of people’s drawings and ' + pct(nb.muse[mid]) + ' of Muse Image’s sit closest to a drawing of the same thing. Both sets are spread out (spread ' +
+      f2(ms.muse[mid]) + ' for Muse Image and ' + f2(ms.people[mid]) + ' for people, averaged over 35 things).'],
+     [44, 'Settling on a name', 'Stages 31–52', 'Which thing it is comes back: from stage 39, ' + pct(nb.muse[L39]) + ' of Muse Image’s drawings and ' + pct(nb.people[L39]) +
+      ' of people’s sit closest to one of the same thing. Glimmer files Muse Image’s drawings of a thing in one place (typically by stage ' + sm.median_collapse_layer +
+      '). A few stages later, the word lens (a tool that reads which word Glimmer is heading towards) can read the name.']
     ].forEach(function (st, i) {
       steps.appendChild(h('li', { class: 'pi-step' }, [
         h('span', { class: 'n', 'aria-hidden': 'true', text: String(i + 1) }),
         h('div', null, [h('h3', { text: st[1] }), h('span', { class: 'when', text: st[2] }), h('p', { text: st[3] }),
-          h('button', { type: 'button', class: 'pi-jump', onclick: function () { stop(); S.touched = true; go(st[0]); scrollToMap(); } }, 'Show layer ' + st[0])])
+          h('button', { type: 'button', class: 'pi-jump', onclick: function () { stop(); S.touched = true; go(st[0]); scrollToMap(); } }, 'Show stage ' + st[0])])
       ]));
     });
 
-    $('why-text').textContent = 'Muse Image draws nearly the same chair every time, so its doodles start out more alike than people’s: that is the finding of Plato’s Chair. ' +
-      'Inside Glimmer the gap grows. Through the middle layers both sets are about equally spread out; by the last layer, Muse’s doodles of a thing are about ' +
-      (times >= 5.5 && times < 6.5 ? 'a sixth' : '1/' + Math.round(times)) + ' as spread out as people’s (' + f2(ms.muse[last]) + ' against ' + f2(ms.people[last]) +
-      '). Glimmer files them in nearly one place, almost as if they were one drawing. People’s doodles of a thing stay many different drawings to the last layer.';
+    $('why-text').textContent = 'Muse Image draws nearly the same chair every time, so its drawings start out more alike than people’s: that is the main finding of Plato’s Chair. ' +
+      'Inside Glimmer the gap grows. Through the middle stages both sets are about equally spread out. By the last stage, Muse Image’s drawings of a thing are about ' +
+      (times >= 5.5 && times < 6.5 ? 'a sixth' : '1/' + Math.round(times)) + ' as far apart as people’s (spread ' + f2(ms.muse[last]) + ' against ' + f2(ms.people[last]) +
+      '). Glimmer files them in nearly one place, almost as if they were one drawing. People’s drawings of a thing stay many different drawings to the last stage.';
 
     var o = sm.other_thresholds || [];
     var lo = o.filter(function (r) { return r.ratio < 0.5; })[0], hi = o.filter(function (r) { return r.ratio > 0.5; })[0];
-    $('every-lede').textContent = 'For each of the ' + sm.n_concepts + ' things: the layer where Muse Image’s doodles collapse, and the median layer where the word lens first reads the name for them. ' +
-      'In all ' + sm.n_with_both + ' things that collapse, the collapse comes at or before the name, a median of ' + sm.median_layers_between + ' layers earlier. ' +
-      cap(sm.never_collapse.join(', ')) + ' never collapses. Choose a thing to explore it above.';
-    var cav = 'Two caveats. The collapse line (Muse’s spread under half of people’s) was chosen after seeing the data.';
-    if (lo) cav += ' At ' + lo.ratio + ', the median collapse layer is ' + lo.median_collapse_layer + ', ' + lo.never_collapse.join(', ') + ' never collapse, and ' +
-      lo.collapse_at_or_before_name + ' of ' + lo.n_with_both + ' still collapse at or before the name.';
-    if (hi) cav += ' At ' + hi.ratio + ', it is ' + hi.median_collapse_layer + (hi.never_collapse.length ? '' : ' and every thing collapses') + '.';
-    cav += ' And the word lens shows when a name becomes readable, not when an idea forms, so “first collapse, then name” compares two measurements; it doesn’t say what Glimmer thinks first.';
+    $('every-lede').textContent = 'For each of the ' + sm.n_concepts + ' things: the stage where Glimmer files Muse Image’s drawings in one place (filled dot), and the typical stage ' +
+      'where the word lens, a tool that reads which word Glimmer is heading towards, first reads the name (ring). ' +
+      'In all ' + sm.n_with_both + ' things that get filed in one place, it happens at or before the name, typically ' + sm.median_layers_between + ' stages earlier. ' +
+      'Drawings of “' + sm.never_collapse.join('”, “') + '” are never filed in one place. Choose a thing to explore it above.';
+    var cav = 'Two caveats. We chose the line for “in one place” (Muse Image’s spread under half of people’s) after seeing the data.';
+    if (lo) cav += ' If the line were ' + lo.ratio + ' of people’s spread instead, the typical stage would be ' + lo.median_collapse_layer + ', drawings of ' +
+      lo.never_collapse.join(', ') + ' would never be filed together, and ' + lo.collapse_at_or_before_name + ' of ' + lo.n_with_both +
+      ' things would still get there at or before the name.';
+    if (hi) cav += ' At ' + hi.ratio + ', it would be ' + hi.median_collapse_layer + (hi.never_collapse.length ? '' : ' and every thing would get filed in one place') + '.';
+    cav += ' And the word lens shows when a name becomes readable, not when an idea forms. So “first filed together, then named” compares two measurements; it doesn’t say what Glimmer thinks first.';
     $('every-caveat').textContent = cav;
 
     var lt = $('cav-threshold');
     if (lt && lo && hi) {
-      lt.appendChild(document.createTextNode(' At ' + lo.ratio + ' the median collapse layer would be ' + lo.median_collapse_layer + ' (' + lo.never_collapse.length +
-        ' things never collapse); at ' + hi.ratio + ', ' + hi.median_collapse_layer + '.'));
+      lt.appendChild(document.createTextNode(' At ' + lo.ratio + ' the typical (median) stage would be ' + lo.median_collapse_layer + ' (' + lo.never_collapse.length +
+        ' things never get there); at ' + hi.ratio + ', ' + hi.median_collapse_layer + '.'));
     }
 
     var mp = D.map, kept = mp.spread_kept;
     var capEl = $('map-cap');
     capEl.innerHTML = '';
     capEl.appendChild(h('b', { text: 'How the map is drawn. ' }));
-    capEl.appendChild(document.createTextNode('Inside Glimmer each doodle is 6,656 numbers; the map squeezes them into two, keeping the real distances between ' +
-      'doodles as closely as it can (weighted multidimensional scaling, most faithful within each set). Each layer starts from the one before and is rotated to ' +
-      'line up with it (Procrustes), and all layers share one scale, so a doodle moves only as far as Glimmer’s state changes and a shrinking cluster really ' +
-      'shrinks. The map keeps about ' + Math.round(kept.muse * 100) + '% of Muse’s spread and ' + Math.round(kept.people * 100) + '% of people’s; its axes mean ' +
-      'nothing. We tried PCA first, but it mostly showed the difference in drawing style and hid most of the middle layers’ spread. The chart uses all 6,656 numbers.'));
+    capEl.appendChild(document.createTextNode('Inside Glimmer each drawing is a list of 6,656 numbers. The map squeezes them into two, keeping the real distances between ' +
+      'drawings as closely as it can (weighted multidimensional scaling, most faithful within each set). Each stage starts from the one before and is turned to ' +
+      'line up with it (Procrustes). All stages share one scale, so a drawing moves only as far as Glimmer’s view of it changes, and a shrinking cluster really ' +
+      'shrinks. The map keeps about ' + Math.round(kept.muse * 100) + '% of Muse Image’s spread and ' + Math.round(kept.people * 100) + '% of people’s; its two directions mean ' +
+      'nothing. We tried a simpler map first (PCA), but it mostly showed the difference in drawing style and hid most of the middle stages’ spread. The chart uses all 6,656 numbers.'));
   }
 
   function scrollToMap() {
@@ -652,10 +655,10 @@
     renderTable();
     go(S.layer, 0);
     markDumbbell();
-    $('chart-h').textContent = 'How spread out each set of ' + (MASS[c.label] ? c.label : c.label + ' doodles') + ' is, layer by layer';
+    $('chart-h').textContent = 'How far apart each set of ' + (MASS[c.label] ? c.label : c.label + ' drawings') + ' is, stage by stage';
     if (announce) {
-      $('thing-note').textContent = cap(c.label) + ': ' + (c.collapse_layer ? 'Muse’s doodles collapse at layer ' + c.collapse_layer : 'Muse’s doodles never collapse') +
-        '; the word lens reads the name at layer ' + nameLayer(c) + '.';
+      $('thing-note').textContent = cap(c.label) + ': ' + (c.collapse_layer ? 'Muse Image’s drawings filed in one place at stage ' + c.collapse_layer : 'Muse Image’s drawings never filed in one place') +
+        '; the word lens reads the name at stage ' + nameLayer(c) + '.';
     }
   }
 

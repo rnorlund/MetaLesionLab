@@ -115,10 +115,10 @@ def test_the_strip_is_never_compared_with_a_drawing(dmg):
 
 def test_the_strip_is_about_the_ai_only():
     code = strip_code()
-    for line in ("Meta’s Muse Image can’t be opened up, so this uses an open image model (Stable Diffusion XL) "
-                 "that we damaged on purpose.",
-                 "Top row: damage to the part that handles words, so the idea wanders off.",
-                 "Bottom row: damage to the part that draws, so the lines dissolve.",
+    for line in ("Meta’s Muse Image can’t be opened up, so we damaged an open image AI, Stable Diffusion XL, adding more "
+                 "noise to its artificial neurons at each step.",
+                 "Top: the part that reads the words, so the idea wanders.",
+                 "Bottom: the part that paints, so the lines dissolve.",
                  "This shows what happens to an AI. It says nothing about the person drawing.",
                  "More: Damage the painter", "/plato/damage", "What damage does to an AI’s "):
         assert line in code, line

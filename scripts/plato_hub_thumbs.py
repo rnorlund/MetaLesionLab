@@ -151,8 +151,32 @@ def phaedrus() -> Image.Image:
     return out
 
 
+def clock() -> Image.Image:
+    """The clock test: the average clock of 315 adults (left, a group average from the study's public export) and of
+    Muse Image's 16 clocks for the same words (right), on paper, each with a line saying whose it is."""
+    from matplotlib import get_data_path
+    from PIL import ImageDraw, ImageFont
+
+    fonts = Path(get_data_path()) / "fonts" / "ttf"
+    bold = ImageFont.truetype(str(fonts / "DejaVuSans-Bold.ttf"), 24)
+    sans = ImageFont.truetype(str(fonts / "DejaVuSans.ttf"), 22)
+    out = canvas()
+    d = ImageDraw.Draw(out)
+    side = 400
+    for i, (src, who, what, colour) in enumerate((
+            ("plato_clock/abc/form_315.webp", "315 adults", "their average clock", (194, 65, 12)),
+            ("plato_clock/muse_avg.webp", "Meta’s AI", "its 16 clocks, averaged", (29, 78, 216)))):
+        x = 60 + i * 450
+        im = Image.open(IMG / src).convert("RGBA").resize((side, side), Image.LANCZOS)
+        out.paste(im, (x, 22), im)
+        d.text((x + 20, 444), who, font=bold, fill=(17, 24, 39))
+        d.text((x + 20 + d.textlength(who + " ", font=bold), 446), what, font=sans, fill=(75, 85, 99))
+        d.line((x + 20, 482, x + 120, 482), fill=colour, width=4)
+    return out
+
+
 MAKERS = {"inside": inside, "ideas": ideas, "bird": bird, "atlas": atlas, "telephone": telephone,
-          "scale": scale, "phaedrus": phaedrus}
+          "scale": scale, "phaedrus": phaedrus, "clock": clock}
 
 
 # --- the Damaged AI hub ------------------------------------------------------------------------------------------
@@ -258,8 +282,29 @@ def damaged_yourself() -> Image.Image:
                   ("draw_damage/chair_drawing_3.webp", "drawing part", ORANGE)], side=200, gap=26, arrows=(0,))
 
 
+FORGET_DOSES = [0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0]  # plato_sketch_forget.DISPLAY_DOSES
+
+
+def damaged_forget() -> Image.Image:
+    """The sketch model's chair that /plato/lifespan draws stroke by stroke, with 0, 30, 60 and 90% of its artificial
+    neurons switched off: cut from the forgetting sprite (plato_forget/forget_sprite.webp: one frame per dose of
+    plato_sketch_forget.DISPLAY_DOSES, 4 across and 4 down; each frame 4 x 4 drawings of 180 px with 8 px gaps)."""
+    import json
+
+    idx = json.loads((IMG / "plato_lifespan" / "sketch" / "stroke_order.json").read_text())["index"]
+    frames = cells(Image.open(IMG / "plato_forget" / "forget_sprite.webp"), 4, 4)
+    x, y = (idx % 4) * 188, (idx // 4) * 188
+
+    def chair(dose: float) -> Image.Image:
+        return frames[FORGET_DOSES.index(dose)].crop((x, y, x + 180, y + 180))
+
+    return strip([(chair(0.0), "undamaged", INK), (chair(0.3), "30% off", ORANGE), (chair(0.6), "60% off", ORANGE),
+                  (chair(0.9), "90% off", ORANGE)], side=200, gap=22, arrows=(0, 1, 2))
+
+
 DAMAGED = {"damaged-painter": damaged_painter, "damaged-ideas": damaged_ideas, "damaged-clocks": damaged_clocks,
-           "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-yourself": damaged_yourself}
+           "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-yourself": damaged_yourself,
+           "damaged-forget": damaged_forget}
 
 
 def main(only: list[str]) -> None:
