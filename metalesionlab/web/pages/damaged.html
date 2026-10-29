@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/static/css/plato_firstscreen.css">
 <link rel="stylesheet" href="/static/css/plato_hub.css">
 <link rel="stylesheet" href="/static/css/plato_damaged.css">
+<link rel="stylesheet" href="/static/css/hero-carousel.css">
 </head>
 <body class="plato-damaged">
 <a class="skip" href="#main">Skip to content</a>
@@ -34,9 +35,116 @@
   </div>
   <!--#epigraph:republic-596a-->
   <p class="fl-answer" id="hero-answer">Damage the words part: it forgets <b>what</b> to draw. Damage the drawing part: it mostly forgets <b>how</b>.</p>
-  <figure class="fl-visual dm-film" id="film" aria-labelledby="film-cap">
-    <div class="dm-film-rows" id="film-rows"></div>
-    <figcaption class="fl-cap" id="film-cap">A rocking chair, drawn by an open image AI with more damage at each step, and the name another AI gave it. <a href="/plato/damage">Try it with a slider</a></figcaption>
+  <figure class="fl-visual dm-film" id="film" data-hero-carousel aria-label="Four things an AI draws, with more damage to its words part or drawing part">
+    <script type="application/json">{
+ "slides": [
+  {
+   "caption": "rocking chair → car",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/rocking_chair_intact.webp",
+     "alt": "A rocking chair drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/rocking_chair_text-noise_2.webp",
+     "alt": "The same request with the words part damaged, step 2: a plain chair",
+     "label": "step 2"
+    },
+    {
+     "src": "/static/img/plato_damage/rocking_chair_text-noise_3.webp",
+     "alt": "The same request with the words part damaged, step 3: a car",
+     "label": "step 3"
+    },
+    {
+     "src": "/static/img/plato_damage/rocking_chair_text-noise_4.webp",
+     "alt": "The same request with the words part damaged, step 4: a car",
+     "label": "step 4"
+    }
+   ],
+   "href": "/plato/damage"
+  },
+  {
+   "caption": "throne → bar",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/throne_intact.webp",
+     "alt": "A throne drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/throne_text-noise_2.webp",
+     "alt": "A throne with the words part damaged, step 2",
+     "label": "step 2"
+    },
+    {
+     "src": "/static/img/plato_damage/throne_text-noise_3.webp",
+     "alt": "A throne with the words part damaged, step 3",
+     "label": "step 3"
+    },
+    {
+     "src": "/static/img/plato_damage/throne_text-noise_4.webp",
+     "alt": "A throne with the words part damaged, step 4: Glimmer calls it a bar",
+     "label": "step 4"
+    }
+   ],
+   "href": "/plato/damage#finding-words-or-painting"
+  },
+  {
+   "caption": "God → an ordinary person",
+   "images": [
+    {
+     "src": "/static/img/plato_ideas/dmg/god_intact.webp",
+     "alt": "God, drawn by Stable Diffusion XL, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_ideas/dmg/god_text-noise_0.25.webp",
+     "alt": "God with the words part damaged, noise 0.25",
+     "label": "noise × 0.25"
+    },
+    {
+     "src": "/static/img/plato_ideas/dmg/god_text-noise_0.5.webp",
+     "alt": "God with the words part damaged, noise 0.5",
+     "label": "noise × 0.5"
+    },
+    {
+     "src": "/static/img/plato_ideas/dmg/god_text-noise_0.75.webp",
+     "alt": "God with the words part damaged, noise 0.75",
+     "label": "noise × 0.75"
+    }
+   ],
+   "href": "/plato/ideas"
+  },
+  {
+   "caption": "a clock losing its numbers",
+   "images": [
+    {
+     "src": "/static/img/plato_damage/clock_8_45_intact.webp",
+     "alt": "A clock showing 8:45, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/clock_8_45_unet-noise_1.webp",
+     "alt": "The same clock with the drawing part damaged, noise 0.9",
+     "label": "noise × 0.9"
+    },
+    {
+     "src": "/static/img/plato_damage/clock_8_45_unet-noise_2.webp",
+     "alt": "The same clock with the drawing part damaged, noise 1",
+     "label": "noise × 1"
+    },
+    {
+     "src": "/static/img/plato_damage/clock_8_45_unet-noise_3.webp",
+     "alt": "The same clock with the drawing part damaged, noise 1.1",
+     "label": "noise × 1.1"
+    }
+   ],
+   "href": "/plato/damage#finding-clocks"
+  }
+ ]
+}</script>
+    <div class="hc-static"><div class="hc-strip" style="--n:4"><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair drawn by Stable Diffusion XL, undamaged" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">undamaged</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_2.webp" alt="The same request with the words part damaged, step 2: a plain chair" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 2</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_3.webp" alt="The same request with the words part damaged, step 3: a car" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 3</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_4.webp" alt="The same request with the words part damaged, step 4: a car" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 4</figcaption></figure></div><p class="hc-cap"><a href="/plato/damage">rocking chair → car</a></p></div>
   </figure>
   <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the damage experiments"></div>
   <details class="fl-note how-we-know">
@@ -66,6 +174,7 @@
 <script src="/static/js/common.js"></script>
 <script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato_firstlook.js"></script>
+<script src="/static/js/hero-carousel.js"></script>
 <script src="/static/js/plato_damaged.js"></script>
 </body>
 </html>

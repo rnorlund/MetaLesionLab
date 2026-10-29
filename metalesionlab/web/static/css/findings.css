@@ -1,0 +1,58 @@
+/* Findings (static/js/findings.js): expandable picture cards under a first screen. Big and quiet: borderless cards, a picture
+   on paper (--paper) at 4:3, a title, one muted line and an "Open" cue; the open card has an orange underline. The panel
+   opens full width under the whole row, with a smooth height change (none with prefers-reduced-motion).
+   Without the script (no .fd-js) every panel shows, expanded, one under the other. Tokens only. */
+.fd { margin-top: var(--space-block, 48px); }
+.fd-item { margin: 0 0 var(--space-block, 48px); min-width: 0; }
+.fd-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 2.4vw, 56px); align-items: start; }
+.fd-media { min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(6px, 0.8vw, 14px); }
+.fd-media figure { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fd-media .fd-pic, .fd-media img { display: block; width: 100%; border-radius: 12px; background: var(--paper); aspect-ratio: 1 / 1; object-fit: contain; }
+.fd-media figcaption { font-size: var(--fs-label); color: var(--muted); text-align: center; }
+.fd-text { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.fd-text h3 { margin: 0; font-size: var(--fs-h2); font-weight: var(--fw-h2); letter-spacing: var(--ls-h2); line-height: 1.12; }
+.fd-text p { margin: 0; max-width: 40ch; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: var(--lh-lead); color: var(--ink-2); }
+.fd-text .fd-number { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.fd-text .fd-num-v { font-size: var(--fs-number); font-weight: var(--fw-number); letter-spacing: var(--ls-number); line-height: var(--lh-number); color: var(--ink); max-width: none; }
+.fd-text .fd-num-l { font-size: var(--fs-body); font-weight: 400; line-height: 1.4; color: var(--ink-2); }
+.fd-text .fd-verdict { display: flex; align-items: center; gap: 0.45em; font-size: var(--fs-label); font-weight: 500; line-height: 1.4; color: var(--ink-2); }
+.fd-verdict::before { content: ""; flex: none; width: 0.55em; height: 0.55em; border-radius: 50%; background: currentColor; }
+.fd-verdict.yes { color: var(--green); }
+.fd-verdict.no { color: var(--orange); }
+.fd-extra { margin-top: clamp(18px, 2.4vw, 48px); min-width: 0; }
+.fd-more { margin-top: clamp(14px, 1.6vw, 28px); }
+.fd-more > summary { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; }
+.fd-more-t { font-weight: 500; }
+
+/* the script is on: a row of cards, the open panel under it */
+.fd-js .fd-item { margin: 0; display: grid; grid-template-rows: 0fr; visibility: hidden; }
+.fd-js .fd-item.is-open { grid-template-rows: 1fr; visibility: visible; margin-top: clamp(20px, 2.4vw, 48px); }
+.fd-inner { min-height: 0; overflow: hidden; }
+.fd-js .fd-item.is-open .fd-inner { overflow: visible; }
+.fd-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: clamp(14px, 1.8vw, 40px); }
+.fd-card { appearance: none; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 0; padding: 0 0 12px; border: 0;
+  border-bottom: 3px solid transparent; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.fd-img { display: block; width: 100%; aspect-ratio: 4 / 3; background: var(--paper); border-radius: 12px; overflow: hidden; }
+.fd-img img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.fd-t { font-size: var(--fs-h3); font-weight: var(--fw-h3); line-height: 1.2; margin-top: 4px; }
+.fd-l { font-size: var(--fs-small); line-height: 1.4; color: var(--muted); }
+.fd-open { font-size: var(--fs-label); font-weight: 500; color: var(--ink-2); }
+.fd-open-t::after { content: " +"; }
+.fd-open-x { display: none; }
+.fd-open-x::after { content: " \2212"; }
+.fd-card:hover .fd-t { text-decoration: underline; text-decoration-color: var(--line-3); text-underline-offset: 0.2em; }
+.fd-card:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; border-radius: 6px; }
+.fd-card[aria-expanded="true"] { border-bottom-color: var(--orange); }
+.fd-card[aria-expanded="true"] .fd-open-t { display: none; }
+.fd-card[aria-expanded="true"] .fd-open-x { display: inline; }
+
+@media (max-width: 600px) { .fd-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; } .fd-t { font-size: var(--fs-body); } }
+@media (min-width: 900px) {
+  .fd-main:has(.fd-media) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fd-js .fd-item { transition: grid-template-rows 350ms ease, margin-top 350ms ease, visibility 0s linear 350ms; }
+  .fd-js .fd-item.is-open { transition: grid-template-rows 350ms ease, margin-top 350ms ease, visibility 0s; }
+  .fd-js .fd-item.is-open .fd-inner { animation: fd-in 350ms ease both; }
+  @keyframes fd-in { from { opacity: 0; } to { opacity: 1; } }
+}

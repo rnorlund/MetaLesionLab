@@ -196,7 +196,7 @@ def test_bird_first_screen(client, tmp_path):
 
 
 def test_damage_first_screen(client, tmp_path):
-    ids, d = first_screen(client, "damage", tmp_path, ("hero-stats", "hero-answer", "hero-qual", "hero-clocks", "hero-clocks-row"))
+    ids, d = first_screen(client, "damage", tmp_path, ("hero-stats", "hero-answer", "hero-qual"))
     kc = d["matched"]["text-zero vs unet-zero"]["delta_correct"]
     s = stats(ids["hero-stats"])
     assert len(s) == 3
@@ -211,8 +211,8 @@ def test_damage_first_screen(client, tmp_path):
     # the verdicts are shown, and the failed prediction is not dressed up
     assert verdicts(ids["hero-stats"]) == [("yes", "As predicted"), ("no", "Prediction failed")]
     assert text(ids["hero-qual"]).startswith("Partly supported.") and "reversed for neurons switched off" in text(ids["hero-qual"])
-    clocks = ids["hero-clocks-row"]  # three clocks beside the slider: intact, and each part at its strongest damage
-    assert clocks.count("<img") == 3 and "clock_8_45_intact.webp" in clocks and 'hidden=""' not in ids["hero-clocks"]
+    page = client.get("/plato/damage").text  # the picture area is the hero carousel; one of its slides is a clock losing its numbers
+    assert "data-hero-carousel" in page and "clock_8_45_intact.webp" in page and "clock_8_45_unet-noise_3.webp" in page
 
 
 def test_telephone_first_screen(client, tmp_path):
