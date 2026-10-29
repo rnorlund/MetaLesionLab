@@ -59,21 +59,21 @@
     window.FirstLook.render($('hero-stats'), { stats: [
       // planned: kiki spikier than bouba, the AUC's CI above 0.5 on at least two of the three measures
       { kind: 'dots', verdict: verdict(['solidity', 'corners', 'axis'].filter(function (m) { var c = kb[m]; return c && c.auc_ci && c.auc_ci[0] > 0.5; }).length >= 2),
-        o: { k: ki.k, n: ki.n, tone: 'orange', cols: 6, label: 'pictures of “kiki” with sharp corners: stars, like people’s',
+        o: { k: ki.k, n: ki.n, tone: 'orange', cols: 6, label: 'pictures of “kiki” with sharp corners',
           alt: ki.k + ' of ' + ki.n + ' pictures of kiki have sharp corners (solidity ' + f2(kiw.solidity.mean) + ' vs ' + f2(bw.solidity.mean) + ' for bouba).' },
         q: 'Predicted: “kiki” spikier than “bouba”. Every kiki was spikier than every bouba (solidity, where 1 is a smooth blob: ' + f2(kiw.solidity.mean) +
           ' against ' + f2(bw.solidity.mean) + ').' },
       // planned: words with kiki's sounds come out spikier than words with bouba's (solidity, CI above 0)
       { kind: 'dots', verdict: verdict(cls.diff_ci[0] > 0),
-        o: { k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12, label: 'pictures with a sharp corner, for “keti” and “tepi”: made-up words with kiki’s hard sounds',
+        o: { k: ke.k + te.k, n: ke.n + te.n, tone: 'orange', cols: 12, label: 'pictures with a sharp corner: “keti”, “tepi”',
           alt: (ke.k + te.k) + ' of ' + (ke.n + te.n) + ' pictures of the new words keti and tepi have a sharp corner (solidity ' +
             f2(word('keti').solidity.mean) + ' and ' + f2(word('tepi').solidity.mean) + ').' },
-        q: 'Predicted: made-up words with kiki’s hard sounds come out spikier. Keti and tepi came out as blobs (solidity ' + f2(word('keti').solidity.mean) +
+        q: '“Keti” and “tepi” are made-up words with kiki’s hard sounds. Predicted: made-up words with kiki’s hard sounds come out spikier. Keti and tepi came out as blobs (solidity ' + f2(word('keti').solidity.mean) +
           ' and ' + f2(word('tepi').solidity.mean) + '; 1 is a smooth blob).' },
       // planned: both AIs match both words at least as often as people do
       { kind: 'bars', verdict: sp >= pe && gl >= pe ? verdict(true) : sp >= pe ? { tone: 'part', text: 'Partly as predicted' } : verdict(false),
         o: { values: [sp, pe, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['ink', 'orange', 'muted'], max: 100, value: sp + '%', unit: 'vs ' + pe + '%',
-          label: 'chose the round shape for “bouba” and the spiky one for “kiki”',
+          label: 'matched “bouba” to round, “kiki” to spiky',
           alt: 'Matched both words: Muse Spark ' + sp + '% of its answers, people ' + pe + '% (' + D.people.n_people + ' people, ' + D.people.n_languages +
             ' languages), Muse Glimmer ' + gl + '%.' },
         q: 'Predicted: both AIs match both words at least as often as people (' + D.people.n_people + ' people, ' + D.people.n_languages + ' languages). ' +

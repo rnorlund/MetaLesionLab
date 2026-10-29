@@ -96,8 +96,8 @@
   function hero() {
     var bird = BY.bird, s = D.summary.spark.dominance, g = D.summary.glimmer_logits.dominance;
     var spark = bird.tables.spark, sTop = spark[0], nSpark = spark.reduce(function (a, r) { return a + r[1]; }, 0);
-    document.getElementById('hero-answer').textContent = 'Ask Meta’s chat AI, Muse Spark, to name a bird and it says “' + sTop[0] + '” ' + sTop[1] +
-      ' times out of ' + nSpark + '; ask ' + bird.n_human + ' people and you get ' + bird.human.distinct + ' different birds.';
+    document.getElementById('hero-answer').textContent = 'Meta’s chat AI, Muse Spark, says “' + sTop[0] + '” ' + sTop[1] +
+      ' times in ' + nSpark + '; ' + bird.n_human + ' people named ' + bird.human.distinct + ' different birds.';
     var sh = document.getElementById('hero-shares');
     sh.innerHTML = '';
     sh.appendChild(shareBar('people', 'People', bird.n_human + ' UK adults', bird.tables.human_first));
@@ -120,22 +120,22 @@
           sparkYes ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
         o: { values: gl == null ? [ai, hu] : [ai, hu, gl], labels: ['Spark', 'people', 'Glimmer'], tones: ['blue', 'orange', 'green'], max: 100,
           value: ai + '%', unit: 'vs ' + hu + '%',
-          label: 'of Muse Spark’s answers go to its single favourite, against ' + hu + '% of people’s (the average over ' + s.n + ' categories)',
+          label: 'of answers go to its favourite, against ' + hu + '% for people',
           alt: 'Across ' + s.n + ' categories, Muse Spark’s favourite answer takes ' + ai + '% of its answers; people’s favourite takes ' + hu + '%' +
             (gl == null ? '.' : '; Muse Glimmer’s, at its standard randomness setting, ' + gl + '%.') },
-        q: 'We predicted both AIs would stick to one favourite more than people do. Muse Spark ' + (sparkYes ? 'did' : 'didn’t') + '.' +
+        q: 'The average over ' + s.n + ' categories: how much of Muse Spark’s answers go to its single favourite. We predicted both AIs would stick to one favourite more than people do. Muse Spark ' + (sparkYes ? 'did' : 'didn’t') + '.' +
           (gt ? ' Muse Glimmer, at its standard randomness setting, ' + glimSaid : '') + ' Each side is measured on the same number of answers.' },
       { kind: 'dots',
-        o: { k: s.n_ai_higher, n: s.n, tone: 'blue', cols: 18, label: 'categories in which Muse Spark sticks to its favourite answer more than people do',
+        o: { k: s.n_ai_higher, n: s.n, tone: 'blue', cols: 18, label: 'categories where it sticks to one answer more',
           alt: 'Muse Spark sticks to one answer more than people in ' + s.n_ai_higher + ' of ' + s.n + ' categories.' },
-        q: 'In ' + s.n_ai_lower + ', people stuck to one answer more.' + (s.abstract_minus_concrete && s.abstract_minus_concrete.ci95[0] <= 0 &&
+        q: 'Categories in which Muse Spark sticks to its favourite answer more than people do. In ' + s.n_ai_lower + ', people stuck to one answer more.' + (s.abstract_minus_concrete && s.abstract_minus_concrete.ci95[0] <= 0 &&
           s.abstract_minus_concrete.ci95[1] >= 0 ? ' We also predicted a bigger gap for abstract categories (emotion, crime) than for concrete ones ' +
           '(fruit, bird). That didn’t happen: the gap is about the same.' : '') }
     ];
     if (pic && pic.spark) {
       var nPics = (pic.spark.labels || []).length || 12, rest = nPics - pic.spark.top_count;
       stats.push({ kind: 'dots',
-        o: { k: pic.spark.top_count, n: nPics, tone: 'ink', cols: 6, label: 'of the ' + nPics + ' birds Muse Image drew look like a ' + pic.spark.top[0] + ' to Muse Spark',
+        o: { k: pic.spark.top_count, n: nPics, tone: 'ink', cols: 6, label: 'of Muse Image’s birds look like a ' + pic.spark.top[0],
           alt: pic.spark.top_count + ' of the ' + nPics + ' birds Muse Image drew look like a ' + pic.spark.top[0] + ' to Muse Spark.' },
         q: 'We asked Muse Spark which bird each drawing shows.' + (rest > 0 ? ' The other ' + rest + ' show the same small songbird.' : '') });
     }

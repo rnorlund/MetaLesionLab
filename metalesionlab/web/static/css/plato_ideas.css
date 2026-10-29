@@ -195,3 +195,6 @@ body.ideas { background: var(--ground-warm); }
   .iv-bar-label small { display: inline; }
   .iv-strip { gap: 2px; padding: 3px; }
 }
+
+.iv-how { margin: 8px 0 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-small); color: var(--ink-2); line-height: 1.5; }
+#tiles-how { grid-column: 1 / -1; }

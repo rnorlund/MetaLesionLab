@@ -45,13 +45,16 @@ def first_screen(client, page, tmp_path, ids=("hero-stats", "hero-answer", "hero
     (tmp_path / "page.html").write_text(html)
     (tmp_path / "api.json").write_text(json.dumps(data))
     cfg = {"html": str(tmp_path / "page.html"), "scripts": [str(s) for s in scripts],
-           "api": {PAGES[page]: str(tmp_path / "api.json")}, "ids": list(ids)}
+           "api": {PAGES[page]: str(tmp_path / "api.json")}, "ids": list(ids) + ["hero-how"]}
     (tmp_path / "cfg.json").write_text(json.dumps(cfg))
     run = subprocess.run([NODE, str(HARNESS), str(tmp_path / "cfg.json")], capture_output=True, text=True, timeout=60)
     assert run.returncode == 0, run.stderr
     out = json.loads(run.stdout)
     for i in ids:
         assert out["ids"][i] is not None, (page, i, out["errors"])
+    # the qualifiers live in the closed "How we know" disclosure under the numbers: read with them
+    if "hero-stats" in ids and out["ids"].get("hero-how"):
+        out["ids"]["hero-stats"] += out["ids"]["hero-how"]
     return out["ids"], data
 
 
@@ -184,8 +187,8 @@ def test_bird_first_screen(client, tmp_path):
     assert s[1][:2] == (str(dom["n_ai_higher"]), f"of {dom['n']}")
     assert s[2][:2] == (str(pic["top_count"]), f"of {len(pic['labels'])}")
     top = bird["tables"]["spark"][0]
-    assert f"“{top[0]}” {top[1]} times out of" in text(ids["hero-answer"])
-    assert f"you get {bird['human']['distinct']} different birds" in text(ids["hero-answer"])
+    assert f"“{top[0]}” {top[1]} times in" in text(ids["hero-answer"])
+    assert f"named {bird['human']['distinct']} different birds" in text(ids["hero-answer"])
     shares = ids["hero-shares"]  # one bar per source, a piece per answer
     assert shares.count('class="pb-share ') == 3
     people = re.search(r'class="pb-share people".*?</div></div>', shares, re.S).group(0)

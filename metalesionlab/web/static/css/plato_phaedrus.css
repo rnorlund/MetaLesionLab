@@ -142,3 +142,8 @@ body.phaedrus { background: var(--ground); }
 @media (prefers-reduced-motion: no-preference) {
   .ph-play, .ph-wrote .text, .ph-rec-meter i { transition: background-color 0.2s, border-color 0.2s, width 0.08s linear; }
 }
+
+/* the short answer, with the evidence in one closed disclosure under it */
+.ph-after > #ph-how { grid-column: 1 / -1; grid-row: 2; }
+.ph-after > #ph-how > p { margin: 8px 0 0; max-width: var(--measure); color: var(--muted); font-size: var(--fs-small); line-height: 1.5; }
+.ph-after > #ph-how .ph-shadow-sub { grid-column: auto; grid-row: auto; }

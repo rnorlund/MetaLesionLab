@@ -89,23 +89,23 @@
       : 'a difference of ' + signed(t3.difference.mean, f2) + ' copies (' + between(t3.difference.ci95, f2) + ')';
     window.FirstLook.render(document.getElementById('hero-stats'), { stats: [
       { kind: 'dots', verdict: t1.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
-        o: { k: away, n: cc.length, cols: 8, tone: 'blue', label: 'chains of copies ended farther from the textbook chair than they started',
+        o: { k: away, n: cc.length, cols: 8, tone: 'blue', label: 'chains ended farther from the textbook chair',
           alt: away + ' of ' + cc.length + ' chains from the ' + nSeeds + ' starting chairs ended farther from Muse Image’s textbook chair than they started. ' +
             'Average change in their difference from it: ' + signed(t1.change.mean, f2) + ', ' + between(t1.change.ci95, f2) + '.' },
-        q: 'We predicted the copies would drift toward it. ' + p1 + ': their average difference from it (0 = identical) went from ' + f2(t1.g0) + ' to ' +
+        q: 'Chains of copies that ended farther from the textbook chair than they started. We predicted the copies would drift toward it. ' + p1 + ': their average difference from it (0 = identical) went from ' + f2(t1.g0) + ' to ' +
           f2(t1.g10) + (clear(t1.change.ci95) ? '.' : ', no clear pull either way.') },
       { kind: 'bars', verdict: t2.supported ? { tone: 'yes', text: 'As predicted' } : apart ? { tone: 'no', text: 'Prediction reversed' } : { tone: 'part', text: 'Not supported' },
         o: { values: [t2.g0, t2.g10], labels: ['start', 'copy 10'], tones: ['muted', 'blue'], digits: 2, value: f2(t2.g10), unit: 'from ' + f2(t2.g0),
-          label: 'the difference between chains from different starting chairs (0 = identical)',
+          label: 'difference between chains from different chairs',
           alt: 'The difference between chains from different starting chairs went from ' + f2(t2.g0) + ' at the start to ' + f2(t2.g10) +
             ' after ten copies. Even the three chains of one chair, which start as the same picture, end ' + f2(t2.within_g10.mean) + ' apart.' },
-        q: 'We predicted different chairs would end up alike. ' + p2 + ' (by ' + signed(t2.change.mean, f2) + ', ' + between(t2.change.ci95, f2) + ').' },
+        q: 'The difference between chains from different starting chairs (0 = identical). We predicted different chairs would end up alike. ' + p2 + ' (by ' + signed(t2.change.mean, f2) + ', ' + between(t2.change.ci95, f2) + ').' },
       { kind: 'bars', verdict: t3.supported ? { tone: 'yes', text: 'As predicted' } : { tone: 'part', text: 'Not supported' },
         o: { values: [k, c], labels: ['kind of chair', '“chair”'], tones: ['blue', 'orange'], max: N, digits: 1, value: k.toFixed(1) + ' vs ' + c.toFixed(1), unit: '',
-          label: 'copies before the descriptions first left out the kind of chair (“rocking”, “beanbag” …), and “chair” (11 = never)',
+          label: 'copies until the kind of chair is lost',
           alt: 'Over ' + cc.length + ' chains, Spark’s descriptions first left out the kind of chair at copy ' + k.toFixed(1) + ' on average, and the word chair at copy ' +
             c.toFixed(1) + '.' },
-        q: 'We predicted the kind would be forgotten first. ' + (t3.supported ? 'It was: ' : 'Not clearly: ') + gone + '.' }
+        q: 'Copies before the descriptions first left out the kind of chair (“rocking”, “beanbag” …), then the word “chair” (11 = never). We predicted the kind would be forgotten first. ' + (t3.supported ? 'It was: ' : 'Not clearly: ') + gone + '.' }
     ] });
     document.getElementById('hero-qual').textContent = 'Only Spark’s sentence passes from one picture to the next, so anything it leaves out is lost. ' +
       'A small test: ' + nSeeds + ' starting chairs plus 2 things that aren’t chairs, for comparison, with 3 chains each, and one way of asking each AI. ' +

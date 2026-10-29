@@ -80,14 +80,14 @@
           gap >= 15 ? 'That order' : 'That order, but silhouettes only ' + gap + ' points lower') + ' (' + pct(a.original.accuracy) + '%, ' +
           pct(a.silhouette.accuracy) + '%, ' + pct(sh.accuracy) + '%).' },
       { kind: 'dots',
-        o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'of its wrong answers for shadows were just the word “Shadow”',
+        o: { k: m.just_shadow, n: e.n_errors, cols: 11, tone: 'orange', label: 'wrong answers were just “Shadow”',
           alt: m.just_shadow + ' of its ' + e.n_errors + ' wrong answers to cast shadows were just the word Shadow, and ' + m.ufo + ' were UFO.' },
-        q: m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' It never said “Shadow” for a sharp black silhouette.' : '') },
+        q: 'Of its ' + e.n_errors + ' wrong answers for shadows, ' + m.just_shadow + ' were just the word “Shadow”. ' + m.ufo + ' more were “UFO”.' + (D.medium_answers.silhouette.just_shadow === 0 ? ' It never said “Shadow” for a sharp black silhouette.' : '') },
       { kind: 'bars', verdict: r.ci95[0] > 0 ? { tone: 'yes', text: 'As predicted' } : { tone: 'no', text: 'Prediction failed' },
         o: { values: [ai, pp], labels: ['Glimmer', 'people'], tones: ['ink', 'orange'], max: 100, value: ai + '%', unit: 'vs ' + pp + '%',
-          label: 'of silhouettes named, by Glimmer and by people, for the same ' + D.human.n_shared_concepts + ' objects',
+          label: 'of silhouettes named: Glimmer, then people',
           alt: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects: Muse Glimmer named ' + ai + '%, people ' + pp + '% (published, other drawings).' },
-        q: 'Predicted: shapes people find hard are hard for the AI too. They were, a modest link (' + r.rho.toFixed(2) +
+        q: 'Silhouettes of the same ' + D.human.n_shared_concepts + ' objects. Predicted: shapes people find hard are hard for the AI too. They were, a modest link (' + r.rho.toFixed(2) +
           ' on a scale from −1 to 1; likely ' + r.ci95[0].toFixed(2) + ' to ' + r.ci95[1].toFixed(2) + ').' }
     ] });
     $('hero-qual').textContent = 'The people, from a published study (Wagemans et al., 2008), saw different drawings of the same objects, so that comparison is by object, ' +

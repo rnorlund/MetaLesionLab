@@ -59,27 +59,38 @@
   function hero() {
     var g = BY.god, S = D.summary, n = g.n, h1 = S.H1, h3 = S.H3_vs_atlas;
     $('answer').textContent = 'Asked to draw God, Meta’s Muse Image drew the same figure ' + nOf(g.top.n, n) +
-      ' times: a bearded man with long hair, a robe and a halo.';
+      ' times: a bearded man in a robe, with a halo.';
     var grid = $('god-grid');
     grid.textContent = '';
     for (var i = 0; i < n; i++) grid.appendChild(cell(g.sprite, i));
-    $('god-cap').textContent = 'Muse Image’s ' + n + ' drawings of God, in the order they came. We typed the same request each time: “' + g.prompt +
-      '” ' + (g.refused ? g.refused + ' requests were refused.' : 'It never refused.') + ' This page describes what the AI drew; it makes no claim about God.';
+    var godNote = 'We typed the same request each time: “' + g.prompt + '” ' + (g.refused ? g.refused + ' requests were refused.' : 'It never refused.') +
+      ' This page describes what the AI drew; it makes no claim about God.';
+    $('god-cap').textContent = 'Muse Image’s ' + n + ' drawings of God, in the order they came.';
     var all = D.ideas.filter(function (x) { return x.top.n === x.n; });
     var tiles = $('tiles');
     tiles.textContent = '';
-    [[g.top.n + ' of ' + n, 'drawings of God show a bearded man with a halo',
-      'A second AI, Meta’s open model Muse Glimmer, and our own eyes agree on all ' + n],
-     [h1.ideas_with_concentration_at_least_half + ' of ' + h1.of, 'ideas drawn with one main symbol (like a heart for love) at least half the time',
-      'We predicted at least 7, before drawing any. Held.'],
-     [all.length + ' of ' + D.ideas.length, 'ideas drawn with the same main symbol every time',
-      all.map(function (x) { return x.label; }).join(', ')],
-     [f2(h3.median_ideas) + ' vs ' + f2(h3.median_things), 'how different the drawings of a typical idea are from one another (spread), against 135 everyday things',
-      'We predicted ideas would vary more. Too close to call: ' + sgn(h3.difference) + ', probably between ' + ciS(h3.difference_ci95).replace(' to ', ' and ') +
-        '. Prediction failed.', 'fail']
-    ].forEach(function (t) {
-      tiles.appendChild(h('div', { class: 'iv-tile' + (t[3] ? ' ' + t[3] : '') }, [h('b', { text: t[0] }), h('span', { text: t[1] }), h('small', { text: t[2] })]));
+    // [number, short label, verdict (shown), full label, the detail (in "How we know"), tile class]
+    var T = [[g.top.n + ' of ' + n, 'drawings of God show a bearded man with a halo', '',
+        'drawings of God show a bearded man with a halo', 'A second AI, Meta’s open model Muse Glimmer, and our own eyes agree on all ' + n + '. ' + godNote],
+      [h1.ideas_with_concentration_at_least_half + ' of ' + h1.of, 'ideas drawn mostly with one symbol', 'Held',
+        'ideas drawn with one main symbol (like a heart for love) at least half the time', 'We predicted at least 7, before drawing any. Held.'],
+      [all.length + ' of ' + D.ideas.length, 'ideas always drawn with the same symbol', '',
+        'ideas drawn with the same main symbol every time', all.map(function (x) { return x.label; }).join(', ')],
+      [f2(h3.median_ideas) + ' vs ' + f2(h3.median_things), 'how varied ideas are, against everyday things', 'Prediction failed',
+        'how different the drawings of a typical idea are from one another (spread), against 135 everyday things',
+        'We predicted ideas would vary more. Too close to call: ' + sgn(h3.difference) + ', probably between ' + ciS(h3.difference_ci95).replace(' to ', ' and ') + '.', 'fail']];
+    T.forEach(function (t) {
+      tiles.appendChild(h('div', { class: 'iv-tile' + (t[5] ? ' ' + t[5] : '') }, [h('b', { text: t[0] }), h('span', { text: t[1] }), t[2] ? h('small', { text: t[2] }) : null]));
     });
+    var how = $('tiles-how');
+    if (!how) {
+      how = h('details', { class: 'how-we-know', id: 'tiles-how' }, [h('summary', null, 'How we know')]);
+      how.appendChild(h('ul', { class: 'iv-how' }));
+      tiles.parentNode.insertBefore(how, tiles.nextSibling);
+    }
+    var ul = how.querySelector('ul');
+    ul.textContent = '';
+    T.forEach(function (t) { ul.appendChild(h('li', null, [h('b', { text: t[0] }), ' ' + t[3] + '. ' + t[4]])); });
   }
 
   // --- how people picture God: the cited study beside Muse ------------------------------------

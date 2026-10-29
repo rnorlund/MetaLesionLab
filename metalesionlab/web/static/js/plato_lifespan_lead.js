@@ -37,10 +37,10 @@
       { kind: 'bars', verdict: verdict(cp.C1_recognizability_rises),
         o: { values: [r2, r10, rad, rsd], labels: ['age ' + ages[0], 'age ' + ages[last], 'adults', 'AI ' + ck[0]], tones: ['orange', 'orange', 'ink', 'green'],
           max: 100, value: r10 + '%', unit: 'at ' + ages[last] + ', from ' + r2 + '% at ' + ages[0],
-          label: 'of children’s drawings that an AI could recognize as what was asked for',
+          label: 'of children’s drawings an AI recognizes',
           alt: 'Recognized: ' + r2 + '% of 2-year-olds’ drawings, ' + r10 + '% of 10-year-olds’, ' + rad + '% of adults’, and ' + rsd +
             '% of Stable Diffusion ' + ck[0] + '’s pictures.' },
-        q: 'We predicted children’s drawings would get easier to recognize with age' +
+        q: 'Drawings an AI could recognize as what was asked for. We predicted children’s drawings would get easier to recognize with age' +
           (slope ? ': ' + (slope.mean_slope < 0 ? 'down ' : 'up ') + one(Math.abs(slope.mean_slope)) + ' points a year (' + between(slope.ci95, one) + ')' : '') +
           '. For comparison: adults ' + rad + '%; Stable Diffusion’s first public version (AI ' + ck[0] + ') already ' + rsd + '%.' },
       // 2. distance to people's drawings: children close in, Stable Diffusion does not
@@ -48,11 +48,10 @@
         o: { values: [c.d_adult.mean[0], c.d_adult.mean[last], sd0, sdN], labels: ['age ' + ages[0], 'age ' + ages[last], 'AI ' + ck[0], 'AI ' + ck[n]],
           tones: ['orange', 'orange', 'green', 'green'], digits: 2,
           value: excludesZero(t.ci95) ? (t.mean > 0 ? 'Farther' : 'Closer') : 'No closer', unit: '',
-          label: (excludesZero(t.ci95) && t.mean > 0 ? 'from' : 'to') + ' the average adult drawing: Stable Diffusion’s pictures from version ' + ver(ck[0]) + ' to ' + ver(ck[n]) +
-            '. Children’s drawings get closer with age.',
+          label: (excludesZero(t.ci95) && t.mean > 0 ? 'from' : 'to') + ' the average adult drawing, for Stable Diffusion',
           alt: 'How far drawings are from the average adult drawing (0 = identical): children ' + f2(c.d_adult.mean[0]) + ' at age ' + ages[0] + ' and ' +
             f2(c.d_adult.mean[last]) + ' at ' + ages[last] + '; Stable Diffusion ' + f2(sd0) + ' at ' + ck[0] + ' and ' + f2(sdN) + ' at ' + ck[n] + '.' },
-        q: 'We predicted more training would change how far its pictures are from people’s drawings' +
+        q: 'Stable Diffusion’s pictures from version ' + ver(ck[0]) + ' to ' + ver(ck[n]) + '. Children’s drawings get closer with age. We predicted more training would change how far its pictures are from people’s drawings' +
           (t.ci95 ? '. The change: ' + signed(t.mean, f2) + ' (' + between(t.ci95, f2) + ')' : '') +
           '. Distance is how different two pictures look to a Meta AI that compares pictures (DINOv2); 0 = identical. A typical adult drawing is ' +
           f2(ad.d_adult) + ' from the adults’ average.' }

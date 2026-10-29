@@ -207,18 +207,18 @@
     return {
       stats: [
         { kind: 'lrange', o: { at: sm.median_collapse_layer, lo: sm.earliest_collapse, hi: sm.latest_collapse, n: n,
-            label: 'the typical stage at which Glimmer files all of Muse Image’s drawings of a thing in one place, as if they were one drawing',
+            label: 'stage where its drawings of a thing merge into one',
             alt: 'Stage ' + sm.median_collapse_layer + ' of ' + n + ', the middle of ' + sm.n_concepts + ' things: where Glimmer files Muse Image’s drawings ' +
               'of a thing in one place. The band is the range, stages ' + sm.earliest_collapse + ' to ' + sm.latest_collapse + '.' },
-          q: 'The middle value of ' + sm.n_concepts + ' things. The band shows the range: stages ' + sm.earliest_collapse + ' to ' + sm.latest_collapse + '. ' +
+          q: 'The typical stage (the middle of ' + sm.n_concepts + ' things) at which Glimmer files all of Muse Image’s drawings of a thing in one place, as if they were one drawing. The band shows the range: stages ' + sm.earliest_collapse + ' to ' + sm.latest_collapse + '. ' +
             'Drawings of ' + never + isAre + ' never filed in one place.' },
         { kind: 'spread', o: { a: ms.muse[last], b: ms.people[last], aLabel: 'Muse Image', bLabel: 'People', value: Math.round(times) + '×',
-            label: 'People’s drawings of a thing still differ from one another about ' + Math.round(times) + ' times as much as Muse Image’s, at Glimmer’s last stage' },
-          q: 'How different the drawings are from one another (we call this spread; 0 would mean identical): ' + f2(ms.people[last]) + ' for people, ' +
+            label: 'times more different from one another: people’s drawings' },
+          q: 'At Glimmer’s last stage, people’s drawings of a thing differ from one another about ' + Math.round(times) + ' times as much as Muse Image’s. How different the drawings are from one another (we call this spread; 0 would mean identical): ' + f2(ms.people[last]) + ' for people, ' +
             f2(ms.muse[last]) + ' for Muse Image, at stage ' + n + ', averaged over ' + sm.n_concepts + ' things.' },
         { kind: 'dots', o: { k: sm.collapse_at_or_before_name, n: sm.n_with_both, cols: Math.min(sm.n_with_both, 12), tone: 'blue',
-            label: 'things whose drawings Glimmer files in one place before, or at, the stage where we can first read the name it is heading for' },
-          q: 'Typically ' + sm.median_layers_between + ' stages before the name. Drawings of ' + never + isAre + ' never filed in one place, so they aren’t counted.' }
+            label: 'things merged before Glimmer’s answer can be read' },
+          q: 'Things whose drawings Glimmer files in one place before, or at, the stage where we can first read the name it is heading for. Typically ' + sm.median_layers_between + ' stages before the name. Drawings of ' + never + isAre + ' never filed in one place, so they aren’t counted.' }
       ],
       note: 'We didn’t plan this test in advance (exploratory): one model, one request, ' + sm.n_concepts + ' things, ' + (lo === hi ? lo : lo + '–' + hi) +
         ' drawings each. “Filed in one place” means Muse Image’s spread stays under half of people’s through the last stage, a line we chose after seeing the data.'
@@ -230,16 +230,16 @@
     var e = (c.byeye_no_time || {}).muse_doodle_default, chance = Math.round(c.chance_ten_ten * 1000) / 10;
     var stats = [
       { kind: 'dots', o: { k: e ? e.sure : m.ten_ten.k, n: e ? e.n : m.n, cols: 8, tone: 'blue',
-          label: 'of Muse Image’s clocks show 10:10, the time on watch adverts, when we ask for a clock without naming a time' },
-        q: e ? 'We counted these by eye. Our automatic clock reader counted ' + m.ten_ten.k + ': it often read the hour one too high, so it saw most of the others as 11:10.'
+          label: 'of Muse Image’s clocks show 10:10 (no time asked)' },
+        q: e ? '10:10 is the time on watch adverts. We asked for a clock without naming a time. We counted these by eye. Our automatic clock reader counted ' + m.ten_ten.k + ': it often read the hour one too high, so it saw most of the others as 11:10.'
           : 'Read by our automatic clock reader.' },
       { kind: 'dots', o: { k: p.ten_ten.k, n: p.n, cols: 40, tone: 'orange', value: pct(p.ten_ten.share), unit: '',
           label: 'of people’s clocks show about 10:10 (' + p.ten_ten.k + ' of ' + p.n + ')' },
         q: '“About 10:10” means within 10 minutes, with the two hands either way round. If people drew times at random, ' + chance + '% would count.' }
     ];
     if (a) {
-      stats.push({ kind: 'dots', o: { k: a.ten_ten.k, n: a.n, cols: 24, tone: 'blue', label: 'of Muse Image’s clocks show 10:10 when we ask it for a particular time' },
-        q: 'So 10:10 is its habit, not its limit: ask for a time and it draws that time. ' + pct(a.minute_correct) + ' of these have the minute hand right.' });
+      stats.push({ kind: 'dots', o: { k: a.ten_ten.k, n: a.n, cols: 24, tone: 'blue', label: 'show 10:10 when a time is asked for' },
+        q: 'Muse Image clocks, asked for a particular time. So 10:10 is its habit, not its limit: ask for a time and it draws that time. ' + pct(a.minute_correct) + ' of these have the minute hand right.' });
     }
     return { stats: stats, note: 'We wrote down our predictions before we made any pictures. The count by eye came afterwards.' };
   }
@@ -248,16 +248,16 @@
     var a = d.summary.all, n = d.summary.n_concepts, nw = d.summary.new, sd = d.summary.sdxl.all;
     return {
       stats: [
-        { kind: 'dots', o: { k: a.below_1, n: n, cols: 45, tone: 'blue', label: 'everyday things that Muse Image draws more alike than people do' },
-          q: 'For ' + a.ci_entirely_below_1 + ' of them the gap is too big to be chance (the whole 95% confidence range is below 1). ' +
+        { kind: 'dots', o: { k: a.below_1, n: n, cols: 45, tone: 'blue', label: 'things drawn more alike than people draw them' },
+          q: 'Everyday things that Muse Image draws more alike than people do. For ' + a.ci_entirely_below_1 + ' of them the gap is too big to be chance (the whole 95% confidence range is below 1). ' +
             'Only ' + a.ci_entirely_above_1 + ' is clearly the other way round.' },
         { kind: 'bars', o: { values: [a.median, 1], labels: ['Muse Image', 'People'], tones: ['blue', 'orange'], max: 1, digits: 2, value: pct(a.median),
-            label: 'as varied as people’s: how much Muse Image’s drawings of a typical thing differ from one another, compared with people’s' },
-          q: 'The middle value of ' + n + ' things is ' + f2(a.median) + ', probably between ' + f2(a.median_ci95[0]) + ' and ' + f2(a.median_ci95[1]) +
+            label: 'as varied as people’s (a typical thing)' },
+          q: 'How much Muse Image’s drawings of a typical thing differ from one another, compared with people’s. The middle value of ' + n + ' things is ' + f2(a.median) + ', probably between ' + f2(a.median_ci95[0]) + ' and ' + f2(a.median_ci95[1]) +
             ' (95% confidence interval). 1 would mean just as varied as people.' },
         { kind: 'dots', o: { k: nw.below_1, n: nw.n, cols: 33, tone: 'blue',
-            label: 'new things, picked at random, that Muse Image also draws more alike than people do. We wrote this prediction down before drawing them.' },
-          q: 'For these ' + nw.n + ', Muse Image’s drawings are typically ' + f2(nw.median) + ' times as varied as people’s, probably between ' + f2(nw.median_ci95[0]) +
+            label: 'new random things also drawn more alike' },
+          q: 'We wrote this prediction down before drawing them. For these ' + nw.n + ', Muse Image’s drawings are typically ' + f2(nw.median) + ' times as varied as people’s, probably between ' + f2(nw.median_ci95[0]) +
             ' and ' + f2(nw.median_ci95[1]) + ' (95% confidence interval).' }
       ],
       note: 'Not every AI does this. Stable Diffusion XL, an open image AI from Stability AI, given the same request, was typically ' +
@@ -290,23 +290,23 @@
       stats: [
         { kind: 'fails', verdict: verdict(P3.primary), o: { value: small.failed + ' → ' + big.failed, unit: 'failures in 12',
             rows: [{ label: params(small), tiles: small.tiles }, { label: params(big), tiles: big.tiles }],
-            label: 'chair drawings that failed (broken code, or a blank or inked-over canvas) from the smallest and largest ' + small.family +
-              ', an open AI family: ' + billions(small) + ' and ' + billions(big) + ' parameters, the adjustable numbers inside an AI' },
-          q: 'We predicted bigger models would fail less often (prediction P3): ' + fewer + '. It held in ' + held + ' of ' + checks.length +
+            label: 'chairs failed: smallest to biggest AI' },
+          q: 'Chair drawings that failed (broken code, or a blank or inked-over canvas), from the smallest and largest ' + small.family +
+              ', an open AI family: ' + billions(small) + ' and ' + billions(big) + ' parameters, the adjustable numbers inside an AI. We predicted bigger models would fail less often (prediction P3): ' + fewer + '. It held in ' + held + ' of ' + checks.length +
             ' checks across the three families.' },
         { kind: 'ratio', verdict: verdict(P2.primary), o: { value: f2(wonder.spread_ratio) + '×', unit: 'as varied as people’s', hi: 1.7,
             pts: top.map(function (r, i) { return { x: r.spread_ratio, label: r.label, tone: 'muted', key: i ? null : 'biggest open models' }; }).concat([
               { x: museImage, label: 'Muse Image', ring: true, key: 'Muse Image' },
               { x: wonder.spread_ratio, label: wonder.label, tone: 'ink', big: true, key: 'Muse Wonder' }]),
-            label: 'Meta’s Muse Wonder draws its chairs as alike as Meta’s image AI, Muse Image, does. The biggest open models (about 32 billion parameters) are ' +
-              f2(Math.min.apply(null, spreads)) + ' to ' + Math.max.apply(null, spreads).toFixed(1) + ' times as varied as people' },
-          q: 'We predicted bigger models would draw more alike (prediction P2). Too close to call: from the smallest to the largest ' + small.family +
+            label: 'Muse Wonder’s chairs, as varied as people’s' },
+          q: 'Meta’s Muse Wonder draws its chairs as alike as Meta’s image AI, Muse Image, does. The biggest open models (about 32 billion parameters) are ' +
+              f2(Math.min.apply(null, spreads)) + ' to ' + Math.max.apply(null, spreads).toFixed(1) + ' times as varied as people. We predicted bigger models would draw more alike (prediction P2). Too close to call: from the smallest to the largest ' + small.family +
             ', the change was ' + signed(P2.contrast, 3) + ' (probably between ' + signed(P2.ci95[0], 3) + ' and ' + signed(P2.ci95[1], 3) + '). ' +
             'Meta doesn’t publish Muse Wonder’s size, so it tells us nothing about growing.' },
         { kind: 'pbars', verdict: verdict(P1.primary), o: { value: pct(first.recog.mean) + ' → ' + pct(last.recog.mean), unit: '',
             rows: [{ label: size(first) + ' chairs', v: first.recog.mean, tone: 'muted' }, { label: size(last) + ' chairs', v: last.recog.mean, tone: 'blue' }],
-            label: 'of a small sketching AI’s chairs that an AI could name correctly, as we trained it on ' + size(first) + ', then ' + size(last) + ', of people’s chairs' },
-          q: 'We predicted more training would make its chairs easier to name (prediction P1): up ' + Math.round(P1.contrast * 100) + ' points (probably between ' +
+            label: 'of its chairs named correctly, with more training' },
+          q: 'A small sketching AI, trained on ' + size(first) + ', then ' + size(last) + ', of people’s chairs. We predicted more training would make its chairs easier to name (prediction P1): up ' + Math.round(P1.contrast * 100) + ' points (probably between ' +
             Math.round(P1.ci95[0] * 100) + ' and ' + Math.round(P1.ci95[1] * 100) + '). But they didn’t become more alike: their spread stays about ' +
             f2(median(arm.map(function (r) { return r.spread.mean; }))) + ', below that of the people’s chairs it learned from (' +
             f2(Math.min.apply(null, learned)) + ' to ' + f2(Math.max.apply(null, learned)) + ').' }
@@ -390,7 +390,7 @@
     if (pr) {
       stats.push({ kind: 'bars', verdict: pr.verdict,
         o: { values: [pr.pz.mean, pr.pd.mean], labels: ['language', 'drawing'], tones: ['blue', 'orange'], digits: 2,
-          value: pr.farther ? 'Farther' : 'No closer', unit: '', label: 'from the plain chair, not back to it (change in distance)',
+          value: pr.farther ? 'Farther' : 'No closer', unit: '', label: 'from the plain chair, not back to it',
           alt: 'Back to the plain chair? No. Distance to the plain chair grew by ' + pr.pz.mean.toFixed(2) + ' after language damage and by ' +
             pr.pd.mean.toFixed(2) + ' after drawing damage (neurons switched off, averaged over the damage levels).' },
         q: 'Predicted: back toward the plain chair, as in semantic dementia.' });
@@ -398,7 +398,7 @@
     if (c) {
       stats.push({ kind: 'bars',
         o: { values: [c.a, c.b], labels: ['intact', 'drawing'], tones: ['ink', 'orange'], max: 100, value: c.a + '% → ' + c.b + '%', unit: '',
-          label: 'clocks with all 12 numbers in order: drawing damage strips them first',
+          label: 'of clocks keep all 12 numbers',
           alt: 'Clocks with all 12 numbers in order: ' + c.a + '% intact, ' + c.b + '% after the mildest drawing damage (' + c.mild.label + ').' },
         q: 'The mildest drawing damage. Language damage removes the whole clock instead.' });
     }

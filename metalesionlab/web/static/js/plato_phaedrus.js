@@ -172,13 +172,11 @@
   function renderAnswer() {
     var tr = D.spark.transcript, caps = D.spark.caps, it = D.spark.italics, rd = D.reader;
     var chance = Math.round(D.chance * tr.n);
-    $('answer').innerHTML = '';
-    $('answer').appendChild(document.createTextNode('Reading these, Muse Spark picked the meaning the speaker intended ' +
-      tr.k + ' times in ' + tr.n + ' (' + pct(tr.acc) + '): no better than guessing, which would get about ' + chance + '. When we wrote the stressed word in '));
-    $('answer').appendChild(h('i', { text: 'italics' }));
-    $('answer').appendChild(document.createTextNode(', it got ' + it.k + ' of ' + it.n + '.'));
-    $('answer').appendChild(h('small', { text: 'A simple sound reader with no AI in it, listening to the recording instead, found the stressed word ' +
-      rd.k + ' times in ' + rd.n + ' (' + pct(rd.acc) + '). Thirteen computer voices, seven stressed words each.' }));
+    $('answer').textContent = 'Reading the words, Muse Spark found the speaker’s meaning ' + tr.k + ' times in ' + tr.n +
+      ': no better than guessing.';
+    $('answer-more').textContent = 'Guessing would get about ' + chance + ' (' + pct(tr.acc) + ' is what Spark got). When we wrote the stressed word in italics, it got ' +
+      it.k + ' of ' + it.n + '. A simple sound reader with no AI in it, listening to the recording instead, found the stressed word ' +
+      rd.k + ' times in ' + rd.n + ' (' + pct(rd.acc) + '). Thirteen computer voices, seven stressed words each.';
     $('results-lede').textContent = 'Every recording of every voice, 91 in all. Guessing would be right 1 time in 7 (14%). Each bar shows how ' +
       'often a reader got the meaning right; the thin line across it shows the likely range (exact 95% confidence interval).';
   }
