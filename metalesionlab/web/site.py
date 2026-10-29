@@ -379,7 +379,7 @@ def series(app) -> list[dict]:
 def pages_flags(app) -> dict:
     """Every page either site can link to, and whether this app serves it (common.js: TOT.hasPage)."""
     paths = [n["href"] for nav in NAV.values() for n in nav if n.get("needs")]
-    paths += [m["href"] for more in MORE.values() for m in more] + [s["path"] for s in SERIES]
+    paths += [m["href"] for more in MORE.values() for m in more] + [s["path"] for s in SERIES] + list(DAMAGED_TITLES)
     return {p: has_page(app, p) for p in dict.fromkeys(paths)}
 
 

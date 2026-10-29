@@ -22,8 +22,9 @@ DATA = HERE / "data" / "plato_glimmer.json"
 _cache: dict = {}
 
 
-def load_data(path: Path = DATA) -> dict | None:
+def load_data(path: Path | None = None) -> dict | None:
     """The page's numbers, cached until the file changes; None if missing, unreadable or not the right shape."""
+    path = path or DATA
     try:
         stamp = path.stat().st_mtime_ns
     except OSError:

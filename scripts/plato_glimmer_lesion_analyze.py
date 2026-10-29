@@ -349,7 +349,7 @@ def type_result(out: dict, dtype: str, things: list[str]) -> dict:
                gap=b["gap"], ci95=b["ci95"], dropped=b["dropped"], verdict=gl.gap_verdict(b["ci95"]), _boot=b)
     sec = {}  # secondary: other measures of each side
     for name, (pm, wm) in {"drew_vs_correct": ("drew", WORD), "named_vs_names": (PICTURE, "names"),
-                           "named_vs_fluent": (PICTURE, "fluent")}.items():
+                           "named_vs_fluent": (PICTURE, "fluent"), "correct_vs_fluent": (WORD, "fluent")}.items():
         bb = gl.boot_gap(stack(out, conds, things, pm), stack(out, conds, things, wm), seed=7)
         sec[name] = {"gap": bb["gap"], "ci95": bb["ci95"], "verdict": gl.gap_verdict(bb["ci95"])}
     res["secondary"] = sec
@@ -368,7 +368,7 @@ def rates(out: dict) -> dict:
     for cond, things in out.items():
         r[cond] = {}
         for t, o in things.items():
-            row = {m: int(np.nansum(v)) for m, v in o.items() if m != "similarity"}
+            row = {m: int(np.nansum(v)) for m, v in o.items() if m != "similarity" and not m.startswith("byeye")}
             row["n"] = len(o["drew"])
             sim = o["similarity"][np.isfinite(o["similarity"])]
             row["similarity"] = round(float(sim.mean()), 4) if len(sim) else None

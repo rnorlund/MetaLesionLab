@@ -55,33 +55,33 @@
     if (k === 99) k = stepsAll.length - 1;
     var c = all.curves, last = stepsAll.length - 1;
     var answer = {
-      'picture first': 'Switch off more and more of its artificial neurons and Meta’s open AI loses the drawing before the words: it can still say what a clock is after it can no longer draw one.',
-      'word first': 'Switch off more and more of its artificial neurons and Meta’s open AI loses the words before the drawing: it can still draw a clock after it can no longer say what one is.',
-      together: 'Switch off more and more of its artificial neurons and Meta’s open AI loses its drawings and its words together; neither clearly goes first.',
-      neither: 'Even with many of its artificial neurons switched off, Meta’s open AI kept both its drawings and its words.',
+      'picture first': 'Damaged, Meta’s open AI stops drawing recognisable pictures before it stops describing things correctly.',
+      'word first': 'Damaged, Meta’s open AI stops describing things correctly before it stops drawing recognisable pictures.',
+      together: 'Damaged, Meta’s open AI loses its drawings and its descriptions together; neither clearly goes first.',
+      neither: 'Even heavily damaged, Meta’s open AI kept both its drawings and its descriptions.',
       'not testable': 'We could not tell which goes first.'
     }[all.verdict];
     var predicted = { tone: all.verdict === 'picture first' ? 'yes' : 'no',
       text: all.verdict === 'picture first' ? 'As we predicted' : 'Not what we predicted' };
     var stats = [
       { kind: 'pbars', verdict: predicted, o: {
-        value: pct(c[PIC][k]) + ' vs ' + pct(c[WORD][k]), unit: '',
+        value: '', unit: '',
         rows: [{ label: 'drawing', v: Math.min(1, c[PIC][k]), tone: 'blue' }, { label: 'describing', v: Math.min(1, c[WORD][k]), tone: 'orange' }],
-        label: 'of each ability left at step ' + k + ' of ' + last + ' (' + stepsAll[k].label + ')' },
+        label: 'left at step ' + k + ' of ' + last + ': drawing against describing' },
         q: ORDER[all.order].charAt(0).toUpperCase() + ORDER[all.order].slice(1) + '. Averaged over the whole ladder, the words kept ' +
           signed(all.gap * 100, 0) + ' points more of their undamaged level (likely between ' + signed(all.ci95[0] * 100, 0) + ' and ' +
           signed(all.ci95[1] * 100, 0) + ').' }
     ];
     if (early && late && early.curves && late.curves) {
-      var e = early.curves, l = late.curves, eL = types.early.steps.length - 1, lL = types.late.steps.length - 1;
+      var e = early.curves, l = late.curves, eL = 3, lL = 3;
       var evl = d.verdict.early_vs_late;
       stats.push({ kind: 'pbars', o: {
-        value: evl && evl.verdict === 'different' ? 'Different' : 'Alike', unit: '',
+        value: '', unit: '',
         rows: [{ label: 'first third: drawing', v: Math.min(1, e[PIC][eL]), tone: 'blue' },
                { label: 'first third: describing', v: Math.min(1, e[WORD][eL]), tone: 'orange' },
                { label: 'last third: drawing', v: Math.min(1, l[PIC][lL]), tone: 'blue' },
                { label: 'last third: describing', v: Math.min(1, l[WORD][lL]), tone: 'orange' }],
-        label: 'left at the heaviest step, with the damage only in its first or only in its last third of stages' },
+        label: 'left at step 3 of 5, damage early or late' },
         q: 'First third: ' + ORDER[early.verdict] + '. Last third: ' + ORDER[late.verdict] + '.' +
           (evl ? ' The difference between the two is ' + (evl.verdict === 'different' ? 'clear' : 'too close to call') +
             ' (gap ' + signed(evl.difference * 100, 0) + ' points, likely between ' + signed(evl.ci95[0] * 100, 0) + ' and ' +
@@ -90,9 +90,9 @@
     var cond = stepsAll[last].cond, fl = 0, cr = 0, n = 0;
     d.things.forEach(function (t) { fl += count(d, cond, t.key, 'fluent'); cr += count(d, cond, t.key, WORD); n += d.n; });
     stats.push({ kind: 'pbars', o: {
-      value: Math.round(100 * fl / n) + '% vs ' + Math.round(100 * cr / n) + '%', unit: '',
+      value: '', unit: '',
       rows: [{ label: 'proper sentences', v: fl / n, tone: 'muted' }, { label: 'correct descriptions', v: cr / n, tone: 'orange' }],
-      label: 'of its ' + n + ' sentences at the heaviest step (' + stepsAll[last].label + ')' },
+      label: 'of its ' + n + ' sentences at the heaviest step' },
       q: fl > cr ? 'Many sentences still read smoothly but say the wrong thing.' : 'When the sentences go wrong, they stop reading smoothly too.' });
     var note = 'We wrote down the question, the measures and how we would decide before the main run. 12 answers per step; the test uses ' +
       list(thingNames(d, inc)) + (inc.length < d.things.length ? ' (undamaged, its other drawings were too rarely named right to measure a loss)' : '') + '.';
@@ -225,6 +225,9 @@
     box.innerHTML = '';
     S.d.damage.forEach(function (t) { if (S.d.verdict.types[t.key].curves) box.appendChild(chart(t)); });
     var all = S.d.verdict.types.all, evl = S.d.verdict.early_vs_late;
+    var Vt = S.d.verdict.types, together = Object.keys(Vt).filter(function (k) { var x = Vt[k].secondary; return x && x.drew_vs_correct && x.drew_vs_correct.verdict === 'together'; }).length;
+    $('verdict-note').textContent = 'A caution: “drawn so an AI can name it” is stricter than “a drawing came out at all”. By that second count the drawing and the words fell together in ' +
+      together + ' of ' + Object.keys(Vt).length + ' kinds of damage. Damage first makes the drawings unrecognisable, and only then stops them coming out.';
     $('verdict').textContent = 'Our main test, neurons switched off in every stage: ' + ORDER[all.verdict] + '.' +
       (evl ? ' Damage only in the first third against only in the last third: ' + (evl.verdict === 'different' ? 'they differ.' : 'too close to call.') : '');
   }

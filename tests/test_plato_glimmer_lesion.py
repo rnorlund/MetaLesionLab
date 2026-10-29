@@ -296,11 +296,12 @@ def test_first_screen_numbers_come_from_the_data():
     first = h["stats"][0]["o"]
     k = min(v["step_picture"] or 99, v["step_word"] or 99)
     k = k if k != 99 else len(d["damage"][0]["steps"]) - 1
-    assert first["value"] == f"{round(v['curves']['named'][k] * 100)}% vs {round(v['curves']['correct'][k] * 100)}%"
+    rows = {r["label"]: r["v"] for r in first["rows"]}
+    assert rows["drawing"] == pytest.approx(min(1, v["curves"]["named"][k])) and rows["describing"] == pytest.approx(min(1, v["curves"]["correct"][k]))
     assert ("predicted" in h["stats"][0]["verdict"]["text"]) and (h["stats"][0]["verdict"]["tone"] == ("yes" if v["verdict"] == "picture first" else "no"))
     last = d["damage"][0]["steps"][-1]["cond"]
     fl = sum(d["conditions"][last][t]["fluent"] for t in ("chair", "clock", "god"))
-    assert h["stats"][2]["o"]["value"].startswith(f"{round(100 * fl / 36)}%")
+    assert h["stats"][2]["o"]["rows"][0]["v"] == pytest.approx(fl / 36)
 
 
 @needs_data
