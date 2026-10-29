@@ -129,7 +129,7 @@ def maybe_donate(opts: dict, *, key: str, source: str, picture, result: dict, st
 
 def score_strokes(ref: draw.Reference, key: str, strokes, opts: dict) -> dict:
     try:
-        picture = draw.render(strokes)
+        picture = ref.prepare(key, draw.render(strokes))  # the clock: prepared as the people's clocks were
         simplified = draw.normalize_strokes(strokes)
     except draw.DrawingError as e:
         raise HTTPException(422, str(e)) from None
@@ -151,10 +151,11 @@ def score_upload(ref: draw.Reference, key: str, data: bytes, opts: dict) -> dict
         picture, stats = draw.prepare_upload(data)  # the photo itself goes no further than this
     except draw.DrawingError as e:
         raise HTTPException(422, str(e)) from None
+    picture = ref.prepare(key, picture)  # the clock: prepared as the people's clocks were
     vec = embed(picture)
     result = ref.score(key, vec)
-    # an idea's score says nothing about people's drawings, so its "is this a doodle at all?" check is done apart
-    stats["d_doodle"] = ref.doodle_distance(vec) if ref.ai_only(key) else result.get("d_doodle", 0)
+    # an idea's or a group's score holds no "is this a doodle at all?" distance, so that check is done apart
+    stats["d_doodle"] = ref.doodle_distance(vec) if ref.ai_only(key) or ref.group(key) else result.get("d_doodle", 0)
     problem = draw.upload_problem(stats)
     if problem:
         raise HTTPException(422, problem)

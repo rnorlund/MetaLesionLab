@@ -511,16 +511,76 @@ def score_ai_only(vec: np.ndarray, concept: IdeaConcept) -> dict:
     }
 
 
+# ---------- a group's average: the clock test ----------
+# "Draw the clock" (/plato/clock): the people's side is a group, never people's drawings. draw_clock.json holds only
+# the people's typical clock (a centroid from the private analysis's public export) with the quantiles of adults'
+# distances to it, and Muse Image's average clock. A drawing is prepared as the people's clocks were
+# (plato_clock.face_normalise) and placed between the two averages, and among the quantiles. No per-person value
+# exists here to compare with, and none is returned.
+
+GROUP = "group"
+GROUP_PATH = DATA_PATH.parent / "draw_clock.json"   # written by scripts/plato_clock.py export
+GROUP_FIELDS = {"concept", "mode", "d_people", "d_ai", "closer", "band", "d_ai_to_people", "n_people"}
+GROUP_TIE = 0.01   # distances closer than this to each other: "about equally close to both"
+
+
+@dataclass
+class GroupConcept:
+    key: str
+    label: str
+    people_centroid: np.ndarray   # the people's typical clock (unit vector)
+    ai_centroid: np.ndarray       # Muse Image's average clock (unit vector)
+    quantiles: dict               # {"p5": d, "p10": d, ...}: adults' distances to their typical clock
+    n_people: int
+
+    @classmethod
+    def from_json(cls, entry: dict) -> "GroupConcept":
+        v = entry["vectors"]
+        return cls(entry["key"], entry["label"], unit(np.asarray(v["people_centroid"], float)),
+                   unit(np.asarray(v["ai_centroid"], float)), dict(entry["quantiles"]), int(entry["n_people"]))
+
+
+def quantile_band(d: float, quantiles: dict) -> list[int]:
+    """The two published percentiles a distance sits between, as [lo, hi] (0 and 100 at the ends)."""
+    lo = 0
+    for p, v in sorted((int(k[1:]), float(v)) for k, v in quantiles.items() if k.startswith("p")):
+        if d < v:
+            return [lo, p]
+        lo = p
+    return [lo, 100]
+
+
+def score_group(vec: np.ndarray, concept: GroupConcept) -> dict:
+    """Which average a drawing is closer to, the people's or the AI's, and where its distance from the people's
+    typical clock falls among the adults' quantiles. Shape similarity only: it says nothing about how good a clock is."""
+    v = unit(np.asarray(vec, dtype=np.float64).reshape(-1))
+    d_people = float(1.0 - v @ concept.people_centroid)
+    d_ai = float(1.0 - v @ concept.ai_centroid)
+    return {
+        "concept": concept.key,
+        "mode": GROUP,
+        "d_people": round(d_people, 4),
+        "d_ai": round(d_ai, 4),
+        "closer": "both" if abs(d_people - d_ai) < GROUP_TIE else "people" if d_people < d_ai else "ai",
+        "band": quantile_band(d_people, concept.quantiles),
+        "d_ai_to_people": round(float(1.0 - concept.ai_centroid @ concept.people_centroid), 4),
+        "n_people": concept.n_people,
+    }
+
+
 class Reference:
     """web/data/draw.json plus the per-concept vector files, parsed on first use and kept. The abstract ideas
-    (draw_ideas.json beside it, when present) join the list with mode "ai_only"."""
+    (draw_ideas.json beside it, when present) join the list with mode "ai_only", and the clock test
+    (draw_clock.json) with mode "group"."""
 
-    def __init__(self, index: dict, root: Path, ideas: dict | None = None):
+    def __init__(self, index: dict, root: Path, ideas: dict | None = None, groups: dict | None = None):
         self.index = index
         self.root = Path(root)
         self.ideas = ideas or {}
+        self.groups = groups or {}
         idea_entries = [{**c, "mode": AI_ONLY} for c in self.ideas.get("concepts", [])]
-        self.entries = {c["key"]: c for c in index["concepts"] + idea_entries}
+        group_entries = [{**c, "mode": GROUP} for c in self.groups.get("concepts", [])]
+        self.entries = {c["key"]: c for c in index["concepts"] + idea_entries + group_entries}
         lib = index.get("centroids") or {}
         self.library = (list(lib["keys"]), unpack(lib["vectors"])) if lib.get("keys") else None
         self.labels = lib.get("labels", {})
@@ -528,27 +588,45 @@ class Reference:
         self._lock = threading.Lock()
 
     @classmethod
-    def load(cls, path: Path = DATA_PATH, ideas_path: Path | None = None) -> "Reference":
+    def load(cls, path: Path = DATA_PATH, ideas_path: Path | None = None, groups_path: Path | None = None) -> "Reference":
         path = Path(path)
         ideas_path = Path(ideas_path) if ideas_path else path.parent / IDEAS_PATH.name
         ideas = json.loads(ideas_path.read_text()) if ideas_path.is_file() else None
-        return cls(json.loads(path.read_text()), path.parent, ideas)
+        groups_path = Path(groups_path) if groups_path else path.parent / GROUP_PATH.name
+        groups = json.loads(groups_path.read_text()) if groups_path.is_file() else None
+        return cls(json.loads(path.read_text()), path.parent, ideas, groups)
 
     def ai_only(self, key: str) -> bool:
         return self.entries.get(key, {}).get("mode") == AI_ONLY
 
-    def concept(self, key: str) -> Concept | IdeaConcept:
+    def group(self, key: str) -> bool:
+        return self.entries.get(key, {}).get("mode") == GROUP
+
+    def prepare(self, key: str, picture: Image.Image) -> Image.Image:
+        """The picture DINOv2 sees for this concept: a group's drawings are prepared as its people's were."""
+        if self.group(key):
+            from metalesionlab.plato_clock import face_normalise
+
+            return face_normalise(picture)
+        return picture
+
+    def concept(self, key: str) -> Concept | IdeaConcept | GroupConcept:
         with self._lock:
             if key not in self._concepts:
                 entry = self.entries[key]
-                vectors = json.loads((self.root / entry["vectors"]).read_text())
-                kind = IdeaConcept if entry.get("mode") == AI_ONLY else Concept
-                self._concepts[key] = kind.from_json(entry, vectors)
+                if entry.get("mode") == GROUP:
+                    self._concepts[key] = GroupConcept.from_json(entry)
+                else:
+                    vectors = json.loads((self.root / entry["vectors"]).read_text())
+                    kind = IdeaConcept if entry.get("mode") == AI_ONLY else Concept
+                    self._concepts[key] = kind.from_json(entry, vectors)
             return self._concepts[key]
 
     def score(self, key: str, vec: np.ndarray) -> dict:
         if self.ai_only(key):  # only the AI-only fields, whatever score_ai_only may grow
             return {k: v for k, v in score_ai_only(vec, self.concept(key)).items() if k in AI_ONLY_FIELDS}
+        if self.group(key):  # only the group fields: two averages and a band, nothing per person
+            return {k: v for k, v in score_group(vec, self.concept(key)).items() if k in GROUP_FIELDS}
         out = score(vec, self.concept(key), self.library)
         if "looks_like" in out:
             out["looks_like"] = [{"key": k, "label": self.labels.get(k, k)} for k in out["looks_like"]]
@@ -560,6 +638,7 @@ class Reference:
         v = unit(np.asarray(vec, dtype=np.float64).reshape(-1))
         cents = [self.library[1]] if self.library else []
         cents += [self.concept(k).ai_centroid[None, :] for k in self.entries if self.ai_only(k)]
+        cents += [self.concept(k).people_centroid[None, :] for k in self.entries if self.group(k)]
         if not cents:
             return 0.0
         return float((1.0 - unit(np.vstack(cents)) @ v).min())
@@ -574,5 +653,9 @@ class Reference:
                                 for c in self.ideas["concepts"]]
             out["groups"] = self.ideas.get("groups", [])
             out["ideas_credits"] = self.ideas.get("credits", [])
+        if self.groups.get("concepts"):  # the clock test: labels, quantiles and the two averages' pictures only
+            out["concepts"] += [{**{k: v for k, v in c.items() if k != "vectors"}, "mode": GROUP}
+                                for c in self.groups["concepts"]]
+            out["group_credits"] = self.groups.get("credits", [])
         return out
 

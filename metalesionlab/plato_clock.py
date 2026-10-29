@@ -98,7 +98,8 @@ ADVERT = (10, 2)    # 10:10, the watch-advert time
 
 def time_label(hands, hour_to, minute_to) -> str:
     """The time drawn, from where the hands point (hour numbers 1-12): '11:10', '10:10', 'swapped' (the long hand
-    at 11 and the short one at 2 or 10), 'other' or 'none' (fewer than two hands, or a hand that can't be read)."""
+    at 11 and the short one at 2 or 10), 'other' (another time, or more than two hands) or 'none' (fewer than two
+    hands, or a hand that can't be read)."""
     try:
         hands = int(hands)
     except (TypeError, ValueError):
@@ -106,6 +107,8 @@ def time_label(hands, hour_to, minute_to) -> str:
     h, m = _num(hour_to), _num(minute_to)
     if hands < 2 or h is None or m is None:
         return "none"
+    if hands > 2:
+        return "other"
     if (h, m) == TARGET:
         return "11:10"
     if (h, m) == ADVERT:
@@ -234,6 +237,137 @@ def trend_verdict(ai: float, ai_ci: list[float], people: float) -> str:
     if people == 0 or (ai > 0) != (people > 0):
         return "contradicts"
     return "exaggerates" if abs(ai) > 2 * abs(people) else "matches"
+
+
+# ---------- the people's measure: a clock centred and scaled on its face ----------
+# The export's typical clock (drawing_pad_reference.json) was made from clocks prepared one way, so every picture
+# compared with it is prepared the same way (face_normalise): find the ink, thin it to a 1-px skeleton, fit a circle
+# to the face's outline, move and scale so the face's radius is 0.40 of a 256-px canvas, keep the ink within 1.25
+# face radii, and redraw the skeleton about 3 px wide in black, anti-aliased. numpy and scipy only (the web image).
+
+FACE_SIDE = 256
+FACE_RADIUS = 0.40     # of the canvas side
+FACE_KEEP = 1.25       # face radii of ink kept around the centre
+FACE_WIDTH = 3.0       # px, the redrawn line
+DISPLAY_SCALE = 0.3629  # the export's shared display scale for average images (bins.json): alpha = mean ink / this
+
+
+def ink_mask(img, threshold: int = 200, max_side: int = 512) -> np.ndarray:
+    """Dark ink as a boolean array, after flattening the paper (plato.flatten_paper); big pictures are shrunk first."""
+    from PIL import Image
+
+    from metalesionlab.plato import flatten_paper
+
+    img = img.convert("L")
+    if max(img.size) > max_side:
+        k = max_side / max(img.size)
+        img = img.resize((max(1, round(img.width * k)), max(1, round(img.height * k))), Image.LANCZOS)
+    return np.asarray(flatten_paper(img)) < threshold
+
+
+def thin(mask: np.ndarray, max_iter: int = 60) -> np.ndarray:
+    """Zhang-Suen thinning: the ink as 1-px-wide lines."""
+    img = np.pad(mask.astype(np.uint8), 1)
+    for _ in range(max_iter):
+        changed = False
+        for step in (0, 1):
+            p = img
+            p2, p3, p4 = p[:-2, 1:-1], p[:-2, 2:], p[1:-1, 2:]
+            p5, p6, p7 = p[2:, 2:], p[2:, 1:-1], p[2:, :-2]
+            p8, p9 = p[1:-1, :-2], p[:-2, :-2]
+            nb = [p2, p3, p4, p5, p6, p7, p8, p9]
+            b = sum(x.astype(np.int16) for x in nb)
+            seq = nb + [p2]
+            a = sum(((seq[i] == 0) & (seq[i + 1] == 1)).astype(np.int16) for i in range(8))
+            if step == 0:
+                c = (p2 * p4 * p6 == 0) & (p4 * p6 * p8 == 0)
+            else:
+                c = (p2 * p4 * p8 == 0) & (p2 * p6 * p8 == 0)
+            kill = (p[1:-1, 1:-1] == 1) & (b >= 2) & (b <= 6) & (a == 1) & c
+            if kill.any():
+                img[1:-1, 1:-1][kill] = 0
+                changed = True
+        if not changed:
+            break
+    return img[1:-1, 1:-1].astype(bool)
+
+
+def fit_face(skel: np.ndarray, tries: int = 1500) -> tuple[float, float, float]:
+    """The clock face's circle (cx, cy, r) in pixels: the circle through three ink pixels with the most ink on it
+    (RANSAC over `tries` seeded triples, radius between 0.2 and 0.62 of the drawing's size), then a least-squares fit
+    to the ink near it. The face's outline is the longest circular line in a clock."""
+    ys, xs = np.nonzero(skel)
+    h, w = skel.shape
+    if len(xs) < 20:
+        return w / 2, h / 2, max(4.0, min(w, h) * 0.4)
+    x, y = xs.astype(float), ys.astype(float)
+    # the drawing's size from its middle 98% of ink, so a stray speck doesn't stretch the radii allowed
+    span = max(np.percentile(x, 99) - np.percentile(x, 1), np.percentile(y, 99) - np.percentile(y, 1), 16.0)
+    rng = np.random.default_rng(0)
+    i, j, k = (rng.integers(0, len(x), tries) for _ in range(3))
+    ax, ay, bx, by, qx, qy = x[i], y[i], x[j], y[j], x[k], y[k]
+    den = 2 * (ax * (by - qy) + bx * (qy - ay) + qx * (ay - by))
+    good = np.abs(den) > 1e-6
+    den = np.where(good, den, 1.0)
+    a2, b2, q2 = ax * ax + ay * ay, bx * bx + by * by, qx * qx + qy * qy
+    ux = (a2 * (by - qy) + b2 * (qy - ay) + q2 * (ay - by)) / den
+    uy = (a2 * (qx - bx) + b2 * (ax - qx) + q2 * (bx - ax)) / den
+    ur = np.hypot(ax - ux, ay - uy)
+    good &= (ur > 0.2 * span) & (ur < 0.62 * span)
+    if not good.any():
+        return float(np.median(x)), float(np.median(y)), float(span / 2)
+    ux, uy, ur = ux[good], uy[good], ur[good]
+    tol = np.maximum(2.0, 0.04 * ur)
+    inliers = np.zeros(len(ux))
+    for s in range(0, len(ux), 256):  # (candidates x ink) in blocks, to keep memory small
+        d = np.hypot(x[None, :] - ux[s:s + 256, None], y[None, :] - uy[s:s + 256, None])
+        inliers[s:s + 256] = (np.abs(d - ur[s:s + 256, None]) < tol[s:s + 256, None]).sum(1)
+    cover = inliers / (2 * np.pi * ur)  # the share of the circle drawn: a long, closed line wins over a big sparse one
+    b = int(np.argmax(inliers * np.sqrt(cover)))
+    cx, cy, r = ux[b], uy[b], ur[b]
+    d = np.hypot(xs - cx, ys - cy)
+    near = np.abs(d - r) < max(3.0, 0.08 * r)
+    if near.sum() >= 12:  # Kasa: x^2 + y^2 = 2a x + 2b y + c
+        x, y = xs[near].astype(float), ys[near].astype(float)
+        A = np.c_[2 * x, 2 * y, np.ones_like(x)]
+        sol, *_ = np.linalg.lstsq(A, x * x + y * y, rcond=None)
+        a, b, c = sol
+        rr = float(np.sqrt(max(c + a * a + b * b, 1.0)))
+        if 0.5 * r < rr < 1.5 * r:
+            cx, cy, r = float(a), float(b), rr
+    return float(cx), float(cy), float(r)
+
+
+def face_normalise(img, side: int = FACE_SIDE, supersample: int = 4):
+    """A clock picture prepared like the export's: centred on its face, the face 0.40 of the side in radius, ink kept
+    within 1.25 face radii, the skeleton redrawn about 3 px wide in black. Returns an RGB PIL image."""
+    from PIL import Image, ImageDraw
+
+    skel = thin(ink_mask(img))
+    cx, cy, r = fit_face(skel)
+    k = FACE_RADIUS * side / r
+    big = side * supersample
+    out = Image.new("L", (big, big), 255)
+    g = ImageDraw.Draw(out)
+    keep = FACE_KEEP * r
+    width = max(1, round(FACE_WIDTH * supersample))
+    ys, xs = np.nonzero(skel)
+    on = set(zip(ys.tolist(), xs.tolist()))
+
+    def at(y, x):
+        return ((x - cx) * k + side / 2) * supersample, ((y - cy) * k + side / 2) * supersample
+
+    for y, x in on:
+        if np.hypot(x - cx, y - cy) > keep:
+            continue
+        p = at(y, x)
+        for dy, dx in ((0, 1), (1, 0), (1, 1), (1, -1)):
+            q = (y + dy, x + dx)
+            if q in on and np.hypot(q[1] - cx, q[0] - cy) <= keep:
+                g.line((p, at(*q)), fill=0, width=width)
+        rad = width / 2  # a round joint (and a lone pixel stays a dot)
+        g.ellipse((p[0] - rad, p[1] - rad, p[0] + rad, p[1] + rad), fill=0)
+    return out.resize((side, side), Image.LANCZOS).convert("RGB")
 
 
 # ---------- the public export: nothing per person gets in ----------

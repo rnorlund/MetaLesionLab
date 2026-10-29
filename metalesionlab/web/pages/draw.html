@@ -113,7 +113,8 @@
     results: document.getElementById('draw-results'),
     onReveal: function (e) {
       var idea = !!(e && e.concept && e.concept.mode === 'ai_only');
-      how.hidden = idea;
+      var group = !!(e && e.concept && e.concept.mode === 'group');  // the clock test explains itself on /plato/clock
+      how.hidden = idea || group;
       howIdeas.hidden = !idea;
       stakes.hidden = true;  // the cards are face up now, just below
     },
