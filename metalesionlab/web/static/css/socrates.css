@@ -23,8 +23,8 @@ body.socrates .footnote { max-width: 110ch; }
 .so-ask p { max-width: 62ch; }
 .so-hero { padding: clamp(20px, 2vw, 40px) clamp(18px, 2.2vw, 44px) clamp(16px, 1.6vw, 32px); display: flex; flex-direction: column; gap: 10px; }
 .so-hero .title-kicker { color: var(--bronze); }  /* the composed title (app.css), in the page's bronze */
-.so-hero h1 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: var(--fs-h1); letter-spacing: -0.01em; line-height: 1.05; }
-.so-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.so-hero h1 { margin: 0; font-family: var(--serif); font-weight: var(--fw-display); font-size: var(--fs-display); letter-spacing: var(--ls-display); line-height: var(--lh-display); }
+.so-lede { margin: 0; font-size: var(--fs-intro); font-weight: var(--fw-lead); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
 .so-key {
   height: 12px; margin-top: 8px; background: var(--bronze-line);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M0 11.25H24M9.75 11.25V.75H2.25V8.25H6.75V3.75H5.25M21.75 11.25V.75H14.25V8.25H18.75V3.75H17.25' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x left center / 24px 12px;
@@ -33,19 +33,19 @@ body.socrates .footnote { max-width: 110ch; }
 
 /* the visitor's drawing, from /draw */
 .so-drawing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; border-color: var(--bronze-line); background: var(--bronze-soft); }
-.so-drawing h2 { margin: 0 0 4px; font-size: clamp(15px, calc(10px + 0.3vw), 18px); }
-.so-drawing p { margin: 0; font-size: var(--fs-sm); line-height: 1.5; }
+.so-drawing h2 { margin: 0 0 4px; font-size: var(--fs-body); }
+.so-drawing p { margin: 0; font-size: var(--fs-small); line-height: 1.5; }
 .so-drawing-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 380px; }
 .so-drop { min-height: 36px; padding: 6px 12px; }
 
 /* the dialogue */
 .so-dialogue { display: flex; flex-direction: column; gap: 16px; padding: clamp(22px, 1.6vw, 40px) clamp(24px, 1.8vw, 44px); }
 .so-dialogue-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
-.so-dialogue-head h2 { font-size: clamp(15px, calc(10px + 0.3vw), 18px); }
-.so-turns { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.so-empty-lede { margin: 0 0 10px; font-size: var(--fs-sm); color: var(--muted); }
+.so-dialogue-head h2 { font-size: var(--fs-body); }
+.so-turns { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
+.so-empty-lede { margin: 0 0 10px; font-size: var(--fs-small); color: var(--muted); }
 .so-starters { display: flex; flex-wrap: wrap; gap: 8px; }
-.so-starter { border: 1px solid var(--line-2); background: var(--soft); color: var(--ink-2); border-radius: 999px; padding: 8px 14px; font-size: var(--fs-sm); line-height: 1.35; cursor: pointer; text-align: left; min-height: 38px; }
+.so-starter { border: 1px solid var(--line-2); background: var(--soft); color: var(--ink-2); border-radius: 999px; padding: 8px 14px; font-size: var(--fs-small); line-height: 1.35; cursor: pointer; text-align: left; min-height: 38px; }
 .so-starter:hover { border-color: var(--bronze); color: var(--ink); }
 .so-starter.mine { border-color: var(--bronze); background: var(--bronze-soft); color: var(--ink); font-weight: 500; }
 .so-starter:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -56,29 +56,29 @@ body.socrates .footnote { max-width: 110ch; }
 .so-turn:first-child { border-top: 0; padding-top: 4px; }
 .so-turn > :not(.so-speaker) { grid-column: 2; }
 .so-speaker { grid-column: 1; grid-row: 1 / span 6; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding-top: 2px; }
-.so-name { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.so-name { font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .so-socrates .so-name { color: var(--bronze); }
-.so-ai { font-family: var(--mono); font-size: 10px; line-height: 1; padding: 3px 5px; border-radius: 4px; border: 1px solid var(--bronze-line); color: var(--bronze); }
-.so-said { margin: 0; font-size: calc(var(--fs-body) + 1px); line-height: 1.55; font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
-.so-state { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.so-ai { font-family: var(--mono); font-size: var(--fs-label); line-height: 1; padding: 3px 5px; border-radius: 4px; border: 1px solid var(--bronze-line); color: var(--bronze); }
+.so-said { margin: 0; font-size: var(--fs-body); line-height: 1.55; font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
+.so-state { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 
 .so-trace { border: 1px solid var(--line); border-radius: 10px; background: var(--soft); }
-.so-trace > summary { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; list-style: none; }
+.so-trace > summary { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: var(--fs-small); color: var(--ink-2); cursor: pointer; list-style: none; }
 .so-trace > summary::-webkit-details-marker { display: none; }
 .so-trace > summary::before { content: ''; width: 0; height: 0; border-left: 6px solid currentColor; border-top: 4px solid transparent; border-bottom: 4px solid transparent; transition: transform 0.15s; }
 .so-trace[open] > summary::before { transform: rotate(90deg); }
 .so-steps { list-style: none; margin: 0; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px; }
-.so-step { display: flex; flex-direction: column; gap: 3px; font-size: 13px; line-height: 1.45; color: var(--ink-2); min-width: 0; }
+.so-step { display: flex; flex-direction: column; gap: 3px; font-size: var(--fs-small); line-height: 1.45; color: var(--ink-2); min-width: 0; }
 .so-step-what { color: var(--ink); }
 .so-step-res { overflow-wrap: anywhere; }
 .so-step-res a { margin-left: 6px; white-space: nowrap; }
 .so-plan, .so-checkstep { color: var(--muted); font-style: italic; }
 .so-ok { color: var(--green); font-weight: 600; }
 .so-bad { color: var(--red); font-weight: 600; }
-.so-data summary { cursor: pointer; font-size: 12px; color: var(--blue); width: fit-content; }
-.so-data pre { max-height: 240px; overflow: auto; margin: 6px 0 0; padding: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: 11.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; color: var(--ink-2); }
+.so-data summary { cursor: pointer; font-size: var(--fs-small); color: var(--blue); width: fit-content; }
+.so-data pre { max-height: 240px; overflow: auto; margin: 6px 0 0; padding: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: var(--fs-label); line-height: 1.45; white-space: pre-wrap; word-break: break-word; color: var(--ink-2); }
 
-.so-body { font-size: calc(var(--fs-body) + 1px); line-height: 1.65; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 12px; }
+.so-body { font-size: var(--fs-body); line-height: 1.65; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 12px; }
 .so-text p { margin: 0 0 10px; }
 .so-text p:last-child, .so-text ul:last-child, .so-text ol:last-child { margin-bottom: 0; }
 .so-text ul, .so-text ol { margin: 0 0 10px; padding-left: 22px; }
@@ -86,37 +86,37 @@ body.socrates .footnote { max-width: 110ch; }
 .so-quote { font-family: var(--serif); font-style: italic; color: var(--ink); }
 .so-body.refused { border-left: 4px solid var(--orange); padding-left: 14px; }
 .so-cite-wrap { white-space: nowrap; }
-.so-cite { display: inline-block; font-family: var(--mono); font-size: 11px; line-height: 1.5; background: var(--bronze-soft); color: var(--bronze-dark); border: 1px solid var(--bronze-line); border-radius: 6px; padding: 0 6px; text-decoration: none; vertical-align: 1px; white-space: normal; max-width: 100%; }
+.so-cite { display: inline-block; font-family: var(--mono); font-size: var(--fs-label); line-height: 1.5; background: var(--bronze-soft); color: var(--bronze-dark); border: 1px solid var(--bronze-line); border-radius: 6px; padding: 0 6px; text-decoration: none; vertical-align: 1px; white-space: normal; max-width: 100%; }
 a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-ask { border-left: 3px solid var(--bronze); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 4px; }
-.so-ask-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bronze); }
-.so-ask p { margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(18.5px, calc(13px + 0.45vw), 24px); line-height: 1.5; color: var(--ink); }
-.so-error { margin: 0; color: var(--red); font-size: 14px; }
+.so-ask-label { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bronze); }
+.so-ask p { margin: 0; font-family: var(--serif); font-style: italic; font-size: var(--fs-intro); line-height: 1.5; color: var(--ink); }
+.so-error { margin: 0; color: var(--red); font-size: var(--fs-small); }
 
 .so-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .so-sources { display: flex; flex-wrap: wrap; gap: 8px; }
-.so-sources a { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; padding: 6px 11px; border: 1px solid var(--line-2); border-radius: 8px; text-decoration: none; color: var(--ink); background: var(--panel); min-height: 34px; }
+.so-sources a { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-small); font-weight: 500; padding: 6px 11px; border: 1px solid var(--line-2); border-radius: 8px; text-decoration: none; color: var(--ink); background: var(--panel); min-height: 34px; }
 .so-sources a:hover { border-color: var(--bronze); color: var(--bronze-dark); }
-.so-check { margin: 0; flex: 1 1 100%; font-size: 13px; border-radius: 8px; padding: 7px 11px; color: var(--ink); }
+.so-check { margin: 0; flex: 1 1 100%; font-size: var(--fs-small); border-radius: 8px; padding: 7px 11px; color: var(--ink); }
 .so-check.ok { background: var(--green-soft); }
 .so-check.warn { background: var(--amber-soft); }
 .so-check b { font-weight: 600; }
-.so-cost { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.so-cost { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 
 .so-form { display: flex; gap: 10px; align-items: stretch; }
-.so-form textarea { flex: 1 1 auto; font-size: clamp(16px, calc(11px + 0.35vw), 20px); min-height: 54px; resize: vertical; line-height: 1.4; }
+.so-form textarea { flex: 1 1 auto; font-size: var(--fs-body); min-height: 54px; resize: vertical; line-height: 1.4; }
 .so-form textarea:disabled { background: var(--soft); }
 .so-form .btn { min-width: 104px; }
 .so-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
-.so-meta { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.so-meta { margin: 0; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .so-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .so-actions .btn { min-height: 38px; padding: 8px 12px; }
 .so-actions .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.so-toast { margin: 0; min-height: 0; font-size: 13px; color: var(--green); opacity: 0; transition: opacity 0.2s; }
+.so-toast { margin: 0; min-height: 0; font-size: var(--fs-small); color: var(--green); opacity: 0; transition: opacity 0.2s; }
 .so-toast.on { opacity: 1; }
 
 .so-how h2 { margin-bottom: 10px; }
-.so-how-list { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
+.so-how-list { margin: 0 0 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-small); line-height: 1.55; color: var(--ink-2); }
 .so-how-list b { color: var(--ink); }
 
 /* the portrait: a Muse Image doodle, kept on white paper in both themes */
@@ -124,33 +124,33 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 .so-hero-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .so-portrait { margin: 0; flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .so-portrait img { width: clamp(112px, 9vw, 220px); height: auto; aspect-ratio: 1; border-radius: 50%; background: var(--portrait-paper, var(--paper)); border: 2px solid var(--portrait-ring, var(--bronze-line)); display: block; }
-.so-portrait figcaption { font-family: var(--mono); font-size: 10.5px; color: var(--muted); text-align: center; }
+.so-portrait figcaption { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); text-align: center; }
 .so-face { width: 40px; height: 40px; border-radius: 50%; background: var(--portrait-paper, var(--paper)); border: 1.5px solid var(--portrait-ring, var(--bronze-line)); display: block; }
 
 /* modes: a two-way switch built from radio buttons (arrow keys move between them) */
 .so-modes { display: inline-flex; flex-wrap: wrap; gap: 0; margin: 0; padding: 3px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--soft); width: fit-content; max-width: 100%; }
 .so-mode { position: relative; display: inline-flex; }
 .so-mode input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
-.so-mode span { display: inline-flex; align-items: center; min-height: 38px; padding: 6px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-2); cursor: pointer; }
+.so-mode span { display: inline-flex; align-items: center; min-height: 38px; padding: 6px 16px; border-radius: 999px; font-size: var(--fs-small); font-weight: 500; color: var(--ink-2); cursor: pointer; }
 .so-mode input:checked + span { background: var(--bronze); color: var(--on-ink); }
 .so-mode input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
 .so-mode input:disabled + span { opacity: 0.6; cursor: not-allowed; }
 .so-examine-intro { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
 .so-examine-intro p { margin: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); }
 .so-concepts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; border: 0; }
-.so-concepts legend { float: left; margin-right: 6px; padding: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
+.so-concepts legend { float: left; margin-right: 6px; padding: 0; font-size: var(--fs-small); font-weight: 600; color: var(--ink); }
 .so-concept { position: relative; display: inline-flex; }
 .so-concept input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
-.so-concept span { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); font-size: 14px; color: var(--ink-2); cursor: pointer; }
+.so-concept span { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel); font-size: var(--fs-small); color: var(--ink-2); cursor: pointer; }
 .so-concept input:checked + span { border-color: var(--bronze); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--bronze); }
 .so-concept input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
 .so-concept input:disabled + span { opacity: 0.6; cursor: not-allowed; }
-.so-opening .so-ask p { font-size: clamp(20px, calc(14px + 0.5vw), 27px); }
+.so-opening .so-ask p { font-size: var(--fs-lead); font-weight: var(--fw-lead); }
 
 /* the end of an examination */
 .so-aporia { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--bronze-line); border-radius: 12px; background: var(--bronze-soft); }
 .so-verdict { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: var(--fs-body); line-height: 1.5; }
-.so-verdict dt { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); padding-top: 3px; }
+.so-verdict dt { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); padding-top: 3px; }
 .so-verdict dt.broke { color: var(--red); }
 .so-verdict dd { margin: 0; color: var(--ink); }
 .so-next { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -158,13 +158,13 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
 
 /* What is the Socratic method? */
 .so-method h2 { margin-bottom: 10px; }
-.so-method-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); }
+.so-method-list { margin: 0 0 8px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-small); line-height: 1.55; color: var(--ink-2); }
 .so-method-list b { color: var(--ink); }
 .so-method-list i { font-family: var(--serif); }
 
 @media (max-width: 720px) {
   .so-hero { padding: 20px 18px 16px; }
-  .so-lede { font-size: 16px; }
+  .so-lede { font-size: var(--fs-body); }
   .so-dialogue { padding: 18px 16px; }
   .so-turn { grid-template-columns: minmax(0, 1fr); }
   .so-turn > :not(.so-speaker) { grid-column: 1; }
@@ -172,7 +172,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
   .so-face { width: 32px; height: 32px; }
   .so-hero-row { align-items: flex-start; }
   .so-portrait img { width: 72px; }
-  .so-portrait figcaption { max-width: 80px; font-size: 9.5px; }
+  .so-portrait figcaption { max-width: 80px; font-size: var(--fs-label); }
   .so-modes { display: flex; width: 100%; }
   .so-mode { flex: 1 1 0; }
   .so-mode span { justify-content: center; width: 100%; padding: 6px 10px; text-align: center; }
@@ -180,7 +180,7 @@ a.so-cite:hover { text-decoration: underline; color: var(--bronze-dark); }
   .so-next .btn { flex: 1 1 100%; justify-content: center; text-align: center; }
   .so-form { flex-direction: column; }
   .so-form .btn { width: 100%; }
-  .so-ask p { font-size: 17.5px; }
+  .so-ask p { font-size: var(--fs-intro); }
   .so-bar { flex-direction: column; align-items: stretch; }
   .so-actions .btn { flex: 1 1 0; }
 }

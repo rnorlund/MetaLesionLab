@@ -104,7 +104,7 @@ def render(pid: str, variant: str | None = None) -> str:
         return ""
     cls = "epigraph" + (f" epigraph--{variant}" if variant in VARIANTS else "")
     who = speaker(p)
-    face = portraits.face(who)
+    face = portraits.face(who, named=True)  # the face with the speaker's name under it
     speaks = f' data-speaker="{_e(who.lower())}"' if face else ""
     return (f'<figure class="{cls}" data-passage="{_e(pid)}"{speaks}>{face}'
             f'<blockquote cite="{_e(p["source_url"])}"><p>{_e(words(p))}</p></blockquote>'
