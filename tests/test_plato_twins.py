@@ -139,3 +139,69 @@ def test_public_file_if_written():
     d = json.loads(p.read_text())
     assert pt.validate_public(d) == []
     assert {q["key"] for q in d["quotes"]} == set(pt.BY_KEY)
+
+
+# ---------- the section (/plato/scale#twins) and the link from /plato/cave ----------
+
+PUBLIC = ROOT / "public_data" / "plato_twins.json"
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="public_data/plato_twins.json not written yet")
+def test_section_and_api_render():
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+    from metalesionlab.web import plato_twins_routes as R
+
+    R._cache.clear()
+    c = TestClient(web.app_for("plato"))
+    page = c.get("/plato/scale").text
+    assert 'id="twins"' in page and 'id="twins-body"' in page and "Prisoners of the cave" in page
+    assert "/static/js/plato_twins.js" in page and "/static/css/plato_twins.css" in page
+    d = c.get("/api/plato/twins").json()
+    assert {"rows", "pairs", "predictions", "quotes", "wall"} <= set(d)
+    assert set(d["predictions"]) == {"P1", "P2"}
+    for task in ("chair", "clock"):
+        rows = d["wall"]["walls"][task]
+        assert [(r["size"], r["arm"]) for r in rows] == [("7B", "text"), ("7B", "vision"), ("32B", "text"), ("32B", "vision")]
+        assert all(len(r["tiles"]) == pt.N and len(r["read"]) == pt.N for r in rows)
+    for path in ["/static/js/plato_twins.js", "/static/css/plato_twins.css", "/static/img/plato_twins/wall_chair.webp",
+                 "/static/img/plato_twins/wall_clock.webp"]:
+        assert c.get(path).status_code == 200, path
+
+
+def test_api_reports_missing_data(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+    from metalesionlab.web import plato_twins_routes as R
+
+    monkeypatch.setattr(R, "DATA", tmp_path / "missing.json")
+    R._cache.clear()
+    assert TestClient(web.app_for("plato")).get("/api/plato/twins").status_code == 503
+    R._cache.clear()
+
+
+def test_cave_page_links_to_the_twins():
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+
+    page = TestClient(web.app_for("plato")).get("/plato/cave").text
+    assert 'href="/plato/scale#twins"' in page and "models that only read vs models that have seen pictures" in page
+
+
+def test_registered_in_the_plato_site_only():
+    from metalesionlab.web import app as web
+
+    assert web.SITE_ROUTERS["plato"].count("plato_twins_routes") == 1
+    assert "plato_twins_routes" not in web.SITE_ROUTERS["lingua"]
+
+
+def test_section_files_stay_small():
+    from metalesionlab.web import app as web
+
+    imgs = list((web.HERE / "static" / "img" / "plato_twins").glob("*"))
+    files = [web.HERE / "static" / "js" / "plato_twins.js", web.HERE / "static" / "css" / "plato_twins.css", *imgs]
+    assert sum(f.stat().st_size for f in files if f.exists()) < 400 * 1024
+    assert all(f.suffix in (".webp", ".json") for f in imgs)
