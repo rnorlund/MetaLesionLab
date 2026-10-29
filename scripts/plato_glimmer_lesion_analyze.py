@@ -59,6 +59,24 @@ def png_path(run: str, cond: str, thing: str, i: int, browser: bool = True) -> P
 
 # ---------- render ----------
 
+def classify_with_timeout(text: str, seconds: int = 20) -> dict:
+    """plato_scale.classify, but a drawing the strict renderer can't finish in 20 s (a pathological filter or a huge
+    path under heavy damage) counts as a render error, so one sample can't hang the run."""
+    import signal
+
+    def stop(*_):
+        raise TimeoutError("render took more than %d s" % seconds)
+    old = signal.signal(signal.SIGALRM, stop)
+    signal.alarm(seconds)
+    try:
+        return classify(text)
+    except TimeoutError as e:
+        return {"ok": False, "reason": "render_error", "svg": None, "image": None, "ink": None, "error": str(e)}
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old)
+
+
 def cmd_render(args):
     out_path = D / f"{args.run}_measure.json"
     res = json.loads(out_path.read_text()) if out_path.exists() else {}
@@ -69,7 +87,7 @@ def cmd_render(args):
         for t in gl.THINGS:
             rows = []
             for s in rec["things"][t.key]["draw"]:
-                c = classify(s["text"])
+                c = classify_with_timeout(s["text"])
                 row = {"i": s["i"], "reason": c["reason"], "ink": c["ink"], "n_tokens": s["n_tokens"], "stop": s["stop"]}
                 if c.get("error"):
                     row["error"] = c["error"]

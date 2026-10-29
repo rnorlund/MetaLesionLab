@@ -143,3 +143,5 @@ No paid API calls. Glimmer runs on our own GPU (axon-server01). SigLIP 2, DINOv2
 ## Deviation, Oct 29 (cost, before any main-run result was seen)
 
 The by-eye check above said all 756 descriptions would be coded by eye. To save effort, the keyword rubric is the **primary** word measure on all 756, and I code by eye a **stratified random sample of 150** instead: seeded (20261029), balanced round-robin across thing x condition (so across damage type and dose), shuffled, showing only an id and the thing, never the condition. The codes (`byeye/codes.json`) are hashed in a commit before `score` runs, as before. I report rubric-against-eye agreement on those 150 (percent agreement, and each side's yes rate). The "named vs by-eye correct" gap secondary analysis is dropped, since the sample cannot give a full curve.
+
+By-eye codes of the 150 sampled descriptions, coded blind (sheet shows only id and thing), SHA-256 of byeye/codes.json: `ee22229a5b579292e00b7b0933fb9a6d3b5f4b8ea1c9c1a7a5d336bb567046e1`. Committed before the rubric was run on the main run.
