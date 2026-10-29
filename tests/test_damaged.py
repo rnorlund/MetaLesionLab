@@ -166,7 +166,7 @@ def test_the_picture_is_a_carousel_that_starts_on_the_rocking_chair_that_becomes
         assert len(sl["caption"].split()) <= 10
         for im in sl["images"]:
             assert (STATIC / im["src"][len("/static/"):]).is_file(), im["src"]
-    assert "hc-static" in page and "rocking_chair_text-noise_3.webp" in page  # the first slide shows without JavaScript
+    assert "hc-static" in page and "dense/rocking_6.webp" in page  # the first slide shows without JavaScript
 
 
 # --- the cards ----------------------------------------------------------------------------------------------------

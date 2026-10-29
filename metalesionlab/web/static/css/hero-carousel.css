@@ -61,7 +61,7 @@
    between slides, and every slide reserves the same height. Phones (up to 640px): a horizontal scroll strip, a little
    more than two tiles showing, snapping to a tile. */
 [data-layout="row"] .hc-static { width: 100%; max-width: none; margin-inline: 0; }
-[data-layout="row"] { --hc-cols: 6; --hc-gap: clamp(8px, 1vw, 20px); width: 100%; max-width: none; margin-inline: 0; }
+[data-layout="row"] { --hc-cols: 10; --hc-gap: clamp(8px, 1vw, 20px); width: 100%; max-width: none; margin-inline: 0; }
 [data-layout="row"] .hc-strip { display: flex; justify-content: flex-start; gap: var(--hc-gap); }
 [data-layout="row"] .hc-pic { flex: 0 0 calc((100% - (var(--hc-cols) - 1) * var(--hc-gap)) / var(--hc-cols)); }
 [data-layout="row"] .hc-slides { align-items: start; }
@@ -70,3 +70,15 @@
     padding-bottom: 4px; scrollbar-width: thin; }
   [data-layout="row"] .hc-pic { flex-basis: 42%; scroll-snap-align: start; }
 }
+
+/* Steps control and the left-to-right cue. Hidden steps (.hc-off) leave the row; --hc-cols is how many show. */
+.hc-off { display: none !important; }
+.hc-more { margin: 0; width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; font-size: var(--fs-label); color: var(--muted); }
+.hc-rule { flex: 1 1 auto; height: 1px; background: var(--line-3); }
+.hc-count { display: inline-flex; align-items: center; gap: 4px; margin-inline-start: auto; font-size: var(--fs-label); color: var(--muted); }
+.hc-count-l { margin-inline-end: 6px; }
+.hc-count button { min-width: 34px; height: 30px; padding: 0 8px; border: 1px solid var(--line-3); border-radius: 999px; background: transparent;
+  color: var(--ink-2); font: inherit; cursor: pointer; }
+.hc-count button[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-2); background: var(--chart-track); }
+.hc-count button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+@media (max-width: 640px) { .hc-count { display: none; } }

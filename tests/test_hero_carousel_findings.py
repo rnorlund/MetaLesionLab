@@ -49,7 +49,7 @@ def test_the_row_slides_render_every_available_step(client, path):
     page = client.get(path).text
     assert re.search(r'data-hero-carousel data-layout="row"', page) and "fl-wide" in page
     steps = [len(s["images"]) for s in carousel_cfg(page)["slides"]]
-    assert steps == [5, 5, 6, 4]  # chair and throne: intact + steps 1-4; God: intact + five noise levels; clock: intact + three
+    assert steps == [10, 10, 10, 10]  # each row: undamaged + 9 doses, same picture (docs/plato_damage.md, denser rows)
     first = re.search(r'<div class="hc-static">.*?</p></div>', page, re.S).group(0)  # the no-JS first slide shows all of its steps
     assert first.count('class="hc-pic"') == steps[0] and f'--n:{steps[0]}' in first
 
@@ -57,7 +57,7 @@ def test_the_row_slides_render_every_available_step(client, path):
 def test_the_carousel_without_javascript_shows_its_first_slide(client):
     page = client.get("/plato/damage").text
     static = re.search(r'<div class="hc-static">.*?</p></div>', page, re.S).group(0)
-    assert static.count("<img") == 5 and "rocking chair" in static and "hidden" not in static
+    assert static.count("<img") == 10 and "rocking chair" in static and "hidden" not in static
 
 
 def test_the_findings_are_in_the_page_each_with_its_h3_more_detail_and_the_old_sections(client):
@@ -221,7 +221,7 @@ def test_browser_the_components_render_from_data(browser_run):
 
 def test_browser_without_javascript_everything_shows(browser_run):
     n = browser_run["nojs"]
-    assert n == {"static": True, "imgs": 5, "cards": 0, "panels": True}
+    assert n == {"static": True, "imgs": 10, "cards": 0, "panels": True}
 
 
 def test_browser_reduced_motion_never_moves_or_animates(browser_run):

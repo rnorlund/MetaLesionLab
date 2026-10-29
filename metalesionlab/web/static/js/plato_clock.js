@@ -208,9 +208,10 @@
       });
       pbox.appendChild(col);
     });
-    box.parentNode.insertBefore(h('p', { class: 'fl-cap pk-dl-note', text: '“How varied”: how different the age group’s clocks are from one another (spread). ' +
+    var wrap = box.parentNode;
+    wrap.parentNode.insertBefore(h('p', { class: 'fl-cap pk-dl-note', text: '“How varied”: how different the age group’s clocks are from one another (spread). ' +
       '“Far from typical”: how different its clocks look from all the full-marks clocks laid on top of each other. Both measure shape only, on a scale where 0 ' +
-      'means identical.' }), box.nextSibling);
+      'means identical.' }), wrap.nextSibling);
     $('persona-h').textContent = 'Meta’s image AI, told “Drawn by a ' + ages.ages[0] + '-year-old”, “… a ' + ages.ages[1] + '-year-old” and so on up to ' +
       ages.ages[ages.ages.length - 1];
     var lf = $('life-facts');
