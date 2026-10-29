@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Would an AI pass the clock test? · {{BRAND}}</title>
+<meta name="description" content="A common memory and thinking test asks people: “Draw a clock. Put in all the numbers and set the time to 10 past 11.” We gave Meta’s image AI, Muse Image, the same words 16 times, and set its clocks beside the average clock of 315 adults aged 20 to 80 from a USC study of aging. Then you can draw the clock yourself.">
+<meta property="og:title" content="Would an AI pass the clock test? · {{BRAND}}">
+<meta property="og:description" content="Given the words of a common clock-drawing test, Meta’s image AI drew the right time, 10 past 11, on 13 of 16 clocks. Beside it: the average clock of 315 adults.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/statviz.css">
+<link rel="stylesheet" href="/static/css/plato_firstlook.css">
+<link rel="stylesheet" href="/static/css/draw.css">
+<link rel="stylesheet" href="/static/css/plato_clock.css">
+</head>
+<body class="pk">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar">
+  <a class="brand" href="/"><b>{{BRAND}}</b></a>
+</header>
+
+<main id="main" tabindex="-1">
+
+<section class="fl pk-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Can an AI copy the ideal clock? · Plato’s <i>Republic</i>, Book X · <a href="/plato">Plato series</a></span></p>
+    <h1 id="hero-h">Would an AI pass the clock test?</h1>
+  </div>
+  <!--#epigraph:republic-597c-->
+  <div class="fl-ctx">
+    <p>Doctors use a short pen-and-paper test of memory and thinking, the MoCA. One part asks everyone the same thing: <q>Draw a clock. Put in all the numbers and set the time to 10 past 11.</q> We gave Meta’s image AI, Muse Image, those exact words 16 times. Then we set its clocks beside the clocks of <span data-k="n_analysed">315</span> adults aged 20 to 80, from a study of aging at the University of South Carolina.</p>
+    <p class="fl-small">Plato wrote about Forms: the one perfect, ideal version of a thing, which every real one copies. A painting of a bed, he said, is a copy of a copy. The blurry clock on the left was drawn by no one. It is <span data-k="n_analysed">315</span> people’s clocks laid on top of each other, and it shows what they have in common.</p>
+  </div>
+  <p class="fl-answer" id="hero-answer">Yes, by our count: Meta’s image AI drew 10 past 11, with all 12 numbers, on 13 of its 16 clocks, and never the 10:10 of watch adverts.</p>
+  <div class="fl-visual">
+    <div class="pk-pair">
+      <figure class="pk-side people">
+        <p class="pk-who"><b><span data-k="n_analysed">315</span> adults,</b> asked for 10 past 11</p>
+        <div class="pk-paper"><img id="hero-people" src="/static/img/plato_clock/abc/form_315.webp" width="512" height="512"
+          alt="All 315 adults’ clocks laid on top of each other: a soft grey ring, darker marks where the numbers go, and two blurred hands pointing to the 11 and the 2."></div>
+        <figcaption class="fl-cap">Every adult’s clock, lined up on its circle and laid on top of the others. No single drawing is shown.</figcaption>
+      </figure>
+      <figure class="pk-side ai">
+        <div class="pk-who-row">
+          <p class="pk-who"><b>Meta’s image AI,</b> 16 tries</p>
+          <div class="seg pk-seg" id="ai-seg" role="group" aria-label="Show Meta’s image AI’s clocks as">
+            <button type="button" data-v="avg" aria-pressed="true">Combined</button>
+            <button type="button" data-v="all" aria-pressed="false">All 16</button>
+          </div>
+        </div>
+        <div class="pk-paper"><img id="hero-ai" src="/static/img/plato_clock/muse_avg.webp" width="512" height="512"
+          alt="Muse Image’s 16 clocks laid on top of each other the same way: one sharp clock with all 12 numbers and its hands at 10 past 11.">
+          <div class="pk-wall" id="hero-wall" hidden></div></div>
+        <figcaption class="fl-cap" id="hero-ai-cap">Its 16 clocks, laid on top of each other the same way.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the experiment"></div>
+  <p class="fl-note" id="hero-note"></p>
+</section>
+
+<nav class="pk-jump" aria-label="On this page">
+  <a href="#points">Point by point</a>
+  <a href="#form">The ideal clock appears</a>
+  <a href="#life">Clocks from 20 to 80</a>
+  <a href="#draw">Draw the clock yourself</a>
+  <a href="#method">How we did it</a>
+</nav>
+
+<section class="pk-sec" id="points" aria-labelledby="points-h">
+  <div class="pk-sec-head">
+    <span class="pk-kicker">The test’s three points</span>
+    <h2 id="points-h">The AI’s 16 clocks, point by point</h2>
+    <p class="pk-lede">The test gives a clock up to three points: one for drawing the circle, one for all 12 numbers in the right order, and one for two hands showing 10 past 11, with the hour hand clearly shorter. We marked every clock ourselves first. Then Meta’s chat AI, Muse Spark, marked them too, with a fixed checklist we wrote for an earlier experiment.</p>
+  </div>
+  <p class="pk-key">Under each clock: the time we see, and its three points. <span class="pk-chips" aria-hidden="true"><i class="on">C</i></span> circle, <span class="pk-chips" aria-hidden="true"><i class="on">N</i></span> numbers, <span class="pk-chips" aria-hidden="true"><i class="on">H</i></span> hands; a crossed-out letter is a missed point. Below that, what Muse Spark saw.</p>
+  <div class="pk-grid" id="muse-grid"></div>
+  <div class="pk-two">
+    <div class="pk-facts" id="agree-facts"></div>
+    <div class="pk-facts" id="time-facts"></div>
+  </div>
+  <div class="pk-sub">
+    <h3>Asked to draw it in computer code</h3>
+    <p class="pk-lede-sm" id="svg-lede"></p>
+    <div class="pk-svg" id="svg-rows"></div>
+  </div>
+</section>
+
+<section class="pk-sec" id="form" aria-labelledby="form-h">
+  <div class="pk-sec-head">
+    <span class="pk-kicker">Plato: what all the copies share</span>
+    <h2 id="form-h">The ideal clock appears from the crowd</h2>
+    <p class="pk-lede">Lay 20 people’s clocks on top of each other and you get a scribble. Lay more, and a clock that no one drew comes through, with its hands at 11 and 2. Every picture here combines at least 20 people’s clocks, so no one’s own drawing can be seen.</p>
+  </div>
+  <div class="pk-emerge">
+    <figure class="pk-emerge-main">
+      <div class="pk-paper"><img id="form-img" src="/static/img/plato_clock/abc/form_020.webp" width="512" height="512" alt=""></div>
+      <div class="pk-steps">
+        <div class="seg" id="form-seg" role="group" aria-label="How many people’s clocks are laid on top of each other"></div>
+        <button type="button" class="btn btn-small" id="form-play">Play</button>
+      </div>
+      <figcaption class="fl-cap" id="form-cap"></figcaption>
+    </figure>
+    <figure class="pk-emerge-ai">
+      <div class="pk-paper"><img src="/static/img/plato_clock/muse_avg.webp" width="512" height="512" loading="lazy"
+        alt="Meta’s image AI’s 16 clocks laid on top of each other: one sharp clock at 10 past 11."></div>
+      <figcaption class="fl-cap"><b>Meta’s image AI, 16 clocks.</b> <span id="form-ai-cap"></span></figcaption>
+    </figure>
+  </div>
+  <div class="pk-levels" id="levels"></div>
+</section>
+
+<section class="pk-sec" id="life" aria-labelledby="life-h">
+  <div class="pk-sec-head">
+    <span class="pk-kicker">People’s clocks by age</span>
+    <h2 id="life-h">The life of a clock: 20 to 80</h2>
+    <p class="pk-lede" id="life-lede"></p>
+  </div>
+  <div class="pk-decades" id="decades"></div>
+  <p class="pk-row-h" id="persona-h">Meta’s image AI, told “Drawn by a 20-year-old”, “… a 24-year-old” and so on up to 80</p>
+  <div class="pk-decades pk-personas" id="personas"></div>
+  <div class="pk-two">
+    <div class="pk-facts" id="life-facts"></div>
+    <div class="pk-facts" id="persona-facts"></div>
+  </div>
+  <div class="pk-sub" id="damage">
+    <h3>An AI’s clock, damaged step by step</h3>
+    <p class="pk-lede-sm">In an earlier experiment (<a href="/plato/damage">Damage the painter</a>) we took Stable Diffusion XL, an open image AI from Stability AI, and damaged it on purpose, a little more at each step. We damaged either the part that reads the words or the part that paints the picture, by adding random noise to its artificial neurons or by switching some of them off. Here it was asked for “a simple clock face showing 8:45”. Under each picture is Muse Spark’s checklist mark out of 3 (circle, all 12 numbers, and the time asked), averaged over the 48 pictures at that step.</p>
+    <div class="seg pk-dmg-seg" id="dmg-seg" role="group" aria-label="Which part is damaged"></div>
+    <div class="pk-dmg" id="dmg-row"></div>
+    <p class="pk-flag">This is a comparison about an AI, not a diagnosis of anyone. We don’t match these clocks to an age: even the undamaged ones look less like people’s clocks than any age group’s do, because this AI draws ornate clocks.</p>
+  </div>
+</section>
+
+<section class="pk-sec pk-draw" id="draw" aria-labelledby="draw-h">
+  <div class="pk-sec-head">
+    <span class="pk-kicker">Your turn</span>
+    <h2 id="draw-h">Draw the clock yourself</h2>
+    <p class="pk-lede">Draw with a mouse, a finger or a pen, or draw on paper and upload a photo. We put your clock beside the two combined clocks, people’s and the AI’s, and tell you which one it looks more like. It isn’t a test, and your drawing isn’t kept.</p>
+  </div>
+  <div id="clock-pad"></div>
+  <div id="clock-results"></div>
+</section>
+
+<section class="pk-sec pk-method" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">How we did it, and what it can’t tell you</h2>
+  <ul>
+    <li><b>The words.</b> Meta’s image AI, Muse Image, got the test’s exact words plus one sentence about the look: <q id="m-prompt"></q> It drew 16 clocks. We wrote down the words, how we would mark the clocks and what we expected before it drew the first one (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_clock_plan.md">our plan</a>), so we couldn’t change them after seeing the results.</li>
+    <li><b>The three points</b> follow the test’s own rules. We marked every AI clock ourselves, from enlarged pictures with a grid, before any AI looked at it. We counted the hour hand as “clearly shorter” if it was at most 90% as long as the minute hand; the test doesn’t give a number and neither did our plan, so we chose it as we started marking. <span id="m-strict"></span></li>
+    <li><b>The second marker</b>, Meta’s chat AI, Muse Spark, looked at each picture and answered a fixed checklist: is there a circle, how many numbers, in what order, how many hands, and where does the shorter and the longer hand point. It can’t judge “clearly shorter” itself.</li>
+    <li><b>The ages.</b> We also gave Muse Image the same words with an age in front (<q id="m-persona"></q>) and nothing else about the person. <span id="m-ages"></span> We marked these clocks with the ages hidden, then matched them back.</li>
+    <li><b>People’s clocks</b> come from 365 drawings in the Aging Brain Cohort, a study of aging at the University of South Carolina, used with the approval of its ethics board. This site shows only pictures and numbers that combine at least 20 people: no one’s drawing, name, date or own result. <span id="m-people"></span> The study’s own raters gave people’s clocks their points.</li>
+    <li><b>“Looks like” and “typical”</b> come from a Meta AI that compares pictures (DINOv2). It turns each picture into a list of numbers that describes how it looks, and says how different two pictures look (0 means identical). Before comparing, every clock is lined up on its circle and redrawn with the same pen. This only measures overall shape. Among the adults, a clock that looked less typical did not get fewer points (<span id="m-valid"></span>), so it never says whether a clock is good or bad.</li>
+    <li><b>How varied</b> a group is: how different its clocks are from one another, on average (we call this spread). 0 would mean identical copies.</li>
+    <li><b>“Probably between”</b> gives a range that the true value very likely falls in. If the range for a change includes zero, the change is too close to call. A “link” runs from −1 to +1, where 0 means no link at all.</li>
+    <li><b>Not a diagnosis.</b> An AI drawing a clock tells you nothing about any person, and nothing here is health advice. Drawing on a screen isn’t the same as pen and paper.</li>
+  </ul>
+  <p>Read more: <a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_clock.md">the full write-up</a>. The AI’s pictures and the AI marker’s answers are kept outside this website’s code; the site shows only the results and the pictures on this page.</p>
+  <p class="pk-credit" id="credit">People’s clocks: Aging Brain Cohort, University of South Carolina (approved by its ethics board), 315 adults aged 20 to 80, shown only as combinations of 20 or more. AI clocks: Meta Muse Image 1.0. Clocks in code: Meta Muse Spark 1.3 and Muse Wonder 1.0. AI marker: Muse Spark 1.3. Damaged clocks: Stable Diffusion XL 1.0 (CreativeML OpenRAIL++-M). Picture comparison: Meta DINOv2.</p>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. Nothing here is medical advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/statviz.js"></script>
+<script src="/static/js/plato_firstlook.js"></script>
+<script src="/static/js/draw.js"></script>
+<script src="/static/js/plato_clock.js"></script>
+</body>
+</html>

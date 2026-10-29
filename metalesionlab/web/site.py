@@ -199,6 +199,8 @@ SERIES = [
      "source": "Phaedrus · the living word and its image", "title": "Seven meanings", "finding": None},
     {"path": "/plato/forms", "slug": "forms", "question": "Is there one ideal clock, bed or table?",
      "source": "Republic X · Plato’s own bed and table", "title": "The Platonic clock", "finding": None},
+    {"path": "/plato/clock", "slug": "clock", "question": "Would an AI pass the clock test?",
+     "source": "Republic X · a copy of a copy", "title": "The clock test", "finding": None},
     {"path": "/plato/cave", "slug": "cave", "question": "Can you know a thing from its shadow?",
      "source": "Republic VII · the Cave", "title": "Name the shadow", "finding": None},
     {"path": "/plato/cratylus", "slug": "cratylus", "question": "Do words naturally fit the things they name?",
@@ -225,6 +227,10 @@ _ART = {
     "chair": '<path d="M44 14v40M76 14v40M44 16h32M44 26h32M44 36h32M40 54h44l-4 8H44zM44 62v18M80 62v18M48 62l-2 14M76 62l2 14"/>',
     "forms": '<circle cx="60" cy="45" r="30"/><path d="M60 45l-13-9M60 45l13-9"/><circle cx="60" cy="45" r="2.5" fill="currentColor"/>'
              '<path d="M60 19v5M60 66v5M34 45h5M81 45h5"/>',
+    # a clock at 10 past 11, its twelve number marks
+    "clock": '<circle cx="60" cy="45" r="32"/><path d="M60 45l-9-15M60 45l15-8"/><circle cx="60" cy="45" r="2.5" fill="currentColor"/>'
+             '<path d="M60 17v4M76 21l-2 3.5M88 29l-3.5 2M92 45h-4M88 61l-3.5-2M76 69l-2-3.5M60 73v-4M44 69l2-3.5'
+             'M32 61l3.5-2M28 45h4M32 29l3.5 2M44 21l2 3.5"/>',
     "cave": '<path d="M8 84C10 36 32 8 60 8s50 28 52 76M8 84h104"/>'
             '<path d="M40 28v28M58 28v28M40 32h18M40 41h18M37 56h24v5H37zM40 61v13M58 61v13" stroke-opacity="0.35" stroke-width="4"/>'
             '<path d="M88 82c-7-3-8-12-1-19c0 6 6 7 4 13c4-2 5-6 4-9c5 6 3 13-4 15"/>',
@@ -282,6 +288,7 @@ HUB_ANSWERS = {
     "telephone": "Copied back and forth ten times, chairs drift apart, not together.",
     "scale": "Bigger open AIs break fewer drawings but never settle on one chair.",
     "phaedrus": "Text alone: Meta’s chat AI got 10 of 91 right. Listening: 82.",
+    "clock": "Meta’s AI: 13 of 16 clocks right. 315 adults: 76% right.",
 }
 
 
