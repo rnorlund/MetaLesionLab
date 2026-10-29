@@ -145,8 +145,8 @@ def test_crowd_numbers_match_the_data(client, data):
     h1 = data["h1"]
     assert f'data-values="{h1["mean_default"]:.2f},{h1["mean_persona"]:.2f},{h1["mean_people"]:.2f}"' in sec
     assert f'data-k="{data["h2"]["n_reach"]}" data-n="{h1["n_things"]}"' in sec
-    assert f'data-value="×{chair["persona_vs_default"]:.1f}"' in sec
-    assert f'data-value="×{h1["median_ratio_vs_default"]:.1f}"' in sec
+    assert f'data-take="With ages, {chair["persona_vs_default"]:.1f} times as varied as without."' in sec
+    assert f'data-take="With ages, {h1["median_ratio_vs_default"]:.1f} times as varied as without."' in sec
     lo, hi = chair["persona_vs_default_ci95"]
     assert f"probably between {lo:.2f} and {hi:.2f}" in sec  # the 95% CI, in plain words
     assert data["answer"].replace("’", "&rsquo;") in sec or data["answer"] in sec

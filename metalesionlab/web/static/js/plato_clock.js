@@ -32,17 +32,17 @@
       answer: (at > 8 ? 'Yes: ' : 'Not on the hands: ') + 'Meta’s image AI drew 10 past 11, with all 12 numbers, on ' + e.all_three +
         ' of its ' + M.n + ' clocks.',
       stats: [
-        { kind: 'dots', o: { k: full.k, n: full.n, cols: 35, tone: 'orange', value: pct(full.k / full.n), unit: '',
+        { kind: 'dots', ask: 'Adults who got all three points', o: { k: full.k, n: full.n, cols: 35, tone: 'orange', value: pct(full.k / full.n), unit: '',
             label: 'of adults got all three points' },
           q: full.k + ' of ' + full.n + ' adults got all three points for their clock. Marked by the study’s own raters. ' + P.two_points.k + ' more got two of the three points: a circle, all 12 numbers, and the hands at 10 past 11.' },
-        { kind: 'dots', o: { k: at, n: M.n, cols: 8, tone: 'blue', label: 'of the AI’s clocks show 10 past 11, by our count' },
+        { kind: 'dots', ask: 'AI clocks that show 10 past 11', o: { k: at, n: M.n, cols: 8, tone: 'blue', label: 'of the AI’s clocks show 10 past 11, by our count' },
           verdict: p1 ? { tone: p1.supported ? 'yes' : 'no', text: 'We expected 7 or fewer' } : null,
           q: 'Counted by us, not by software. ' + (ten ? ten + ' show 10:10, the watch-advert time. ' : 'None shows 10:10. ') + (sw ? cap(words(sw)) + ' have the long and short hands the wrong way round' : '') +
             (oth ? (sw ? ', and ' : '') + words(oth) + ' has a third hand' : '') + '. Meta’s chat AI, Muse Spark, marking the same clocks, counted only ' +
             count(s.times, '11:10') + ': it mixed up which hand was which.' },
-        { kind: 'pbars', o: { value: e.contour.k + ' · ' + e.numbers.k + ' · ' + e.hands.k, unit: 'of ' + M.n,
-            rows: [{ label: 'Circle', v: e.contour.k / M.n, tone: 'blue' }, { label: '12 numbers', v: e.numbers.k / M.n, tone: 'blue' },
-                   { label: 'Hands', v: e.hands.k / M.n, tone: 'blue' }],
+        { kind: 'pbars', ask: 'AI clocks that get each point', o: {
+            rows: [{ label: 'Circle', v: e.contour.k / M.n, k: e.contour.k, n: M.n, tone: 'blue' }, { label: '12 numbers', v: e.numbers.k / M.n, k: e.numbers.k, n: M.n, tone: 'blue' },
+                   { label: 'Hands', v: e.hands.k / M.n, k: e.hands.k, n: M.n, tone: 'blue' }],
             label: 'of the AI’s clocks get each point, by our count' },
           q: 'Muse Spark agreed with us on the circle and the numbers for all ' + M.n + ', but on the hands for only ' + agree.hands.agree + '.' }
       ],

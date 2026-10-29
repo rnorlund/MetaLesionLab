@@ -142,13 +142,13 @@
       var pct = Math.max(0, Math.min(100, 100 * v / max));
       rows.push('<div class="sv-bar"><span class="sv-bar-l">' + esc(labels[i] || '') + '</span>' +
         '<span class="sv-track"><i class="sv-fill sv-' + tone(tones[i], dflt[i % dflt.length]) + '" style="width:' + r1(pct) +
-        '%;--d:' + i * 120 + 'ms"></i></span><span class="sv-bar-v">' + esc(fmt(v, digits) + (o.suffix || '')) + '</span></div>');
+        '%;--d:' + i * 120 + 'ms"></i></span><span class="sv-bar-v">' + esc(fmt(v, digits)) +
+        (o.suffix ? '<span class="sv-bar-u">' + esc(o.suffix) + '</span>' : '') + '</span></div>');
     });
     var alt = o.alt || (values.map(function (v, i) { return (labels[i] || 'Bar ' + (i + 1)) + ' ' + fmt(v, digits) + (o.suffix || ''); }).join(', ') +
       (o.label ? ': ' + o.label : ''));
-    var value = '';
-    if (values.length === 2 && values[0] > 0) value = times(values[1] / values[0]);
-    return { value: value, unit: '', alt: alt,
+    // a comparison has no single headline number: each row carries its own value and units
+    return { value: '', unit: '', alt: alt,
       plot: '<div class="sv-bars" role="img" aria-label="' + esc(alt) + '">' + rows.join('') + '</div>' };
   }
 
@@ -163,15 +163,15 @@
     var value = o.value != null ? String(o.value) : g.value, unit = o.unit != null ? String(o.unit) : (o.value != null ? '' : g.unit);
     var head = value ? '<p class="sv-val" aria-hidden="true"><span class="sv-num">' + esc(value) + '</span>' +
       (unit ? '<span class="sv-unit">' + esc(unit) + '</span>' : '') + '</p>' : '';
-    var cap = o.label ? '<p class="sv-cap">' + esc(o.label) + '</p>' : '';
-    return head + '<div class="sv-plot">' + g.plot + '</div>' + cap;
+    var cap = o.label && !o.nocap ? '<p class="sv-cap">' + esc(o.label) + '</p>' : '';
+    return cap + head + '<div class="sv-plot">' + g.plot + '</div>' + (o.take ? '<p class="sv-take">' + esc(o.take) + '</p>' : '');
   }
 
   // ---------- the DOM side ----------
   function optsFrom(el) {
     var d = el.dataset || {}, o = {};
     ['n', 'k', 'cols', 'tone', 'a', 'b', 'aLabel', 'bLabel', 'aTone', 'bTone', 'points', 'at', 'mode', 'values', 'labels',
-      'tones', 'max', 'digits', 'suffix', 'value', 'unit', 'label', 'alt'].forEach(function (key) {
+      'tones', 'max', 'digits', 'suffix', 'value', 'unit', 'label', 'alt', 'nocap', 'take'].forEach(function (key) {
       if (d[key] != null) o[key] = d[key];
     });
     return o;

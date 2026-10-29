@@ -78,11 +78,11 @@ def test_every_kind_renders_from_its_data():
 
     bars = out["bars"]  # one scale: the larger bar is full
     assert re.findall(r'style="width:([\d.]+)%', bars) == ["36.1", "100"]
-    assert '<span class="sv-num">2.8×</span>' in bars and bars.count('class="sv-bar"') == 2
+    assert "sv-num" not in bars and bars.count('class="sv-bar"') == 2  # a comparison has no combined headline
 
     assert '<span class="sv-num">83%</span>' in out["custom"] and "sv-unit" not in out["custom"]
     pct = out["pct"]  # a fixed scale (data-max) and a suffix on each value
-    assert re.findall(r'style="width:([\d.]+)%', pct) == ["33", "4"] and '<span class="sv-bar-v">33%</span>' in pct
+    assert re.findall(r'style="width:([\d.]+)%', pct) == ["33", "4"] and '<span class="sv-bar-v">33<span class="sv-bar-u">%</span></span>' in pct
     assert 'aria-label="Intact 33%, Damaged 4%"' in pct
     assert "sv-val" not in out["hidden"]
     assert out["bad"].startswith("ERROR: statviz: unknown kind")

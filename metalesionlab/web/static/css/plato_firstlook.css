@@ -102,3 +102,18 @@
 @media (max-width: 600px) {
   .fl { padding: 18px 16px; }
 }
+
+/* Number blocks, top to bottom: the label (what was measured), the numbers, one takeaway line, the verdict. */
+.fl-stat { container-type: inline-size; }
+.fl-ask { margin: 0; font-size: var(--fs-h3); font-weight: 500; line-height: 1.25; color: var(--ink); text-wrap: balance; max-width: 30ch; }
+.fl-q { display: flex; flex-direction: column; gap: 4px; }
+.fl-q .fl-take { font-size: var(--fs-body); color: var(--ink-2); line-height: 1.35; }
+.fl-q .fl-verdict { font-size: var(--fs-sm); }
+.fl-fails { display: flex; flex-direction: column; gap: 12px; }
+.fl-fail-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; align-items: center; }
+.fl-fail-l { grid-column: 1 / -1; font-size: var(--fs-body); color: var(--ink-2); }
+.fl-fail-row .sv-svg { grid-column: 1; max-width: 16rem; }
+.fl-fail-v { grid-column: 2; font-size: var(--fs-h2); font-weight: var(--fw-number); line-height: 1; white-space: nowrap; }
+.fl-stat { --fs-fit: min(var(--fs-number), 24cqi); --fs-fit-sm: min(var(--fs-number-sm), 11cqi); }
+.fl-stat .sv-num { font-size: var(--fs-fit); }  /* a single number scales down to fit its column, never wraps */
+.fl-stat .sv-unit { font-size: var(--fs-fit-sm); }

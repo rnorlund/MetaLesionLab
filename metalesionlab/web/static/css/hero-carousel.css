@@ -45,3 +45,12 @@
 @media (prefers-reduced-motion: reduce) {
   .hc-fill { animation: none !important; }
 }
+
+/* Wide screens: the pictures fill the column beside the title and answer. A slide of four is a 2x2 grid of larger
+   squares, centred on the text; every slide shares one cell, so nothing jumps. Narrow screens stay stacked. */
+@media (min-width: 960px) {
+  .fl-visual:has(.hc, .hc-static) { align-self: center; justify-content: center; }
+  .hc, .hc-static { width: min(100%, clamp(27rem, 26vw, 40rem)); margin-inline: auto; }
+  .hc-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hc-strip[style*="--n: 1"], .hc-strip[style*="--n:1"], .hc-strip[style*="--n: 2"], .hc-strip[style*="--n:2"] { grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+}
