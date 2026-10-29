@@ -415,27 +415,25 @@
       var kv = plainVerdict(verdictOf(k.kc));
       stats.push({ kind: 'bars', verdict: kv,
         o: { values: [k.lang, k.draw], labels: parts, tones: ['blue', 'orange'], max: 100, value: k.lang + ' vs ' + k.draw, unit: ' in 100',
-          label: 'chairs stopped being the kind we asked for, such as a rocking chair: damage to the words part, against the drawing part',
+          label: 'chairs stopped being the kind we asked for',
           alt: 'After damage to the part that reads the words, ' + k.lang + ' in every 100 chairs stopped being the kind asked for. After the same ' +
             'amount of damage to the part that paints the picture, ' + k.draw + ' in 100 did.' },
-        q: 'Both kinds of damage changed the pictures by the same amount. We wrote this prediction down before we made any pictures' +
-          (kv.tone === 'yes' ? ', and the gap is too big to be chance.' : '.') });
+        q: 'Equal damage to each part' + (kv.tone === 'yes' ? '; too big a gap for chance.' : '.') });
     }
     if (g) {
       stats.push({ kind: 'bars', verdict: g.verdict,
         o: { values: [g.a, g.b], labels: parts, tones: ['blue', 'orange'], max: g.n, value: plus(g.a) + ' vs ' + plus(g.b), unit: ' of ' + g.n,
-          label: 'more of Stable Diffusion XL’s ' + g.n + ' drawings of God became an ordinary person, with no beard and no halo',
+          label: 'more drawings of God became an ordinary person',
           alt: 'Of Stable Diffusion XL’s ' + g.n + ' drawings of God, ' + g.a + ' more showed an ordinary person, with no beard and no halo, after the ' +
             'most damage to the part that reads the words. After the most damage to the part that paints the picture, ' + g.b + ' more did.' },
-        q: 'At the heaviest damage. We wrote this prediction down before we made any pictures. Meta’s open AI model, Muse Glimmer, judged ' +
-          'the drawings.' + (g.eye ? ' Counted by eye instead: ' + plus(g.eye[0]) + ' vs ' + plus(g.eye[1]) + '.' : '') });
+        q: 'Heaviest damage.' + (g.eye ? ' Counted by eye instead: ' + plus(g.eye[0]) + ' vs ' + plus(g.eye[1]) + '.' : '') });
     }
     if (c) {
       stats.push({ kind: 'bars',
         o: { values: [c.a, c.b], labels: ['undamaged', 'drawing part'], tones: ['ink', 'orange'], max: 100, value: c.a + '% → ' + c.b + '%', unit: '',
-          label: 'of clocks had all 12 numbers in order: undamaged, then after the lightest damage to the drawing part',
+          label: 'of clocks had all 12 numbers: undamaged, then lightly damaged',
           alt: 'Clocks with all 12 numbers in order: ' + c.a + '% undamaged, ' + c.b + '% after the lightest damage to the part that paints the picture.' },
-        q: 'Clocks drawn by Stable Diffusion XL. Damage to the words part takes away the whole clock instead.' });
+        q: 'Words-part damage erases the whole clock instead.' });
     }
     var pr = d ? protoNumbers(d) : null;
     return { stats: stats, split: d ? splitParts(d) : null, proto: pr && pr.verdict ? { verdict: pr.verdict, farther: pr.farther } : null };

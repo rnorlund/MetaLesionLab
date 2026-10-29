@@ -69,8 +69,8 @@
       q: 'Before I tell you anything: what is a chair? Draw one, and we’ll see.',
       p: function () {
         return revealed()
-          ? 'You’ve seen the machine’s chairs now, so your drawing won’t be a blind one. Draw one anyway, or go on.'
-          : 'You have 20 seconds, as the people who played Google’s Quick, Draw! had. Or press Next, and I’ll show you the machine’s chairs first.';
+          ? 'You’ve seen the machine’s chairs, so yours won’t be blind. Draw anyway, or go on.'
+          : 'You have 20 seconds, like the players of Google’s Quick, Draw! game. Or press Next to see the machine’s chairs.';
       },
       next: function () { return revealed() ? 'Next' : 'Show me the machine’s chairs'; } },
 
@@ -81,7 +81,7 @@
         return wait(700).then(function () { if (current === at && T.landing) { T.landing.cancelAuto(); T.landing.stack(true); } });
       },
       q: 'The machine drew the same chair sixteen times. Is that wisdom, or habit?',
-      p: 'We asked Meta’s Muse Image for a chair 16 times and set its drawings beside 16 people’s. Watch: stacked on top of each other, its 16 make one chair. People’s make a cloud.' },
+      p: 'Meta’s image AI, Muse Image, drew 16 chairs; 16 people drew theirs. Stacked, the machine’s make one chair, people’s a cloud.' },
 
     { page: '/plato', url: '/plato', id: 'plato', face: 'neutral', kicker: 'Measuring “varied”',
       target: function () { return phone() ? '.pc-frame' : '#hero-fig'; },
@@ -91,30 +91,30 @@
         return wait(2400).then(function () { if (current === at && T.plato) T.plato.setWho('people'); });
       },
       q: 'How would you measure how varied sixteen drawings are?',
-      p: 'We let Meta’s DINOv2 vision model turn each drawing into numbers; the spread is how different two drawings look on average. Muse Image’s chairs: 0.13. People’s: 0.36. In a moment, the picture switches to people’s chairs.' },
+      p: 'Another Meta AI, DINOv2, judged how different the drawings look (their spread). People’s chairs differed nearly three times as much: 0.36 against 0.13.' },
 
     { page: '/plato', url: '/plato#everything', face: 'questioning', kicker: 'Not just chairs', target: '#rank-chart', before: platoReady, skip: noPlato,
       q: 'Was it only the chair, or does the machine do this with everything?',
-      p: 'We tried 35 things. Each dot is one; left of the line, Muse Image drew it more alike than people did. That’s 34 of 35, typically about half as varied (0.49). Umbrellas are the most uniform as DINOv2 sees it (other vision models rank them differently); books, the one exception.' },
+      p: 'We tried 35 things; left of the line, the machine drew one more alike than people. That’s 34 of 35, typically half as varied (0.49).' },
 
     { page: '/plato', url: '/plato#variety', face: 'pointing', kicker: 'Can you talk it out of the chair?', target: '#var-fig', before: platoReady,
       skip: function () { var d = P(); return !d || !d.variety || !d.variety.conditions || !d.variety.conditions.listed; },
       q: 'If you ask it for “any kind of chair”, will it draw you a different one?',
-      p: 'No: the same slat-back chair again. But when Meta’s Muse Spark named kinds (a rocking chair, a beanbag, a wheelchair, a throne) and Muse Image drew one of each, its drawings were typically 1.30 times as varied as people’s, across 35 things. It knows the variety; the one chair is a habit.' },
+      p: 'No: the same chair again. But given a list of kinds (a rocking chair, a throne), it drew 1.30 times people’s variety. The one chair is a habit.' },
 
     { page: '/plato', url: '/plato#variety', face: 'questioning', kicker: 'People draw the plain chair too', target: '#var-kinds', before: platoReady,
       skip: function () { var d = P(); return !d || !d.variety || !d.variety.kinds || !d.variety.kinds.summary; },
       q: 'Most people draw a chair from the side. Did you? And who taught you that?',
-      p: 'Muse Glimmer labeled which kind of chair each drawing shows: 84% of people’s recognizable chairs are the plain, ordinary kind. People vary in how they draw a chair far more than in which chair they draw.' },
+      p: 'Meta’s open AI model, Muse Glimmer, sorted the drawings: 84% of people’s chairs are the plain, ordinary kind. People differ in how they draw, not what.' },
 
-    { page: '/plato', url: '/plato#second-model', face: 'neutral', kicker: 'Is it just Meta’s model?', target: '#sdxl-card', before: platoReady,
+    { page: '/plato', url: '/plato#second-model', face: 'neutral', kicker: 'Do all image AIs do this?', target: '#sdxl-card', before: platoReady,
       skip: function () { var d = P(); return !d || !d.sdxl || !d.sdxl.n_concepts; },
       q: 'Is this a law of all machines, or the habit of one?',
-      p: 'Mostly of one. From the same prompt, Stable Diffusion XL drew more varied pictures for 34 of 35 things, about 2.4 times Muse Image’s spread, though much of that is drawing style. Plato’s Chair measures a model, not all AI.' },
+      p: 'Mostly of one. Another image AI, Stable Diffusion XL, drew about 2.4 times the variety, for 34 of 35 things, though much of it is style.' },
 
-    { page: '/plato', url: '/plato#inside', face: 'pointing', kicker: 'Inside Meta’s open model', target: '#inside .pc-card', before: platoReady, skip: noPlato,
+    { page: '/plato', url: '/plato#inside', face: 'pointing', kicker: 'Inside Meta’s open AI model', target: '#inside .pc-card', before: platoReady, skip: noPlato,
       q: 'And inside a machine’s mind, do sixteen chairs stay sixteen?',
-      p: 'We showed both sets of doodles to Muse Glimmer, Meta’s open model, and measured their spread after each of its 52 layers. By the last one, Muse Image’s doodles of a thing sit almost in one place (spread 0.09), while people’s stay spread out (0.54).' },
+      p: 'Muse Glimmer reads a picture in 52 stages. By the last, the machine’s doodles of a thing are one (spread 0.09); people’s stay apart (0.54).' },
 
     { page: '/', url: '/#series', face: 'questioning', kicker: 'The Plato series', target: '#series .series-grid', id: 'series',
       // Only once another experiment of the series is on this server (decided before changing page).
@@ -124,7 +124,7 @@
       },
       skip: function () { return document.querySelectorAll('#series .series-card').length < 2; },
       q: 'Plato had more questions than chairs. Which would you put to a machine?',
-      p: 'Each card puts one of his questions to an AI and to people, and opens its results, the predictions that failed included.' },
+      p: 'Each card puts one question to an AI and to people. Failed predictions are shown too.' },
 
     { page: function () { return hasDraw() ? '/draw' : null; }, url: '/draw?thing=chair', id: 'draw', finish: true, face: 'neutral', kicker: 'Your turn',
       target: function () {  // the drawing pad if the page has one; otherwise a centered card
@@ -137,8 +137,8 @@
       },
       p: function () {
         return hasDraw()
-          ? 'Draw a chair, or anything else, in 20 seconds, and see where it lands among 200 people’s, measured the same way. Nothing you draw is stored. Then come and talk: I have more questions.'
-          : 'Everything you saw comes from Meta’s models: Muse Image drew, DINOv2 measured, Muse Spark listed kinds and Muse Glimmer labeled them.';
+          ? 'Draw a chair in 20 seconds and compare it with 200 people’s. Nothing is stored. Then come and talk.'
+          : 'Everything you saw comes from Meta’s AIs: Muse Image drew, DINOv2 compared the pictures, Muse Spark listed kinds and Muse Glimmer sorted the drawings into them.';
       },
       links: function () {
         var out = [];

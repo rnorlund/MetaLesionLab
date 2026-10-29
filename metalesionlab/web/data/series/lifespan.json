@@ -1,1 +1,1 @@
-{"finding": "From age 2 to 10, children’s drawings grow more recognizable and closer to adults’. Stable Diffusion’s training stages don’t follow that path; a small model trained on people’s chairs does, and ends narrower than its chairs in all 8 runs (not so for cats)."}
+{"finding": "Children’s chairs grow more like adults’ from age 2 to 10. A small AI trained on people’s chairs grows that way too; a big image AI doesn’t."}

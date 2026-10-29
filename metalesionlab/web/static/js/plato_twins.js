@@ -217,12 +217,17 @@
     var stage = el('div', { 'class': 'tw-stage' });
     var key = el('p', { 'class': 'tw-key' });
     var note = el('p', { 'class': 'tw-note' });
+    var extra = el('details', { 'class': 'how-we-know' }, '<summary>How we know</summary><p></p>');
     function show(task) {
       stage.innerHTML = '';
       stage.appendChild(pairs(d, task));
       if (window.StatViz) window.StatViz.renderAll(stage);
       key.innerHTML = '<i aria-hidden="true"></i>' + esc(T.key[task]);
-      note.textContent = T.note[task];
+      // two short sentences stay in view; the rest of the note is under "How we know"
+      var sents = T.note[task].split(/(?<=[.?!])\s+/), more = sents.slice(2).join(' ');
+      note.textContent = sents.slice(0, 2).join(' ');
+      extra.hidden = !more;
+      extra.querySelector('p').textContent = more;
       chips.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-task') === task ? 'true' : 'false'); });
     }
     [['chair', 'Draw a chair'], ['clock', 'Draw a clock at 10 past 11']].forEach(function (c) {
@@ -234,6 +239,7 @@
     host.appendChild(key);
     host.appendChild(stage);
     host.appendChild(note);
+    host.appendChild(extra);
     var det = el('details', { 'class': 'sc-numbers' });
     det.appendChild(el('summary', {}, 'All the numbers'));
     det.appendChild(table(d));

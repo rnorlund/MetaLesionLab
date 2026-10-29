@@ -218,8 +218,10 @@
     var box = h('div', { class: 'fg-findings', role: 'list' });
     function card(cls, head, paras, numbers) {
       box.appendChild(h('div', { class: 'fg-card ' + cls, role: 'listitem' }, [h('h3', null, head)]
-        .concat(paras.map(function (p) { return h('p', null, p); }))
-        .concat(numbers ? [h('p', { class: 'fg-num' }, numbers)] : [])));
+        .concat(paras.slice(0, 1).map(function (p) { return h('p', null, p); }))  // one short paragraph; the rest is under "How we know"
+        .concat(paras.length > 1 || numbers ? [h('details', { class: 'how-we-know' }, [h('summary', null, 'How we know')]
+          .concat(paras.slice(1).map(function (p) { return h('p', null, p); }))
+          .concat(numbers ? [h('p', { class: 'fg-num' }, numbers)] : []))] : [])));
     }
     // Q1
     var lows = dd.filter(function (d) { return d >= 0.4 && d <= 0.8; }).map(function (d) { return at(cv4, 'recog', d); });
