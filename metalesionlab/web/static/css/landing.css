@@ -101,10 +101,11 @@ body.landing .tour-offer { left: auto; right: 16px; }  /* keep the tour invitati
 .band-paper { background: var(--ground-warm); }
 .band-gray { background: var(--ground); }
 .band-ink { background: var(--band-ink); color: var(--bar-ink-2); }
-/* The quote band below the reveal: three verified passages in a row (epigraph.css), between hairlines. */
+/* The quote band below the reveal: verified passages (epigraph.css), one at a time (quote-carousel.css), between hairlines. */
 .quote-band { border-bottom: 1px solid var(--line-warm); }
 .quote-band-in { padding-top: clamp(44px, 3.2vw, 88px); padding-bottom: clamp(48px, 3.4vw, 92px); display: flex; flex-direction: column; gap: clamp(22px, 1.8vw, 44px); }
 .landing .quote-band-h { font-weight: 500; max-width: var(--measure); }
+.quote-band-in:has(> .epigraph-band.qc) > .quote-band-h { align-self: center; text-align: center; }  /* over the carousel's one quote */
 .section { padding-top: clamp(72px, 5vw, 128px); padding-bottom: clamp(80px, 5.5vw, 140px); display: flex; flex-direction: column; gap: clamp(28px, 2vw, 48px); }
 .section-head { display: flex; flex-direction: column; gap: 10px; }
 .section-head > p { max-width: var(--measure); }
