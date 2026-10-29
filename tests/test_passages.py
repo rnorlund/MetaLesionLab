@@ -93,7 +93,7 @@ PLACED = {  # each series page: one epigraph, just below its shared title header
     "plato_lifespan.html": "meno-85c", "plato_telephone.html": "republic-597e", "plato_cave.html": "republic-518b",
     "plato_cratylus.html": "cratylus-439b", "plato_atlas.html": "metaphysics-980a21",
     "plato_inside.html": "metaphysics-981a28", "plato_damage.html": "timaeus-28a", "plato_bird.html": "theaetetus-155d",
-    "plato_forms.html": "republic-596a",
+    "plato_forms.html": "republic-596a", "plato_clock.html": "republic-597c",
 }
 
 

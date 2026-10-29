@@ -148,7 +148,8 @@ def test_reference_schema(ref):
 
 
 def test_reference_vectors_reproduce_the_shipped_distances(ref):
-    for key in [k for k in ref.entries if not ref.ai_only(k)]:  # the abstract ideas have no people: test_plato_ideas.py
+    # the abstract ideas have no people (test_plato_ideas.py); the clock test has only averages (test_plato_clock.py)
+    for key in [k for k in ref.entries if not ref.ai_only(k) and not ref.group(k)]:
         c = ref.concept(key)
         e = ref.entries[key]
         assert c.ai.shape == (e["n_ai"], 768) and c.people.shape == (200, 768) and c.pca_axes.shape == (2, 768)
