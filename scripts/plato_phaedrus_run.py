@@ -7,6 +7,11 @@ Usage:
   python scripts/plato_phaedrus_run.py pilot               2 clips and 2 Spark calls into pilot/ (not analysed)
   python scripts/plato_phaedrus_run.py retest              every clip transcribed again (added after the main run,
                                                            to see whether the transcripts' stray words recur)
+  python scripts/plato_phaedrus_run.py transcribe --root $PLATO_PHAEDRUS_DIR/v2 --budget 1.5
+  python scripts/plato_phaedrus_run.py spark --root $PLATO_PHAEDRUS_DIR/v2 --no-control --budget 1.5
+                                                           v2, the Kokoro clips remade with stronger stress (a revision
+                                                           after the run): only their transcripts and Spark's guesses;
+                                                           the CAPITALS and italics control doesn't depend on the clips
 
 Each clip gets 0.5 s of silence before and after (the synthetic voices start at once, and Voice Transcribe
 sometimes returns nothing for clips without a lead-in) and the language hint English. Spark gets the fixed
@@ -48,8 +53,9 @@ def append(path: Path, entry: dict) -> None:
 
 
 class Budget:
-    def __init__(self, root: Path):
+    def __init__(self, root: Path, cap: float = P.BUDGET_USD):
         self.log = root / "spend.jsonl"
+        self.cap = cap
 
     def mine(self) -> float:
         return sum(e["usd"] for e in jsonl(self.log))
@@ -58,8 +64,8 @@ class Budget:
         shared = meta_api.spent()
         if shared >= P.SHARED_STOP:
             raise SystemExit(f"stopping: the shared ledger is at ${shared:.2f} (stop at ${P.SHARED_STOP:.2f})")
-        if self.mine() + estimate > P.BUDGET_USD:
-            raise SystemExit(f"stopping: this task has spent ${self.mine():.4f} of ${P.BUDGET_USD:.2f}")
+        if self.mine() + estimate > self.cap:
+            raise SystemExit(f"stopping: this task has spent ${self.mine():.4f} of ${self.cap:.2f}")
 
     def book(self, kind: str, usd: float, **extra) -> None:
         append(self.log, {"kind": kind, "usd": round(usd, 6), **extra})
@@ -114,7 +120,7 @@ def run_transcribe(root: Path, api: MetaAPI, budget: Budget, name: str = "transc
         print(f"{family:<7}{voice:<11}{name:<9} {r['transcript']!r}")
 
 
-def run_spark(root: Path, api: MetaAPI, budget: Budget) -> None:
+def run_spark(root: Path, api: MetaAPI, budget: Budget, control: bool = True) -> None:
     out = root / "spark.jsonl"
     done = {(e["condition"], e["item"]) for e in jsonl(out)}
     rng = random.Random(P.SEED)
@@ -125,7 +131,7 @@ def run_spark(root: Path, api: MetaAPI, budget: Budget) -> None:
         k = int(e["clip"].split("_")[0])
         trials.append(("transcript", f"{e['family']}/{e['voice']}/{e['clip']}", e["transcript"], k,
                        {"family": e["family"], "voice": e["voice"]}))
-    for style in CONTROL_STYLES:
+    for style in CONTROL_STYLES if control else ():
         for k in range(P.N):
             for r in range(CONTROL_REPEATS):
                 trials.append((style, f"{style}/{k}/{r}", P.stressed_text(k, style), k, {}))
@@ -157,13 +163,17 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("step", choices=["transcribe", "spark", "pilot", "retest"])
     ap.add_argument("--root", type=Path, default=P.PHAEDRUS_DIR)
+    ap.add_argument("--budget", type=float, default=P.BUDGET_USD, help="this run's own cap, summed in ROOT/spend.jsonl")
+    ap.add_argument("--no-control", action="store_true", help="spark: the transcripts only, not the CAPITALS/italics control")
     args = ap.parse_args()
     print(f"ledger {meta_api.LEDGER}: ${meta_api.spent():.4f}")
-    api, budget = MetaAPI(), Budget(args.root)
+    api, budget = MetaAPI(), Budget(args.root, args.budget)
     if args.step == "retest":  # added after the main run (a deviation): every clip transcribed a second time
         run_transcribe(args.root, api, budget, "transcripts_retest.jsonl")
+    elif args.step == "spark":
+        run_spark(args.root, api, budget, control=not args.no_control)
     else:
-        {"transcribe": run_transcribe, "spark": run_spark, "pilot": run_pilot}[args.step](args.root, api, budget)
+        {"transcribe": run_transcribe, "pilot": run_pilot}[args.step](args.root, api, budget)
     print(f"this task: ${budget.mine():.4f}; ledger: ${meta_api.spent():.4f}")
 
 

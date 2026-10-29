@@ -3,7 +3,12 @@ $PLATO_PHAEDRUS_DIR, runs the prosody reader on every clip and tests the pre-reg
 (docs/plato_phaedrus_plan.md).
 
 Usage:
-  python scripts/plato_phaedrus_analyze.py [--write]
+  python scripts/plato_phaedrus_analyze.py [--v1] [--write]
+
+By default the Kokoro family is v2 (the clips remade with stronger stress after a listener couldn't hear v1's: a
+revision after the run, not pre-registered; $PLATO_PHAEDRUS_DIR/v2), and the macOS and eSpeak families are the
+first run's, unchanged. --v1 analyses the first run alone, as pre-registered. Either way the prosody reader aligns
+to the first run's neutral Kokoro readings, its templates. With --write both analyses are written: the page shows v2.
 
 --write also writes
   public_data/plato_phaedrus.json            the statistics, every transcript and every guess (no audio)
@@ -28,10 +33,14 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from metalesionlab import plato_phaedrus as P  # noqa: E402
-from plato_phaedrus_stimuli import ESPEAK_VOICES, FOCUS, KOKORO_TEMPLATES, KOKORO_TEST, SAY_VOICES  # noqa: E402
+from plato_phaedrus_stimuli import (ESPEAK_VOICES, FOCUS, FOCUS_V2, KOKORO_TEMPLATES, KOKORO_TEST,  # noqa: E402
+                                    SAY_VOICES, V2_PICK, V2_SUBDIR)
 
 FAMILIES = {"kokoro": KOKORO_TEST, "say": SAY_VOICES, "espeak": ESPEAK_VOICES}
-FAMILY_LABEL = {"kokoro": "Kokoro + WORLD focus", "say": "macOS say commands", "espeak": "eSpeak NG emphasis"}
+FAMILY_LABEL_V1 = {"kokoro": "Kokoro + WORLD focus", "say": "macOS say commands", "espeak": "eSpeak NG emphasis"}
+# what the page calls each family in v2 (plain words: the page is for everyone)
+FAMILY_LABEL_V2 = {"kokoro": "Kokoro computer voices, remade (version 2)", "say": "macOS computer voices, first recordings",
+                   "espeak": "eSpeak computer voices, first recordings"}
 CLIPS = [f"{i}_{w.lower()}" for i, w in enumerate(P.WORDS)]
 
 
@@ -77,11 +86,12 @@ def templates(root: Path) -> list[P.Template]:
     return out
 
 
-def run_reader(root: Path, temps: list[P.Template]) -> list[dict]:
+def run_reader(roots: dict[str, Path], temps: list[P.Template]) -> list[dict]:
+    """The reader on every tested clip; roots: each family's data folder."""
     rows = []
     for family, voices in FAMILIES.items():
         for v in voices:
-            folder = root / "stimuli" / family / v
+            folder = roots[family] / "stimuli" / family / v
             meta = json.loads((folder / "meta.json").read_text())
             use = [t for t in temps if t.name != v]  # a Kokoro voice never meets its own template
             for k, name in enumerate(CLIPS):
@@ -102,9 +112,18 @@ def run_reader(root: Path, temps: list[P.Template]) -> list[dict]:
     return rows
 
 
-def analyse(root: Path) -> dict:
-    trans = jsonl(root / "transcripts.jsonl")
-    spark = jsonl(root / "spark.jsonl")
+def analyse(root: Path, kokoro_root: Path | None = None) -> dict:
+    """The pre-registered analysis. With kokoro_root (v2), the Kokoro family's clips, transcripts and Spark answers
+    come from there, the other families' from root; the templates and the CAPITALS/italics control always from root."""
+    trans_first = jsonl(root / "transcripts.jsonl")
+    spark_first = jsonl(root / "spark.jsonl")
+    trans, spark = trans_first, spark_first
+    roots = {f: root for f in FAMILIES}
+    if kokoro_root is not None:
+        roots["kokoro"] = kokoro_root
+        trans = jsonl(kokoro_root / "transcripts.jsonl") + [e for e in trans_first if e["family"] != "kokoro"]
+        spark = [e for e in jsonl(kokoro_root / "spark.jsonl") if e["condition"] == "transcript"] + \
+            [e for e in spark_first if not (e["condition"] == "transcript" and e["family"] == "kokoro")]
     temps = templates(root)
 
     # --- H1: the shadow
@@ -152,10 +171,11 @@ def analyse(root: Path) -> dict:
     n_b = len(all_t) - n_a
     h1["lower_case_i_test"] = {"neutral_or_I_stressed": [a_low, n_a], "other_word_stressed": [b_low, n_b],
                                "fisher_p_two_sided": float(fisher_exact([[a_low, n_a - a_low], [b_low, n_b - b_low]])[1])}
-    # exploratory: every clip transcribed a second time (added after the main run)
+    # exploratory: every clip of the first run transcribed a second time (added after the main run); always against
+    # the first run's own transcripts
     retest = jsonl(root / "transcripts_retest.jsonl")
     if retest:
-        first = {(e["family"], e["voice"], e["clip"]): e["transcript"] for e in trans}
+        first = {(e["family"], e["voice"], e["clip"]): e["transcript"] for e in trans_first}
         pairs = [(first[(e["family"], e["voice"], e["clip"])], e["transcript"]) for e in retest
                  if (e["family"], e["voice"], e["clip"]) in first]
 
@@ -208,7 +228,7 @@ def analyse(root: Path) -> dict:
     spark_usd = sum(e.get("usd", 0) for e in spark)
 
     # --- H4: the living word
-    rows = run_reader(root, temps)
+    rows = run_reader(roots, temps)
     clusters = [f"{r['family']}/{r['voice']}" for r in rows]
     h4 = acc_block([r["guess"] == r["truth"] for r in rows], clusters)
     h4["by_family"] = {}
@@ -230,7 +250,7 @@ def analyse(root: Path) -> dict:
                                       for f in FAMILIES} for c in P.CUES}
 
     return {"h1": h1, "h2": h2, "h3": h3, "h4": h4, "voices": voices, "reader_rows": rows, "spark": spark,
-            "templates": temps, "spark_usd": spark_usd}
+            "templates": temps, "spark_usd": spark_usd, "transcripts": trans, "version": "v2" if kokoro_root else "v1"}
 
 
 def pct(x) -> str:
@@ -286,48 +306,175 @@ def round_block(b):
     return b
 
 
-def write(a: dict, root: Path) -> None:
-    spend = jsonl(root / "spend.jsonl")
-    usd = {"transcription": round(sum(e["usd"] for e in spend if e["kind"] == "asr"), 4),
-           "spark": round(sum(e["usd"] for e in spend if e["kind"] == "chat"), 4)}
+def word_cues(x: np.ndarray, spans) -> dict:
+    """Per word span (s): pitch peak (90th percentile of voiced F0, Hz), loudness peak (90th percentile of the 30 ms
+    level, dB) and length (s), with the reader's own pitch tracker and level meter."""
+    f0, db = P.pitch_track(x), P.level_db(x)
+    n = min(len(f0), len(db))
+    f0, db = f0[:n], db[:n]
+    out = {"f0": [], "db": [], "dur": []}
+    for s, e in spans:
+        i0 = int(np.floor(s / P.HOP_S))
+        i1 = max(i0 + 1, int(np.ceil(e / P.HOP_S)))
+        seg = f0[i0:i1]
+        seg = seg[~np.isnan(seg)]
+        out["f0"].append(float(np.percentile(seg, 90)) if len(seg) else np.nan)
+        out["db"].append(float(np.percentile(db[i0:i1], 90)))
+        out["dur"].append(e - s)
+    return {k: np.array(v) for k, v in out.items()}
+
+
+def onset_spike(x: np.ndarray, a: float, sr: int = P.SR) -> dict:
+    """How abrupt the entry into a word starting at a (s) is: the largest spectral flux (mean rise of the log spectrum,
+    dB; 25 ms Hann windows every 5 ms, floored 70 dB under the loudest frame) and the largest rise of the frame level
+    (dB per 5 ms), from 60 ms before a to 40 ms after it."""
+    win, hop = int(0.025 * sr), int(0.005 * sr)
+    n = 1 + (len(x) - win) // hop
+    fr = np.stack([x[i * hop:i * hop + win] for i in range(n)]) * np.hanning(win)
+    spec = 20 * np.log10(np.abs(np.fft.rfft(fr, axis=1)) + 1e-9)
+    spec = np.maximum(spec, spec.max() - 70)
+    lev = 10 * np.log10(np.mean(fr ** 2, axis=1) + 1e-12)
+    lev = np.maximum(lev, lev.max() - 70)
+    flux = np.r_[0, np.mean(np.maximum(0, np.diff(spec, axis=0)), axis=1)]
+    rise = np.r_[0, np.diff(lev)]
+    t = (np.arange(n) * hop + win / 2) / sr
+    sel = (t >= a - 0.06) & (t <= a + 0.04)
+    return {"flux": float(flux[sel].max()), "rise": float(rise[sel].max())}
+
+
+def manipulation(kokoro_root: Path) -> dict:
+    """v2's manipulation check. Each stressed word against the same word in its voice's neutral reading, on the
+    frame-aligned word spans: pitch (semitones), loudness (dB) and length (ratio); "vs the rest" subtracts the median
+    change of the other six words (for length, divides by it). Clips are peak-normalised, so the rest of a stressed
+    sentence is quieter than the neutral one: "vs the rest" is what a listener compares."""
+    rows = []
+    for v in KOKORO_TEST:
+        folder = kokoro_root / "stimuli" / "kokoro" / v
+        meta = json.loads((folder / "meta.json").read_text())
+        xn, sn = load(folder / "neutral.wav"), meta["clips"]["neutral"]["word_spans_audio"]
+        neu = word_cues(xn, sn)
+        for k, name in enumerate(CLIPS):
+            c = meta["clips"][name]
+            x, sp = load(folder / f"{name}.wav"), c["word_spans_audio"]
+            w = word_cues(x, sp)
+            # the entry into the word against the neutral reading at the same spot (not for "I", which starts the clip)
+            on = onset_spike(x, sp[k][0]) if k else None
+            on0 = onset_spike(xn, sn[k][0]) if k else None
+            gap = round(1000 * ((sp[k][0] - sp[k - 1][1]) - (sn[k][0] - sn[k - 1][1]))) if k else 0
+            d_st, d_db, r = 12 * np.log2(w["f0"] / neu["f0"]), w["db"] - neu["db"], w["dur"] / neu["dur"]
+            o = [j for j in range(P.N) if j != k]
+            rows.append({"voice": v, "clip": name, "truth": k, "st": round(float(d_st[k]), 2), "db": round(float(d_db[k]), 2),
+                         "dur": round(float(r[k]), 3), "rel_st": round(float(d_st[k] - np.nanmedian(d_st[o])), 2),
+                         "rel_db": round(float(d_db[k] - np.nanmedian(d_db[o])), 2),
+                         "rel_dur": round(float(r[k] / np.nanmedian(r[o])), 3), "gap_added_ms": gap,
+                         "onset_flux_ratio": round(on["flux"] / on0["flux"], 3) if k else None,
+                         "onset_rise_excess_db": round(on["rise"] - on0["rise"], 2) if k else None,
+                         "highest": bool(np.nanargmax(w["f0"]) == k), "loudest": bool(np.nanargmax(w["db"]) == k),
+                         "longest_vs_neutral": bool(np.nanargmax(r) == k)})
+
+    def med(key, sub=None):
+        vals = np.array([x[key] for x in (sub or rows)])
+        return {"median": round(float(np.median(vals)), 2), "min": round(float(vals.min()), 2), "max": round(float(vals.max()), 2)}
+    keys = ("rel_st", "rel_db", "rel_dur", "st", "db", "dur")
+    by_word = {P.WORDS[k]: {key: med(key, [x for x in rows if x["truth"] == k])["median"] for key in keys}
+               for k in range(P.N)}
+    for k in range(P.N):
+        by_word[P.WORDS[k]]["gap_added_ms"] = med("gap_added_ms", [x for x in rows if x["truth"] == k])["median"]
+    later = [x for x in rows if x["truth"] > 0]
+    onset = {"flux_ratio": med("onset_flux_ratio", later), "rise_excess_db": med("onset_rise_excess_db", later),
+             "clips": len(later)}
+    about = ("Each stressed word against the same word in its voice's neutral reading, on the frame-aligned word spans: "
+             "pitch peak (semitones), loudness peak (dB), length (ratio). rel_*: minus the median change of the other six "
+             "words (length: divided by it), which is what a listener compares; the clips are peak-normalised. "
+             "gap_added_ms: the silence or transition before the word, longer than in the neutral reading. onset: the "
+             "entry into the word (not \"I\") against the neutral reading at the same spot: spectral-flux ratio and extra "
+             "level rise per 5 ms (the v1 candidates with a cut-in pause had about +20 dB).")
+    return {"about": about,
+            "summary": {key: med(key) for key in keys}, "by_word": by_word, "onset": onset,
+            "highest": sum(x["highest"] for x in rows), "loudest": sum(x["loudest"] for x in rows),
+            "longest_vs_neutral": sum(x["longest_vs_neutral"] for x in rows), "clips": len(rows), "rows": rows}
+
+
+def report_manipulation(m: dict) -> None:
+    s = m["summary"]
+    print(f"v2 manipulation (vs the rest of the sentence): pitch {s['rel_st']['median']:+.1f} st [{s['rel_st']['min']:+.1f}, "
+          f"{s['rel_st']['max']:+.1f}], loudness {s['rel_db']['median']:+.1f} dB [{s['rel_db']['min']:+.1f}, {s['rel_db']['max']:+.1f}], "
+          f"length x{s['rel_dur']['median']:.2f} [{s['rel_dur']['min']:.2f}, {s['rel_dur']['max']:.2f}]; the focus word highest in "
+          f"{m['highest']}/{m['clips']}, loudest in {m['loudest']}/{m['clips']}, most lengthened in {m['longest_vs_neutral']}/{m['clips']}")
+    for w, b in m["by_word"].items():
+        print(f"   {w:<6} {b['rel_st']:+5.1f} st {b['rel_db']:+5.1f} dB x{b['rel_dur']:.2f}  (vs its neutral: {b['st']:+5.1f} st "
+              f"{b['db']:+5.1f} dB x{b['dur']:.2f})  gap +{b['gap_added_ms']:.0f} ms")
+    o = m["onset"]
+    print(f"   onset vs neutral ({o['clips']} clips): spectral flux x{o['flux_ratio']['median']:.2f} (max x{o['flux_ratio']['max']:.2f}), "
+          f"level rise {o['rise_excess_db']['median']:+.1f} dB per 5 ms (max {o['rise_excess_db']['max']:+.1f})")
+
+
+def tile(b):
+    return {"k": b["k"], "n": b["n"], "acc": round(b["acc"], 4), "ci": [round(x, 4) for x in b["ci"]],
+            "p": b["p_above_chance"]}
+
+
+def spend_of(folder: Path) -> dict:
+    spend = jsonl(folder / "spend.jsonl")
+    return {"transcription": round(sum(e["usd"] for e in spend if e["kind"] == "asr"), 4),
+            "spark": round(sum(e["usd"] for e in spend if e["kind"] == "chat"), 4)}
+
+
+def write(a: dict, a1: dict, root: Path, kokoro_root: Path, manip: dict) -> None:
+    """a: the analysis with the v2 Kokoro clips (what the page shows); a1: the first run's, as pre-registered."""
+    usd = {"first_run": spend_of(root), "v2": spend_of(kokoro_root)}
     stats = {k: round_block(a[k]) for k in ("h1", "h2", "h3", "h4")}
-    for k in ("confusion",):
-        pass
+    stats_v1 = {k: round_block(a1[k]) for k in ("h1", "h2", "h3", "h4")}
+    how = {"inside": "with stress added by editing Kokoro's own predicted timing, pitch and energy before it renders, "
+                     "then raising the word's level",
+           "world": "with stress added by the WORLD vocoder (pyworld, MIT)"}[FOCUS_V2["method"]]
+    revision = ("v2: listening with his eyes closed, one of us couldn't tell which word the first Kokoro clips "
+                "stressed. The four Kokoro voices were remade with focus as large as speakers make it (candidate "
+                f"{V2_PICK} of a blind listening test), transcribed again and read again by Spark and the reader. A revision "
+                "after the run, not pre-registered. The macOS and eSpeak NG clips, the CAPITALS and italics control and "
+                "the reader's templates are the first run's. The first run's numbers, as pre-registered, are under \"v1\".")
+    kokoro_v1 = lambda rows: [e for e in rows if e.get("family") == "kokoro"]  # noqa: E731
     public = {
         "about": "Seven meanings (/plato/phaedrus): \"I never said she stole my money.\" spoken with each word stressed in "
                  "13 synthetic voices, written down by Meta's Voice Transcribe, read by Muse Spark from the transcript and "
                  "from CAPITALS or italics, and read from the sound by a plain prosody reader. Pre-registered in "
                  "docs/plato_phaedrus_plan.md; results in docs/plato_phaedrus.md. Written by scripts/plato_phaedrus_analyze.py.",
+        "stimulus_version": "v2", "revision": revision,
         "license": "Our statistics, transcripts and model answers: Apache 2.0. The audio in plato_phaedrus_audio/ is "
-                   "Kokoro-82M's voice (hexgrad, Apache-2.0) with stress added by the WORLD vocoder (pyworld, MIT). The macOS "
-                   "and eSpeak NG clips are not included.",
+                   f"Kokoro-82M's voice (hexgrad, Apache-2.0) {how} (v2). The macOS and eSpeak NG clips are not included.",
         "sentence": P.SENTENCE, "words": list(P.WORDS),
         "meanings": [{"word": m.word, "gloss": m.gloss, "option": m.option} for m in P.MEANINGS],
         "prompt": P.PROMPT, "models": {"transcribe": "muse-voice-transcribe-1.0", "spark": "muse-spark-1.3",
                                        "spark_reasoning_effort": "minimal"},
-        "families": {f: {"label": FAMILY_LABEL[f], "voices": v} for f, v in FAMILIES.items()},
-        "focus": FOCUS, "chance": P.CHANCE, "cost_usd": usd, **stats,
-        "transcripts": [{k: v for k, v in e.items() if k in ("family", "voice", "clip", "transcript")}
-                        for e in jsonl(root / "transcripts.jsonl")],
+        "families": {f: {"label": FAMILY_LABEL_V2[f], "voices": v} for f, v in FAMILIES.items()},
+        "focus": {"v1": FOCUS, "v2": FOCUS_V2}, "manipulation_v2": manip, "chance": P.CHANCE, "cost_usd": usd, **stats,
+        "transcripts": [{k: v for k, v in e.items() if k in ("family", "voice", "clip", "transcript")} for e in a["transcripts"]],
         "spark_trials": [{k: e[k] for k in ("condition", "item", "text", "truth", "choice", "answer", "order")}
                          for e in a["spark"]],
         "reader": [{k: r[k] for k in ("family", "voice", "clip", "truth", "guess", "raw_guess", "cue_guess", "bounds",
                                       "prominence")} for r in a["reader_rows"]],
+        "v1": {"about": "The first run, as pre-registered: the Kokoro clips with v1's WORLD focus (focus.v1).", **stats_v1,
+               "kokoro_transcripts": [{k: v for k, v in e.items() if k in ("family", "voice", "clip", "transcript")}
+                                      for e in kokoro_v1(a1["transcripts"])],
+               "kokoro_spark_trials": [{k: e[k] for k in ("condition", "item", "text", "truth", "choice", "answer", "order")}
+                                       for e in a1["spark"] if e["condition"] == "transcript" and e.get("family") == "kokoro"],
+               "kokoro_reader": [{k: r[k] for k in ("family", "voice", "clip", "truth", "guess", "raw_guess", "cue_guess",
+                                                    "bounds", "prominence")} for r in kokoro_v1(a1["reader_rows"])]},
     }
     (ROOT / "public_data" / "plato_phaedrus.json").write_text(json.dumps(public, indent=1, ensure_ascii=False) + "\n")
 
-    # the shipped clips
+    # the shipped clips: v2
     audio_dir = ROOT / "public_data" / "plato_phaedrus_audio"
     for v in KOKORO_TEST:
         dst = audio_dir / v
         dst.mkdir(parents=True, exist_ok=True)
         for name in ["neutral"] + CLIPS:
-            shutil.copyfile(root / "ship" / v / f"{name}.mp3", dst / f"{name}.mp3")
+            shutil.copyfile(kokoro_root / "ship" / v / f"{name}.mp3", dst / f"{name}.mp3")
 
-    # the page
+    # the page: v2
     spark_by_item = {e["item"]: e for e in a["spark"] if e["condition"] == "transcript"}
     reader_by = {(r["family"], r["voice"], r["clip"]): r for r in a["reader_rows"]}
-    tr_by = {(e["family"], e["voice"], e["clip"]): e["transcript"] for e in jsonl(root / "transcripts.jsonl")}
+    tr_by = {(e["family"], e["voice"], e["clip"]): e["transcript"] for e in a["transcripts"]}
     page_voices = []
     labels = {"af_heart": "Heart (US)", "am_michael": "Michael (US)", "bf_emma": "Emma (UK)", "bm_george": "George (UK)"}
     for v in KOKORO_TEST:
@@ -342,10 +489,8 @@ def write(a: dict, root: Path) -> None:
             "src": f"/api/plato/phaedrus/audio/{v}/neutral.mp3", "transcript": tr_by.get(("kokoro", v, "neutral"))},
             "clips": clips})
     h1, h2, h3, h4 = a["h1"], a["h2"], a["h3"], a["h4"]
-
-    def tile(b):
-        return {"k": b["k"], "n": b["n"], "acc": round(b["acc"], 4), "ci": [round(x, 4) for x in b["ci"]],
-                "p": b["p_above_chance"]}
+    v1h2, v1h4 = a1["h2"], a1["h4"]
+    ms = manip["summary"]
     page = {
         "sentence": P.SENTENCE, "words": list(P.WORDS), "chance": P.CHANCE,
         "meanings": [{"word": m.word, "gloss": m.gloss, "option": m.option} for m in P.MEANINGS],
@@ -356,13 +501,23 @@ def write(a: dict, root: Path) -> None:
                    "word_changes_by_clip": h1["word_changes_by_clip"], "lower_case_i_by_clip": h1["lower_case_i_by_clip"],
                    "lower_case_i_test": h1["lower_case_i_test"], "retest": h1.get("retest")},
         "spark": {"transcript": {**tile(h2), "choices": h2["choices"], "confusion": h2["confusion"],
-                                 "passes": h2["passes"]},
+                                 "passes": h2["passes"], "by_family": {f: tile(b) for f, b in h2["by_family"].items()}},
                   "caps": {**tile(h3["caps"]), "confusion": h3["caps"]["confusion"]},
                   "italics": {**tile(h3["italics"]), "confusion": h3["italics"]["confusion"]}},
         "reader": {**tile(h4), "confusion": h4["confusion"], "passes": h4["passes"],
-                   "by_family": {f: {**tile(b), "label": FAMILY_LABEL[f]} for f, b in h4["by_family"].items()},
+                   "by_family": {f: {**tile(b), "label": FAMILY_LABEL_V2[f]} for f, b in h4["by_family"].items()},
+                   "by_word": {w: tile(b) for w, b in h4["by_word"].items()},
                    "single_cue": {c: tile(b) for c, b in h4["single_cue"].items()}},
-        "families": {f: {"label": FAMILY_LABEL[f], "n_voices": len(v)} for f, v in FAMILIES.items()},
+        "families": {f: {"label": FAMILY_LABEL_V2[f], "n_voices": len(v)} for f, v in FAMILIES.items()},
+        "revision": {"version": "v2", "candidate": V2_PICK, "method": FOCUS_V2["method"],
+                     "focus": {"pitch_st": round(ms["rel_st"]["median"], 1), "loudness_db": round(ms["rel_db"]["median"], 1),
+                               "length": round(ms["rel_dur"]["median"], 2),
+                               "gap_ms": round(float(np.median([x["gap_added_ms"] for x in manip["rows"] if x["truth"] > 0])))},
+                     "v1": {"spark_transcript": tile(v1h2), "reader": tile(v1h4), "reader_passes": v1h4["passes"],
+                            "spark_passes": v1h2["passes"], "shadow_passes": a1["h1"]["passes"],
+                            "shadow_voices_same_words": a1["h1"]["voices_same_words"],
+                            "spark_kokoro": tile(v1h2["by_family"]["kokoro"]), "reader_kokoro": tile(v1h4["by_family"]["kokoro"])},
+                     "v2_kokoro": {"spark": tile(h2["by_family"]["kokoro"]), "reader": tile(h4["by_family"]["kokoro"])}},
         "cost_usd": usd,
     }
     (ROOT / "metalesionlab" / "web" / "data" / "plato_phaedrus.json").write_text(json.dumps(page, ensure_ascii=False) + "\n")
@@ -372,18 +527,29 @@ def write(a: dict, root: Path) -> None:
     for t in tpl["templates"]:
         t["feats"] = [[round(v, 2) for v in row] for row in t["feats"]]
     (ROOT / "metalesionlab" / "web" / "data" / "phaedrus_templates.json").write_text(json.dumps(tpl) + "\n")
-    print("wrote public_data/plato_phaedrus.json, the audio, web/data/plato_phaedrus.json and the templates")
+    print("wrote public_data/plato_phaedrus.json, the v2 audio, web/data/plato_phaedrus.json and the templates")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=P.PHAEDRUS_DIR)
+    ap.add_argument("--v1", action="store_true", help="the first run alone, as pre-registered (no --write)")
     ap.add_argument("--write", action="store_true")
     args = ap.parse_args()
-    a = analyse(args.root)
+    a1 = analyse(args.root)
+    if args.v1:
+        report(a1)
+        return
+    kr = args.root / V2_SUBDIR
+    a = analyse(args.root, kr)
+    print("=== v2: the Kokoro clips remade with stronger stress; macOS and eSpeak from the first run ===")
     report(a)
+    manip = manipulation(kr)
+    report_manipulation(manip)
+    print(f"first run (pre-registered): Spark {a1['h2']['k']}/{a1['h2']['n']}, reader {a1['h4']['k']}/{a1['h4']['n']}; "
+          f"Kokoro Spark {a1['h2']['by_family']['kokoro']['k']}/28, reader {a1['h4']['by_family']['kokoro']['k']}/28")
     if args.write:
-        write(a, args.root)
+        write(a, a1, args.root, kr, manip)
 
 
 if __name__ == "__main__":
