@@ -28,14 +28,14 @@
 
 <!-- The first screen: the question, the rocking chair that language damage turns into a car, the answer in one sentence
      and three numbers drawn (FirstLook.damaged, from /api/plato/damage and /api/plato/ideas; plato_damaged.js). -->
-<section class="fl fl-side dm-hero" aria-labelledby="hero-h">
+<section class="fl fl-side fl-wide dm-hero" aria-labelledby="hero-h">
   <div class="title-pair">
     <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Damaged AI: we damaged AIs on purpose. We switched off some of their artificial neurons, or added random noise to them.</span></p>
     <h1 id="hero-h">What happens to an AI’s idea of a thing when we damage it?</h1>
   </div>
   <!--#epigraph:republic-596a-->
   <p class="fl-answer" id="hero-answer">Damage the words part: it forgets <b>what</b> to draw. Damage the drawing part: it mostly forgets <b>how</b>.</p>
-  <figure class="fl-visual dm-film" id="film" data-hero-carousel aria-label="Four things an AI draws, with more damage to its words part or drawing part">
+  <figure class="fl-visual dm-film" id="film" data-hero-carousel data-layout="row" aria-label="Four things an AI draws, with more damage to its words part or drawing part">
     <script type="application/json">{
  "slides": [
   {
@@ -45,6 +45,11 @@
      "src": "/static/img/plato_damage/rocking_chair_intact.webp",
      "alt": "A rocking chair drawn by Stable Diffusion XL, undamaged",
      "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/rocking_chair_text-noise_1.webp",
+     "alt": "The same request with the words part damaged, step 1",
+     "label": "step 1"
     },
     {
      "src": "/static/img/plato_damage/rocking_chair_text-noise_2.webp",
@@ -71,6 +76,11 @@
      "src": "/static/img/plato_damage/throne_intact.webp",
      "alt": "A throne drawn by Stable Diffusion XL, undamaged",
      "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_damage/throne_text-noise_1.webp",
+     "alt": "The same request with the words part damaged, step 1",
+     "label": "step 1"
     },
     {
      "src": "/static/img/plato_damage/throne_text-noise_2.webp",
@@ -109,9 +119,19 @@
      "label": "noise × 0.5"
     },
     {
+     "src": "/static/img/plato_ideas/dmg/god_text-noise_0.625.webp",
+     "alt": "God, drawn with the words part damaged: noise × 0.625",
+     "label": "noise × 0.625"
+    },
+    {
      "src": "/static/img/plato_ideas/dmg/god_text-noise_0.75.webp",
      "alt": "God with the words part damaged, noise 0.75",
      "label": "noise × 0.75"
+    },
+    {
+     "src": "/static/img/plato_ideas/dmg/god_text-noise_1.webp",
+     "alt": "God, drawn with the words part damaged: noise × 1",
+     "label": "noise × 1"
     }
    ],
    "href": "/plato/ideas"
@@ -144,7 +164,7 @@
   }
  ]
 }</script>
-    <div class="hc-static"><div class="hc-strip" style="--n:4"><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair drawn by Stable Diffusion XL, undamaged" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">undamaged</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_2.webp" alt="The same request with the words part damaged, step 2: a plain chair" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 2</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_3.webp" alt="The same request with the words part damaged, step 3: a car" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 3</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_4.webp" alt="The same request with the words part damaged, step 4: a car" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 4</figcaption></figure></div><p class="hc-cap"><a href="/plato/damage">rocking chair → car</a></p></div>
+    <div class="hc-static"><div class="hc-strip" style="--n:5"><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_intact.webp" alt="A rocking chair drawn by Stable Diffusion XL, undamaged" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">undamaged</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_1.webp" alt="The same request with the words part damaged, step 1" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 1</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_2.webp" alt="The same request with the words part damaged, step 2: a plain chair" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 2</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_3.webp" alt="The same request with the words part damaged, step 3: a car" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 3</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_damage/rocking_chair_text-noise_4.webp" alt="The same request with the words part damaged, step 4: a car" width="512" height="512" decoding="async"></span><figcaption class="hc-lab">step 4</figcaption></figure></div><p class="hc-cap"><a href="/plato/damage">rocking chair → car</a></p></div>
   </figure>
   <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the damage experiments"></div>
   <details class="fl-note how-we-know">

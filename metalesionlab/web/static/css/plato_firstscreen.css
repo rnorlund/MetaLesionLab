@@ -141,3 +141,18 @@
 .ls-who-row.sd .key { background: var(--sd, var(--green)); }
 .ls-who-row img { width: 100%; max-width: 1218px; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line);
   background: var(--paper, #fbfaf5); }
+
+/* Wide first screen (.fl-wide, /damaged and /plato/damage only): the text spans the page left to right (kicker, title,
+   then the answer at a readable measure) and the carousel's row of pictures runs underneath, full width. The numbers
+   below keep their row of three. */
+.fl.fl-wide > .title-pair h1 { max-width: none; text-wrap: balance; }
+.fl.fl-wide .fl-answer { max-width: 58ch; }
+@media (min-width: 960px) {
+  .fl.fl-side.fl-wide {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "title" "answer" "visual" "stats" "note" "quote" "ctx";
+  }
+  .fl.fl-wide .fl-visual { align-self: stretch; }
+  .fl.fl-wide .pd-visual { grid-template-columns: minmax(0, 1fr); }
+}
