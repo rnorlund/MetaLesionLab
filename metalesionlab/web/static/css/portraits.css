@@ -10,6 +10,26 @@
    A theme may override any of them (they are set with :where(), so any :root rule wins). To draw the whole
    figures in light lines straight on a dark page instead of on paper, add class="portraits-chalk" to <html>
    (or set --portrait-sheet: transparent and --portrait-line-filter: invert(1)). */
+/* PORTRAIT ROLES, one pattern (Big and quiet). Plato asks, Socrates guides, Aristotle checks the evidence.
+   - Name label: every portrait has its speaker's name, .pt-name (12-13px, uppercase, muted), under the face in
+     <span class="pt-who"><img ...><span class="pt-name" aria-hidden="true">Plato</span></span> (portraits.face(named=True)).
+   - Plato asks: the page kicker is his face, a thin orange rule and "Plato would ask:" (.title-kicker .kicker-who).
+   - Aristotle badge, for "How we know" (plato_firstlook.js) and a findings card's "More detail" (findings.js),
+     markup (portraits.ARISTOTLE_BADGE), put inside the <summary> before its label or beside it:
+       <span class="pt-badge pt-aristotle"><img class="pt-badge-face" src="/static/img/portraits/aristotle-neutral.webp"
+         width="256" height="256" alt="" loading="lazy"><span class="pt-badge-text">Aristotle checks the evidence</span></span> */
+.pt-who { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.pt-name { font-size: var(--fs-label); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.2; color: var(--muted); }
+.hero-plato figcaption .pt-name { display: block; margin-bottom: 2px; }
+.pt-badge { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); font-size: var(--fs-small); line-height: 1.3; }
+.pt-badge-face { flex: none; display: block; width: 28px; height: 28px; aspect-ratio: 1; border-radius: 50%; box-sizing: border-box;
+  background: var(--portrait-paper); border: 1.5px solid var(--portrait-ring); object-fit: cover; }
+.pt-badge-text { text-decoration: underline; text-decoration-color: var(--line-2); text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
+summary:hover .pt-badge { color: var(--ink); }
+.title-kicker .kicker-face { width: 32px; height: 32px; margin: 0; border-width: 1.5px; }
+.title-kicker .kicker-who { font-size: var(--fs-small); color: var(--muted); }
+figure.epigraph .pt-who { grid-column: 1; grid-row: 1 / span 2; width: 100%; }
+figure.epigraph--band .pt-who { grid-row: auto; width: var(--ep-face); }
 :where(:root) {
   --portrait-paper: #FFFFFF;                 /* the paper every doodle is drawn on: light in every theme */
   --portrait-ring: #E4D3B4;                  /* the bronze ring round a face */
@@ -76,7 +96,7 @@ figure.epigraph--band .epigraph-face { grid-row: auto; width: var(--ep-face); ma
 }
 .hero-plato { position: absolute; top: 0; right: 0; width: var(--plato-w); margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .hero-plato img { display: block; width: 100%; height: auto; padding: var(--plato-pad); border-radius: clamp(10px, 1vw, 20px); }
-.hero-plato figcaption { font-family: var(--mono); font-size: clamp(10.5px, calc(7px + 0.3vw), 13px); line-height: 1.4; color: var(--muted); }
+.hero-plato figcaption { font-family: var(--mono); font-size: var(--fs-label); line-height: 1.4; color: var(--muted); }
 .hero-plato figcaption span { display: block; }
 .hero-ask:has(> .hero-plato) > .title-pair { box-sizing: border-box; width: 100%; min-height: var(--plato-h);
   padding-right: calc(var(--plato-w) + var(--plato-gap)); justify-content: center; }
@@ -101,7 +121,7 @@ figure.epigraph--band .epigraph-face { grid-row: auto; width: var(--ep-face); ma
 
 /* --- "What would Plato ask an AI?" on the series pages: Plato himself, thinking, in place of the short rule --- */
 .title-kicker.has-face::before { display: none; }
-.kicker-face { flex: none; width: 1.9em; height: 1.9em; margin: -0.2em 0.05em -0.2em 0; border-width: 1.5px; }
+.kicker-face { flex: none; }
 
 /* --- Socrates, the guide: floating at the foot of the window on the series pages --------------------------
    His face and "Ask Socrates" (a link to /socrates). Out of the way while the tour's offer or the tour itself
@@ -117,8 +137,8 @@ figure.epigraph--band .epigraph-face { grid-row: auto; width: var(--ep-face); ma
 .pt-guide:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .pt-guide img { width: clamp(46px, calc(30px + 1.4vw), 68px); height: auto; }
 .pt-guide-text { display: flex; flex-direction: column; line-height: 1.2; }
-.pt-guide-text b { font-size: clamp(14px, calc(10px + 0.3vw), 17px); font-weight: 700; color: var(--orange-dark); }
-.pt-guide-text small { font-size: clamp(12px, calc(9px + 0.2vw), 14px); color: var(--muted); }
+.pt-guide-text b { font-size: var(--fs-small); font-weight: 700; color: var(--orange-dark); }
+.pt-guide-text small { font-size: var(--fs-small); color: var(--muted); }
 html.tour-on .pt-guide, body:has(> .tour-offer) .pt-guide { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   .pt-guide { animation: pt-guide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both 1.2s; }
@@ -140,14 +160,14 @@ html.tour-on .pt-guide, body:has(> .tour-offer) .pt-guide { display: none; }
 }
 
 /* --- the credit line, when a page has no footnote to hold it ---------------------------------------------- */
-.pt-credit-row { max-width: var(--page-max, 100%); margin: 0 auto; padding: 8px var(--gutter, 16px) 0; font-size: 12px; color: var(--muted); }
+.pt-credit-row { max-width: var(--page-max, 100%); margin: 0 auto; padding: 8px var(--gutter, 16px) 0; font-size: var(--fs-small); color: var(--muted); }
 
 /* --- /plato, Aristotle's reply: the two gestures of Raphael's School of Athens, Plato up and Aristotle down ---- */
 .pt-athens { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: end; gap: 8px clamp(10px, 1.2vw, 28px);
   margin-top: clamp(10px, 1vw, 22px); }
 .pt-athens img { display: block; width: auto; height: clamp(150px, 12vw, 300px); padding: clamp(6px, 0.5vw, 12px); border-radius: 12px; }
 .pt-athens .pt-athens-aristotle { transform: scaleX(-1); }  /* turned to face Plato, as they walk together in the fresco */
-.pt-athens .pt-athens-cap { margin: 0; align-self: center; max-width: 42ch; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
+.pt-athens .pt-athens-cap { margin: 0; align-self: center; max-width: 42ch; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); }
 @media (max-width: 640px) {
   .pt-athens { grid-template-columns: auto auto; justify-content: start; }
   .pt-athens img { height: clamp(130px, 36vw, 180px); }
@@ -157,12 +177,12 @@ html.tour-on .pt-guide, body:has(> .tour-offer) .pt-guide { display: none; }
 /* --- /socrates: Socrates and Plato in conversation, and "Who were they?" (two public-domain paintings) ------- */
 .so-pair { margin: 0 0 12px; display: flex; flex-direction: column; gap: 6px; }
 .so-pair img { display: block; width: 100%; max-width: 520px; height: auto; padding: 8px 10px 4px; border-radius: 12px; }
-.so-pair figcaption { font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); max-width: 60ch; }
+.so-pair figcaption { font-size: var(--fs-small); line-height: 1.5; color: var(--muted); max-width: 60ch; }
 .so-who h2 { margin-bottom: 10px; }
 .so-art { margin: 0 0 16px; display: flex; flex-direction: column; gap: 8px; }
 .so-art:last-child { margin-bottom: 0; }
 .so-art img { display: block; width: 100%; max-width: 560px; height: auto; border-radius: 10px; border: 1px solid var(--line); }
 .so-art:nth-of-type(2) img { max-width: 380px; }
-.so-art figcaption { font-size: var(--fs-sm); line-height: 1.55; color: var(--ink-2); max-width: 60ch; }
-.so-art-credit { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); }
+.so-art figcaption { font-size: var(--fs-small); line-height: 1.55; color: var(--ink-2); max-width: 60ch; }
+.so-art-credit { display: block; margin-top: 4px; font-size: var(--fs-small); color: var(--muted); }
 .so-art-credit a { color: inherit; }

@@ -4,15 +4,15 @@
 body.ideas { background: var(--ground-warm); }
 .ideas main { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; outline: none; }
 .ideas { --muse: var(--blue); --muse-2: var(--blue-mid); --muse-3: var(--blue-soft); --thing: var(--faint); }  /* --teal: app.css */
-.iv-cap { max-width: var(--measure); font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); margin: 0; }
+.iv-cap { max-width: var(--measure); font-size: var(--fs-small); line-height: 1.5; color: var(--muted); margin: 0; }
 
 /* hero: the text beside Muse Image's 16 drawings of God */
 .iv-hero { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(28px, 2.5vw, 64px); display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 24px clamp(32px, 3.5vw, 96px); align-items: center; }
 .iv-hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.iv-hero h1 { margin: 0; font-size: var(--fs-h1); letter-spacing: -0.02em; line-height: 1.02; }
-.iv-lede { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 25px); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
-.iv-answer { margin: 0; font-size: clamp(21px, calc(14px + 0.55vw), 30px); font-weight: 700; line-height: 1.35; letter-spacing: -0.01em;
+.iv-hero h1 { margin: 0; font-size: var(--fs-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: var(--lh-display); }
+.iv-lede { margin: 0; font-size: var(--fs-intro); font-weight: var(--fw-lead); line-height: 1.55; color: var(--ink-2); max-width: var(--measure); }
+.iv-answer { margin: 0; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: var(--lh-lead); letter-spacing: -0.01em;
   border-left: 4px solid var(--muse); padding-left: 16px; max-width: 46ch; }
 .iv-god { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .iv-god-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 0.5vw, 12px); padding: clamp(8px, 0.6vw, 14px);
@@ -21,52 +21,52 @@ body.ideas { background: var(--ground-warm); }
 .iv-god-grid .iv-cell { border: 1px solid var(--paper-line); }
 .iv-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(12px, 1vw, 24px); }
 .iv-tile { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--soft); }
-.iv-tile b { font-size: clamp(30px, calc(18px + 1vw), 46px); letter-spacing: -0.01em; line-height: 1.05; }
-.iv-tile span { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
-.iv-tile small { font-size: 12px; color: var(--muted); font-family: var(--mono); line-height: 1.4; }
+.iv-tile b { font-size: var(--fs-number-sm); font-weight: var(--fw-number); letter-spacing: var(--ls-number); line-height: 1.05; }
+.iv-tile span { font-size: var(--fs-small); color: var(--ink-2); line-height: 1.4; }
+.iv-tile small { font-size: var(--fs-label); color: var(--muted); font-family: var(--mono); line-height: 1.4; }
 .iv-tile.fail b { color: var(--ink-2); }
 
 .iv-jump { display: flex; flex-wrap: wrap; gap: 8px; }
-.iv-jump a { font-size: 14px; padding: 8px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.iv-jump a { font-size: var(--fs-small); padding: 8px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .iv-jump a:hover { border-color: var(--ink); }
 
 /* sections */
-.iv-sec { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 2.2vw, 56px) clamp(24px, 2.5vw, 64px);
+.iv-sec { background: transparent; border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: var(--space-sec) 0 0; margin-top: clamp(8px, 1.4vw, 28px);
   display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 12px; min-width: 0; }
 .iv-sec-head { display: flex; flex-direction: column; gap: 8px; }
 .iv-sec-head > p { max-width: var(--measure); }
-.iv-sec h2 { margin: 0; font-size: var(--fs-h2); letter-spacing: -0.015em; }
-.iv-sec-lede { margin: 0; font-size: var(--fs-lede); line-height: 1.6; color: var(--ink-2); }
+.iv-sec h2 { margin: 0; font-size: var(--fs-h2); font-weight: var(--fw-h2); letter-spacing: var(--ls-h2); }
+.iv-sec-lede { margin: 0; font-size: var(--fs-intro); font-weight: var(--fw-lead); line-height: 1.6; color: var(--ink-2); }
 
 /* how people picture God: the cited study beside a two-bar picture */
 .iv-people-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px clamp(28px, 3vw, 80px); align-items: start; }
 .iv-prose { display: flex; flex-direction: column; gap: 12px; max-width: var(--measure); }
 .iv-prose p { margin: 0; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); }
-.iv-src { font-size: var(--fs-sm) !important; color: var(--muted) !important; }
+.iv-src { font-size: var(--fs-small) !important; color: var(--muted) !important; }
 .iv-compare { display: flex; flex-direction: column; gap: 14px; border: 1px solid var(--line); border-radius: 12px; padding: clamp(14px, 1.2vw, 24px); background: var(--soft); }
-.iv-compare h3 { margin: 0; font-size: 14px; font-family: var(--mono); font-weight: 500; color: var(--muted); }
+.iv-compare h3 { margin: 0; font-size: var(--fs-label); font-family: var(--mono); font-weight: 500; color: var(--muted); }
 .iv-cmp { display: flex; flex-direction: column; gap: 6px; }
-.iv-cmp-top { display: flex; justify-content: space-between; gap: 10px; font-size: var(--fs-sm); color: var(--ink-2); }
+.iv-cmp-top { display: flex; justify-content: space-between; gap: 10px; font-size: var(--fs-small); color: var(--ink-2); }
 .iv-cmp-top b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .iv-cmp-bar { height: 14px; border-radius: 4px; background: var(--chart-track); overflow: hidden; }
 .iv-cmp-bar i { display: block; height: 100%; border-radius: 4px; }
-.iv-cmp-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+.iv-cmp-note { margin: 0; font-size: var(--fs-small); line-height: 1.45; color: var(--muted); }
 
 /* eleven ideas: a card per idea with its 16 drawings */
 .iv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(300px, 21vw, 560px)), 1fr)); gap: clamp(12px, 1vw, 22px); }
 .iv-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; background: var(--panel); }
 .iv-card.is-god { border-color: var(--muse-2); }
 .iv-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.iv-card-head b { font-size: clamp(17px, calc(12px + 0.35vw), 22px); }
-.iv-card-head span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.iv-card-head b { font-size: var(--fs-h3); font-weight: var(--fw-h3); }
+.iv-card-head span { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .iv-strip { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; background: var(--paper-mat); border: 1px solid var(--paper-line); border-radius: 8px; padding: 4px; }
 .iv-strip .iv-cell { border-radius: 3px; }
-.iv-card-top { margin: 0; font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.4; }
+.iv-card-top { margin: 0; font-size: var(--fs-small); color: var(--ink-2); line-height: 1.4; }
 .iv-card-top b { color: var(--ink); }
-.iv-card-top small { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.iv-card-top small { display: block; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 
 /* emblem bars: one stacked bar of 16 per idea; the top emblem in Muse blue, the rest lighter, unlabeled gray */
-.iv-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); }
+.iv-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--fs-small); color: var(--ink-2); }
 .iv-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .iv-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
 .iv-legend i.dot { border-radius: 50%; width: 10px; height: 10px; }
@@ -84,15 +84,15 @@ body.ideas { background: var(--ground-warm); }
 .iv-bar span.none { background: var(--line-2); }
 .iv-bar span:hover, .iv-bar span:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 1; }
 .iv-bar-half { position: absolute; top: -4px; bottom: -4px; left: 50%; width: 0; border-left: 1.5px dashed var(--ink-2); pointer-events: none; }
-.iv-bar-label { font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.35; }
+.iv-bar-label { font-size: var(--fs-small); color: var(--ink-2); line-height: 1.35; }
 .iv-bar-label b { color: var(--ink); }
-.iv-bar-label small { display: block; font-size: 12px; color: var(--muted); }
+.iv-bar-label small { display: block; font-size: var(--fs-small); color: var(--muted); }
 .iv-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--tip); color: var(--tip-ink); padding: 8px 10px; border-radius: 8px;
-  font-size: 12.5px; line-height: 1.45; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); max-width: 260px; }
-.iv-tip b { font-size: 14px; display: block; }
-.iv-numbers summary { cursor: pointer; font-size: 14px; color: var(--ink-2); }
+  font-size: var(--fs-small); line-height: 1.45; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); max-width: 260px; }
+.iv-tip b { font-size: var(--fs-small); display: block; }
+.iv-numbers summary { cursor: pointer; font-size: var(--fs-small); color: var(--ink-2); }
 .iv-table-wrap { overflow-x: auto; margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; }
-.iv-numbers table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.iv-numbers table { border-collapse: collapse; width: 100%; font-size: var(--fs-small); }
 .iv-numbers th, .iv-numbers td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .iv-numbers th { background: var(--soft); font-weight: 600; white-space: nowrap; }
 .iv-numbers td.n { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
@@ -106,35 +106,35 @@ body.ideas { background: var(--ground-warm); }
 
 /* God under damage: Stable Diffusion XL's pictures (not Muse's), so its frames get a neutral frame, not Muse blue.
    The two parts keep /plato/damage's colours: blue words part, orange drawing part. Pictures sit on light cards. */
-.iv-kicker { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); }
-.iv-h3 { margin: 0; font-size: var(--fs-h3); letter-spacing: -0.01em; }
+.iv-kicker { display: none;  /* Big and quiet: no section eyebrows; the h2 leads */ }
+.iv-h3 { margin: 0; font-size: var(--fs-h3); font-weight: var(--fw-h3); letter-spacing: var(--ls-h3); }
 .iv-dmg-top { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px clamp(28px, 3vw, 80px); align-items: start; }
 .iv-dmg-fig { margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .iv-dmg-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1vw, 20px); }
 .iv-dmg-panel { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.iv-dmg-panel h3 { margin: 0; font-size: clamp(16px, calc(11px + 0.4vw), 21px); }
+.iv-dmg-panel h3 { margin: 0; font-size: var(--fs-body); }
 .iv-dmg-panel.lang h3 { color: var(--blue); }
 .iv-dmg-panel.draw h3 { color: var(--orange); }
-.iv-dmg-sub { margin: 0 0 4px; font-size: 13px; color: var(--muted); }
+.iv-dmg-sub { margin: 0 0 4px; font-size: var(--fs-small); color: var(--muted); }
 .iv-dmg-frame { aspect-ratio: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .iv-dmg-panel.lang .iv-dmg-frame { box-shadow: inset 0 -4px 0 var(--blue); }
 .iv-dmg-panel.draw .iv-dmg-frame { box-shadow: inset 0 -4px 0 var(--orange); }
 .iv-dmg-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.iv-dmg-read { margin: 2px 0 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-2); min-height: 2.9em; }
+.iv-dmg-read { margin: 2px 0 0; font-size: var(--fs-small); line-height: 1.45; color: var(--ink-2); min-height: 2.9em; }
 .iv-dmg-range { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(110px, auto); gap: 12px; align-items: center; }
 .iv-dmg-range label { font-weight: 600; }
 .iv-dmg-range input { width: 100%; accent-color: var(--ink); height: 28px; }
-.iv-dmg-range output { font-family: var(--mono); font-size: 13px; text-align: right; }
+.iv-dmg-range output { font-family: var(--mono); font-size: var(--fs-label); text-align: right; }
 .iv-dmg-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.iv-dmg-answer { margin: 0; font-size: clamp(18px, calc(12px + 0.45vw), 24px); line-height: 1.45; font-weight: 600; color: var(--ink);
+.iv-dmg-answer { margin: 0; font-size: var(--fs-lead); line-height: var(--lh-lead); font-weight: var(--fw-lead); color: var(--ink);
   border-left: 4px solid var(--line-2); padding-left: 14px; max-width: 52ch; }
 .iv-dmg-verdicts { display: flex; flex-direction: column; gap: 8px; }
 .iv-dmg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.iv-dmg-list li { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 2px 10px; font-size: var(--fs-sm); line-height: 1.4; color: var(--ink-2);
+.iv-dmg-list li { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 2px 10px; font-size: var(--fs-small); line-height: 1.4; color: var(--ink-2);
   border-top: 1px solid var(--line); padding-top: 8px; }
-.iv-dmg-list li b { grid-row: 1 / span 2; font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--ink-2); padding-top: 2px; }
+.iv-dmg-list li b { grid-row: 1 / span 2; font-family: var(--mono); font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); padding-top: 2px; }
 .iv-dmg-list li.ok b { color: var(--green); }
-.iv-dmg-list li small { grid-column: 2; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.iv-dmg-list li small { grid-column: 2; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 .iv-dmg-note { margin: 0; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
 .iv-dmg-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 12px clamp(20px, 2vw, 48px); }
 .iv-dmg-chart .grid { stroke: var(--line); stroke-width: 1; }
@@ -154,23 +154,23 @@ body.ideas { background: var(--ground-warm); }
 .iv-dmg-others { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(280px, 19vw, 520px)), 1fr)); gap: clamp(12px, 1vw, 22px); }
 .iv-dmg-other { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .iv-dmg-other img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 1; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
-.iv-dmg-other figcaption { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.35; }
+.iv-dmg-other figcaption { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-small); color: var(--ink-2); line-height: 1.35; }
 .iv-dmg-other figcaption b { color: var(--ink); }
-.iv-dmg-other figcaption span { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.iv-dmg-other figcaption span { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
 
 /* beyond nouns: four cards, one row on wide screens */
 #words-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(300px, 19vw, 560px)), 1fr)); }
 
 /* try it */
 .iv-try-links { display: flex; flex-wrap: wrap; gap: 8px; }
-.iv-try-links a { font-size: clamp(15px, calc(10px + 0.35vw), 19px); padding: 8px 16px; min-height: 40px; display: inline-flex; align-items: center;
+.iv-try-links a { font-size: var(--fs-body); padding: 8px 16px; min-height: 40px; display: inline-flex; align-items: center;
   border-radius: 999px; border: 1.5px dashed var(--muse-2); background: var(--panel); color: var(--ink); text-decoration: none; }
 .iv-try-links a:hover { border-style: solid; border-color: var(--muse); }
 .iv-try-links a.lead { background: var(--ink); border: 1.5px solid var(--ink); color: var(--on-ink); font-weight: 600; }
 
 /* method */
 .iv-method ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: var(--fs-body); line-height: 1.6; color: var(--ink-2); max-width: var(--measure); }
-.iv-credit { margin: 0; font-size: var(--fs-sm); max-width: 120ch; line-height: 1.55; color: var(--muted); }
+.iv-credit { margin: 0; font-size: var(--fs-small); max-width: 120ch; line-height: 1.55; color: var(--muted); }
 
 @media (min-width: 1700px) {  /* method notes in two columns on wide screens */
   .iv-method ul { max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(40px, 4vw, 112px); }
@@ -182,13 +182,14 @@ body.ideas { background: var(--ground-warm); }
 }
 @media (max-width: 720px) {
   .iv-dmg-pair { gap: 8px; }
-  .iv-dmg-panel h3 { font-size: 14px; }
+  .iv-dmg-panel h3 { font-size: var(--fs-small); }
   .iv-dmg-range { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .iv-dmg-range output { text-align: left; }
 }
 @media (max-width: 720px) {
   .ideas .page { padding: 12px 16px 32px; }
-  .iv-hero, .iv-sec { padding: 18px; border-radius: 14px; }
+  .iv-hero { padding: 18px; border-radius: 14px; }
+  .iv-sec { padding: var(--space-sec) 0 0; }
   .iv-answer { padding-left: 12px; }
   .iv-bar-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .iv-bar-label small { display: inline; }
