@@ -40,7 +40,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import numpy as np  # noqa: E402
 
 from metalesionlab.plato_sketch import BIG, N_REF, boot_counts, boot_spread, make_noise, sample_name, t_interval  # noqa: E402
-from metalesionlab.plato_sketch_forget import (ARMS, COARSE, DISPLAY, FINE, HIDDEN, MARGIN, N_SAMPLES, PRIMARY_ARM,  # noqa: E402
+from metalesionlab.plato_sketch_forget import (ARMS, COARSE, DISPLAY, DISPLAY_DOSES, EXTRA_SILENCE, FINE, HIDDEN, MARGIN, N_SAMPLES, PRIMARY_ARM,  # noqa: E402
                                                PRIMARY_DOSES, PRIMARY_TEMP, SEEDS, STEP, TEMPS, TEST_SEEDS, UNIT_NOISE_KEY,
                                                boot_rng, gap_verdict, half_forgotten, ink_maps, keep_mask, kept_share,
                                                nearest_person, nearest_step, path_doses, path_gap, run_name, set_name,
@@ -143,7 +143,7 @@ def unit_sd(seed: int, ckpt: Path, data: Path, ref: Path, out: Path, device: str
     print(f"seed {seed}: unit sd median {meta['sd_median']:.3f} [{meta['sd_min']:.3f}, {meta['sd_max']:.3f}]", flush=True)
 
 
-def sample(seed: int, ckpt: Path, scale: float, out: Path, device: str):
+def sample(seed: int, ckpt: Path, scale: float, out: Path, device: str, extra: bool = False):
     """Every arm x dose x temperature: 200 drawings from the learning run's fixed noise. Then the reversibility
     check: with every hook removed, the intact model draws exactly what it drew first."""
     import torch
@@ -159,8 +159,9 @@ def sample(seed: int, ckpt: Path, scale: float, out: Path, device: str):
     eps = torch.randn(MAX_LEN, N_SAMPLES, HIDDEN, generator=gen, device=device)
     (out / "samples").mkdir(parents=True, exist_ok=True)
     t0, done = time.time(), {}
+    plan = {"silence": EXTRA_SILENCE} if extra else ARMS  # --extra: the finer doses added after the planned run
     for temp in TEMPS:
-        for arm, doses in ARMS.items():
+        for arm, doses in plan.items():
             for dose in doses:
                 if dose == 0 and arm != "silence":
                     continue  # the intact model is shared by all arms: silence_d0.00
@@ -178,10 +179,10 @@ def sample(seed: int, ckpt: Path, scale: float, out: Path, device: str):
         model.eval()
         first = json.loads((out / "samples" / f"{set_name('silence', 0.0, temp)}.json").read_text())
         check[f"t{temp:.1f}"] = {"identical": sum(a == b for a, b in zip(d, first)), "of": len(d)}
-    meta = {"seed": seed, "ckpt": str(ckpt), "step": STEP, "scale": scale, "device": device, "arms": ARMS,
+    meta = {"seed": seed, "ckpt": str(ckpt), "step": STEP, "scale": scale, "device": device, "arms": plan,
             "temps": TEMPS, "n_samples": N_SAMPLES, "kept": done, "reversible": check,
             "seconds": round(time.time() - t0, 1)}
-    (out / "meta.json").write_text(json.dumps(meta, indent=1))
+    (out / ("meta_extra.json" if extra else "meta.json")).write_text(json.dumps(meta, indent=1))
     print(f"seed {seed}: reversible {check}; {meta['seconds']}s", flush=True)
 
 
@@ -345,6 +346,11 @@ def analyze(reps: int, public: Path | None):
                     sets[(seed, arm, dose, temp)] = sd
                     boots[(seed, arm, dose, temp)] = boots.get((seed, "silence", 0.0, temp)) if dose == 0 and arm != "silence" \
                         else sd.boot(reps, brng)
+            for dose in EXTRA_SILENCE:  # exploratory doses for the page (no bootstrap: no test uses them)
+                nm = set_name("silence", dose, temp)
+                if (frun / "emb" / f"{nm}.npz").exists():
+                    sets[(seed, "silence", dose, temp)] = SetData(frun / "emb" / f"{nm}.npz", frun / "samples" / f"{nm}.json",
+                                                                  FORGET_DIR / "maps" / run_name(seed) / f"{nm}.npz", M, ref_maps, ref_spread)
         print(f"seed {seed}: measured", flush=True)
     seeds_done = [s for s in SEEDS if (s, "silence", 0.0, PRIMARY_TEMP) in sets]
 
@@ -378,6 +384,12 @@ def analyze(reps: int, public: Path | None):
         tk = f"t{temp:.1f}"
         res["learn"][tk] = curves("learn", learn_steps, temp, seeds_done)
         res["forget"][tk] = {arm: curves(arm, doses, temp, seeds_done) for arm, doses in ARMS.items()}
+        res["forget"][tk]["silence_display"] = curves("silence", DISPLAY_DOSES, temp, seeds_done)
+        LRm, LDm = res["learn"][tk]["recog"]["mean"], res["learn"][tk]["d_adult"]["mean"]
+        cv = res["forget"][tk]["silence_display"]
+        res["forget"][tk]["silence_display"]["looks_like_step"] = [
+            nearest_step(LRm, LDm, learn_steps, r, d) if r is not None and d is not None and r == r and d == d else None
+            for r, d in zip(cv["recog"]["mean"], cv["d_adult"]["mean"])]
         res["tests"][tk] = {}
         for arm, doses in ARMS.items():
             res["tests"][tk][arm] = {"test_seeds": run_tests(arm, doses, temp, res["test_seeds"], sets, boots, brng, reps, learn_steps)}
@@ -394,10 +406,12 @@ def analyze(reps: int, public: Path | None):
         res["checks"][str(seed)] = {"dose0_vs_learning": same, "hooks_removed": meta.get("reversible")}
     ds = sets
     dt = f"t{DISPLAY['temp']:.1f}"
-    res["animation"] = {**DISPLAY, "doses": SILENCE_DOSES, "learn_steps": learn_steps,
-                        "recog": [ds[(DISPLAY["seed"], "silence", x, DISPLAY["temp"])].row.get("recog") for x in SILENCE_DOSES],
-                        "spread": [ds[(DISPLAY["seed"], "silence", x, DISPLAY["temp"])].row.get("spread") for x in SILENCE_DOSES],
-                        "n": [ds[(DISPLAY["seed"], "silence", x, DISPLAY["temp"])].row.get("n") for x in SILENCE_DOSES],
+    shown = [x for x in DISPLAY_DOSES if (DISPLAY["seed"], "silence", x, DISPLAY["temp"]) in ds]
+    res["display_doses"], res["extra_doses"] = shown, [x for x in EXTRA_SILENCE if x in shown]
+    res["animation"] = {**DISPLAY, "doses": shown, "learn_steps": learn_steps,
+                        "recog": [ds[(DISPLAY["seed"], "silence", x, DISPLAY["temp"])].row.get("recog") for x in shown],
+                        "spread": [ds[(DISPLAY["seed"], "silence", x, DISPLAY["temp"])].row.get("spread") for x in shown],
+                        "n": [ds[(DISPLAY["seed"], "silence", x, DISPLAY["temp"])].row.get("n") for x in shown],
                         "learn_recog": res["learn"][dt]["recog"]["per_seed"][str(DISPLAY["seed"])],
                         "learn_spread": res["learn"][dt]["spread"]["per_seed"][str(DISPLAY["seed"])]}
     out = FORGET_DIR / "results.json"
@@ -405,7 +419,7 @@ def analyze(reps: int, public: Path | None):
     print(f"wrote {out}")
     report(res)
     if public:
-        public.write_text(json.dumps(no_nan(to_jsonable(public_block(res))), indent=1))
+        public.write_text(json.dumps(rounded(no_nan(to_jsonable(public_block(res)))), separators=(",", ":")))
         print(f"wrote {public}")
 
 
@@ -508,13 +522,23 @@ def no_nan(obj):
     return obj
 
 
+def rounded(obj, nd: int = 4):
+    """Floats to nd decimals (the page shows at most 3)."""
+    if isinstance(obj, dict):
+        return {k: rounded(v, nd) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [rounded(v, nd) for v in obj]
+    return round(obj, nd) if isinstance(obj, float) else obj
+
+
 def public_block(res: dict) -> dict:
     """Group-level numbers only (no drawings, no embeddings). Per-seed curves are kept for the three page
     measures, as in the learning block."""
     out = {k: v for k, v in res.items() if k not in ("learn", "forget")}
     keep = ("recog", "d_adult", "spread", "shape", "detail", "n")
     out["learn"] = {t: {m: c for m, c in cv.items() if m in keep} for t, cv in res["learn"].items()}
-    out["forget"] = {t: {a: {m: c for m, c in cv.items() if m in keep} for a, cv in arms.items()} for t, arms in res["forget"].items()}
+    out["forget"] = {t: {a: {m: c for m, c in cv.items() if m in keep + ("looks_like_step",)} for a, cv in arms.items()}
+                     for t, arms in res["forget"].items()}
     return out
 
 
@@ -539,7 +563,8 @@ def report(res: dict):
                           f"(shape kept {q3['shape_kept']['mean']:.2f}, details kept {q3['detail_kept']['mean']:.2f})")
     for tk in res["forget"]:
         for arm, cv in res["forget"][tk].items():
-            print(f"\n{tk} {arm}: dose " + " ".join(f"{x:6.2f}" for x in res["arms"][arm]))
+            xs = res["display_doses"] if arm == "silence_display" else res["arms"][arm]
+            print(f"\n{tk} {arm}: dose " + " ".join(f"{x:6.2f}" for x in xs))
             for m in ("recog", "d_adult", "spread", "shape", "detail", "n"):
                 print(f"   {m:8s}" + " ".join(f"{v:6.3f}" if v is not None and v == v else "   nan" for v in cv[m]["mean"]))
     print("\nchecks:", json.dumps(res["checks"]))
@@ -548,16 +573,17 @@ def report(res: dict):
 # ---------- pictures for the page (Mac) ----------
 
 def web():
-    """The page's sprite (seed 1, temperature 0.4, the first 16 drawings at every silencing dose: 12 frames, 4 across
-    and 3 down) and the hub card's strip (the learning page's stroke-by-stroke chair at 0, 30, 60 and 90%)."""
+    """The page's sprite: seed 1 at temperature 0.4, the first 16 drawings at every silencing dose shown on the page
+    (DISPLAY_DOSES: 16 frames, 4 across and 4 down; each frame 4 x 4 drawings of 180 px with 8 px gaps, as the learning
+    sprite). The Damaged AI hub's card
+    is cut from it by scripts/plato_hub_thumbs.py (damaged-forget)."""
     from PIL import Image
 
-    sys.path.insert(0, str(ROOT / "scripts"))
-    from plato_sketch_animate import PAPER, grid, tile
+    from plato_sketch_animate import PAPER, grid
 
     run = FORGET_DIR / "runs" / run_name(DISPLAY["seed"])
     frames = []
-    for x in SILENCE_DOSES:
+    for x in DISPLAY_DOSES:
         d = json.loads((run / "samples" / f"{set_name('silence', x, DISPLAY['temp'])}.json").read_text())[:DISPLAY["n"]]
         frames.append(grid(d, 180, 8, bg=PAPER))
     fw, cols = frames[0].width, 4
@@ -567,19 +593,11 @@ def web():
         sheet.paste(fr, ((i % cols) * fw, (i // cols) * fw))
     WEB.mkdir(parents=True, exist_ok=True)
     sheet.save(WEB / "forget_sprite.webp", "WEBP", quality=70, method=6)
-    idx = json.loads((ROOT / "metalesionlab" / "web" / "static" / "img" / "plato_lifespan" / "sketch" / "stroke_order.json").read_text())["index"]
-    cell, gap, card = 240, 12, [0.0, 0.3, 0.6, 0.9]
-    strip = Image.new("RGB", (len(card) * cell + (len(card) - 1) * gap, cell), PAPER)
-    for k, x in enumerate(card):
-        d = json.loads((run / "samples" / f"{set_name('silence', x, DISPLAY['temp'])}.json").read_text())[idx]
-        strip.paste(tile(d, cell), (k * (cell + gap), 0))
-    strip.save(WEB / "forget_card.webp", "WEBP", quality=80, method=6)
     for p in sorted(WEB.iterdir()):
         print(f"{p.name}: {p.stat().st_size / 1024:.0f} KB")
 
 
 from metalesionlab.plato_sketch import MODELS as _MODELS  # noqa: E402
-from metalesionlab.plato_sketch_forget import SILENCE as SILENCE_DOSES  # noqa: E402
 
 MODELS_BIG = _MODELS["big"]
 MODELS_BIG_NAME = _MODELS["big"]["model"]
@@ -602,6 +620,7 @@ def main():
     s.add_argument("--scale", type=float, required=True)
     s.add_argument("--out", type=Path, required=True)
     s.add_argument("--device", default="cuda")
+    s.add_argument("--extra", action="store_true", help="only the finer doses added after the planned run")
     e = sub.add_parser("embed")
     e.add_argument("--run", type=Path, nargs="+", required=True)
     e.add_argument("--device", default="cuda")
@@ -618,7 +637,7 @@ def main():
     if args.cmd == "unitsd":
         unit_sd(args.seed, args.ckpt, args.data, args.ref, args.out, args.device)
     elif args.cmd == "sample":
-        sample(args.seed, args.ckpt, args.scale, args.out, args.device)
+        sample(args.seed, args.ckpt, args.scale, args.out, args.device, args.extra)
     elif args.cmd == "embed":
         for run in args.run:
             embed(run, args.device, args.workers)

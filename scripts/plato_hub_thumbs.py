@@ -258,8 +258,29 @@ def damaged_yourself() -> Image.Image:
                   ("draw_damage/chair_drawing_3.webp", "drawing part", ORANGE)], side=200, gap=26, arrows=(0,))
 
 
+FORGET_DOSES = [0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0]  # plato_sketch_forget.DISPLAY_DOSES
+
+
+def damaged_forget() -> Image.Image:
+    """The sketch model's chair that /plato/lifespan draws stroke by stroke, with 0, 30, 60 and 90% of its artificial
+    neurons switched off: cut from the forgetting sprite (plato_forget/forget_sprite.webp: one frame per dose of
+    plato_sketch_forget.DISPLAY_DOSES, 4 across and 4 down; each frame 4 x 4 drawings of 180 px with 8 px gaps)."""
+    import json
+
+    idx = json.loads((IMG / "plato_lifespan" / "sketch" / "stroke_order.json").read_text())["index"]
+    frames = cells(Image.open(IMG / "plato_forget" / "forget_sprite.webp"), 4, 4)
+    x, y = (idx % 4) * 188, (idx // 4) * 188
+
+    def chair(dose: float) -> Image.Image:
+        return frames[FORGET_DOSES.index(dose)].crop((x, y, x + 180, y + 180))
+
+    return strip([(chair(0.0), "undamaged", INK), (chair(0.3), "30% off", ORANGE), (chair(0.6), "60% off", ORANGE),
+                  (chair(0.9), "90% off", ORANGE)], side=200, gap=22, arrows=(0, 1, 2))
+
+
 DAMAGED = {"damaged-painter": damaged_painter, "damaged-ideas": damaged_ideas, "damaged-clocks": damaged_clocks,
-           "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-yourself": damaged_yourself}
+           "damaged-glimmer": damaged_glimmer, "damaged-janus": damaged_janus, "damaged-yourself": damaged_yourself,
+           "damaged-forget": damaged_forget}
 
 
 def main(only: list[str]) -> None:

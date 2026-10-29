@@ -159,3 +159,125 @@ def test_ink_maps_keep_shape_coarse_and_lines_fine():
     assert c.shape == (COARSE, COARSE) and f.shape == (FINE, FINE)
     assert 0 <= c.min() and f.max() <= 1 and f.max() > c.max()  # the fine map keeps the line sharper
     assert np.isclose(c.sum() * (256 / COARSE) ** 2, f.sum() * (256 / FINE) ** 2, rtol=0.05)  # the same ink at both scales
+
+
+# ---------- the page, its data and its words ----------
+
+PUBLIC = ROOT / "public_data" / "plato_sketch_forget.json"
+STATIC = ROOT / "metalesionlab" / "web" / "static"
+
+
+@pytest.fixture(scope="module")
+def client():
+    from fastapi.testclient import TestClient
+
+    from metalesionlab.web import app as web
+
+    return TestClient(web.app_for("plato"))
+
+
+def test_forget_section_sits_right_below_learn(client):
+    page = client.get("/plato/lifespan").text
+    learn, forget, method = (page.index(f'id="{k}"') for k in ("learn", "forget", "method"))
+    assert learn < forget < method
+    sec = page[forget:page.index("</section>", forget)]
+    assert page[learn:forget].count("</section>") == 1 and page[learn:forget].count("<section") == 1  # directly after #learn
+    assert 'href="/static/css/plato_forget.css' in sec and "Then watch it forget" in sec  # (the site adds ?v=)
+    assert page.count('src="/static/js/plato_forget.js') == 1
+    assert page.index('src="/static/js/plato_lifespan.js') < page.index('src="/static/js/plato_forget.js')
+
+
+@pytest.mark.skipif(not PUBLIC.exists(), reason="no forgetting results yet")
+def test_forget_api_and_public_file_are_group_level(client):
+    r = client.get("/api/plato/lifespan/forget")
+    assert r.status_code == 200
+    d = r.json()
+    assert d["plan"] == "docs/plato_sketch_forget_plan.md" and d["test_seeds"] == TEST_SEEDS and d["step"] == STEP
+    assert d["arms"] == {k: v for k, v in ARMS.items()} and d["display_doses"][0] == 0 and d["display_doses"][-1] == 1.0
+    text = PUBLIC.read_text()
+    assert '"strokes":[[' not in text and "cls" not in d and len(text) < 400_000  # numbers only: no drawings, no embeddings
+    for tk in ("t1.0", "t0.4"):
+        t = d["tests"][tk]["silence"]["test_seeds"]
+        assert t["seeds"] == TEST_SEEDS and t["half_forgotten_dose"] in PRIMARY_DOSES
+        for q in ("q1_distance_gap", "q2_primary", "q3_primary"):
+            assert len(t[q]["t_ci95"]) == 2 and len(t[q]["boot_ci95"]) == 2 and t[q]["verdict"]
+        assert len(d["forget"][tk]["silence_display"]["recog"]["mean"]) == len(d["display_doses"])
+    # the damage is reversible: dose 0 draws exactly the learning run's last drawings, and so does the model after
+    for seed, c in d["checks"].items():
+        for tk in ("t1.0", "t0.4"):
+            assert c["dose0_vs_learning"][tk]["identical_to_learning_run"] == c["dose0_vs_learning"][tk]["of"] == 200
+            assert c["hooks_removed"][tk]["identical"] == 200
+    a = d["animation"]
+    assert a["seed"] == DISPLAY["seed"] and a["temp"] == DISPLAY["temp"] and len(a["recog"]) == len(a["doses"]) == 16
+    assert len(a["learn_recog"]) == len(a["learn_steps"]) == len(MODELS["big"]["steps"])
+
+
+def test_forget_api_reports_missing_data(client, monkeypatch, tmp_path):
+    from metalesionlab.web import plato_lifespan_routes as routes
+
+    monkeypatch.setattr(routes, "FORGET", tmp_path / "missing.json")
+    assert client.get("/api/plato/lifespan/forget").status_code == 503
+
+
+def test_forget_pictures_are_small_and_cut_to_the_sprite():
+    sprite = STATIC / "img" / "plato_forget" / "forget_sprite.webp"
+    if not sprite.exists():
+        pytest.skip("no sprite yet")
+    from PIL import Image
+
+    from metalesionlab.plato_sketch_forget import DISPLAY_DOSES
+
+    assert sprite.stat().st_size < 600 * 1024
+    w, h = Image.open(sprite).size
+    assert w == h == 4 * (4 * 180 + 3 * 8) and len(DISPLAY_DOSES) == 16  # 4 x 4 frames of 4 x 4 drawings
+    thumbs = load("plato_hub_thumbs")
+    assert thumbs.FORGET_DOSES == DISPLAY_DOSES and "damaged-forget" in thumbs.DAMAGED
+    card = STATIC / "img" / "plato" / "hub" / "damaged-forget.webp"
+    assert card.exists() and card.stat().st_size < 60_000
+
+
+def test_damaged_hub_has_a_card_for_forgetting(client):
+    from metalesionlab.web import damaged_routes
+
+    card = [c for c in damaged_routes.CARDS if c["slug"] == "damaged-forget"]
+    assert len(card) == 1 and card[0]["path"] == "/plato/lifespan#forget"
+    assert 'href="/plato/lifespan#forget"' in client.get("/damaged").text
+
+
+def js_strings(js: str) -> list[str]:
+    """The string literals of a script (single or double quotes; comments skipped)."""
+    out, i, n = [], 0, len(js)
+    while i < n:
+        c = js[i]
+        if js.startswith("//", i):
+            i = js.find("\n", i) if js.find("\n", i) >= 0 else n
+        elif js.startswith("/*", i):
+            i = js.index("*/", i) + 2
+        elif c in "'\"":
+            j, buf = i + 1, []
+            while js[j] != c:
+                if js[j] == "\\":
+                    j += 1
+                buf.append(js[j])
+                j += 1
+            out.append("".join(buf))
+            i = j + 1
+        else:
+            i += 1
+    return out
+
+
+def test_forget_words_are_plain():
+    """The section's visible strings (plato_forget.js and its paragraph) avoid unexplained jargon
+    (docs/style_plain_language.md); "spread" appears only as "(we call this spread)"."""
+    import re
+
+    shown = " ".join(js_strings((STATIC / "js" / "plato_forget.js").read_text()))
+    page = (ROOT / "metalesionlab" / "web" / "pages" / "plato_lifespan.html").read_text()
+    sec = page[page.index('id="forget"'):page.index('id="method"')]
+    shown += " " + re.sub(r"<[^>]+>", " ", sec)
+    shown = shown.replace("(we call this spread)", "")
+    for word in (r"\bLSTM\b", r"[Tt]emperature", r"[Cc]heckpoint", r"\bspread\b", r"\bCI\b", r"\bseed", r"\bdose", r"\bn\s*=",
+                 r"\bintact\b", r"\bablat", r"\blesion", r"[Pp]re-registered", r"\bhidden units?\b"):
+        assert not re.search(word, shown), word
+    assert "a Meta AI that compares pictures (DINOv2)" in shown and "artificial neurons" in shown

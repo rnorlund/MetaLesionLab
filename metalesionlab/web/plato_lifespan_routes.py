@@ -20,6 +20,8 @@ from metalesionlab.web import app as web
 router = APIRouter()
 
 DATA = meta_api.REPO_ROOT / "public_data" / "plato_lifespan.json"
+# "Watch an AI forget" (#forget): the sketch model damaged step by step (scripts/plato_sketch_forget.py analyze --public)
+FORGET = meta_api.REPO_ROOT / "public_data" / "plato_sketch_forget.json"
 _cache: dict = {}
 
 
@@ -53,4 +55,14 @@ def plato_lifespan_data():
     data = load()
     if not isinstance(data, dict):
         raise HTTPException(503, "The life-of-a-chair statistics aren't on this server yet.")
+    return data
+
+
+@router.get("/api/plato/lifespan/forget")
+def plato_forget_data():
+    """Watch an AI forget what a chair is: the trained sketch model with a growing share of its artificial neurons
+    switched off (or noisy): recognizability, distance to the adult chair, variety, and the plan's three tests."""
+    data = load(FORGET)
+    if not isinstance(data, dict):
+        raise HTTPException(503, "The forgetting results aren't on this server yet.")
     return data

@@ -40,6 +40,10 @@ PRIMARY_DOSES = SILENCE[1:10]  # 10-90%: the doses the path tests average over
 NOISE = [0.0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0]
 ARMS = {"silence": SILENCE, "noise": NOISE, "readout": SILENCE}
 PRIMARY_ARM = "silence"
+# Added after the planned run had shown that most of the change happens by 10% (exploratory, not in any test): finer
+# silencing doses for the page's animation and curves. DISPLAY_DOSES are the animation's 16 frames.
+EXTRA_SILENCE = [0.02, 0.04, 0.06, 0.08]
+DISPLAY_DOSES = sorted(SILENCE + EXTRA_SILENCE)
 MARGIN = 0.03  # Q1's equivalence margin, in cosine distance (about a tenth of the learning path's fall, 0.51 -> 0.20)
 # Q3's two scales: ink maps of the ink-cropped 256-px render, area-averaged and blurred by 1 pixel
 COARSE, FINE = 16, 64
