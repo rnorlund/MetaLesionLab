@@ -2,14 +2,14 @@
  "about": "Curated pictures from the Plato's Chair experiments, for /plato/gallery and the \"From the lab\" strip on every Plato page. Captions are hand-written and every number is from docs/plato*.md. thumb is the card picture; for a sequence it is a sprite of all its frames side by side (scripts/plato_gallery_export.py writes the pictures). A frame with a \"pair\" shows two panels side by side, named by pair_labels. No child's drawing appears anywhere.",
  "categories": [
   "Watch it degrade",
-  "The Forms",
+  "One ideal version",
   "Shadows",
   "Words and shapes",
   "Growing up"
  ],
  "credits": [
   "People's drawings: Google Quick, Draw! dataset (Google Creative Lab), CC BY 4.0.",
-  "Meta's models: Muse Image (drawings), Muse Spark (descriptions, names, labels), Muse Glimmer (names, open weights), DINOv2 (similarity).",
+  "Meta's AIs: Muse Image, the image AI (drawings); Muse Spark, the chat AI (descriptions, names, labels); Muse Glimmer, the open AI model (names); DINOv2 (compares pictures).",
   "Stable Diffusion XL base 1.0 (Stability AI), CreativeML OpenRAIL++-M. Stable Diffusion v1.1–v1.5, CreativeML OpenRAIL-M.",
   "Janus-Pro-7B (DeepSeek), MIT.",
   "Published figures only: Ćwiek et al. 2022 (bouba and kiki), Banks & Connell 2023 (CC BY 4.0, category norms), Long et al. 2024 (children's drawings: statistics only, none shown).",
@@ -19,7 +19,7 @@
   {
    "id": "telephone-beanbag",
    "title": "A beanbag becomes a croissant, then a window",
-   "caption": "Each round, Muse Spark describes the drawing and Muse Image draws the description. The beanbag became “a plump croissant”, then “a semicircular fanlight window”.",
+   "caption": "Two Meta AIs play telephone: Muse Spark describes the drawing in words, Muse Image redraws it. The beanbag became “a plump croissant”, then “a semicircular fanlight window”.",
    "category": "Watch it degrade",
    "link": "/plato/telephone#player",
    "thumb": "/static/img/gallery/telephone-beanbag.webp",
@@ -76,8 +76,8 @@
   },
   {
    "id": "telephone-high-chair",
-   "title": "The high chair falls into the textbook chair",
-   "caption": "The tray was gone after one copy, and the picture stayed Muse’s slat-back textbook chair for nine generations (distance to it 0.25 → 0.09 → 0.07).",
+   "title": "A high chair becomes the AI’s plain chair",
+   "caption": "Meta’s AIs described and redrew a high chair ten times. It lost its tray, then grew ever closer to Muse Image’s plain slatted chair (0.25 → 0.09 → 0.07).",
    "category": "Watch it degrade",
    "link": "/plato/telephone#player",
    "thumb": "/static/img/gallery/telephone-high-chair.webp",
@@ -135,7 +135,7 @@
   {
    "id": "telephone-folding-chair",
    "title": "A folding chair becomes a scribbled diamond",
-   "caption": "Ten rounds of describe-then-draw turned this folding chair into a scribbled diamond. Asked to pick its kind from a list, Muse Spark still chose “a folding chair”.",
+   "caption": "Meta’s AIs described and redrew a folding chair ten times, into a scribbled diamond. Asked to pick its kind from a list, Muse Spark still chose “a folding chair”.",
    "category": "Watch it degrade",
    "link": "/plato/telephone#player",
    "thumb": "/static/img/gallery/telephone-folding-chair.webp",
@@ -193,7 +193,7 @@
   {
    "id": "telephone-throne",
    "title": "The throne’s crown ends up on a pole",
-   "caption": "Muse Spark’s first description never said “throne”. The crown survived anyway, ending on a pole above a black oval.",
+   "caption": "Meta’s AIs described and redrew a throne ten times. The first description, by Muse Spark, never said “throne”. The crown survived anyway, ending on a pole above a black oval.",
    "category": "Watch it degrade",
    "link": "/plato/telephone#player",
    "thumb": "/static/img/gallery/telephone-throne.webp",
@@ -251,7 +251,7 @@
   {
    "id": "damage-rocking-chair",
    "title": "A rocking chair: a red car, or charcoal",
-   "caption": "Noise in Stable Diffusion XL’s language part turns a rocking chair into a room, then a red car. Noise in its drawing part dissolves it into charcoal.",
+   "caption": "We damaged Stable Diffusion XL, an open image AI. Damage to its words part made a rocking chair a room, then a red car; to its drawing part, charcoal.",
    "category": "Watch it degrade",
    "link": "/plato/damage#slider",
    "thumb": "/static/img/gallery/damage-rocking-chair.webp",
@@ -286,7 +286,7 @@
      }
     ],
     "pair_labels": [
-     "Language part: noise added",
+     "Words part: noise added",
      "Drawing part: noise added"
     ]
    }
@@ -294,7 +294,7 @@
   {
    "id": "damage-wheelchair",
    "title": "A wheelchair becomes a bicycle",
-   "caption": "Switch off neurons in Stable Diffusion XL’s language part and its wheelchair becomes a bicycle. In its drawing part, the lines break into stripes and checks.",
+   "caption": "Switch off neurons in the open image AI Stable Diffusion XL: in its words part, a wheelchair becomes a bicycle; in its drawing part, lines break into stripes and checks.",
    "category": "Watch it degrade",
    "link": "/plato/damage#slider",
    "thumb": "/static/img/gallery/damage-wheelchair.webp",
@@ -329,7 +329,7 @@
      }
     ],
     "pair_labels": [
-     "Language part: neurons off",
+     "Words part: neurons off",
      "Drawing part: neurons off"
     ]
    }
@@ -337,7 +337,7 @@
   {
    "id": "damage-clock-numbers",
    "title": "Damaged clocks lose their numbers first",
-   "caption": "Damage Stable Diffusion XL’s drawing part and the numbers go first: 12 numbers in order fall from 33% of clocks to 4%, while the outline survives on 85%.",
+   "caption": "Damage an open image AI’s drawing part (Stable Diffusion XL) and numbers go first: 12 numbers in order fall from 33% of clocks to 4%; outlines survive on 85%.",
    "category": "Watch it degrade",
    "link": "/plato/damage#clock-h",
    "thumb": "/static/img/gallery/damage-clock-numbers.webp",
@@ -367,7 +367,7 @@
   {
    "id": "damage-clock-cyclist",
    "title": "A clock turns into a cyclist",
-   "caption": "Damage the language part instead and whole clocks disappear: this 8:45 became a cyclist. The clocks it still draws keep their numbers.",
+   "caption": "Damage the words part of an open image AI (Stable Diffusion XL) and whole clocks vanish: this 8:45 became a cyclist. The clocks it still draws keep their numbers.",
    "category": "Watch it degrade",
    "link": "/plato/damage#clock-h",
    "thumb": "/static/img/gallery/damage-clock-cyclist.webp",
@@ -381,23 +381,23 @@
      },
      {
       "src": "/static/img/gallery/damage-clock-cyclist-1.webp",
-      "label": "language part, noise ×0.5"
+      "label": "words part, noise ×0.5"
      },
      {
       "src": "/static/img/gallery/damage-clock-cyclist-2.webp",
-      "label": "language part, noise ×0.75"
+      "label": "words part, noise ×0.75"
      },
      {
       "src": "/static/img/gallery/damage-clock-cyclist-3.webp",
-      "label": "language part, noise ×1"
+      "label": "words part, noise ×1"
      }
     ]
    }
   },
   {
    "id": "damage-janus-wheelchair",
-   "title": "Janus’s wheelchair becomes a tricycle, then a car",
-   "caption": "Janus-Pro-7B reads and draws with one language model. Switch off 20%, 35% and 50% of its language model’s neurons and the wheelchair becomes a tricycle, a trike, then a car.",
+   "title": "Janus-Pro’s wheelchair becomes a tricycle, then a car",
+   "caption": "Janus-Pro, an open AI from DeepSeek, reads and draws with one language part. Switch off 20%, 35%, 50% of its neurons: the wheelchair becomes a tricycle, a trike, a car.",
    "category": "Watch it degrade",
    "link": "/plato/damage#janus-sec",
    "thumb": "/static/img/gallery/damage-janus-wheelchair.webp",
@@ -427,7 +427,7 @@
   {
    "id": "draw-damage-chair",
    "title": "A chair becomes two people at a café",
-   "caption": "Noise in Stable Diffusion XL’s words part swaps the armchair for café chairs, then for two people at a table. Noise in its drawing part dissolves it.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, swapped an armchair for café chairs, then two people at a table; drawing-part noise dissolved it.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-chair.webp",
@@ -475,7 +475,7 @@
   {
    "id": "draw-damage-umbrella",
    "title": "An umbrella turns into a motorbike",
-   "caption": "With noise in its words part, Stable Diffusion XL’s umbrella moves outdoors and becomes a motorbike. With noise in its drawing part, it sinks into gray texture.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, moved its umbrella outdoors, then made it a motorbike; drawing-part noise sank it into gray texture.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-umbrella.webp",
@@ -523,7 +523,7 @@
   {
    "id": "draw-damage-bicycle",
    "title": "A bicycle grows a rider",
-   "caption": "Noise in the words part adds a rider in a helmet to Stable Diffusion XL’s bicycle. Noise in the drawing part keeps the bicycle but buries it in scribbles.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, added a helmeted rider to its bicycle; drawing-part noise kept the bicycle but buried it in scribbles.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-bicycle.webp",
@@ -571,7 +571,7 @@
   {
    "id": "draw-damage-house",
    "title": "A house that stays a house",
-   "caption": "Not everything wanders: with noise in its words part, Stable Diffusion XL’s house stays a house. Noise in its drawing part dissolves the same house into texture.",
+   "caption": "Not everything wanders. With noise in the words part of Stable Diffusion XL, an open image AI, its house stays a house; drawing-part noise dissolves it into texture.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-house.webp",
@@ -619,7 +619,7 @@
   {
    "id": "draw-damage-cat",
    "title": "A cat zooms in on its own face",
-   "caption": "Noise in the words part zooms Stable Diffusion XL’s cat in to a close-up of its face, then out again. Noise in the drawing part breaks it into patches.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, zoomed its cat in on its face, then out; drawing-part noise broke it into patches.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-cat.webp",
@@ -667,7 +667,7 @@
   {
    "id": "draw-damage-tree",
    "title": "A tree steps out into a street",
-   "caption": "With noise in its words part, Stable Diffusion XL’s tree keeps its shape, then stands in a street beside a house. Noise in its drawing part dissolves it.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, kept its tree’s shape, then stood it in a street beside a house; drawing-part noise dissolved it.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-tree.webp",
@@ -715,7 +715,7 @@
   {
    "id": "draw-damage-face",
    "title": "A face becomes someone else",
-   "caption": "Noise in Stable Diffusion XL’s words part turns one woman’s face into a different person’s, with glasses and curly hair. Noise in its drawing part dissolves it.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, turned one woman’s face into another person’s, with glasses and curly hair; drawing-part noise dissolved it.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-face.webp",
@@ -763,7 +763,7 @@
   {
    "id": "draw-damage-sailboat",
    "title": "A sailboat becomes a man at the harbour",
-   "caption": "Noise in Stable Diffusion XL’s words part replaces the sailboat with a young man looking out over a harbour, then a crowd. Noise in its drawing part dissolves it.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, replaced its sailboat with a man looking over a harbour, then a crowd; drawing-part noise dissolved it.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-sailboat.webp",
@@ -811,7 +811,7 @@
   {
    "id": "draw-damage-cup",
    "title": "A cup becomes a busy café",
-   "caption": "Noise in Stable Diffusion XL’s words part puts the cup on a saucer, then turns it into a crowded café. Noise in its drawing part fades it.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, put its cup on a saucer, then turned it into a crowded café; drawing-part noise faded it.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-cup.webp",
@@ -859,7 +859,7 @@
   {
    "id": "draw-damage-book",
    "title": "A book becomes a bedroom with a dog",
-   "caption": "Noise in Stable Diffusion XL’s words part opens the book, then replaces it with a bedroom and a dog. Noise in its drawing part blurs it into texture.",
+   "caption": "Noise in the words part of Stable Diffusion XL, an open image AI, opened its book, then swapped it for a bedroom and a dog; drawing-part noise blurred it.",
    "category": "Watch it degrade",
    "link": "/draw",
    "thumb": "/static/img/gallery/draw-damage-book.webp",
@@ -907,7 +907,7 @@
   {
    "id": "draw-damage-god",
    "title": "God becomes an ordinary man, then a crowd",
-   "caption": "Stable Diffusion XL, not Muse Image. Noise in its words part turns a bearded, crowned God into a robed figure, then a man in headphones. Drawing-part noise dissolves him.",
+   "caption": "Stable Diffusion XL, an open image AI, not Muse Image. Words-part noise turned a bearded, crowned God into a robed figure, then a man in headphones; drawing-part noise dissolved him.",
    "category": "Watch it degrade",
    "link": "/plato/ideas#damage",
    "thumb": "/static/img/gallery/draw-damage-god.webp",
@@ -955,7 +955,7 @@
   {
    "id": "cave-rabbit",
    "title": "A rabbit’s shadow is just “Shadow”",
-   "caption": "Meta’s open model Muse Glimmer named the rabbit from its drawing, outline and silhouette. For its cast shadow it said “Shadow”, its most common wrong answer (10 times).",
+   "caption": "Meta’s open AI model, Muse Glimmer, named the rabbit from its drawing, outline and filled silhouette. Its shadow it called “Shadow”, its most common wrong answer (10 times).",
    "category": "Shadows",
    "link": "/plato/cave#medium",
    "thumb": "/static/img/gallery/cave-rabbit.webp",
@@ -985,7 +985,7 @@
   {
    "id": "cave-hat",
    "title": "A hat becomes a bowler, then a UFO",
-   "caption": "Muse Glimmer named the hat from its drawing and outline, called its silhouette a “bowler”, and its cast shadow a “UFO”, one of seven UFOs.",
+   "caption": "Meta’s open AI model, Muse Glimmer, named the hat from its drawing and outline. It called the filled silhouette a “bowler”, and the shadow a “UFO”: one of seven UFOs.",
    "category": "Shadows",
    "link": "/plato/cave#medium",
    "thumb": "/static/img/gallery/cave-hat.webp",
@@ -1015,7 +1015,7 @@
   {
    "id": "cave-wall",
    "title": "Twelve shadows on the cave wall",
-   "caption": "Meta’s open model Muse Glimmer named 67 of 100 everyday objects from their cast shadows. Here the scissors and anchor survive; the rabbit and guitar become “Shadow”.",
+   "caption": "Meta’s open AI model, Muse Glimmer, named 67 of 100 everyday objects from their shadows alone. Here it still names the scissors and anchor; the rabbit and guitar become “Shadow”.",
    "category": "Shadows",
    "link": "/plato/cave#game",
    "thumb": "/static/img/gallery/cave-wall.webp",
@@ -1026,7 +1026,7 @@
   {
    "id": "cave-versions",
    "title": "What survives as a shadow?",
-   "caption": "Muse Glimmer named 100% of the line drawings, 86% of their outlines, 90% of filled silhouettes and 67% of soft cast shadows. The clock was lost in every reduced version.",
+   "caption": "Meta’s open AI model, Muse Glimmer, named 100% of line drawings, 86% of outlines, 90% of filled silhouettes and 67% of shadows. It lost the clock in every simplified version.",
    "category": "Shadows",
    "link": "/plato/cave#survive",
    "thumb": "/static/img/gallery/cave-versions.webp",
@@ -1036,9 +1036,9 @@
   },
   {
    "id": "forms-sixteen-chairs",
-   "title": "Asked for 16 chairs, Muse drew one",
-   "caption": "Left: Muse Image’s 16 chairs, the same slat-back chair in the same three-quarter view. Right: 16 people’s chairs from Quick, Draw!. Spread 0.13 against 0.36.",
-   "category": "The Forms",
+   "title": "Asked for 16 chairs, Meta’s AI drew one",
+   "caption": "Left: Meta’s image AI, asked for a chair 16 times. Right: 16 chairs by players of Google’s Quick, Draw!. People’s differ nearly 3 times as much (0.36 against 0.13).",
+   "category": "One ideal version",
    "link": "/plato#hero",
    "thumb": "/static/img/gallery/forms-sixteen-chairs.webp",
    "alt": "Two grids of 16 chair doodles. Left, by Meta’s Muse Image: nearly identical slat-back wooden chairs in three-quarter view. Right, by 16 people: simple side-view chairs, each drawn differently.",
@@ -1048,8 +1048,8 @@
   {
    "id": "forms-stacked",
    "title": "Stacked: one sharp chair, or a cloud",
-   "caption": "Lay the 16 drawings on top of each other. Muse Image’s chairs make one sharp chair; people’s make a cloud of lines.",
-   "category": "The Forms",
+   "caption": "Lay 16 drawings on top of each other. Those by Meta’s image AI, Muse Image, make one sharp chair; people’s make a cloud of lines.",
+   "category": "One ideal version",
    "link": "/plato#hero",
    "thumb": "/static/img/gallery/forms-stacked.webp",
    "alt": "Muse Image’s 16 chairs and people’s 16 chairs slide from a grid onto one another: the AI’s stack into one dark, sharp chair, people’s into a gray cloud of lines.",
@@ -1081,8 +1081,8 @@
   {
    "id": "forms-clock-1010",
    "title": "The AI’s average clock reads 10:10",
-   "caption": "Averaged pixel by pixel, Muse Image’s 16 clocks show crisp hands at ten past ten (13 of 16 read 10:10 by eye). People’s 200 clocks blur into a soft ring.",
-   "category": "The Forms",
+   "caption": "Stack Meta’s image AI’s 16 clocks and the hands stay crisp at ten past ten (13 of 16 read 10:10). People’s 200 clocks blur into a soft ring.",
+   "category": "One ideal version",
    "link": "/plato/forms#average",
    "thumb": "/static/img/gallery/forms-clock-1010.webp",
    "alt": "Two pixel averages. Left, Muse Image’s 16 clock doodles: a crisp ring of ticks with two sharp hands at ten past ten. Right, 200 people’s clocks: a soft gray ring with a faint stroke up to the 12.",
@@ -1092,8 +1092,8 @@
   {
    "id": "forms-clock-asked",
    "title": "Ask for a time, and it draws it",
-   "caption": "10:10 is a default, not a limit. Asked for a time, Muse Image draws it: none of its 72 time-asked clocks shows 10:10, and 93% get the minute hand right.",
-   "category": "The Forms",
+   "caption": "10:10 is the AI’s habit, not a limit. Asked for a time, none of Meta’s image AI’s 72 clocks showed 10:10, and 93% got the minute hand right.",
+   "category": "One ideal version",
    "link": "/plato/forms#asked",
    "thumb": "/static/img/gallery/forms-clock-asked.webp",
    "alt": "Ten clock doodles by Muse Image, each labelled with the time asked, from 1:20 to 12:25. The hands point roughly to each asked time, never to ten past ten.",
@@ -1103,8 +1103,8 @@
   {
    "id": "forms-table",
    "title": "Plato’s table, drawn the same way 16 times",
-   "caption": "Plato’s own example in Republic X. Muse Image’s 16 tables are almost the same four-legged table: 61% less varied than people’s tables (ratio 0.39).",
-   "category": "The Forms",
+   "caption": "Plato used a table as an example of an ideal Form (Republic X). Meta’s image AI drew 16 almost identical tables: 61% less varied than people’s (0.39).",
+   "category": "One ideal version",
    "link": "/plato/forms#bed-table",
    "thumb": "/static/img/gallery/forms-table.webp",
    "alt": "Two grids of 16 table doodles. Left, Muse Image: the same four-legged table in three-quarter view. Right, people: quick, varied line drawings of tables.",
@@ -1114,8 +1114,8 @@
   {
    "id": "forms-bed",
    "title": "Plato’s bed, sixteen times over",
-   "caption": "Plato’s other example in Republic X. Muse Image’s 16 beds have about half the variety of people’s (ratio 0.47), right at the median of 36 things.",
-   "category": "The Forms",
+   "caption": "Plato’s own example of an ideal Form was a bed (Republic X). Meta’s image AI’s 16 beds have about half the variety of people’s (0.47), the middle of 36 things.",
+   "category": "One ideal version",
    "link": "/plato/forms#bed-table",
    "thumb": "/static/img/gallery/forms-bed.webp",
    "alt": "Two grids of 16 bed doodles. Left, Muse Image: near-identical beds with a headboard and pillows in three-quarter view. Right, people: varied quick drawings of beds.",
@@ -1124,9 +1124,9 @@
   },
   {
    "id": "forms-named-kinds",
-   "title": "Name the kind, and the variety returns",
-   "caption": "“Any kind of chair” still gives the textbook chair. But asked for 16 named kinds, from rocking chair to throne, Muse Image draws as varied as people.",
-   "category": "The Forms",
+   "title": "Name kinds of chair, and the variety returns",
+   "caption": "Asked for “any kind of chair”, Meta’s image AI still drew its textbook chair. Asked for 16 named kinds, from rocking chair to throne, it varied as much as people.",
+   "category": "One ideal version",
    "link": "/plato#variety",
    "thumb": "/static/img/gallery/forms-named-kinds.webp",
    "alt": "Sixteen doodles by Muse Image, one per named kind: rocking chair, armchair, folding chair, office chair, recliner, beanbag, highchair, wheelchair, dining chair, bar chair, lounge chair, wingback, cantilever chair, throne, Adirondack chair, gaming chair.",
@@ -1135,9 +1135,9 @@
   },
   {
    "id": "forms-sdxl",
-   "title": "Another image model varies far more",
-   "caption": "This is Muse, not every image model. Given the same prompt, Stable Diffusion XL (middle) varies more for 34 of 35 things, at about 2.4 times the spread.",
-   "category": "The Forms",
+   "title": "Another image AI draws far more varied pictures",
+   "caption": "The sameness is Meta’s Muse Image, not every image AI. Given the same request, Stable Diffusion XL (middle) varied more for 34 of 35 things: about 2.4 times as much.",
+   "category": "One ideal version",
    "link": "/plato#second-model",
    "thumb": "/static/img/gallery/forms-sdxl.webp",
    "alt": "Three grids of nine chairs from the same prompt. Left, Muse Image: the same slatted chair. Middle, Stable Diffusion XL: armchairs, an office chair and framed, shaded scenes. Right, people: quick line drawings.",
@@ -1147,7 +1147,7 @@
   {
    "id": "cratylus-bouba-kiki",
    "title": "Bouba is round, kiki is spiky",
-   "caption": "Muse Image drew all 12 “bouba”s as soft blobs and all 12 “kiki”s as stars, the match people make: 72% of 917 people in 25 languages.",
+   "caption": "Asked to draw two made-up words, Meta’s image AI made all 12 “bouba”s soft blobs and all 12 “kiki”s stars. So do 72% of 917 people in 25 languages.",
    "category": "Words and shapes",
    "link": "/plato/cratylus#words",
    "thumb": "/static/img/gallery/cratylus-bouba-kiki.webp",
@@ -1157,8 +1157,8 @@
   },
   {
    "id": "cratylus-keti",
-   "title": "But “keti” comes out round",
-   "caption": "“Keti” has kiki’s hard sounds, yet Muse Image drew 12 round blobs. All eight new words came out rounded: it learned the famous words, not the sounds.",
+   "title": "A spiky-sounding made-up word comes out round",
+   "caption": "“Keti” sounds hard like “kiki”, a word people link to spiky shapes. Yet Meta’s image AI drew 12 round blobs, as it did for all eight new words.",
    "category": "Words and shapes",
    "link": "/plato/cratylus#sound",
    "thumb": "/static/img/gallery/cratylus-keti.webp",
@@ -1169,7 +1169,7 @@
   {
    "id": "cratylus-no-name",
    "title": "A shape with no name is spiky",
-   "caption": "With no name at all, “a shape” came out as stars and polygons. Any made-up name except kiki and takete turned it into a soft blob.",
+   "caption": "Asked for just “a shape”, Meta’s image AI drew stars and polygons. Give the shape any made-up name except “kiki” or “takete”, and it became a soft blob.",
    "category": "Words and shapes",
    "link": "/plato/cratylus#words",
    "thumb": "/static/img/gallery/cratylus-no-name.webp",
@@ -1180,7 +1180,7 @@
   {
    "id": "bird-game",
    "title": "Name a game: chess. Draw one: Super Mario",
-   "caption": "Asked to name a game, Muse Spark said chess 49 times in 50. Asked to draw one, Muse Image drew a Super Mario-style platformer 9 times in 12.",
+   "caption": "Asked to name a game, Meta’s chat AI said chess 49 times in 50. Asked to draw one, Meta’s image AI drew a Super Mario-style game 9 times in 12.",
    "category": "Words and shapes",
    "link": "/plato/bird#draw",
    "thumb": "/static/img/gallery/bird-game.webp",
@@ -1191,7 +1191,7 @@
   {
    "id": "bird-sparrow",
    "title": "Name a bird: sparrow, 49 times in 50",
-   "caption": "Muse Spark named a sparrow 49 times in 50, and Muse Image drew the same little songbird 12 times. Twenty people named 11 different birds.",
+   "caption": "Asked to name a bird, Meta’s chat AI said “sparrow” 49 times in 50, and Meta’s image AI drew the same songbird 12 times. Twenty people named 11 different birds.",
    "category": "Words and shapes",
    "link": "/plato/bird#pick",
    "thumb": "/static/img/gallery/bird-sparrow.webp",
@@ -1202,7 +1202,7 @@
   {
    "id": "lifespan-sketch",
    "title": "A tiny AI learns to draw a chair",
-   "caption": "Trained from scratch on 20,000 people’s chairs, a small sketch model goes from scribbles (18% recognizable) to chairs (87%), ending less varied than its data in all 8 runs.",
+   "caption": "We trained a small drawing AI on 20,000 people’s chairs. It went from scribbles (18% recognizable) to chairs (87%), ending less varied than people’s in all 8 runs.",
    "category": "Growing up",
    "link": "/plato/lifespan#learn",
    "thumb": "/static/img/gallery/lifespan-sketch.webp",
@@ -1244,7 +1244,7 @@
   {
    "id": "lifespan-sd-stages",
    "title": "Stable Diffusion has no public childhood",
-   "caption": "Five public training stages of Stable Diffusion, one seed. Its first public checkpoint already draws as recognizably as a 10-year-old, so there is no childhood to watch.",
+   "caption": "Stable Diffusion, an open image AI, at five stages of its training, from one random start. Even the first already draws as recognizably as a 10-year-old: no childhood to watch.",
    "category": "Growing up",
    "link": "/plato/lifespan#curves",
    "thumb": "/static/img/gallery/lifespan-sd-stages.webp",
@@ -1278,7 +1278,7 @@
   {
    "id": "lifespan-life",
    "title": "The life of a chair, without children’s drawings",
-   "caption": "No child’s drawing is shown: each tile counts how many of 10 chair drawings a model recognizes. 53% at age 2, 89% at 10, 92% for adults.",
+   "caption": "Each tile shows how many of 10 chair drawings an AI recognizes at each age: 53% at age 2, 89% at 10, 92% for adults. No child’s drawing is shown.",
    "category": "Growing up",
    "link": "/plato/lifespan#timeline",
    "thumb": "/static/img/gallery/lifespan-life.webp",

@@ -186,11 +186,12 @@ def _set_theme(page: str, site: str) -> str:
 SERIES = [
     {"path": "/plato", "slug": "chair", "question": "Is there one ideal chair?", "source": "Republic X · the Forms",
      "title": "Plato’s Chair",
-     "finding": "Muse Image drew the same chair 16 times, and drew 34 of 35 things more alike than people do."},
+     "finding": "Meta’s image AI, Muse Image, drew the same chair 16 times, and drew 34 of 35 things more alike than "
+                "people do."},
     {"path": "/plato/inside", "slug": "inside", "question": "What happens to a drawing inside the machine?",
      "source": "Republic VII · out of the cave", "title": "Inside the model",
-     "finding": "From about layer 36 of 52 (the median), Muse Glimmer holds Muse Image’s doodles of a thing together; "
-                "at the last layer, people’s are about 6 times as spread out."},
+     "finding": "Meta’s open AI model, Muse Glimmer, reads a picture in 52 stages. By about stage 36, it treats all of "
+                "Muse Image’s doodles of a thing as one. People’s drawings stay about 6 times as spread out."},
     # its picture would show Muse Image's drawings of God, so it has none: the drawn icon keeps the blind draw
     {"path": "/plato/ideas", "slug": "ideas", "question": "Can an AI draw what no one has seen?",
      "source": "Republic X · God’s bed, Beauty, Justice, the Good", "title": "The invisible Forms", "finding": None},
@@ -200,17 +201,17 @@ SERIES = [
      "source": "Republic X · Plato’s own bed and table", "title": "The Platonic clock", "finding": None},
     {"path": "/plato/cave", "slug": "cave", "question": "Can you know a thing from its shadow?",
      "source": "Republic VII · the Cave", "title": "Name the shadow", "finding": None},
-    {"path": "/plato/cratylus", "slug": "cratylus", "question": "Do names fit things by nature?",
+    {"path": "/plato/cratylus", "slug": "cratylus", "question": "Do words naturally fit the things they name?",
      "source": "Cratylus", "title": "Bouba and kiki", "finding": None},
     {"path": "/plato/bird", "slug": "bird", "question": "Is there one best example of a kind?",
      "source": "the Forms · Wittgenstein · Rosch", "title": "Name a bird", "finding": None},
-    {"path": "/plato/damage", "slug": "damage", "question": "What happens to the Form when the mind is damaged?",
+    {"path": "/plato/damage", "slug": "damage", "question": "What happens to an AI’s ideal chair when we damage its mind?",
      "source": "Our own question", "title": "Damage the painter", "finding": None},
     # its picture shows Muse Image's chair, so on the landing page it waits for the blind draw ("blind_art")
-    {"path": "/plato/lifespan", "slug": "lifespan", "question": "Is learning remembering the Forms?",
+    {"path": "/plato/lifespan", "slug": "lifespan", "question": "Do we learn what a chair is, or remember it?",
      "source": "Meno · children, adults and a model in training", "title": "The life of a chair", "finding": None,
      "blind_art": True},
-    {"path": "/plato/atlas", "slug": "atlas", "question": "Is every thing one Form, or only some?",
+    {"path": "/plato/atlas", "slug": "atlas", "question": "Does the AI have one ideal version of everything, or only of some things?",
      "source": "Republic X", "title": "The Atlas of Forms", "finding": None},
     {"path": "/plato/telephone", "slug": "telephone", "question": "What survives a copy of a copy?",
      "source": "Republic X · the painter’s copy", "title": "Plato’s Telephone", "finding": None},
@@ -268,19 +269,19 @@ _ART = {
 # so its pictures may show Muse Image's chairs; the invisible Forms card shows Plato, never Muse Image's God.
 HUB_IMG = HERE / "static" / "img" / "plato" / "hub"
 HUB_ANSWERS = {
-    "chair": "Muse Image drew the same chair 16 times; people drew 16 different ones.",
-    "inside": "From about layer 36 of 52, Meta’s open model files Muse Image’s doodles of a thing as one point.",
-    "ideas": "For 10 of 11 ideas, one emblem filled at least half of Muse Image’s 16 drawings.",
-    "forms": "Muse Image put the advert’s 10:10 on 13 of 16 clocks. People almost never do.",
-    "cave": "Meta’s open model named 67 of 100 everyday objects from their shadows.",
-    "cratylus": "“Kiki” gave 12 spiky stars. “Keti”, built from the same hard sounds, gave 12 round blobs.",
-    "bird": "Muse Spark said “sparrow” 49 times in 50. Twenty people named 11 different birds.",
-    "damage": "Damage its language part and a rocking chair becomes a room, a car or a person.",
-    "lifespan": "Children’s chairs grow toward adults’. Stable Diffusion’s training stages don’t.",
-    "atlas": "Muse Image drew 131 of 135 everyday things more alike than people did.",
-    "telephone": "Copied ten times, chairs drift apart instead of back to the textbook chair.",
-    "scale": "Bigger open models break fewer drawings, but up to 33 billion parameters their chairs don’t become one.",
-    "phaedrus": "From the transcript, Muse Spark got 10 of 91 stresses right; a simple listener got 82.",
+    "chair": "Meta’s image AI drew the same chair 16 times. People didn’t.",
+    "inside": "Inside another Meta AI, Muse Image’s doodles of a thing merge into one.",
+    "ideas": "For 10 of 11 ideas, one symbol filled at least half its drawings.",
+    "forms": "Meta’s image AI set 13 of 16 clocks to 10:10. People rarely do.",
+    "cave": "Meta’s open AI named 67 of 100 objects from shadows alone.",
+    "cratylus": "“Kiki” got spiky stars; “keti”, with the same hard sounds, got blobs.",
+    "bird": "Meta’s chat AI said “sparrow” 49 times in 50. People named 11 birds.",
+    "damage": "Damaged on purpose, an image AI turned a rocking chair into a car.",
+    "lifespan": "Children’s chairs grow like adults’. An image AI’s training doesn’t follow.",
+    "atlas": "Meta’s image AI drew 131 of 135 things more alike than people.",
+    "telephone": "Copied back and forth ten times, chairs drift apart, not together.",
+    "scale": "Bigger open AIs break fewer drawings but never settle on one chair.",
+    "phaedrus": "Text alone: Meta’s chat AI got 10 of 91 right. Listening: 82.",
 }
 
 

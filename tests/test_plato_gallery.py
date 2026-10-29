@@ -35,7 +35,7 @@ def local(url: str) -> Path:
 
 def test_items_have_every_field_and_short_text():
     assert 30 <= len(ITEMS) <= 40
-    assert DATA["categories"] == R.CATEGORIES == ["Watch it degrade", "The Forms", "Shadows", "Words and shapes", "Growing up"]
+    assert DATA["categories"] == R.CATEGORIES == ["Watch it degrade", "One ideal version", "Shadows", "Words and shapes", "Growing up"]
     ids = [i["id"] for i in ITEMS]
     assert len(ids) == len(set(ids)) and all(re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", i) for i in ids)
     for it in ITEMS:
