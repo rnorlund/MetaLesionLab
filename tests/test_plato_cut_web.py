@@ -199,7 +199,8 @@ def test_plato_says_the_result_does_not_hang_on_dinov2(client, monkeypatch, tmp_
     assert r["first"] == "umbrella" and r["last"] == "book" and all(x["rank_last"] == 35 for x in r["rows"])
     assert [x["rank_first"] for x in r["rows"]][2:] == [8, 24] and r["doc"].endswith("docs/plato_robustness.md")
     html = c.get("/plato").text
-    assert 'id="ev-robust"' in html and "Does it depend on DINOv2?" in html
+    assert 'id="ev-robust"' in html and "Does the result depend on which AI does the measuring?" in html
+    assert "instead of DINOv2" in html  # the plain heading still names the measuring AI it swaps out
     assert "as DINOv2 sees it" in (web.HERE / "static" / "js" / "plato.js").read_text()
     monkeypatch.setattr(plato_routes, "ROBUST", tmp_path / "missing.json")
     assert c.get("/api/plato").json()["robustness"] is None  # the page hides the box
