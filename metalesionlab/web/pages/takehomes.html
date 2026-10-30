@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Three things to take home · {{BRAND}}</title>
-<meta name="description" content="What we learned by asking AI the questions Plato asked about ideas: Meta’s image AI has one idea of a chair, damaging the part that reads words makes it forget what it is drawing, and asked to draw God it draws the same figure every time.">
+<meta name="description" content="What we learned by asking AI the questions Plato asked about ideas: Meta’s image AI has one idea of a chair, damage Meta’s open AI and its drawings go before its words, and asked to draw God Meta’s image AI draws the same figure every time.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,19 +68,20 @@
   </div>
 </section>
 
-<!-- 2. words go first -->
-<section class="th-panel" id="words-first" aria-labelledby="th2-h">
+<!-- 2. drawings go first (Muse Glimmer; numbers filled by plato_takehomes_routes.py from data/plato_glimmer.json; no God picture) -->
+<section class="th-panel" id="drawing-first" aria-labelledby="th2-h">
   <div class="th-text th-top">
     <p class="th-num">2</p>
-    <h2 id="th2-h">Damage the part of an AI that reads words, and it forgets what it’s drawing.</h2>
-    <p class="th-support">The words go first: a rocking chair becomes a car.</p>
+    <h2 id="th2-h">Damage Meta’s open AI, and its drawings go before its words.</h2>
+    <p class="th-support">With a fifth of its neurons switched off, {{TH_G_RIGHT}} of its {{TH_G_N}} descriptions were still right. Only {{TH_G_NAMED}} of its {{TH_G_N}} drawings could still be named.</p>
   </div>
   <div class="th-pic th-card">
-    <ol class="th-row" aria-label="A rocking chair, with more and more noise added to the part of the AI that reads words, from left to right">{{TH_ROW}}</ol>
+    <p class="th-legend">Under each picture, out of {{TH_G_N}} answers: <span class="th-key named"><i aria-hidden="true"></i>drawings named</span> <span class="th-key right"><i aria-hidden="true"></i>descriptions right</span></p>
+    <ol class="th-row" aria-label="Muse Glimmer’s chair, with more and more of its neurons switched off, from left to right">{{TH_ROW}}</ol>
   </div>
   <div class="th-text th-bottom">
-    <p class="th-fig">Stable Diffusion XL, an open image AI. Left to right: more random noise added to its words part, from none to × 1.</p>
-    <a class="th-link" href="/damaged">See the experiment →</a>
+    <p class="th-fig">Muse Glimmer, Meta’s open AI. Left to right: more of its neurons switched off, from none to 30%. Pictures: one of its chairs at each step. Numbers: all {{TH_G_N}} answers at each step (a chair, a clock and God, 12 times each); an AI reader named the drawings.</p>
+    <a class="th-link" href="/plato/glimmer">See the experiment →</a>
   </div>
 </section>
 

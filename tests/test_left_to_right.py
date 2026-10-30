@@ -71,10 +71,17 @@ def test_the_steps_control_always_keeps_the_first_and_last_step():
 
 
 def test_every_hero_row_has_ten_steps_undamaged_first():
+    """Stable Diffusion XL's rows have ten steps (undamaged + 9 doses). The one documented exception: Muse Glimmer's rows on
+    /damaged have as many steps as that experiment has (undamaged + 5 doses of switched-off neurons = 6); no step is invented."""
+    glimmer_steps = len(load("plato_glimmer.json")["damage"][0]["steps"])
+    assert glimmer_steps == 6
     for page in ("damaged.html", "plato_damage.html"):
         text = (HERE / "pages" / page).read_text()
-        cfg = json.loads(re.search(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', text, re.S).group(1))
-        for s in cfg["slides"]:
-            assert len(s["images"]) == 10, (page, s["caption"])
-            assert s["images"][0]["label"] == "undamaged"
-            assert all((HERE / "static" / im["src"][len("/static/"):]).is_file() for im in s["images"])
+        carousels = re.findall(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', text, re.S)
+        assert carousels and (page != "damaged.html" or len(carousels) == 2), page
+        for raw in carousels:
+            for s in json.loads(raw)["slides"]:
+                want = glimmer_steps if s["caption"].startswith("Muse Glimmer") else 10
+                assert len(s["images"]) == want, (page, s["caption"])
+                assert s["images"][0]["label"] == "undamaged"
+                assert all((HERE / "static" / im["src"][len("/static/"):]).is_file() for im in s["images"])
