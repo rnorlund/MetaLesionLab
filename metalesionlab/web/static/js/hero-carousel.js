@@ -17,7 +17,7 @@
       Slide: {caption, images:[{src, alt, label?}], href? (the caption becomes a link)}. Keep every slide to the same
       number of pictures so the area never changes height (the area is always as tall as the tallest slide anyway).
    2b. ROW LAYOUT: add data-layout="row" to the figure (or {layout:'row'} to mount()) and each slide is one horizontal
-      row of equal square tiles (a "Pictures in a row" control, 5 / 7 / 10, thins a long row to evenly spaced steps,
+      row of equal square tiles (a "Pictures in a row" control, 5 / 7 / 10, shown when a row has more than 7, thins it to evenly spaced steps,
       always keeping the first and the last), left to right, filling the width (a tile is 1/6 of the row, so 4-6 steps all fit and
       every slide reserves the same height); up to 640px it is a horizontal scroll strip. Put it under the text, full
       width (/damaged and /plato/damage use it with .fl-wide in plato_firstscreen.css). Without it: the 2x2 grid.
@@ -106,7 +106,7 @@
     }
     if (rowMode) {
       view.insertAdjacentHTML('afterend', '<p class="hc-more" aria-hidden="true"><span>undamaged</span><span class="hc-rule"></span><span>more damage \u2192</span></p>');
-      if (most > COUNTS[0]) {
+      if (most > DEFAULT_COUNT) {  // a real choice only: a row of 6 (Glimmer's steps) shows them all, no control
         var box = document.createElement('div'); box.className = 'hc-count'; box.setAttribute('role', 'group');
         box.setAttribute('aria-label', 'Pictures in a row');
         box.innerHTML = '<span class="hc-count-l">Pictures in a row</span>' + COUNTS.map(function (c) {
