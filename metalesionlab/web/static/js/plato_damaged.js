@@ -1,8 +1,9 @@
-/* Damaged AI (/damaged): the hub's first screen. The rocking chair that damage to Stable Diffusion XL's language part
-   turns into a car, step by step beside the same steps of damage to its drawing part, and three numbers drawn by
-   FirstLook.damaged (plato_firstlook.js), the code that draws /plato/damage's first screen. Everything comes from
-   /api/plato/damage and /api/plato/ideas (statistics and precomputed pictures); no API calls. The cards below are
-   served with the page (damaged_routes.py). */
+/* Damaged AI (/damaged). The first screen leads with the damage to Meta's own open AI, Muse Glimmer: two numbers drawn by
+   FirstLook.glimmer (plato_firstlook.js) from /api/plato/glimmer, and the plain note under them (#hero-qual). The "second
+   AI" section below it (#sdxl) is Stable Diffusion XL: the rocking chair that damage to its language part turns into a
+   car, and three numbers drawn by FirstLook.damaged, the code that draws /plato/damage's first screen, from
+   /api/plato/damage and /api/plato/ideas (#sdxl-stats, #sdxl-qual). Statistics and precomputed pictures only; no API
+   calls. The cards below are served with the page (damaged_routes.py). */
 (function () {
   'use strict';
   var KIND = /rocking/, METHOD = 'noise', STEPS = 4;  // the slider's opening picture on /plato/damage: noise, up to level 3
@@ -56,7 +57,7 @@
   }
 
   function renderLead(d, ideas) {
-    var host = $('hero-stats'), q = $('hero-qual');
+    var host = $('sdxl-stats'), q = $('sdxl-qual');
     if (!host || !window.FirstLook) return;
     var lead = window.FirstLook.damaged(d, ideas);
     if (lead.stats.length) window.FirstLook.render(host, lead);
@@ -83,13 +84,22 @@
     t(' Other AIs, not people, judged the pictures. The damage is to an AI, so this is a comparison, not a claim about people.');
   }
 
-  Promise.all([get('/api/plato/damage'), get('/api/plato/ideas')]).then(function (r) {
-    var d = r[0], ideas = r[1];
-    if (!d && !ideas) {
+  // The lead: Muse Glimmer's two numbers (the note under them is written out in the page).
+  function renderGlimmer(g) {
+    var host = $('hero-stats');
+    if (!host || !g || !window.FirstLook || !window.FirstLook.glimmer) return;
+    var lead = window.FirstLook.glimmer(g);
+    if (lead.stats.length) window.FirstLook.render(host, lead);
+  }
+
+  Promise.all([get('/api/plato/glimmer'), get('/api/plato/damage'), get('/api/plato/ideas')]).then(function (r) {
+    var g = r[0], d = r[1], ideas = r[2];
+    if (!g && !d && !ideas) {
       var n = $('load-error');
       if (n) { n.hidden = false; n.textContent = 'Could not load the results of the damage experiments.'; }
       return;
     }
+    renderGlimmer(g);
     renderFilm(d);
     renderLead(d, ideas);
   });

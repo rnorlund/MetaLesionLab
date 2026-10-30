@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Damaged AI · {{BRAND}}</title>
-<meta name="description" content="What happens to an AI’s idea of a thing when we damage it? We damaged image AIs on purpose: we switched off some of their artificial neurons, or added random noise to them. Damage the part that reads the words and a rocking chair becomes a car, and God becomes an ordinary person. Damage the part that paints the picture and it mostly forgets how to draw. Every damage experiment on one page.">
+<meta name="description" content="What happens to an AI’s idea of a thing when we damage it? We switched off some of the artificial neurons of Meta’s own open AI, Muse Glimmer, and its drawings went first: it could still say what a chair is after it could no longer draw one. We also damaged Stable Diffusion XL, an open image AI: damage the part that reads words and a rocking chair becomes a car. Every damage experiment on one page.">
 <meta property="og:title" content="Damaged AI: what happens to an AI’s idea of a thing when we damage it? · {{BRAND}}">
-<meta property="og:description" content="Damage the part of an image AI that reads the words and a rocking chair turns into a car, and God into an ordinary person. Damage the part that paints the picture and it mostly forgets how to draw.">
+<meta property="og:description" content="Damage Meta’s own open AI, Muse Glimmer, and its drawings go first: it can still say what a chair is after it can no longer draw one. Damage an image AI’s word reader and a rocking chair becomes a car.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,16 +28,112 @@
 
 <main id="main" tabindex="-1">
 
-<!-- The first screen: the question, the rocking chair that language damage turns into a car, the answer in one sentence
-     and three numbers drawn (FirstLook.damaged, from /api/plato/damage and /api/plato/ideas; plato_damaged.js). -->
+<!-- The first screen leads with the damage to Meta's own open model, Muse Glimmer (numbers drawn by FirstLook.glimmer from
+     /api/plato/glimmer; plato_damaged.js). The pictures are static/img/plato_glimmer/steps (scripts/plato_glimmer_steps.py);
+     no AI's God is shown here, so /draw's "Draw God" stays blind. -->
 <section class="fl fl-side fl-wide dm-hero" aria-labelledby="hero-h">
   <div class="title-pair">
-    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Damaged AI: we damaged AIs on purpose. We switched off some of their artificial neurons, or added random noise to them.</span></p>
-    <h1 id="hero-h" aria-label="What happens to an AI’s idea of a thing when we damage it?">What happens to an AI’s idea of <span class="rw" data-rotating-word data-words="a chair|a rocking chair|a throne|God|a clock"><span class="rw-i">a thing</span></span> when we damage it?</h1>
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">Damaged AI: we damaged AIs on purpose, starting with Meta’s own open model, Muse Glimmer. We switched off some of their artificial neurons, or added random noise to them.</span></p>
+    <h1 id="hero-h" aria-label="What happens to an AI’s idea of a thing when we damage it?">What happens to an AI’s idea of <span class="rw" data-rotating-word data-words="a chair|a clock|God"><span class="rw-i">a thing</span></span> when we damage it?</h1>
   </div>
   <!--#epigraph:republic-596a-->
-  <p class="fl-answer" id="hero-answer">Damage the words part: it forgets <b>what</b> to draw. Damage the drawing part: it mostly forgets <b>how</b>.</p>
-  <figure class="fl-visual dm-film" id="film" data-hero-carousel data-layout="row" aria-label="Four things an AI draws, with more damage to its words part or drawing part">
+  <p class="fl-answer" id="hero-answer">Damage Meta’s open AI, and its drawings go first: it can still say what a chair is after it can no longer draw one.</p>
+  <figure class="fl-visual dm-film" id="film" data-hero-carousel data-layout="row" aria-label="Meta’s open AI, Muse Glimmer, drawing a chair and a clock with more and more of its neurons switched off">
+    <script type="application/json">{
+ "slides": [
+  {
+   "caption": "Muse Glimmer’s chair",
+   "images": [
+    {
+     "src": "/static/img/plato_glimmer/steps/chair_0.webp",
+     "alt": "Muse Glimmer’s drawing of a chair, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/chair_1.webp",
+     "alt": "Muse Glimmer’s drawing of a chair with 5% of its neurons switched off",
+     "label": "5% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/chair_2.webp",
+     "alt": "Muse Glimmer’s drawing of a chair with 10% of its neurons switched off",
+     "label": "10% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/chair_3.webp",
+     "alt": "Muse Glimmer’s attempt at a chair with 15% of its neurons switched off: no drawing came out",
+     "label": "15% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/chair_4.webp",
+     "alt": "Muse Glimmer’s attempt at a chair with 20% of its neurons switched off: no drawing came out",
+     "label": "20% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/chair_5.webp",
+     "alt": "Muse Glimmer’s attempt at a chair with 30% of its neurons switched off: no drawing came out",
+     "label": "30% off"
+    }
+   ],
+   "href": "/plato/glimmer"
+  },
+  {
+   "caption": "Muse Glimmer’s clock",
+   "images": [
+    {
+     "src": "/static/img/plato_glimmer/steps/clock_0.webp",
+     "alt": "Muse Glimmer’s drawing of a clock, undamaged",
+     "label": "undamaged"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/clock_1.webp",
+     "alt": "Muse Glimmer’s drawing of a clock with 5% of its neurons switched off",
+     "label": "5% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/clock_2.webp",
+     "alt": "Muse Glimmer’s drawing of a clock with 10% of its neurons switched off",
+     "label": "10% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/clock_3.webp",
+     "alt": "Muse Glimmer’s drawing of a clock with 15% of its neurons switched off",
+     "label": "15% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/clock_4.webp",
+     "alt": "Muse Glimmer’s attempt at a clock with 20% of its neurons switched off: no drawing came out",
+     "label": "20% off"
+    },
+    {
+     "src": "/static/img/plato_glimmer/steps/clock_5.webp",
+     "alt": "Muse Glimmer’s attempt at a clock with 30% of its neurons switched off: no drawing came out",
+     "label": "30% off"
+    }
+   ],
+   "href": "/plato/glimmer"
+  }
+ ]
+}</script>
+    <div class="hc-static"><div class="hc-strip" style="--n:6"><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_glimmer/steps/chair_0.webp" alt="Muse Glimmer’s drawing of a chair, undamaged" width="300" height="300" decoding="async"></span><figcaption class="hc-lab">undamaged</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_glimmer/steps/chair_1.webp" alt="Muse Glimmer’s drawing of a chair with 5% of its neurons switched off" width="300" height="300" decoding="async"></span><figcaption class="hc-lab">5% off</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_glimmer/steps/chair_2.webp" alt="Muse Glimmer’s drawing of a chair with 10% of its neurons switched off" width="300" height="300" decoding="async"></span><figcaption class="hc-lab">10% off</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_glimmer/steps/chair_3.webp" alt="Muse Glimmer’s attempt at a chair with 15% of its neurons switched off: no drawing came out" width="300" height="300" decoding="async"></span><figcaption class="hc-lab">15% off</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_glimmer/steps/chair_4.webp" alt="Muse Glimmer’s attempt at a chair with 20% of its neurons switched off: no drawing came out" width="300" height="300" decoding="async"></span><figcaption class="hc-lab">20% off</figcaption></figure><figure class="hc-pic"><span class="hc-paper"><img src="/static/img/plato_glimmer/steps/chair_5.webp" alt="Muse Glimmer’s attempt at a chair with 30% of its neurons switched off: no drawing came out" width="300" height="300" decoding="async"></span><figcaption class="hc-lab">30% off</figcaption></figure></div><p class="hc-cap"><a href="/plato/glimmer">Muse Glimmer’s chair</a></p></div>
+  </figure>
+  <div class="fl-stats" id="hero-stats" role="group" aria-label="Two numbers from the damage to Muse Glimmer"></div>
+  <details class="fl-note how-we-know">
+    <summary>How we know</summary>
+    <p>Meta’s open AI model, Muse Glimmer, is one anyone can download and run. We ran it on our own graphics card and switched off a share of its artificial neurons, step by step, from none to 30%. At every step we asked it to draw a chair, a clock and God as drawing code, and to describe each in one sentence, 12 times each: 36 answers per step. A separate AI, Google’s SigLIP 2, looked at each drawing and said whether it showed the right thing.</p>
+    <p id="hero-qual">We predicted before the run that the drawing would go first, and it did (<a href="/plato/glimmer">details</a>). Much of that is drawings becoming unrecognisable before they stop coming out at all. The damage is to an AI, so this is a comparison, not a claim about people.</p>
+  </details>
+</section>
+
+<!-- A second AI: Stable Diffusion XL, because Meta's image AI (Muse Image) runs only on Meta's servers and can't be damaged.
+     Numbers drawn by FirstLook.damaged from /api/plato/damage and /api/plato/ideas. -->
+<section class="dm-sec dm-sdxl" id="sdxl" aria-labelledby="sdxl-h">
+  <div class="dm-sec-head">
+    <h2 id="sdxl-h">A second AI: damage the part that reads words, and a rocking chair becomes a car</h2>
+    <p class="dm-lede">Meta’s image AI, Muse Image, runs only on Meta’s servers, so we can’t damage it. Stable Diffusion XL is an open image AI with two parts, one that reads your words and one that paints the picture, so we damaged each part.</p>
+  </div>
+  <div class="fl fl-side fl-wide dm-sdxl-body">
+  <figure class="fl-visual dm-film" id="sdxl-film" data-hero-carousel data-layout="row" aria-label="Four things an AI draws, with more damage to its words part or drawing part">
     <script type="application/json">{
  "slides": [
   {
@@ -285,14 +381,15 @@
     <p class="ds-small">The AI is Stable Diffusion XL, an open image AI. &lsquo;Damage&rsquo; means we switched off some of its artificial neurons, or added random noise to them.</p>
   </figcaption>
 </figure>
-  <div class="fl-stats" id="hero-stats" role="group" aria-label="Three numbers from the damage experiments"></div>
+  <div class="fl-stats" id="sdxl-stats" role="group" aria-label="Three numbers from the damage to Stable Diffusion XL"></div>
   <details class="fl-note how-we-know">
     <summary>How we know</summary>
     <p>Plato thought every real chair copies one perfect, ideal chair, which he called its Form. An image AI seems to hold an idea like that too: ask it for a rocking chair and it knows what to draw. So we damaged image AIs on purpose, one part at a time, to see what that idea is made of.</p>
     <p>The pictures: Stable Diffusion XL, an open image AI from Stability AI, was asked for a rocking chair every time, with the same random starting point. Each step adds more random noise to the artificial neurons of one part (steps 1 to 3 of 4 shown). Under each picture is the word that Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), used for it. Damage to the part that reads the words turned the rocking chair into a car, and God into an ordinary person.</p>
-    <p id="hero-qual">Our predictions held only in part: see <a href="/plato/damage#diss-h">what we predicted</a>.</p>
+    <p id="sdxl-qual">Our predictions held only in part: see <a href="/plato/damage#diss-h">what we predicted</a>.</p>
     <p>Brain science learned much of what each part of the brain does by studying people whose brains were damaged in one place. Our damage is to an AI, and we can undo it. It is a comparison, not a claim about people.</p>
   </details>
+  </div>
 </section>
 
 <!-- Every damage result as one even grid (damaged_routes.py: CARDS; site.py: render_hub). -->

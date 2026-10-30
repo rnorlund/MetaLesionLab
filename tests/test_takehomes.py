@@ -1,4 +1,7 @@
-"""Take-homes (/takehomes): three panels, the God panel covered by default, numbers from the data files, the starred nav item."""
+"""Take-homes (/takehomes): three panels, the God panel covered by default, numbers from the data files, the starred nav item.
+
+Message 2 is Meta's open AI, Muse Glimmer: one chair at each of six steps of damage (least at the left), with the drawings
+named and the descriptions right, pooled over a chair, a clock and God, all computed from data/plato_glimmer.json."""
 import json
 import re
 
@@ -8,6 +11,7 @@ from fastapi.testclient import TestClient
 from metalesionlab.web import app as web
 
 DATA = web.HERE / "data"
+WEB_STATIC = web.HERE / "static"
 
 
 @pytest.fixture(scope="module")
@@ -19,11 +23,12 @@ def test_route_and_three_panels(client):
     r = client.get("/takehomes")
     assert r.status_code == 200
     assert len(re.findall(r'<section class="th-panel"', r.text)) == 3
-    for h in ("Meta’s AI has one idea of a chair.", "Damage the part of an AI that reads words, and it forgets what it’s drawing.",
+    for h in ("Meta’s AI has one idea of a chair.", "Damage Meta’s open AI, and its drawings go before its words.",
               "Ask Meta’s AI to draw God."):
         assert h in r.text
-    assert [m for m in re.findall(r'class="th-link" href="([^"]+)"', r.text)] == ["/plato", "/damaged", "/plato/ideas"]
-    assert len(re.findall(r"/static/img/plato_damage/dense/rocking_\d\.webp", r.text)) == 7
+    assert [m for m in re.findall(r'class="th-link" href="([^"]+)"', r.text)] == ["/plato", "/plato/glimmer", "/plato/ideas"]
+    assert 'id="drawing-first"' in r.text and "words-first" not in r.text
+    assert "rocking" not in r.text and "plato_damage" not in r.text  # the Stable Diffusion XL row is gone
 
 
 def test_god_panel_is_covered_by_default(client):
@@ -52,3 +57,34 @@ def test_nav_has_starred_takehomes_first_after_home(client):
     assert labels[:3] == ["Home", "Take-homes", "Draw"]
     attrs, body = links[1]
     assert 'href="/takehomes"' in attrs and "nav-star" in attrs and "<svg" in body
+
+
+def test_drawing_first_panel_numbers_come_from_the_data_and_run_left_to_right(client):
+    t = client.get("/takehomes").text
+    g = json.loads((DATA / "plato_glimmer.json").read_text())
+    steps = g["damage"][0]["steps"]
+    assert len(steps) == 6
+
+    def pooled(cond, key):
+        return sum(c[key] for c in g["conditions"][cond].values())
+    n = sum(c["n"] for c in g["conditions"][steps[4]["cond"]].values())
+    right, named = pooled("all@0.2", "correct"), pooled("all@0.2", "named")
+    assert (right, named, n) == (21, 1, 36)  # the figures the message quotes, checked once against the data
+    assert (f"With a fifth of its neurons switched off, {right} of its {n} descriptions were still right. "
+            f"Only {named} of its {n} drawings could still be named.") in t
+    sec = t[t.index('id="drawing-first"'):t.index('<!-- 3.')]
+    assert "Muse Glimmer, Meta’s open AI. Left to right: more of its neurons switched off, from none to 30%." in sec
+    cols = re.findall(r"<li>(.*?)</li>", sec, re.S)
+    assert len(cols) == 6
+    labels = ["undamaged", "5% off", "10% off", "15% off", "20% off", "30% off"]
+    for i, (col, label, st) in enumerate(zip(cols, labels, steps)):
+        assert f"/static/img/plato_glimmer/steps/chair_{i}.webp" in col and f'<span class="th-lbl">{label}</span>' in col
+        assert f'<b>{pooled(st["cond"], "named")} of {n}</b>' in col and f'<b>{pooled(st["cond"], "correct")} of {n}</b>' in col
+        assert (WEB_STATIC / "img" / "plato_glimmer" / "steps" / f"chair_{i}.webp").is_file()
+    assert "god" not in sec.lower().replace("and god", "")  # no God picture; the fig line names God only as one of three things
+    assert 'class="th-legend"' in sec and sec.index("th-legend") < sec.index('class="th-row"')
+
+
+def test_takehomes_css_uses_tokens_only():
+    css = (WEB_STATIC / "css" / "takehomes.css").read_text()
+    assert not re.search(r"#[0-9a-fA-F]{3,8}\b", css) and not re.search(r"font-size:\s*\d", css)
