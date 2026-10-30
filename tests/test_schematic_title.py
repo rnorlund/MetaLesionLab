@@ -30,9 +30,8 @@ def test_schematic_renders_with_three_versions(page):
 
 
 def test_schematic_before_number_blocks_on_damaged():
-    # the schematic sits in the Stable Diffusion XL section (#sdxl): after its carousel, before its numbers
-    assert DAMAGED.index("data-damage-schematic") < DAMAGED.index('id="sdxl-stats"')
-    assert DAMAGED.index("data-damage-schematic") > DAMAGED.index('id="sdxl-film"')
+    assert DAMAGED.index("data-damage-schematic") < DAMAGED.index('id="hero-stats"')
+    assert DAMAGED.index("data-damage-schematic") > DAMAGED.index("data-hero-carousel")
 
 
 def test_default_is_seven_pictures():

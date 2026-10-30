@@ -264,7 +264,7 @@ def test_page_api_and_sprites(client):
             assert row["named"] <= row["drew"] and row["correct"] <= row["names"]
             for m in ("drew", "named", "correct", "fluent"):
                 assert d["marks"][cond][th][m].count("1") == row[m]
-    imgs = [f for f in (web.HERE / "static" / "img" / "plato_glimmer").rglob("*") if f.is_file()]  # the sprites and steps/ (the Damaged AI hero)
+    imgs = list((web.HERE / "static" / "img" / "plato_glimmer").glob("*"))
     assert all(f.suffix == ".webp" for f in imgs) and sum(f.stat().st_size for f in imgs) < 2.5 * 1024 * 1024
 
 

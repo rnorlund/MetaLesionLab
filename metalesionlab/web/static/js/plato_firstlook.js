@@ -178,14 +178,11 @@
     var doc = (root && root.document) || box.ownerDocument;
     if (!doc || !box.parentNode) return null;
     var hero = (box.closest && box.closest('section')) || null, scope = hero || doc;
-    // one disclosure per set of numbers: /damaged has two (#hero-stats: hero-how, #sdxl-stats: sdxl-how)
-    var howId = /^(?!hero-).+-stats$/.test(box.id || '') ? box.id.replace(/-stats$/, '') + '-how' : 'hero-how';
     var d = scope.querySelector('details.fl-how');
-    if (d && d.id && d.id !== howId && howId !== 'hero-how') d = null;
     if (!d) {
       d = doc.createElement('details');
       d.className = 'fl-how how-we-know';
-      d.setAttribute('id', howId);
+      d.setAttribute('id', 'hero-how');
       d.innerHTML = HOW_SUMMARY;
       box.parentNode.insertBefore(d, box.nextSibling);
     }
@@ -466,42 +463,7 @@
     return { stats: stats, split: d ? splitParts(d) : null, proto: pr && pr.verdict ? { verdict: pr.verdict, farther: pr.farther } : null };
   }
 
-  // /damaged's lead, Meta's own open AI (Muse Glimmer 30B, neurons switched off): d is what /api/plato/glimmer returns.
-  // Counts are pooled over the things (chair, clock, God) at each step of the "all" damage type.
-  function glimmerCount(d, cond, key) {
-    var c = d.conditions && d.conditions[cond], t = 0, n = 0, things = 0;
-    if (!c) return null;
-    Object.keys(c).forEach(function (k) { t += c[k][key] || 0; n += c[k].n || 0; things++; });
-    return { v: t, n: n, things: things };
-  }
-  function glimmer(d) {
-    var all = d && d.damage && d.damage[0];
-    if (!all || !all.steps || all.steps.length < 5) return { stats: [] };
-    var fifth = all.steps[4].cond, last = all.steps[all.steps.length - 1].cond;  // all@0.2 and the heaviest, all@0.3
-    var named = glimmerCount(d, fifth, 'named'), right = glimmerCount(d, fifth, 'correct');
-    var fluent = glimmerCount(d, last, 'fluent'), right30 = glimmerCount(d, last, 'correct');
-    if (!named || !right || !fluent || !right30) return { stats: [] };
-    var first = d.verdict && d.verdict.types && d.verdict.types.all;
-    var v = first && first.verdict === 'picture first' ? { tone: 'yes', text: 'As predicted' } : { tone: 'part', text: 'Too close to call' };
-    var pct = function (c) { return Math.round(parseFloat(c.replace(/^.*@/, '')) * 100); };
-    return { stats: [
-      { kind: 'bars', verdict: v,
-        ask: 'With a fifth of its neurons switched off', take: right.v > named.v ? 'Its words outlasted its drawings.' : 'Its drawings lasted as long as its words.',
-        o: { values: [named.v, right.v], labels: ['Drawings an AI could still name', 'Descriptions still right'], tones: ['blue', 'orange'], max: right.n, suffix: ' of ' + right.n,
-          label: 'of its answers: drawings an AI could still name, descriptions still right',
-          alt: 'With ' + pct(fifth) + '% of Muse Glimmer’s neurons switched off, an AI could still name ' + named.v + ' of its ' + named.n + ' drawings, and ' +
-            right.v + ' of its ' + right.n + ' descriptions were still right.' },
-        q: right.n + ' answers: a chair, a clock and God, ' + (right.n / right.things) + ' each.' },
-      { kind: 'bars',
-        ask: 'At the heaviest damage (' + pct(last) + '% off)', take: 'Some proper sentences, almost no true ones.',
-        o: { values: [fluent.v, right30.v], labels: ['Proper sentences', 'Right descriptions'], tones: ['blue', 'orange'], max: fluent.n, suffix: ' of ' + fluent.n,
-          label: 'of its descriptions: proper sentences, right descriptions',
-          alt: 'With ' + pct(last) + '% of Muse Glimmer’s neurons switched off, ' + fluent.v + ' of its ' + fluent.n + ' descriptions were proper sentences, and ' +
-            right30.v + ' were right.' } }
-    ] };
-  }
-
-  var api = { inside: inside, forms: forms, atlas: atlas, scale: scale, damage: damage, damaged: damaged, glimmer: glimmer,
+  var api = { inside: inside, forms: forms, atlas: atlas, scale: scale, damage: damage, damaged: damaged,
     html: html, figure: figure, how: how, render: render };
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root && root.document) root.FirstLook = api;

@@ -27,10 +27,7 @@ def client():
 
 
 def carousel_cfg(page):
-    """The Stable Diffusion XL carousel: /plato/damage's only one, and /damaged's #sdxl-film (its first screen now leads with
-    Muse Glimmer's own two-slide carousel, #film, with 6 steps per slide: tests/test_damaged.py checks that one)."""
-    sdxl = re.search(r'id="sdxl-film" data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', page, re.S)
-    return json.loads((sdxl or re.search(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', page, re.S)).group(1))
+    return json.loads(re.search(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', page, re.S).group(1))
 
 
 @pytest.mark.parametrize("path", ["/plato/damage", "/damaged"])
@@ -53,8 +50,7 @@ def test_the_row_slides_render_every_available_step(client, path):
     assert re.search(r'data-hero-carousel data-layout="row"', page) and "fl-wide" in page
     steps = [len(s["images"]) for s in carousel_cfg(page)["slides"]]
     assert steps == [10, 10, 10, 10]  # each row: undamaged + 9 doses, same picture (docs/plato_damage.md, denser rows)
-    start = page.index('id="sdxl-film"') if 'id="sdxl-film"' in page else 0
-    first = re.search(r'<div class="hc-static">.*?</p></div>', page[start:], re.S).group(0)  # the no-JS first slide shows all of its steps
+    first = re.search(r'<div class="hc-static">.*?</p></div>', page, re.S).group(0)  # the no-JS first slide shows all of its steps
     assert first.count('class="hc-pic"') == steps[0] and f'--n:{steps[0]}' in first
 
 
@@ -165,7 +161,7 @@ with sync_playwright() as p:
       getComputedStyle(document.querySelector('.hc-slide')).transitionDuration, getComputedStyle(document.querySelector('.fd-item')).transitionDuration]""")
     # the hub
     hub = ctx.new_page(); hub.goto(B + "/damaged?nosplash=1"); hub.wait_for_selector(".hc-dot"); hub.wait_for_timeout(500)
-    out["hub"] = hub.evaluate("[document.querySelectorAll('.hc-slide').length, document.querySelectorAll('.dm-hub a').length > 3]")  # Glimmer's 2 slides + Stable Diffusion XL's 4
+    out["hub"] = hub.evaluate("[document.querySelectorAll('.hc-slide').length, document.querySelectorAll('.dm-hub a').length > 3]")
     br.close()
 print(json.dumps(out))
 '''
@@ -235,7 +231,7 @@ def test_browser_reduced_motion_never_moves_or_animates(browser_run):
 
 def test_browser_no_console_errors_and_the_hub_has_the_carousel_and_its_cards(browser_run):
     assert browser_run["errors"] == []
-    assert browser_run["hub"] == [6, True]
+    assert browser_run["hub"] == [4, True]
 
 
 def test_browser_the_key_numbers_from_the_data_are_on_the_page(browser_run):

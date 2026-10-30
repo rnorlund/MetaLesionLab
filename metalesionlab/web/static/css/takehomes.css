@@ -21,28 +21,12 @@
 .th-link { justify-self: start; margin-top: 6px; font-size: var(--fs-body); font-weight: 600; color: var(--ink); text-decoration: underline; text-decoration-color: var(--orange); text-underline-offset: 4px; }
 .th-link:hover { color: var(--orange); }
 
-/* 2: six steps of Muse Glimmer's chair, evenly spaced, undamaged at the left; under each, two thin bars (blue: drawings
-   named, orange: descriptions right) out of the same total. On a narrow screen the row scrolls sideways, never wraps. */
-.th-legend { margin: 0 0 clamp(10px, 1vw, 20px); font-family: var(--mono); font-size: var(--fs-label); color: var(--paper-ink); display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; }
-.th-key { display: inline-flex; align-items: baseline; gap: 6px; color: var(--paper-ink); }
-.th-key i { width: 0.7em; height: 0.7em; border-radius: 50%; display: inline-block; background: var(--blue); }
-.th-key.right i { background: var(--orange); }
-.th-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(8px, 1.2vw, 28px); }
-.th-row li { display: grid; align-content: start; gap: 6px; min-width: 0; }
+/* 2: seven steps, evenly spaced, undamaged at the left */
+.th-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: clamp(4px, 0.8vw, 20px); }
+.th-row li { display: grid; gap: 6px; min-width: 0; }
 .th-tile { display: block; aspect-ratio: 1; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 8px; overflow: hidden; }
 .th-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.th-lbl { font-family: var(--mono); font-size: var(--fs-label); color: var(--paper-ink); text-align: center; }
-.th-val { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 2px 6px; font-family: var(--mono); font-size: var(--fs-label); color: var(--paper-ink); }
-.th-val-l { grid-column: 1; }
-.th-val b { grid-column: 2; justify-self: end; font-weight: 500; color: var(--paper-ink); white-space: nowrap; }
-.th-bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--paper-line); overflow: hidden; }
-.th-bar i { display: block; height: 100%; background: var(--blue); }
-.th-val.right .th-bar i { background: var(--orange); }
-@media (max-width: 700px) {
-  .th-card:has(.th-row) { overflow-x: auto; }
-  .th-row { grid-template-columns: repeat(6, minmax(8.5rem, 1fr)); min-width: 56rem; }
-  .th-legend { position: sticky; left: 0; }
-}
+.th-lbl { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); text-align: center; }
 
 /* 3: covered until drawn */
 .th-god-pic { position: relative; min-height: clamp(200px, 22vw, 420px); display: grid; }
@@ -57,3 +41,4 @@
   background-image: var(--sprite); background-repeat: no-repeat; background-size: calc(var(--cols) * 100%) calc(var(--rows) * 100%);
   background-position: calc(var(--c) * 100% / (var(--cols) - 1)) calc(var(--r) * 100% / (var(--rows) - 1)); }
 
+@media (max-width: 700px) { .th-row li:not(:first-child):not(:last-child) .th-lbl { visibility: hidden; } }
