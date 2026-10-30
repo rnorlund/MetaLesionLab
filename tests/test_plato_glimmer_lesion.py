@@ -222,6 +222,21 @@ def test_registered_in_damaged_ai_on_the_plato_site_only():
     assert any(c["path"].startswith("/plato/glimmer") for c in damaged_routes.CARDS)
 
 
+def test_swear_words_are_masked_the_comic_strip_way():
+    assert gl.grawlix("What a chair is? Fuck you 😂") == "What a chair is? F&$# you 😂"
+    assert gl.grawlix("Holy shit, you want the infinite") == "Holy s&$#, you want the infinite"
+    assert gl.grawlix("motherfucking clocks") == "m&$#@!%&$#@!%" + " clocks"
+    for fine in ("A chair has a seat, a back and legs.", "Dickens, class, assessment, Scunthorpe, cocktail", "", None):
+        assert gl.grawlix(fine) == (fine or "")
+
+
+@needs_data
+def test_the_public_file_shows_no_swear_words():
+    said = json.dumps(json.loads(DATA.read_text())["sentences"], ensure_ascii=False)
+    assert not gl.SWEARS.search(said)
+    assert "F&$# you" in said and "Holy s&$#" in said  # still there, masked, so a reader can tell what was said
+
+
 def test_api_reports_missing_data(tmp_path, monkeypatch):
     monkeypatch.setattr(R, "DATA", tmp_path / "missing.json")
     R._cache.clear()

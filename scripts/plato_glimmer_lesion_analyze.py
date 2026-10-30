@@ -475,7 +475,7 @@ def cmd_web(args):
         for t in gl.THINGS:
             o = out[cond][t.key]
             marks[cond][t.key] = {m: "".join(str(int(x)) for x in o[m]) for m in ("drew", "named", "correct", "fluent")}
-            sentences[cond][t.key] = [clean_sentence(s["text"]) for s in raw[cond]["things"][t.key]["describe"]]
+            sentences[cond][t.key] = [gl.grawlix(clean_sentence(s["text"])) for s in raw[cond]["things"][t.key]["describe"]]
     damage = []
     for d in gl.DAMAGE:
         conds = ["intact"] + [gl.condition_name(d.key, x) for x in d.doses]

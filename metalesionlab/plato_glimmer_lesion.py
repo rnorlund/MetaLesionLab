@@ -346,6 +346,16 @@ def boot_rate_ci(x: np.ndarray, reps: int = 4000, seed: int = 0) -> list[float]:
 
 PUBLIC_KEYS = {"about", "credits", "things", "damage", "conditions", "verdict", "cost"}
 
+# The damaged model sometimes swears. The public file shows a swear word the comic-strip way: its first letter, then
+# symbols for the rest ("F&$# you"), so a reader can tell what was said without reading the word itself.
+SWEARS = re.compile(r"\b(?:(?:mother)?fuck|shit|bullshit|bitch|cunt|asshole|bastard|whore|slut)\w*", re.I)
+GRAWLIX = "&$#@!%"
+
+
+def grawlix(text: str) -> str:
+    """The text with each strong swear word masked: "Fuck you" -> "F&$# you", "Holy shit" -> "Holy s&$#"."""
+    return SWEARS.sub(lambda m: m[0][0] + "".join(GRAWLIX[i % len(GRAWLIX)] for i in range(len(m[0]) - 1)), text or "")
+
 
 def validate_public(d: dict) -> list[str]:
     """Problems with web/data/plato_glimmer.json (empty = fine): derived numbers, short example sentences and the
