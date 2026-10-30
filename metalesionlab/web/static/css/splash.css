@@ -8,6 +8,7 @@
   --sp-caption: #e9dccb; --sp-caption-lit: #3d4250; --sp-chair: #141a26; --sp-seat: #C2410C;
   --sp-veil: rgba(23, 17, 12, 0.9); --sp-veil-lit: rgba(247, 246, 241, 0.94); --sp-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
   --sp-ink: #171a22; --sp-cream: #f4efe6; --sp-white: #fff; --sp-mute: #6b7180; --sp-mute-2: #4b5160;
+  --sp-ember: #ffb35c; --sp-ember-glow: rgba(255, 140, 50, 0.85); --sp-ember-soft: rgba(242, 163, 58, 0.22); --sp-cast: rgba(6, 4, 2, 0.8);
   --sp-skip: #f4efe6; --sp-skip-lit: #171a22; --sp-skip-bg-lit: rgba(255, 255, 255, 0.75); --sp-skip-line-lit: #c9c6bc; --sp-focus: #60A5FA; }
 :root[data-theme="dark"] .splash { --sp-paper: var(--paper); }
 .sp-scene { position: absolute; inset: 0; }
@@ -93,3 +94,28 @@ html.splash-fade .site-head .brand-logo { visibility: hidden; }  /* the flying c
 .sp-still-big { font: 600 var(--fs-h2)/1.2 var(--sans); }
 .sp-continue { align-self: flex-start; font: 600 var(--fs-body)/1 var(--sans); color: var(--sp-cream); background: var(--sp-ink); border: 0; border-radius: 999px; padding: 14px 24px; min-height: 48px; cursor: pointer; }
 .sp-continue:focus-visible { outline: 2px solid var(--sp-focus); outline-offset: 3px; }
+
+/* The opening title (splash.js opening()): in the dark with only the fire, each letter lights up like an ember and
+   cools to the caption colour; then the letters go dark and their shadows stretch up and to the left, away from the
+   fire at the front right, as the cave's drifting shadows come in behind them. */
+.splash.dark .sp-fire, .splash.dark .sp-lamp { opacity: 0.45; }
+.sp-title { position: absolute; left: 50%; top: 47%; transform: translate(-50%, -50%); z-index: 5; width: min(92%, 64rem);
+  margin: 0; text-align: center; color: var(--sp-caption); pointer-events: none; }
+.sp-title .ln { display: block; text-wrap: balance; }
+.sp-title .l1 { font-family: var(--sp-serif); font-style: italic; font-weight: 300; font-size: var(--fs-h2); line-height: 1.3; }
+.sp-title .l2 { margin-top: 0.3em; font: 600 var(--fs-display)/1.05 var(--sans); letter-spacing: -0.02em; }
+.sp-title .w { display: inline-block; white-space: nowrap; }
+.sp-title .ch { display: inline-block; opacity: 0; }
+.sp-title .ln.on .ch { animation: sp-ember 1200ms cubic-bezier(.2, .7, .3, 1) both; animation-delay: calc(var(--i) * 45ms); }
+@keyframes sp-ember {
+  0% { opacity: 0; filter: blur(10px); transform: translateY(0.35em) scale(1.2); color: var(--sp-ember); text-shadow: 0 0 0.7em var(--sp-ember-glow); }
+  40% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); color: var(--sp-ember); text-shadow: 0 0 0.5em var(--sp-ember-glow); }
+  100% { opacity: 1; filter: none; transform: none; color: var(--sp-caption); text-shadow: 0 0 0.25em var(--sp-ember-soft); }
+}
+.sp-title.cast .ln.on .ch { animation: sp-cast 1250ms cubic-bezier(.4, 0, .6, 1) both; animation-delay: calc(var(--i) * 10ms); }
+@keyframes sp-cast {
+  0% { opacity: 1; color: var(--sp-caption); text-shadow: 0 0 0 var(--sp-cast); transform: none; filter: none; }
+  40% { opacity: 1; color: transparent; text-shadow: -0.2em -0.1em 0.06em var(--sp-cast); transform: skewX(6deg); }
+  100% { opacity: 0; color: transparent; text-shadow: -0.9em -0.45em 0.3em var(--sp-cast); transform: skewX(16deg); filter: blur(3px); }
+}
+.sp-title.gone { display: none; }

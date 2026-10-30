@@ -1,6 +1,8 @@
 /* Plato's Chair's opening animation, "the cave", on the landing page, in three styles.
 
-   Firelight and drifting shadows, with Republic 515c. The chair's shadow slows to the centre and comes
+   It opens on the question, in the dark with only the fire: "If Plato were alive today…" and "What would he ask
+   AI?" light up letter by letter like embers, cool, then turn into shadows thrown on the wall away from the fire.
+   Then firelight and drifting shadows, with Republic 515c. The chair's shadow slows to the centre and comes
    into focus, the wall turns to paper, and the chair comes closer while flipping through the 16 kinds
    Muse Spark named (drawn by Muse Image) and people's own chairs, with Republic 596a. It ends on the
    geometric "Form" chair, which draws itself and glides into the header's brand slot to become the logo,
@@ -35,13 +37,14 @@
     '<cite>Plato, Republic 515c · Jowett</cite>';
   var Q596 = '“Whenever a number of individuals have a common name, we assume them to have also a corresponding idea or form.”' +
     '<cite>Plato, Republic 596a · Jowett</cite>';
+  var T1 = 'If Plato were alive today…', T2 = 'What would he ask AI?';  // the opening title
   var ONE = 'One ideal chair?';
   var C1 = 'Plato said every chair is a copy of one ideal chair.', C2 = 'We only ever see the shadows.', C3 = 'What would Plato ask an AI?';
   var NAVY = '#141a26', WHITE = '#F9FAFB', ORANGE = '#C2410C';
-  var MAX_MS = { a: 34000, b: 38000, c: 22000 }[STYLE];  // whatever happens, the page is back by then
+  var MAX_MS = { a: 42000, b: 46000, c: 30000 }[STYLE];  // whatever happens, the page is back by then
 
   var raf = 0, run = 0, done = false, anims = [], timers = [], log = [], cur = null;
-  var stage, actor, shadowEl, caption, skipBtn, form, frames = [], shadowPic, L = {};
+  var stage, actor, shadowEl, caption, title, skipBtn, form, frames = [], shadowPic, L = {};
 
   // Reading time of a caption (the citation line is not counted).
   function words(html) { var t = html.replace(/<cite>.*?<\/cite>/g, '').replace(/<[^>]+>/g, ' ').trim(); return t ? t.split(/\s+/).length : 0; }
@@ -52,6 +55,17 @@
     if (cls) e.className = cls;
     if (html != null) e.innerHTML = html;
     return e;
+  }
+  // A line of the opening title: one span per letter (--i staggers them), words kept whole so a line breaks only
+  // between words.
+  function embers(text, cls) {
+    var line = el('span', cls), i = 0;
+    text.split(' ').forEach(function (w, k) {
+      if (k) line.appendChild(document.createTextNode(' '));
+      var word = line.appendChild(el('span', 'w'));
+      Array.from(w).forEach(function (c) { var ch = word.appendChild(el('span', 'ch')); ch.textContent = c; ch.style.setProperty('--i', i++); });
+    });
+    return line;
   }
   function img(src) { var i = new Image(); i.src = src; i.alt = ''; i.decoding = 'async'; return i; }
   function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
@@ -124,6 +138,8 @@
     }
     scene.appendChild(el('div', 'sp-bg sp-veil'));
     caption = scene.appendChild(el('p', 'sp-caption'));
+    title = scene.appendChild(el('div', 'sp-title'));
+    [[T1, 'ln l1'], [T2, 'ln l2']].forEach(function (t) { title.appendChild(embers(t[0], t[1])); });
     stage.appendChild(scene);
     skipBtn = el('button', 'sp-skip', 'Skip intro <span aria-hidden="true">→</span>');
     skipBtn.type = 'button';
@@ -139,6 +155,7 @@
     stage = el('div', 'splash static');
     var box = el('div', 'sp-still');
     box.appendChild(el('p', 'sp-still-h', 'Plato’s Chair'));
+    box.appendChild(el('p', 'sp-still-big', T1 + '<br>' + T2));
     [Q515, Q596].forEach(function (q) { box.appendChild(el('p', 'sp-still-q', q)); });
     box.appendChild(el('p', 'sp-still-big', ONE));
     skipBtn = el('button', 'sp-continue', 'Continue to the page <span aria-hidden="true">→</span>');
@@ -179,6 +196,28 @@
   }
 
   // --- the scenes (each style strings them together with its own captions) ----------------------
+  // The opening title, in the dark with only the fire: each line lights up letter by letter like embers and cools;
+  // after its reading time the letters go dark and their shadows stretch away from the fire (up and to the left),
+  // while onCast starts the cave behind them. Resolves once the title has gone.
+  function opening(id, onCast) {
+    var lines = title.children, both = T1 + ' ' + T2;
+    stage.classList.add('dark');
+    return wait(350, id).then(function () {
+      lines[0].classList.add('on');
+      cur = { text: both, need: readMs(both), shown: performance.now() };
+      log.push(cur);
+      return wait(1500, id);
+    }).then(function () {
+      lines[1].classList.add('on');
+      return wait(readMs(both) - 1500, id);
+    }).then(function () {
+      endLog();
+      title.classList.add('cast');
+      stage.classList.remove('dark');
+      onCast();
+      return wait(1300, id);
+    }).then(function () { title.classList.add('gone'); });
+  }
   function cave(slide) {  // firelight, drifting shadows, the chair's shadow sliding in
     var W = L.W, H = L.H;
     var items = SHADOWS.map(function (name, i) {
@@ -263,8 +302,7 @@
 
   // --- the three styles -------------------------------------------------------------------------
   function playA(id) {  // the same sequence, every caption held for its reading time
-    cave();
-    return wait(400, id).then(function () { return hold(id, Q515); })
+    return opening(id, function () { cave(); }).then(function () { return hold(id, Q515); })
       .then(function () { unsay(); return focus(id); })
       .then(function () { still(id); say(Q596); return wait(1000, id); })  // the caption is up first, then the chair moves
       .then(function () {
@@ -274,8 +312,7 @@
       .then(function () { return end(id); });
   }
   function playB(id) {  // words first: each caption alone, big, then small at the top while the scene plays
-    cave(2400);
-    return wait(300, id).then(function () { return hold(id, Q515, 'big', true); })
+    return opening(id, function () { cave(2400); }).then(function () { return hold(id, Q515, 'big', true); })
       .then(function () { demote(); return focus(id); })
       .then(function () { return wait(1500, id); })
       .then(function () { unsay(); still(id); return wait(500, id); })
@@ -286,8 +323,7 @@
       .then(function () { return end(id); });
   }
   function playC(id) {  // short and bold: three lines
-    cave(2600);
-    return wait(300, id).then(function () { return hold(id, C1, 'big', true, 3000); })
+    return opening(id, function () { cave(2600); }).then(function () { return hold(id, C1, 'big', true, 3000); })
       .then(function () { return hold(id, C2, 'big', false, 2800); })
       .then(function () { unsay(); return focus(id); })
       .then(function () { still(id); return flip(id, 0.5); })
