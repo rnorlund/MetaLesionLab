@@ -100,6 +100,9 @@
   --chart-grid: #E1E0D9;
   --chart-axis: #C3C2B7;
   --chart-halo: #FFFFFF;       /* the ring round a mark, the halo behind a label */
+  --chart-muse: #1D4ED8;       /* glowing charts (glowchart.js): checked for colour blindness on --chart-bg */
+  --chart-people: #C2410C;
+  --chart-you: #0D9488;
   /* more series: the validated palette of /plato/cratylus, /plato/cave and /plato/scale */
   --s-blue: #2A78D6;
   --s-orange: #EB6834;
@@ -208,6 +211,9 @@
   --chart-grid: #2A3240;
   --chart-axis: #4D5768;
   --chart-halo: #12161D;
+  --chart-muse: #6991E6;       /* a shade deeper than --blue so the glow stays inside the checked lightness band */
+  --chart-people: #DB750F;
+  --chart-you: #0EAB99;
   --s-blue: #5E9DF0;
   --s-orange: #F38A5E;
   --s-green: #3CCB94;

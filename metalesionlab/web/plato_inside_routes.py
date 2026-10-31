@@ -55,3 +55,17 @@ def plato_inside_data():
     if data is None:
         raise HTTPException(503, "The inside-the-model statistics aren't on this server yet.")
     return data
+
+
+@router.get("/api/plato/inside/layers")
+def plato_inside_layers():
+    """Only what the layer-by-layer chart needs (about 20 KB, not the page's 450 KB): per thing, how spread out Muse
+    Image's and people's doodles are at each of Muse Glimmer's layers, the means and the median collapse layer."""
+    data = load_data()
+    if data is None:
+        raise HTTPException(503, "The inside-the-model statistics aren't on this server yet.")
+    s = data["summary"]
+    return {"n_layers": data["n_layers"], "collapse_layer": s["median_collapse_layer"], "mean": s["mean_spread"],
+            "things": [{"label": c["label"], "muse": c["spread"]["muse"], "people": c["spread"]["people"]}
+                       for c in data["concepts"]]}
+

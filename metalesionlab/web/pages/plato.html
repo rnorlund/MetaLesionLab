@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="/static/css/statviz.css">
 <link rel="stylesheet" href="/static/css/plato.css">
 <link rel="stylesheet" href="/static/css/plato_hub.css">
+<link rel="stylesheet" href="/static/css/glowchart.css">
 </head>
 <body class="plato">
 <a class="skip" href="#main">Skip to content</a>
@@ -288,8 +289,7 @@
   <div class="pc-cards">
     <article class="pc-card">
       <h3>Muse Image’s doodles of a thing end up in one place</h3>
-      <img src="/static/img/plato/spread_by_layer.webp" width="1200" height="560" loading="lazy"
-           alt="Line chart over Glimmer’s 52 stages. How different people’s doodles look to it (orange) stays between about 0.5 and 0.7 throughout. Muse Image’s doodles (blue) track just below until about stage 28, then fall steeply to about 0.1 by stage 40 and stay there.">
+      <div class="glow-chart" data-glow="layers" data-src="/api/plato/inside/layers" aria-label="Line chart over Glimmer’s 52 stages. How different people’s doodles look to it (orange) stays between about 0.5 and 0.7 throughout. Muse Image’s doodles (blue) track just below until about stage 28, then fall steeply to about 0.1 by stage 40 and stay there."></div>
       <p id="collapse-text">By about stage 36 of 52, Glimmer sees all of Muse Image’s doodles of a thing as one picture; people’s stay apart.</p>
     </article>
     <article class="pc-card">
@@ -341,6 +341,7 @@
 </div>
 
 <script src="/static/js/common.js"></script>
+<script src="/static/js/glowchart.js"></script>
 <script src="/static/js/statviz.js"></script>
 <script src="/static/js/plato.js"></script>
 <script src="/static/js/tour.js"></script>

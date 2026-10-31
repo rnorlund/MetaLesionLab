@@ -45,6 +45,7 @@
 <link rel="stylesheet" href="/static/css/draw.css">
 <link rel="stylesheet" href="/static/css/landing.css">
 <link rel="stylesheet" href="/static/css/tour.css">
+<link rel="stylesheet" href="/static/css/glowchart.css">
 </head>
 <body class="landing">
 <a class="skip" href="#main">Skip to content</a>
@@ -236,8 +237,7 @@
   <div class="wrap section">
     <div class="split">
       <figure class="split-art inside-fig">
-        <img src="/static/img/plato/spread_by_layer.webp" width="1200" height="560" loading="lazy"
-             alt="Line chart over the 52 stages (layers) in which Meta’s open AI model, Muse Glimmer, reads a picture. How different people’s doodles look to it (orange) stays between about 0.5 and 0.7 throughout. Muse Image’s doodles (blue) track just below until about stage 28, then fall steeply to about 0.1 by stage 40 and stay there.">
+        <div class="glow-chart" data-glow="layers" data-src="/api/plato/inside/layers" aria-label="Line chart over the 52 stages (layers) in which Meta’s open AI model, Muse Glimmer, reads a picture. How different people’s doodles look to it (orange) stays between about 0.5 and 0.7 throughout. Muse Image’s doodles (blue) track just below until about stage 28, then fall steeply to about 0.1 by stage 40 and stay there."></div>
         <figcaption>How different the doodles look to Muse Glimmer at each of its 52 stages: Muse Image’s (blue), people’s (orange).</figcaption>
       </figure>
       <div class="split-text">
@@ -268,6 +268,7 @@
   </div>
 </footer>
 <script src="/static/js/common.js"></script>
+<script src="/static/js/glowchart.js"></script>
 <script src="/static/js/draw.js"></script>
 <script src="/static/js/landing.js"></script>
 <script src="/static/js/tour.js"></script>
