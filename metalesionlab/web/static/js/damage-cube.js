@@ -47,7 +47,7 @@
     }
     function show(i) {
       step = i;
-      if (stepEl) stepEl.textContent = labels[i] + ' · step ' + (i + 1) + ' of ' + n;
+      if (stepEl) stepEl.textContent = labels[i];  // plain words, no numbers (the track shows how far along)
       if (trackEl) [].forEach.call(trackEl.children, function (b, j) {
         b.classList.toggle('on', j <= i);
         b.setAttribute('aria-current', j === i ? 'step' : 'false');
