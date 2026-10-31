@@ -54,3 +54,5 @@
 
 @media (max-width: 800px) { .ba-pair { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .ba-cur { animation: none; } }
+/* on a phone the panels stack, so a sticky bar would cover the brain: it scrolls with the page there */
+@media (max-width: 860px) { .ba-ctrl { position: static; } }
