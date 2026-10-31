@@ -134,3 +134,8 @@ html.splash-fade .site-head .brand-logo { visibility: hidden; }  /* the flying c
 .sp-spark.c { background: var(--sp-cream); }
 .sp-ring { position: absolute; z-index: 6; display: block; border-radius: 50%; pointer-events: none; border: 3px solid var(--sp-ember);
   box-shadow: 0 0 18px 4px var(--sp-ember-glow), inset 0 0 14px var(--sp-ember-soft); }
+
+/* The WebGL cave (static/js/splash-cave.js): a canvas over the CSS wall, under the chair and the captions. It fades in
+   with the cave and out (splash.js focus(), 900 ms) as the wall turns to paper. ?cave=dom plays the CSS cave instead. */
+.sp-cave { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; display: block; transition: opacity 700ms ease; }
+.splash.out .sp-cave { opacity: 0; }

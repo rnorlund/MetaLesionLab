@@ -457,7 +457,7 @@ def test_splash_is_on_the_plato_landing_only(client):
 
 def test_splash_assets_are_small_webp_and_never_muse_images_chairs():
     folder = web.HERE / "static" / "img" / "splash"
-    files = sorted(folder.iterdir())
+    files = sorted(f for f in folder.rglob("*") if f.is_file())  # incl. shadows/, Roger's 18 objects
     assert files and all(f.suffix == ".webp" for f in files)
     assert sum(f.stat().st_size for f in files) < 400 * 1024
     assert all(Image.open(f).format == "WEBP" for f in files)
