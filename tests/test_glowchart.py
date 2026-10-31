@@ -49,3 +49,17 @@ def test_tokens_only_and_motion_respected():
     assert not re.search(r"#[0-9a-fA-F]{3,8}\b", CSS)
     assert not re.search(r"font-size:\s*\d", CSS)
     assert "prefers-reduced-motion: reduce" in JS and "IntersectionObserver" in JS
+
+
+@pytest.mark.parametrize("path", ["/draw", "/", "/plato/clock"])
+def test_draw_pages_load_the_glowing_charts_before_the_draw_script(client, path):
+    page = client.get(path).text
+    assert page.count("/static/js/glowchart.js") == 1 and page.count("/static/css/glowchart.css") == 1
+    assert page.index("/static/js/glowchart.js") < page.index("/static/js/draw.js")
+
+
+def test_draw_results_use_one_glowing_line_each_and_no_flat_map():
+    draw = (STATIC / "js" / "draw.js").read_text()
+    assert draw.count("GlowChart.swarm(") == 2 and "map-chart" not in draw and "mapChart" not in draw
+    assert "'The AI’s usual ' + c.label" in draw and "'A typical person’s ' + c.label" in draw
+    assert "function swarm(el, o)" in JS and "tinted(row.sprite.src" in JS

@@ -11,3 +11,13 @@
 .glow-tip .glow-k.people::before { background: var(--chart-people); }
 .glow-tip .glow-k.muse::before { background: var(--chart-muse); }
 .glow-tip .glow-note { color: var(--muted); margin-top: 2px; }
+.glow-swarm { padding: 16px 16px 12px; }
+.glow-stage { position: relative; }
+.glow-key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 10px; font-size: var(--fs-label); color: var(--ink-2); }
+.glow-key i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: -1px; }
+.glow-key i.muse { background: var(--chart-muse); }
+.glow-key i.people { background: var(--chart-people); }
+.glow-key i.you { background: var(--chart-you); box-shadow: 0 0 0 2px var(--chart-bg), 0 0 0 4px var(--chart-you); }
+.glow-ends { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: var(--fs-label); color: var(--ink-2); }
+.glow-ends b { font-weight: 650; color: var(--ink); }
+.glow-tip canvas { display: block; width: 96px; height: 96px; margin: 0 auto 6px; border-radius: 8px; background: var(--chart-bg); }

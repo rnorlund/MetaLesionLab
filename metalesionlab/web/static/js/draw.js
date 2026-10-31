@@ -109,8 +109,6 @@
     '    <p class="dw-headline" data-dw="muse-text"></p><div class="dw-chart" data-dw="muse-chart"></div><p class="dw-note" data-dw="muse-note"></p></article>' +
     '</div>' +
     '<div class="dw-pair" data-dw="people-pair">' +
-    '  <article class="dw-card"><h3>Where your <span data-label>chair</span> lands</h3><div class="dw-legend" data-dw="map-legend"></div>' +
-    '    <div class="dw-chart dw-map" data-dw="map-chart"></div><p class="dw-note" data-dw="map-note"></p></article>' +
     '  <article class="dw-card"><h3>Closest drawings</h3><div class="dw-near" data-dw="near"></div>' +
     '    <p class="dw-note">The drawings that look most like yours to DINOv2, a Meta AI that compares pictures.</p>' +
     '    <details class="dw-numbers"><summary>See the numbers</summary><div class="table-wrap"><table class="data" data-dw="numbers"></table></div></details></article>' +
@@ -404,41 +402,6 @@
     items.push({ x: yx, y: yTop, color: TEAL, label: 'Your drawing', value: o.you });
     el.appendChild(root);
     nearestHover(root, el, items);
-  }
-
-  function mapChart(el, legend, c, r) {
-    el.textContent = '';
-    var W = Math.max(280, el.clientWidth || 320), H = Math.round(W * 0.72), P = 16;
-    var pts = c.map.ai.concat(c.map.human, [r.xy]);
-    var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
-    var x0 = min(xs), x1 = max(xs), y0 = min(ys), y1 = max(ys);
-    var k = Math.min((W - 2 * P) / (x1 - x0 || 1), (H - 2 * P) / (y1 - y0 || 1));  // same scale both ways
-    var ox = (W - (x1 - x0) * k) / 2, oy = (H - (y1 - y0) * k) / 2;
-    var X = function (v) { return ox + (v - x0) * k; }, Y = function (v) { return H - (oy + (v - y0) * k); };
-    var root = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
-      'aria-label': 'Map of Muse Image’s ' + c.n_ai + ' doodles, ' + c.n_human + ' people’s drawings and yours' });
-    root.appendChild(svg('rect', { x: 0.5, y: 0.5, width: W - 1, height: H - 1, rx: 10, fill: 'var(--chart-bg)', stroke: GRID }));
-    var items = [];
-    c.map.human.forEach(function (p, i) {
-      root.appendChild(svg('circle', { cx: X(p[0]), cy: Y(p[1]), r: 4, fill: ORANGE, 'fill-opacity': 0.55, stroke: HALO, 'stroke-width': 1 }));
-      items.push({ x: X(p[0]), y: Y(p[1]), i: i, sprite: c.sprites.people, color: ORANGE, label: 'A person’s drawing' });
-    });
-    c.map.ai.forEach(function (p, i) {
-      root.appendChild(svg('circle', { cx: X(p[0]), cy: Y(p[1]), r: 5, fill: BLUE, stroke: HALO, 'stroke-width': 2 }));
-      items.push({ x: X(p[0]), y: Y(p[1]), i: i, sprite: c.sprites.muse, color: BLUE, label: 'Muse Image doodle' });
-    });
-    var yx = X(r.xy[0]), yy = Y(r.xy[1]);
-    root.appendChild(svg('circle', { cx: yx, cy: yy, r: 9, fill: TEAL, stroke: HALO, 'stroke-width': 2.5 }));
-    var right = yx > W - 60;
-    root.appendChild(svg('text', { class: 'lbl-you', x: yx + (right ? -14 : 14), y: yy + 4, 'text-anchor': right ? 'end' : 'start',
-      stroke: HALO, 'stroke-width': 4, 'paint-order': 'stroke' }, 'You'));
-    items.push({ x: yx, y: yy, color: TEAL, label: 'Your drawing' });
-    el.appendChild(root);
-    nearestHover(root, el, items);
-    legend.textContent = '';
-    [[BLUE, 'Muse Image (' + c.n_ai + ')'], [ORANGE, 'People (' + c.n_human + ')'], [TEAL, 'You']].forEach(function (e, i) {
-      legend.appendChild(h('span', null, [h('i', { class: i === 2 ? 'you' : null, style: { background: e[0] } }), e[1]]));
-    });
   }
 
   // ---------- share card drawing helpers ----------
@@ -1167,22 +1130,41 @@
       }
       q('photo-note').hidden = r.source !== 'upload';
       q('photo-note').textContent = 'Scored from a photo: in our tests, photos scored about 14 points more original than the same drawing made here.';
-      q('orig-note').textContent = 'Each dot is one person’s drawing from Google’s Quick, Draw! game; the further right, the more it differs from everyone else’s.';
+      q('orig-note').textContent = 'Each dot is one person’s drawing from Google’s Quick, Draw! game, placed by how different it looks from the typical one.';
       q('muse-text').textContent = museSentence(r, c);
       charts(c, r);
       q('muse-note').textContent = 'Muse Image’s own ' + plural(c.label) + ' sit ' + f2(min(c.ai_loo)) + '–' + f2(max(c.ai_loo)) +
         ' from their average; yours sits ' + f2(r.d_ai) + ' away, partly because DINOv2 also sees style (marker sketch or quick doodle).';
-      var ex = c.map.explained || [];
-      q('map-note').textContent = 'A flat map of how DINOv2 sees the drawings, from its two main directions' +
-        (ex.length ? ' (' + Math.round(100 * (ex[0] + ex[1])) + '% of the differences)' : '') +
-        ', so closeness is approximate; hover or tap a dot to see the drawing.';
       renderNear(r, c);
       renderNumbers(r, c);
       drawCard().catch(function () {});
       updateShareLinks();
       socratesLink(r, c);
     }
+    function yourInk() {  // the visitor's drawing as dark ink on white (a photo as it is), for the charts
+      if (S.upload) return { image: S.upload.canvas, photo: true };
+      var cv = document.createElement('canvas'), side = 240;
+      cv.width = cv.height = side;
+      var g = cv.getContext('2d');
+      g.fillStyle = '#FFFFFF';
+      g.fillRect(0, 0, side, side);
+      strokeAll(g, S.strokes, side / 1000, Math.max(6, side / 24), 0, 0);
+      return { image: cv, photo: false };
+    }
     function charts(c, r) {
+      if (window.GlowChart) {  // one line each, glowing (Roger's pick); the plain strips are the fallback
+        var mine = yourInk();
+        GlowChart.swarm(q('orig-chart'), {
+          rows: [{ who: 'people', label: c.n_human + ' people', values: c.human_loo, sprite: c.sprites.people }],
+          you: r.d_human, youImage: mine.image, youPhoto: mine.photo,
+          anchor: { row: 0, label: 'A typical person’s ' + c.label }, ends: ['Like most people’s', 'Unlike anyone’s'] });
+        GlowChart.swarm(q('muse-chart'), {
+          rows: [{ who: 'muse', label: 'Meta’s AI (' + c.n_ai + ')', values: c.ai_loo, sprite: c.sprites.muse },
+                 { who: 'people', label: 'People (' + c.n_human + ')', values: c.human_to_ai, sprite: c.sprites.people }],
+          you: r.d_ai, youImage: mine.image, youPhoto: mine.photo,
+          anchor: { row: 0, label: 'The AI’s usual ' + c.label }, ends: ['Just like the AI’s ' + c.label, 'Nothing like it'] });
+        return;
+      }
       stripChart(q('orig-chart'), {
         axis: 'distance from the typical person’s ' + c.label + ' →',
         rows: [{ name: c.n_human + ' people’s ' + plural(c.label), color: ORANGE, values: c.human_loo, sprite: c.sprites.people, who: 'person' }],
@@ -1196,7 +1178,6 @@
         ],
         you: r.d_ai
       });
-      mapChart(q('map-chart'), q('map-legend'), c, r);
     }
 
     function renderNear(r, c) {

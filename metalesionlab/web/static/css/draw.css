@@ -67,6 +67,7 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 .dw-fair { margin: 0; font-size: var(--fs-body); max-width: var(--measure); line-height: 1.55; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 8px; padding: 10px 12px; }
 .dw-fair:empty { display: none; }
 .dw-tiles, .dw-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.dw-pair > .dw-card:only-child { grid-column: 1 / -1; }
 .dw-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(22px, 1.6vw, 36px) clamp(24px, 1.8vw, 40px); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .dw-card h3 { margin: 0; font-size: var(--fs-label); font-weight: 600; color: var(--muted); font-family: var(--mono); letter-spacing: 0.01em; }
 .dw-big { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
@@ -82,7 +83,6 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 .dw-chart .tick { font-size: 11px; fill: var(--muted); }
 .dw-chart .lbl { font-size: 12px; fill: var(--ink-2); }
 .dw-chart .lbl-you { font-size: 12px; font-weight: 700; fill: var(--ink); }
-.dw-map svg { touch-action: pan-y; }
 /* people's dots are see-through so overlaps show; on a dark ground that turns the orange brown, so less so */
 :root[data-theme="dark"] .dw-chart circle[fill-opacity^="0.5"] { fill-opacity: 0.8; }
 .dw-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-small); color: var(--ink-2); }

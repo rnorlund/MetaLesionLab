@@ -5,6 +5,12 @@
      <div class="glow-chart" data-glow="layers" data-src="/api/plato/inside/layers"></div>
        Muse Glimmer's 52 layers: per thing, how spread out Muse Image's and people's doodles look to it (faint
        threads), their means (bold, glowing) and the median layer where Muse Image's collapse to one.
+   From script:
+     GlowChart.swarm(el, { rows: [{ who: 'muse' | 'people', label, values, sprite: { src, cell, cols } }], you: value,
+                           youImage: canvas (dark ink on white) or null, youPhoto: true for a photo (drawn as it is),
+                           anchor: { row: 0, label: 'The AI’s usual chair' }, ends: ['Just like it', 'Nothing like it'] })
+       One line (Roger's pick): every drawing a glowing dot placed by its distance, the anchor row's closest drawing
+       pinned at the start and the visitor's drawing pinned where it lands.
    Colours are the --chart-muse / --chart-people / --chart-you tokens (app.css), checked for colour blindness on
    both themes; text is in ink tokens. Each chart draws itself in when it scrolls into view (reduced motion: drawn
    at once), redraws on resize and on a theme switch, and shows the values under the pointer. */
@@ -175,8 +181,185 @@
     return function () { draw(performance.now()); };
   }
 
-  var KINDS = { layers: layers };
   var redraws = [];
+
+  // ---- swarm: one line, every drawing a glowing dot -------------------------------------------------
+  var sheets = {};
+  function tinted(src, color) {  // a sprite sheet of dark ink on white, as ink of `color` on nothing
+    var key = src + '|' + color;
+    if (!sheets[key]) sheets[key] = new Promise(function (ok) {
+      var im = new Image();
+      im.onload = function () { ok(tint(im, color)); };
+      im.onerror = function () { ok(null); };
+      im.src = src;
+    });
+    return sheets[key];
+  }
+  function tint(im, color) {
+    var cv = document.createElement('canvas');
+    cv.width = im.naturalWidth || im.width; cv.height = im.naturalHeight || im.height;
+    var g = cv.getContext('2d');
+    g.drawImage(im, 0, 0);
+    var d = g.getImageData(0, 0, cv.width, cv.height), px = d.data, h = color.replace('#', '');
+    var r = parseInt(h.slice(0, 2), 16), gg = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    for (var k = 0; k < px.length; k += 4) {
+      var a = 255 - (px[k] + px[k + 1] + px[k + 2]) / 3;
+      px[k] = r; px[k + 1] = gg; px[k + 2] = b; px[k + 3] = Math.min(255, a * 1.5);
+    }
+    g.putImageData(d, 0, 0);
+    return cv;
+  }
+  function swarm(el, o) {
+    if (el._glowStop) el._glowStop();
+    el.textContent = '';
+    el.classList.add('glow-chart', 'glow-swarm');
+    var C = colors(), stage = document.createElement('div'), t0 = null, raf = 0, alive = true, L = null;
+    stage.className = 'glow-stage';
+    var key = document.createElement('div');
+    key.className = 'glow-key';
+    o.rows.forEach(function (row) {
+      key.insertAdjacentHTML('beforeend', '<span><i class="' + row.who + '"></i>' + row.label + '</span>');
+    });
+    key.insertAdjacentHTML('beforeend', '<span><i class="you"></i>Yours</span>');
+    var ends = document.createElement('div');
+    ends.className = 'glow-ends';
+    ends.innerHTML = '<span>← <b></b></span><span><b></b> →</span>';
+    ends.querySelectorAll('b')[0].textContent = o.ends[0];
+    ends.querySelectorAll('b')[1].textContent = o.ends[1];
+    el.appendChild(key); el.appendChild(stage); el.appendChild(ends);
+    var tip = tipFor(el);
+
+    var dots = [];
+    o.rows.forEach(function (row) { row.values.forEach(function (v, i) { dots.push({ who: row.who, row: row, i: i, v: v }); }); });
+    var anchorRow = o.rows[o.anchor.row], anchorI = anchorRow.values.indexOf(Math.min.apply(0, anchorRow.values));
+    var ink = {};
+
+    function layout() {
+      var W = Math.max(260, stage.clientWidth), F = fonts(el), r = Math.max(3.2, Math.min(6, W / 200)), pad = 12;
+      var vmax = Math.max(o.you, Math.max.apply(0, dots.map(function (d) { return d.v; }))) * 1.03;
+      var X = function (v) { return pad + v / vmax * (W - 2 * pad); };
+      var placed = [];
+      dots.slice().sort(function (a, b) { return a.v - b.v; }).forEach(function (d) {
+        var sx = X(d.v), best = 0;
+        for (var k = 0; k < 600; k++) {
+          var y = (k % 2 ? 1 : -1) * Math.ceil(k / 2) * r * 0.9, ok = true;
+          for (var j = placed.length - 1; j >= 0; j--) {
+            var q = placed[j]; if (sx - q.sx > 2 * r + 1.5) break;
+            var dx = sx - q.sx, dy = y - q.sy; if (dx * dx + dy * dy < (2 * r + 1.5) * (2 * r + 1.5)) { ok = false; break; }
+          }
+          if (ok) { best = y; break; }
+        }
+        d.sx = sx; d.sy = best; placed.push(d);
+      });
+      var spread = Math.max.apply(0, placed.map(function (d) { return Math.abs(d.sy); }));
+      var narrow = W < 520, thumb = Math.max(64, Math.min(132, W / 6)), lab = F.base * (narrow ? 1.05 : 1.25);
+      var top = thumb + (narrow ? 2 * lab + 26 : lab + 22), mid = top + spread + r + 14;
+      L = { W: W, H: mid + spread + r + 10, r: r, X: X, pad: pad, top: top, mid: mid, thumb: thumb, lab: lab, narrow: narrow, F: F,
+            order: placed };
+    }
+    function box(g, cx, color, glow, drawInk) {
+      var th = L.thumb, y = L.top - th - 8;
+      g.save(); g.shadowColor = color; g.shadowBlur = glow; g.fillStyle = C.bg; g.beginPath(); g.roundRect(cx - th / 2, y, th, th, 14); g.fill(); g.restore();
+      g.strokeStyle = color; g.lineWidth = 2.5; g.beginPath(); g.roundRect(cx - th / 2, y, th, th, 14); g.stroke();
+      g.save(); g.beginPath(); g.roundRect(cx - th / 2 + 3, y + 3, th - 6, th - 6, 11); g.clip(); drawInk(cx - th / 2 + 5, y + 5, th - 10); g.restore();
+    }
+    function sprite(g, d, x, y, size) {
+      var sh = ink[d.who], sp = d.row.sprite;
+      if (!sh || !sp) return;
+      g.drawImage(sh, (d.i % sp.cols) * sp.cell, Math.floor(d.i / sp.cols) * sp.cell, sp.cell, sp.cell, x, y, size, size);
+    }
+    function draw(now) {
+      if (!alive || !L) return;
+      C = colors();
+      var cg = canvasFor(stage, L.W, L.H), g = cg.g, r = L.r, n = L.order.length;
+      var el0 = reduce ? 1e9 : t0 === null ? 0 : now - t0;
+      function prog(k) { return reduce ? 1 : Math.max(0, Math.min(1, (el0 - k / n * 900) / 700)); }
+      g.strokeStyle = C.line; g.lineWidth = 1.5; g.beginPath(); g.moveTo(L.pad, L.mid); g.lineTo(L.W - L.pad, L.mid); g.stroke();
+      g.globalCompositeOperation = 'lighter';
+      L.order.forEach(function (d, k) {
+        var e = ease(prog(k)); if (!e) return;
+        var x = L.pad + (d.sx - L.pad) * e, y = L.mid + d.sy * e, R = r * (d.who === 'muse' ? 8 : 7.5);
+        var gr = g.createRadialGradient(x, y, 0, x, y, R);
+        gr.addColorStop(0, rgba(C[d.who], d.who === 'muse' ? 0.30 : 0.17)); gr.addColorStop(1, rgba(C[d.who], 0));
+        g.fillStyle = gr; g.beginPath(); g.arc(x, y, R, 0, 7); g.fill();
+      });
+      g.globalCompositeOperation = 'source-over';
+      L.order.forEach(function (d, k) {
+        var e = ease(prog(k)); if (!e) return;
+        d.hx = L.pad + (d.sx - L.pad) * e; d.hy = L.mid + d.sy * e;
+        g.save(); g.shadowColor = C[d.who]; g.shadowBlur = 10; g.globalAlpha = e; g.fillStyle = C[d.who];
+        g.beginPath(); g.arc(d.hx, d.hy, d.who === 'muse' ? r + 0.5 : r, 0, 7); g.fill(); g.restore();
+      });
+      // the anchor's drawing at the start of the line, and yours where it lands
+      var ax = L.pad + L.thumb / 2, labFont = L.F.label(L.lab / L.F.base, 700);
+      box(g, ax, C[anchorRow.who], 18, function (x, y, s) { sprite(g, { who: anchorRow.who, row: anchorRow, i: anchorI }, x, y, s); });
+      var words = o.anchor.label.split(' ');
+      if (L.narrow) {
+        var half = Math.ceil(words.length / 2);
+        text(g, words.slice(0, half).join(' '), ax - L.thumb / 2, L.top - L.thumb - 8 - L.lab * 1.9, { font: labFont }, C);
+        text(g, words.slice(half).join(' '), ax - L.thumb / 2, L.top - L.thumb - 8 - L.lab * 0.75, { font: labFont }, C);
+      } else {
+        text(g, o.anchor.label, ax + L.thumb / 2 + 14, L.top - L.thumb / 2 - 8, { font: labFont }, C);
+      }
+      var ty = reduce ? 1 : ease(Math.max(0, Math.min(1, (el0 - 1300) / 600)));
+      if (ty > 0) {
+        var ux = L.X(o.you), bx = Math.min(L.W - L.thumb / 2 - 4, Math.max(L.thumb * 1.5 + 24, ux));
+        g.globalAlpha = ty;
+        g.strokeStyle = C.you; g.lineWidth = 2.5; g.beginPath(); g.moveTo(ux, L.mid); g.lineTo(ux, L.top - 8); g.stroke();
+        if (Math.abs(bx - ux) > 1) { g.beginPath(); g.moveTo(ux, L.top - 8); g.lineTo(bx, L.top - 8); g.stroke(); }
+        var pulse = reduce ? 0 : (now / 1500) % 1;
+        g.beginPath(); g.arc(ux, L.mid, r + 4 + pulse * 22, 0, 7); g.strokeStyle = rgba(C.you, 0.6 * (1 - pulse)); g.lineWidth = 2; g.stroke();
+        g.save(); g.shadowColor = C.you; g.shadowBlur = 16; g.fillStyle = C.you; g.beginPath(); g.arc(ux, L.mid, r + 4, 0, 7); g.fill(); g.restore();
+        box(g, bx, C.you, 22, function (x, y, s) {
+          if (ink.you) { var k = Math.min(s / ink.you.width, s / ink.you.height); g.drawImage(ink.you, x + (s - ink.you.width * k) / 2, y + (s - ink.you.height * k) / 2, ink.you.width * k, ink.you.height * k); }
+        });
+        if (L.narrow) text(g, 'Yours', bx, L.top - L.thumb - 8 - L.lab * 0.75, { font: labFont, align: 'center' }, C);
+        else if (bx - L.thumb / 2 - 14 - g.measureText('Yours').width > ax + L.thumb / 2 + 14 + g.measureText(o.anchor.label).width + 20)
+          text(g, 'Yours', bx - L.thumb / 2 - 14, L.top - L.thumb / 2 - 8, { font: labFont, align: 'right' }, C);
+        else text(g, 'Yours', bx, L.top - L.thumb - 8 - L.lab * 0.75, { font: labFont, align: 'center' }, C);
+        g.globalAlpha = 1;
+      }
+      if (!reduce && t0 !== null) raf = requestAnimationFrame(draw);
+    }
+    // the drawings, in the chart's colours
+    var jobs = o.rows.map(function (row) { return row.sprite ? tinted(row.sprite.src, C[row.who]).then(function (cv) { ink[row.who] = cv; }) : null; });
+    if (o.youImage) {
+      ink.you = o.youPhoto ? o.youImage : null;
+      if (!o.youPhoto) jobs.push(Promise.resolve().then(function () { ink.you = tint(o.youImage, C.you); }));
+    }
+    layout();
+    draw(0);
+    Promise.all(jobs).then(function () { draw(performance.now()); });
+    onView(el, function () { t0 = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); });
+    // the drawing under the pointer, bigger
+    var tcv = document.createElement('canvas');
+    stage.addEventListener('pointermove', function (e) {
+      if (!L) return;
+      var rc = stage.getBoundingClientRect(), mx = e.clientX - rc.left, my = e.clientY - rc.top, best = null, bd = 144;
+      L.order.forEach(function (d) { var dx = d.hx - mx, dy = d.hy - my, q = dx * dx + dy * dy; if (q < bd) { bd = q; best = d; } });
+      if (!best) { tip.hidden = true; return; }
+      tip.innerHTML = '';
+      if (ink[best.who] && best.row.sprite) {
+        tcv.width = tcv.height = 96; var tg = tcv.getContext('2d'); tg.clearRect(0, 0, 96, 96);
+        sprite(tg, best, 0, 0, 96); tip.appendChild(tcv);
+      }
+      var b = document.createElement('b'); b.textContent = best.who === 'muse' ? 'Meta’s AI (Muse Image)' : 'A person’s drawing';
+      tip.appendChild(b);
+      tip.hidden = false;
+      tip.style.left = Math.min(L.W - tip.offsetWidth, Math.max(0, best.hx + 14)) + 'px';
+      tip.style.top = Math.max(0, best.hy + stage.offsetTop - tip.offsetHeight - 10) + 'px';
+    });
+    stage.addEventListener('pointerleave', function () { tip.hidden = true; });
+    el.setAttribute('role', 'img');
+    el._glowStop = function () { alive = false; cancelAnimationFrame(raf); };
+    var redraw = function () { if (!alive) return; C = colors(); layout(); jobs = []; o.rows.forEach(function (row) {
+      if (row.sprite) tinted(row.sprite.src, C[row.who]).then(function (cv) { ink[row.who] = cv; draw(performance.now()); }); });
+      if (o.youImage && !o.youPhoto) ink.you = tint(o.youImage, C.you); draw(performance.now()); };
+    redraws.push(redraw);
+    return redraw;
+  }
+
+  var KINDS = { layers: layers };
   function render(el) {
     var kind = KINDS[el.getAttribute('data-glow')], src = el.getAttribute('data-src');
     if (!kind || el._glow) return;
@@ -193,6 +376,6 @@
   addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { redraws.forEach(function (f) { f(); }); }, 120); });
   new MutationObserver(function () { redraws.forEach(function (f) { f(); }); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  window.GlowChart = { render: render, renderAll: renderAll, rgba: rgba, colors: colors };
+  window.GlowChart = { render: render, renderAll: renderAll, swarm: swarm, rgba: rgba, colors: colors };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { renderAll(); }); else renderAll();
 })();
