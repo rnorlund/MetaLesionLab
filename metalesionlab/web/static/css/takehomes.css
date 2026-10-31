@@ -28,17 +28,30 @@
 .th-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .th-lbl { font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); text-align: center; }
 
-/* 3: covered until drawn */
-.th-god-pic { position: relative; min-height: clamp(200px, 22vw, 420px); display: grid; }
-.th-cover { display: grid; place-content: center; justify-items: center; gap: 18px; text-align: center; padding: clamp(24px, 4vw, 80px); border-radius: 10px;
-  background: var(--soft); border: 1px dashed var(--line-2); }
-.th-cover[hidden], .th-god-grid[hidden] { display: none; }
-.th-cover-text { margin: 0; font-size: var(--fs-h2); line-height: 1.15; color: var(--ink-2); }
-.th-cover-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-.th-cover-btns .btn { font-size: var(--fs-body); padding: 12px 22px; }
-.th-god-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: clamp(3px, 0.4vw, 10px); }
-.th-god-grid span { aspect-ratio: 1; display: block; background-color: var(--paper); border: 1px solid var(--paper-line); border-radius: 6px;
-  background-image: var(--sprite); background-repeat: no-repeat; background-size: calc(var(--cols) * 100%) calc(var(--rows) * 100%);
-  background-position: calc(var(--c) * 100% / (var(--cols) - 1)) calc(var(--r) * 100% / (var(--rows) - 1)); }
+.th-lbl { white-space: nowrap; }
 
-@media (max-width: 700px) { .th-row li:not(:first-child):not(:last-child) .th-lbl { visibility: hidden; } }
+/* 2: on phones the row scrolls sideways inside its card, not the page */
+.th-scroll { overflow-x: auto; }
+@media (max-width: 700px) { .th-scroll { grid-template-columns: repeat(7, 38vw); padding-bottom: 6px; } }
+
+/* 3: what you hear beside what a text-only AI receives, then the two scores */
+.th-meaning { display: grid; gap: clamp(16px, 2vw, 40px); color: var(--paper-ink); }
+.th-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 3vw, 64px); }
+.th-col-h { margin: 0 0 10px; font-family: var(--mono); font-size: var(--fs-label); color: var(--paper-ink); opacity: 0.7; }
+.th-says { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.th-says li { display: flex; align-items: center; gap: 10px; min-height: 40px; border-bottom: 1px solid var(--paper-line); font-size: var(--fs-body); color: var(--paper-ink); }
+.th-says b { color: var(--orange); font-weight: 700; }
+.th-play { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--paper-ink); background: var(--paper); cursor: pointer; display: grid; place-content: center; padding: 0; }
+.th-play:hover, .th-play[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); }
+.th-ico { width: 0; height: 0; border-left: 11px solid var(--paper-ink); border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 3px; }
+.th-play[aria-pressed="true"] .th-ico { width: 12px; height: 12px; border: 0; margin: 0; background: var(--paper-ink); }
+.th-bars { display: grid; gap: 14px; }
+.th-bar { padding-bottom: 22px; }
+@media (max-width: 700px) { .th-says li { min-height: 58px; } }
+.th-bar p { margin: 0 0 6px; font-size: var(--fs-body); color: var(--paper-ink); }
+.th-track { position: relative; height: 22px; background: var(--paper); border: 1px solid var(--paper-line); border-radius: 6px; }
+.th-track i { position: absolute; inset: 0 auto 0 0; border-radius: 5px; background: var(--orange); }
+.th-bar.sound .th-track i { background: var(--blue); }
+.th-track u { position: absolute; top: -4px; bottom: -4px; border-left: 2px dashed var(--paper-ink); text-decoration: none; }
+.th-track u span { position: absolute; left: 6px; top: 100%; margin-top: 2px; font-family: var(--mono); font-size: var(--fs-label); color: var(--paper-ink); white-space: nowrap; }
+@media (max-width: 700px) { .th-cols { gap: 10px; } .th-says li { font-size: var(--fs-label); gap: 6px; } .th-play { width: 32px; height: 32px; } }

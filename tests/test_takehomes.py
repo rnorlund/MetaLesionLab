@@ -1,4 +1,4 @@
-"""Take-homes (/takehomes): three panels, the God panel covered by default, numbers from the data files, the starred nav item."""
+"""Take-homes (/takehomes): three panels (one chair, copies of copies, written words), numbers from the data files, the starred nav item."""
 import json
 import re
 
@@ -19,30 +19,55 @@ def test_route_and_three_panels(client):
     r = client.get("/takehomes")
     assert r.status_code == 200
     assert len(re.findall(r'<section class="th-panel"', r.text)) == 3
-    for h in ("Meta’s AI has one idea of a chair.", "Damage the part of an AI that reads words, and it forgets what it’s drawing.",
-              "Ask Meta’s AI to draw God."):
+    for h in ("Meta’s AI has one idea of a chair.", "Copy a copy, and the idea gets lost.", "Written words lose what you meant."):
         assert h in r.text
-    assert [m for m in re.findall(r'class="th-link" href="([^"]+)"', r.text)] == ["/plato", "/damaged", "/plato/ideas"]
-    assert len(re.findall(r"/static/img/plato_damage/dense/rocking_\d\.webp", r.text)) == 7
+    assert [m for m in re.findall(r'class="th-link" href="([^"]+)"', r.text)] == ["/plato", "/plato/telephone", "/plato/phaedrus"]
+    assert re.findall(r'class="th-num">(\d)<', r.text) == ["1", "2", "3"]
+    assert "words-first" not in r.text and 'id="god"' not in r.text
 
 
-def test_god_panel_is_covered_by_default(client):
+def test_data_ask_questions(client):
     t = client.get("/takehomes").text
-    assert 'id="god" data-state="covered"' in t
-    assert "Draw yours first, then see Meta’s AI’s" in t and 'href="/draw?thing=god"' in t and "Show me now" in t
-    assert re.search(r'id="god-grid" hidden', t)  # the drawings stay out of sight until revealed
-    assert re.search(r'th-god-after" hidden>16 of 16: the same bearded man with long hair and a halo, as in Western religious art\.', t)
-    js = (web.HERE / "static" / "js" / "takehomes.js").read_text()
-    assert "tot-draw-seen" in js
+    assert re.findall(r'data-ask="([^"]+)"', t) == ["What happens when you copy a copy?", "Can written words say what you meant?"]
+
+
+def test_copies_pictures_exist_and_run_left_to_right(client):
+    t = client.get("/takehomes").text
+    row = re.search(r'<ol class="th-row th-scroll"[^>]*>(.*?)</ol>', t, re.S).group(1)
+    idx = [int(i) for i in re.findall(r"telephone-beanbag-(\d+)\.webp", row)]
+    assert idx == [0, 2, 3, 5, 7, 8, 10]
+    assert re.findall(r'class="th-lbl">([^<]+)<', row) == ["start", "copy 2", "copy 3", "copy 5", "copy 7", "copy 8", "copy 10"]
+    for i in idx:
+        assert client.get(f"/static/img/gallery/telephone-beanbag-{i}.webp").status_code == 200
+    assert all(a.strip() for a in re.findall(r'alt="([^"]*)"', row)) and len(re.findall(r'alt="', row)) == 7
+
+
+def test_phaedrus_numbers_match_data(client):
+    t = client.get("/takehomes").text
+    d = json.loads((DATA / "plato_phaedrus.json").read_text())
+    ks, kr, n = d["spark"]["transcript"]["k"], d["reader"]["k"], d["reader"]["n"]
+    assert f"Meta’s AI, reading the words: <b>{ks} of {n}</b>" in t
+    assert f"A simple program, listening to the sound: <b>{kr} of {n}</b>" in t
+    assert f"got the meaning {ks} times in {n}" in t and f"listening to the sound got {kr}." in t
+    assert "guessing: 1 in 7" in t
+
+
+def test_play_buttons_labelled_and_audio_served(client):
+    t = client.get("/takehomes").text
+    btns = re.findall(r'<button type="button" class="th-play" data-src="([^"]+)"[^>]*aria-label="([^"]+)"', t)
+    assert len(btns) == 7
+    assert btns[0][1] == "Play: I never said she stole my money."
+    assert [re.search(r"\b[A-Z]{2,}\b", a).group(0) for _, a in btns[1:]] == ["NEVER", "SAID", "SHE", "STOLE", "MY", "MONEY"]
+    assert all(a.startswith("Play: ") for _, a in btns)
+    for src, _ in btns:
+        assert client.get(src).status_code == 200
+    assert "{{" not in t
 
 
 def test_numbers_match_data(client):
     t = client.get("/takehomes").text
     chair = next(h for h in json.loads((DATA / "plato.json").read_text())["hero"] if h["key"] == "chair")
-    god = next(i for i in json.loads((DATA / "plato_ideas.json").read_text())["ideas"] if i["key"] == "god")
     assert f'<b>{chair["ai_spread"]:.2f}</b>' in t and f'<b>{chair["human_spread"]:.2f}</b>' in t
-    assert f'{god["top"]["n"]} of {god["n"]}' in t
-    assert "{{" not in t
 
 
 def test_nav_has_starred_takehomes_first_after_home(client):

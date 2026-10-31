@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Three things to take home · {{BRAND}}</title>
-<meta name="description" content="What we learned by asking AI the questions Plato asked about ideas: Meta’s image AI has one idea of a chair, damaging the part that reads words makes it forget what it is drawing, and asked to draw God it draws the same figure every time.">
+<meta name="description" content="What we learned by asking AI the questions Plato asked about ideas: Meta’s image AI has one idea of a chair, a copy of a copy drifts until the idea is lost, and written words lose what you meant.">
 <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,42 +68,45 @@
   </div>
 </section>
 
-<!-- 2. words go first -->
-<section class="th-panel" id="words-first" data-ask="What happens when we damage an AI?" aria-labelledby="th2-h">
+<!-- 2. copies of copies drift -->
+<section class="th-panel" id="copies" data-ask="What happens when you copy a copy?" aria-labelledby="th2-h">
   <div class="th-text th-top">
     <p class="th-num">2</p>
-    <h2 id="th2-h">Damage the part of an AI that reads words, and it forgets what it’s drawing.</h2>
-    <p class="th-support">The words go first: a rocking chair becomes a car.</p>
+    <h2 id="th2-h">Copy a copy, and the idea gets lost.</h2>
+    <p class="th-support">Two of Meta’s AIs passed a drawing back and forth ten times: one described it, the other drew the description. A beanbag became a croissant, then a window. Its name was the first thing to go.</p>
   </div>
   <div class="th-pic th-card">
-    <ol class="th-row" aria-label="A rocking chair, with more and more noise added to the part of the AI that reads words, from left to right">{{TH_ROW}}</ol>
+    <ol class="th-row th-scroll" aria-label="A beanbag chair, copied through Meta’s AIs, from the start at the left to copy 10 at the right">{{TH_COPIES}}</ol>
   </div>
   <div class="th-text th-bottom">
-    <p class="th-fig">Stable Diffusion XL, an open image AI. Left to right: more random noise added to its words part, from none to × 1.</p>
-    <a class="th-link" href="/damaged">See the experiment →</a>
+    <p class="th-fig">Muse Spark described each picture; Muse Image drew each description. Left to right: the start, then copies 2 to 10. Plato called a painting a copy of a copy.</p>
+    <a class="th-link" href="/plato/telephone">See the experiment →</a>
   </div>
 </section>
 
-<!-- 3. God: covered until the visitor has drawn (the draw pad's "seen" flag) or asks to see -->
-<section class="th-panel" id="god" data-state="covered" data-ask="What does Meta’s AI think God looks like?" aria-labelledby="th3-h">
+<!-- 3. writing loses meaning -->
+<section class="th-panel" id="meaning" data-ask="Can written words say what you meant?" aria-labelledby="th3-h">
   <div class="th-text th-top">
     <p class="th-num">3</p>
-    <h2 id="th3-h">Ask Meta’s AI to draw God.</h2>
-    <p class="th-support th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}}: the same bearded man with long hair and a halo, as in Western religious art.</p>
+    <h2 id="th3-h">Written words lose what you meant.</h2>
+    <p class="th-support">“I never said she stole my money” means seven different things, depending on the word you stress. From the written words, Meta’s AI got the meaning {{TH_SPARK_K}} times in {{TH_N91}}, no better than guessing. A simple program listening to the sound got {{TH_READER_K}}.</p>
   </div>
-  <div class="th-pic th-card th-god-pic">
-    <div class="th-cover" id="god-cover">
-      <p class="th-cover-text">Draw yours first, then see Meta’s AI’s</p>
-      <div class="th-cover-btns">
-        <a class="btn btn-dark" href="/draw?thing=god">Draw God</a>
-        <button type="button" class="btn" id="god-show">Show me now</button>
+  <div class="th-pic th-card th-meaning">
+    <div class="th-cols">
+      <div class="th-col">
+        <p class="th-col-h">What you hear</p>
+        <ul class="th-says">{{TH_SAYS}}</ul>
+      </div>
+      <div class="th-col">
+        <p class="th-col-h">What a text-only AI receives</p>
+        <ul class="th-says th-wrote">{{TH_WROTE}}</ul>
       </div>
     </div>
-    <div class="th-god-grid" id="god-grid" hidden role="img" aria-label="Muse Image’s 16 drawings of God" style="--cols:{{TH_COLS}};--rows:{{TH_ROWS}};--sprite:url({{TH_SPRITE}})">{{TH_GOD_CELLS}}</div>
+    <div class="th-bars">{{TH_BARS}}</div>
   </div>
   <div class="th-text th-bottom">
-    <p class="th-fig th-god-after" hidden>{{TH_GOD_TOP}} of {{TH_GOD_N}} drawings by Muse Image show the same figure.</p>
-    <a class="th-link" href="/plato/ideas">See the experiment →</a>
+    <p class="th-fig">Seven computer voices, each word stressed in turn. Meta’s Voice Transcribe wrote each down; Muse Spark guessed the meaning from the transcript. Plato complained that writing can’t answer back.</p>
+    <a class="th-link" href="/plato/phaedrus">See the experiment →</a>
   </div>
 </section>
 
