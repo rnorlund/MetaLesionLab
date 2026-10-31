@@ -248,7 +248,7 @@ def test_god_turns_on_the_cube_first_then_the_car_left_to_right(client):
     m = re.search(r'<figure class="dcube" id="god-cube" data-damage-cube data-pattern="([^"]+)" data-labels="([^"]+)"', page)
     assert m, "the God cube"
     labels = html.unescape(m.group(2)).split("|")
-    assert labels[0] == "undamaged" and len(labels) == 10
+    assert labels[0] == "undamaged" and labels[-1] == "noise \u00d7 0.9" and len(labels) == 9  # at x 1 this God becomes a crowded room
     for i in range(len(labels)):  # every step's picture is shipped
         assert (STATIC / m.group(1).replace("{i}", str(i))[len("/static/"):]).is_file()
     assert page.index('id="god-cube"') < page.index('class="dm-second"') < page.index('id="film"')  # the cube, then the car

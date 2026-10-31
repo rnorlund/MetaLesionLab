@@ -78,6 +78,7 @@
 
     if (trackEl) {
       trackEl.innerHTML = '';
+      trackEl.style.gridTemplateColumns = 'repeat(' + n + ', minmax(0, 1fr))';
       labels.forEach(function (lab, i) {
         var b = document.createElement('button');
         b.type = 'button';
