@@ -119,3 +119,18 @@ html.splash-fade .site-head .brand-logo { visibility: hidden; }  /* the flying c
   100% { opacity: 0; color: transparent; text-shadow: -0.9em -0.45em 0.3em var(--sp-cast); transform: skewX(16deg); filter: blur(3px); }
 }
 .sp-title.gone { display: none; }
+
+/* The ending (splash.js drawForm, glide): the site's name under the Form chair, which glows like an ember; on exit
+   it swells, bursts into sparks, trails a few on its way into the header and lands with a ring of light. */
+.sp-caption.name { font-family: var(--sans); font-style: normal; font-weight: 700; font-size: var(--fs-display); line-height: 1.05; letter-spacing: -0.02em; color: var(--sp-ink); }
+.sp-actor .brand-logo.glow { animation: sp-glow 1.5s ease-in-out infinite; }
+@keyframes sp-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--sp-ember-glow)) drop-shadow(0 0 14px var(--sp-ember-soft)); }
+  50% { filter: drop-shadow(0 0 10px var(--sp-ember-glow)) drop-shadow(0 0 32px var(--sp-ember-glow)); }
+}
+.sp-spark { position: absolute; z-index: 6; display: block; border-radius: 50%; pointer-events: none; background: var(--sp-ember);
+  box-shadow: 0 0 10px 2px var(--sp-ember-glow); }
+.sp-spark.b { background: var(--sp-seat); }
+.sp-spark.c { background: var(--sp-cream); }
+.sp-ring { position: absolute; z-index: 6; display: block; border-radius: 50%; pointer-events: none; border: 3px solid var(--sp-ember);
+  box-shadow: 0 0 18px 4px var(--sp-ember-glow), inset 0 0 14px var(--sp-ember-soft); }

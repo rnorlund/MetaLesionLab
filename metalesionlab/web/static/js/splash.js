@@ -38,7 +38,7 @@
   var Q596 = '“Whenever a number of individuals have a common name, we assume them to have also a corresponding idea or form.”' +
     '<cite>Plato, Republic 596a · Jowett</cite>';
   var T1 = 'If Plato were alive today…', T2 = 'What would he ask AI?';  // the opening title
-  var ONE = 'One ideal chair?';
+  var ONE = 'Plato’s Chair';  // the closing caption: the site's name, under the Form chair
   var C1 = 'Plato said every chair is a copy of one ideal chair.', C2 = 'We only ever see the shadows.', C3 = 'What would Plato ask an AI?';
   var NAVY = '#141a26', WHITE = '#F9FAFB', ORANGE = '#C2410C';
   var MAX_MS = { a: 42000, b: 46000, c: 30000 }[STYLE];  // whatever happens, the page is back by then
@@ -157,7 +157,6 @@
     box.appendChild(el('p', 'sp-still-h', 'Plato’s Chair'));
     box.appendChild(el('p', 'sp-still-big', T1 + '<br>' + T2));
     [Q515, Q596].forEach(function (q) { box.appendChild(el('p', 'sp-still-q', q)); });
-    box.appendChild(el('p', 'sp-still-big', ONE));
     skipBtn = el('button', 'sp-continue', 'Continue to the page <span aria-hidden="true">→</span>');
     skipBtn.type = 'button';
     skipBtn.addEventListener('click', function () { finish(); });
@@ -297,6 +296,7 @@
       path.style.strokeDasharray = len;
       anim(path, [{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 420, delay: 90 * j, easing: 'ease-out', fill: 'both' });
     });
+    later(function () { form.classList.add('glow'); }, 600);  // drawn: it glows like an ember while the name is up
   }
   function end(id) { unsay(); return glide(id); }
 
@@ -308,7 +308,7 @@
       .then(function () {
         var until = performance.now() + 300 + readMs(Q596) - 1000;  // the caption's reading time is unchanged
         return flip(id).then(function () { return cycle(id, until); });  // ...and the pictures keep changing under it
-      }).then(function () { drawForm(); return hold(id, ONE, 'short'); })
+      }).then(function () { drawForm(); return hold(id, ONE, 'name'); })
       .then(function () { return end(id); });
   }
   function playB(id) {  // words first: each caption alone, big, then small at the top while the scene plays
@@ -319,7 +319,7 @@
       .then(function () { return hold(id, Q596, 'big', true); })
       .then(function () { demote(); return flip(id); })
       .then(function () { unsay(); drawForm(); return wait(900, id); })
-      .then(function () { return hold(id, ONE, 'high'); })
+      .then(function () { return hold(id, ONE, 'high name'); })
       .then(function () { return end(id); });
   }
   function playC(id) {  // short and bold: three lines
@@ -342,12 +342,42 @@
     root.classList.add('splash-fade');
     stage.classList.add('out');
     if (!g || !form) return wait(700, id).then(function () { finish(); });
-    anim(actor, [{ transform: 'translateX(0) scale(' + L.smax + ')' }, { transform: 'translate(' + g.dx + 'px,' + g.dy + 'px) scale(' + g.s + ')' }],
-         { duration: 950, easing: 'cubic-bezier(.65,0,.35,1)' });
-    anim(form, [{ color: NAVY }, { color: WHITE }], { duration: 600, delay: 350 });
+    // it swells for a beat, bursts into sparks, and flies up into the header trailing a few more
+    var SWELL = 180, FLY = 950, cx = L.x + L.base / 2, cy = L.y + L.base / 2;
+    anim(actor, [{ transform: 'translate(0,0) scale(' + L.smax + ')', easing: 'ease-out' },
+                 { transform: 'translate(0,0) scale(' + (L.smax * 1.1) + ')', offset: SWELL / (SWELL + FLY), easing: 'cubic-bezier(.65,0,.35,1)' },
+                 { transform: 'translate(' + g.dx + 'px,' + g.dy + 'px) scale(' + g.s + ')' }], { duration: SWELL + FLY });
+    later(function () { ring(cx, cy, L.base * L.smax * 0.75); burst(cx, cy, 60, L.base * L.smax * 1.05, 1); }, SWELL - 40);
+    for (var k = 1; k <= 8; k++) {
+      (function (k) {
+        var t = k / 9, e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;  // the flight's easing, roughly
+        later(function () { burst(cx + g.dx * e, cy + g.dy * e, 6, L.base * 0.32, 0.6); }, SWELL + FLY * t);
+      })(k);
+    }
+    later(function () { ring(cx + g.dx, cy + g.dy, L.base * g.s); }, SWELL + FLY - 60);
+    form.classList.remove('glow');
+    anim(form, [{ color: NAVY }, { color: WHITE }], { duration: 600, delay: SWELL + 350 });
     var seat = form.querySelector('.seat');
-    if (seat) anim(seat, [{ stroke: ORANGE }, { stroke: WHITE }], { duration: 600, delay: 350 });
-    return wait(1000, id).then(function () { finish(); });
+    if (seat) anim(seat, [{ stroke: ORANGE }, { stroke: WHITE }], { duration: 600, delay: SWELL + 350 });
+    return wait(SWELL + FLY + 560, id).then(function () { finish(); });
+  }
+  // Sparks flying out from (x, y): n of them, up to `reach` px away, each fading as it goes.
+  function burst(x, y, n, reach, life) {
+    for (var i = 0; i < n; i++) {
+      var sp = stage.appendChild(el('i', 'sp-spark' + (i % 3 ? (i % 3 === 1 ? ' b' : ' c') : ''), null));
+      var a = Math.random() * Math.PI * 2, d = reach * (0.45 + Math.random() * 0.55), size = (5 + Math.random() * 11) * (0.6 + 0.4 * life);
+      sp.style.left = x + 'px'; sp.style.top = y + 'px'; sp.style.width = sp.style.height = size + 'px';
+      anim(sp, [{ transform: 'translate(-50%,-50%) translate(0,0) scale(1)', opacity: 1 },
+                { transform: 'translate(-50%,-50%) translate(' + Math.cos(a) * d + 'px,' + (Math.sin(a) * d - reach * 0.15) + 'px) scale(0.2)', opacity: 0 }],
+           { duration: (850 + Math.random() * 700) * life, easing: 'cubic-bezier(.15,.7,.3,1)' });
+    }
+  }
+  // A ring of light where the chair lands in the header.
+  function ring(x, y, size) {
+    var r = stage.appendChild(el('i', 'sp-ring', null));
+    r.style.left = x + 'px'; r.style.top = y + 'px'; r.style.width = r.style.height = Math.max(36, size * 2.2) + 'px';
+    anim(r, [{ transform: 'translate(-50%,-50%) scale(0.4)', opacity: 0.95 }, { transform: 'translate(-50%,-50%) scale(2.6)', opacity: 0 }],
+         { duration: 620, easing: 'ease-out' });
   }
 
   // --- the end, played or skipped ---------------------------------------------------------------
