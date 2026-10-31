@@ -55,7 +55,7 @@
   <p class="fl-note" id="hero-note"></p>
 </section>
 
-<section class="gl-sec" id="curves" aria-labelledby="curves-h">
+<section class="gl-sec" id="curves" data-ask="Does it forget the word or the picture first?" aria-labelledby="curves-h">
   <h2 id="curves-h">The word against the picture</h2>
   <p class="gl-intro">For each kind of damage, two lines. <span class="gl-key pic"></span><b>Drawn so an AI can name it</b>: the share of its drawings that another AI, Google’s SigLIP 2, lists among its three best guesses out of 36 names. <span class="gl-key word"></span><b>Described correctly</b>: the share of its sentences that name the thing and say something true and typical about it (a seat, the time, a creator). Both start at 100% when the AI is undamaged, so the lines show how much of each ability is left.</p>
   <p class="gl-verdict" id="verdict"></p>
@@ -68,7 +68,7 @@
   <details class="gl-numbers"><summary>The numbers as a table</summary><div id="table"></div></details>
 </section>
 
-<section class="gl-sec" id="answers" aria-labelledby="answers-h">
+<section class="gl-sec" id="answers" data-ask="What were all the answers?" aria-labelledby="answers-h">
   <h2 id="answers-h">All 12 answers at every step</h2>
   <p class="gl-intro">Each row is one step of damage, from undamaged at the top to the heaviest at the bottom. Each column is one of the 12 tries, with the same random starting point in every row. Pick a step to read the 12 sentences it wrote.</p>
   <div class="gl-controls">
@@ -79,7 +79,7 @@
   <div class="gl-sentences" id="sentences"></div>
 </section>
 
-<section class="gl-sec gl-method" id="method" aria-labelledby="method-h">
+<section class="gl-sec gl-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
     <li><b>The AI.</b> Muse Glimmer 30B, Meta’s open-weight model, on one of our lab’s graphics cards, with its weights stored at reduced precision (FP8) to fit. It got each request 12 times, with the randomness setting (temperature) at 1, as in our earlier test of AIs drawing a chair.</li>

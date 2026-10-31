@@ -43,7 +43,7 @@
 </section>
 <p class="fl-note">See also: <a href="/plato/scale#twins">models that only read vs models that have seen pictures</a></p>
 
-<section class="cv-sec" id="game" aria-labelledby="game-h">
+<section class="cv-sec" id="game" data-ask="Can you name the shadow?" aria-labelledby="game-h">
   <div class="cv-sec-head">
     <h2 id="game-h">Your turn: name the shadow</h2>
     <p class="cv-sec-lede">Type what you think each shadow is, then reveal the object and what the AI said. Your answers stay in your browser; nothing is sent or stored.</p>
@@ -53,7 +53,7 @@
   <div class="cv-actions"><button type="button" id="reveal-all">Reveal all</button><button type="button" id="reset">Start over</button></div>
 </section>
 
-<section class="cv-sec" id="survive" aria-labelledby="survive-h">
+<section class="cv-sec" id="survive" data-ask="What if the picture is a shadow?" aria-labelledby="survive-h">
   <div class="cv-sec-head">
     <h2 id="survive-h">Outlines and silhouettes cost little; a soft shadow costs a third</h2>
     <p class="cv-sec-lede" id="survive-lede">We showed each of 100 drawings four ways: the line drawing, its outline only, a solid black silhouette, and a soft shadow, as if cast on a wall. Taking away the inside detail cost little. The cast shadow cost the most.</p>
@@ -72,7 +72,7 @@
   </div>
 </section>
 
-<section class="cv-sec" id="medium" aria-labelledby="medium-h">
+<section class="cv-sec" id="medium" data-ask="Does the AI know it sees a shadow?" aria-labelledby="medium-h">
   <div class="cv-sec-head">
     <h2 id="medium-h">Glimmer often knows it is looking at a shadow</h2>
     <p class="cv-sec-lede" id="medium-lede"></p>
@@ -90,7 +90,7 @@
   </div>
 </section>
 
-<section class="cv-sec" id="people" aria-labelledby="people-h">
+<section class="cv-sec" id="people" data-ask="What do people and the AI both find hard?" aria-labelledby="people-h">
   <div class="cv-sec-head">
     <h2 id="people-h">People and the AI find some of the same shapes hard</h2>
     <p class="cv-sec-lede" id="people-lede"></p>
@@ -99,7 +99,7 @@
   <p class="cv-cap" id="people-note"></p>
 </section>
 
-<section class="cv-sec" id="lens" aria-labelledby="lens-h">
+<section class="cv-sec" id="lens" data-ask="When does the right name arrive?" aria-labelledby="lens-h">
   <div class="cv-sec-head">
     <h2 id="lens-h">Inside the model, the right name arrives a little later for shadows</h2>
     <p class="cv-sec-lede" id="lens-lede"></p>
@@ -113,7 +113,7 @@
   </div>
 </section>
 
-<section class="cv-sec cv-method" id="method" aria-labelledby="method-h">
+<section class="cv-sec cv-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
     <li><b>Pictures.</b> Our 100 checked line drawings, drawn by Meta’s image AI, Muse Image (each named correctly by Meta’s chat AI, Muse Spark, when it was made). Outlines, silhouettes and shadows were made by a computer program: the background is flooded from the picture’s edge, so whatever it can’t reach is the object. Holes are filled, as in the human study. Three open drawings (foot, ear, nose) were closed across their biggest opening.</li>

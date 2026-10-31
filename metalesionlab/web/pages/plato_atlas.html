@@ -49,7 +49,7 @@
   <a href="#method">How we measured</a>
 </nav>
 
-<section class="at-sec" id="gallery" aria-labelledby="gallery-h">
+<section class="at-sec" id="gallery" data-ask="What does each averaged thing look like?" aria-labelledby="gallery-h">
   <div class="at-sec-head">
     <h2 id="gallery-h">All 135 things, averaged: crisp for Muse Image, a cloud for people</h2>
     <p class="at-sec-lede">Each card lays 12 drawings of one thing on top of each other. When the drawings agree, the average is crisp, like one ideal Form. When they differ, it blurs into a cloud. Left: <b class="k-muse">Muse Image</b>. Right: <b class="k-people">12 people</b>. The number is how varied Muse Image’s drawings are compared with people’s (0.5 = half as varied, 1 = just as varied); the small range after it is where the true value probably lies. Below 1, Muse Image draws the thing more alike than people do. Open a card to see the drawings.</p>
@@ -69,7 +69,7 @@
   <button type="button" class="at-more" id="more" hidden>Show all things</button>
 </section>
 
-<section class="at-sec" id="ranking" aria-labelledby="ranking-h">
+<section class="at-sec" id="ranking" data-ask="Which things are drawn most alike?" aria-labelledby="ranking-h">
   <div class="at-sec-head">
     <h2 id="ranking-h">All 135 things, ranked from the most alike to the most varied</h2>
     <p class="at-sec-lede" id="ranking-lede">…</p>
@@ -80,7 +80,7 @@
   <details class="at-numbers"><summary>All the numbers</summary><p class="at-cap">Spread: how different the drawings are from one another (0 = identical). “÷ people”: a spread divided by people’s, so 1 means just as varied as people. The likely range is a 95% confidence interval.</p><div class="at-table-wrap"><table id="rank-table"></table></div></details>
 </section>
 
-<section class="at-sec" id="why" aria-labelledby="why-h">
+<section class="at-sec" id="why" data-ask="Why are some things drawn more alike?" aria-labelledby="why-h">
   <div class="at-sec-head">
     <h2 id="why-h">Why are some things drawn more alike than others? Our three guesses explain little</h2>
     <p class="at-sec-lede">Before making any picture, we wrote down three things that might matter: how varied people’s drawings of the thing are, how common its name is, and whether it is natural (an animal, a fruit, a body part, the weather) or made by people. These were side questions, not the main test (exploratory): we show how uncertain each answer is, and claim none of them as proven.</p>
@@ -103,7 +103,7 @@
   <p class="at-cap" id="why-cap"></p>
 </section>
 
-<section class="at-sec" id="run" aria-labelledby="run-h">
+<section class="at-sec" id="run" data-ask="Can I test my own image AI?" aria-labelledby="run-h">
   <div class="at-sec-head">
     <h2 id="run-h">You can run the same test on your own image AI</h2>
     <p class="at-sec-lede">The Atlas is a ready-made test (a benchmark). Have your image AI draw any of the 135 things, at least 4 pictures each (12 is better), with the same request. Put the pictures in one folder per thing and run one script. It measures them exactly as we measured Muse Image’s, against the same 200 people’s drawings per thing, which it downloads and keeps the first time.</p>
@@ -130,7 +130,7 @@ python scripts/plato_benchmark.py my_model \
   </div>
 </section>
 
-<section class="at-sec at-method" id="method" aria-labelledby="method-h">
+<section class="at-sec at-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">How we measured, and what it doesn’t show</h2>
   <ul id="method-list">
     <li><b>Things.</b> The 35 things of our first experiment, <a href="/plato">Plato’s Chair</a>; Plato’s own examples, a bed and a table; and 98 new ones. We picked the new ones at random, within 12 kinds of thing, from the 345 things in Google’s Quick, Draw! game. We left out shapes, landmarks, imaginary things, weapons, words with two meanings and near-duplicates. We published the list, the rule and our predictions before making any new picture (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_atlas_plan.md">pre-registration</a>).</li>

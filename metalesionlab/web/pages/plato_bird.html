@@ -66,7 +66,7 @@
   <a href="#method">Method</a>
 </nav>
 
-<section class="pb-sec" id="pick" aria-labelledby="pick-h">
+<section class="pb-sec" id="pick" data-ask="What does the AI answer in each category?" aria-labelledby="pick-h">
   <div class="pb-sec-head">
     <h2 id="pick-h">Pick a category and compare the answers</h2>
     <p class="pb-sub">The philosopher Ludwig Wittgenstein said some categories, like “game”, have no definition: their members only share a family likeness. The psychologist Eleanor Rosch showed that such categories still have best examples: a robin feels more like a bird than a penguin does. People’s first answer shows that pull toward the best example. Is the AI’s pull stronger?</p>
@@ -83,7 +83,7 @@
   <p class="pb-note" id="cat-hint">Each bar is one answer; its length is the share of answers it got. People: the first answer each UK adult said aloud (Banks &amp; Connell, 2023). Muse Spark: asked 50 separate times. A fair comparison needs equal numbers, so the shares use as many AI answers as there were people (13 to 20), drawn at random from its 50. We merge answers only when they name the same thing (“eggplant” = “aubergine”), ignoring capitals and plurals.</p>
 </section>
 
-<section class="pb-sec" id="all" aria-labelledby="all-h">
+<section class="pb-sec" id="all" data-ask="Who sticks to one favourite answer?" aria-labelledby="all-h">
   <div class="pb-sec-head">
     <h2 id="all-h">In all 117 categories, who sticks to one favourite answer?</h2>
     <p class="pb-sub" id="all-sub"></p>
@@ -107,7 +107,7 @@
   </details>
 </section>
 
-<section class="pb-sec" id="draw" aria-labelledby="draw-h">
+<section class="pb-sec" id="draw" data-ask="Does the image AI draw the same favourite?" aria-labelledby="draw-h">
   <div class="pb-sec-head">
     <h2 id="draw-h">Does Meta’s image AI draw the favourite its chat AI names?</h2>
     <p class="pb-sub" id="draw-sub">Asked for “a chair”, Meta’s image AI, Muse Image, draws the same plain chair nearly every time. Does it draw the same favourite that Muse Spark names? We asked Muse Image for 12 quick drawings of each of 12 categories. Then Muse Spark looked at each drawing and said which member it shows.</p>
@@ -115,7 +115,7 @@
   <div class="pb-draw-grid" id="draw-grid"></div>
 </section>
 
-<section class="pb-sec" id="temp" aria-labelledby="temp-h">
+<section class="pb-sec" id="temp" data-ask="Is it just a randomness setting?" aria-labelledby="temp-h">
   <div class="pb-sec-head">
     <h2 id="temp-h">Is it just the AI’s randomness setting?</h2>
     <p class="pb-sub" id="temp-sub"></p>
@@ -125,7 +125,7 @@
   <p class="pb-note" id="temp-note"></p>
 </section>
 
-<section class="pb-sec pb-game" id="game" aria-labelledby="game-h">
+<section class="pb-sec pb-game" id="game" data-ask="Is your first answer the AI’s?" aria-labelledby="game-h">
   <div class="pb-sec-head">
     <h2 id="game-h">Try it: is your first answer the AI’s?</h2>
     <p class="pb-sub">Say the first one that comes to mind. Nothing you type leaves this page.</p>
@@ -140,7 +140,7 @@
   <div class="pb-game-out" id="game-out" aria-live="polite"></div>
 </section>
 
-<section class="pb-sec pb-method" id="method" aria-labelledby="method-h">
+<section class="pb-sec pb-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul id="method-list">
     <li><b>People.</b> The Banks &amp; Connell (2023) study of how people name members of categories (their “category production norms”): 117 categories (67 concrete, like fruit; 50 abstract, like emotion), 20 UK adults per category, each naming aloud as many members as they could in 60 seconds. We use each person’s first answer. “People who said it at all” counts how many of the 20 named a member at any point; the typicality ratings (1 to 5) came from a separate group of raters.</li>

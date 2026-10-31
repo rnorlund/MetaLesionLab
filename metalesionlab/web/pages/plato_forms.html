@@ -65,7 +65,7 @@
   <a href="#method">How we measured</a>
 </nav>
 
-<section class="pf-sec" id="asked" aria-labelledby="asked-h">
+<section class="pf-sec" id="asked" data-ask="Does it draw the time we ask for?" aria-labelledby="asked-h">
   <div class="pf-sec-head">
     <span class="pf-kicker">Ask for a time</span>
     <h2 id="asked-h">Ask Muse Image for a time, and it draws that time (nearly)</h2>
@@ -93,7 +93,7 @@
   </div>
 </section>
 
-<section class="pf-sec" id="dials" aria-labelledby="dials-h">
+<section class="pf-sec" id="dials" data-ask="Where do all the clock hands point?" aria-labelledby="dials-h">
   <div class="pf-sec-head">
     <span class="pf-kicker">All the clocks at once</span>
     <h2 id="dials-h">Every clock’s hands, drawn on one dial</h2>
@@ -107,7 +107,7 @@
   <p class="pf-note" id="dial-note">Hover or tap a hand to see the time and how many clocks show it.</p>
 </section>
 
-<section class="pf-sec" id="average" aria-labelledby="avg-h">
+<section class="pf-sec" id="average" data-ask="What does the average clock look like?" aria-labelledby="avg-h">
   <div class="pf-sec-head">
     <span class="pf-kicker">No AI reading involved</span>
     <h2 id="avg-h">Stack the clocks, and Muse Image’s average shows one sharp 10:10</h2>
@@ -120,7 +120,7 @@
   </div>
 </section>
 
-<section class="pf-sec" id="bed-table" aria-labelledby="bt-h">
+<section class="pf-sec" id="bed-table" data-ask="What about beds and tables?" aria-labelledby="bt-h">
   <div class="pf-sec-head">
     <span class="pf-kicker">Plato, Republic X</span>
     <h2 id="bt-h">Plato’s own examples: Muse Image draws beds and tables more alike than people do</h2>
@@ -158,7 +158,7 @@
   </div>
 </section>
 
-<section class="pf-sec pf-method" id="method" aria-labelledby="method-h">
+<section class="pf-sec pf-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">How we measured, and caveats</h2>
   <ul id="method-list">
     <li><b>Pictures.</b> Muse Image drew 16 clock doodles with no time (“A quick simple doodle sketch of a clock, black marker on plain white…”), 8 for each of 12 asked times (“…of a simple clock face showing 3:00…”), and realistic photos (“A photo of a wall clock showing 3:00.”) for 6 times. Stable Diffusion XL, an open image AI from Stability AI, got the same requests. People’s clocks are the first 200 recognised “clock” drawings in Google’s Quick, Draw! game, where players had 20 seconds.</li>

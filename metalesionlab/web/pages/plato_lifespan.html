@@ -59,7 +59,7 @@
   <a href="#method">Method and caveats</a>
 </nav>
 
-<section class="ls-sec ls-grow" id="grow" aria-labelledby="grow-h">
+<section class="ls-sec ls-grow" id="grow" data-ask="How does a chair grow up?" aria-labelledby="grow-h">
   <h2 id="grow-h">Watch the chair grow up</h2>
   <p class="ls-lede">Move the slider from age 2, through adults, to the AIs. At each stop you see three things: how often an AI can tell what the drawings show, how far they are from the average adult drawing, and how different they are from one another.</p>
 
@@ -87,7 +87,7 @@
   </div>
 </section>
 
-<section class="ls-sec" id="paths" aria-labelledby="paths-h">
+<section class="ls-sec" id="paths" data-ask="Who ends up closest to the adult chair?" aria-labelledby="paths-h">
   <h2 id="paths-h">Children close in on the adult chair; the AI stays far away</h2>
   <p class="ls-sub">Each dot is one stage of life. Across: how often an AI can tell what its drawings show. Up: how far a typical drawing is from the average adult drawing. Children start near the adult chair, then get closer and easier to recognize. Stable Diffusion is easy to recognize from the start, but stays far away at every stage of its training.</p>
   <div class="ls-legend" id="paths-legend"></div>
@@ -95,7 +95,7 @@
   <p class="ls-note" id="paths-note"></p>
 </section>
 
-<section class="ls-sec" id="curves" aria-labelledby="curves-h">
+<section class="ls-sec" id="curves" data-ask="How do growing up and training compare?" aria-labelledby="curves-h">
   <h2 id="curves-h">Growing up and training, compared one measure at a time</h2>
   <div class="ls-tabs" role="tablist" id="measure-tabs" aria-label="Measure"></div>
   <p class="ls-sub" id="measure-sub"></p>
@@ -107,7 +107,7 @@
   <details class="ls-numbers"><summary>The numbers as a table</summary><div id="curves-table"></div></details>
 </section>
 
-<section class="ls-sec" id="learn" aria-labelledby="learn-h">
+<section class="ls-sec" id="learn" data-ask="What happens as an AI learns a chair?" aria-labelledby="learn-h">
   <h2 id="learn-h">Watch an AI learn what a chair is</h2>
   <p class="ls-sub">The first public version of Stable Diffusion, an open image AI, can already draw a chair, which means it can’t show us an AI’s first steps. Instead, we trained our own small AI from nothing: a model that learns to draw from people’s sketches (Sketch-RNN). It learned from 203,324 chairs drawn by people playing Google’s Quick, Draw! game, 20 seconds per drawing. We trained it four separate times. This is the larger of two sizes we built; the smaller one is described below.</p>
   <p class="ls-sub">Here its first training run draws the same 16 chairs at every stage of training. Each chair always starts from the same random starting point; only what the AI has learned changes. Its chairs can only be as detailed as the quick sketches it learned from.</p>
@@ -158,14 +158,14 @@
   <details class="ls-numbers"><summary>Does it end up less varied than the chairs it learned from? The numbers</summary><div id="learn-table"></div></details>
 </section>
 
-<section class="ls-sec fg" id="forget" aria-labelledby="forget-h">
+<section class="ls-sec fg" id="forget" data-ask="What happens when it forgets?" aria-labelledby="forget-h">
   <link rel="stylesheet" href="/static/css/plato_forget.css">
   <h2 id="forget-h">Then watch it forget</h2>
   <p class="ls-sub">Then we damaged the fully trained model on purpose: we switched off more and more of its artificial neurons, and asked it to redraw the same 16 chairs from the same random starting points. Its training stayed as it was.</p>
   <div class="fg-app" id="forget-app"><p class="ls-note">Loading the results…</p></div>
 </section>
 
-<section class="ls-sec ls-method" id="method" aria-labelledby="method-h">
+<section class="ls-sec ls-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul>
     <li><b>Children.</b> 15,820 drawings of 20 things by children aged 2 to 10, drawn with a fingertip on a tablet at a museum kiosk in 30 seconds each (Long, Fan, Huey, Chai &amp; Frank, 2024). Every age and thing has at least 23 drawings. We rendered their strokes exactly like the adults’ drawings. <b>We never show a child’s drawing.</b> The data are licensed non-commercially with share-alike, and they are children’s, so this page shows group-level numbers only.</li>

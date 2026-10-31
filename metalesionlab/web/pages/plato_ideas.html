@@ -50,7 +50,7 @@
 </nav>
 
 <!-- God under damage: Stable Diffusion XL (open), not Muse Image (closed, can't be damaged). docs/plato_ideas_damage.md -->
-<section class="iv-sec iv-dmg" id="damage" aria-labelledby="damage-h" hidden>
+<section class="iv-sec iv-dmg" id="damage" data-ask="What if the AI’s grasp of words is damaged?" aria-labelledby="damage-h" hidden>
   <div class="iv-sec-head">
     <p class="iv-kicker">Stable Diffusion XL, an open image AI from Stability AI · not Muse Image</p>
     <h2 id="damage-h">Damage an AI’s grasp of words, and its God turns into an ordinary person</h2>
@@ -103,7 +103,7 @@
   <p class="iv-cap" id="dmg-others-cap"></p>
 </section>
 
-<section class="iv-sec iv-people" id="people" aria-labelledby="people-h">
+<section class="iv-sec iv-people" id="people" data-ask="How do people picture God?" aria-labelledby="people-h">
   <div class="iv-sec-head">
     <h2 id="people-h">How people picture God</h2>
     <p class="iv-sec-lede">This page asks how an AI pictures God, and how people have. It makes no claim about God or about any faith. We asked for “God” and nothing more: no request or label named a religion or its figures.</p>
@@ -119,7 +119,7 @@
   <p class="iv-cap">Context, not a comparison. Those are children’s colour drawings, made with time to think; these are an AI’s doodles, made from a request for a 20-second drawing. We found no collection of people’s quick doodles of God, or of the other ideas here, so nothing on this page scores the AI against people.</p>
 </section>
 
-<section class="iv-sec" id="ideas" aria-labelledby="ideas-h">
+<section class="iv-sec" id="ideas" data-ask="What does the AI draw for an idea?" aria-labelledby="ideas-h">
   <div class="iv-sec-head">
     <h2 id="ideas-h">Eleven ideas, sixteen drawings each</h2>
     <p class="iv-sec-lede">God; Plato’s own highest Forms, beauty, justice and the Good; and seven ideas everyone lives with. Muse Image drew each one 16 times, from the same request we use for a chair: “A quick simple doodle sketch of …”. Under each set you see two things. First, the main symbol (emblem) that Meta’s open AI model, Muse Glimmer (one anyone can download and look inside), found most often. Second, how different the drawings are from one another (we call this spread; 0 would mean 16 identical copies).</p>
@@ -127,7 +127,7 @@
   <div class="iv-grid" id="grid"></div>
 </section>
 
-<section class="iv-sec" id="emblems" aria-labelledby="emblems-h">
+<section class="iv-sec" id="emblems" data-ask="Does each idea get one main symbol?" aria-labelledby="emblems-h">
   <div class="iv-sec-head">
     <h2 id="emblems-h">Most ideas come out as one main symbol</h2>
     <p class="iv-sec-lede" id="emblems-lede">…</p>
@@ -138,7 +138,7 @@
   <details class="iv-numbers"><summary>All the numbers</summary><div class="iv-table-wrap"><table id="emblem-table"></table></div></details>
 </section>
 
-<section class="iv-sec" id="spread" aria-labelledby="spread-h">
+<section class="iv-sec" id="spread" data-ask="Are ideas drawn more differently than things?" aria-labelledby="spread-h">
   <div class="iv-sec-head">
     <h2 id="spread-h">Ideas aren’t clearly more varied than everyday things</h2>
     <p class="iv-sec-lede" id="spread-lede">…</p>
@@ -148,7 +148,7 @@
   <p class="iv-cap" id="spread-cap"></p>
 </section>
 
-<section class="iv-sec" id="words" aria-labelledby="words-h" hidden>
+<section class="iv-sec" id="words" data-ask="What about actions and qualities?" aria-labelledby="words-h" hidden>
   <div class="iv-sec-head">
     <h2 id="words-h">Actions get one stock figure; qualities get a few favourite things</h2>
     <p class="iv-sec-lede" id="words-lede">…</p>
@@ -157,7 +157,7 @@
   <p class="iv-cap" id="words-cap"></p>
 </section>
 
-<section class="iv-sec iv-try" id="try" aria-labelledby="try-h">
+<section class="iv-sec iv-try" id="try" data-ask="Want to try it yourself?" aria-labelledby="try-h">
   <div class="iv-sec-head">
     <h2 id="try-h">Draw one yourself</h2>
     <p class="iv-sec-lede">Draw any of these yourself in 20 seconds, before you look too long at Muse Image’s. The drawing pad shows where your drawing lands among Muse Image’s 16, and which one it is closest to. A Meta AI that compares pictures (DINOv2) measures it on our server, and nothing is stored.</p>
@@ -165,7 +165,7 @@
   <div class="iv-try-links" id="try-links"></div>
 </section>
 
-<section class="iv-sec iv-method" id="method" aria-labelledby="method-h">
+<section class="iv-sec iv-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">How we measured, and what it doesn’t show</h2>
   <ul id="method-list">
     <li><b>Ideas.</b> Eleven: God; beauty, justice and the Good; love, time, death, the soul, freedom, happiness and truth. We left out infinity, because its stock symbol is a written sign and the request says “no text”, and “an idea”, a light bulb by cartoon convention. We wrote down the list, the predictions and the tests before the main run (<a href="https://github.com/rnorlund/MetaLesionLab/blob/main/docs/plato_ideas_plan.md">pre-registration</a>).</li>
