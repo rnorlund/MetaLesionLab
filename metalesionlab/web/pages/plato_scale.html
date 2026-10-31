@@ -51,20 +51,20 @@
   <a href="#method">Method and caveats</a>
 </nav>
 
-<section class="sc-sec" id="models" aria-labelledby="models-h">
+<section class="sc-sec" id="models" data-ask="What do the AIs draw as they grow?" aria-labelledby="models-h">
   <h2 id="models-h">Every AI’s first 12 chairs, from the smallest AI to the biggest</h2>
   <p class="sc-sub">Every AI got the same request: <i>“Draw a simple chair as an SVG drawing: black strokes only on a white background, 256 by 256 pixels, no text, no colour fill. Output only the SVG code.”</i> SVG is a way of writing a picture as text code, so each answer is code, which we turned into a picture and cropped to its ink. Here are each AI’s first 12 answers at its usual randomness setting (temperature 1). Within each family, the AIs go from smallest to largest. A grey tile is a failure: no drawing code, code that doesn’t work, a blank canvas, or one covered in ink. “As varied as people’s” compares how different its chairs are from one another with how different people’s are.</p>
   <div class="sc-chips" id="wall-filter" role="group" aria-label="Show which AIs"></div>
   <div class="sc-wall" id="wall-models"><p class="sc-note">Loading the chairs…</p></div>
 </section>
 
-<section class="sc-sec" id="data" aria-labelledby="data-h">
+<section class="sc-sec" id="data" data-ask="What if one small AI trains on more?" aria-labelledby="data-h">
   <h2 id="data-h">One small AI, trained on more and more people’s chairs</h2>
   <p class="sc-sub">One small sketching AI, built like Sketch-RNN (an AI that learns to draw from people’s sketches), learned from scratch, only from chairs drawn by people in Google’s Quick, Draw! game: 100 of them, then 300, 1,000, 3,000, 10,000 or 20,000. Each version trained for the same number of steps (25,600). Each row shows 12 drawings from the end of training, made from the same 12 random starting points, so the rows can be compared.</p>
   <div class="sc-wall" id="wall-data"></div>
 </section>
 
-<section class="sc-sec" id="answer" aria-labelledby="answer-h">
+<section class="sc-sec" id="answer" data-ask="What is the short answer?" aria-labelledby="answer-h">
   <h2 id="answer-h">The short answer, in four parts</h2>
   <div class="sc-answer">
     <div class="sc-card"><span class="tag">Bigger AI</span><h3>Bigger AIs fail less, but don’t draw more alike</h3>
@@ -78,7 +78,7 @@
   </div>
 </section>
 
-<section class="sc-sec" id="curves" aria-labelledby="curves-h">
+<section class="sc-sec" id="curves" data-ask="Did our predictions come true?" aria-labelledby="curves-h">
   <h2 id="curves-h">What we predicted, and what happened</h2>
   <p class="sc-sub">Before running anything, we wrote down three predictions: as an AI grows, its chairs would become easier for an AI to name (P1) and more alike (P2), and it would fail less (P3). In the table, brackets give the likely range of each change. In the charts, bars and shaded bands show where the true value probably lies (95% confidence intervals, from re-sampling); hover or focus a point for its numbers.</p>
   <div class="sc-table-wrap"><table class="sc-pred">
@@ -107,7 +107,7 @@
   <details class="sc-numbers"><summary>All the numbers</summary><div id="table-a"></div></details>
 </section>
 
-<section class="sc-sec" id="platonic" aria-labelledby="platonic-h">
+<section class="sc-sec" id="platonic" data-ask="Do different AIs draw more alike?" aria-labelledby="platonic-h">
   <h2 id="platonic-h">AIs from different makers don’t come to draw alike as they grow</h2>
   <div class="sc-two">
     <div class="sc-prose" id="platonic-text">
@@ -120,12 +120,12 @@
   </div>
 </section>
 
-<section class="sc-sec tw" id="twins" aria-labelledby="twins-h">
+<section class="sc-sec tw" id="twins" data-ask="Does seeing pictures help?" aria-labelledby="twins-h">
   <h2 id="twins-h">Prisoners of the cave: does seeing pictures help?</h2>
   <div id="twins-body"><p class="tw-note">Loading the twins…</p></div>
 </section>
 
-<section class="sc-sec sc-method" id="method" aria-labelledby="method-h">
+<section class="sc-sec sc-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">Method and caveats</h2>
   <ul>
     <li><b>The AIs.</b> Three open families of language AIs (anyone can download them), all under the Apache-2.0 licence, free to download without signing anything, and fixed to exact versions on Hugging Face: Qwen2.5-Instruct 0.5B, 1.5B, 7B, 14B and 32B, from Alibaba (our main family); OLMo 2 Instruct 1B, 7B, 13B and 32B, from AI2, the Allen Institute for AI; and Qwen3 0.6B to 32B, from Alibaba, with its step-by-step “thinking” switched off. Plus Meta’s open AI model, Muse Glimmer 30B, and Meta’s chat AI, Muse Spark 1.3, and Muse Wonder 1.0 through Meta’s online service, the Meta Model API (reasoning effort “minimal”). Not used: Qwen2.5-3B and -72B (not Apache-2.0), Llama and Gemma 3 (you must accept a licence to download them, and we never accept one on anyone’s behalf).</li>
