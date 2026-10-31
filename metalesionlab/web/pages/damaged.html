@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="/static/css/damage-schematic.css">
 <link rel="stylesheet" href="/static/css/rotating-word.css">
 <link rel="stylesheet" href="/static/css/damage-cube.css">
+<link rel="stylesheet" href="/static/css/brain-ai.css">
 </head>
 <body class="plato-damaged">
 <a class="skip" href="#main">Skip to content</a>
@@ -136,6 +137,47 @@
   </details>
 </section>
 
+<!-- Damage, in a brain and in an AI (static/js/brain-ai.js, brain-ai.css): an ageing brain and an AI losing neurons on one timeline. -->
+<section class="dm-sec" id="brain-ai" data-ask="What are we comparing this to?" aria-labelledby="brain-ai-h">
+  <div class="dm-sec-head">
+    <h2 id="brain-ai-h">Damage, in a brain and in an AI</h2>
+    <p class="dm-lede">Brains change as we age: on scans, the tissue shrinks a little and the fluid-filled spaces in the middle grow. We damaged an AI on purpose, switching off more and more of its artificial neurons. It’s a comparison, not a claim about any person.</p>
+  </div>
+  <div class="ba" data-state="paused">
+    <div class="ba-ctrl">
+      <button class="ba-pp" type="button" aria-label="Play the animation"><svg class="ba-i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.5" height="12"/><rect x="9.5" y="2" width="3.5" height="12"/></svg><svg class="ba-i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l10 6-10 6z"/></svg></button>
+      <div class="ba-sl">
+        <input class="ba-slider" type="range" min="0" max="1000" value="0" aria-label="Age, from 20 to 80">
+        <div class="ba-ticks" aria-hidden="true"><span>20 · undamaged</span><span>50</span><span>80 · most damage</span></div>
+      </div>
+    </div>
+    <div class="ba-pair">
+      <div class="ba-panel">
+        <h3>A human brain, from age 20 to 80</h3>
+        <div class="ba-sub">Age <b class="ba-age-n">20</b></div>
+        <div class="ba-stage">
+          <svg class="ba-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="14" y1="13" x2="25" y2="35.5"/><line x1="14" y1="89" x2="23.5" y2="60"/></svg>
+          <span class="ba-lbl" style="left:3%;top:6%">Broca’s area</span><span class="ba-lbl" style="left:3%;top:89.5%">Wernicke’s area</span>
+          <span class="ba-lr l" aria-hidden="true">L</span><span class="ba-lr r" aria-hidden="true">R</span>
+        </div>
+        <div class="ba-langcap">Language areas (left side)</div>
+        <div class="ba-legend"><span><i class="ba-sw"></i>lost since age 20</span><span><i class="ba-ln"></i>fluid spaces at age 20</span></div>
+        <p class="ba-cap">An AI-made illustration of an ageing brain scan, not a real person’s scan.</p>
+      </div>
+      <div class="ba-panel">
+        <h3>Meta’s open AI, Muse Glimmer, asked to describe a chair</h3>
+        <div class="ba-sub">Age <b class="ba-age-n">20</b></div>
+        <canvas class="ba-net" role="img" aria-label="A network of artificial neurons: more and more of them switch off and the signals between them thin out"></canvas>
+        <div class="ba-out">
+          <p class="ba-q">Asked: “Describe a chair in one sentence.”</p>
+          <div class="ba-ans" aria-live="off"></div>
+          <div class="ba-mk"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Every damage result as one even grid (damaged_routes.py: CARDS; site.py: render_hub). -->
 <section class="dm-sec dm-hub" id="results" data-ask="What else did we damage?" aria-labelledby="results-h">
   <div class="dm-sec-head">
@@ -158,6 +200,7 @@
 <script src="/static/js/damage-schematic.js"></script>
 <script src="/static/js/rotating-word.js"></script>
 <script src="/static/js/damage-cube.js"></script>
+<script src="/static/js/brain-ai.js"></script>
 <script src="/static/js/plato_damaged.js"></script>
 </body>
 </html>

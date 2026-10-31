@@ -1,0 +1,56 @@
+/* Damage, in a brain and in an AI (brain-ai.js): one timeline drives an ageing brain and a network of artificial
+   neurons switching off. Site tokens only; the overlay colours (loss, language glow) live in the images. */
+.ba { margin-top: clamp(16px, 2vw, 32px); }
+.ba-ctrl { display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 5; padding: 12px 0 8px;
+  background: var(--ground); border-bottom: 1px solid var(--line); }
+.ba-pp { flex: none; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--btn-edge); background: transparent;
+  color: var(--ink); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.ba-pp:hover { border-color: var(--orange); }
+.ba-pp:focus-visible, .ba-slider:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ba-pp svg { width: 18px; height: 18px; fill: currentColor; }
+.ba-pp .ba-i-play { display: none; }
+.ba[data-state="paused"] .ba-i-play { display: block; }
+.ba[data-state="paused"] .ba-i-pause { display: none; }
+.ba-sl { flex: 1; min-width: 0; }
+.ba-slider { width: 100%; margin: 0; accent-color: var(--orange); height: 28px; }
+.ba-ticks { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: var(--fs-label); color: var(--faint); }
+
+.ba-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(12px, 2vw, 32px); margin-top: clamp(14px, 2vw, 28px); }
+.ba-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: clamp(12px, 1.6vw, 24px); min-width: 0; }
+.ba-panel h3 { margin: 0 0 4px; font-size: var(--fs-h3); font-weight: 600; line-height: 1.2; }
+.ba-sub { min-height: 1.4em; margin-bottom: 10px; font-family: var(--mono); font-size: var(--fs-label); color: var(--faint); }
+.ba-sub b { color: var(--ink); font-weight: 500; }
+
+.ba-stage { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; isolation: isolate; background: rgb(0, 0, 0); }
+.ba-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.ba-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 9; opacity: 0; pointer-events: none; }
+.ba-lines line { stroke: color-mix(in srgb, var(--violet) 55%, white); vector-effect: non-scaling-stroke; stroke-width: 1; }
+.ba-lbl { position: absolute; z-index: 9; opacity: 0; font-size: var(--fs-small); line-height: 1.2; font-weight: 500;
+  color: color-mix(in srgb, var(--violet) 40%, white); white-space: nowrap; pointer-events: none; }
+.ba-lr { position: absolute; top: 50%; z-index: 9; transform: translateY(-50%); font-family: var(--mono); font-size: var(--fs-label);
+  color: color-mix(in srgb, var(--faint) 60%, white); }
+.ba-lr.l { left: 2%; }
+.ba-lr.r { right: 2%; }
+.ba-langcap { margin-top: 8px; min-height: 1.4em; font-size: var(--fs-small); color: var(--violet); opacity: 0; }
+.ba-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 6px; font-size: var(--fs-small); color: var(--muted); }
+.ba-legend span { display: flex; align-items: center; gap: 7px; }
+.ba-sw { width: 14px; height: 14px; border-radius: 3px; background: var(--orange); display: inline-block; }
+.ba-ln { width: 20px; height: 0; border-top: 2px solid var(--ink); display: inline-block; }
+.ba-cap { margin: 8px 0 0; font-size: var(--fs-small); color: var(--muted); }
+.ba-age { margin-top: 12px; text-align: center; font-size: var(--fs-number-sm); font-weight: 300; line-height: 1; }
+.ba-age small { font-size: var(--fs-small); color: var(--faint); margin-right: .5em; }
+
+.ba-net { display: block; width: 100%; height: auto; aspect-ratio: 1.25; }
+.ba-out { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+.ba-q { margin: 0 0 8px; font-size: var(--fs-small); color: var(--muted); }
+.ba-ans { min-height: 9.5em; font-size: var(--fs-body); line-height: 1.5; overflow-wrap: anywhere; }
+.ba-cur { display: inline-block; width: .5em; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--orange); animation: ba-blink 1s steps(2) infinite; }
+@keyframes ba-blink { 50% { opacity: 0; } }
+.ba-mk { margin-top: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: var(--fs-label); font-weight: 500; }
+.ba-pill { padding: 3px 12px; border-radius: 99px; border: 1px solid currentColor; }
+.ba-pill.ok { color: var(--blue); }
+.ba-pill.bad { color: var(--orange); }
+.ba[data-noai="1"] .ba-out { display: none; }
+
+@media (max-width: 800px) { .ba-pair { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .ba-cur { animation: none; } }

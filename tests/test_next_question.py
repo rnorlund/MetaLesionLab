@@ -13,7 +13,7 @@ from metalesionlab.web import site
 STATIC = web.HERE / "static"
 JS = (STATIC / "js" / "next-question.js").read_text()
 CSS = (STATIC / "css" / "next-question.css").read_text()
-PAGES = {"/": 6, "/takehomes": 2, "/damaged": 1, "/plato/clock": 5, "/plato/phaedrus": 4, "/plato": 9,
+PAGES = {"/": 6, "/takehomes": 2, "/damaged": 2, "/plato/clock": 5, "/plato/phaedrus": 4, "/plato": 9,
          "/plato/ideas": 8,
          "/plato/bird": 6,
          "/plato/cave": 6,
