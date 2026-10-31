@@ -113,6 +113,15 @@ def test_key_comes_from_the_env_file(tmp_path, monkeypatch):
     monkeypatch.setattr(claude_api, "KEY_FILE", f)
     assert claude_api.available() and claude_api._env("ANTHROPIC_WORKSPACE_ID") == "wrkspc_1"
 
+    locked = tmp_path / "locked"  # the Space: the home folder can't be looked into
+    locked.mkdir()
+    monkeypatch.setattr(claude_api, "KEY_FILE", locked / "env")
+    locked.chmod(0)
+    try:
+        assert not claude_api.available()
+    finally:
+        locked.chmod(0o700)
+
 
 # --- the route ----------------------------------------------------------------------------------------------------
 

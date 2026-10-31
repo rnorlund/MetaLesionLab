@@ -51,9 +51,12 @@ def ledger() -> Path:
 def _env(name: str) -> str | None:
     if v := os.environ.get(name):
         return v
-    if KEY_FILE.exists() and (m := re.search(rf"^\s*(?:export\s+)?{name}=\"?([^\s\"]+)", KEY_FILE.read_text(), re.M)):
-        return m.group(1)
-    return None
+    try:  # a server may not let the app look in the home folder (the Space runs as a user without /root)
+        text = KEY_FILE.read_text()
+    except OSError:
+        return None
+    m = re.search(rf"^\s*(?:export\s+)?{name}=\"?([^\s\"]+)", text, re.M)
+    return m.group(1) if m else None
 
 
 def available() -> bool:
