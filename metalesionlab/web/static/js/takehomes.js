@@ -1,9 +1,6 @@
-/* Take-homes: the stack toggle for the chairs, and the God panel, covered until the visitor has drawn.
-   The draw pad's flag (sessionStorage "tot-draw-seen", draw.js SEEN_KEY) means this tab has already shown
-   Muse Image's drawings, so a seen visitor gets the panel uncovered; "Show me now" sets the same flag. */
+/* Take-homes: the stack toggle for the chairs (message 1), and the play buttons of message 3 (one voice at a time). */
 (function () {
   'use strict';
-  var SEEN_KEY = 'tot-draw-seen';
   function $(id) { return document.getElementById(id); }
 
   var fig = $('chairs'), btn = $('stack-btn');
@@ -13,18 +10,25 @@
     btn.setAttribute('aria-pressed', String(on));
   });
 
-  var god = $('god');
-  function reveal() {
-    $('god-cover').hidden = true;
-    $('god-grid').hidden = false;
-    god.setAttribute('data-state', 'open');
-    god.querySelectorAll('.th-god-after').forEach(function (e) { e.hidden = false; });
+  var audioEl = null, current = null;
+  function stop() {
+    if (audioEl) { audioEl.pause(); audioEl = null; }
+    if (current) current.setAttribute('aria-pressed', 'false');
+    current = null;
   }
-  var seen = false;
-  try { seen = window.sessionStorage.getItem(SEEN_KEY) === '1'; } catch (e) { /* storage off */ }
-  if (seen) reveal();
-  $('god-show').addEventListener('click', function () {
-    try { window.sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) { /* storage off */ }
-    reveal();
+  document.querySelectorAll('.th-play').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var was = current;
+      stop();
+      if (was === b) return;
+      var a = new Audio(b.getAttribute('data-src'));
+      audioEl = a;
+      current = b;
+      b.setAttribute('aria-pressed', 'true');
+      a.addEventListener('ended', function () { if (current === b) stop(); });
+      a.addEventListener('error', function () { if (current === b) stop(); });
+      var p = a.play();
+      if (p && p.catch) p.catch(function () { if (current === b) stop(); });
+    });
   });
 })();
