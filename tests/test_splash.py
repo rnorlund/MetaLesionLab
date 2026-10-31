@@ -95,3 +95,46 @@ def test_shadow_projection_leans_away_from_the_light():
     assert at["skew"] == 0 and at["blur"] > far["blur"] and at["scale"] > far["scale"]
     assert 0 < mid["skew"] < far["skew"] <= 25 and edge["skew"] <= 25 and right["skew"] < 0
     assert abs(far["x"] - 920) > abs(500 - 920)  # the shadow runs faster than its object
+
+
+# ---- the WebGL "Firelit rock" cave (static/js/splash-cave.js) ----
+CAVE = STATIC / "js" / "splash-cave.js"
+OBJECTS = ["brain", "laptop", "light-bulb", "microchip", "dna", "amphora", "lyre", "scroll", "owl", "horse",
+           "greek-bust", "hourglass", "key", "cat", "book", "bird", "ship", "teapot"]
+
+
+def test_the_18_object_sprites_exist():
+    for name in OBJECTS:
+        assert (STATIC / "img" / "splash" / "shadows" / f"{name}.webp").stat().st_size > 0, name
+    assert (STATIC / "img" / "splash" / "shadow_chair.webp").exists()
+    for name in OBJECTS:  # both the WebGL cave and the DOM fallback know every object
+        assert f"'{name}'" in JS and f"'{name}'" in CAVE.read_text()
+
+
+def test_the_cave_script_is_loaded_only_when_the_intro_plays(home):
+    assert CAVE.exists()
+    assert "splash-cave.js" not in home  # not in the page: splash.js adds it, and splash.js is itself added only to play the intro
+    assert JS.count("sc.src = '/static/js/splash-cave.js'") == 1 and "document.createElement('script')" in JS
+    assert JS.index("if (STATIC)") < JS.index("sc.src = '/static/js/splash-cave.js'")  # never on the reduced-motion still page
+
+
+def test_the_dom_cave_is_still_the_fallback():
+    assert "function cave(slide)" in JS and "projectShadow(xo, L.lightX, L.depth, W)" in JS
+    assert "cave=dom" in JS and "glCave = false;" in JS and "sc.onerror" in JS
+    assert "PCCave.stop()" in JS  # no leak at finish()
+
+
+def test_the_cave_script_uses_no_external_urls():
+    assert not re.search(r"https?://|//cdn|\.src\s*=\s*'//", CAVE.read_text())
+    assert not re.search(r"importScripts|createElement\('script'\)", CAVE.read_text())
+
+
+def test_the_waver_runs_at_half_the_prototypes_speed():
+    src = CAVE.read_text()
+    # documented constant: the prototype's heat-haze and shadow-wobble clocks times 0.5; the shader gets it as uW
+    assert re.search(r"var WAVER_SPEED = 0\.5;", src)
+    assert "uniform1f(U.uW, now / 1000 * WAVER_SPEED)" in src
+    assert "uW*1.9" in src and "uW*.4" in src and "uW*1.3" in src
+    assert "wt = now * WAVER_SPEED" in src
+    assert "uT*1.9" not in src  # the haze no longer runs on the full-speed clock
+    assert "devicePixelRatio || 1, DPR_MAX" in src and "DPR_MAX = 1.5" in src

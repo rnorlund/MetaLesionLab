@@ -31,7 +31,13 @@
   var STATIC = root.classList.contains('splash-static');  // reduced motion: a still page with the text
 
   var IMG = '/static/img/splash/';
-  var SHADOWS = ['umbrella', 'cup', 'cat', 'bicycle', 'tree', 'house', 'key'];
+  // Roger's 18 chosen objects (img/splash/shadows/): the WebGL cave (splash-cave.js) shows 8 at a time; the DOM cave, which
+  // stays as the fallback (no WebGL, or ?cave=dom), shows 8 of them too, a new shuffle each visit.
+  var SHADOWS = ['brain', 'laptop', 'light-bulb', 'microchip', 'dna', 'amphora', 'lyre', 'scroll', 'owl', 'horse', 'greek-bust',
+                 'hourglass', 'key', 'cat', 'book', 'bird', 'ship', 'teapot'];
+  var DOM_PICK = SHADOWS.slice().sort(function () { return Math.random() - 0.5; }).slice(0, 8);
+  var NO_GL = /[?&]cave=dom(&|$)/.test(location.search);  // force the DOM cave (documented flag, for testing the fallback)
+  var glCave = false;  // true once splash-cave.js and its sprites are ready and WebGL works
   var N_KINDS = 16, N_PEOPLE = 8;
   var Q515 = '“To them, I said, the truth would be literally nothing but the shadows of the images.”' +
     '<cite>Plato, Republic 515c · Jowett</cite>';
@@ -219,8 +225,18 @@
   }
   function cave(slide) {  // firelight, drifting shadows, the chair's shadow sliding in
     var W = L.W, H = L.H;
-    var items = SHADOWS.map(function (name, i) {
-      var s = img(IMG + 'shadow_' + name + '.webp');
+    var lean0 = projectShadow(W / 2, L.lightX, L.depth, W).skew.toFixed(1);  // the chair stops at the centre, leaning away from the fire
+    L.lean = lean0;
+    if (glCave && window.PCCave && PCCave.start(stage, {
+      before: actor,  // under the chair's DOM layers and the captions
+      chair: { x: L.x + L.base / 2, y: L.y + L.base / 2, size: L.base * 0.62, lean: +lean0 },  // exactly where the DOM chair sits at rest
+      slide: slide || 3200, k: L.W < L.H ? 1.45 : 1 })) {
+      stage.classList.add('gl');
+      return;  // the chair's shadow is drawn in the cave; focus() hands over to the DOM chair
+    }
+    glCave = false;
+    var items = DOM_PICK.map(function (name, i) {
+      var s = img(IMG + 'shadows/' + name + '.webp');
       shadowEl.appendChild(s);
       var dir = i % 2 ? -1 : 1;
       return { el: s, scale: 0.65 + (i % 3) * 0.22, y: H * (0.14 + (i * 0.37 % 0.5)), dir: dir, period: 4500 + i * 520, delay: i * 320 - 400, blur: -1 };
@@ -244,14 +260,18 @@
     })(t0);
     shadowPic.classList.add('on');
     shadowPic.style.filter = 'blur(3px)';
-    var lean = projectShadow(W / 2, L.lightX, L.depth, W).skew.toFixed(1);  // the chair stops at the centre, leaning away from the fire
-    L.lean = lean;
+    var lean = lean0;
     anim(actor, [{ transform: 'translateX(-' + (0.62 * W) + 'px) skewX(' + (+lean + 8) + 'deg) scale(.62)', opacity: 0.6 },
                  { transform: 'translateX(0) skewX(' + lean + 'deg) scale(.62)', opacity: 0.6 }], { duration: slide || 3200, easing: 'cubic-bezier(.2,.7,.25,1)' });
   }
   function focus(id) {  // the fire goes out, the wall turns to paper, the shadow comes into focus
     shadowEl.style.opacity = 0;
     stage.classList.add('lit');
+    if (glCave) {  // the cave canvas fades out as the wall turns to paper; the DOM chair's shadow takes over in the same place
+      PCCave.fadeOut(900);
+      shadowPic.classList.add('on');
+      shadowPic.style.filter = 'blur(3px)';
+    }
     anim(actor, [{ transform: 'translateX(0) skewX(' + (L.lean || 0) + 'deg) scale(.62)', opacity: 0.6 },
                  { transform: 'translateX(0) skewX(0deg) scale(.66)', opacity: 1 }], { duration: 700, easing: 'ease-out' });
     anim(shadowPic, [{ filter: 'blur(3px)' }, { filter: 'blur(0px)' }], { duration: 700 });
@@ -387,6 +407,7 @@
     run++;
     endLog();
     cancelAnimationFrame(raf);
+    if (window.PCCave) PCCave.stop();
     timers.forEach(clearTimeout);
     anims.forEach(function (a) { try { a.cancel(); } catch (e) { /* already gone */ } });
     document.removeEventListener('keydown', onKey, true);
@@ -415,15 +436,25 @@
   }
   setTimeout(finish, MAX_MS);
   window.addEventListener('resize', finish);
-  var names = ['shadow_chair'].concat(SHADOWS.map(function (n) { return 'shadow_' + n; }));
+  var names = ['shadow_chair'].concat(DOM_PICK.map(function (n) { return 'shadows/' + n; }));
   for (var k = 1; k <= N_KINDS; k++) names.push('kind_' + (k < 10 ? '0' : '') + k);
   for (var p = 1; p <= N_PEOPLE; p++) names.push('people_' + p);
   // Every picture gets 1.5 s at most; one that fails or is slow is simply left out, and the intro goes on without it.
   var picsReady = Promise.all(names.map(function (n) {
     return new Promise(function (resolve) { var i = new Image(); i.onload = i.onerror = resolve; i.src = IMG + n + '.webp'; setTimeout(resolve, 1500); });
   }));
+  // The WebGL cave: its script is added only now, when the intro plays, and gets the same few seconds as the pictures;
+  // if it is slow, missing or WebGL doesn't work, the DOM cave plays instead.
+  var caveReady = NO_GL ? Promise.resolve(false) : new Promise(function (resolve) {
+    var sc = document.createElement('script');
+    sc.src = '/static/js/splash-cave.js';
+    sc.onload = function () { resolve(window.PCCave ? PCCave.load(IMG, 2800) : false); };
+    sc.onerror = function () { resolve(false); };
+    setTimeout(function () { resolve(false); }, 3000);
+    document.head.appendChild(sc);
+  }).catch(function () { return false; }).then(function (ok) { glCave = !!ok; });
   var slow = new Promise(function (_, reject) { setTimeout(function () { reject(new Error('slow')); }, 3500); });
-  Promise.race([Promise.all([sheetReady.catch(function () {}), picsReady]), slow]).then(function () {
+  Promise.race([Promise.all([sheetReady.catch(function () {}), picsReady, caveReady]), slow]).then(function () {
     if (done) return;
     build();
     layout();
