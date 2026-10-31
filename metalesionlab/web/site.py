@@ -596,7 +596,7 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     if "og:image" not in page:
         head += share_tags(page, origin_url, path, site)
     if site == "plato":
-        page = add_motion(page)
+        page = add_next(add_motion(page))
     page = _ASSET.sub(_versioned, page)
     page = _set_theme(page, site)
     at = page.find("</head>")
@@ -620,6 +620,16 @@ MOTION = ('<link rel="stylesheet" href="/static/css/motion.css">' + MOTION_BOOT
 def add_motion(page: str) -> str:
     at = page.find("</head>")
     return page if at < 0 or "/static/js/motion.js" in page else page[:at] + MOTION + page[at:]
+
+
+# The next-question buttons (static/js/next-question.js): a section marked data-ask="…?" gets a button just above it
+# that asks its question and scrolls the page down to it. Added with motion; a page with no data-ask is unchanged.
+NEXT = '<link rel="stylesheet" href="/static/css/next-question.css"><script src="/static/js/next-question.js" defer></script>'
+
+
+def add_next(page: str) -> str:
+    at = page.find("</head>")
+    return page if at < 0 or "/static/js/next-question.js" in page else page[:at] + NEXT + page[at:]
 
 
 # Every stylesheet and script link carries the file's modification time (?v=…), so a browser that cached

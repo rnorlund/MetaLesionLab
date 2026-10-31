@@ -1,0 +1,16 @@
+/* Next question (static/js/next-question.js): one quiet, centred button between two sections, asking the next
+   section's question, with a small bobbing arrow. Tokens only. */
+.nq { display: flex; justify-content: center; margin: clamp(32px, 4.5vw, 88px) 0 clamp(12px, 1.5vw, 28px); padding: 0 16px; }
+.nq-btn { display: inline-flex; align-items: center; gap: 16px; max-width: min(100%, 46em); padding: 14px 18px 14px 28px;
+  border: 1px solid var(--line-2); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer;
+  font: 500 var(--fs-lead)/1.3 var(--sans); text-align: left; transition: border-color 0.2s ease, background-color 0.2s ease; }
+.nq-btn:hover { border-color: var(--orange); background: var(--soft); }
+.nq-btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+.nq-arrow { display: inline-grid; place-items: center; flex: none; width: 2.1em; height: 2.1em; border-radius: 50%;
+  background: var(--orange); color: var(--paper); font-weight: 700; animation: nq-bob 1.8s ease-in-out infinite; }
+.nq-btn:hover .nq-arrow { animation-duration: 0.9s; }
+@keyframes nq-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .nq-arrow { animation: none; } }
+/* a hidden section keeps its question hidden too */
+.nq:has(+ [hidden]) { display: none; }
+[data-ask] { scroll-margin-top: 16px; }

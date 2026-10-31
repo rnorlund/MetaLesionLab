@@ -57,7 +57,7 @@
   <a href="#method">How we did it</a>
 </nav>
 
-<section class="ph-sec" id="results" aria-labelledby="results-h">
+<section class="ph-sec" id="results" data-ask="Who got the meaning right?" aria-labelledby="results-h">
   <div class="ph-sec-head">
     <h2 id="results-h">Who got the meaning right: reading the words, or listening to the sound?</h2>
     <p class="ph-sec-lede" id="results-lede">…</p>
@@ -81,7 +81,7 @@
   </div>
 </section>
 
-<section class="ph-sec" id="reader" aria-labelledby="reader-h">
+<section class="ph-sec" id="reader" data-ask="How does the sound reader hear the stress?" aria-labelledby="reader-h">
   <div class="ph-sec-head">
     <h2 id="reader-h">The sound reader hears the stressed word: higher, louder and longer</h2>
     <p class="ph-sec-lede">The stress that writing loses is still in the sound: the stressed word is higher, louder and longer. Our sound reader, a small program with no AI in it, measures those three things for each word and picks the word that stands out most. Press a recording at the top of the page to see it here.</p>
@@ -89,7 +89,7 @@
   <div class="ph-contour" id="contour-demo"></div>
 </section>
 
-<section class="ph-sec ph-try" id="try" aria-labelledby="try-h">
+<section class="ph-sec ph-try" id="try" data-ask="Want to try it with your own voice?" aria-labelledby="try-h">
   <div class="ph-sec-head">
     <h2 id="try-h">Try it with your voice</h2>
     <p class="ph-sec-lede">Say “I never said she stole my money”, stressing any one word. Voice Transcribe writes it down, Muse Spark guesses your meaning from the writing alone, and the sound reader guesses from your voice. Then tell us which word you meant.</p>
@@ -121,7 +121,7 @@
   </div>
 </section>
 
-<section class="ph-sec ph-method" id="method" aria-labelledby="method-h">
+<section class="ph-sec ph-method" id="method" data-ask="How did we do it?" aria-labelledby="method-h">
   <h2 id="method-h">How we did it, and what it can’t show</h2>
   <ul id="method-list">
     <li><b>The recordings.</b> Thirteen synthetic (computer) voices said the sentence eight ways: neutral, and with each word stressed. The four you can play are Kokoro-82M, an open voice that can’t stress a word by itself, so we added the stress the way English speakers mark it: the word higher, louder and longer, and the words after it lower and flatter. Six macOS voices stressed the word with their own pitch, volume and rate commands (their emphasis command did nothing at all). Three eSpeak NG voices used their own emphasis. No recording of a person was used. The macOS and eSpeak clips stay on our computer.</li>
