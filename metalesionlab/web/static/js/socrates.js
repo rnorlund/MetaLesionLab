@@ -267,8 +267,10 @@
     }
     var stats = ev.refused ? 'answered without calling the model · $0' :
       money(ev.cost_usd) + ' · ' + ev.tool_calls + ' tool call' + (ev.tool_calls === 1 ? '' : 's') + ' · ' +
-      ev.model_calls + ' Muse Spark call' + (ev.model_calls === 1 ? '' : 's') + ' · ' + (ev.t || 0).toFixed(1) + ' s';
+      ev.model_calls + (ev.backup ? ' model call' : ' Muse Spark call') + (ev.model_calls === 1 ? '' : 's') + ' · ' + (ev.t || 0).toFixed(1) + ' s';
     foot.appendChild(h('span', { class: 'so-cost', text: stats }));
+    // Claude stood in for Muse Spark (Meta's budget ran out or its API failed): say so plainly.
+    if (ev.backup) foot.appendChild(h('p', { class: 'so-backup', text: 'Answered by ' + ev.backup.label + ' because ' + ev.backup.why + '.' }));
   };
 
   // The end of an examination: what held, what broke, where to look, and what next.
@@ -306,7 +308,8 @@
       $('turns').textContent = used ? 'Turn ' + Math.min(used + (S.busy ? 0 : 1), max) + ' of ' + max : 'Up to ' + max + ' turns';
     }
     var s = S.status;
-    $('meta').textContent = s ? 'Muse Spark 1.3 · up to ' + s.max_tool_calls + ' tool calls a turn · ' + s.turns_left + ' turns left today' : '';
+    var who = s && s.backup && s.backup.active ? s.backup.label + ', standing in for Muse Spark' : 'Muse Spark 1.3';
+    $('meta').textContent = s ? who + ' · up to ' + s.max_tool_calls + ' tool calls a turn · ' + s.turns_left + ' turns left today' : '';
     var full = used >= max || (ex && d.over);
     $('msg').disabled = S.busy || full || !!(s && (!s.enabled || !s.budget_left || !s.turns_left)) || (ex && !info);
     $('send').disabled = $('msg').disabled;

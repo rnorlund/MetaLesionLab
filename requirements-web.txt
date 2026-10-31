@@ -2,6 +2,7 @@
 # No torch, transformers or GPU code: Model Lab, Plato's Chair and What can I cut? replay results.
 # Versions match the development environment (Python 3.12) these were tested in.
 openai==3.37.0
+anthropic==2.3.0  # Ask Socrates' stand-in when the Meta budget runs out (metalesionlab/claude_api.py)
 httpx==0.28.1
 numpy==2.5.4
 pillow==13.0.0

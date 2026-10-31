@@ -26,6 +26,7 @@ import secrets
 import threading
 import time
 from collections import defaultdict, deque
+from pathlib import Path
 from typing import Callable, Iterator
 
 import httpx
@@ -72,11 +73,13 @@ def ip_cap() -> int:
 
 class _Spend:
     """Today's spend for one ledger tag (default: Ask the Lab's), with a reserve held per request in flight
-    so that parallel requests can't overshoot the daily cap."""
+    so that parallel requests can't overshoot the daily cap. `ledger` gives the ledger's path (default: the
+    Meta API's; Ask Socrates' Claude stand-in keeps its own)."""
 
     def __init__(self, tag: str | None = None, cap: Callable[[], float] | None = None,
-                 reserve_usd: float = RESERVE_USD):
+                 reserve_usd: float = RESERVE_USD, ledger: Callable[[], Path] | None = None):
         self.tag = tag or lab_agent.LEDGER_TAG
+        self.ledger = ledger or (lambda: meta_api.LEDGER)
         self.cap = cap or daily_usd
         self.reserve_usd = reserve_usd
         self.lock = threading.Lock()
@@ -94,7 +97,7 @@ class _Spend:
         """USD spent today (UTC) by calls with this tag. Reads only lines added since last time."""
         now = time.time()
         start = self._day_start(now)
-        path = meta_api.LEDGER
+        path = self.ledger()
         with self.lock:
             if path != self.path or start != self.day:
                 self.path, self.day, self.offset, self.total = path, start, 0, 0.0

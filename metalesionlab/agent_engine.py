@@ -286,7 +286,8 @@ class ToolAgent:
         kwargs = {"tools": self.tools} if tools else {}
         resp = self.api.chat(messages, model=self.model, reasoning_effort=self.effort,
                              max_completion_tokens=self.max_completion_tokens, ledger_tag=self.tag, **kwargs)
-        state["cost"] += call_cost(self.model, getattr(resp, "usage", None))
+        cost = getattr(resp, "cost_usd", None)  # a stand-in model (claude_api) prices its own calls
+        state["cost"] += cost if cost is not None else call_cost(self.model, getattr(resp, "usage", None))
         state["tokens"] += usage_tokens(getattr(resp, "usage", None))
         state["model_calls"] += 1
         choice = resp.choices[0]
@@ -418,7 +419,7 @@ class ToolAgent:
         if not check["ok"] and (calls or self.repair_without_calls):
             shown, fix = self.problems(check)
             if fix:
-                yield ev("checking", text="The draft answer had " + "; ".join(shown) + ". Asking Muse Spark to fix it.",
+                yield ev("checking", text="The draft answer had " + "; ".join(shown) + ". Asking " + getattr(self.api, "label", "Muse Spark") + " to fix it.",
                          draft=answer, problems=shown)
                 answer = self._repair(answer, fix, calls, state)
                 check = self.check(answer, results, q)

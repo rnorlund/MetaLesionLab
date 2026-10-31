@@ -27,27 +27,41 @@ Limits for this route (a site-wide guard may add its own):
   a reserve for each turn in flight.
 - MetaAPI's overall budget cap still applies.
 
+Claude stands in when Muse Spark can't answer, so a visitor never gets an empty reply: when the Meta key is
+missing, the Meta budget (overall or today's for Socrates) is spent, or the Meta API fails partway through a turn
+(metalesionlab/claude_api.py, if an Anthropic key is set). It has its own ledger and limits:
+- CLAUDE_SOCRATES_DAILY_USD (default 2.00): Claude's spend today on Socrates, plus a reserve per turn in flight.
+- CLAUDE_BUDGET_USD (default 20.00): Claude's overall cap (claude_api.py).
+Claude says it is Claude standing in for Muse Spark, and the reply is marked "backup" so the page can say so.
+
 app.py includes this router with one line.
 """
 from __future__ import annotations
 
 import json
+import logging
 import os
-from typing import Literal
+from typing import Callable, Literal
+
+import httpx
+import openai
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
-from metalesionlab import meta_api, socrates_agent
+from metalesionlab import claude_api, meta_api, socrates_agent
 from metalesionlab.web import agent_routes
 from metalesionlab.web import app as web
 from metalesionlab.web.limits import client_ip
 
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 COOKIE = "tl_socrates"
 RESERVE_USD = 0.05  # held per turn in flight; a typical turn costs $0.01-0.03
+CLAUDE_TURN_USD = 0.25  # Claude's per-turn cap (Opus costs about three times Muse Spark per token)
+CLAUDE_RESERVE_USD = 0.25
 STARTERS = [
     "Did the AI really draw the same chair 16 times?",
     "What would Plato say about AI art?",
@@ -69,7 +83,66 @@ def ip_cap() -> int:
     return int(os.environ.get("TIPPA_SOCRATES_IP_TURNS", "60"))
 
 
+def claude_daily_usd() -> float:
+    return float(os.environ.get("CLAUDE_SOCRATES_DAILY_USD", "2"))
+
+
 spend = agent_routes._Spend(tag=socrates_agent.LEDGER_TAG, cap=daily_usd, reserve_usd=RESERVE_USD)
+claude_spend = agent_routes._Spend(tag=socrates_agent.LEDGER_TAG, cap=claude_daily_usd, reserve_usd=CLAUDE_RESERVE_USD,
+                                   ledger=claude_api.ledger)
+
+
+def _claude_today_check() -> None:
+    if claude_spend.today() >= claude_daily_usd():
+        raise meta_api.BudgetExceeded("Claude has used today's budget for Socrates")
+
+
+class MetaThenClaude:
+    """Muse Spark first; Claude for the rest of the turn once the Meta API can't answer (its budget is spent or
+    it fails after its own retries). `claude` makes the stand-in when it's first needed (None: no stand-in)."""
+
+    WHY = {"budget": "today’s Meta budget is used up", "error": "the Meta Model API didn’t answer"}
+
+    def __init__(self, meta, claude: Callable[[], claude_api.ClaudeAPI] | None, why: str | None = None):
+        self.meta, self.make_claude, self.claude = meta, claude, None
+        self.why = why if meta is None else None  # set: Claude from the start
+        self.switched: Callable[[], None] | None = None
+
+    @property
+    def on_claude(self) -> bool:
+        return self.why is not None
+
+    @property
+    def label(self) -> str:
+        return "Claude" if self.on_claude else "Muse Spark"
+
+    def chat(self, messages, **kw):
+        if not self.on_claude:
+            try:
+                return self.meta.chat(messages, **kw)
+            except (meta_api.BudgetExceeded, openai.OpenAIError, httpx.HTTPError) as e:
+                if self.make_claude is None:
+                    raise
+                log.warning("socrates: Meta API can't answer (%s); Claude stands in", type(e).__name__)
+                self.why = "budget" if isinstance(e, meta_api.BudgetExceeded) else "error"
+                if self.switched:
+                    self.switched()
+        if self.claude is None:
+            self.claude = self.make_claude()
+        swapped = [{**m, "content": m["content"].replace(socrates_agent.WHO_MUSE, socrates_agent.WHO_CLAUDE)}
+                   if m.get("role") == "system" and isinstance(m.get("content"), str) else m for m in messages]
+        return self.claude.chat(swapped, **kw)
+
+    def note(self) -> dict:
+        return {"model": claude_api.MODEL, "label": "Claude (Anthropic)", "why": self.WHY[self.why]}
+
+
+def _make_claude() -> claude_api.ClaudeAPI:
+    return claude_api.ClaudeAPI(checks=[_claude_today_check])
+
+
+def meta_ready() -> bool:
+    return web.api_key_present() and meta_api.spent() + RESERVE_USD <= meta_api.BUDGET_USD
 sessions = agent_routes._Counter()
 addresses = agent_routes._Counter()
 
@@ -85,9 +158,14 @@ def socrates_status(request: Request):
     sid, new = agent_routes._session(request, COOKIE)
     spent = spend.today()
     left = max(0, min(session_cap() - sessions.count(sid), ip_cap() - addresses.count(client_ip(request))))
-    body = {"enabled": web.api_key_present(), "starters": STARTERS, "turns_left": left, "per_session": session_cap(),
-            "max_turns": socrates_agent.MAX_TURNS, "history_tokens": socrates_agent.HISTORY_TOKENS,
-            "daily_cap_usd": daily_usd(), "spent_today_usd": round(spent, 4), "budget_left": spend.left(),
+    meta_left = meta_ready() and spend.left()
+    claude_left = claude_api.available() and claude_spend.left()
+    body = {"enabled": web.api_key_present() or claude_api.available(), "starters": STARTERS, "turns_left": left,
+            "per_session": session_cap(), "max_turns": socrates_agent.MAX_TURNS,
+            "history_tokens": socrates_agent.HISTORY_TOKENS, "daily_cap_usd": daily_usd(),
+            "spent_today_usd": round(spent, 4), "budget_left": bool(meta_left or claude_left),
+            "backup": {"available": claude_api.available(), "active": bool(not meta_left and claude_left),
+                       "model": claude_api.MODEL, "label": "Claude (Anthropic)"},
             "model": socrates_agent.MODEL, "reasoning_effort": socrates_agent.REASONING_EFFORT,
             "max_tool_calls": socrates_agent.MAX_TOOL_CALLS, "tools": socrates_agent.TOOL_NAMES,
             "examine": examine_info()}
@@ -123,8 +201,9 @@ class Dialogue(BaseModel):
         return v
 
 
-def make_agent(history, context, mode: str = "ask", concept: str | None = None) -> socrates_agent.SocratesAgent:
-    return socrates_agent.SocratesAgent(web.get_api(), history=history, context=context, mode=mode, concept=concept)
+def make_agent(history, context, mode: str = "ask", concept: str | None = None, api=None) -> socrates_agent.SocratesAgent:
+    return socrates_agent.SocratesAgent(api or web.get_api(), history=history, context=context, mode=mode,
+                                        concept=concept)
 
 
 def examine_info() -> dict:
@@ -157,18 +236,43 @@ def socrates(body: Dialogue, request: Request):
     if sessions.count(sid) >= session_cap() or addresses.count(ip) >= ip_cap():
         raise HTTPException(429, f"You've had {session_cap()} turns with Socrates today, the limit for this demo. "
                                  "Every page of the lab still works; come back tomorrow.")
-    if not web.api_key_present():
+    backup = claude_api.available()
+    if not web.api_key_present() and not backup:
         raise HTTPException(503, "Ask Socrates needs the Meta Model API, which isn't set up on this server.")
-    if meta_api.spent() + RESERVE_USD > meta_api.BUDGET_USD:
-        raise HTTPException(503, web.BUDGET_MSG)
-    agent = (make_agent(body.history, body.context, mode="examine", concept=concept) if concept
-             else make_agent(body.history, body.context))
-    if not spend.reserve():
-        raise HTTPException(503, "Socrates has used today's budget for dialogues. Every page of the lab still works, "
-                                 "and he'll be back tomorrow.")
+    held = spend if meta_ready() and spend.reserve() else None
+    if held is None:
+        if not backup:
+            if not meta_ready():
+                raise HTTPException(503, web.BUDGET_MSG)
+            raise HTTPException(503, "Socrates has used today's budget for dialogues. Every page of the lab still "
+                                     "works, and he'll be back tomorrow.")
+        if not claude_spend.reserve():
+            raise HTTPException(503, "Socrates has used today's budget for dialogues. Every page of the lab still "
+                                     "works, and he'll be back tomorrow.")
+        held = claude_spend
+    api = MetaThenClaude(web.get_api() if held is spend else None, _make_claude if backup else None,
+                         why=None if held is spend else "budget")
+    try:
+        agent = (make_agent(body.history, body.context, mode="examine", concept=concept, api=api) if concept
+                 else make_agent(body.history, body.context, api=api))
+    except BaseException:
+        held.release()
+        raise
+
+    def to_claude():  # Claude's turns cost more per token: give it room, and say so in the trace
+        agent.max_usd = max(agent.max_usd, CLAUDE_TURN_USD)
+        agent.model = claude_api.MODEL
+    api.switched = to_claude
+    if api.on_claude:
+        to_claude()
+
+    def events():
+        for e in agent.run(question):
+            yield {**e, "backup": api.note()} if api.on_claude and e["type"] in ("start", "answer") else e
+
     sessions.take(sid)
     addresses.take(ip)
-    resp = agent_routes.stream_events(lambda: agent.run(question), spend.release, "socrates")
+    resp = agent_routes.stream_events(events, held.release, "socrates")
     if new:
         agent_routes._set_cookie(resp, sid, COOKIE)
     return resp

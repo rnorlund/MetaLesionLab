@@ -380,7 +380,7 @@ def client(monkeypatch):
                         else _reply("Spread 0.13 [plato_stats: chair].\n\nWhat is a chair for?"))
     made = []
 
-    def make(history, context, mode="ask", concept=None):
+    def make(history, context, mode="ask", concept=None, api=None):
         agent = S.SocratesAgent(FakeAPI(script), history=history, context=context, mode=mode, concept=concept)
         made.append(agent)
         return agent
