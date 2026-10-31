@@ -330,6 +330,13 @@ Every AI step in the tools uses a Meta model. As outside comparisons, the Plato 
 - Draw a chair processes each drawing in memory and never stores or logs it, unless the opt-in donation is switched on (`TIPPA_DONATIONS=1`; off by default).
 - Assessment sessions and private test sets stay in the user's browser. The only thing the server keeps is the summary a volunteer chooses to add to the public test's reference range (see Naming Assessment).
 
+## Responsible use: damaging AIs on purpose
+
+- The damage experiments switch off a share of a model's artificial neurons, or add noise to them, through reversible forward hooks (`metalesionlab/lesions.py`, `metalesionlab/sdxl_lesions.py`). Model weights are never edited, and no damaged model is saved, released or served: the site only replays saved results.
+- The damage is random and untargeted. It makes a model worse at everything at once, including keeping to its own rules: at the heaviest damage, Muse Glimmer's answers broke down into gibberish and a few swear words (shown masked on the site). By then the model can't do anything useful either.
+- Deliberately removing a model's safety training is a different, targeted technique (for example, ablating the activation direction that carries refusals; Arditi et al., 2024). This repository doesn't implement it, and the experiments never looked for it.
+- Every prompt in the experiments is harmless (draw a chair, a clock or God; describe a chair). If you reuse the tools, keep to the licence and acceptable-use policy of the model you damage, and don't use them to strip safety behaviour.
+
 ## Setup
 
 ```bash
