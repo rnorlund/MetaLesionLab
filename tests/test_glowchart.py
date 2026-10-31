@@ -63,3 +63,24 @@ def test_draw_results_use_one_glowing_line_each_and_no_flat_map():
     assert draw.count("GlowChart.swarm(") == 2 and "map-chart" not in draw and "mapChart" not in draw
     assert "'The AI’s usual ' + c.label" in draw and "'A typical person’s ' + c.label" in draw
     assert "function swarm(el, o)" in JS and "tinted(row.sprite.src" in JS
+
+
+SKIN = (STATIC / "js" / "glowskin.js").read_text()
+PLATO_PAGES = ["/", "/plato", "/damaged", "/takehomes", "/draw", "/socrates", "/plato/clock", "/plato/bird", "/plato/cave",
+               "/plato/forms", "/plato/lifespan", "/plato/inside", "/plato/glimmer", "/plato/scale", "/plato/atlas"]
+
+
+@pytest.mark.parametrize("path", PLATO_PAGES)
+def test_every_plato_page_gets_the_glow_skin_once(client, path):
+    page = client.get(path).text
+    assert page.count("/static/js/glowskin.js") == 1 and page.count("/static/css/glowchart.css") == 1, path
+
+
+def test_the_skin_lights_coloured_marks_only_and_keeps_straight_lines_visible():
+    from metalesionlab.web import site
+    once = site.add_glow("<head></head>")
+    assert site.add_glow(once) == once and once.count("glowskin.js") == 1
+    assert ':root[data-theme="dark"] svg .gl { filter: url(#pc-glow); }' in CSS  # dark theme only
+    assert "s > 0.4" in SKIN  # saturated colours only: grids, axes and text stay flat
+    assert "bb.width < 1 || bb.height < 1" in SKIN  # a filter sized from a flat box would hide the line
+    assert "header, nav, .sp-stage, .splash" in SKIN  # icons and the intro are left alone

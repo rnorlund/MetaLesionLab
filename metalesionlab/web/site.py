@@ -596,7 +596,7 @@ def render_page(page: str, app, path: str, origin_url: str) -> str:
     if "og:image" not in page:
         head += share_tags(page, origin_url, path, site)
     if site == "plato":
-        page = add_next(add_motion(page))
+        page = add_glow(add_next(add_motion(page)))
     page = _ASSET.sub(_versioned, page)
     page = _set_theme(page, site)
     at = page.find("</head>")
@@ -630,6 +630,20 @@ NEXT = '<link rel="stylesheet" href="/static/css/next-question.css"><script src=
 def add_next(page: str) -> str:
     at = page.find("</head>")
     return page if at < 0 or "/static/js/next-question.js" in page else page[:at] + NEXT + page[at:]
+
+
+# The glowing look on every Plato chart (static/js/glowskin.js and the shared rules in static/css/glowchart.css): a
+# page that draws a glowing chart itself already links the stylesheet, and gets it once.
+GLOW_CSS = '<link rel="stylesheet" href="/static/css/glowchart.css">'
+GLOW_JS = '<script src="/static/js/glowskin.js" defer></script>'
+
+
+def add_glow(page: str) -> str:
+    at = page.find("</head>")
+    if at < 0 or "/static/js/glowskin.js" in page:
+        return page
+    add = ("" if "/static/css/glowchart.css" in page else GLOW_CSS) + GLOW_JS
+    return page[:at] + add + page[at:]
 
 
 # Every stylesheet and script link carries the file's modification time (?v=…), so a browser that cached
