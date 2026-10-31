@@ -185,7 +185,7 @@ body.plato { background: var(--ground-warm); --pc-reply: #FCFBF7; }
 /* The result first (.pc-top): the headline, three numbers drawn as graphics (statviz.css) and Muse Image's 16
    chairs beside people's 16, with the stack button. Line art sits on light paper whatever the theme. */
 .pc-top { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 2.2vw, 60px) clamp(24px, 2.5vw, 64px);
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, clamp(460px, 42vw, 1080px)); gap: 24px clamp(32px, 3.6vw, 104px); align-items: center; }
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, clamp(460px, 47vw, 1180px)); gap: 24px clamp(28px, 3vw, 88px); align-items: start; }  /* the chairs start level with the title */
 .pc-top-text { display: flex; flex-direction: column; gap: clamp(12px, 1vw, 22px); min-width: 0; }
 .pc-top h1 { margin: 0; font-size: var(--fs-display); font-weight: var(--fw-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); text-wrap: balance; }
 .pc-top-lede { font-size: var(--fs-intro); font-weight: var(--fw-lead); max-width: 46ch; }
@@ -232,6 +232,16 @@ body.plato { background: var(--ground-warm); --pc-reply: #FCFBF7; }
 .pc-hub-more { margin: 0; max-width: var(--measure); font-size: var(--fs-body); line-height: 1.5; color: var(--ink-2); }
 .pc-hub-more a { font-weight: 600; }
 
+/* wide: the headline and its line on the left, the chairs on the right from the top, then the numbers and the
+   buttons in a full-width row under both, so neither column ends in empty space */
+@media (min-width: 1101px) {
+  .pc-top-text { display: contents; }
+  .pc-top .title-pair { grid-column: 1; grid-row: 1; }
+  .pc-top-lede { grid-column: 1; grid-row: 2; }
+  .pc-chairs { grid-column: 2; grid-row: 1 / span 2; }
+  .pc-stats { grid-column: 1 / -1; grid-row: 3; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pc-cta { grid-column: 1 / -1; grid-row: 4; }
+}
 @media (max-width: 1100px) {
   .pc-top { grid-template-columns: minmax(0, 1fr); }
   .pc-chairs { max-width: 760px; }
