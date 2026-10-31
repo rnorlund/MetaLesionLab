@@ -1,6 +1,6 @@
 # Does damage hurt Spanish more than English? A controlled test
 
-- **First measured** on **Oct 26, 2026**, on 20 pictures.
+- **First measured** on 20 pictures.
 - **Rerun on Oct 27** on **100 new pictures**, with the same plan, as a pre-registered replication:
   [`replication_plan.md`](replication_plan.md), results in [`replication.md`](replication.md).
 - **Setup:** Muse Glimmer 30B (decoder in FP8), one NVIDIA L40S per run.
@@ -473,7 +473,7 @@ inspectable mechanism, which brains do not: an English intermediate in the late 
 
 ## First run (n = 20)
 
-The first run (Oct 26) used the same plan on the 20 demo pictures. It is re-coded here with the
+The first run used the same plan on the 20 demo pictures. It is re-coded here with the
 current coder, which gives the same numbers as first reported. Results:
 `runs/bilingual_n20/results.json`; figures: `docs/figures/bilingual/n20/`.
 

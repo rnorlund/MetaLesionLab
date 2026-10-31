@@ -1,6 +1,6 @@
 # Language support
 
-Measured on **Oct 26, 2026** (six languages) and **Oct 27** (ten more: see [Ten more languages](#ten-more-languages-oct-27)). "Any language" means you can type a word list in any language and Test Studio will try it. This page lists what we have actually measured. The same numbers, with every transcript, are in [`public_data/language_support.json`](../public_data/language_support.json).
+Measured in two rounds: six languages, then ten more (see [Ten more languages](#ten-more-languages-oct-27)). "Any language" means you can type a word list in any language and Test Studio will try it. This page lists what we have actually measured. The same numbers, with every transcript, are in [`public_data/language_support.json`](../public_data/language_support.json).
 
 ## At a glance
 
@@ -248,7 +248,7 @@ German, Italian, Dutch, Japanese, Korean, Arabic, Turkish, Polish, Indonesian an
 
 The sets are in `runs/sets/demo_<lang>/`, and the lists in `runs/wordlists/demo_<lang>.txt`.
 
-**Spoken naming:** the same method as Oct 26. Each item was synthesized with `say`, converted to 16 kHz mono 16-bit WAV, padded with 0.7 s of silence, transcribed with the language hint, and coded with the set's alternates. Each language got:
+**Spoken naming:** the same method as the first six languages. Each item was synthesized with `say`, converted to 16 kHz mono 16-bit WAV, padded with 0.7 s of silence, transcribed with the language hint, and coded with the set's alternates. Each language got:
 - the bare word;
 - its citation form: an article (*der/die/das*, *un/una*, *een*, *bir*, *al-*) or a classifier (*con mèo*).
 

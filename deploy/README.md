@@ -114,7 +114,7 @@ Free CPU hardware (2 vCPU, 16 GB) runs either site comfortably. One Space per si
      so public-test results stay verifiable across restarts (Lingua).
 
    Optional **variables**: `MLL_SISTER_URL` (the other Space's address, for the "Sister project" link),
-   `TIPPA_PUBLIC_DAILY_USD` (default 2), `MLL_BUDGET_USD` (default 10), `TIPPA_PUBLIC_BUILD_WORDS` (Lingua,
+   `TIPPA_PUBLIC_DAILY_USD` (default 8), `MLL_BUDGET_USD` (default 60), `TIPPA_PUBLIC_BUILD_WORDS` (Lingua,
    default 4; 0 turns Test Studio builds off). `MLL_SITE` comes from the staged Dockerfile; a variable
    overrides it, so leave it unset.
 3. Upload the staged folder (the CLI comes with `pip install -U huggingface_hub`; the login needs a token with
@@ -207,10 +207,12 @@ which writes `public_data/naming_norms_<set>.json` only for sets with at least 1
 | `MLL_SISTER_URL` | none | The other site's address, for the "Sister project" link on every page; no link while unset |
 | `MODEL_API_KEY` | none | Meta Model API key: a secret in the host's secret store |
 | `PUBLIC_DEMO` | 1 | Turns on the guard; unset on a laptop |
-| `TIPPA_PUBLIC_DAILY_USD` | 2 | Daily cap for all visitors together, per UTC day; 0 refuses every call |
-| `MLL_BUDGET_USD` | 10 | Total cap for this host's ledger |
+| `TIPPA_PUBLIC_DAILY_USD` | 8 | Daily cap for all visitors together, per UTC day; 0 refuses every call |
+| `MLL_BUDGET_USD` | 60 | Total cap for this host's ledger |
+| `ANTHROPIC_API_KEY` | none | Plato: optional secret; Claude answers Ask Socrates when the Meta API can't (`metalesionlab/claude_api.py`) |
+| `CLAUDE_SOCRATES_DAILY_USD` / `CLAUDE_BUDGET_USD` | 2 / 20 | Plato: Claude's daily cap for Ask Socrates and its total cap, in its own ledger |
 | `TIPPA_PUBLIC_SOCRATES_PER_DAY` | 30 | Plato: Ask Socrates turns per visitor per day |
-| `TIPPA_SOCRATES_DAILY_USD` | 1 | Plato: Ask Socrates' own daily cap |
+| `TIPPA_SOCRATES_DAILY_USD` | 1 (5 on the Space) | Plato: Ask Socrates' own daily cap |
 | `TIPPA_PUBLIC_BUILD_WORDS` / `_CANDIDATES` | 4 / 2 | Lingua: Test Studio build size; 0 words turns builds off |
 | `TIPPA_PUBLIC_PHOTO_TESTS` | 0 | Lingua: 1 allows personal tests from a photo |
 | `TIPPA_PUBLIC_ASK_PER_DAY` | 20 | Lingua: Ask the Lab questions per visitor per day |

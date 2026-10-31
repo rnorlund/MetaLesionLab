@@ -69,45 +69,53 @@ Code: `metalesionlab/plato.py`, `scripts/plato_*.py`, `metalesionlab/draw.py`; t
 
 > Research and teaching use only. Nothing here is medical or treatment advice.
 
-## Built during the Meta Global AI Developer Hackathon (Oct 26 – Nov 4, 2026)
+## Built during the Meta Global AI Developer Hackathon
 
-Everything in this repository was written during the hackathon, starting at the kickoff on Oct 26, 2026. The commit history is the record.
+Everything in this repository was built during the hackathon. The commit history is the record.
 
-| Date | Built |
-|---|---|
-| Oct 26 | Repo, data guard, Meta Model API client with spend ledger and budget cap |
-| Oct 26 | Muse Glimmer in FP8 on a single L40S (32 GiB used). Picture naming with the reasoning channel skipped (it can leak into answers under heavy damage). Word lens (logit lens) that matches the model's own output at the last layer |
-| Oct 26 | Naming-error classifier (English and Spanish), with WordNet plus a Muse Spark judge for meaning. It passed 34 unit tests that day and agreed with the expected code on 19 of 20 live cases; the one miss was a mistake in the expected answer. |
-| Oct 26 | Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. A guided tour |
-| Oct 26 | You vs. the AI (`/challenge`): name 10 pictures beside Muse Glimmer, then watch it lose a word |
-| Oct 26 | Naming scored in French, Brazilian Portuguese, Hindi and Mandarin; language support measured in six languages ([docs/languages.md](docs/languages.md)) |
-| Oct 26 | Naming Assessment: speech-onset latency (max error 5.6 ms on synthesized speech), first-complete-response coding, review and override, PDF report, tracking across sessions, parallel forms, bring-your-own test (ZIP or folder; a PowerPoint is converted on the command line), personal tests from a photo, and a public naming test with an opt-in reference range |
-| Oct 26 | "What can I cut?": every Glimmer decoder layer skipped alone, a greedy removal path guarded by picture naming (English and Spanish) and perplexity on Muse Spark-written text, and real deletion of the chosen layers with measured size, memory and speed |
-| Oct 26 | Plato's Chair: 35 things, Muse Image against Quick, Draw!, measured with DINOv2; six prompt languages; inside Muse Glimmer; the Stable Diffusion XL comparison; the `/plato` and `/lab/cut` pages, which replay shipped statistics with no API calls |
-| Oct 26 | Bilingual lesion test: the same pictures and the same damage in English, Spanish, French and Portuguese |
-| Oct 27 | Second language page (`/lab/bilingual`), Ask the Lab (`/ask`, a Muse Spark agent with read-only tools), and ten more languages measured for spoken scoring |
-| Oct 27 | Plato's Chair, "Can you prompt it out of the Platonic chair?": "any kind", "an unusual kind" and named kinds; Muse Glimmer labels the kind of object in 10,020 drawings, with Muse Spark as a second opinion |
-| Oct 27 | Pre-registered replication of the lesion results at n = 100 ([docs/replication.md](docs/replication.md)) |
-| Oct 27 | Deploy kit: public-demo spend guard, site data bundle, container |
-| Oct 27 | Draw a chair (`/draw`): a visitor's drawing measured with DINOv2 on the CPU, against Muse Image's chairs and 200 people's |
-| Oct 27 | Ask Socrates (`/socrates`): Muse Spark plays Socrates over the Plato results |
-| Oct 27 | Plato-first site: new landing page, one header and nav on every page (`web/site.py`), the product name in one place (`metalesionlab/brand.py`), share card, a shorter tour |
-| Oct 27 | Plato's Bird (`/plato/bird`): "name a member of the category" for 117 categories, Muse Spark and Muse Glimmer against published norms, pre-registered |
-| Oct 27 | Plato's Forms (`/plato/forms`): the Platonic clock (what time Muse Image, SDXL and people draw), and Plato's own bed and table, pre-registered |
-| Oct 27 | Plato's Cave (`/plato/cave`, name the shadow) and Cratylus (`/plato/cratylus`, bouba and kiki), pre-registered, with a game on each page |
-| Oct 27 | Draw a chair, round 2: the pad on the landing page, draw blind and then the reveal, photo upload, opt-in donation (off by default) |
-| Oct 27 | The life of a chair (`/plato/lifespan`): children's drawings by age, Stable Diffusion's training stages, and a sketch model trained from scratch, pre-registered |
-| Oct 27 | Plato's Chair, damaged (`/plato/damage`): reversible lesions in SDXL's text encoders and UNet, damaged Muse Glimmer reading doodles, clocks, and Janus-Pro, pre-registered |
-| Oct 28 | The invisible Forms (`/plato/ideas`): Muse Image draws God and 10 other abstract ideas, pre-registered; "Draw the invisible" on the pad, scored against Muse's drawings only |
-| Oct 27 | Consistency pass: every number on the pages and in the docs checked against its source |
-| Oct 27 | Inside the model (`/plato/inside`): drag through Muse Glimmer's 52 layers and watch Muse Image's doodles of a thing collapse while people's stay spread out |
-| Oct 27 | Two sites from one codebase (`MLL_SITE`): Plato's Chair, and its sister project Tippa Lingua on its own landing page, each with only its own pages, nav and paid routes, and a per-site data bundle. The opening animation on Plato's landing page (the cave, ending on the Form chair, now the logo) |
-| Oct 27 | Socrates guides the tour and examines you (`/socrates?mode=examine`): his doodle portrait, a Socratic tour, the elenchus over hard cases from the experiments. On `/draw`, an SDXL strip after the reveal shows what damage does |
-| Oct 27 | Robustness of Plato's Chair (pre-registered): every picture re-measured with DINOv2-large, Meta's Perception Encoder and Google's SigLIP 2; the "Does it depend on DINOv2?" box on `/plato` |
-| Oct 27 | Plato's Telephone (`/plato/telephone`): describe-then-draw chains between Muse Spark and Muse Image, pre-registered |
-| Oct 27 | Watch an AI learn: the sketch model trained 8 times on chairs and 5 times on cats, at 3 temperatures, pre-registered ([docs/plato_sketch.md](docs/plato_sketch.md)) |
-| Oct 27 | The Atlas of Forms (`/plato/atlas`): 135 things, pre-registered, and `scripts/plato_benchmark.py`, which measures any image model the same way |
-| Oct 27 | The gallery (`/plato/gallery`) and the "From the lab" band on every Plato page; every page scales with the window; NOTICE file |
+- Repo, data guard, Meta Model API client with spend ledger and budget cap
+- Muse Glimmer in FP8 on a single L40S (32 GiB used). Picture naming with the reasoning channel skipped (it can leak into answers under heavy damage). Word lens (logit lens) that matches the model's own output at the last layer
+- Naming-error classifier (English and Spanish), with WordNet plus a Muse Spark judge for meaning. It passed 34 unit tests that day and agreed with the expected code on 19 of 20 live cases; the one miss was a mistake in the expected answer.
+- Web app (FastAPI, plain HTML and JS): landing page, Test Studio with live build progress, review and exports (cards PDF, norms CSV, ZIP), Scorer with voice recording per picture and reviewer override, Model Lab with the word-lens chart and published human profiles. Per-visitor limits on every paid call. A guided tour
+- You vs. the AI (`/challenge`): name 10 pictures beside Muse Glimmer, then watch it lose a word
+- Naming scored in French, Brazilian Portuguese, Hindi and Mandarin; language support measured in six languages ([docs/languages.md](docs/languages.md))
+- Naming Assessment: speech-onset latency (max error 5.6 ms on synthesized speech), first-complete-response coding, review and override, PDF report, tracking across sessions, parallel forms, bring-your-own test (ZIP or folder; a PowerPoint is converted on the command line), personal tests from a photo, and a public naming test with an opt-in reference range
+- "What can I cut?": every Glimmer decoder layer skipped alone, a greedy removal path guarded by picture naming (English and Spanish) and perplexity on Muse Spark-written text, and real deletion of the chosen layers with measured size, memory and speed
+- Plato's Chair: 35 things, Muse Image against Quick, Draw!, measured with DINOv2; six prompt languages; inside Muse Glimmer; the Stable Diffusion XL comparison; the `/plato` and `/lab/cut` pages, which replay shipped statistics with no API calls
+- Bilingual lesion test: the same pictures and the same damage in English, Spanish, French and Portuguese
+- Second language page (`/lab/bilingual`), Ask the Lab (`/ask`, a Muse Spark agent with read-only tools), and ten more languages measured for spoken scoring
+- Plato's Chair, "Can you prompt it out of the Platonic chair?": "any kind", "an unusual kind" and named kinds; Muse Glimmer labels the kind of object in 10,020 drawings, with Muse Spark as a second opinion
+- Pre-registered replication of the lesion results at n = 100 ([docs/replication.md](docs/replication.md))
+- Deploy kit: public-demo spend guard, site data bundle, container
+- Draw a chair (`/draw`): a visitor's drawing measured with DINOv2 on the CPU, against Muse Image's chairs and 200 people's
+- Ask Socrates (`/socrates`): Muse Spark plays Socrates over the Plato results
+- Plato-first site: new landing page, one header and nav on every page (`web/site.py`), the product name in one place (`metalesionlab/brand.py`), share card, a shorter tour
+- Plato's Bird (`/plato/bird`): "name a member of the category" for 117 categories, Muse Spark and Muse Glimmer against published norms, pre-registered
+- Plato's Forms (`/plato/forms`): the Platonic clock (what time Muse Image, SDXL and people draw), and Plato's own bed and table, pre-registered
+- Plato's Cave (`/plato/cave`, name the shadow) and Cratylus (`/plato/cratylus`, bouba and kiki), pre-registered, with a game on each page
+- Draw a chair, round 2: the pad on the landing page, draw blind and then the reveal, photo upload, opt-in donation (off by default)
+- The life of a chair (`/plato/lifespan`): children's drawings by age, Stable Diffusion's training stages, and a sketch model trained from scratch, pre-registered
+- Plato's Chair, damaged (`/plato/damage`): reversible lesions in SDXL's text encoders and UNet, damaged Muse Glimmer reading doodles, clocks, and Janus-Pro, pre-registered
+- The invisible Forms (`/plato/ideas`): Muse Image draws God and 10 other abstract ideas, pre-registered; "Draw the invisible" on the pad, scored against Muse's drawings only
+- Consistency pass: every number on the pages and in the docs checked against its source
+- Inside the model (`/plato/inside`): drag through Muse Glimmer's 52 layers and watch Muse Image's doodles of a thing collapse while people's stay spread out
+- Two sites from one codebase (`MLL_SITE`): Plato's Chair, and its sister project Tippa Lingua on its own landing page, each with only its own pages, nav and paid routes, and a per-site data bundle. The opening animation on Plato's landing page (the cave, ending on the Form chair, now the logo)
+- Socrates guides the tour and examines you (`/socrates?mode=examine`): his doodle portrait, a Socratic tour, the elenchus over hard cases from the experiments. On `/draw`, an SDXL strip after the reveal shows what damage does
+- Robustness of Plato's Chair (pre-registered): every picture re-measured with DINOv2-large, Meta's Perception Encoder and Google's SigLIP 2; the "Does it depend on DINOv2?" box on `/plato`
+- Plato's Telephone (`/plato/telephone`): describe-then-draw chains between Muse Spark and Muse Image, pre-registered
+- Watch an AI learn: the sketch model trained 8 times on chairs and 5 times on cats, at 3 temperatures, pre-registered ([docs/plato_sketch.md](docs/plato_sketch.md))
+- The Atlas of Forms (`/plato/atlas`): 135 things, pre-registered, and `scripts/plato_benchmark.py`, which measures any image model the same way
+- The gallery (`/plato/gallery`) and the "From the lab" band on every Plato page; every page scales with the window; NOTICE file
+- Seven meanings (`/plato/phaedrus`): one sentence spoken with seven stresses; what a text-only AI receives against a sound reader, with a voice test on Muse Voice Transcribe
+- The clock test (`/plato/clock`): would an AI pass the clock-drawing test? Muse Image's clocks against published adult group results
+- Watch an AI forget what a chair is, Prisoners of the cave (text-only and vision twins) and Ask it to be a crowd, pre-registered
+- Damage Meta's Muse Glimmer (`/plato/glimmer`): what does it forget first, drawing or describing? Pre-registered
+- Damaged AI (`/damaged`): God becoming an ordinary person on a turning cube, a rocking chair becoming a car, and damage, in a brain and in an AI: an ageing brain beside an AI losing neurons
+- Take-homes (`/takehomes`): three things to take home, each a picture first
+- The intro: "If Plato were alive today… What would he ask AI?", then a firelit cave in WebGL with wavering shadows, and the Form chair bursting into the site's name
+- Plain language and a "Big and quiet" type system on every page; a question button above each section that scrolls to its answer
+- Ask Socrates' backup: if the Meta Model API can't answer, Claude (Anthropic) stands in, and the reply says so
+- Responsible use: why damaging an AI on purpose is safe here (see below)
 
 ### Prior research context (not part of this submission)
 
@@ -315,7 +323,7 @@ Each step streams to the page as it happens (JSON lines), so you watch the trace
 | Muse Voice Transcribe 1.0 | Transcribes spoken responses |
 | DINOv2 (`facebook/dinov2-base`, open weights, run locally) | Picture embeddings for Plato's Chair and Draw a chair |
 
-Every AI step in the tools uses a Meta model. As outside comparisons, the Plato series also runs Stable Diffusion XL and Stable Diffusion v1.1–v1.5 (CreativeML OpenRAIL licences), Janus-Pro-7B (DeepSeek, MIT) and a small sketch model we trained ourselves. Human data: Google Quick, Draw! (CC BY 4.0), Banks & Connell (2023) category norms (CC BY 4.0), children's drawings from Long et al. (2024; CC BY-NC-SA 4.0, statistics only), and published numbers from Wagemans et al. (2008) and Ćwiek et al. (2022). The other resources are non-AI: WordNet, the CMU Pronouncing Dictionary and wordfreq.
+Every AI step in the tools uses a Meta model, with one exception: when the Meta Model API can't answer (its budget for the day is spent, or it fails), Ask Socrates falls back to Claude (Anthropic), and the reply says so. As outside comparisons, the Plato series also runs Stable Diffusion XL and Stable Diffusion v1.1–v1.5 (CreativeML OpenRAIL licences), Janus-Pro-7B (DeepSeek, MIT) and a small sketch model we trained ourselves. Human data: Google Quick, Draw! (CC BY 4.0), Banks & Connell (2023) category norms (CC BY 4.0), children's drawings from Long et al. (2024; CC BY-NC-SA 4.0, statistics only), and published numbers from Wagemans et al. (2008) and Ćwiek et al. (2022). The other resources are non-AI: WordNet, the CMU Pronouncing Dictionary and wordfreq.
 
 ## Data policy
 
