@@ -1,0 +1,33 @@
+/* Damage cube (static/js/damage-cube.js): the picture turning on a cube, with what it shows, the step and a track
+   of steps beside it (under it on a phone). Pictures sit on paper whatever the theme. Tokens only. */
+.dcube { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(28px, 4vw, 96px); align-items: center; }
+.dcube-scene { --dc-s: clamp(300px, min(60vh, 34vw), 600px); position: relative; width: var(--dc-s); height: var(--dc-s); perspective: calc(var(--dc-s) * 3.2);
+  margin: 8px 0 calc(var(--dc-s) * 0.16); cursor: pointer; }
+.dcube-cube { position: absolute; inset: 0; transform-style: preserve-3d; }
+.dcube-face { position: absolute; inset: 0; overflow: hidden; border-radius: 8px; background: var(--paper); backface-visibility: hidden;
+  box-shadow: 0 0 0 1px var(--line), 0 0 32px color-mix(in srgb, var(--orange) 26%, transparent); }  /* a filter on the cube would flatten it */
+.dcube-face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.dcube-shade { position: absolute; inset: 0; background: rgba(0, 0, 0, 1); opacity: 0; pointer-events: none; }
+.dcube-scene::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: calc(var(--dc-s) * -0.15); height: calc(var(--dc-s) * 0.08);
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent); filter: blur(4px); }
+.dcube-scene > img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }  /* before the script runs */
+.dcube.ready .dcube-scene > img { display: none; }
+
+.dcube-read { display: grid; gap: 14px; align-content: center; min-width: 0; }
+.dcube-what { margin: 0; font-size: var(--fs-h2); font-weight: 700; line-height: 1.1; letter-spacing: -0.015em; }
+.dcube-step { margin: 0; font-family: var(--mono); font-size: var(--fs-body); color: var(--orange); }
+.dcube-track { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; max-width: 34rem; }
+.dcube-track button { height: 10px; padding: 0; border: 0; border-radius: 5px; background: var(--line-2); cursor: pointer; transition: background-color 0.3s ease; }
+.dcube-track button.on { background: var(--orange); }
+.dcube-track button:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+.dcube-ends { display: flex; justify-content: space-between; max-width: 34rem; font-size: var(--fs-small); color: var(--muted); }
+.dcube-how { margin: 0; max-width: 46ch; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); }
+.dcube-play { justify-self: start; font: 500 var(--fs-small) var(--sans); color: var(--ink); background: transparent; border: 1px solid var(--line-2);
+  border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.dcube-play:hover { border-color: var(--orange); }
+
+@media (max-width: 860px) {
+  .dcube { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 12px; }
+  .dcube-scene { --dc-s: min(78vw, 380px); }
+  .dcube-read { justify-items: stretch; width: 100%; }
+}

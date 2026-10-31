@@ -129,7 +129,7 @@
       d.addEventListener('animationend', function (e) { if (e.animationName === 'hc-fill' && !paused()) go(cur + 1); }, true);
       dots.push(d); dotBox.appendChild(d);
     });
-    if (!(REDUCE && REDUCE.matches)) ctl.appendChild(toggle);
+    if (n > 1 && !(REDUCE && REDUCE.matches)) ctl.appendChild(toggle);  // one slide: nothing to play
     if (n > 1) { ctl.appendChild(prev); ctl.appendChild(dotBox); ctl.appendChild(next); }
 
     function sync() {

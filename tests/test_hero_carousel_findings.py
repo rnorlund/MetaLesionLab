@@ -34,7 +34,7 @@ def carousel_cfg(page):
 def test_the_carousel_data_is_complete_and_its_pictures_exist(client, path):
     page = client.get(path).text
     cfg = carousel_cfg(page)
-    assert len(cfg["slides"]) == 4
+    assert len(cfg["slides"]) == {"/plato/damage": 4, "/damaged": 1}[path]  # /damaged: God turns on the cube above; the row is the car
     for s in cfg["slides"]:
         assert 0 < len(s["caption"].split()) <= 10
         assert len(s["images"]) >= 4
@@ -49,7 +49,7 @@ def test_the_row_slides_render_every_available_step(client, path):
     page = client.get(path).text
     assert re.search(r'data-hero-carousel data-layout="row"', page) and "fl-wide" in page
     steps = [len(s["images"]) for s in carousel_cfg(page)["slides"]]
-    assert steps == [10, 10, 10, 10]  # each row: undamaged + 9 doses, same picture (docs/plato_damage.md, denser rows)
+    assert steps == [10] * {"/plato/damage": 4, "/damaged": 1}[path]  # each row: undamaged + 9 doses, same picture (docs/plato_damage.md, denser rows)
     first = re.search(r'<div class="hc-static">.*?</p></div>', page, re.S).group(0)  # the no-JS first slide shows all of its steps
     assert first.count('class="hc-pic"') == steps[0] and f'--n:{steps[0]}' in first
 
@@ -160,7 +160,7 @@ with sync_playwright() as p:
     out["reduced"] = rm.evaluate("""() => [document.querySelectorAll('.hc-toggle').length, [...document.querySelectorAll('.hc-dot')].findIndex(d => d.getAttribute('aria-current') === 'true'),
       getComputedStyle(document.querySelector('.hc-slide')).transitionDuration, getComputedStyle(document.querySelector('.fd-item')).transitionDuration]""")
     # the hub
-    hub = ctx.new_page(); hub.goto(B + "/damaged?nosplash=1"); hub.wait_for_selector(".hc-dot"); hub.wait_for_timeout(500)
+    hub = ctx.new_page(); hub.goto(B + "/damaged?nosplash=1"); hub.wait_for_selector(".hc-slide"); hub.wait_for_timeout(500)
     out["hub"] = hub.evaluate("[document.querySelectorAll('.hc-slide').length, document.querySelectorAll('.dm-hub a').length > 3]")
     br.close()
 print(json.dumps(out))
@@ -231,7 +231,7 @@ def test_browser_reduced_motion_never_moves_or_animates(browser_run):
 
 def test_browser_no_console_errors_and_the_hub_has_the_carousel_and_its_cards(browser_run):
     assert browser_run["errors"] == []
-    assert browser_run["hub"] == [4, True]
+    assert browser_run["hub"] == [1, True]  # one row (the car): God turns on the cube above it
 
 
 def test_browser_the_key_numbers_from_the_data_are_on_the_page(browser_run):

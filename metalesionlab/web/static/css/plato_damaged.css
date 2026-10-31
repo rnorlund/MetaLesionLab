@@ -47,3 +47,7 @@ body.plato-damaged { background: var(--ground-warm); }
   .dm-frames { gap: 5px; }
   .dm-step { font-size: var(--fs-label); }
 }
+
+/* The first screen's pictures: God turning on the damage cube (damage-cube.css), then the rocking chair, left to right */
+.dm-visuals { display: flex; flex-direction: column; gap: clamp(18px, 2.2vw, 44px); }
+.dm-second { margin: 0; padding-top: clamp(14px, 1.6vw, 30px); border-top: 1px solid var(--line); font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; }

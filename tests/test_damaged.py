@@ -5,6 +5,7 @@ damage turns into a car and draws three numbers. The page's own scripts run unde
 browser (tests/firstscreen_dom.js), fed the real /api/plato/damage and /api/plato/ideas, and every picture, number and
 verdict they draw is checked against that data here, so nothing on the first screen is typed in. Then one card per damage
 result, each opening a section that exists. The Experiments hub on /plato no longer lists the damage experiments."""
+import html
 import json
 import re
 import shutil
@@ -161,7 +162,7 @@ def test_the_picture_is_a_carousel_that_starts_on_the_rocking_chair_that_becomes
     page = client.get("/damaged").text
     cfg = json.loads(re.search(r'data-hero-carousel[^>]*>\s*<script type="application/json">(.*?)</script>', page, re.S).group(1))
     first = cfg["slides"][0]
-    assert first["caption"] == "rocking chair \u2192 car" and len(cfg["slides"]) == 4
+    assert first["caption"] == "rocking chair \u2192 car" and len(cfg["slides"]) == 1  # the second example, under the God cube
     for sl in cfg["slides"]:
         assert len(sl["caption"].split()) <= 10
         for im in sl["images"]:
@@ -230,10 +231,27 @@ def test_the_hub_speaks_plain_words(client, tmp_path):
         assert full in shown, full
 
 
-def test_no_god_picture_on_either_hub(client):
-    """/draw starts on a blind "Draw God", so neither hub shows any AI's picture of God (the ideas card shows death)."""
-    for path in ("/damaged", "/plato"):
-        pics = re.findall(r'<img src="([^"]+)"', main_of(client.get(path).text))
-        assert pics and not [p for p in pics if "god" in p.lower()], path
+def test_god_only_on_the_damage_cube(client):
+    """/draw starts on a blind "Draw God". Roger chose (Oct 30) to put Stable Diffusion XL's God, turning on the damage
+    cube, front and centre on /damaged; no card on either hub, and nothing on /plato, shows any AI's God."""
+    pics = re.findall(r'<img src="([^"]+)"', main_of(client.get("/plato").text))
+    assert pics and not [p for p in pics if "god" in p.lower()]
+    page = main_of(client.get("/damaged").text)
+    cube = re.search(r'<figure class="dcube" id="god-cube".*?</figure>', page, re.S).group(0)
+    assert not [p for p in re.findall(r'<img src="([^"]+)"', page.replace(cube, "")) if "god" in p.lower()]
     card = dict(hub_cards(main_of(client.get("/damaged").text)))["/plato/ideas#damage"]
     assert '<img src="/static/img/plato/hub/damaged-ideas.webp"' in card and "death" in card
+
+
+def test_god_turns_on_the_cube_first_then_the_car_left_to_right(client):
+    page = client.get("/damaged").text
+    m = re.search(r'<figure class="dcube" id="god-cube" data-damage-cube data-pattern="([^"]+)" data-labels="([^"]+)"', page)
+    assert m, "the God cube"
+    labels = html.unescape(m.group(2)).split("|")
+    assert labels[0] == "undamaged" and len(labels) == 10
+    for i in range(len(labels)):  # every step's picture is shipped
+        assert (STATIC / m.group(1).replace("{i}", str(i))[len("/static/"):]).is_file()
+    assert page.index('id="god-cube"') < page.index('class="dm-second"') < page.index('id="film"')  # the cube, then the car
+    assert "/static/js/damage-cube.js" in page and "/static/css/damage-cube.css" in page
+    js = (STATIC / "js" / "damage-cube.js").read_text()
+    assert "prefers-reduced-motion: reduce" in js and "IntersectionObserver" in js  # no autoplay with reduced motion; only on screen

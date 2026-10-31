@@ -45,9 +45,9 @@ def test_title_keeps_the_full_question_and_words_are_damaged_things():
     assert H.unescape(re.sub(r"<[^>]+>", "", h1.group(2))) == QUESTION  # without JS it reads "a thing"
     words = re.search(r'data-rotating-word data-words="([^"]+)"', h1.group(2)).group(1).split("|")
     assert words and set(words) <= THINGS
-    carousel = " ".join(re.findall(r'"caption":\s*"([^"]+)"', DAMAGED))
-    for w in words:
-        assert w.replace("a ", "") in carousel or w == "a chair", w
+    shown = " ".join(re.findall(r'"caption":\s*"([^"]+)"', DAMAGED) + re.findall(r'class="dcube-what"[^>]*>([^<]+)<', DAMAGED))
+    for w in words:  # each word is something the first screen shows: the cube (God) or the row (the rocking chair)
+        assert w.replace("a ", "") in shown or w == "a chair", w
 
 
 @pytest.mark.skipif(not shutil.which("node"), reason="node")
