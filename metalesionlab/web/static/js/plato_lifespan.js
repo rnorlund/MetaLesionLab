@@ -291,55 +291,127 @@
   }
 
   // ---------- two roads to the Form ----------
+  // Drawn at the box's own pixel width, so labels are as big on screen as the CSS says (plato_lifespan.css, .ls-sc-*).
+  // The children's trail grows from age 2 to age 10 the first time the chart scrolls into view.
+  var pathsPlayed = false;
   function renderPaths() {
     var box = document.getElementById('paths-chart');
     box.innerHTML = '';
-    var W = 760, H = 430, L = 56, R = 120, T = 16, B = 46;
-    var xs = function (v) { return L + (W - L - R) * (v - 0.3) / 0.7; };
-    var ys = function (v) { return T + (H - T - B) * (0.7 - v) / 0.55; };
-    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
-      'aria-label': 'How recognizable the drawings are, against how far they are from the average adult drawing, for children by age, adults, ' +
-        'Muse Image and Stable Diffusion’s versions' }, box);
+    var W = Math.max(300, Math.round(box.getBoundingClientRect().width || 760)), narrow = W < 560;
+    var H = narrow ? 460 : Math.max(420, Math.min(600, Math.round(W * 0.5)));
+    var L = narrow ? 62 : 84, R = narrow ? 14 : 28, T = 22, B = narrow ? 66 : 76;
+    var kid = STOPS.filter(function (o) { return o.kind === 'kid'; });
+    var sd = STOPS.filter(function (o) { return o.kind === 'sd'; });
+    var adult = STOPS[9], muse = STOPS[10];
+    var all = kid.concat(sd, [adult, muse]).map(function (o) { return [value(o, 'recog'), value(o, 'd_adult')]; })
+      .filter(function (p) { return !isNaN(p[0]) && !isNaN(p[1]); });
+    var xs0 = Math.min.apply(null, all.map(function (p) { return p[0]; })), xs1 = Math.max.apply(null, all.map(function (p) { return p[0]; }));
+    var ys0 = Math.min.apply(null, all.map(function (p) { return p[1]; })), ys1 = Math.max.apply(null, all.map(function (p) { return p[1]; }));
+    var xd = [Math.max(0, xs0 - 0.05 * (xs1 - xs0)), xs1 + 0.04 * (xs1 - xs0)];     // hug the data, with room for a glow
+    var yd = [ys0 - 0.12 * (ys1 - ys0), ys1 + 0.2 * (ys1 - ys0)];                   // headroom for the AI labels
+    var xs = function (v) { return L + (W - L - R) * (v - xd[0]) / (xd[1] - xd[0]); };
+    var ys = function (v) { return T + (H - T - B) * (yd[1] - v) / (yd[1] - yd[0]); };
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'data-no-motion': '',
+      'aria-label': 'How recognizable the drawings are, against how far they are from the average adult drawing. Children by age 2 to 10 close in on the adults; ' +
+        'Muse Image and Stable Diffusion’s versions stay far away.' }, box);
     var tip = tipper(box);
-    [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].forEach(function (v) {
+    niceTicks(xd[0], xd[1], narrow ? 4 : 6).forEach(function (v) {
       svg('line', { x1: xs(v), x2: xs(v), y1: T, y2: H - B, stroke: C.grid }, s);
-      text(s, xs(v), H - B + 18, pct(v), { 'text-anchor': 'middle' });
+      text(s, xs(v), H - B + 22, pct(v), { 'text-anchor': 'middle', class: 'ls-sc-tick' });
     });
-    [0.2, 0.3, 0.4, 0.5, 0.6].forEach(function (v) {
+    niceTicks(yd[0], yd[1], narrow ? 5 : 6).forEach(function (v) {
       svg('line', { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: C.grid }, s);
-      text(s, L - 8, ys(v) + 4, v.toFixed(1), { 'text-anchor': 'end' });
+      text(s, L - 10, ys(v) + 5, v.toFixed(2), { 'text-anchor': 'end', class: 'ls-sc-tick' });
     });
-    text(s, (L + W - R) / 2, H - 6, 'recognizable: an AI tells which of 21 things it is', { 'text-anchor': 'middle', class: 'lbl' });
-    text(s, 14, (T + H - B) / 2, 'distance from the adults’ average (lower = closer)', { transform: 'rotate(-90 14 ' + (T + H - B) / 2 + ')', 'text-anchor': 'middle', class: 'lbl' });
-    function dot(st, shape, labelText, anchor, dx, dy) {
-      var x = xs(value(st, 'recog')), y = ys(value(st, 'd_adult'));
-      if (isNaN(x) || isNaN(y)) return;
-      var col = color(st);
-      if (shape === 'sq') svg('rect', { x: x - 6, y: y - 6, width: 12, height: 12, rx: 2, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
-      else if (shape === 'dia') svg('path', { d: 'M' + x + ' ' + (y - 8) + 'L' + (x + 8) + ' ' + y + 'L' + x + ' ' + (y + 8) + 'L' + (x - 8) + ' ' + y + 'Z', fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
-      else svg('circle', { cx: x, cy: y, r: 5, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
-      if (labelText) text(s, x + (dx || 8), y + (dy || 4), labelText, { class: 'lbl', 'text-anchor': anchor || 'start' });
-      var hit = svg('circle', { cx: x, cy: y, r: 12, fill: 'transparent' }, s);
+    text(s, (L + W - R) / 2, H - 10, narrow ? 'How often an AI names the drawing right' : 'How often an AI names the drawing right (more = easier to recognize)',
+      { 'text-anchor': 'middle', class: 'ls-sc-axis' });
+    text(s, 16, (T + H - B) / 2, narrow ? 'Distance from adults (lower = closer)' : 'Distance from the adults’ drawings (lower = closer)',
+      { transform: 'rotate(-90 16 ' + (T + H - B) / 2 + ')', 'text-anchor': 'middle', class: 'ls-sc-axis' });
+    var px = function (o) { return xs(value(o, 'recog')); }, py = function (o) { return ys(value(o, 'd_adult')); };
+    function hover(o, x, y) {
+      var hit = svg('circle', { cx: x, cy: y, r: 14, fill: 'transparent' }, s);
       hit.addEventListener('mousemove', function (e) {
-        tip.show(e, '<b>' + stopName(st) + '</b><br>recognizable ' + pct(value(st, 'recog')) + '<br>distance from the adults’ average ' +
-          f3(value(st, 'd_adult')) + '<br>variety ' + f3(value(st, 'spread')));
+        tip.show(e, '<b>' + stopName(o) + '</b><br>recognizable ' + pct(value(o, 'recog')) + '<br>distance from the adults’ average ' +
+          f3(value(o, 'd_adult')) + '<br>variety ' + f3(value(o, 'spread')));
       });
       hit.addEventListener('mouseleave', tip.hide);
     }
-    var kid = STOPS.filter(function (o) { return o.kind === 'kid'; });
-    var d = kid.map(function (o, i) { return (i ? 'L' : 'M') + xs(value(o, 'recog')) + ' ' + ys(value(o, 'd_adult')); }).join('');
-    svg('path', { d: d, fill: 'none', stroke: C.people, 'stroke-width': 2, 'stroke-linejoin': 'round' }, s);
-    var sd = STOPS.filter(function (o) { return o.kind === 'sd'; });
-    function seg(a, b) { svg('line', { x1: xs(value(a, 'recog')), y1: ys(value(a, 'd_adult')), x2: xs(value(b, 'recog')), y2: ys(value(b, 'd_adult')), stroke: C.sd, 'stroke-width': 2 }, s); }
-    seg(sd[0], sd[1]); seg(sd[1], sd[2]); seg(sd[1], sd[3]); seg(sd[1], sd[4]);
-    kid.forEach(function (o) { dot(o, 'dot', [2, 6, 10].indexOf(o.age) >= 0 ? 'age ' + o.age : '', 'start', 6, -8); });
-    sd.forEach(function (o, i) { dot(o, 'dot', i === 0 ? 'Stable Diffusion v1.1' : i === 4 ? 'v1.2–v1.5' : '', i === 0 ? 'end' : 'start', i === 0 ? -8 : 9, i === 0 ? 20 : -10); });
-    dot(STOPS[9], 'sq', 'adults', 'start', 10, 4);
-    dot(STOPS[10], 'dia', 'Muse Image', 'start', 11, 4);
+    // the AI: points joined as they continue from one another, labelled directly, far from the target
+    var sdOk = sd.filter(function (o) { return !isNaN(px(o)) && !isNaN(py(o)); });
+    if (sdOk.length === 5) {
+      [[0, 1], [1, 2], [1, 3], [1, 4]].forEach(function (p) {
+        svg('line', { x1: px(sd[p[0]]), y1: py(sd[p[0]]), x2: px(sd[p[1]]), y2: py(sd[p[1]]), stroke: C.sd, 'stroke-width': 2, opacity: 0.6 }, s);
+      });
+    }
+    sdOk.forEach(function (o) { var x = px(o), y = py(o); svg('circle', { cx: x, cy: y, r: 6, fill: C.sd, stroke: C.halo, 'stroke-width': 2 }, s); hover(o, x, y); });
+    var mx = px(muse), my = py(muse);
+    if (!isNaN(mx) && !isNaN(my)) {
+      svg('path', { d: 'M' + mx + ' ' + (my - 10) + 'L' + (mx + 10) + ' ' + my + 'L' + mx + ' ' + (my + 10) + 'L' + (mx - 10) + ' ' + my + 'Z', fill: C.muse, stroke: C.halo, 'stroke-width': 2 }, s);
+      hover(muse, mx, my);
+    }
+    // direct labels: the higher mark's label sits above it, the other below, so they never collide
+    var sy = sdOk.length ? Math.min.apply(null, sdOk.map(py)) : NaN, sx = sdOk.length ? Math.min.apply(null, sdOk.map(px)) : NaN;
+    var sdAbove = isNaN(my) || isNaN(sy) || sy <= my;
+    if (!isNaN(sy)) {
+      text(s, sx - 16, sdAbove ? sy - 14 : sy + 8, 'Stable Diffusion (v1.1 to v1.5)', { 'text-anchor': 'end', class: 'ls-sc-name', fill: C.sd });
+      text(s, sx - 16, sdAbove ? sy + 8 : sy + 30, 'far away at every stage', { 'text-anchor': 'end', class: 'ls-sc-sub' });
+    }
+    if (!isNaN(my)) {
+      var below = isNaN(sy) || sdAbove;
+      text(s, mx - 18, below ? my + 22 : my - 10, 'Muse Image', { 'text-anchor': 'end', class: 'ls-sc-name', fill: C.muse });
+    }
+    // the children's trail, age 2 to age 10
+    var kk = kid.filter(function (o) { return !isNaN(px(o)) && !isNaN(py(o)); });
+    var trail = null, marks = [];
+    if (kk.length > 1) {
+      trail = svg('path', { d: kk.map(function (o, i) { return (i ? 'L' : 'M') + px(o) + ' ' + py(o); }).join(''), fill: 'none', stroke: C.people,
+        'stroke-width': 4, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', class: 'ls-sc-trail' }, s);
+    }
+    // the adults: a target
+    var ax = px(adult), ay = py(adult);
+    if (!isNaN(ax) && !isNaN(ay)) {
+      svg('circle', { cx: ax, cy: ay, r: 24, fill: 'none', stroke: C.people, 'stroke-width': 2, class: 'ls-sc-pulse', opacity: 0.55 }, s);
+      svg('circle', { cx: ax, cy: ay, r: 17, fill: 'none', stroke: C.people, 'stroke-width': 3 }, s);
+      svg('circle', { cx: ax, cy: ay, r: 7, fill: C.people, stroke: C.halo, 'stroke-width': 2 }, s);
+      hover(adult, ax, ay);
+      text(s, ax + (narrow ? 10 : 0), ay + 46, 'Adults: the target', { 'text-anchor': narrow ? 'end' : 'middle', class: 'ls-sc-name', fill: C.people });
+    }
+    kk.forEach(function (o, i) {
+      var x = px(o), y = py(o), g = svg('g', { class: 'ls-sc-age' }, s);
+      svg('circle', { cx: x, cy: y, r: 8, fill: C.people, stroke: C.halo, 'stroke-width': 2 }, g);
+      var nb = [kk[i - 1], kk[i + 1]].filter(Boolean).map(py), nm = nb.reduce(function (u, v) { return u + v; }, 0) / nb.length;
+      var up = nm > y ? -1 : 1;  // the label goes on the side away from the trail's neighbours
+      text(g, x, y + (up < 0 ? -16 : 28), (i === 0 ? 'age ' : '') + o.age, { 'text-anchor': 'middle', class: 'ls-sc-name ls-sc-agenum' });
+      hover(o, x, y);
+      marks.push(g);
+    });
+    // entrance: the trail grows, each age appears as it reaches it
+    if (trail && !pathsPlayed && !REDUCED && trail.animate && window.IntersectionObserver) {
+      var len = trail.getTotalLength(), dur = 2600, parts = [];
+      var pts = kk.map(function (o) { return [px(o), py(o)]; });
+      var cum = [0];
+      for (var i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      var tot = cum[cum.length - 1] || 1;
+      parts.push(trail.animate([{ strokeDasharray: len + ' ' + len, strokeDashoffset: len }, { strokeDasharray: len + ' ' + len, strokeDashoffset: 0 }],
+        { duration: dur, easing: 'linear', fill: 'backwards' }));
+      marks.forEach(function (g, i) {
+        parts.push(g.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, delay: cum[i] / tot * dur, fill: 'backwards' }));
+      });
+      parts.forEach(function (a) { a.pause(); });
+      var io = new IntersectionObserver(function (es) {
+        if (!es.some(function (e) { return e.isIntersecting; })) return;
+        io.disconnect();
+        pathsPlayed = true;
+        parts.forEach(function (a) { a.play(); });
+      }, { threshold: 0.3 });
+      io.observe(s);
+    } else if (trail) {
+      pathsPlayed = true;
+    }
     var leg = document.getElementById('paths-legend');
     leg.innerHTML = '';
-    [['Children, ages 2–10', C.people, ''], ['Adults (Quick, Draw!)', C.people, 'sq'], ['Muse Image', C.muse, 'sq'],
-     ['Stable Diffusion, versions 1.1–1.5', C.sd, '']].forEach(function (x) {
+    [['Children, ages 2–10', C.people, 'dot'], ['Adults (Quick, Draw!)', C.people, 'dot'], ['Muse Image', C.muse, 'sq'],
+     ['Stable Diffusion, versions 1.1–1.5', C.sd, 'dot']].forEach(function (x) {
       leg.appendChild(h('span', null, [h('i', { class: x[2], style: 'background:' + x[1] }), x[0]]));
     });
     document.getElementById('paths-note').textContent = (thing === 'mean' ? 'Averages over the 20 things both drew.' :
@@ -359,43 +431,38 @@
              adult: D.adults.cells[thing][m], muse: D.muse.cells[thing][m] };
   }
 
-  function panel(boxId, series, xdom, xticks, xfmt, yd, isAI, md, refs) {
+  function panel(boxId, series, xdom, xticks, yd, md, refs) {
     var box = document.getElementById(boxId);
     box.innerHTML = '';
-    var W = 400, H = 280, L = 44, R = 74, T = 26, B = 34;
+    var W = Math.max(300, Math.round(box.getBoundingClientRect().width || 760)), narrow = W < 560;
+    var H = narrow ? 340 : Math.max(340, Math.min(520, Math.round(W * 0.36)));
+    var L = narrow ? 56 : 70, R = narrow ? 14 : 120, T = 26, B = narrow ? 60 : 66;
     var xs = function (v) { return L + (W - L - R) * (v - xdom[0]) / (xdom[1] - xdom[0]); };
     var ys = function (v) { return T + (H - T - B) * (yd[1] - v) / (yd[1] - yd[0]); };
-    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': md.name + (isAI ? ' by training stage' : ' by age') }, box);
+    var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': md.name + ' by age' }, box);
     var tip = tipper(box);
-    var yt = niceTicks(yd[0], yd[1], 5);
-    yt.forEach(function (v) {
+    niceTicks(yd[0], yd[1], 5).forEach(function (v) {
       svg('line', { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: C.grid }, s);
-      text(s, L - 6, ys(v) + 4, md.key === 'recog' ? pct(v) : v.toFixed(2), { 'text-anchor': 'end' });
+      text(s, L - 8, ys(v) + 5, md.key === 'recog' ? pct(v) : v.toFixed(2), { 'text-anchor': 'end', class: 'ls-sc-tick' });
     });
-    xticks.forEach(function (v) { text(s, xs(v), H - B + 16, xfmt(v), { 'text-anchor': 'middle' }); });
-    text(s, (L + W - R) / 2, H - 4, isAI ? 'training steps (millions)' : 'age (years)', { 'text-anchor': 'middle', class: 'lbl' });
+    xticks.forEach(function (v) { text(s, xs(v), H - B + 22, v, { 'text-anchor': 'middle', class: 'ls-sc-tick' }); });
+    text(s, (L + W - R) / 2, H - 10, 'age (years)', { 'text-anchor': 'middle', class: 'ls-sc-axis' });
     [['adults', refs.adult, C.people], ['Muse Image', refs.muse, C.muse]].forEach(function (r) {
       if (r[1] == null || r[1] < yd[0] || r[1] > yd[1]) return;
-      svg('line', { x1: L, x2: W - R, y1: ys(r[1]), y2: ys(r[1]), stroke: r[2], 'stroke-width': 1.2, opacity: 0.85 }, s);
-      text(s, W - R + 4, ys(r[1]) + 4, r[0], { class: 'lbl' });
+      svg('line', { x1: L, x2: W - R, y1: ys(r[1]), y2: ys(r[1]), stroke: r[2], 'stroke-width': 1.5, opacity: 0.85 }, s);
+      if (narrow) text(s, W - R, ys(r[1]) - 8, r[0], { 'text-anchor': 'end', class: 'ls-sc-name', fill: r[2] });  // above the line on a phone
+      else text(s, W - R + 8, ys(r[1]) + 5, r[0], { class: 'ls-sc-name', fill: r[2] });
     });
-    var col = isAI ? C.sd : C.people;
-    if (!isAI) {
-      var band = series.map(function (p, i) { return (i ? 'L' : 'M') + xs(p.x) + ' ' + ys(p.ci[1]); }).join('') +
-        series.slice().reverse().map(function (p) { return 'L' + xs(p.x) + ' ' + ys(p.ci[0]); }).join('') + 'Z';
-      svg('path', { d: band, fill: col, opacity: 0.1 }, s);
-      svg('path', { d: series.map(function (p, i) { return (i ? 'L' : 'M') + xs(p.x) + ' ' + ys(p.v); }).join(''), fill: 'none', stroke: col, 'stroke-width': 2, 'stroke-linejoin': 'round' }, s);
-    } else {
-      series.forEach(function (p) { svg('line', { x1: xs(p.x), x2: xs(p.x), y1: ys(p.ci[0]), y2: ys(p.ci[1]), stroke: col, 'stroke-width': 2, opacity: 0.45, 'stroke-linecap': 'round' }, s); });
-      var b = function (a, c) { svg('line', { x1: xs(series[a].x), y1: ys(series[a].v), x2: xs(series[c].x), y2: ys(series[c].v), stroke: col, 'stroke-width': 2 }, s); };
-      b(0, 1); b(1, 2); b(1, 3); b(1, 4);
-    }
-    series.forEach(function (p, i) {
-      svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 4.5, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
-      if (isAI && (i === 0 || i === 4)) text(s, xs(p.x), ys(p.v) - 10, p.ck, { 'text-anchor': 'middle', class: 'lbl' });
-      var hit = svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 12, fill: 'transparent' }, s);
+    var col = C.people;
+    var band = series.map(function (p, i) { return (i ? 'L' : 'M') + xs(p.x) + ' ' + ys(p.ci[1]); }).join('') +
+      series.slice().reverse().map(function (p) { return 'L' + xs(p.x) + ' ' + ys(p.ci[0]); }).join('') + 'Z';
+    svg('path', { d: band, fill: col, opacity: 0.1 }, s);
+    svg('path', { d: series.map(function (p, i) { return (i ? 'L' : 'M') + xs(p.x) + ' ' + ys(p.v); }).join(''), fill: 'none', stroke: col, 'stroke-width': 3, 'stroke-linejoin': 'round' }, s);
+    series.forEach(function (p) {
+      svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 6, fill: col, stroke: C.halo, 'stroke-width': 2 }, s);
+      var hit = svg('circle', { cx: xs(p.x), cy: ys(p.v), r: 14, fill: 'transparent' }, s);
       hit.addEventListener('mousemove', function (e) {
-        tip.show(e, '<b>' + (isAI ? 'Stable Diffusion ' + p.ck : 'Age ' + p.x) + '</b><br>' + md.name + ': ' + md.fmt(p.v) +
+        tip.show(e, '<b>Age ' + p.x + '</b><br>' + md.name + ': ' + md.fmt(p.v) +
           '<br>likely range (95% CI) ' + ciTxt(p.ci, md.key === 'recog' ? pct : f2));
       });
       hit.addEventListener('mouseleave', tip.hide);
@@ -422,18 +489,16 @@
     document.getElementById('measure-sub').textContent = md.sub;
     var cd = curveData(md.key);
     var all = [];
-    cd.kid.concat(cd.ai).forEach(function (p) { all.push(p.v, p.ci[0], p.ci[1]); });
-    all.push(cd.adult, cd.muse);
+    cd.kid.forEach(function (p) { all.push(p.v, p.ci[0], p.ci[1]); });
+    all.push(cd.adult);  // the adults' line is the one reference; Muse Image's shows only if it falls inside
     var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo) * 0.08;
     var yd = md.key === 'recog' ? [Math.max(0, lo - pad), Math.min(1, hi + pad)] : [Math.max(0, lo - pad), hi + pad];
-    panel('kid-chart', cd.kid, [1.6, 10.4], AGES, String, yd, false, md, cd);
-    panel('ai-chart', cd.ai, [0.3, 1.65], [0.5, 1.0, 1.5], function (v) { return v.toFixed(1); }, yd, true, md, cd);
-    var t = D.children.tests[md.key].linear, a = D.ai.all.tests[md.key];
+    panel('kid-chart', cd.kid, [1.7, 10.3], AGES, yd, md, cd);
+    var t = D.children.tests[md.key].linear;
     var fmtS = md.key === 'recog' ? function (v) { return (100 * v).toFixed(1); } : f3, unit = md.key === 'recog' ? ' points' : '';
-    document.getElementById('curves-note').textContent = (thing === 'mean' ? 'Averages over 20 things for children, and 21 for Stable Diffusion (the 20 and an umbrella). ' :
-      'Charts: one thing, ' + label(thing) + '. ') + 'Over all 20 things, children change by ' + signed(t.mean_slope, fmtS) + unit + ' a year (' +
-      between(t.ci95, fmtS) + '). Over 21 things, Stable Diffusion changes by ' + signed(a.last_minus_first.mean, fmtS) + unit + ' from v1.1 to v1.5 (' +
-      between(a.last_minus_first.ci95, fmtS) + '). The shaded bands and bars show the likely range (95% confidence intervals, by resampling).';
+    document.getElementById('curves-note').textContent = (thing === 'mean' ? 'Averages over the 20 things children drew. ' :
+      'Chart: one thing, ' + label(thing) + '. ') + 'Over all 20 things, children change by ' + signed(t.mean_slope, fmtS) + unit + ' a year (' +
+      between(t.ci95, fmtS) + '). The shaded band shows the likely range (95% confidence interval, by resampling).';
     // table view
     var rows = STOPS.filter(function (o) { return o.kind !== 'damage'; }).map(function (o) {
       return h('tr', null, [h('td', null, stopName(o))].concat(MEASURES.map(function (m) {
@@ -543,6 +608,7 @@
 
   function renderStroke() {
     var box = document.getElementById('stroke-svg');
+    box.setAttribute('data-no-motion', '');  // it replays the drawing itself (glowskin.js leaves it alone)
     TOT.api('/static/img/plato_lifespan/sketch/stroke_order.json').then(function (d) {
       var strokes = d.strokes, css = getComputedStyle(box);  // line art on its light card (--art-* in plato_lifespan.css)
       var ink = css.getPropertyValue('--art-ink').trim(), pen = css.getPropertyValue('--art-pen').trim();
@@ -847,9 +913,11 @@
     window.addEventListener('resize', function () {  // the meters are drawn at the column's width
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
-        if (window.innerWidth === lastW) return;
+        if (Math.abs(window.innerWidth - lastW) < 30) return;
         lastW = window.innerWidth;
         renderStage();
+        renderPaths();
+        renderCurves();
       }, 150);
     });
     thingSelect();

@@ -147,3 +147,12 @@ body.phaedrus { background: var(--ground); }
 .ph-after > #ph-how { grid-column: 1 / -1; grid-row: 2; }
 .ph-after > #ph-how > p { margin: 8px 0 0; max-width: var(--measure); color: var(--muted); font-size: var(--fs-small); line-height: 1.5; }
 .ph-after > #ph-how .ph-shadow-sub { grid-column: auto; grid-row: auto; }
+
+/* confusion grids: rows appear one after another when scrolled into view; filled cells glow in the dark theme */
+.ph-grid.ph-seq .ph-grow { opacity: 0; transform: translateX(-14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.ph-grid.ph-seq-in .ph-grow { opacity: 1; transform: none; }
+:root[data-theme="dark"] #grid-spark .ph-gfill { filter: drop-shadow(0 0 5px var(--ink-2)); }
+:root[data-theme="dark"] #grid-reader .ph-gfill { filter: drop-shadow(0 0 6px var(--sound)); }
+@media (prefers-reduced-motion: reduce) {
+  .ph-grid.ph-seq .ph-grow { opacity: 1; transform: none; transition: none; }
+}

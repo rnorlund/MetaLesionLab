@@ -81,11 +81,6 @@
     if (focus) $('voices').children[i].focus();
     renderCards();
     renderTranscripts();
-    drawContour($('contour-demo'), D.voices[voice].clips[0].contour, { truth: 0, title: titleFor(0) });
-  }
-
-  function titleFor(k) {
-    return [D.voices[voice].label + ', ', h('b', { text: D.words[k].toUpperCase() }), ' stressed'];
   }
 
   function chip(label, k, truth) {
@@ -164,7 +159,6 @@
     var p = audioEl.play();
     if (p && p.catch) p.catch(function () { if (playing === k) stop(); });
     revealChips(k);
-    drawContour($('contour-demo'), c.contour, { truth: k, title: titleFor(k) });
   }
 
   // --- the answer and the charts -------------------------------------------------------------------------------
@@ -227,34 +221,52 @@
 
   function grid(el, capEl, m, color, who) {
     var n = m.length, cell = 46, L = 92, top = 64, W = L + n * cell + 8, H = top + n * cell + 8;
-    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'data-no-motion': '' });
     var total = 0, diag = 0;
-    svg.appendChild(s('text', { x: L + n * cell / 2, y: 14, 'text-anchor': 'middle', style: 'fill: var(--muted); font-size: 12px' },
+    svg.appendChild(s('text', { x: L + n * cell / 2, y: 14, 'text-anchor': 'middle', style: 'fill: var(--muted); font-size: 14px' },
       who + '’s guess →'));
     D.words.forEach(function (w, j) {
-      svg.appendChild(s('text', { x: L + j * cell + cell / 2, y: top - 10, 'text-anchor': 'middle', style: 'fill: var(--ink-2); font-size: 13px' }, w));
+      svg.appendChild(s('text', { x: L + j * cell + cell / 2, y: top - 10, 'text-anchor': 'middle', style: 'fill: var(--ink-2); font-size: 15px' }, w));
     });
     m.forEach(function (row, i) {
       var rt = row.reduce(function (a, b) { return a + b; }, 0) || 1;
-      svg.appendChild(s('text', { x: L - 10, y: top + i * cell + cell / 2 + 5, 'text-anchor': 'end', style: 'fill: var(--ink-2); font-size: 13px' },
+      var g = s('g', { class: 'ph-grow' });  // one row: label, cells and numbers appear together
+      svg.appendChild(g);
+      g.appendChild(s('text', { x: L - 10, y: top + i * cell + cell / 2 + 5, 'text-anchor': 'end', style: 'fill: var(--ink-2); font-size: 15px' },
         D.words[i]));
       row.forEach(function (v, j) {
         total += v; if (i === j) diag += v;
-        svg.appendChild(s('rect', { x: L + j * cell + 1, y: top + i * cell + 1, width: cell - 2, height: cell - 2, rx: 4,
+        g.appendChild(s('rect', { x: L + j * cell + 1, y: top + i * cell + 1, width: cell - 2, height: cell - 2, rx: 4,
+          class: v ? 'ph-gfill' : null, 'data-c': color,
           style: 'fill: ' + color + '; fill-opacity: ' + (v ? 0.12 + 0.88 * v / rt : 0) + '; stroke: ' +
             (i === j ? 'var(--ink)' : 'var(--line)') + '; stroke-width: ' + (i === j ? 1.5 : 1) }));
-        if (v) svg.appendChild(s('text', { x: L + j * cell + cell / 2, y: top + i * cell + cell / 2 + 5, 'text-anchor': 'middle',
-          style: 'font-size: 14px; font-weight: 600; fill: ' + (v / rt > 0.55 ? 'var(--panel)' : 'var(--ink)') }, v));
+        if (v) g.appendChild(s('text', { x: L + j * cell + cell / 2, y: top + i * cell + cell / 2 + 5, 'text-anchor': 'middle',
+          style: 'font-size: 16px; font-weight: 600; fill: ' + (v / rt > 0.55 ? 'var(--panel)' : 'var(--ink)') }, v));
       });
     });
     svg.appendChild(s('text', { x: 12, y: top + n * cell / 2, transform: 'rotate(-90 12 ' + (top + n * cell / 2) + ')',
-      'text-anchor': 'middle', style: 'fill: var(--muted); font-size: 12px' }, 'stressed word'));
+      'text-anchor': 'middle', style: 'fill: var(--muted); font-size: 14px' }, 'stressed word'));
     svg.setAttribute('aria-label', who + ': ' + diag + ' of ' + total + ' on the diagonal (right). ' + m.map(function (row, i) {
       return D.words[i] + ' stressed: ' + row.map(function (v, j) { return v ? v + '× ' + D.words[j] : ''; }).filter(Boolean).join(', ');
     }).join('; '));
     el.innerHTML = '';
     el.appendChild(svg);
+    sequence(el);
     return { diag: diag, total: total };
+  }
+
+  // rows appear one after another when the grid first scrolls into view (at once with reduced motion)
+  function sequence(el) {
+    var rows = el.querySelectorAll('.ph-grow');
+    if (REDUCED || !window.IntersectionObserver) return;
+    el.classList.add('ph-seq');
+    Array.prototype.forEach.call(rows, function (r, i) { r.style.transitionDelay = (i * 0.28) + 's'; });
+    var io = new IntersectionObserver(function (es) {
+      if (!es.some(function (e) { return e.isIntersecting; })) return;
+      io.disconnect();
+      el.classList.add('ph-seq-in');
+    }, { threshold: 0.25 });
+    io.observe(el);
   }
 
   function grids() {
@@ -594,7 +606,6 @@
     bars();
     grids();
     renderRevision();
-    drawContour($('contour-demo'), D.voices[0].clips[0].contour, { truth: 0, title: titleFor(0) });
     method();
     setupRecorder();
     var lastW = window.innerWidth, timer = 0;

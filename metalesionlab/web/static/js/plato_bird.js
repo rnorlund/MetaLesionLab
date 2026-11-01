@@ -350,48 +350,73 @@
 
   // ---------- temperature ----------
   function temperature() {
+    // Roger (Oct 31): "very boring graph just showing a graph downwards, spruce up creatively". The axis hugs the data,
+    // Spark and people are glowing bands with big labels, Glimmer's line has a glowing fill, a steady-to-random bar
+    // runs along the bottom, and Spark turned up gets a callout.
     var S = D.summary, el = document.getElementById('temp-chart');
     el.innerHTML = '';
     document.getElementById('temp-legend').innerHTML = '';
-    var narrow = (el.clientWidth || 760) < 600;
-    var W = narrow ? 400 : 760, H = narrow ? 330 : 380, m = { l: narrow ? 50 : 64, r: narrow ? 104 : 150, t: 20, b: 50 };
+    var narrow = (el.clientWidth || 760) < 600, fs = narrow ? 15 : 17, big = narrow ? 17 : 21;
+    var W = narrow ? 400 : 760, H = narrow ? 360 : 420, m = { l: narrow ? 46 : 58, r: narrow ? 92 : 168, t: 28, b: narrow ? 74 : 82 };
     var pw = W - m.l - m.r, ph = H - m.t - m.b;
     var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true' }, el);
-    var X = function (t) { return m.l + (t - 0.4) / 1.7 * pw; }, Y = function (v) { return m.t + (1 - v) * ph; };
-    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
-      svg('line', { x1: X(0.4), x2: X(2.1), y1: Y(v), y2: Y(v), stroke: COLORS.grid }, s);
-      svgText(s, X(0.4) - 8, Y(v) + 4, Math.round(v * 100) + '%', { 'text-anchor': 'end' });
-    });
-    [0.5, 1, 1.5, 2].forEach(function (t) { svgText(s, X(t), Y(0) + 18, String(t), { 'text-anchor': 'middle' }); });
-    svgText(s, X(1.25), H - 10, 'Randomness setting, or temperature (higher = more random)', { 'text-anchor': 'middle', fill: COLORS.ink2, 'font-size': 13 });
-    svgText(s, 16, Y(0.5), 'Average share going to the favourite', { 'text-anchor': 'middle', fill: COLORS.ink2, 'font-size': 13, transform: 'rotate(-90 16 ' + Y(0.5) + ')' });
-    function hline(v, color, label) {
-      svg('line', { x1: X(0.4), x2: X(2.1), y1: Y(v), y2: Y(v), stroke: color, 'stroke-width': 2 }, s);
-      svgText(s, X(2.1) + 8, Y(v) + 4, label + ' ' + pct(v), { fill: COLORS.ink2 });
-    }
-    hline(S.spark.dominance.human_mean.mean, COLORS.people, 'People');
-    hline(S.spark.dominance.ai_mean.mean, COLORS.spark, narrow ? 'Spark' : 'Spark, usual');
-    // keys are the analysis's own strings ("0.5", "1.0"): keep them, never round-trip through Number
     var temps = Object.keys(S.logit_temperature).sort(function (a, b) { return +a - +b; });
-    var pts = temps.map(function (t) { return [X(+t), Y(S.logit_temperature[t].dominance.mean)]; });
+    var vals = temps.map(function (t) { return S.logit_temperature[t].dominance.mean; });
+    var y0 = Math.max(0, Math.floor((Math.min.apply(null, vals) - 0.02) * 10) / 10);
+    var X = function (t) { return m.l + (t - 0.4) / 1.7 * pw; }, Y = function (v) { return m.t + (1 - (v - y0) / (1 - y0)) * ph; };
+    var defs = svg('defs', {}, s);
+    var fill = svg('linearGradient', { id: 'pb-temp-fill', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+    svg('stop', { offset: '0%', style: 'stop-color:' + COLORS.glimmer + ';stop-opacity:0.38' }, fill);
+    svg('stop', { offset: '100%', style: 'stop-color:' + COLORS.glimmer + ';stop-opacity:0' }, fill);
+    var heat = svg('linearGradient', { id: 'pb-temp-heat', x1: 0, y1: 0, x2: 1, y2: 0 }, defs);
+    svg('stop', { offset: '0%', style: 'stop-color:' + COLORS.ink + ';stop-opacity:0.08' }, heat);
+    svg('stop', { offset: '100%', style: 'stop-color:' + COLORS.ink + ';stop-opacity:0.75' }, heat);
+    for (var v = y0; v <= 1.0001; v += 0.2) {
+      svg('line', { x1: X(0.4), x2: X(2.1), y1: Y(v), y2: Y(v), stroke: COLORS.grid }, s);
+      svgText(s, X(0.4) - 8, Y(v) + 5, Math.round(v * 100) + '%', { 'text-anchor': 'end', 'font-size': fs });
+    }
+    // the setting, from steady to random, as a bar that brightens
+    var by = Y(y0) + 14;
+    svg('rect', { x: X(0.4), y: by, width: X(2.1) - X(0.4), height: 8, rx: 4, fill: 'url(#pb-temp-heat)' }, s);
+    [0.5, 1, 1.5, 2].forEach(function (t) { svgText(s, X(t), by + 28, String(t), { 'text-anchor': 'middle', 'font-size': fs, fill: COLORS.ink2 }); });
+    svgText(s, X(0.4), by + (narrow ? 50 : 54), '← steady', { 'font-size': fs, fill: COLORS.ink2, 'font-weight': 600 });
+    svgText(s, X(2.1), by + (narrow ? 50 : 54), 'more random →', { 'text-anchor': 'end', 'font-size': fs, fill: COLORS.ink2, 'font-weight': 600 });
+    if (!narrow) svgText(s, (X(0.4) + X(2.1)) / 2, by + 54, 'randomness setting', { 'text-anchor': 'middle', 'font-size': fs - 2, fill: COLORS.muted });
+    function band(v, color, label) {  // a glowing band: a wide faint line under a crisp one
+      svg('line', { x1: X(0.4), x2: X(2.1), y1: Y(v), y2: Y(v), stroke: color, 'stroke-width': 12, 'stroke-opacity': 0.16, 'stroke-linecap': 'round' }, s);
+      svg('line', { x1: X(0.4), x2: X(2.1), y1: Y(v), y2: Y(v), stroke: color, 'stroke-width': 2.5 }, s);
+      svgText(s, X(2.1) + 10, Y(v) - 4, label, { fill: COLORS.ink, 'font-size': fs, 'font-weight': 650 });
+      svgText(s, X(2.1) + 10, Y(v) + fs + 1, narrow ? pct(v) : pct(v) + ' on the favourite', { fill: COLORS.ink2, 'font-size': fs - 2 });
+    }
+    band(S.spark.dominance.ai_mean.mean, COLORS.spark, narrow ? 'Spark' : 'Muse Spark');
+    band(S.spark.dominance.human_mean.mean, COLORS.people, 'People');
+    // keys are the analysis's own strings ("0.5", "1.0"): keep them, never round-trip through Number
+    var pts = temps.map(function (t, k) { return [X(+t), Y(vals[k])]; });
+    svg('path', { d: 'M' + pts.map(function (p) { return p.join(','); }).join('L') + 'L' + pts[pts.length - 1][0] + ',' + Y(y0) + 'L' + pts[0][0] + ',' + Y(y0) + 'Z',
+                  fill: 'url(#pb-temp-fill)', stroke: 'none' }, s);
     svg('polyline', { points: pts.map(function (p) { return p.join(','); }).join(' '), fill: 'none', stroke: COLORS.glimmer,
-                      'stroke-width': 2, 'stroke-linejoin': 'round' }, s);
+                      'stroke-width': 3.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, s);
     pts.forEach(function (p, i) {
-      var c = svg('circle', { cx: p[0], cy: p[1], r: 4, fill: COLORS.glimmer, stroke: COLORS.chart, 'stroke-width': 2 }, s);
+      var c = svg('circle', { cx: p[0], cy: p[1], r: 5, fill: COLORS.glimmer, stroke: COLORS.chart, 'stroke-width': 2 }, s);
       var t = svg('title', {}, c); t.textContent = 'Glimmer’s own odds at setting ' + (+temps[i]) + ': ' + pct(S.logit_temperature[temps[i]].dominance.mean) + ' on the favourite';
     });
     ['0.7', '1.0', '1.5'].forEach(function (t) {
       var k = 'glimmer_T' + t;
       if (!S[k]) return;
-      var c = svg('circle', { cx: X(+t), cy: Y(S[k].dominance.ai_mean.mean), r: 6, fill: COLORS.chart, stroke: COLORS.glimmer, 'stroke-width': 2 }, s);
+      var c = svg('circle', { cx: X(+t), cy: Y(S[k].dominance.ai_mean.mean), r: 8, fill: COLORS.chart, stroke: COLORS.glimmer, 'stroke-width': 3 }, s);
       var tt = svg('title', {}, c); tt.textContent = 'Glimmer, 50 answers at setting ' + t + ': ' + pct(S[k].dominance.ai_mean.mean) + ' on the favourite';
     });
+    var p0 = pts[0];
+    if (narrow) svgText(s, p0[0] + 8, Y(y0 + 0.07), 'Muse Glimmer', { fill: COLORS.ink, 'font-size': big, 'font-weight': 700 });  // low in its glow, clear of the bands
+    else svgText(s, p0[0] + 10, p0[1] - 14, 'Muse Glimmer', { fill: COLORS.ink, 'font-size': big, 'font-weight': 700 });
     var sk = Object.keys(S).filter(function (k) { return k.indexOf('spark_T') === 0; })[0];
     if (sk) {
-      var T = +sk.slice(7), v = S[sk].dominance.mean;
-      var dmd = svg('rect', { x: X(T) - 6, y: Y(v) - 6, width: 12, height: 12, fill: COLORS.spark, transform: 'rotate(45 ' + X(T) + ' ' + Y(v) + ')' }, s);
-      var tt2 = svg('title', {}, dmd); tt2.textContent = 'Spark at setting ' + T + ' (' + S[sk].n_categories + ' categories): ' + pct(v) + ' on the favourite';
-      svgText(s, X(T) + 12, Y(v) + 20, 'Spark at ' + T, { fill: COLORS.ink2 });
+      var T = +sk.slice(7), sv = S[sk].dominance.mean, dx = X(T), dy = Y(sv);
+      var dmd = svg('rect', { x: dx - 8, y: dy - 8, width: 16, height: 16, fill: COLORS.spark, transform: 'rotate(45 ' + dx + ' ' + dy + ')' }, s);
+      var tt2 = svg('title', {}, dmd); tt2.textContent = 'Spark at setting ' + T + ' (' + S[sk].n_categories + ' categories): ' + pct(sv) + ' on the favourite';
+      svg('line', { x1: dx, x2: dx, y1: dy + 12, y2: dy + 24, stroke: COLORS.ink2, 'stroke-width': 1.2 }, s);  // the callout, under the diamond
+      svgText(s, dx, dy + 24 + fs, 'Spark turned up to ' + T, { 'text-anchor': 'middle', 'font-size': fs, fill: COLORS.ink, 'font-weight': 600 });
+      svgText(s, dx, dy + 28 + 2 * fs, 'still ' + pct(sv) + ' on the favourite', { 'text-anchor': 'middle', 'font-size': fs - 1, fill: COLORS.ink2 });
     }
     var leg = document.getElementById('temp-legend');
     var l1 = h('span', { class: 'ln' }); l1.style.background = COLORS.glimmer;

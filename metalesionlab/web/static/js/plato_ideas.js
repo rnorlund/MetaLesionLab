@@ -214,54 +214,82 @@
   }
   // One row per idea (its spread and 95% CI) under a strip of the 135 things; dashed lines mark both medians.
   function spreadChart() {
+    // Roger (Oct 31): "way too boring, dots could be different shapes, bars could have sides, maybe rainbow". Each
+    // idea's likely range is a glossy capsule in its own colour (a sweep from cyan through violet to orange, in the
+    // order of the rows), its marker a badge with one of Muse Image's own drawings of it, and the everyday things a
+    // glowing cloud above.
     var wrap = $('spread-chart');
     wrap.textContent = '';
-    var W = Math.max(300, wrap.clientWidth || 800), narrow = W < 560;
+    var W = Math.max(300, wrap.clientWidth || 800), narrow = W < 560, fs = narrow ? 14 : 16;
     var a = D.summary.H3_vs_atlas, ideas = D.ideas.slice().sort(function (p, q) { return p.spread - q.spread; });
-    var L = narrow ? 92 : 190, R = 18, top = 46, stripH = narrow ? 70 : 84, rowH = narrow ? 26 : 30;
-    var H = top + stripH + rowH * ideas.length + 56;
+    var L = narrow ? 96 : 150, R = 22, top = 52, stripH = narrow ? 82 : 100, rowH = narrow ? 34 : 54, badge = narrow ? 22 : 46;
+    var H = top + stripH + rowH * ideas.length + 80;
     var hiCI = Math.max.apply(null, ideas.map(function (p) { return p.spread_ci95[1]; }));
     var xmax = Math.max(0.5, Math.ceil(hiCI * 10) / 10);
     var x = function (v) { return L + (W - L - R) * v / xmax; };
-    var yAxis = H - 30;
+    var yAxis = H - 54;
     var root = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
       'aria-label': 'Spread of Muse Image’s drawings. ' + D.things.length + ' everyday things: median ' + f2(a.median_things) +
         '. 11 ideas: median ' + f2(a.median_ideas) + '. ' + ideas.map(function (p) { return p.label + ' ' + f2(p.spread); }).join(', ') });
+    var defs = s('defs', {});
+    root.appendChild(defs);
+    function hsl(hue, l) { return 'hsl(' + Math.round(hue) + ', 78%, ' + l + '%)'; }
+    function rgb01(hue) {  // the hue at 62% lightness, as 0-1 RGB for the ink filter
+      var l = 0.62, c = (1 - Math.abs(2 * l - 1)) * 0.78, hp = (hue % 360) / 60, xx = c * (1 - Math.abs(hp % 2 - 1)), m = l - c / 2;
+      var t = hp < 1 ? [c, xx, 0] : hp < 2 ? [xx, c, 0] : hp < 3 ? [0, c, xx] : hp < 4 ? [0, xx, c] : hp < 5 ? [xx, 0, c] : [c, 0, xx];
+      return t.map(function (v) { return (v + m).toFixed(3); });
+    }
     var step = xmax > 0.6 ? 0.2 : 0.1;
     for (var t = 0; t <= xmax + 1e-9; t += step) {
       root.appendChild(s('line', { x1: x(t), x2: x(t), y1: top - 6, y2: yAxis, stroke: C.grid, 'stroke-width': 1 }));
-      root.appendChild(s('text', { class: 'tick', x: x(t), y: yAxis + 18, 'text-anchor': t === 0 ? 'start' : 'middle' }, f2(t)));
+      root.appendChild(s('text', { x: x(t), y: yAxis + fs + 6, 'text-anchor': t === 0 ? 'start' : 'middle', 'font-size': fs - 2, fill: C.muted }, f2(t)));
     }
-    root.appendChild(s('text', { class: 'lbl', x: W - R, y: H - 2, 'text-anchor': 'end' },
-      narrow ? 'spread →' : 'spread: how different two drawings look, on average →'));
+    root.appendChild(s('text', { x: L, y: H - 4, 'font-size': fs, 'font-weight': 600, fill: C.ink2 }, '← drawn alike'));
+    root.appendChild(s('text', { x: W - R, y: H - 4, 'text-anchor': 'end', 'font-size': fs, 'font-weight': 600, fill: C.ink2 }, 'drawn many ways →'));
     var hits = [];
-    // the things: a jittered strip
-    var cy0 = top + stripH / 2 - 6;
-    root.appendChild(s('text', { class: 'lbl-b', x: 8, y: cy0 - 2 }, narrow ? D.things.length + ' things' : D.things.length + ' everyday things'));
-    root.appendChild(s('text', { class: 'lbl', x: 8, y: cy0 + 15 }, 'median ' + f2(a.median_things)));
+    // the everyday things: a glowing cloud
+    var cy0 = top + stripH / 2 - 8;
+    root.appendChild(s('text', { x: 8, y: cy0 - 2, 'font-size': fs + 1, 'font-weight': 700, fill: C.ink }, narrow ? D.things.length + ' things' : D.things.length + ' everyday things'));
+    root.appendChild(s('text', { x: 8, y: cy0 + fs + 2, 'font-size': fs - 2, fill: C.ink2 }, 'typical ' + f2(a.median_things)));
     D.things.slice().sort(function (p, q) { return p.spread - q.spread; }).forEach(function (it, i) {
-      var cx = x(it.spread), cy = cy0 + ((i * 37) % 11 - 5) * (narrow ? 2.6 : 3.4);
-      root.appendChild(s('circle', { cx: cx, cy: cy, r: narrow ? 3.5 : 4.5, fill: C.thing, 'fill-opacity': 0.8, stroke: C.surface, 'stroke-width': 1 }));
+      var cx = x(it.spread), cy = cy0 + ((i * 37) % 11 - 5) * (narrow ? 3.4 : 4.4);
+      root.appendChild(s('circle', { cx: cx, cy: cy, r: narrow ? 4 : 7.5, fill: hsl(205, 70), 'fill-opacity': 0.13 }));
+      root.appendChild(s('circle', { cx: cx, cy: cy, r: narrow ? 2.6 : 3.2, fill: hsl(205, 82) }));
       hits.push({ x: cx, y: cy, name: it.label, lines: ['everyday thing · spread ' + f2(it.spread)] });
     });
-    // the ideas: one row each, a CI whisker and a dot
-    var y1 = top + stripH;
+    // the ideas: a glossy capsule for the likely range, and a badge with one of the AI's own drawings of the idea
+    var y1 = top + stripH, n = ideas.length;
     ideas.forEach(function (p, i) {
-      var cy = y1 + rowH * i + rowH / 2, cx = x(p.spread);
-      root.appendChild(s('text', { class: p.key === 'god' ? 'lbl-b' : 'lbl', x: 8, y: cy + 4 }, p.label));
-      root.appendChild(s('line', { x1: x(p.spread_ci95[0]), x2: x(p.spread_ci95[1]), y1: cy, y2: cy, stroke: C.muse2, 'stroke-width': 3,
-        'stroke-linecap': 'round' }));
-      root.appendChild(s('circle', { cx: cx, cy: cy, r: narrow ? 5.5 : 6.5, fill: C.muse, stroke: C.surface, 'stroke-width': 2 }));
+      var hue = 190 + i * 190 / Math.max(1, n - 1), cy = y1 + rowH * i + rowH / 2, cx = x(p.spread), hgt = narrow ? 14 : 18;
+      var g = s('linearGradient', { id: 'pi-cap-' + i, x1: 0, y1: 0, x2: 0, y2: 1 });
+      g.appendChild(s('stop', { offset: '0%', 'stop-color': hsl(hue, 80) }));
+      g.appendChild(s('stop', { offset: '45%', 'stop-color': hsl(hue, 62) }));
+      g.appendChild(s('stop', { offset: '100%', 'stop-color': hsl(hue, 40) }));
+      defs.appendChild(g);
+      var c = rgb01(hue), f = s('filter', { id: 'pi-ink-' + i, 'color-interpolation-filters': 'sRGB' });
+      f.appendChild(s('feColorMatrix', { type: 'matrix', values: '0 0 0 0 ' + c[0] + ' 0 0 0 0 ' + c[1] + ' 0 0 0 0 ' + c[2] + ' -0.45 -0.45 -0.45 0 1.35' }));
+      defs.appendChild(f);
+      var clip = s('clipPath', { id: 'pi-badge-' + i });
+      clip.appendChild(s('circle', { cx: cx, cy: cy, r: badge / 2 - 2 }));
+      defs.appendChild(clip);
+      root.appendChild(s('text', { x: 8, y: cy + 5, 'font-size': p.key === 'god' ? fs + 1 : fs, 'font-weight': p.key === 'god' ? 750 : 500, fill: C.ink }, p.label));
+      var x0 = x(p.spread_ci95[0]), x1 = x(p.spread_ci95[1]);
+      root.appendChild(s('rect', { x: x0, y: cy - hgt / 2, width: Math.max(hgt, x1 - x0), height: hgt, rx: hgt / 2, fill: 'url(#pi-cap-' + i + ')', opacity: 0.9 }));
+      root.appendChild(s('rect', { x: x0 + hgt / 3, y: cy - hgt / 2 + 2, width: Math.max(2, x1 - x0 - hgt * 0.66), height: hgt * 0.28, rx: hgt * 0.14, fill: hsl(hue, 94), 'fill-opacity': 0.4 }));
+      root.appendChild(s('circle', { cx: cx, cy: cy, r: badge / 2 + 1, fill: hsl(hue, 62) }));
+      root.appendChild(s('circle', { cx: cx, cy: cy, r: badge / 2 - 1.5, fill: C.surface }));
+      root.appendChild(s('image', { href: '/static/img/plato_ideas/' + p.key + '.webp', x: cx - badge / 2, y: cy - badge / 2, width: badge * 8, height: badge * 2,
+        preserveAspectRatio: 'none', 'clip-path': 'url(#pi-badge-' + i + ')', filter: 'url(#pi-ink-' + i + ')', 'pointer-events': 'none' }));
       hits.push({ x: cx, y: cy, name: p.label, lines: ['idea · spread ' + f2(p.spread), 'likely range ' + ci(p.spread_ci95),
         'top symbol: ' + p.top.emblem + ' (' + p.top.n + ' of ' + p.n + ')'] });
     });
-    // the medians, as reference lines over everything
-    [[a.median_things, C.thing, 'things’ median ' + f2(a.median_things), 'end'], [a.median_ideas, C.muse, 'ideas’ median ' + f2(a.median_ideas), 'start']]
+    // the typical values, as reference lines over everything
+    [[a.median_things, hsl(205, 82), 'things typically ' + f2(a.median_things), 'end'], [a.median_ideas, C.ink, 'ideas typically ' + f2(a.median_ideas), 'start']]
       .forEach(function (m) {
         var mx = x(m[0]);
-        root.appendChild(s('line', { x1: mx, x2: mx, y1: top - 6, y2: yAxis, stroke: m[1], 'stroke-width': 1.5, 'stroke-dasharray': '5 4' }));
-        root.appendChild(s('text', { class: 'lbl', x: mx + (m[3] === 'end' ? -5 : 5), y: top - 12, 'text-anchor': m[3], stroke: C.surface,
-          'stroke-width': 4, 'paint-order': 'stroke' }, m[2]));
+        root.appendChild(s('line', { x1: mx, x2: mx, y1: top - 6, y2: yAxis, stroke: m[1], 'stroke-width': 1.5, 'stroke-dasharray': '5 4', opacity: 0.8 }));
+        root.appendChild(s('text', { x: mx + (m[3] === 'end' ? -6 : 6), y: top - 16, 'text-anchor': m[3], 'font-size': fs - 1, 'font-weight': 600, fill: C.ink,
+          stroke: C.surface, 'stroke-width': 4, 'paint-order': 'stroke' }, m[2]));
       });
     wrap.appendChild(root);
     root.addEventListener('pointermove', function (e) {
@@ -274,8 +302,9 @@
     root.addEventListener('pointerleave', function () { hideTip(wrap); });
     var legend = $('spread-legend');
     legend.textContent = '';
-    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: C.thing } }), 'Muse Image’s ' + D.things.length + ' everyday things']));
-    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: C.muse } }), 'Muse Image’s ideas, with likely ranges (95%)']));
+    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: 'hsl(205, 78%, 82%)' } }), 'Muse Image’s ' + D.things.length + ' everyday things']));
+    legend.appendChild(h('span', null, [h('i', { class: 'dot', style: { background: 'linear-gradient(90deg, hsl(190, 78%, 62%), hsl(285, 78%, 62%), hsl(20, 78%, 62%))' } }),
+      'Muse Image’s ideas: its drawing, and the likely range (95%)']));
     legend.appendChild(h('span', null, [h('i', { class: 'line', style: { background: C.ink2 } }), 'typical values (medians, dashed)']));
   }
 

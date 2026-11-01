@@ -189,3 +189,14 @@
   .ls-ticks { font-size: var(--fs-label); }
   .ls-ticks span.minor { visibility: hidden; }
 }
+
+/* the scatter and the age chart are drawn at their own pixel width, so these sizes are what you read on screen */
+.ls-chart .ls-sc-tick { font-size: var(--fs-label); fill: var(--ink-2); }
+.ls-chart .ls-sc-axis { font-size: var(--fs-small); font-weight: 600; fill: var(--ink-2); }
+.ls-chart .ls-sc-name { font-size: var(--fs-body); font-weight: 700; paint-order: stroke; stroke: var(--chart-halo); stroke-width: 4px; stroke-linejoin: round; }
+.ls-chart .ls-sc-sub { font-size: var(--fs-small); fill: var(--ink-2); paint-order: stroke; stroke: var(--chart-halo); stroke-width: 4px; stroke-linejoin: round; }
+.ls-chart .ls-sc-agenum { fill: var(--people); }
+.ls-chart .ls-sc-pulse { transform-box: fill-box; transform-origin: center; animation: ls-pulse 2.8s ease-out infinite; }
+@keyframes ls-pulse { 0% { transform: scale(0.7); opacity: 0.7; } 100% { transform: scale(1.7); opacity: 0; } }
+.ls-pair.ls-solo { grid-template-columns: minmax(0, 1fr); }
+@media (prefers-reduced-motion: reduce) { .ls-chart .ls-sc-pulse { animation: none; } }

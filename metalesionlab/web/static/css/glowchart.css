@@ -24,3 +24,5 @@
 /* glowskin.js: every other chart's coloured marks glow too, in the dark theme */
 :root[data-theme="dark"] svg .gl { filter: url(#pc-glow); }
 :root[data-theme="dark"] svg .gl-w { stroke-width: 2px; }
+.gl-flow { pointer-events: none; stroke: var(--ink); opacity: 0.85; }
+:root:not([data-theme="dark"]) .gl-flow { display: none; }

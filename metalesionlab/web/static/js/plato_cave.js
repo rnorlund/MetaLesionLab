@@ -166,49 +166,93 @@
 
   // --- accuracy by version ---------------------------------------------------------------
   function accuracyChart() {
+    // Roger (Oct 31): no dead space, labels big enough to read, something to look at. The axis starts at 50% (nothing
+    // falls lower), every point carries its number, and the cat in its four versions labels the columns.
     var wrap = $('acc-chart');
     wrap.innerHTML = '';
-    var W = 640, H = 300, L = 46, R = 16, Tp = 14, B = 34;
+    var W = Math.max(320, Math.round(wrap.clientWidth || 640)), wide = W >= 560;
+    var thumb = Math.round(Math.max(56, Math.min(112, (W - 60) / 4 - 26)));
+    var L = 50, R = wide ? 156 : 14, Tp = 30, B = thumb + 46, H = Math.round(Math.max(340, Math.min(470, W * 0.62)) + thumb * 0.5);
+    var lows = [];
+    VERSIONS.forEach(function (v) {
+      var e = D.accuracy[v]; lows.push(e.ci95 && e.ci95.length ? e.ci95[0] : e.accuracy);
+      if (D.spark && D.spark.accuracy && D.spark.accuracy[v]) { var sp = D.spark.accuracy[v]; lows.push(sp.ci95 && sp.ci95.length ? sp.ci95[0] : sp.accuracy); }
+    });
+    var pub = D.human.published;
+    lows.push(pub.outline_mean_260, pub.silhouette_mean_260);
+    var y0 = Math.min(0.5, Math.floor(Math.min.apply(null, lows) * 10) / 10);
     var x = function (i) { return L + (i + 0.5) * (W - L - R) / VERSIONS.length; };
-    var y = function (v) { return Tp + (1 - v) * (H - Tp - B); };
+    var y = function (v) { return Tp + (1 - (v - y0) / (1 - y0)) * (H - Tp - B); };
     var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Share named correctly in each version, with the likely range (95% interval)' });
-    [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
+    var defs = s('defs', {});
+    var grad = s('linearGradient', { id: 'cv-acc-fill', x1: 0, y1: 0, x2: 0, y2: 1 });
+    grad.appendChild(s('stop', { offset: '0%', 'stop-color': C.glimmer, 'stop-opacity': 0.34 }));
+    grad.appendChild(s('stop', { offset: '100%', 'stop-color': C.glimmer, 'stop-opacity': 0 }));
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+    for (var t = y0; t <= 1.0001; t += 0.1) {
       svg.appendChild(s('line', { x1: L, x2: W - R, y1: y(t), y2: y(t), stroke: C.grid, 'stroke-width': 1 }));
-      svg.appendChild(s('text', { x: L - 8, y: y(t) + 4, 'text-anchor': 'end', class: 'lbl' }, pct(t) + '%'));
-    });
-    VERSIONS.forEach(function (v, i) {
-      svg.appendChild(s('text', { x: x(i), y: H - 10, 'text-anchor': 'middle', class: 'lbl em' }, LABEL[v]));
-    });
-    var series = [{ key: 'glimmer', dx: -12, color: C.glimmer, name: 'Muse Glimmer (100 objects)', get: function (v) { return D.accuracy[v]; } }];
-    if (D.spark && D.spark.accuracy && D.spark.accuracy.original) {
-      series.push({ key: 'spark', dx: 12, color: C.spark, name: 'Muse Spark (' + D.spark.n_items + ' of them)', get: function (v) { return D.spark.accuracy[v]; } });
+      svg.appendChild(s('text', { x: L - 10, y: y(t) + 5, 'text-anchor': 'end', class: 'lbl' }, pct(t) + '%'));
     }
-    series.forEach(function (se) {
+    VERSIONS.forEach(function (v, i) {  // the cat in this version, and the version's name
+      var tx = x(i) - thumb / 2, ty = H - B + 16, clip = s('clipPath', { id: 'cv-cat-' + i });
+      clip.appendChild(s('rect', { x: tx, y: ty, width: thumb, height: thumb, rx: 10 }));
+      defs.appendChild(clip);
+      svg.appendChild(s('rect', { x: tx - 3, y: ty - 3, width: thumb + 6, height: thumb + 6, rx: 12, fill: 'var(--panel)', stroke: C.grid }));
+      svg.appendChild(s('image', { href: '/static/img/plato_cave/cat_versions.webp', x: tx - i * thumb, y: ty, width: thumb * 4, height: thumb,
+        'clip-path': 'url(#cv-cat-' + i + ')', preserveAspectRatio: 'none' }));
+      svg.appendChild(s('text', { x: x(i), y: H - 6, 'text-anchor': 'middle', class: 'lbl em ax' }, wide ? LABEL[v] : (v === 'shadow' ? 'Shadow' : LABEL[v])));
+    });
+    var series = [{ key: 'glimmer', dx: wide ? -10 : -6, color: C.glimmer, name: 'Muse Glimmer (100 objects)', label: 'Muse Glimmer', get: function (v) { return D.accuracy[v]; } }];
+    if (D.spark && D.spark.accuracy && D.spark.accuracy.original) {
+      series.push({ key: 'spark', dx: wide ? 10 : 6, color: C.spark, name: 'Muse Spark (' + D.spark.n_items + ' of them)', label: 'Muse Spark', get: function (v) { return D.spark.accuracy[v]; } });
+    }
+    var g0 = series[0], gpts = VERSIONS.map(function (v, i) { return [x(i) + g0.dx, y(g0.get(v).accuracy)]; });
+    svg.appendChild(s('path', { d: 'M' + gpts.map(function (p) { return p.join(','); }).join('L') + 'L' + gpts[gpts.length - 1][0] + ',' + y(y0) +
+      'L' + gpts[0][0] + ',' + y(y0) + 'Z', fill: 'url(#cv-acc-fill)', stroke: 'none' }));
+    series.slice().reverse().forEach(function (se) {
       var pts = VERSIONS.map(function (v, i) { return [x(i) + se.dx, y(se.get(v).accuracy)]; });
-      svg.appendChild(s('polyline', { points: pts.map(function (p) { return p.join(','); }).join(' '), fill: 'none', stroke: se.color, 'stroke-width': 2 }));
       VERSIONS.forEach(function (v, i) {
         var e = se.get(v);
-        if (e.ci95 && e.ci95.length) svg.appendChild(s('line', { x1: pts[i][0], x2: pts[i][0], y1: y(e.ci95[0]), y2: y(e.ci95[1]), stroke: se.color, 'stroke-width': 2, 'stroke-linecap': 'round' }));
-        svg.appendChild(s('circle', { cx: pts[i][0], cy: pts[i][1], r: 5, fill: se.color, stroke: 'var(--chart-halo)', 'stroke-width': 2 }));
-        if (se.key === 'glimmer') svg.appendChild(s('text', { x: pts[i][0] - 10, y: pts[i][1] + 4, 'text-anchor': 'end', class: 'lbl em' }, pct(e.accuracy) + '%'));
-        var hit = s('rect', { x: pts[i][0] - 12, y: Tp, width: 24, height: H - Tp - B, class: 'hit' });
+        if (e.ci95 && e.ci95.length) svg.appendChild(s('line', { x1: pts[i][0], x2: pts[i][0], y1: y(e.ci95[0]), y2: y(Math.min(1, e.ci95[1])), stroke: se.color, 'stroke-width': 2, 'stroke-linecap': 'round', opacity: 0.55 }));
+      });
+      svg.appendChild(s('polyline', { points: pts.map(function (p) { return p.join(','); }).join(' '), fill: 'none', stroke: se.color, 'stroke-width': se.key === 'glimmer' ? 3.5 : 2.5, 'stroke-linejoin': 'round' }));
+      VERSIONS.forEach(function (v, i) {
+        var e = se.get(v);
+        svg.appendChild(s('circle', { cx: pts[i][0], cy: pts[i][1], r: se.key === 'glimmer' ? 7 : 5.5, fill: se.color, stroke: 'var(--chart-halo)', 'stroke-width': 2 }));
+        if (se.key === 'glimmer') svg.appendChild(s('text', { x: pts[i][0], y: pts[i][1] - 16, 'text-anchor': 'middle', class: 'val' }, pct(e.accuracy) + '%'));
+        var hit = s('rect', { x: pts[i][0] - 14, y: Tp, width: 28, height: H - Tp - B, class: 'hit' });
         hit.addEventListener('mousemove', function (evt) {
           showTip(wrap, evt, [se.name, LABEL[v] + ': ' + pct(e.accuracy) + '% named correctly', e.ci95 ? 'likely range ' + pctCi(e.ci95) : '']);
         });
         hit.addEventListener('mouseleave', function () { hideTip(wrap); });
         svg.appendChild(hit);
       });
+      if (wide) {  // the line's name at its end
+        var last = pts[pts.length - 1];
+        svg.appendChild(s('circle', { cx: W - R + 22, cy: last[1] + (se.key === 'spark' ? -12 : 12), r: 5, fill: se.color }));
+        svg.appendChild(s('text', { x: W - R + 32, y: last[1] + (se.key === 'spark' ? -7 : 17), class: 'ser' }, se.label));
+      }
     });
-    var pub = D.human.published;
-    [['outline', pub.outline_mean_260], ['silhouette', pub.silhouette_mean_260]].forEach(function (p) {
-      var i = VERSIONS.indexOf(p[0]), cx = x(i) + 30, cy = y(p[1]);
-      svg.appendChild(s('rect', { x: cx - 5, y: cy - 5, width: 10, height: 10, fill: C.people, transform: 'rotate(45 ' + cx + ' ' + cy + ')' }));
-      var hit = s('rect', { x: cx - 10, y: cy - 10, width: 20, height: 20, class: 'hit' });
+    [['outline', pub.outline_mean_260], ['silhouette', pub.silhouette_mean_260]].forEach(function (p, k) {
+      var i = VERSIONS.indexOf(p[0]), cx = x(i) + (wide ? 34 : 22), cy = y(p[1]);
+      svg.appendChild(s('rect', { x: cx - 7, y: cy - 7, width: 14, height: 14, fill: C.people, transform: 'rotate(45 ' + cx + ' ' + cy + ')' }));
+      if (k === 0) svg.appendChild(s('text', { x: cx + 14, y: cy + 5, class: 'lbl em' }, 'People ' + pct(p[1]) + '%'));
+      else svg.appendChild(s('text', { x: cx + 14, y: cy + 5, class: 'lbl em' }, pct(p[1]) + '%'));
+      var hit = s('rect', { x: cx - 12, y: cy - 12, width: 24, height: 24, class: 'hit' });
       hit.addEventListener('mousemove', function (evt) { showTip(wrap, evt, ['People (published)', LABEL[p[0]] + 's of 260 classic drawings: ' + pct(p[1]) + '%', 'Wagemans et al. 2008, different drawings']); });
       hit.addEventListener('mouseleave', function () { hideTip(wrap); });
       svg.appendChild(hit);
     });
     wrap.appendChild(svg);
+    if (!wrap._sized) {  // drawn to the column's width: redraw when it changes
+      wrap._sized = true;
+      var rt = 0, lastW = W;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () { var w = Math.round(wrap.clientWidth); if (Math.abs(w - lastW) > 8) { lastW = w; accuracyChart(); } }, 150);
+      });
+    }
     var leg = $('acc-legend');
     leg.innerHTML = '';
     series.forEach(function (se) { leg.appendChild(h('span', {}, [h('i', { style: { background: se.color } }), se.name])); });
