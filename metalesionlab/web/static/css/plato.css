@@ -25,6 +25,8 @@ body.plato { background: var(--ground-warm); --pc-reply: #FCFBF7; }
 .pc-stat { border-left: 4px solid var(--blue); padding: 4px 0 4px 16px; display: flex; flex-direction: column; gap: 6px; }
 .pc-stat-num { font-size: var(--fs-number); font-weight: var(--fw-number); line-height: var(--lh-number); letter-spacing: var(--ls-number); }
 .pc-stat-text { margin: 0; font-size: var(--fs-body); font-weight: 600; line-height: 1.35; }
+.pc-stat-more { margin: 2px 0 0; font-size: var(--fs-small); color: var(--ink-2); line-height: 1.4; }
+.pc-stat-more a { color: inherit; }
 .pc-stat-sub { margin: 0; font-size: var(--fs-small); line-height: 1.5; color: var(--muted); }
 .pc-stat-sub .k { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 .pc-pick legend { font-weight: 600; }

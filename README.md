@@ -16,6 +16,7 @@ The series follows the life of a chair, as an analogy: children's drawings move 
 | | Result |
 |---|---|
 | **Almost everything** | Muse Image drew **34 of 35** things more alike than people did. Typically its drawings are about half as varied as people's (median ratio **0.49**). Only books came out as varied. |
+| **Asked 200 times** | A check added later: asked for a chair 200 times, Muse Image drew the same slat-back chair throughout: **72% less varied** than 200 people's (ratio 0.28, CI 0.26–0.31), stronger than with 16 ([docs/plato.md](docs/plato.md#at-full-size-200-chairs)). |
 | **"Any kind" changes nothing** | "A chair (any kind of chair)" gives the same slat-back chair again; across 35 things the ratio stays at 0.49. |
 | **Naming the kinds works** | When Muse Spark lists 16 kinds and Muse Image draws one of each, the drawings are **1.30 times** as varied as people's. Muse knows the variety: its narrow chair is a default, and it varies when asked. |
 | **People draw the plain chair too** | **83%** of people's recognizable drawings show the plain, ordinary kind (Muse Glimmer's labels, all 35 things), the same share as Muse Image's usual prompt. People's extra variety is mostly *how* they draw a thing, not *which* one. |

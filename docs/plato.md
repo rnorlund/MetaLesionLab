@@ -63,6 +63,21 @@ Code: `metalesionlab/plato.py` and `scripts/plato_{generate,human,embed,analyze,
 - bench 17%
 - hat 25%
 
+## At full size: 200 chairs
+
+*Added Nov 1, after the main analysis, as a robustness check; not pre-registered.* Is 16 drawings per thing enough? The main analysis compares Muse Image's 16 with 200 random sets of 16 people's drawings, so the comparison is fair at that size. Here we asked for the chair 200 times, with the same prompt, ink crop, DINOv2 and spread, and compared all 200 with people's 200 at once: no subsets. Code: `scripts/plato_bigger.py`; numbers: `public_data/plato_bigger_chair.json`.
+
+| | Spread (95% CI) |
+|---|---|
+| Muse Image, 200 chairs | 0.10 (0.10–0.11) |
+| People, 200 Quick, Draw! chairs | 0.36 (0.35–0.38) |
+| Ratio | **0.28** (0.26–0.31): 72% less varied |
+
+- **The result holds, and is stronger.** With 16 chairs the ratio was 0.37 (63% less varied); with 200, it is 0.28.
+- **The first 16 were not a lucky draw.** Random sets of 16 from the 200 have a spread of 0.08–0.14 (95% range); the first 16's spread, 0.13, sits at the top of it, so they were if anything more varied than usual.
+- **Every set of 16 is narrower than every set of people's.** Of 2,000 random sets of 16 of Muse Image's chairs, 100% are less varied than the least varied of 2,000 random sets of 16 of people's.
+- **By eye:** all 200 are a slat-back dining chair in the same three-quarter view; a handful have arms. Laid on top of each other, the 200 make one sharp chair; people's 200 make a cloud.
+
 ## Is it just Muse? (a second generator)
 
 Do AI image models in general picture one prototype, or is it Muse? We drew the same 35 concepts with an open model, Stable Diffusion XL, and measured them the same way.

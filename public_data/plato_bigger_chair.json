@@ -1,0 +1,34 @@
+{
+ "what": "Muse Image's chair at full size: 200 doodles from the main prompt against 200 people's Quick, Draw! chairs",
+ "added": "2026-11-01, after the main analysis; a robustness check, not pre-registered",
+ "n_ai": 200,
+ "n_people": 200,
+ "ai_spread": 0.10369933396577835,
+ "ai_spread_ci95": [
+  0.09501501692625128,
+  0.1132711662568789
+ ],
+ "people_spread": 0.36388251185417175,
+ "people_spread_ci95": [
+  0.3467305106210151,
+  0.38075105555685324
+ ],
+ "ratio": 0.28498026310024077,
+ "ratio_ci95": [
+  0.25849565365953703,
+  0.31468769357637916
+ ],
+ "less_varied_pct": 72,
+ "first_16_spread": 0.13376297056674957,
+ "first_16_ratio_vs_16_subsets_of_people": 0.36828451387555217,
+ "ai_16_subsets_spread_range95": [
+  0.07955820057541133,
+  0.13848208300769327
+ ],
+ "people_16_subsets_spread_range95": [
+  0.29894096180796625,
+  0.4218522273004055
+ ],
+ "ai_16_subsets_below_every_people_16_subset_share": 1.0,
+ "method": "DINOv2-base CLS on ink-cropped pictures; spread = mean pairwise cosine distance; CIs from 2,000 bootstrap resamples of pictures"
+}

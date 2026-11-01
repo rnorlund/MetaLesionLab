@@ -105,6 +105,7 @@
     var less = pct(1 - c.index);
     $('stat-num').textContent = less + '%';
     $('stat-text').textContent = 'Muse Image’s ' + NOUN[c.key] + ' are ' + less + '% less varied than people’s.';
+    if ($('stat-200')) $('stat-200').hidden = c.key !== 'chair';  // the 200-chair check exists for the chair only
     var sub = $('stat-sub');
     sub.innerHTML = '';
     var k1 = h('span', { class: 'k' }); k1.style.background = BLUE;
