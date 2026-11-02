@@ -51,7 +51,7 @@ body.landing { background: var(--l-white); --l-white: var(--panel); --ai: var(--
 
 /* draw first: the pad (draw.js) and Plato's question, before anything about the AI's chairs */
 .hero-draw { padding: clamp(32px, 2.6vw, 64px) 0 clamp(52px, 3.6vw, 90px); }
-.draw-grid { display: grid; grid-template-columns: minmax(0, clamp(460px, 32vw, 682px)) minmax(0, 1fr); gap: 32px clamp(56px, 6vw, 160px); align-items: center; }
+.draw-grid { display: grid; grid-template-columns: minmax(0, clamp(460px, 32vw, 682px)) minmax(0, 1fr); gap: 32px clamp(56px, 6vw, 160px); align-items: start; }  /* the pad and Plato share a top edge (Roger, Nov 2) */
 .hero-pad { background: var(--panel); border: 1px solid var(--line-warm); border-radius: 20px; padding: 20px 20px 16px; box-shadow: var(--l-shadow); }
 .hero-pad .dw-title { font-size: var(--fs-h3); font-weight: var(--fw-h3); line-height: var(--lh-h3); }
 .hero-pad .dw-instr { font-size: var(--fs-intro); }

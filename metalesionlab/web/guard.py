@@ -50,6 +50,7 @@ from fastapi.responses import JSONResponse
 from starlette.datastructures import Headers, MutableHeaders
 from starlette.requests import Request as StarletteRequest
 
+from metalesionlab.web.own_key import key_of
 from metalesionlab import meta_api
 from metalesionlab.brand import LINGUA
 from metalesionlab.meta_api import BudgetExceeded
@@ -389,13 +390,15 @@ class Guard:
             note = (f"On the live demo each word gets up to {cands} picture{'s' if cands > 1 else ''}.")
         return None, len(words) * max(1, cands) * COST_PER_CANDIDATE + 0.01, new_body, note
 
-    def admit(self, rule: Rule, ip: str, body: bytes = b"") -> Decision:
+    def admit(self, rule: Rule, ip: str, body: bytes = b"", own_key: bool = False) -> Decision:
+        """own_key: the request carries the visitor's own Meta API key (web/own_key.py), so the demo's daily dollar
+        cap doesn't apply; the per-visitor limits do."""
         estimate, new_body, note = rule.estimate_usd, None, None
         if rule.bucket == "build":
             rejected, estimate, new_body, note = self._build(body)
             if rejected:
                 return rejected
-        if self.would_exceed(estimate):
+        if not own_key and self.would_exceed(estimate):
             payload = self.budget_payload()
             return Decision(503, payload, {"X-Tippa-Guard": "budget", "Retry-After": str(payload["resets_in_s"])})
         now = self.clock()
@@ -568,7 +571,8 @@ class GuardMiddleware:
         body, too_big = await _read_body(receive, rule.max_bytes)
         if too_big:
             return await _respond(send, self.guard.too_large(rule))
-        d = self.guard.admit(rule, self.guard.client_ip(StarletteRequest(scope)), body)
+        own = key_of(Headers(scope=scope)) is not None
+        d = self.guard.admit(rule, self.guard.client_ip(StarletteRequest(scope)), body, own_key=own)
         if d.status is not None:
             return await _respond(send, d)
         if d.body is not None:

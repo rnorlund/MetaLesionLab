@@ -109,7 +109,7 @@ figure.epigraph--band .epigraph-face { grid-row: auto; width: var(--ep-face); ma
   .hero-ask:has(> .hero-plato) { --plato-w: clamp(160px, 24vw, 240px);
     min-height: var(--plato-h); padding-right: calc(var(--plato-w) + var(--plato-gap)); justify-content: center; }
   .hero-ask:has(> .hero-plato) > .title-pair { min-height: 0; padding-right: 0; }
-  .hero-plato { top: 50%; transform: translateY(-50%); }
+  .hero-plato { top: 0; }  /* level with the drawing pad's top; the question stays centred beside him */
 }
 @media (min-width: 1200px) {
   .hero-ask:has(> .hero-plato) { --plato-w: clamp(180px, 19vw, 440px); }

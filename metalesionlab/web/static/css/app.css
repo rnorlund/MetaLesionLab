@@ -367,13 +367,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (min-width: 861px) and (max-width: 1600px) {  /* one row with the Tour button: the tagline goes */
   .topbar:has(.nav-btn) .brand-tag { display: none; }
 }
-@media (min-width: 861px) and (max-width: 1279px) {  /* too narrow for one row: logo, Tour and theme on top, the links below */
-  .topbar:has(.nav-btn) .brand { order: 1; }
-  .topbar:has(.nav-btn) .demo-btn { order: 2; margin-left: auto; }
-  .topbar:has(.nav-btn) .theme-toggle { order: 3; }
-  .topbar:has(.nav-btn) .topnav { order: 4; flex-basis: 100%; }
-  .topbar:has(.nav-btn):not(:has(.demo-btn)) .theme-toggle { margin-left: auto; }
+@media (min-width: 861px) {  /* one row at every width (Roger, Nov 2): links that don't fit move into More (navfit.js) */
+  .topbar:has(.nav-btn) { flex-wrap: nowrap; }
+  .topbar:has(.nav-btn) .topnav { flex-wrap: nowrap; min-width: 0; }
+  .topbar:has(.nav-btn) > .demo-btn, .topbar:has(.nav-btn) > .theme-toggle { flex: none; }
 }
+.navfit-moved { display: flex; flex-direction: column; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+.navfit-moved:empty { display: none; }
+.navfit-moved a .nav-ico { display: none; }
 @media (max-width: 860px) {
   .topnav { display: none; }
   .nav-menu { display: block; }

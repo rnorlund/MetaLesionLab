@@ -121,6 +121,7 @@ Everything in this repository was built during the hackathon. The commit history
 - Plain language and a "Big and quiet" type system on every page; a question button above each section that scrolls to its answer
 - Ask Socrates' backup: if the Meta Model API can't answer, Claude (Anthropic) stands in, and the reply says so
 - Responsible use: why damaging an AI on purpose is safe here (see below)
+- For judges: **More → Use your own API key** runs Ask Socrates and the voice test on your own Meta key, past the demo's daily budget. The key stays in your browser tab and is sent only with those requests; the server never stores or logs it (`web/own_key.py`, `static/js/ownkey.js`)
 - Charts that glow and move: the layer-by-layer chart drawn live, your drawing pinned on one glowing line on Draw a chair, lines that draw themselves in and bars that grow on every chart, and redrawn charts with pictures as markers and no dead space (`static/js/glowchart.js`, `static/js/glowskin.js`)
 
 ### Prior research context (not part of this submission)

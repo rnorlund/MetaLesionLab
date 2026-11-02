@@ -173,36 +173,47 @@ def image_data_url(image: bytes, mime: str = "image/png") -> str:
 
 
 class MetaAPI:
-    def __init__(self, api_key: str | None = None):
+    def __init__(self, api_key: str | None = None, metered: bool = True):
+        """metered=False is a visitor's own key (web/own_key.py): its calls bill their account, so they are neither
+        checked against this site's caps nor written to its ledger."""
         key = api_key or load_api_key()
+        self.metered = metered
         self.client = OpenAI(base_url=BASE_URL, api_key=key, max_retries=3)
         self.http = httpx.Client(base_url=BASE_URL, headers={"Authorization": f"Bearer {key}"}, timeout=120)
+
+    def _check(self, estimate: float = 0.0) -> None:
+        if self.metered:
+            _check_budget(estimate)
+
+    def _record(self, *args, **kwargs) -> None:
+        if self.metered:
+            _record(*args, **kwargs)
 
     def chat(self, messages: list[dict], model: str = CHAT_MODEL, reasoning_effort: str = "minimal",
              ledger_tag: str | None = None, **kwargs):
         """reasoning_effort is minimal, low, medium, high, xhigh or max. Reasoning tokens bill as output:
         "minimal" used ~100 of them for a one-word answer, the default ~250. ledger_tag marks the ledger
         entry (e.g. "ask" for the Ask the Lab agent) so a feature's own spend can be totalled."""
-        _check_budget()
+        self._check()
         resp = self.client.chat.completions.create(model=model, messages=messages,
                                                    reasoning_effort=reasoning_effort, **kwargs)
-        _record("chat", model, token_cost(model, resp.usage), usage=resp.usage.model_dump(),
+        self._record("chat", model, token_cost(model, resp.usage), usage=resp.usage.model_dump(),
                 **({"tag": ledger_tag} if ledger_tag else {}))
         return resp
 
     def generate_images(self, prompt: str, n: int = 1, size: str | None = None,
                         output_format: str = "png", ledger_tag: str | None = None) -> list[bytes]:
-        _check_budget(n * IMAGE_PRICE)
+        self._check(n * IMAGE_PRICE)
         extra = {"size": size} if size else {}
         resp = self.client.images.generate(model=IMAGE_MODEL, prompt=prompt, n=n,
                                            output_format=output_format, **extra)
-        _record("image", IMAGE_MODEL, len(resp.data) * IMAGE_PRICE, n=len(resp.data),
+        self._record("image", IMAGE_MODEL, len(resp.data) * IMAGE_PRICE, n=len(resp.data),
                 **({"tag": ledger_tag} if ledger_tag else {}))
         return [base64.b64decode(d.b64_json) for d in resp.data]
 
     def segment(self, image: bytes, text: str, mime: str = "image/png") -> tuple[list[SamMatch], str]:
         """Find every instance of `text` in the image; returns parsed boxes and the raw output."""
-        _check_budget(SAM_PRICE)
+        self._check(SAM_PRICE)
         resp = self.client.responses.create(
             model=SAM_MODEL,
             input=[{"type": "message", "role": "user", "content": [
@@ -211,7 +222,7 @@ class MetaAPI:
             ]}],
             metadata={"include_confidence": "true"},
         )
-        _record("sam", SAM_MODEL, SAM_PRICE)
+        self._record("sam", SAM_MODEL, SAM_PRICE)
         return parse_sam_output(resp.output_text), resp.output_text
 
     def transcribe(self, wav: bytes, language: str | None = None, retries: int = 3) -> dict:
@@ -221,7 +232,7 @@ class MetaAPI:
         toward that language without forcing it. Without it, or for a language outside the 25
         supported ones, the model detects the language itself. Network failures and 5xx replies
         are retried with backoff (1, 3, 9 s); a 4xx is final."""
-        _check_budget()
+        self._check()
         request = {"model": ASR_MODEL, "audioEncoding": "WAV", "mode": "PUSH_TO_TALK"}
         if language and (name := asr_language_name(language)):
             request["languageBias"] = [name]
@@ -240,5 +251,5 @@ class MetaAPI:
         resp.raise_for_status()
         body = resp.json()
         ms = body.get("audioDurationMs") or 0
-        _record("asr", ASR_MODEL, ms / 3.6e6 * ASR_PRICE_PER_HOUR, audio_ms=ms)
+        self._record("asr", ASR_MODEL, ms / 3.6e6 * ASR_PRICE_PER_HOUR, audio_ms=ms)
         return body

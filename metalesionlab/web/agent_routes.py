@@ -39,6 +39,7 @@ from starlette.background import BackgroundTask
 from metalesionlab import lab_agent, meta_api
 from metalesionlab.meta_api import BudgetExceeded
 from metalesionlab.web import app as web
+from metalesionlab.web.own_key import OWN_KEY_ERROR
 from metalesionlab.web.limits import client_ip
 
 log = logging.getLogger("tot.ask")
@@ -180,8 +181,8 @@ def _set_cookie(resp, sid: str, cookie: str = COOKIE) -> None:
     resp.set_cookie(cookie, sid, max_age=DAY_S, httponly=True, samesite="lax")
 
 
-def stream_events(events: Callable[[], Iterator[dict]], release: Callable[[], None], name: str = "ask"
-                  ) -> StreamingResponse:
+def stream_events(events: Callable[[], Iterator[dict]], release: Callable[[], None], name: str = "ask",
+                  own_key: bool = False) -> StreamingResponse:
     """An agent's events as JSON lines. A failure after the stream has started is reported as an "error"
     line; `release` runs once, when the stream ends or (via a background task) if the client left first."""
     released = threading.Event()
@@ -198,6 +199,10 @@ def stream_events(events: Callable[[], Iterator[dict]], release: Callable[[], No
         except BudgetExceeded:
             yield json.dumps({"type": "error", "message": web.BUDGET_MSG}) + "\n"
         except (openai.OpenAIError, httpx.HTTPError) as e:
+            if own_key:  # a visitor's own key: its type only, so no part of the key reaches the log or the page
+                log.warning("%s: Meta API error on a visitor's own key: %s", name, type(e).__name__)
+                yield json.dumps({"type": "error", "message": OWN_KEY_ERROR.format(kind=type(e).__name__)}) + "\n"
+                return
             log.warning("%s: Meta API error: %s", name, e)
             yield json.dumps({"type": "error", "message": f"The Meta Model API returned an error "
                                                           f"({type(e).__name__}). Please try again in a minute."}) + "\n"

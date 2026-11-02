@@ -308,7 +308,8 @@
       $('turns').textContent = used ? 'Turn ' + Math.min(used + (S.busy ? 0 : 1), max) + ' of ' + max : 'Up to ' + max + ' turns';
     }
     var s = S.status;
-    var who = s && s.backup && s.backup.active ? s.backup.label + ', standing in for Muse Spark' : 'Muse Spark 1.3';
+    var who = s && s.own_key ? 'Muse Spark 1.3, on your own API key'
+      : s && s.backup && s.backup.active ? s.backup.label + ', standing in for Muse Spark' : 'Muse Spark 1.3';
     $('meta').textContent = s ? who + ' · up to ' + s.max_tool_calls + ' tool calls a turn · ' + s.turns_left + ' turns left today' : '';
     var full = used >= max || (ex && d.over);
     $('msg').disabled = S.busy || full || !!(s && (!s.enabled || !s.budget_left || !s.turns_left)) || (ex && !info);
@@ -545,6 +546,7 @@
   }
 
   // --- status and start -----------------------------------------------------------------------------
+  window.addEventListener('pc-own-key', function () { refreshStatus(); });  // a key added or removed (ownkey.js)
   function refreshStatus() {
     return T.api('/api/socrates/status').then(function (s) {
       S.status = s;

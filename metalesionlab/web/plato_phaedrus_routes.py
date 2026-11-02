@@ -23,7 +23,9 @@ import logging
 import random
 import threading
 
+import httpx
 import numpy as np
+import openai
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
@@ -31,6 +33,7 @@ from fastapi.responses import FileResponse
 from metalesionlab import audio, meta_api
 from metalesionlab import plato_phaedrus as P
 from metalesionlab.meta_api import BudgetExceeded
+from metalesionlab.web import own_key
 from metalesionlab.web import app as web
 from metalesionlab.web.limits import DailyLimiter, client_ip, limit_for, limiter
 from metalesionlab.web.plato_atlas_routes import _load
@@ -102,7 +105,7 @@ def phaedrus_audio(voice: str, name: str):
 @router.get("/api/phaedrus/status")
 def phaedrus_status(request: Request):
     ip = client_ip(request)
-    return {"enabled": web.api_key_present(), "privacy": PRIVACY, "max_seconds": MAX_S, "min_seconds": MIN_S,
+    return {"enabled": web.api_key_present() or own_key.key_of(request.headers) is not None, "privacy": PRIVACY, "max_seconds": MAX_S, "min_seconds": MIN_S,
             "cost_per_try_usd": COST_PER_TRY, "sentence": P.SENTENCE,
             "limits": {"tries_per_day": limit_for("phaedrus"), "tries_left_today": limiter.remaining("phaedrus", ip),
                        "per_minute": limit_for("phaedrus_burst")}}
@@ -174,9 +177,10 @@ def spark_guess(api: meta_api.MetaAPI, transcript: str) -> dict:
             "gloss": P.MEANINGS[k].gloss if k is not None else None, "answer": answer[:40]}
 
 
-def read(wav: bytes) -> dict:
+def read(wav: bytes, api=None) -> dict:
+    """`api`: a visitor's own key (web/own_key.py), or None for the site's."""
     not_silent(audio.samples(wav)[0])  # nothing to pay for
-    api = web.get_api()
+    api = api or web.get_api()
     body = api.transcribe(audio.pad_silence(wav, PAD_S), language="en")
     transcript = str(body.get("transcript") or "").strip()
     out = {"transcript": transcript, "is_sentence": P.is_the_sentence(transcript), "spark": None,
@@ -193,11 +197,17 @@ def read(wav: bytes) -> dict:
 async def phaedrus_read(request: Request):
     """Voice Transcribe writes the visitor's recording down (a 16 kHz mono WAV as the body); if it is the sentence,
     Muse Spark guesses the meaning from the transcript alone. Paid: about $0.003."""
-    if not web.api_key_present():
+    mine = own_key.api_for(request)  # a visitor's own key: their budget, not the demo's
+    if mine is None and not web.api_key_present():
         raise HTTPException(503, "The voice test needs the Meta Model API, which isn't set up on this server. "
                                  "The prosody reader and everything above still work.")
     take("phaedrus", client_ip(request))
     wav = await read_wav(request)
+    if mine is not None:
+        try:
+            return await run_in_threadpool(read, wav, mine)
+        except (openai.OpenAIError, httpx.HTTPError) as e:
+            raise HTTPException(502, own_key.OWN_KEY_ERROR.format(kind=type(e).__name__)) from None
     if meta_api.spent() + RESERVE_USD > meta_api.BUDGET_USD:
         raise HTTPException(503, "This demo has reached its spending cap for Meta API calls, so the transcript and "
                                  "Muse Spark's guess are paused. The prosody reader and the seven recordings still work.")

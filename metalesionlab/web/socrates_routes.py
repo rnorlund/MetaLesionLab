@@ -51,7 +51,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
 from metalesionlab import claude_api, meta_api, socrates_agent
-from metalesionlab.web import agent_routes
+from metalesionlab.web import agent_routes, own_key
 from metalesionlab.web import app as web
 from metalesionlab.web.limits import client_ip
 
@@ -158,12 +158,14 @@ def socrates_status(request: Request):
     sid, new = agent_routes._session(request, COOKIE)
     spent = spend.today()
     left = max(0, min(session_cap() - sessions.count(sid), ip_cap() - addresses.count(client_ip(request))))
-    meta_left = meta_ready() and spend.left()
-    claude_left = claude_api.available() and claude_spend.left()
-    body = {"enabled": web.api_key_present() or claude_api.available(), "starters": STARTERS, "turns_left": left,
+    mine = own_key.key_of(request.headers) is not None  # a visitor's own key: their budget, not the demo's
+    meta_left = mine or (meta_ready() and spend.left())
+    claude_left = not mine and claude_api.available() and claude_spend.left()
+    body = {"enabled": mine or web.api_key_present() or claude_api.available(), "starters": STARTERS, "turns_left": left,
             "per_session": session_cap(), "max_turns": socrates_agent.MAX_TURNS,
             "history_tokens": socrates_agent.HISTORY_TOKENS, "daily_cap_usd": daily_usd(),
             "spent_today_usd": round(spent, 4), "budget_left": bool(meta_left or claude_left),
+            "own_key": mine,
             "backup": {"available": claude_api.available(), "active": bool(not meta_left and claude_left),
                        "model": claude_api.MODEL, "label": "Claude (Anthropic)"},
             "model": socrates_agent.MODEL, "reasoning_effort": socrates_agent.REASONING_EFFORT,
@@ -236,11 +238,12 @@ def socrates(body: Dialogue, request: Request):
     if sessions.count(sid) >= session_cap() or addresses.count(ip) >= ip_cap():
         raise HTTPException(429, f"You've had {session_cap()} turns with Socrates today, the limit for this demo. "
                                  "Every page of the lab still works; come back tomorrow.")
-    backup = claude_api.available()
-    if not web.api_key_present() and not backup:
+    mine = own_key.api_for(request)  # a visitor's own key: their budget, so none of the demo's caps or backups
+    backup = claude_api.available() and mine is None
+    if mine is None and not web.api_key_present() and not backup:
         raise HTTPException(503, "Ask Socrates needs the Meta Model API, which isn't set up on this server.")
-    held = spend if meta_ready() and spend.reserve() else None
-    if held is None:
+    held = None if mine is not None else (spend if meta_ready() and spend.reserve() else None)
+    if mine is None and held is None:
         if not backup:
             if not meta_ready():
                 raise HTTPException(503, web.BUDGET_MSG)
@@ -250,13 +253,15 @@ def socrates(body: Dialogue, request: Request):
             raise HTTPException(503, "Socrates has used today's budget for dialogues. Every page of the lab still "
                                      "works, and he'll be back tomorrow.")
         held = claude_spend
-    api = MetaThenClaude(web.get_api() if held is spend else None, _make_claude if backup else None,
-                         why=None if held is spend else "budget")
+    api = (MetaThenClaude(mine, None) if mine is not None else
+           MetaThenClaude(web.get_api() if held is spend else None, _make_claude if backup else None,
+                          why=None if held is spend else "budget"))
     try:
         agent = (make_agent(body.history, body.context, mode="examine", concept=concept, api=api) if concept
                  else make_agent(body.history, body.context, api=api))
     except BaseException:
-        held.release()
+        if held is not None:
+            held.release()
         raise
 
     def to_claude():  # Claude's turns cost more per token: give it room, and say so in the trace
@@ -272,7 +277,8 @@ def socrates(body: Dialogue, request: Request):
 
     sessions.take(sid)
     addresses.take(ip)
-    resp = agent_routes.stream_events(events, held.release, "socrates")
+    resp = agent_routes.stream_events(events, held.release if held is not None else (lambda: None), "socrates",
+                                      own_key=mine is not None)
     if new:
         agent_routes._set_cookie(resp, sid, COOKIE)
     return resp
