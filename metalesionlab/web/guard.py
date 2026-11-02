@@ -91,7 +91,8 @@ BUDGET_DETAIL = {
               "recorded results, and Draw a chair runs on our own server."),
 }
 # Paid requests per visitor per minute, by bucket.
-BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "socrates": 5, "phaedrus": 6, "other": 10}  # a fast /take is ~20 a minute
+BURST_PER_MIN = {"build": 1, "scene": 1, "photo": 1, "score": 30, "ask": 4, "socrates": 5, "phaedrus": 6, "redraw": 3,
+                 "telephone": 2, "other": 10}  # a fast /take is ~20 a minute
 # Daily limits the guard counts itself; limits.py counts builds, scenes and scored responses.
 OTHER_PER_DAY = 100
 # Daily limits.py defaults on the public demo (TOT_LIMIT_* in the environment still wins). Scoring is cheap
@@ -99,7 +100,8 @@ OTHER_PER_DAY = 100
 # generous; the daily dollar cap is what bounds spending.
 PUBLIC_LIMITS = {"build": 3, "scene": 2, "score": 150}
 WHAT = {"build": "picture sets", "scene": "scenes", "photo": "photo tests", "score": "scored answers",
-        "ask": "questions", "socrates": "dialogue turns", "phaedrus": "voice tries", "other": "requests"}
+        "ask": "questions", "socrates": "dialogue turns", "phaedrus": "voice tries", "redraw": "fresh drawings",
+        "telephone": "telephone games", "other": "requests"}
 
 # Mutating /api/ routes that never call a Meta API, and the site that serves them. Everything else that
 # mutates is treated as paid.
@@ -127,6 +129,8 @@ PAID = [
     (MUTATING, re.compile(r"/api/ask(/.*)?"), "ask", "lingua"),  # GET /api/ask/status is free
     (MUTATING, re.compile(r"/api/socrates(/.*)?"), "socrates", "plato"),  # GET /api/socrates/status is free
     ({"POST"}, re.compile(r"/api/phaedrus/read/?"), "phaedrus", "plato"),  # Voice Transcribe and Muse Spark
+    ({"POST"}, re.compile(r"/api/plato/redraw/?"), "redraw", "plato"),  # Muse Image draws 8 new pictures of one thing
+    ({"POST"}, re.compile(r"/api/plato/telephone/play/?"), "telephone", "plato"),  # Muse Spark and Muse Image, 5 rounds
 ]
 
 
@@ -191,6 +195,8 @@ def make_rules(s: Settings) -> dict[str, Rule]:
         "ask": Rule("ask", 64 * 1024, 0.05),
         "socrates": Rule("socrates", 96 * 1024, 0.05),  # the dialogue so far rides along with each turn
         "phaedrus": Rule("phaedrus", 512 * 1024, 0.01),  # a 16 kHz WAV of at most 12 s; a try costs about $0.003
+        "redraw": Rule("redraw", 4 * 1024, 0.08),  # 8 fresh Muse Image drawings of one thing; free tries are counted by the route
+        "telephone": Rule("telephone", 2 * MB, 0.08),  # the visitor's drawing, then 5 rounds; a visitor's own key only
         "other": Rule("other", 256 * 1024, 0.01),
     }
 

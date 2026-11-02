@@ -110,6 +110,6 @@ def test_every_plato_page_gets_the_key_dialog_and_the_one_line_header(client, pa
 
 def test_the_key_stays_in_the_tab_and_goes_only_to_the_paid_routes():
     assert "sessionStorage" in JS and "localStorage" not in JS
-    assert "/^\\/api\\/(socrates|phaedrus)(\\/|$|\\?)/" in JS and "X-Meta-Key" in JS
+    assert "/^\\/api\\/(socrates|phaedrus|plato\\/redraw|plato\\/telephone)(\\/|$|\\?)/" in JS and "X-Meta-Key" in JS
     assert "never stores or logs it" in JS
     assert "nav-accent" in NAVFIT and "nav-star" in NAVFIT and "innerWidth <= 860" in NAVFIT

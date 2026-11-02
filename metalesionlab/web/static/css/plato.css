@@ -292,3 +292,25 @@ body.plato { background: var(--ground-warm); --pc-reply: #FCFBF7; }
   .pc-crowd-strip { grid-template-columns: repeat(8, minmax(0, 1fr)); row-gap: 8px; }
 }
 @media (max-width: 860px) { .pc-crowd-stats { grid-template-columns: minmax(0, 1fr); } }
+
+/* Draw it again, live (plato.js runRedraw) */
+.pc-redraw { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.pc-redraw-btn { align-self: flex-start; font: inherit; font-size: var(--fs-small); font-weight: 650; padding: 11px 18px; border-radius: 10px;
+  border: 1px solid var(--blue); background: transparent; color: var(--ink); cursor: pointer; }
+.pc-redraw-btn:hover:not(:disabled) { background: var(--blue-soft); }
+.pc-redraw-btn:disabled { opacity: 0.7; cursor: default; }
+.pc-redraw-note { margin: 0; font-size: var(--fs-small); color: var(--ink-2); line-height: 1.45; }
+.pc-linkbtn { font: inherit; padding: 0; border: 0; background: none; color: var(--blue); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.pc-redraw-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+.pc-redraw-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--paper); border-radius: 8px; border: 1px solid var(--line); }
+.pc-redraw-say { margin: 4px 0 0; font-size: var(--fs-small); line-height: 1.5; color: var(--ink-2); }
+.pc-redraw-say b { color: var(--ink); }
+.pc-redraw-err { margin: 4px 0 0; font-size: var(--fs-small); color: var(--ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .pc-redraw-grid img { animation: pc-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .pc-redraw-grid img:nth-child(2) { animation-delay: 0.06s; } .pc-redraw-grid img:nth-child(3) { animation-delay: 0.12s; }
+  .pc-redraw-grid img:nth-child(4) { animation-delay: 0.18s; } .pc-redraw-grid img:nth-child(5) { animation-delay: 0.24s; }
+  .pc-redraw-grid img:nth-child(6) { animation-delay: 0.3s; } .pc-redraw-grid img:nth-child(7) { animation-delay: 0.36s; }
+  .pc-redraw-grid img:nth-child(8) { animation-delay: 0.42s; }
+  @keyframes pc-pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
+}

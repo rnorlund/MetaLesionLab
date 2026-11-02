@@ -71,6 +71,8 @@
     S.concept = key;
     renderHero();
     renderRank();
+    var out = $('redraw-out'); if (out && !R.busy) out.textContent = '';
+    updateRedraw();
   }
   function swapImage(img, src, alt) {
     if (img.getAttribute('src') === src) { img.alt = alt; return; }
@@ -83,6 +85,62 @@
     };
     pre.src = src;
   }
+  // --- draw it again, live (plato_redraw_routes.py): 8 new pictures now, measured like the experiment's --------------
+  var R = { status: null, busy: false };
+  function redrawKey(concept) { return concept === 'boat' ? 'sailboat' : concept; }
+  function loadRedraw() {
+    T.api('/api/plato/redraw/status').then(function (s) { R.status = s; updateRedraw(); }).catch(function () { /* no live drawing here */ });
+  }
+  function updateRedraw() {
+    var box = $('redraw'), s = R.status;
+    if (!box) return;
+    var ok = !!(s && s.enabled && s.keys.indexOf(redrawKey(S.concept)) >= 0);
+    box.hidden = !ok;
+    if (!ok) return;
+    var noun = NOUN[S.concept] || 'pictures', btn = $('redraw-btn'), note = $('redraw-note');
+    if (!R.busy) btn.textContent = 'Ask Meta’s AI for ' + s.n + ' new ' + noun + ', now';
+    note.textContent = '';
+    if (s.own_key) {
+      note.appendChild(document.createTextNode('Live, in about 20 seconds, on your own API key (about ' + Math.round(100 * s.cost_usd) + '¢ a try).'));
+    } else if (s.tries_left_today > 0) {
+      note.appendChild(document.createTextNode('Live, in about 20 seconds: are they cherry-picked? One free try a day; as many as you like with '));
+      var a = h('button', { type: 'button', class: 'pc-linkbtn', text: 'your own API key' });
+      a.addEventListener('click', function () { if (window.PCOwnKey) PCOwnKey.open(); });
+      note.appendChild(a);
+      note.appendChild(document.createTextNode('.'));
+    } else {
+      note.appendChild(document.createTextNode('That was today’s free try. To draw again now, add '));
+      var b = h('button', { type: 'button', class: 'pc-linkbtn', text: 'your own API key' });
+      b.addEventListener('click', function () { if (window.PCOwnKey) PCOwnKey.open(); });
+      note.appendChild(b);
+      note.appendChild(document.createTextNode('.'));
+    }
+    btn.disabled = R.busy || (!s.own_key && s.tries_left_today <= 0);
+  }
+  function runRedraw() {
+    if (R.busy) return;
+    var noun = NOUN[S.concept] || 'pictures', out = $('redraw-out'), btn = $('redraw-btn');
+    R.busy = true;
+    btn.disabled = true;
+    btn.textContent = 'Muse Image is drawing ' + R.status.n + ' new ' + noun + '…';
+    out.textContent = '';
+    fetch('/api/plato/redraw', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: S.concept }) })
+      .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.detail || 'It didn’t work. Please try again.'); return d; }); })
+      .then(function (d) {
+        var grid = h('div', { class: 'pc-redraw-grid' });
+        d.images.forEach(function (src, i) { grid.appendChild(h('img', { src: src, alt: 'New drawing ' + (i + 1) + ' of ' + d.n + ' by Muse Image' })); });
+        out.appendChild(grid);
+        var closer = d.people_farther_pct >= 99.5 ? 'any of people’s' : d.people_farther_pct + '% of people’s';
+        out.appendChild(h('p', { class: 'pc-redraw-say', html: '<b>' + d.n + ' new ' + noun + ', drawn just now.</b> How different they look from each other: ' +
+          f2(d.new_spread) + ' (the published ' + c16() + ': ' + f2(d.ai_spread) + '; people’s: ' + f2(d.human_spread) + '). Each is closer to Muse’s usual ' +
+          (d.label || 'one') + ' than ' + closer + '.' }));
+      })
+      .catch(function (e) { out.appendChild(h('p', { class: 'pc-redraw-err', text: e.message })); })
+      .then(function () { R.busy = false; loadRedraw(); });
+  }
+  function c16() { var c = heroConcept(S.concept); return c && c.n ? c.n : 16; }
+  window.addEventListener('pc-own-key', loadRedraw);
+
   function renderHero() {
     var c = heroConcept(S.concept);
     if (!c) return;
@@ -653,6 +711,8 @@
   }
 
   bind();
+  if ($('redraw-btn')) $('redraw-btn').addEventListener('click', runRedraw);
+  loadRedraw();
   T.api('/api/plato').then(function (d) {
     S.data = d;
     renderHero();

@@ -970,9 +970,11 @@ SITE_ROUTERS = {
         "plato_twins_routes",  # Prisoners of the cave, a section of /plato/scale (/api/plato/twins)
         "plato_ideas_routes",  # The invisible Forms (/plato/ideas)
         "plato_phaedrus_routes",  # Seven meanings (/plato/phaedrus): its voice test is paid
+        "plato_telephone_live_routes",  # play telephone with your own drawing (/draw result card): paid, own key only
         "plato_clock_routes",  # The clock test (/plato/clock)
         "plato_gallery_routes",  # the gallery (/plato/gallery) and the "From the lab" band on every Plato page
         "draw_routes",  # Draw a chair (/draw)
+        "plato_redraw_routes",  # Draw it again, live: 8 new Muse Image pictures, measured (/api/plato/redraw): paid
         "socrates_routes",  # Ask Socrates (/socrates): paid
     ],
     "lingua": [

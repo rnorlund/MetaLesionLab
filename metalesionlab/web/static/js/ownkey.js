@@ -1,11 +1,12 @@
 /* Your own Meta API key (for judges): More → "Use your own API key" opens a small dialog. The key stays in this tab's
    sessionStorage (gone when the tab closes) and is added, as the X-Meta-Key header, only to the paid requests: Ask
-   Socrates (/api/socrates…) and the voice test (/api/phaedrus/…). The server uses it for that request and nothing
+   Socrates (/api/socrates…), the voice test (/api/phaedrus/…), Draw it again (/api/plato/redraw) and telephone
+   (/api/plato/telephone/…). The server uses it for that request and nothing
    else (web/own_key.py): those calls bill the visitor's account, so the demo's daily budget doesn't limit them.
    While a key is set, "More" and the phone menu show a small dot. site.py adds this file to every Plato page. */
 (function () {
   'use strict';
-  var STORE = 'pc-own-meta-key', PAID = /^\/api\/(socrates|phaedrus)(\/|$|\?)/;
+  var STORE = 'pc-own-meta-key', PAID = /^\/api\/(socrates|phaedrus|plato\/redraw|plato\/telephone)(\/|$|\?)/;
   function get() { try { return sessionStorage.getItem(STORE) || ''; } catch (e) { return ''; } }
   function set(v) {
     try { if (v) sessionStorage.setItem(STORE, v); else sessionStorage.removeItem(STORE); } catch (e) { /* storage off */ }
@@ -45,11 +46,11 @@
       dialog = el('dialog', { class: 'ok-dialog', 'aria-labelledby': 'ok-title' }, [
         close,
         el('h2', { id: 'ok-title', text: 'Use your own Meta API key' }),
-        el('p', { text: 'The live demo shares a small daily budget. To try Ask Socrates and the voice test as much as you like, use your own key from dev.meta.ai. Those calls then bill your account.' }),
+        el('p', { text: 'The live demo shares a small daily budget. To try Ask Socrates, the voice test and Draw it again as much as you like, and to play telephone with your own drawing, use your own key from dev.meta.ai. Those calls then bill your account.' }),
         el('label', { for: 'ok-key', text: 'Your key' }), input,
         el('ul', { class: 'ok-facts' }, [
           el('li', { text: 'It stays in this browser tab only, and is gone when you close the tab.' }),
-          el('li', { text: 'It is sent only with your own Ask Socrates and voice-test requests, over HTTPS.' }),
+          el('li', { text: 'It is sent only with those requests, over HTTPS.' }),
           el('li', { text: 'Our server uses it for that request and never stores or logs it.' })
         ]),
         status,

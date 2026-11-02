@@ -113,6 +113,14 @@
     '    <p class="dw-note">The drawings that look most like yours to DINOv2, a Meta AI that compares pictures.</p>' +
     '    <details class="dw-numbers"><summary>See the numbers</summary><div class="table-wrap"><table class="data" data-dw="numbers"></table></div></details></article>' +
     '</div>' +
+    // Play telephone with your own drawing (things only; judges, on their own Meta API key)
+    '<article class="dw-card dw-tele" data-dw="tele" hidden><h3 data-dw="tele-h">Play telephone with your drawing</h3>' +
+    '  <p class="dw-verdict">Muse Spark describes your drawing, Muse Image draws the description, and then Spark describes the new picture, five times over. Watch what survives.</p>' +
+    '  <p class="dw-note">This sends your drawing to Meta’s API on your own key. Nothing is stored here.</p>' +
+    '  <div class="dw-tele-act"><button type="button" class="btn btn-dark" data-dw="tele-go">Add your own API key to play</button></div>' +
+    '  <p class="dw-oops" data-dw="tele-err" role="alert" hidden></p>' +
+    '  <ol class="dw-tele-strip" data-dw="tele-strip" aria-live="polite" hidden></ol>' +
+    '  <p class="dw-note" data-dw="tele-end" hidden>Plato called a painting a copy of a copy.</p></article>' +
     // The clock test (mode "group"): two averages, never anyone's drawing. Which one the clock is closer to, and where
     // its distance from people's average falls among adults' (published quantiles): shape similarity, not a score.
     '<div class="dw-tiles dw-group-tiles" data-dw="group-tiles" hidden>' +
@@ -920,6 +928,7 @@
       if (!shown) fillStrip(c);
       q('fair').textContent = isGroup(c) ? groupFair(c) : isIdea(c) ? ideaFair(c) : fair(c);
       if (isGroup(c)) showGroupResults(r, c); else if (isIdea(c)) showIdeaResults(r, c); else showResults(r, c);
+      showTele(c);
       showDamage();  // after the results, apart from them; it gets the thing's key only
       if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
       document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
@@ -1141,6 +1150,116 @@
       updateShareLinks();
       socratesLink(r, c);
     }
+    // ---------- Play telephone (things only): Spark describes, Muse Image draws, five rounds, on the visitor's own key ----------
+    var teleRun = 0;  // a new game or a new result ends the one in progress
+    function teleKey() { return !!(window.PCOwnKey && window.PCOwnKey.active()); }
+    function teleBtn() {
+      var b = q('tele-go');
+      if (!b) return;
+      b.textContent = teleKey() ? 'Play telephone (5 rounds, about 6¢ on your key)' : 'Add your own API key to play';
+    }
+    window.addEventListener('pc-own-key', teleBtn);
+    function teleDrawing() {  // the visitor's drawing as a white-background PNG, about 512 px
+      var side = 512, cv = document.createElement('canvas');
+      cv.width = cv.height = side;
+      var g = cv.getContext('2d');
+      g.fillStyle = '#FFFFFF';
+      g.fillRect(0, 0, side, side);
+      if (S.upload) {
+        var u = S.upload.canvas, k = Math.min(side / u.width, side / u.height);
+        g.drawImage(u, (side - u.width * k) / 2, (side - u.height * k) / 2, u.width * k, u.height * k);
+      } else {
+        strokeAll(g, S.strokes, side / 1000, Math.max(3, side / 110), 0, 0);
+      }
+      return cv.toDataURL('image/png');
+    }
+    function teleStep(strip, label, src, text) {
+      var li = h('li', { class: 'dw-tele-step' }, [
+        h('img', { src: src, alt: label === 'Yours' ? 'Your drawing' : 'Round ' + label, width: 512, height: 512 }),
+        h('p', { class: 'dw-tele-cap', text: text })]);
+      li.insertBefore(h('p', { class: 'dw-tele-n', text: label }), li.firstChild);
+      strip.appendChild(li);
+      return li;
+    }
+    function showTele(c) {
+      var box = q('tele');
+      if (!box) return;
+      teleRun++;
+      var on = !isGroup(c) && !isIdea(c);
+      box.hidden = !on;
+      q('tele-strip').hidden = true;
+      q('tele-strip').textContent = '';
+      q('tele-end').hidden = true;
+      q('tele-err').hidden = true;
+      q('tele-go').disabled = false;
+      if (!on) return;
+      q('tele-h').textContent = 'Play telephone with your ' + c.label.toLowerCase();
+      teleBtn();
+    }
+    function playTele() {
+      if (!teleKey()) { if (window.PCOwnKey) window.PCOwnKey.open(); return; }
+      var btn = q('tele-go'), strip = q('tele-strip'), err = q('tele-err'), end = q('tele-end'), me = ++teleRun;
+      function fail(m) { err.textContent = m; err.hidden = false; btn.disabled = false; if (pend) pend.remove(); }
+      var pend = null;
+      err.hidden = true;
+      end.hidden = true;
+      strip.textContent = '';
+      strip.hidden = false;
+      btn.disabled = true;
+      var mine = teleDrawing();
+      teleStep(strip, 'Yours', mine, 'Your drawing');
+      function waiting(n) {
+        if (pend) pend.remove();
+        pend = h('li', { class: 'dw-tele-step dw-tele-wait' }, [
+          h('p', { class: 'dw-tele-n', text: 'Round ' + n }),
+          h('div', { class: 'dw-tele-ph', 'aria-hidden': 'true' }),
+          h('p', { class: 'dw-tele-cap', text: 'Spark is describing, Muse Image is drawing…' })]);
+        strip.appendChild(pend);
+      }
+      waiting(1);
+      fetch('/api/plato/telephone/play', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: mine, rounds: 5 }) }).then(function (r) {
+        if (!r.ok) {
+          return r.json().catch(function () { return {}; }).then(function (j) {
+            throw new Error(typeof j.detail === 'string' ? j.detail : 'The game could not start (' + r.status + ').');
+          });
+        }
+        var rd = r.body.getReader(), dec = new TextDecoder(), buf = '', finished = false;
+        function line(t) {
+          if (me !== teleRun || !t.trim()) return;
+          var ev = JSON.parse(t);
+          if (ev.type === 'round') {
+            if (pend) { pend.remove(); pend = null; }
+            var li = teleStep(strip, 'Round ' + ev.n, ev.image, ev.description);
+            if (!reduced()) li.classList.add('dw-tele-in');
+            waiting(ev.n + 1);
+          } else if (ev.type === 'done') {
+            finished = true;
+            if (pend) { pend.remove(); pend = null; }
+            end.hidden = false;
+            btn.disabled = false;
+            btn.textContent = 'Play again';
+          } else if (ev.type === 'error') {
+            finished = true;
+            fail(ev.message || 'Something went wrong.');
+          }
+        }
+        function pump() {
+          return rd.read().then(function (x) {
+            if (me !== teleRun) { rd.cancel(); return; }
+            if (x.done) { if (buf) line(buf); if (!finished) fail('The game stopped early. Please try again.'); return; }
+            buf += dec.decode(x.value, { stream: true });
+            var parts = buf.split('\n');
+            buf = parts.pop();
+            parts.forEach(line);
+            return pump();
+          });
+        }
+        return pump();
+      }).catch(function (e) { if (me === teleRun) fail(e && e.message ? e.message : 'The game could not run.'); });
+    }
+    q('tele-go').addEventListener('click', playTele);
+
     function yourInk() {  // the visitor's drawing as dark ink on white (a photo as it is), for the charts
       if (S.upload) return { image: S.upload.canvas, photo: true };
       var cv = document.createElement('canvas'), side = 240;

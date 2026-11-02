@@ -288,3 +288,18 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 @media (min-width: 1800px) {  /* the results' four-column row: the clock's two cards take half each */
   .dw-results > .dw-group-tiles .dw-card { grid-column: span 2; }
 }
+
+/* Play telephone with your own drawing (things only): the drawing, then each round's picture and what Spark said */
+.dw-tele-act { display: flex; flex-wrap: wrap; gap: 10px; }
+.dw-tele-strip { list-style: none; margin: 0; padding: 0 0 6px; display: flex; gap: 14px; overflow-x: auto; }
+.dw-tele-step { flex: 0 0 clamp(150px, 16vw, 260px); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dw-tele-step img, .dw-tele-ph { width: 100%; height: auto; aspect-ratio: 1; display: block; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+.dw-tele-n { margin: 0; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
+.dw-tele-cap { margin: 0; font-size: var(--fs-small); line-height: 1.4; color: var(--ink-2); }
+.dw-tele-wait .dw-tele-ph { animation: dw-tele-pulse 1.6s ease-in-out infinite; }
+.dw-tele-in img { animation: dw-tele-fade 0.6s ease both; }
+@keyframes dw-tele-pulse { 50% { opacity: 0.45; } }
+@keyframes dw-tele-fade { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .dw-tele-wait .dw-tele-ph, .dw-tele-in img { animation: none; }
+}

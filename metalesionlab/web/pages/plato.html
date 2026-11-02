@@ -148,6 +148,11 @@
         <button type="button" data-concept="person" aria-pressed="false">Person</button>
       </div>
     </fieldset>
+    <div class="pc-redraw" id="redraw" hidden>
+      <button type="button" class="pc-redraw-btn" id="redraw-btn">Ask Meta’s AI for 8 new chairs, now</button>
+      <p class="pc-redraw-note" id="redraw-note"></p>
+      <div class="pc-redraw-out" id="redraw-out" aria-live="polite"></div>
+    </div>
     <details class="pc-how">
       <summary>How do you measure “varied”?</summary>
       <p>A Meta AI that compares pictures (DINOv2) turns each picture into a list of numbers that describes how it looks. Pictures that look alike get similar numbers. A set’s <b>spread</b> is how different two of its pictures are, on average: 16 copies of one picture would score 0. We compare Muse Image’s spread with the spread of the same number of people’s drawings.</p>
