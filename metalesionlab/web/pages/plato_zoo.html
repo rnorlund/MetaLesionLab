@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The damage zoo · {{BRAND}}</title>
+<meta name="description" content="We switched off more and more of the artificial neurons of open image AIs, in the part that reads the words or the part that draws, and asked each to draw a chair, God and four other things. Each one breaks in its own way.">
+<meta property="og:title" content="The damage zoo · {{BRAND}}">
+<meta property="og:description" content="Damage an image AI and each one breaks in its own way: some draw strangers, some dissolve into texture.">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/plato_zoo.css">
+</head>
+<body class="plato-zoo">
+<a class="skip" href="#main">Skip to content</a>
+<div class="page">
+<header class="topbar"><a class="brand" href="/"><b>{{BRAND}}</b></a></header>
+
+<main id="main" tabindex="-1">
+
+<!-- The first screen: the question, the answer, then the zoo itself (plato_zoo.js, from /api/plato/zoo): pick a thing
+     and where the damage is, then play or drag; every AI's card steps through its own 11 steps of damage together. -->
+<section class="zoo-hero" aria-labelledby="hero-h">
+  <div class="title-pair">
+    <p class="title-kicker">What would Plato ask an AI? <span class="kicker-q">The damage zoo · For fun · <a href="/damaged">Damaged AI</a></span></p>
+    <h1 id="hero-h">The damage zoo</h1>
+  </div>
+  <p class="zoo-answer">Switch off an image AI’s artificial neurons and each one breaks in its own way. Damage the part that reads the words and some draw strangers; damage the part that draws and the picture dissolves.</p>
+</section>
+
+<section class="zoo" id="zoo" aria-label="The damaged pictures">
+  <div class="zoo-controls">
+    <div class="seg" role="group" aria-label="What the AIs drew" id="thing-seg"></div>
+    <div class="seg zoo-part" role="group" aria-label="Where the damage is" id="part-seg"></div>
+  </div>
+  <div class="zoo-range">
+    <button type="button" class="zoo-play" id="play" aria-pressed="false">Play</button>
+    <label for="step">Damage</label>
+    <input type="range" id="step" min="0" max="10" step="1" value="0" aria-valuetext="intact">
+    <output id="step-out" for="step">intact</output>
+  </div>
+  <div class="zoo-grid" id="grid" aria-live="off"><p class="zoo-note">Loading the zoo…</p></div>
+  <p class="zoo-cap">Each card follows one picture, drawn from the same random start at every step, so you see what the damage did to it. Each AI’s damage runs from intact to where its pictures stop meaning anything, so the share of neurons switched off differs between AIs; it is under each picture.</p>
+</section>
+
+<section class="zoo-sec" id="how" data-ask="How did we damage them?" aria-labelledby="how-h">
+  <h2 id="how-h">How we did it</h2>
+  <ul class="zoo-how">
+    <li><b>The request.</b> The same one we give Meta’s Muse Image: <span id="prompt">“A quick simple doodle sketch of a chair, black marker on plain white, like a 20-second drawing, no text, no shading.”</span></li>
+    <li><b>The damage.</b> An image AI has two parts: one reads the words, the other turns them into a picture. In one part at a time, we switched off a share of the artificial neurons in every layer (the neurons inside each layer’s feed-forward step), chosen at random. Each step keeps the neurons the step before switched off and adds more, like damage that spreads. Nothing is changed for good: the neurons come back when the picture is done.</li>
+    <li><b>The range.</b> A first pass went from 0 to 90% of neurons off in steps of 10. Past some point each AI’s pictures stop meaning anything (noise, texture, a blank), and we chose that point by eye for each AI and part. The 11 steps here run from intact to it.</li>
+    <li><b>Caveats.</b> One random choice of neurons per part, and two pictures per thing per step (one shown): this shows the variety, it measures nothing. Not planned in advance. “Neurons” here are numbers in a program, not brain cells.</li>
+  </ul>
+  <div class="zoo-table-wrap"><table class="zoo-table" id="models"><caption>The AIs</caption></table></div>
+</section>
+
+<div class="note note-error" id="load-error" hidden></div>
+</main>
+<p class="footnote">Research and teaching use only. Nothing here is medical advice.</p>
+</div>
+
+<script src="/static/js/common.js"></script>
+<script src="/static/js/plato_zoo.js"></script>
+</body>
+</html>

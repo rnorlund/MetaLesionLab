@@ -1,0 +1,180 @@
+{
+ "about": "The damage zoo (/plato/zoo): open image models drawing with a growing share of their neurons switched off, in the language part or the drawing part. Written by scripts/damage_zoo.py web.",
+ "prompt": "A quick simple doodle sketch of {phrase}, black marker on plain white, like a 20-second drawing, no text, no shading.",
+ "things": {
+  "chair": "a chair",
+  "god": "God",
+  "clock": "a clock",
+  "bird": "a bird",
+  "house": "a house",
+  "love": "love"
+ },
+ "parts": [
+  "language",
+  "drawing"
+ ],
+ "steps": 11,
+ "frame": 200,
+ "models": [
+  {
+   "key": "sd15",
+   "name": "Stable Diffusion 1.5",
+   "maker": "Stability AI and Runway, 2022",
+   "reads_with": "OpenAI's CLIP",
+   "license": "CreativeML OpenRAIL-M",
+   "repo": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+   "doses": {
+    "language": [
+     0.0,
+     0.05,
+     0.1,
+     0.15,
+     0.2,
+     0.25,
+     0.3,
+     0.35,
+     0.4,
+     0.45,
+     0.5
+    ],
+    "drawing": [
+     0.0,
+     0.05,
+     0.1,
+     0.15,
+     0.2,
+     0.25,
+     0.3,
+     0.35,
+     0.4,
+     0.45,
+     0.5
+    ]
+   },
+   "captions": {
+    "language": "Forgets the request: sketches of strangers, then a murky photo.",
+    "drawing": "Lines thicken into stripes, then into texture."
+   }
+  },
+  {
+   "key": "sdxl",
+   "name": "Stable Diffusion XL",
+   "maker": "Stability AI, 2023",
+   "reads_with": "two CLIP readers",
+   "license": "CreativeML OpenRAIL++-M",
+   "repo": "stabilityai/stable-diffusion-xl-base-1.0",
+   "doses": {
+    "language": [
+     0.0,
+     0.04,
+     0.08,
+     0.12,
+     0.16,
+     0.2,
+     0.24,
+     0.28,
+     0.32,
+     0.36,
+     0.4
+    ],
+    "drawing": [
+     0.0,
+     0.04,
+     0.08,
+     0.12,
+     0.16,
+     0.2,
+     0.24,
+     0.28,
+     0.32,
+     0.36,
+     0.4
+    ]
+   },
+   "captions": {
+    "language": "Loses the request: God becomes an ordinary man; a bird, a page of birds.",
+    "drawing": "Shatters into bold black-and-white patterns."
+   }
+  },
+  {
+   "key": "pixart",
+   "name": "PixArt-Σ",
+   "maker": "PixArt team, 2024",
+   "reads_with": "Google's T5",
+   "license": "CreativeML OpenRAIL++-M",
+   "repo": "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS",
+   "doses": {
+    "language": [
+     0.0,
+     0.08,
+     0.16,
+     0.24,
+     0.32,
+     0.4,
+     0.48,
+     0.56,
+     0.64,
+     0.72,
+     0.8
+    ],
+    "drawing": [
+     0.0,
+     0.04,
+     0.08,
+     0.12,
+     0.16,
+     0.2,
+     0.24,
+     0.28,
+     0.32,
+     0.36,
+     0.4
+    ]
+   },
+   "captions": {
+    "language": "Holds on longest, then draws strangers in bright colour.",
+    "drawing": "Melts into a dark blur, then grey static."
+   }
+  },
+  {
+   "key": "sana",
+   "name": "Sana",
+   "maker": "NVIDIA, 2024",
+   "reads_with": "Google's Gemma 2",
+   "license": "Apache-2.0",
+   "repo": "Efficient-Large-Model/Sana_1600M_1024px_BF16_diffusers",
+   "doses": {
+    "language": [
+     0.0,
+     0.09,
+     0.18,
+     0.27,
+     0.36,
+     0.45,
+     0.54,
+     0.63,
+     0.72,
+     0.81,
+     0.9
+    ],
+    "drawing": [
+     0.0,
+     0.09,
+     0.18,
+     0.27,
+     0.36,
+     0.45,
+     0.54,
+     0.63,
+     0.72,
+     0.81,
+     0.9
+    ]
+   },
+   "captions": {
+    "language": "Forgets the words and draws stock photos: smiling people, posters, skylines.",
+    "drawing": "Falls apart stroke by stroke, like a drawing being rubbed out."
+   }
+  }
+ ]
+}

@@ -58,8 +58,8 @@ TRUST_PROXY = os.environ.get("TOT_TRUST_PROXY") == "1"
 # they mark Damaged AI as the current page, have their own group under More, and appear on the Damaged AI hub's cards
 # instead of the Experiments hub on /plato. A damage page that isn't in SERIES (it asks no question of Plato's) takes
 # its More-menu label from DAMAGED_TITLES.
-DAMAGED_PAGES = ["/plato/damage", "/plato/glimmer"]
-DAMAGED_TITLES = {"/plato/glimmer": "What a damaged AI forgets first"}
+DAMAGED_PAGES = ["/plato/damage", "/plato/glimmer", "/plato/zoo"]
+DAMAGED_TITLES = {"/plato/glimmer": "What a damaged AI forgets first", "/plato/zoo": "The damage zoo"}
 NAV = {
     "plato": [
         {"href": "/", "label": "Home", "current": ["/"], "icon": "home"},

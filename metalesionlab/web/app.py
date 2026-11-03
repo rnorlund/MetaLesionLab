@@ -961,6 +961,7 @@ SITE_ROUTERS = {
         "plato_bird_routes",  # Plato's Bird (/plato/bird)
         "plato_damage_routes",  # Plato's Chair, damaged (/plato/damage)
         "plato_glimmer_routes",  # Damage Meta's open AI: what does it forget first? (/plato/glimmer)
+        "plato_zoo_routes",  # The damage zoo: how other open image models fall apart (/plato/zoo)
         "damaged_routes",  # Damaged AI, the hub of the damage experiments (/damaged)
         "plato_lifespan_routes",  # The life of a chair (/plato/lifespan)
         "plato_inside_routes",  # Inside the model (/plato/inside)

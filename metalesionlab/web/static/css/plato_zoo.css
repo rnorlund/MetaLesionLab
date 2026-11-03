@@ -1,0 +1,52 @@
+/* The damage zoo (/plato/zoo): the question and answer, the controls (thing, where the damage is, play and a slider),
+   a fluid grid of cards, one per AI, each showing one frame of its strip of 11 pictures, and the method. Pictures sit on
+   paper (--paper) in both themes. Colours are the site's tokens only. */
+body.plato-zoo { background: var(--ground-warm); }
+.plato-zoo main { margin-top: 20px; display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 40px); outline: none; }
+
+.zoo-hero { display: flex; flex-direction: column; gap: 14px; }
+.zoo-hero h1 { margin: 0; font-size: var(--fs-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display);
+  line-height: var(--lh-display); }
+.zoo-answer { margin: 0; max-width: 48ch; font-size: var(--fs-lead); font-weight: var(--fw-lead); line-height: 1.4; color: var(--ink-2); }
+
+.zoo { display: flex; flex-direction: column; gap: 14px; }
+.zoo-controls { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.zoo-controls .seg { flex: 1 1 420px; flex-wrap: wrap; }
+.zoo-controls .zoo-part { flex: 0 1 380px; }
+.zoo-controls .seg button { font-size: var(--fs-small); min-width: 0; }
+.zoo-range { display: grid; grid-template-columns: auto auto minmax(0, 1fr) minmax(110px, auto); gap: 12px; align-items: center;
+  background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.zoo-range label { font-weight: 600; font-size: var(--fs-body); }
+.zoo-range input { width: 100%; accent-color: var(--ink); height: 28px; }
+.zoo-range output { font-size: var(--fs-body); font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.zoo-play { font: inherit; font-size: var(--fs-small); font-weight: 600; padding: 8px 18px; border-radius: 999px;
+  border: 1.5px solid var(--ink); background: var(--ink); color: var(--ground); cursor: pointer; min-width: 84px; }
+.zoo-play[aria-pressed="true"] { background: transparent; color: var(--ink); }
+
+.zoo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: clamp(12px, 1.2vw, 24px); }
+.zoo-card { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.zoo-pic { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--paper); }
+.zoo-pic img { display: block; height: 100%; max-width: none; }
+.zoo-card figcaption { display: flex; flex-direction: column; gap: 2px; }
+.zoo-name { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--fs-body); }
+.zoo-dose { font-size: var(--fs-small); font-variant-numeric: tabular-nums; color: var(--ink-2); white-space: nowrap; }
+.zoo-maker { font-size: var(--fs-label); color: var(--muted); }
+.zoo-capt { font-size: var(--fs-small); color: var(--ink-2); line-height: 1.4; }
+.zoo-cap, .zoo-note { margin: 0; max-width: 90ch; font-size: var(--fs-small); color: var(--muted); line-height: 1.5; }
+
+.zoo-sec { display: flex; flex-direction: column; gap: 14px; padding-top: 20px; border-top: 1px solid var(--line); }
+.zoo-sec h2 { margin: 0; font-size: var(--fs-h2); }
+.zoo-how { margin: 0; padding-left: 1.2em; max-width: 90ch; display: flex; flex-direction: column; gap: 8px;
+  font-size: var(--fs-body); line-height: 1.55; color: var(--ink-2); }
+.zoo-table-wrap { overflow-x: auto; }
+.zoo-table { border-collapse: collapse; min-width: 640px; font-size: var(--fs-small); }
+.zoo-table caption { text-align: left; font-weight: 600; padding-bottom: 6px; }
+.zoo-table th, .zoo-table td { text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); }
+.zoo-table thead th { color: var(--muted); font-weight: 500; }
+
+@media (max-width: 720px) {
+  .zoo-range { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .zoo-range label { display: none; }
+  .zoo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
