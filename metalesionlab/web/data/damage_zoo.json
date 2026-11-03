@@ -175,6 +175,206 @@
     "language": "Forgets the words and draws stock photos: smiling people, posters, skylines.",
     "drawing": "Falls apart stroke by stroke, like a drawing being rubbed out."
    }
+  },
+  {
+   "key": "kolors",
+   "name": "Kolors",
+   "maker": "Kuaishou, 2024",
+   "reads_with": "ChatGLM3, a chat AI",
+   "license": "Apache-2.0",
+   "repo": "Kwai-Kolors/Kolors-diffusers",
+   "doses": {
+    "language": [
+     0.0,
+     0.06,
+     0.12,
+     0.18,
+     0.24,
+     0.3,
+     0.36,
+     0.42,
+     0.48,
+     0.54,
+     0.6
+    ],
+    "drawing": [
+     0.0,
+     0.06,
+     0.12,
+     0.18,
+     0.24,
+     0.3,
+     0.36,
+     0.42,
+     0.48,
+     0.54,
+     0.6
+    ]
+   },
+   "captions": {
+    "language": "Goes glossy and cute: God becomes a young woman, then a puppy.",
+    "drawing": "Pencil turns to charcoal and smudge, then brown fog."
+   }
+  },
+  {
+   "key": "hunyuan",
+   "name": "Hunyuan-DiT",
+   "maker": "Tencent, 2024 · Powered by Tencent Hunyuan",
+   "reads_with": "a bilingual CLIP and mT5",
+   "license": "Tencent Hunyuan Community",
+   "repo": "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers",
+   "doses": {
+    "language": [
+     0.0,
+     0.08,
+     0.16,
+     0.24,
+     0.32,
+     0.4,
+     0.48,
+     0.56,
+     0.64,
+     0.72,
+     0.8
+    ],
+    "drawing": [
+     0.0,
+     0.05,
+     0.1,
+     0.15,
+     0.2,
+     0.25,
+     0.3,
+     0.35,
+     0.4,
+     0.45,
+     0.5
+    ]
+   },
+   "captions": {
+    "language": "Draws everyday photos instead: children doing homework, a bowl of food.",
+    "drawing": "Goes stark black and white, then a dark silhouette in green static."
+   }
+  },
+  {
+   "key": "lumina",
+   "name": "Lumina-Next",
+   "maker": "Shanghai AI Lab, 2024",
+   "reads_with": "Google's Gemma",
+   "license": "Apache-2.0",
+   "repo": "Alpha-VLLM/Lumina-Next-SFT-diffusers",
+   "doses": {
+    "language": [
+     0.0,
+     0.09,
+     0.18,
+     0.27,
+     0.36,
+     0.45,
+     0.54,
+     0.63,
+     0.72,
+     0.81,
+     0.9
+    ],
+    "drawing": [
+     0.0,
+     0.07,
+     0.14,
+     0.21,
+     0.28,
+     0.35,
+     0.42,
+     0.49,
+     0.56,
+     0.63,
+     0.7
+    ]
+   },
+   "captions": {
+    "language": "Hangs on to faint sketches longest, then draws people instead.",
+    "drawing": "Lines thin out, then splatter like spilled ink."
+   }
+  },
+  {
+   "key": "cogview4",
+   "name": "CogView4",
+   "maker": "Zhipu AI, 2025",
+   "reads_with": "GLM-4, a chat AI",
+   "license": "Apache-2.0",
+   "repo": "THUDM/CogView4-6B",
+   "doses": {
+    "language": [
+     0.0,
+     0.015,
+     0.03,
+     0.045,
+     0.06,
+     0.075,
+     0.09,
+     0.105,
+     0.12,
+     0.135,
+     0.15
+    ],
+    "drawing": [
+     0.0,
+     0.025,
+     0.05,
+     0.075,
+     0.1,
+     0.125,
+     0.15,
+     0.175,
+     0.2,
+     0.225,
+     0.25
+    ]
+   },
+   "captions": {
+    "language": "The most fragile: a few percent off and the page turns to flat colour.",
+    "drawing": "Breaks into speckled noise within a quarter."
+   }
+  },
+  {
+   "key": "playground",
+   "name": "Playground v2.5",
+   "maker": "Playground, 2024",
+   "reads_with": "two CLIP readers",
+   "license": "Playground v2.5 Community",
+   "repo": "playgroundai/playground-v2.5-1024px-aesthetic",
+   "doses": {
+    "language": [
+     0.0,
+     0.05,
+     0.1,
+     0.15,
+     0.2,
+     0.25,
+     0.3,
+     0.35,
+     0.4,
+     0.45,
+     0.5
+    ],
+    "drawing": [
+     0.0,
+     0.08,
+     0.16,
+     0.24,
+     0.32,
+     0.4,
+     0.48,
+     0.56,
+     0.64,
+     0.72,
+     0.8
+    ]
+   },
+   "captions": {
+    "language": "Ink turns to abstract paint, embers and frost.",
+    "drawing": "Lines thin and fade until the page is nearly empty."
+   }
   }
  ]
 }

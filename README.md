@@ -130,6 +130,7 @@ Everything in this repository was built during the hackathon. The commit history
 - Watch an AI forget what a chair is, Prisoners of the cave (text-only and vision twins) and Ask it to be a crowd, pre-registered
 - Damage Meta's Muse Glimmer (`/plato/glimmer`): what does it forget first, drawing or describing? Pre-registered
 - Damaged AI (`/damaged`): God becoming an ordinary person on a turning cube, a rocking chair becoming a car, and damage, in a brain and in an AI: an ageing brain beside an AI losing neurons
+- The damage zoo (`/plato/zoo`): nine open image AIs (Stable Diffusion 1.5 and XL, PixArt-Σ, Sana, Kolors, Hunyuan-DiT, Lumina-Next, CogView4, Playground v2.5) draw a chair, God and four other things while a growing share of neurons is switched off, in the part that reads the words or the part that draws; each AI's range runs to where its pictures stop meaning anything, chosen by eye (`scripts/damage_zoo.py`; for fun, not pre-registered). Hunyuan-DiT: Powered by Tencent Hunyuan
 - Take-homes (`/takehomes`): three things to take home, each a picture first
 - The intro: "If Plato were alive today… What would he ask AI?", then a firelit cave in WebGL with wavering shadows, and the Form chair bursting into the site's name
 - Plain language and a "Big and quiet" type system on every page; a question button above each section that scrolls to its answer
@@ -363,7 +364,7 @@ Every AI step in the tools uses a Meta model, with one exception: when the Meta 
 
 ## Responsible use: damaging AIs on purpose
 
-- The damage experiments switch off a share of a model's artificial neurons, or add noise to them, through reversible forward hooks (`metalesionlab/lesions.py`, `metalesionlab/sdxl_lesions.py`). Model weights are never edited, and no damaged model is saved, released or served: the site only replays saved results.
+- The damage experiments switch off a share of a model's artificial neurons, or add noise to them, through reversible forward hooks (`metalesionlab/lesions.py`, `metalesionlab/sdxl_lesions.py`, `scripts/damage_zoo.py`). Model weights are never edited, and no damaged model is saved, released or served: the site only replays saved results.
 - The damage is random and untargeted. It makes a model worse at everything at once, including keeping to its own rules: at the heaviest damage, Muse Glimmer's answers broke down into gibberish and a few swear words (shown masked on the site). By then the model can't do anything useful either.
 - Deliberately removing a model's safety training is a different, targeted technique (for example, ablating the activation direction that carries refusals; Arditi et al., 2024). This repository doesn't implement it, and the experiments never looked for it.
 - Every prompt in the experiments is harmless (draw a chair, a clock or God; describe a chair). If you reuse the tools, keep to the licence and acceptable-use policy of the model you damage, and don't use them to strip safety behaviour.

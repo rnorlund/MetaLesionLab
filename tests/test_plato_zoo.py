@@ -63,3 +63,11 @@ def test_the_hub_card_shows_chairs_never_god():
     src = (REPO / "scripts" / "damage_zoo.py").read_text()
     hub = src[src.index("def hub_card"):src.index("def cmd_web")]
     assert '"chair"' in hub and "god" not in hub.lower()
+
+
+def test_hunyuan_carries_the_mark_its_license_asks_for():
+    """The Tencent Hunyuan Community License asks products built with it to say "Powered by Tencent Hunyuan"."""
+    assert "Powered by Tencent Hunyuan" in Z.ABOUT["hunyuan"][1]
+    for m in DATA["models"]:
+        if m["key"] == "hunyuan":
+            assert "Powered by Tencent Hunyuan" in m["maker"]

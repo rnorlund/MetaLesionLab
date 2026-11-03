@@ -103,7 +103,7 @@ def test_the_fine_pass_spends_eleven_pictures_inside_each_parts_meaningful_range
     assert Z.fine_doses("pixart", "language")[-1] == 0.8 and Z.fine_doses("pixart", "drawing")[-1] == 0.4
     assert Z.doses_for("sdxl", "drawing", False) == Z.DOSES
     with pytest.raises(SystemExit):
-        Z.cmd_run(SimpleNamespace(model="kolors", out="unused", fine=True))  # no range chosen yet
+        Z.cmd_run(SimpleNamespace(model="flux", out="unused", fine=True))  # no range chosen
 
 
 @pytest.mark.parametrize("part", ["language", "drawing"])
