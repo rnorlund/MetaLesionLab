@@ -1,0 +1,46 @@
+{
+ "about": "How much of Meta's AI the project used: calls per model in our spend ledger while we built and tested (Meta Model API), plus the two open-weight Meta models we ran ourselves. Counts only. Written by scripts/meta_usage.py.",
+ "api_models": {
+  "muse-image-1.0": {
+   "calls": 2188,
+   "items": 5500
+  },
+  "muse-spark-1.3": {
+   "calls": 11700,
+   "items": 11700
+  },
+  "muse-voice-transcribe-1.0": {
+   "calls": 2113,
+   "items": 2113
+  },
+  "muse-wonder-1.0": {
+   "calls": 41,
+   "items": 41
+  },
+  "sam-3.1": {
+   "calls": 526,
+   "items": 526
+  }
+ },
+ "api_calls": 16568,
+ "open_models": {
+  "muse-glimmer-30b": {
+   "kind_labels": 10020,
+   "source": "docs/plato.md"
+  },
+  "dinov2": {
+   "atlas_drawings_compared": 30436,
+   "source": "public_data/plato_atlas.json"
+  }
+ },
+ "shown": {
+  "api_calls": "16,600",
+  "muse_spark_calls": "11,700",
+  "muse_image_pictures": "5,500",
+  "voice_clips": "2,100",
+  "sam_checks": "526",
+  "wonder_drawings": "41",
+  "glimmer_labels": "10,020",
+  "dinov2_drawings": "30,000+"
+ }
+}

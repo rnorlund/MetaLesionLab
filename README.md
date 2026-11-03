@@ -11,6 +11,20 @@ The series follows the life of a chair, as an analogy: children's drawings move 
 - **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/plato/inside` (Muse Glimmer's 52 layers, one by one), `/plato/gallery` (the pictures the experiments made), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
 - **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), [docs/plato_robustness.md](docs/plato_robustness.md) (three other vision models), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md) (with [the sketch model's 8 runs](docs/plato_sketch.md)), [atlas](docs/plato_atlas.md), [telephone](docs/plato_telephone.md), [ideas](docs/plato_ideas.md), [clock test](docs/plato_clock.md), [seven meanings](docs/plato_phaedrus.md), [damaging Glimmer](docs/plato_glimmer_lesion.md), [scale](docs/plato_scale.md).
 
+## Built on Meta's AI
+
+Seven Meta models do the work. Counts from our spend ledger while we built and tested ([public_data/meta_usage.json](public_data/meta_usage.json), written by `scripts/meta_usage.py`); about 16,600 calls to Meta's API in all.
+
+| Meta model | What it did | How much |
+|---|---|---|
+| **Muse Spark** | Listed kinds, named birds, read clocks, described drawings; the Ask Socrates agent (tool calling) | 11,700 calls |
+| **Muse Image** | Every AI drawing; draws 8 new chairs live on request | 5,500 pictures |
+| **Muse Glimmer 30B** (open weights, our GPU) | Sorted drawings into kinds, read layer by layer, damaged on purpose | 10,020 drawings sorted |
+| **DINOv2** (open weights) | Measures how alike two drawings look, in every experiment and live | 30,000+ drawings in the Atlas alone |
+| **Muse Voice Transcribe** | The seven-meanings test and the naming scorer | 2,100 clips |
+| **SAM 3.1** | Checks each picture in the picture-test builder shows one clear object | 526 checks |
+| **Muse Wonder** | Chairs and clocks drawn in code | 41 drawings |
+
 ## What we found
 
 | | Result |
