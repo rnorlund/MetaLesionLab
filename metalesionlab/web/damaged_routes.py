@@ -23,10 +23,14 @@ router = APIRouter()
 
 PAGE = Path(__file__).resolve().parent / "pages" / "damaged.html"
 
-# One card per damage result, in the order a visitor meets them: the question, a one-line answer, and the section it
-# opens. The picture is static/img/plato/hub/<slug>.webp (site.render_hub). No card shows any AI's God, so the blind
-# "Draw God" on /draw stays blind: the ideas card shows death.
+# One card per damage result: the damage zoo (nine AIs side by side) first, then the rest in the order a visitor meets
+# them: the question, a one-line answer, and the section it opens. The picture is static/img/plato/hub/<slug>.webp
+# (site.render_hub). No card shows any AI's God, so the blind "Draw God" on /draw stays blind: the ideas card shows
+# death.
 CARDS = [
+    {"slug": "damaged-zoo", "path": "/plato/zoo", "title": "The damage zoo",
+     "question": "Do all image AIs break the same way when damaged?",
+     "answer": "No: some draw strangers, some dissolve into texture, each in its own way."},
     {"slug": "damaged-painter", "path": "/plato/damage", "title": "Damage the painter",
      "question": "What happens to a drawing when we damage the AI that draws it?",
      "answer": "Words damage: a wheelchair becomes a bicycle. Drawing damage: it breaks up."},
@@ -48,9 +52,6 @@ CARDS = [
     {"slug": "damaged-glimmer-draws", "path": "/plato/glimmer", "title": "What a damaged AI forgets first",
      "question": "Does a damaged AI lose the drawing or the words first?",
      "answer": "The drawing goes first: it stops drawing recognisable pictures before it stops describing, early or late."},
-    {"slug": "damaged-zoo", "path": "/plato/zoo", "title": "The damage zoo",
-     "question": "Do all image AIs break the same way when damaged?",
-     "answer": "No: some draw strangers, some dissolve into texture, each in its own way."},
     {"slug": "damaged-yourself", "path": "/draw", "title": "Damage it yourself",
      "question": "What would damage do to the thing you draw?",
      "answer": "Draw anything, then watch a damaged image AI draw it too."},

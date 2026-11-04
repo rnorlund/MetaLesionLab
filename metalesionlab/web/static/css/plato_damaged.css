@@ -51,3 +51,7 @@ body.plato-damaged { background: var(--ground-warm); }
 /* The first screen's pictures: God turning on the damage cube (damage-cube.css), then the rocking chair, left to right */
 .dm-visuals { display: flex; flex-direction: column; gap: clamp(18px, 2.2vw, 44px); }
 .dm-second { margin: 0; padding-top: clamp(14px, 1.6vw, 30px); border-top: 1px solid var(--line); font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; }
+/* The way into the damage zoo, right under the God cube: a plain line with an orange link */
+.dm-zoo-link { margin: 0; font-size: var(--fs-lead); line-height: var(--lh-lead); color: var(--ink-2); }
+.dm-zoo-link a { color: var(--orange); font-weight: var(--fw-strong); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+.dm-zoo-link a:hover { color: var(--ink); }

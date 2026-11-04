@@ -256,3 +256,14 @@ def test_god_turns_on_the_cube_first_then_the_car_left_to_right(client):
     assert "/static/js/damage-cube.js" in page and "/static/css/damage-cube.css" in page
     js = (STATIC / "js" / "damage-cube.js").read_text()
     assert "prefers-reduced-motion: reduce" in js and "IntersectionObserver" in js  # no autoplay with reduced motion; only on screen
+
+
+def test_the_wide_first_screen_has_a_place_for_the_schematic_at_every_width():
+    """The damage schematic (.ds) sits in grid-area "schem". If a narrow window's grid had no such area, the browser
+    would make implicit columns for it and squeeze /damaged's and /plato/damage's first screen into a sliver on a phone.
+    """
+    css = (STATIC / "css" / "plato_firstscreen.css").read_text()
+    outside_media = re.sub(r"@media[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", css)
+    rule = re.search(r"\.fl\.fl-side\.fl-wide\s*\{([^}]*)\}", outside_media)
+    assert rule and '"schem"' in rule.group(1), "the schem area, outside any @media"
+    assert "grid-area: schem" in (STATIC / "css" / "damage-schematic.css").read_text()

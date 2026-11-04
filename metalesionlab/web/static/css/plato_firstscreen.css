@@ -156,11 +156,13 @@
    below keep their row of three. */
 .fl.fl-wide > .title-pair h1 { max-width: none; text-wrap: balance; }
 .fl.fl-wide .fl-answer { max-width: 58ch; }
+/* One column at every width, with a place for the damage schematic (.ds, grid-area: schem). Without "schem" in the
+   areas, a narrow window's grid makes implicit columns for it and squeezes the whole first screen into a sliver. */
+.fl.fl-side.fl-wide { grid-template-areas: "title" "answer" "visual" "schem" "stats" "note" "quote" "ctx"; }
 @media (min-width: 960px) {
   .fl.fl-side.fl-wide {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
-    grid-template-areas: "title" "answer" "visual" "schem" "stats" "note" "quote" "ctx";
   }
   .fl.fl-wide .fl-visual { align-self: stretch; }
   .fl.fl-wide .pd-visual { grid-template-columns: minmax(0, 1fr); }
