@@ -1,11 +1,11 @@
 name: Site check
 
-# Visits the live site every 4 hours. The free Hugging Face Space sleeps after 48 hours without visitors, so this keeps
+# Visits the live site every hour (GitHub skips some scheduled runs when busy). The free Hugging Face Space sleeps after 48 hours without visitors, so this keeps
 # it awake; and if a main page doesn't answer after a few tries (a sleeping Space takes a minute or two to wake), the run
 # fails and GitHub emails the repository's owner. Pages only: no Meta API calls, nothing spent.
 on:
   schedule:
-    - cron: "23 */4 * * *"
+    - cron: "23 * * * *"
   workflow_dispatch:
 
 permissions:
