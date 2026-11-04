@@ -47,7 +47,13 @@
   var PAD_HTML =
     '<div class="dw-ask">' +
     '  <p class="dw-kicker" data-dw="kicker" hidden></p>' +
-    '  <h1 class="dw-title" data-dw="title"></h1>' +
+    '  <div class="dw-title-row"><h1 class="dw-title" data-dw="title"></h1>' +
+    // Play telephone, findable at the top (things only; Roger, Nov 4): the card itself is far down the results
+    '  <button type="button" class="dw-tele-quick" data-dw="tele-quick" aria-label="Play telephone with your drawing" ' +
+    'data-tip="Play telephone with your drawing" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 ' +
+    '19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 ' +
+    '2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.8.7a2 2 0 0 1 1.7 2z" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>' +
     '  <p class="dw-instr" data-dw="instr"></p>' +
     '  <a class="dw-pick-jump" data-dw="pick-jump" href="#dw-pick" hidden>Or pick something else to draw</a>' +
     '</div>' +
@@ -640,6 +646,7 @@
       if (o.picker && S.data) {
         el.querySelectorAll('.dw-pick button[data-key]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.key === S.key)); });
       }
+      teleQuick();
       if (o.onConcept) o.onConcept(label(), c);
     }
     // The picker (pickerGroups, above): things in the first box, every AI-only group in the second.
@@ -893,6 +900,7 @@
       }).then(function () {
         if (S.result) reveal();
       }).catch(function (e) {
+        teleSoon = false;
         status(e.message || 'Something went wrong. Please try again.', 'error');
         if (res.classList.contains('dw-waiting')) { res.classList.remove('dw-waiting'); res.hidden = true; }
         if (o.onError) o.onError(e);
@@ -913,6 +921,7 @@
 
     function hideResults() {
       res.hidden = true;
+      teleSoon = false;
       hideDamage();
       S.result = null;
       if (o.onReset) o.onReset();
@@ -933,6 +942,7 @@
       if (o.onReveal) o.onReveal({ result: r, concept: c, instance: api });
       document.dispatchEvent(new CustomEvent('tot:revealed'));  // the tour's "New here?" offer steps aside
       var target = o.scrollTo || res;
+      if (teleSoon) { setTimeout(teleOpen, 60); return; }  // the telephone button measured the drawing: go on to the game
       if (!shown || o.scrollTo) setTimeout(function () { target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); }, 60);
     }
 
@@ -1259,6 +1269,29 @@
       }).catch(function (e) { if (me === teleRun) fail(e && e.message ? e.message : 'The game could not run.'); });
     }
     q('tele-go').addEventListener('click', playTele);
+
+    // The telephone button beside the title (things only). With a measured drawing it goes to the telephone card
+    // and starts a game (playTele opens the key box when no key is set); with a drawing not yet measured it measures
+    // it first, then does the same; with an empty pad it asks for a drawing.
+    var teleSoon = false;
+    function teleQuick() {
+      var b = q('tele-quick'), c = S.data ? concept() : null;
+      if (b) b.hidden = !c || isGroup(c) || isIdea(c) || !q('tele');
+    }
+    function teleOpen() {
+      teleSoon = false;
+      var box = q('tele');
+      if (!box || box.hidden) return;
+      box.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' });
+      if (q('tele-strip').hidden) playTele();
+    }
+    q('tele-quick').addEventListener('click', function () {
+      if (S.result) { teleOpen(); return; }
+      if (S.busy) { teleSoon = true; return; }
+      if (totalPoints() < 3 && !S.upload) { status('Draw your ' + thingName(concept()) + ' first, then press the telephone.'); return; }
+      teleSoon = true;
+      submit();
+    });
 
     function yourInk() {  // the visitor's drawing as dark ink on white (a photo as it is), for the charts
       if (S.upload) return { image: S.upload.canvas, photo: true };

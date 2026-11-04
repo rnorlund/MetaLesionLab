@@ -123,3 +123,17 @@ def test_daily_limit_per_address(client):
         assert _post(client, {"image": _url(_png()), "rounds": 1}).status_code == 200
     r = _post(client, {"image": _url(_png()), "rounds": 1})
     assert r.status_code == 429 and "limit" in r.json()["detail"]
+
+
+def test_a_telephone_button_beside_the_title_finds_the_game():
+    """Roger (Nov 4): the telephone card is far down the results, so a round telephone button sits beside "Draw a
+    chair." (its name in a tooltip), for things only; it measures the drawing if needed, then starts the game."""
+    from pathlib import Path
+    static = Path(web.__file__).resolve().parent / "static"
+    js = (static / "js" / "draw.js").read_text()
+    css = (static / "css" / "draw.css").read_text()
+    assert 'data-dw="tele-quick" aria-label="Play telephone with your drawing"' in js
+    assert 'data-tip="Play telephone with your drawing"' in js
+    assert "b.hidden = !c || isGroup(c) || isIdea(c) || !q('tele');" in js  # things only, like the card
+    assert "teleSoon = true;\n      submit();" in js and "if (teleSoon) { setTimeout(teleOpen, 60); return; }" in js
+    assert ".dw-tele-quick::after { content: attr(data-tip);" in css and ".dw-tele-quick[hidden] { display: none; }" in css

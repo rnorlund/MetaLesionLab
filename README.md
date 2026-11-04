@@ -28,7 +28,7 @@ The live site shares a small daily budget for calls to Meta's AI. To try the liv
 | **Ask Socrates** ([/socrates](https://rogiedodgie-platos-chair.hf.space/socrates)) | a set number of turns a day, from the shared budget | as many as you like |
 | **The voice test** ([/plato/phaedrus](https://rogiedodgie-platos-chair.hf.space/plato/phaedrus)): say one sentence seven ways; Muse Voice Transcribe writes down what it heard | from the shared budget | as many as you like |
 | **Ask Meta's AI for 8 new chairs, now** ([/plato](https://rogiedodgie-platos-chair.hf.space/plato)): are the published chairs cherry-picked? | one try a day | up to 20 a day |
-| **Play telephone with your drawing** ([/draw](https://rogiedodgie-platos-chair.hf.space/draw)): Muse Spark describes it, Muse Image draws the description, five rounds | not available | about 6¢ a game |
+| **Play telephone with your drawing** ([/draw?thing=chair](https://rogiedodgie-platos-chair.hf.space/draw?thing=chair)): draw a thing (a chair, not an idea like God), then press the telephone button beside the title. Muse Spark describes your drawing, Muse Image draws the description, five rounds | not available | about 6¢ a game |
 
 How the key is kept safe:
 

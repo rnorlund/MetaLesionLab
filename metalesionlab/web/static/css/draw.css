@@ -16,6 +16,24 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 .dw-panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .dw-ask { display: flex; flex-direction: column; gap: 8px; }
 .dw-title { margin: 0; font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); font-weight: var(--fw-display); }
+/* the telephone button beside the title (draw.js teleQuick): a round button with a handset, its name in a tooltip */
+.dw-title-row { display: flex; align-items: center; gap: clamp(12px, 1.2vw, 28px); min-width: 0; }
+.dw-title-row .dw-title { min-width: 0; }
+.dw-tele-quick { position: relative; flex: none; display: grid; place-items: center; width: clamp(48px, 3.6vw, 84px); aspect-ratio: 1;
+  padding: 0; border-radius: 50%; border: 2px solid var(--blue); background: var(--panel); color: var(--blue); cursor: pointer;
+  box-shadow: 0 0 22px color-mix(in srgb, var(--blue) 40%, transparent); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.dw-tele-quick[hidden] { display: none; }
+.dw-tele-quick svg { width: 46%; height: 46%; }
+.dw-tele-quick:hover { transform: scale(1.06); box-shadow: 0 0 32px color-mix(in srgb, var(--blue) 60%, transparent); }
+.dw-tele-quick:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.dw-tele-quick::after { content: attr(data-tip); position: absolute; z-index: 20; top: calc(100% + 10px); right: 0;
+  white-space: nowrap; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--panel); font-size: var(--fs-small);
+  font-weight: 600; line-height: 1.3; letter-spacing: 0; pointer-events: none; opacity: 0; transition: opacity 0.15s ease; }
+.dw-tele-quick:hover::after, .dw-tele-quick:focus-visible::after { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .dw-tele-quick { animation: dw-tele-ring 2.4s ease-in-out 0.6s 2; }
+  @keyframes dw-tele-ring { 0%, 100% { transform: none; } 4%, 12% { transform: rotate(-12deg); } 8%, 16% { transform: rotate(12deg); } 20% { transform: none; } }
+}
 .dw-instr { margin: 0; font-size: var(--fs-intro); line-height: 1.45; color: var(--ink-2); }
 
 /* The pad is paper in every theme: what sits on it (the placeholder, the timer, a dropped photo) keeps paper colours. */
@@ -290,6 +308,7 @@ body.draw .tour-offer { display: none; }  /* the pad is centred, so the invitati
 }
 
 /* Play telephone with your own drawing (things only): the drawing, then each round's picture and what Spark said */
+.dw-tele { scroll-margin-top: 16px; }  /* the telephone button scrolls here */
 .dw-tele-act { display: flex; flex-wrap: wrap; gap: 10px; }
 .dw-tele-strip { list-style: none; margin: 0; padding: 0 0 6px; display: flex; gap: 14px; overflow-x: auto; }
 .dw-tele-step { flex: 0 0 clamp(150px, 16vw, 260px); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
