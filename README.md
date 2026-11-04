@@ -15,6 +15,30 @@ The series follows the life of a chair, as an analogy: children's drawings move 
 - **See it:** run the site (below) and open `/` (a short opening animation, then draw a chair blind and see the reveal), `/plato` (the whole experiment), `/plato/inside` (Muse Glimmer's 52 layers, one by one), `/plato/gallery` (the pictures the experiments made), `/draw` (draw a chair in 20 seconds, then see what Meta's AI drew), the other experiments under `/plato/…` (table below) and `/socrates` (ask an AI playing Socrates).
 - **Read it:** [docs/plato.md](docs/plato.md) (35 things, a second image model, prompting for variety), [docs/plato_glimmer.md](docs/plato_glimmer.md) (inside Muse Glimmer), [docs/plato_languages.md](docs/plato_languages.md) (six prompt languages), [docs/plato_robustness.md](docs/plato_robustness.md) (three other vision models), and one write-up per experiment: [forms](docs/plato_forms.md), [cave](docs/plato_cave.md), [cratylus](docs/plato_cratylus.md), [bird](docs/plato_bird.md), [damage](docs/plato_damage.md), [lifespan](docs/plato_lifespan.md) (with [the sketch model's 8 runs](docs/plato_sketch.md)), [atlas](docs/plato_atlas.md), [telephone](docs/plato_telephone.md), [ideas](docs/plato_ideas.md), [clock test](docs/plato_clock.md), [seven meanings](docs/plato_phaedrus.md), [damaging Glimmer](docs/plato_glimmer_lesion.md), [scale](docs/plato_scale.md).
 
+## For judges: use your own API key
+
+The live site shares a small daily budget for calls to Meta's AI. To try the live features as much as you like, use your own Meta Model API key. Those calls then bill your account, not the demo's.
+
+1. Get a key at [dev.meta.ai](https://dev.meta.ai).
+2. Open [the site with the key box showing](https://rogiedodgie-platos-chair.hf.space/socrates?ownkey=1). On any page, the box is also under **More → Use your own API key** (on a phone: **Menu → Use your own API key**).
+3. Paste the key and click **Use this key**. A small dot on **More** shows that a key is in use.
+
+| What your key runs | Without a key | With your key |
+|---|---|---|
+| **Ask Socrates** ([/socrates](https://rogiedodgie-platos-chair.hf.space/socrates)) | a set number of turns a day, from the shared budget | as many as you like |
+| **The voice test** ([/plato/phaedrus](https://rogiedodgie-platos-chair.hf.space/plato/phaedrus)): say one sentence seven ways; Muse Voice Transcribe writes down what it heard | from the shared budget | as many as you like |
+| **Ask Meta's AI for 8 new chairs, now** ([/plato](https://rogiedodgie-platos-chair.hf.space/plato)): are the published chairs cherry-picked? | one try a day | up to 20 a day |
+| **Play telephone with your drawing** ([/draw](https://rogiedodgie-platos-chair.hf.space/draw)): Muse Spark describes it, Muse Image draws the description, five rounds | not available | about 6¢ a game |
+
+How the key is kept safe:
+
+- It stays in that browser tab and is gone when you close the tab.
+- It is sent only with those four kinds of requests, over HTTPS.
+- The server uses it for that one request and never stores or logs it. If Meta turns the key down, the page names the kind of error, never the key.
+- To stop using it, open the same box and click **Remove key**.
+
+The per-visitor speed limits still apply. To run everything on your own computer instead, put the key in `MODEL_API_KEY` (see [Setup](#setup)). The code is in `metalesionlab/web/own_key.py` and `metalesionlab/web/static/js/ownkey.js`.
+
 ## Built on Meta's AI
 
 Seven Meta models do the work. Counts from our spend ledger while we built and tested ([public_data/meta_usage.json](public_data/meta_usage.json), written by `scripts/meta_usage.py`); about 16,600 calls to Meta's API in all.
@@ -142,7 +166,7 @@ Everything in this repository was built during the hackathon. The commit history
 - Responsible use: why damaging an AI on purpose is safe here (see below)
 - Live, on the chair page: **Ask Meta's AI for 8 new chairs, now** (also boat and face). Muse Image draws 8 new pictures with the experiment's prompt and the server measures them the experiment's way against the published numbers: are these cherry-picked? One free try a day; more on your own key (`web/plato_redraw_routes.py`)
 - Live, on Draw a chair, for judges on their own key: **Play telephone with your drawing**. Muse Spark describes it, Muse Image draws the description, five rounds, with the telephone experiment's protocol (`web/plato_telephone_live_routes.py`)
-- For judges: **More → Use your own API key** runs Ask Socrates and the voice test on your own Meta key, past the demo's daily budget. The key stays in your browser tab and is sent only with those requests; the server never stores or logs it (`web/own_key.py`, `static/js/ownkey.js`)
+- For judges: **More → Use your own API key** runs Ask Socrates, the voice test, 8 new chairs and telephone on your own Meta key, past the demo's daily budget. The key stays in your browser tab and is sent only with those requests; the server never stores or logs it ([how to use it](#for-judges-use-your-own-api-key); `web/own_key.py`, `static/js/ownkey.js`)
 - Charts that glow and move: the layer-by-layer chart drawn live, your drawing pinned on one glowing line on Draw a chair, lines that draw themselves in and bars that grow on every chart, and redrawn charts with pictures as markers and no dead space (`static/js/glowchart.js`, `static/js/glowskin.js`)
 
 ### Prior research context (not part of this submission)
