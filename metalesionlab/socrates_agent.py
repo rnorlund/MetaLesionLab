@@ -76,6 +76,8 @@ EXPERIMENTS = {
               "has seen", "/plato/ideas"),
     "phaedrus": ("Seven meanings: what writing keeps of “I never said she stole my money”, spoken seven ways",
                  "/plato/phaedrus"),
+    "zoo": ("The damage zoo: do all image AIs break the same way when damaged? Nine open image AIs, a growing share "
+            "of their neurons switched off", "/plato/zoo"),
 }
 _EXPERIMENT_ALIASES = {
     "form": "forms", "clock": "forms", "bed": "forms", "table": "forms", "platonic clock": "forms",
@@ -92,6 +94,10 @@ _EXPERIMENT_ALIASES = {
     "seven meanings": "phaedrus", "stress": "phaedrus", "emphasis": "phaedrus", "prosody": "phaedrus",
     "voice": "phaedrus", "living word": "phaedrus", "transcript": "phaedrus", "speech": "phaedrus",
     "i never said she stole my money": "phaedrus",
+    "damage zoo": "zoo", "the damage zoo": "zoo", "nine ais": "zoo", "other image ais": "zoo", "other ais": "zoo",
+    "all image ais": "zoo", "other models": "zoo", "same way": "zoo", "kolors": "zoo", "sana": "zoo", "pixart": "zoo",
+    "hunyuan": "zoo", "hunyuan-dit": "zoo", "lumina": "zoo", "lumina-next": "zoo", "cogview": "zoo", "cogview4": "zoo",
+    "playground": "zoo", "stable diffusion 1.5": "zoo",
 }
 # Each experiment's short answer, as its write-up states it (docs/plato_<name>.md). Sent with the data so the
 # headline (and its honest limits) is never lost when a large results file is cut to fit.
@@ -175,6 +181,17 @@ SHORT_ANSWERS = {
              "It is AI only: no one has collected people's quick doodles of these ideas that we could find. A Lausanne "
              "study of children's drawings of god (87.6% human-like in a Swiss sample) is cited only as context. The "
              "page describes what the model drew and makes no claim about God or any faith.",
+    "zoo": "Nine open image AIs (Stable Diffusion 1.5 and XL, PixArt-Σ, Sana, Kolors, Hunyuan-DiT, Lumina-Next, CogView4 "
+           "and Playground v2.5) drew a chair, God, a clock, a bird, a house and love from Muse Image's doodle request "
+           "while a growing share of their neurons was switched off, either in the part that reads the words or in "
+           "the part that draws. They don't break the same way. With the words part damaged, most forget the request "
+           "and draw something else: Stable Diffusion XL's God becomes an ordinary man, Kolors' a young woman and "
+           "then a puppy, and Sana draws stock photos of smiling people. With the drawing part damaged, each picture "
+           "comes apart in its own style: Sana's is rubbed out stroke by stroke, Stable Diffusion XL's shatters into "
+           "bold patterns, CogView4's into speckled noise. CogView4 is the most fragile: its words range ends at 15% "
+           "switched off, Sana's and Lumina-Next's at 90%. Each range runs from intact to where the pictures stop "
+           "meaning anything, chosen by eye. For fun and not pre-registered: the pictures were judged by eye, not "
+           "measured. Muse Image can't be damaged (it is API-only), so it isn't in the zoo.",
 }
 QUICKDRAW = "Google Quick, Draw! (Google Creative Lab), CC BY 4.0"
 PEOPLE_PER_CONCEPT = 200  # Quick, Draw! drawings per concept (recognized, first 200 in file order; docs/plato.md)
@@ -769,7 +786,8 @@ TOOLS = [
                    "Platonic clock, bed, table), damage (damage an image model: what happens to a rocking chair?), bird "
                    "(name a bird), cave (name the shadow), cratylus (bouba/kiki), lifespan (the life of a chair: "
                    "children, an AI in training), atlas (135 everyday things, a benchmark), telephone (describe-then-"
-                   "draw chains). Each comes with its short answer. Says when one isn't published yet.",
+                   "draw chains), zoo (the damage zoo: nine open image AIs damaged the same way; do they break the same way?). "
+                   "Each comes with its short answer. Says when one isn't published yet.",
                    {"name": {"type": "string", "enum": list(EXPERIMENTS)},
                     "focus": {"type": "string", "description": "Optional: one item to zoom in on, e.g. 'robin', 'chair'."}},
                    ["name"]),
@@ -1077,7 +1095,7 @@ The experiments, behind your tools:
 - plato_stats: Plato's Chair. Muse Image drew 35 things (chair, boat, umbrella, ...) 12-16 times each with the same doodle prompt; Meta DINOv2 measured how varied ("spread") its drawings are against 200 people's drawings of each thing from Google's Quick, Draw! game (CC BY 4.0). Index = AI spread / people's spread; below 1 means the AI is more uniform. Its chair: one slat-back dining chair, 16 times.
 - plato_variety: asking for "any kind", "an unusual kind" or named kinds, and which KIND of object Muse and people draw.
 - glimmer_inside: inside Muse Glimmer, the layer where Muse's doodles of a thing collapse to one point while people's drawings stay spread out, and how well Glimmer names each.
-- plato_experiment: newer experiments (forms: the Platonic clock, bed and table; damage: damage an image model and see what happens to a rocking chair; bird: name a bird; cave: name the shadow; cratylus: bouba/kiki; lifespan: the life of a chair, from children's drawings to an AI in training; atlas: the Atlas of Forms, 135 everyday things; telephone: Plato's Telephone, describe-then-draw chains). Each result has a short_answer: lead with it and keep its limits (for example, the damage experiment's double dissociation is only partly supported). Some aren't published yet; then say so, and don't guess.
+- plato_experiment: newer experiments (forms: the Platonic clock, bed and table; damage: damage an image model and see what happens to a rocking chair; bird: name a bird; cave: name the shadow; cratylus: bouba/kiki; lifespan: the life of a chair, from children's drawings to an AI in training; atlas: the Atlas of Forms, 135 everyday things; telephone: Plato's Telephone, describe-then-draw chains; zoo: the damage zoo, nine open image AIs damaged the same way, each breaking in its own way). Each result has a short_answer: lead with it and keep its limits (for example, the damage experiment's double dissociation is only partly supported). Some aren't published yet; then say so, and don't guess.
 - plato_passage: verified passages of Plato in Benjamin Jowett's public-domain translation, and a few of Aristotle's (W. D. Ross's translation) on knowing, causes and learning.
 - counterexamples: hard cases for a definition of a chair, clock, bird or game (the kinds Muse Spark named, such as a beanbag chair or a sundial; the AI's textbook example against people's; Plato's painter; the Cave; bouba/kiki), for when the visitor defines something.
 

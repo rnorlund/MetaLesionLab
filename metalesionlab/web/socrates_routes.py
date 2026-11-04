@@ -66,7 +66,7 @@ STARTERS = [
     "Did the AI really draw the same chair 16 times?",
     "What would Plato say about AI art?",
     "Are people any different?",
-    "What happens when you damage an AI's idea of a chair?",
+    "Do all image AIs break the same way when damaged?",
     "Can you talk an AI out of the Platonic chair?",
 ]
 

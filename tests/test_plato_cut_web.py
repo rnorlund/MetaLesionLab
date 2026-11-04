@@ -151,7 +151,7 @@ def test_navigation_and_landing_link_the_new_pages(client):
 def test_tour_has_a_plato_step_and_stays_short():
     tour = (web.HERE / "static" / "js" / "tour.js").read_text()
     assert "page: '/plato'" in tour
-    assert tour.count("{ page:") <= 10
+    assert tour.count("{ page:") <= 11
 
 
 def test_variety_section_is_shipped(client):

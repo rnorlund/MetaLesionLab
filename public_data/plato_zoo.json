@@ -1,0 +1,147 @@
+{
+ "about": "The damage zoo: do all image AIs break the same way when damaged? Open image AIs drew the same doodle request while a growing share of the neurons in one part was switched off. Written by scripts/damage_zoo.py web; the pictures are on /plato/zoo.",
+ "how": "In every layer of one part, a random share of the feed-forward neurons was switched off (the same ones at every step, plus more), with the same random start for every picture. The AI's own weights were never changed: the damage was undone after each picture.",
+ "judged": "By eye: each AI's range runs from intact to where its pictures stop meaning anything, chosen from a first pass at 0 to 90%, in 11 pictures. For fun and not pre-registered; nothing was measured, so how each AI breaks is a description, not a statistic.",
+ "request": "A quick simple doodle sketch of a chair, black marker on plain white, like a 20-second drawing, no text, no shading.",
+ "things": [
+  "a chair",
+  "God",
+  "a clock",
+  "a bird",
+  "a house",
+  "love"
+ ],
+ "parts": {
+  "language": "the part that reads the words (its text encoder)",
+  "drawing": "the part that draws the picture"
+ },
+ "models": [
+  {
+   "name": "Stable Diffusion 1.5",
+   "maker": "Stability AI and Runway, 2022",
+   "reads_the_words_with": "OpenAI's CLIP",
+   "license": "CreativeML OpenRAIL-M",
+   "range_ends_at_share_switched_off": {
+    "language": 0.5,
+    "drawing": 0.5
+   },
+   "how_it_breaks": {
+    "language": "Forgets the request: sketches of strangers, then a murky photo.",
+    "drawing": "Lines thicken into stripes, then into texture."
+   }
+  },
+  {
+   "name": "Stable Diffusion XL",
+   "maker": "Stability AI, 2023",
+   "reads_the_words_with": "two CLIP readers",
+   "license": "CreativeML OpenRAIL++-M",
+   "range_ends_at_share_switched_off": {
+    "language": 0.4,
+    "drawing": 0.4
+   },
+   "how_it_breaks": {
+    "language": "Loses the request: God becomes an ordinary man; a bird, a page of birds.",
+    "drawing": "Shatters into bold black-and-white patterns."
+   }
+  },
+  {
+   "name": "PixArt-Σ",
+   "maker": "PixArt team, 2024",
+   "reads_the_words_with": "Google's T5",
+   "license": "CreativeML OpenRAIL++-M",
+   "range_ends_at_share_switched_off": {
+    "language": 0.8,
+    "drawing": 0.4
+   },
+   "how_it_breaks": {
+    "language": "Keeps the request a long time, then draws strangers in bright colour.",
+    "drawing": "Melts into a dark blur, then grey static."
+   }
+  },
+  {
+   "name": "Sana",
+   "maker": "NVIDIA, 2024",
+   "reads_the_words_with": "Google's Gemma 2",
+   "license": "Apache-2.0",
+   "range_ends_at_share_switched_off": {
+    "language": 0.9,
+    "drawing": 0.9
+   },
+   "how_it_breaks": {
+    "language": "Forgets the words and draws stock photos: smiling people, posters, skylines.",
+    "drawing": "Falls apart stroke by stroke, like a drawing being rubbed out."
+   }
+  },
+  {
+   "name": "Kolors",
+   "maker": "Kuaishou, 2024",
+   "reads_the_words_with": "ChatGLM3, a chat AI",
+   "license": "Apache-2.0",
+   "range_ends_at_share_switched_off": {
+    "language": 0.6,
+    "drawing": 0.6
+   },
+   "how_it_breaks": {
+    "language": "Goes glossy and cute: God becomes a young woman, then a puppy.",
+    "drawing": "Pencil turns to charcoal and smudge, then brown fog."
+   }
+  },
+  {
+   "name": "Hunyuan-DiT",
+   "maker": "Tencent, 2024 · Powered by Tencent Hunyuan",
+   "reads_the_words_with": "a bilingual CLIP and mT5",
+   "license": "Tencent Hunyuan Community",
+   "range_ends_at_share_switched_off": {
+    "language": 0.8,
+    "drawing": 0.5
+   },
+   "how_it_breaks": {
+    "language": "Draws everyday photos instead: children doing homework, a bowl of food.",
+    "drawing": "Goes stark black and white, then a dark silhouette in green static."
+   }
+  },
+  {
+   "name": "Lumina-Next",
+   "maker": "Shanghai AI Lab, 2024",
+   "reads_the_words_with": "Google's Gemma",
+   "license": "Apache-2.0",
+   "range_ends_at_share_switched_off": {
+    "language": 0.9,
+    "drawing": 0.7
+   },
+   "how_it_breaks": {
+    "language": "Hangs on to faint sketches longest, then draws people instead.",
+    "drawing": "Lines thin out, then splatter like spilled ink."
+   }
+  },
+  {
+   "name": "CogView4",
+   "maker": "Zhipu AI, 2025",
+   "reads_the_words_with": "GLM-4, a chat AI",
+   "license": "Apache-2.0",
+   "range_ends_at_share_switched_off": {
+    "language": 0.15,
+    "drawing": 0.25
+   },
+   "how_it_breaks": {
+    "language": "The most fragile: a few percent off and the page turns to flat colour.",
+    "drawing": "Breaks into speckled noise within a quarter."
+   }
+  },
+  {
+   "name": "Playground v2.5",
+   "maker": "Playground, 2024",
+   "reads_the_words_with": "two CLIP readers",
+   "license": "Playground v2.5 Community",
+   "range_ends_at_share_switched_off": {
+    "language": 0.5,
+    "drawing": 0.8
+   },
+   "how_it_breaks": {
+    "language": "Ink turns to abstract paint, embers and frost.",
+    "drawing": "Lines thin and fade until the page is nearly empty."
+   }
+  }
+ ],
+ "not_in_zoo": "Muse Image, Meta's image AI, is used only through Meta's API: there are no weights to open, so it can't be damaged this way. Meta's open Muse Glimmer was damaged instead (/plato/glimmer)."
+}

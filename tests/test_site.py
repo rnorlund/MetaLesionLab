@@ -375,7 +375,7 @@ def _tour_steps() -> list[str]:
 def test_tour_is_plato_first_short_and_ends_at_draw():
     tour = TOUR.read_text()
     steps = tour.count("{ page:")
-    assert 6 <= steps <= 10
+    assert 6 <= steps <= 11  # 11 since the damage zoo stop (Roger, Nov 3)
     pages = re.findall(r"\{ page: '([^']*)'", tour)
     assert pages[:3] == ["/", "/", "/plato"]  # the blind draw, the chairs, then the experiment
     assert "'/scorer" not in tour and "'/studio" not in tour and "'/lab'" not in tour  # the sister site's pages

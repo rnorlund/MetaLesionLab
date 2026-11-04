@@ -71,3 +71,17 @@ def test_hunyuan_carries_the_mark_its_license_asks_for():
     for m in DATA["models"]:
         if m["key"] == "hunyuan":
             assert "Powered by Tencent Hunyuan" in m["maker"]
+
+
+def test_socrates_file_and_readme_gif_match_the_zoo():
+    """public_data/plato_zoo.json (what Ask Socrates reads) is the zoo's data in words, and the README opens with the
+    zoo's animated God (docs/img/damage_zoo_god.gif, from the strips; scripts/damage_zoo.py gif)."""
+    from PIL import Image
+
+    pub = json.loads(Z.PUBLIC.read_text())
+    assert pub == Z.public_summary([m["key"] for m in DATA["models"]])
+    assert "plato_zoo.json" in (REPO / "public_data" / "README.md").read_text()
+    readme = (REPO / "README.md").read_text()
+    assert "(docs/img/damage_zoo_god.gif)" in readme[:2500]
+    gif = Image.open(Z.README_GIF)
+    assert gif.n_frames == DATA["steps"] and Z.README_GIF.stat().st_size < 5e6

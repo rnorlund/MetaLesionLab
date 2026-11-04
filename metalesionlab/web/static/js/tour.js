@@ -3,7 +3,7 @@
    written in advance and every number in them comes from the write-ups (docs/plato*.md; tests/test_site.py
    checks them), so the tour makes no AI calls. Blind draw first: on the landing page Socrates asks for a
    chair before anything of Muse Image's is shown; the chairs appear when the visitor draws or presses Next.
-   The current step lives in sessionStorage, so the tour carries on across page loads. At most 10 steps; it
+   The current step lives in sessionStorage, so the tour carries on across page loads. At most 11 steps; it
    ends at /draw when the server has that page (TOT.hasPage), with "Ask me yourself" (/socrates).
    It is the Plato's Chair site's tour: where /plato isn't served (the Lingua site, MLL_SITE=lingua) it does nothing. */
 (function () {
@@ -115,6 +115,13 @@
     { page: '/plato', url: '/plato#inside', face: 'pointing', kicker: 'Inside Meta’s open AI model', target: '#inside .pc-card', before: platoReady, skip: noPlato,
       q: 'And inside a machine’s mind, do sixteen chairs stay sixteen?',
       p: 'Muse Glimmer reads a picture in 52 stages. By the last, the machine’s doodles of a thing are one (spread 0.09); people’s stay apart (0.54).' },
+
+    // The damage zoo, on the chair (never God: /draw's "Draw God" stays blind). Only where the zoo is served.
+    { page: '/plato/zoo', url: '/plato/zoo?thing=chair&part=drawing', id: 'zoo', face: 'pointing', kicker: 'Damage the machine',
+      target: '#grid', phoneTarget: '#grid .zoo-card',
+      skipEarly: function () { return !T.hasPage('/plato/zoo'); },
+      q: 'Brain science learns how a mind works from what damage takes away. Shall we damage a machine’s?',
+      p: 'We switched off more and more of the artificial neurons of nine image AIs. Each loses the chair its own way: some fade, some shatter, some draw something else.' },
 
     { page: '/', url: '/#series', face: 'questioning', kicker: 'The Plato series', target: '#series .series-grid', id: 'series',
       // Only once another experiment of the series is on this server (decided before changing page).

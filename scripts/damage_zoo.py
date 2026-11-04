@@ -312,7 +312,7 @@ CAPTIONS: dict[tuple[str, str], str] = {
     ("sd15", "drawing"): "Lines thicken into stripes, then into texture.",
     ("sdxl", "language"): "Loses the request: God becomes an ordinary man; a bird, a page of birds.",
     ("sdxl", "drawing"): "Shatters into bold black-and-white patterns.",
-    ("pixart", "language"): "Holds on longest, then draws strangers in bright colour.",
+    ("pixart", "language"): "Keeps the request a long time, then draws strangers in bright colour.",
     ("pixart", "drawing"): "Melts into a dark blur, then grey static.",
     ("sana", "language"): "Forgets the words and draws stock photos: smiling people, posters, skylines.",
     ("sana", "drawing"): "Falls apart stroke by stroke, like a drawing being rubbed out.",
@@ -350,6 +350,60 @@ def hub_card(root: Path, models: list[str]) -> None:
     card.save(HUB, "WEBP", quality=82, method=6)
 
 
+PUBLIC = REPO / "public_data" / "plato_zoo.json"
+NOT_IN_ZOO = ("Muse Image, Meta's image AI, is used only through Meta's API: there are no weights to open, so it can't be "
+              "damaged this way. Meta's open Muse Glimmer was damaged instead (/plato/glimmer).")
+
+
+def zoo_data(models: list[str]) -> dict:
+    """web/data/damage_zoo.json: what /plato/zoo draws."""
+    return {
+        "about": "The damage zoo (/plato/zoo): open image models drawing with a growing share of their neurons switched "
+                 "off, in the language part or the drawing part. Written by scripts/damage_zoo.py web.",
+        "prompt": STYLES["doodle"], "things": THINGS, "parts": list(PARTS), "steps": FINE_STEPS + 1, "frame": FRAME,
+        "models": [{"key": m, "name": ABOUT[m][0], "maker": ABOUT[m][1], "reads_with": ABOUT[m][2],
+                    "license": MODELS[m]["license"], "repo": MODELS[m]["repo"],
+                    "doses": {p: fine_doses(m, p) for p in PARTS},
+                    "captions": {p: CAPTIONS.get((m, p), "") for p in PARTS}} for m in models],
+    }
+
+
+def public_summary(models: list[str]) -> dict:
+    """public_data/plato_zoo.json: the zoo as Ask Socrates reads it. Descriptions only: no pictures."""
+    return {
+        "about": "The damage zoo: do all image AIs break the same way when damaged? Open image AIs drew the same "
+                 "doodle request while a growing share of the neurons in one part was switched off. Written by "
+                 "scripts/damage_zoo.py web; the pictures are on /plato/zoo.",
+        "how": "In every layer of one part, a random share of the feed-forward neurons was switched off (the same "
+               "ones at every step, plus more), with the same random start for every picture. The AI's own weights "
+               "were never changed: the damage was undone after each picture.",
+        "judged": "By eye: each AI's range runs from intact to where its pictures stop meaning anything, chosen from a "
+                  "first pass at 0 to 90%, in 11 pictures. For fun and not pre-registered; nothing was measured, so "
+                  "how each AI breaks is a description, not a statistic.",
+        "request": STYLES["doodle"].format(phrase="a chair"),
+        "things": list(THINGS.values()),
+        "parts": {"language": "the part that reads the words (its text encoder)",
+                  "drawing": "the part that draws the picture"},
+        "models": [{"name": ABOUT[m][0], "maker": ABOUT[m][1], "reads_the_words_with": ABOUT[m][2],
+                    "license": MODELS[m]["license"],
+                    "range_ends_at_share_switched_off": {p: fine_doses(m, p)[-1] for p in PARTS},
+                    "how_it_breaks": {p: CAPTIONS.get((m, p), "") for p in PARTS}} for m in models],
+        "not_in_zoo": NOT_IN_ZOO,
+    }
+
+
+def write_data(models: list[str]) -> None:
+    WEB_DATA.write_text(json.dumps(zoo_data(models), indent=1, ensure_ascii=False) + "\n")
+    PUBLIC.write_text(json.dumps(public_summary(models), indent=1, ensure_ascii=False) + "\n")
+
+
+def cmd_data(args):
+    """Only the two data files (captions or ranges changed): the strips stay as they are."""
+    models = [m for m in MODELS if (Path(args.out) / m / "fine.json").exists()]
+    write_data(models)
+    print(f"{len(models)} models: {WEB_DATA.name}, {PUBLIC.name}")
+
+
 def cmd_web(args):
     """Strips (seed 1 of each thing) and web/data/damage_zoo.json for every model with a fine pass."""
     from PIL import Image
@@ -365,30 +419,61 @@ def cmd_web(args):
                     p = root / model / f"{part}@{dose:g}" / thing / "s0.png"
                     strip.paste(Image.open(p).convert("RGB").resize((FRAME, FRAME), Image.LANCZOS), (k * FRAME, 0))
                 strip.save(SPRITES / f"{model}-{part}-{thing}.webp", "WEBP", quality=78, method=6)
-    data = {
-        "about": "The damage zoo (/plato/zoo): open image models drawing with a growing share of their neurons switched "
-                 "off, in the language part or the drawing part. Written by scripts/damage_zoo.py web.",
-        "prompt": STYLES["doodle"], "things": THINGS, "parts": list(PARTS), "steps": FINE_STEPS + 1, "frame": FRAME,
-        "models": [{"key": m, "name": ABOUT[m][0], "maker": ABOUT[m][1], "reads_with": ABOUT[m][2],
-                    "license": MODELS[m]["license"], "repo": MODELS[m]["repo"],
-                    "doses": {p: fine_doses(m, p) for p in PARTS},
-                    "captions": {p: CAPTIONS.get((m, p), "") for p in PARTS}} for m in models],
-    }
-    WEB_DATA.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+    write_data(models)
     hub_card(root, models)
     size = sum(f.stat().st_size for f in SPRITES.glob("*.webp")) / 1e6
     print(f"{len(models)} models: {', '.join(models)}; {len(list(SPRITES.glob('*.webp')))} strips, {size:.1f} MB")
 
 
+README_GIF = REPO / "docs" / "img" / "damage_zoo_god.gif"
+
+
+def cmd_gif(args):
+    """docs/img/damage_zoo_god.gif for the README: the nine AIs' God, words part damaged, step by step, from the strips."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    data = json.loads(WEB_DATA.read_text())
+    models, n = data["models"], data["steps"]
+    tile, gap, pad, top, lab = FRAME, 10, 16, 58, 30
+    w = pad * 2 + 3 * tile + 2 * gap
+    h = top + 3 * (tile + lab) + 2 * gap + 34
+    font = lambda size, bold=False: ImageFont.truetype(args.font, size, index=1 if bold else 0)
+    strips = {m["key"]: Image.open(SPRITES / f"{m['key']}-language-god.webp").convert("RGB") for m in models}
+    frames = []
+    for k in range(n):
+        im = Image.new("RGB", (w, h), (11, 14, 19))
+        d = ImageDraw.Draw(im)
+        d.text((pad, 12), "Nine image AIs asked for God", fill=(236, 238, 242), font=font(22, True))
+        d.text((pad, 37), "while more of the part that reads the words is switched off", fill=(158, 167, 181), font=font(15))
+        for i, m in enumerate(models):
+            x, y = pad + (i % 3) * (tile + gap), top + (i // 3) * (tile + lab + gap)
+            im.paste(strips[m["key"]].crop((k * tile, 0, (k + 1) * tile, tile)), (x, y))
+            dose = m["doses"]["language"][k]
+            d.text((x, y + tile + 5), m["name"], fill=(236, 238, 242), font=font(14, True))
+            tag = "intact" if dose == 0 else f"{dose:.0%} off"
+            d.text((x + tile - d.textlength(tag, font=font(13)), y + tile + 6), tag, fill=(232, 163, 61), font=font(13))
+        d.text((pad, h - 26), "Plato’s Chair · the damage zoo · rogiedodgie-platos-chair.hf.space/plato/zoo",
+               fill=(158, 167, 181), font=font(13))
+        frames.append(im)
+    durations = [1600] + [450] * (n - 2) + [2200]
+    pal = [f.convert("P", palette=Image.ADAPTIVE, colors=255, dither=Image.FLOYDSTEINBERG) for f in frames]
+    README_GIF.parent.mkdir(parents=True, exist_ok=True)
+    pal[0].save(README_GIF, save_all=True, append_images=pal[1:], duration=durations, loop=0, optimize=True, disposal=1)
+    print(README_GIF, f"{README_GIF.stat().st_size / 1e6:.1f} MB, {w}x{h}, {n} frames")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name, fn in (("probe", cmd_probe), ("run", cmd_run), ("sheets", cmd_sheets), ("web", cmd_web)):
+    for name, fn in (("probe", cmd_probe), ("run", cmd_run), ("sheets", cmd_sheets), ("web", cmd_web), ("data", cmd_data),
+                     ("gif", cmd_gif)):
         p = sub.add_parser(name)
         if name in ("probe", "run"):
             p.add_argument("--model", required=True, choices=list(MODELS))
-        if name != "probe":
+        if name not in ("probe", "gif"):
             p.add_argument("--out", required=True)
+        if name == "gif":
+            p.add_argument("--font", default="/System/Library/Fonts/HelveticaNeue.ttc")
         if name in ("run", "sheets"):
             p.add_argument("--fine", action="store_true", help="the fine pass, inside each part's meaningful range")
         p.set_defaults(fn=fn)

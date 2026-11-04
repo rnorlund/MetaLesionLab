@@ -18,6 +18,9 @@
 .th-text h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.12; }
 .th-support { margin: 0; font-size: var(--fs-lead); color: var(--ink-2); }
 .th-fig { margin: 0; font-family: var(--mono); font-size: var(--fs-label); color: var(--muted); }
+/* After the three: one line to the damage zoo */
+.th-more { margin: 0; padding: clamp(28px, 3.5vw, 72px) 0; border-top: 1px solid var(--line); font-size: var(--fs-lead); color: var(--ink-2); max-width: 56em; }
+.th-more a { color: var(--orange); font-weight: var(--fw-strong); }
 .th-link { justify-self: start; margin-top: 6px; font-size: var(--fs-body); font-weight: 600; color: var(--ink); text-decoration: underline; text-decoration-color: var(--orange); text-underline-offset: 4px; }
 .th-link:hover { color: var(--orange); }
 

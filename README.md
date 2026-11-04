@@ -4,6 +4,10 @@
 
 ![Left: 16 chair doodles by Meta's Muse Image, nearly identical, and all 16 stacked into one sharp chair. Right: 16 chairs drawn by people, and the same 16 stacked into a cloud.](metalesionlab/web/static/img/og-plato-chair.png)
 
+![The damage zoo, animated: nine open image AIs asked for God while more and more of the part that reads the words is switched off. Stable Diffusion XL's God becomes an ordinary man, Kolors' a puppy, Hunyuan-DiT's a living room and CogView4's a flat orange page.](docs/img/damage_zoo_god.gif)
+
+*The damage zoo: we switched off more and more of nine open image AIs' neurons, and each falls apart in its own way ([live](https://rogiedodgie-platos-chair.hf.space/plato/zoo), `scripts/damage_zoo.py`).*
+
 Plato held that each kind of thing has one ideal Form, and every real one is a copy. We put his questions to Meta's AI and to people. The first one: *is there one ideal chair?* We asked Meta's image model, Muse Image, for 16 quick doodles of a chair and of 34 other things, took 200 people's 20-second drawings of the same words from Google's Quick, Draw!, and measured how varied each set is with Meta's DINOv2 vision model.
 
 The series follows the life of a chair, as an analogy: children's drawings move toward the adult chair from age 2 to 10, a small model trained on people's chairs grows from scribbles to adult-like chairs, and damage to an image model's language part makes its chair wander off into other things. In semantic dementia, people's drawings instead lose their distinctive features and drift toward the typical member of the kind (Bozeat et al. 2003; published neurology, not our data); the damaged model did not do that.

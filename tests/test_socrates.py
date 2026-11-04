@@ -771,3 +771,18 @@ def test_examine_route_and_status(client):
                                               "history": _history(5)})
     assert over.status_code == 422 and "exchanges" in over.json()["detail"]
     assert client.post("/api/socrates", json={"question": "x", "mode": "examine", "history": _history(4)}).status_code == 200
+
+
+def test_the_damage_zoo_is_an_experiment_socrates_can_read():
+    """The zoo (/plato/zoo) reaches Socrates through plato_experiment: its short answer names every AI in the
+    published file, and its percents are the file's range ends."""
+    r = S.plato_experiment("the damage zoo")
+    assert r["available"] and r["link"] == "/plato/zoo" and r["short_answer"] == S.SHORT_ANSWERS["zoo"]
+    data = json.loads((S.PUBLIC / "plato_zoo.json").read_text())
+    short = S.SHORT_ANSWERS["zoo"]
+    for m in data["models"]:
+        assert m["name"].split(" (")[0] in short.replace("Stable Diffusion 1.5 and XL", "Stable Diffusion 1.5, Stable Diffusion XL"), m["name"]
+    ends = {round(100 * v) for m in data["models"] for v in m["range_ends_at_share_switched_off"].values()}
+    assert {int(p) for p in re.findall(r"(\d+)%", short)} <= ends
+    assert "not pre-registered" in short and "by eye" in short
+    assert S.plato_experiment("CogView4")["experiment"] == "zoo"
