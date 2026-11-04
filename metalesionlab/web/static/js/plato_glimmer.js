@@ -145,8 +145,9 @@
 
   // ---------- the slider ----------
 
-  function renderTrio() {
-    var d = S.d, T = type(S.type), step = T.steps[S.level], cond = step.cond, rows = d.sprites.rows;
+  // The chair, clock and God at the current step: drawing, whole sentence, two tags.
+  function drawPanels() {
+    var d = S.d, step = type(S.type).steps[S.level], cond = step.cond, rows = d.sprites.rows;
     var box = $('trio');
     box.innerHTML = '';
     d.things.forEach(function (t, k) {
@@ -165,6 +166,23 @@
         el('h2', { text: t.key === 'god' ? 'God' : 'A ' + t.name }), pic,
         el('blockquote', { class: 'gl-said' }, [el('p', { text: '“' + said + '”' })]), tags]));
     });
+  }
+
+  // The sentences are shown whole and differ in length from step to step, so the panels keep the height of the tallest
+  // step for this kind of damage: the slider under them stays put while you drag it. Measured again when the kind of
+  // damage, the width or the fonts change.
+  function fitTrio() {
+    var box = $('trio'), keep = S.level, n = type(S.type).steps.length, tallest = 0;
+    box.style.minHeight = '';
+    for (var lv = 0; lv < n; lv++) { S.level = lv; drawPanels(); tallest = Math.max(tallest, box.offsetHeight); }
+    S.level = keep;
+    box.style.minHeight = tallest + 'px';
+    renderTrio();
+  }
+
+  function renderTrio() {
+    drawPanels();
+    var T = type(S.type), step = T.steps[S.level];
     var r = $('level');
     r.max = String(T.steps.length - 1);
     r.value = String(S.level);
@@ -177,9 +195,15 @@
 
   function setupSlider() {
     var items = S.d.damage.map(function (t) { return { key: t.key, label: t.short }; });
-    seg($('type-seg'), items, S.type, function (k) { S.type = k; renderTrio(); });
+    seg($('type-seg'), items, S.type, function (k) { S.type = k; fitTrio(); });
     $('level').addEventListener('input', function (e) { S.level = +e.target.value; renderTrio(); });
-    renderTrio();
+    fitTrio();
+    var wide = innerWidth, timer;
+    addEventListener('resize', function () {
+      if (innerWidth === wide) return;  // a phone's address bar showing or hiding changes only the height
+      wide = innerWidth; clearTimeout(timer); timer = setTimeout(fitTrio, 150);
+    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTrio);
   }
 
   // ---------- the two lines ----------
