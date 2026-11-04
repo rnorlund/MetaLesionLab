@@ -1,0 +1,33 @@
+name: Site check
+
+# Visits the live site every 4 hours. The free Hugging Face Space sleeps after 48 hours without visitors, so this keeps
+# it awake; and if a main page doesn't answer after a few tries (a sleeping Space takes a minute or two to wake), the run
+# fails and GitHub emails the repository's owner. Pages only: no Meta API calls, nothing spent.
+on:
+  schedule:
+    - cron: "23 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Visit the main pages
+        run: |
+          base=https://rogiedodgie-platos-chair.hf.space
+          fail=0
+          for path in / /plato /plato/zoo /damaged /draw /takehomes /socrates /api/socrates/status; do
+            code=000
+            for try in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 "$base$path" || true)
+              [ "$code" = 200 ] && break
+              sleep 30
+            done
+            echo "$path $code"
+            [ "$code" = 200 ] || fail=1
+          done
+          exit $fail
