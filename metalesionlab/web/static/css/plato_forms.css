@@ -21,7 +21,8 @@ body.pf { background: var(--ground-warm); --pf-ten: var(--amber); }  /* --pf-ten
 .pf-frame img.swapping { opacity: 0.15; }
 .pf-wall-cap { font-size: var(--fs-small); line-height: 1.45; color: var(--muted); }
 .pf-wall-cap b { color: var(--ink); }
-.pf-wall-cap .credit { font-size: var(--fs-small); color: var(--muted); white-space: nowrap; }
+/* The credit stays on one line when it fits, and otherwise wraps inside the column (on a phone the column is ~160px). */
+.pf-wall-cap .credit { display: inline-block; max-width: 100%; font-size: var(--fs-small); color: var(--muted); }
 
 .pf-jump { display: flex; flex-wrap: wrap; gap: 6px 8px; }
 .pf-jump a { font-size: var(--fs-small); text-decoration: none; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; }

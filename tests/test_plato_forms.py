@@ -215,3 +215,9 @@ def test_forms_page_images_exist_and_are_small():
 def test_app_includes_the_forms_router_once():
     assert web.SITE_ROUTERS["plato"].count("plato_forms_routes") == 1  # on the Plato site only
     assert "plato_forms_routes" not in web.SITE_ROUTERS["lingua"]
+
+
+def test_on_a_phone_the_clock_credit_wraps_instead_of_running_off_the_screen():
+    css = (web.HERE / "static/css/plato_forms.css").read_text()
+    rule = re.search(r"\.pf-wall-cap \.credit \{([^}]*)\}", css).group(1)
+    assert "nowrap" not in rule and "max-width: 100%" in rule

@@ -104,11 +104,17 @@ body.plato-glimmer { background: var(--ground-warm); }
 @media (max-width: 1000px) {
   .gl-sec { padding: 24px; }
 }
+/* On a phone the chair, clock and God are rows, not columns: the drawing on the left, the name, the whole sentence and
+   the two tags beside it (three columns left ~100px each, which cut the sentences off). */
 @media (max-width: 560px) {
   .gl-sec { padding: 20px 16px; }
-  .gl-trio { gap: 6px; }
-  .gl-panel h2 { font-size: var(--fs-small); }
-  .gl-said { font-size: var(--fs-label); padding: 6px 7px; max-height: 12em; }
+  .gl-trio { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .gl-panel { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-rows: auto auto 1fr; gap: 6px 12px; }
+  .gl-panel > * { grid-column: 2; }
+  .gl-panel > .gl-pic { grid-column: 1; grid-row: 1 / span 3; align-self: start; }
+  .gl-panel h2 { font-size: var(--fs-body); }
+  .gl-said { font-size: var(--fs-small); padding: 6px 8px; max-height: none; overflow: visible; }
+  .gl-tags { align-self: start; }
   .gl-tag { font-size: var(--fs-label); padding: 0 6px; }
   .gl-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
 }

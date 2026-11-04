@@ -337,3 +337,11 @@ def test_no_god_picture_on_the_hub_card():
     assert "god" not in card["slug"].lower()
     pic = web.HERE / "static" / "img" / "plato" / "hub" / f"{card['slug']}.webp"
     assert pic.is_file() and pic.stat().st_size < 60_000
+
+
+def test_on_a_phone_the_glimmer_panels_are_rows_with_whole_sentences():
+    from metalesionlab.web import app as web
+    css = (web.HERE / "static/css/plato_glimmer.css").read_text()
+    phone = css[css.index("@media (max-width: 560px)"):]
+    assert re.search(r"\.gl-trio \{[^}]*grid-template-columns: minmax\(0, 1fr\)", phone)  # one panel per row
+    assert re.search(r"\.gl-said \{[^}]*max-height: none", phone)  # the whole sentence, no scroll box
